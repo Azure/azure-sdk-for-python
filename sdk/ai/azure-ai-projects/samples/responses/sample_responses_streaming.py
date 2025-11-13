@@ -36,25 +36,15 @@ from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
-# Create OpenAI client with Azure AI authentication and logging
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
     # [START response_stream_method]
     openai_client = project_client.get_openai_client()
 
-    response = openai_client.responses.create(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-        input=[
-            {"role": "user", "content": "What is the size of France in square miles?"},
-        ],
-        stream=False,  # Create non-streaming response
-    )
-
-    # [START response_stream_method]
     # Create a non-streaming response first to get the response object
     response = openai_client.responses.create(
         model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],

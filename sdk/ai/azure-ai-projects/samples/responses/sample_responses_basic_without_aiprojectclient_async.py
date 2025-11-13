@@ -33,27 +33,23 @@ from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 
 load_dotenv()
 
-
 async def main() -> None:
 
-    credential = DefaultAzureCredential()
-
-    async with credential:
-
-        openai = AsyncOpenAI(
-            api_key=get_bearer_token_provider(credential, "https://ai.azure.com/.default"),
+    async with (
+        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        AsyncOpenAI(
             base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai",
+            api_key=get_bearer_token_provider(credential, "https://ai.azure.com/.default"),
             default_query={"api-version": "2025-11-15-preview"},
+        ) as openai_client,
+    ):
+
+        response = await openai_client.responses.create(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            input="How many feet are in a mile?",
         )
 
-        async with openai:
-
-            response = await openai.responses.create(
-                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                input="How many feet are in a mile?",
-            )
-
-            print(f"Response output: {response.output_text}")
+        print(f"Response output: {response.output_text}")
 
 
 if __name__ == "__main__":

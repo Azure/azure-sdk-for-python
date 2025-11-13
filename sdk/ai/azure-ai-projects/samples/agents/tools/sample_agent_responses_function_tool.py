@@ -33,6 +33,8 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 
 load_dotenv()
 
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
 # Define a function tool for the model to use
 func_tool = FunctionTool(
     name="get_horoscope",
@@ -53,19 +55,15 @@ func_tool = FunctionTool(
 
 tools: list[Tool] = [func_tool]
 
-
 def get_horoscope(sign: str) -> str:
     """Generate a horoscope for the given astrological sign."""
     return f"{sign}: Next Tuesday you will befriend a baby otter."
 
-
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-
-with project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
@@ -75,8 +73,6 @@ with project_client:
             tools=tools,
         ),
     )
-
-    openai_client = project_client.get_openai_client()
 
     # Prompt the model with tools defined
     response = openai_client.responses.create(

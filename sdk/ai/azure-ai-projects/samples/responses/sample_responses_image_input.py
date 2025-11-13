@@ -33,11 +33,7 @@ from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 def image_to_base64(image_path: str) -> str:
     if not os.path.isfile(image_path):
@@ -50,10 +46,11 @@ def image_to_base64(image_path: str) -> str:
     except Exception as exc:
         raise OSError(f"Error reading file '{image_path}'") from exc
 
-
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     image_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/image_input.png"))
 

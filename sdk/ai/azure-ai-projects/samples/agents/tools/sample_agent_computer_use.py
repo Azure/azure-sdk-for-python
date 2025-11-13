@@ -57,14 +57,15 @@ except FileNotFoundError:
     print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
     exit(1)
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 computer_use_tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
 
-with project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+
     agent = project_client.agents.create_version(
         agent_name="ComputerUseAgent",
         definition=PromptAgentDefinition(
@@ -79,8 +80,6 @@ with project_client:
         description="Computer automation agent with screen interaction capabilities.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
-    openai_client = project_client.get_openai_client()
 
     # Initial request with screenshot - start with Bing search page
     print("Starting computer automation session (initial screenshot: cua_browser_search.png)...")

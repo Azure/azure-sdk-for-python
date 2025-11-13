@@ -39,13 +39,7 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-# Get the OpenAI client for responses
-openai_client = project_client.get_openai_client()
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 sharepoint_tool = SharepointAgentTool(
     sharepoint_grounding_preview=SharepointGroundingToolParameters(
@@ -55,7 +49,11 @@ sharepoint_tool = SharepointAgentTool(
     )
 )
 
-with project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(

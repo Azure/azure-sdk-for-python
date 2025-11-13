@@ -40,12 +40,13 @@ from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
+
     # [START setup_azure_monitor_tracing]
     # Enable Azure Monitor tracing
     application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()

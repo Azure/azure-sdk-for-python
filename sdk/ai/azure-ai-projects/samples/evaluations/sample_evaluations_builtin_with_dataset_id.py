@@ -63,9 +63,11 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
 
-with DefaultAzureCredential() as credential:
-
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as client,
+):
 
         print("Upload a single file and create a new Dataset to reference the file.")
         dataset: DatasetVersion = project_client.datasets.upload_file(
@@ -74,10 +76,6 @@ with DefaultAzureCredential() as credential:
             file_path=data_file,
         )
         pprint(dataset)
-
-        print("Creating an OpenAI client from the AI Project client")
-
-        client = project_client.get_openai_client()
 
         data_source_config = {
             "type": "custom",
@@ -114,8 +112,8 @@ with DefaultAzureCredential() as credential:
         print("Creating Eval Group")
         eval_object = client.evals.create(
             name="label model test with dataset ID",
-            data_source_config=data_source_config, # type: ignore
-            testing_criteria=testing_criteria, # type: ignore
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Eval Group created")
 

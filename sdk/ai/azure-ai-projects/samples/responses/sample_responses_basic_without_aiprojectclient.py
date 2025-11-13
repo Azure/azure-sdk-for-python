@@ -32,15 +32,18 @@ from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 load_dotenv()
 
-openai = OpenAI(
-    api_key=get_bearer_token_provider(DefaultAzureCredential(), "https://ai.azure.com/.default"),
-    base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai",
-    default_query={"api-version": "2025-11-15-preview"},
-)
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    OpenAI(
+        base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai",
+        api_key=get_bearer_token_provider(credential, "https://ai.azure.com/.default"),
+        default_query={"api-version": "2025-11-15-preview"},
+    ) as openai_client,
+):
 
-response = openai.responses.create(
-    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-    input="How many feet are in a mile?",
-)
+    response = openai_client.responses.create(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        input="How many feet are in a mile?",
+    )
 
-print(f"Response output: {response.output_text}")
+    print(f"Response output: {response.output_text}")

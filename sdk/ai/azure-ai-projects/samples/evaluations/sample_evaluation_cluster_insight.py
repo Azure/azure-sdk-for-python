@@ -41,14 +41,13 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEva
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     # Create an evaluation
     data_source_config = DataSourceConfigCustom(
@@ -73,8 +72,8 @@ with project_client:
     ]
     eval_object = openai_client.evals.create(
         name="Sentiment Evaluation",
-        data_source_config=data_source_config, # type: ignore
-        testing_criteria=testing_criteria, # type: ignore
+        data_source_config=data_source_config,  # type: ignore
+        testing_criteria=testing_criteria,  # type: ignore
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 

@@ -36,82 +36,77 @@ load_dotenv()
 
 async def main():
     # Initialize the Azure AI Projects async client
-    credential = DefaultAzureCredential()
+    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-    async with credential:
-        project_client = AIProjectClient(
-            endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-            credential=credential,
+    mcp_tool = MCPTool(
+        server_label="api-specs",
+        server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
+        require_approval="always",
+    )
+
+    # Create tools list with proper typing for the agent definition
+    tools: list[Tool] = [mcp_tool]
+
+    async with (
+        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        await project_client.get_openai_client() as openai_client,
+    ):
+
+        # Create a prompt agent with MCP tool capabilities
+        agent = await project_client.agents.create_version(
+            agent_name="MyAgent",
+            definition=PromptAgentDefinition(
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
+                tools=tools,
+            ),
+        )
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+        # Create a conversation thread to maintain context across multiple interactions
+        conversation = await openai_client.conversations.create()
+        print(f"Created conversation (id: {conversation.id})")
+
+        # Send initial request that will trigger the MCP tool
+        response = await openai_client.responses.create(
+            conversation=conversation.id,
+            input="Please summarize the Azure REST API specifications Readme",
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
 
-        async with project_client:
-            mcp_tool = MCPTool(
-                server_label="api-specs",
-                server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
-                require_approval="always",
-            )
+        # Process any MCP approval requests that were generated
+        input_list: ResponseInputParam = []
+        for item in response.output:
+            if item.type == "mcp_approval_request":
+                if item.server_label == "api-specs" and item.id:
+                    # Automatically approve the MCP request to allow the agent to proceed
+                    # In production, you might want to implement more sophisticated approval logic
+                    input_list.append(
+                        McpApprovalResponse(
+                            type="mcp_approval_response",
+                            approve=True,
+                            approval_request_id=item.id,
+                        )
+                    )
 
-            # Create tools list with proper typing for the agent definition
-            tools: list[Tool] = [mcp_tool]
+        print("Final input:")
+        print(input_list)
 
-            # Create a prompt agent with MCP tool capabilities
-            agent = await project_client.agents.create_version(
-                agent_name="MyAgent",
-                definition=PromptAgentDefinition(
-                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                    instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
-                    tools=tools,
-                ),
-            )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        # Send the approval response back to continue the agent's work
+        # This allows the MCP tool to access the GitHub repository and complete the original request
+        response = await openai_client.responses.create(
+            input=input_list,
+            previous_response_id=response.id,
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        )
 
-            # Get the OpenAI async client for responses and conversations
-            openai_client = await project_client.get_openai_client()
+        print(f"Response: {response.output_text}")
 
-            async with openai_client:
-                # Create a conversation thread to maintain context across multiple interactions
-                conversation = await openai_client.conversations.create()
-                print(f"Created conversation (id: {conversation.id})")
-
-                # Send initial request that will trigger the MCP tool
-                response = await openai_client.responses.create(
-                    conversation=conversation.id,
-                    input="Please summarize the Azure REST API specifications Readme",
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                )
-
-                # Process any MCP approval requests that were generated
-                input_list: ResponseInputParam = []
-                for item in response.output:
-                    if item.type == "mcp_approval_request":
-                        if item.server_label == "api-specs" and item.id:
-                            # Automatically approve the MCP request to allow the agent to proceed
-                            # In production, you might want to implement more sophisticated approval logic
-                            input_list.append(
-                                McpApprovalResponse(
-                                    type="mcp_approval_response",
-                                    approve=True,
-                                    approval_request_id=item.id,
-                                )
-                            )
-
-                print("Final input:")
-                print(input_list)
-
-                # Send the approval response back to continue the agent's work
-                # This allows the MCP tool to access the GitHub repository and complete the original request
-                response = await openai_client.responses.create(
-                    input=input_list,
-                    previous_response_id=response.id,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                )
-
-                print(f"Response: {response.output_text}")
-
-            # Clean up resources by deleting the agent version
-            # This prevents accumulation of unused agent versions in your project
-            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-            print("Agent deleted")
+        # Clean up resources by deleting the agent version
+        # This prevents accumulation of unused agent versions in your project
+        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        print("Agent deleted")
 
 
 if __name__ == "__main__":

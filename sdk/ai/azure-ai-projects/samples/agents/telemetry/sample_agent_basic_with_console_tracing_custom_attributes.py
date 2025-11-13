@@ -85,18 +85,20 @@ provider.add_span_processor(CustomAttributeSpanProcessor())
 
 scenario = os.path.basename(__file__)
 with tracer.start_as_current_span(scenario):
-    client = AIProjectClient(
-        endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-        credential=DefaultAzureCredential(),
-    )
 
-    with client:
+    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
+    with (
+        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    ):
+
         agent_definition = PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that answers general questions",
         )
 
-        agent = client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
+        agent = project_client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
 
-        client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print("Agent deleted")

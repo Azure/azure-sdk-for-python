@@ -34,17 +34,15 @@ from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 agent_name = os.environ["AGENT_NAME"]
 conversation_id = os.environ["CONVERSATION_ID"]
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     # Retrieves latest version of an existing Agent
     agent = project_client.agents.get(agent_name=agent_name)

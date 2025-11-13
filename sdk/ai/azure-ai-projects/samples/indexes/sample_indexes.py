@@ -39,33 +39,34 @@ index_version = os.environ.get("INDEX_VERSION", "1.0")
 ai_search_connection_name = os.environ.get("AI_SEARCH_CONNECTION_NAME", "my-ai-search-connection-name")
 ai_search_index_name = os.environ.get("AI_SEARCH_INDEX_NAME", "my-ai-search-index-name")
 
-with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
 
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+    # [START indexes_sample]
+    print(
+        f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
+    )
+    index = project_client.indexes.create_or_update(
+        name=index_name,
+        version=index_version,
+        index=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
+    )
+    print(index)
 
-        # [START indexes_sample]
-        print(
-            f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
-        )
-        index = project_client.indexes.create_or_update(
-            name=index_name,
-            version=index_version,
-            index=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
-        )
+    print(f"Get Index `{index_name}` version `{index_version}`:")
+    index = project_client.indexes.get(name=index_name, version=index_version)
+    print(index)
+
+    print("List latest versions of all Indexes:")
+    for index in project_client.indexes.list():
         print(index)
 
-        print(f"Get Index `{index_name}` version `{index_version}`:")
-        index = project_client.indexes.get(name=index_name, version=index_version)
+    print(f"Listing all versions of the Index named `{index_name}`:")
+    for index in project_client.indexes.list_versions(name=index_name):
         print(index)
 
-        print("List latest versions of all Indexes:")
-        for index in project_client.indexes.list():
-            print(index)
-
-        print(f"Listing all versions of the Index named `{index_name}`:")
-        for index in project_client.indexes.list_versions(name=index_name):
-            print(index)
-
-        print(f"Delete Index `{index_name}` version `{index_version}`:")
-        project_client.indexes.delete(name=index_name, version=index_version)
-        # [END indexes_sample]
+    print(f"Delete Index `{index_name}` version `{index_version}`:")
+    project_client.indexes.delete(name=index_name, version=index_version)
+    # [END indexes_sample]

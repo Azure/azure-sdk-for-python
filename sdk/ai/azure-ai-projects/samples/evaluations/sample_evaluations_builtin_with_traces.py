@@ -138,74 +138,73 @@ def main() -> None:
     for trace_id in trace_ids:
         print(f"  - {trace_id}")
 
-    with DefaultAzureCredential() as credential:
-        with AIProjectClient(
-            endpoint=endpoint,
-            credential=credential,
-            api_version="2025-11-15-preview",
-        ) as project_client:
-            client = project_client.get_openai_client()
-            data_source_config = {
-                "type": "azure_ai_source",
-                "scenario": "traces",
-            }
+    with (
+        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as client,
+    ):
 
-            testing_criteria = [
-                _build_evaluator_config(
-                    name="intent_resolution",
-                    evaluator_name="builtin.intent_resolution",
-                ),
-                _build_evaluator_config(
-                    name="task_adherence",
-                    evaluator_name="builtin.task_adherence",
-                ),
-            ]
+        data_source_config = {
+            "type": "azure_ai_source",
+            "scenario": "traces",
+        }
 
-            print("\nCreating Eval Group")
-            eval_object = client.evals.create(
-                name="agent_trace_eval_group",
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
-            )
-            print("Eval Group created")
+        testing_criteria = [
+            _build_evaluator_config(
+                name="intent_resolution",
+                evaluator_name="builtin.intent_resolution",
+            ),
+            _build_evaluator_config(
+                name="task_adherence",
+                evaluator_name="builtin.task_adherence",
+            ),
+        ]
 
-            print("\nGet Eval Group by Id")
-            eval_object_response = client.evals.retrieve(eval_object.id)
-            print("Eval Group Response:")
-            pprint(eval_object_response)
+        print("\nCreating Eval Group")
+        eval_object = client.evals.create(
+            name="agent_trace_eval_group",
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
+        )
+        print("Eval Group created")
 
-            print("\nCreating Eval Run with trace IDs")
-            run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            eval_run_object = client.evals.runs.create(
-                eval_id=eval_object.id,
-                name=run_name,
-                metadata={
-                    "agent_id": agent_id,
-                    "start_time": start_time.isoformat(),
-                    "end_time": end_time.isoformat(),
-                },
-                data_source={
-                    "type": "azure_ai_traces",
-                    "trace_ids": trace_ids,
-                    "lookback_hours": trace_query_hours,
-                },
-            )
-            print("Eval Run created")
-            pprint(eval_run_object)
+        print("\nGet Eval Group by Id")
+        eval_object_response = client.evals.retrieve(eval_object.id)
+        print("Eval Group Response:")
+        pprint(eval_object_response)
 
-            print("\nMonitoring Eval Run status...")
-            while True:
-                run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-                print(f"Status: {run.status}")
+        print("\nCreating Eval Run with trace IDs")
+        run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        eval_run_object = client.evals.runs.create(
+            eval_id=eval_object.id,
+            name=run_name,
+            metadata={
+                "agent_id": agent_id,
+                "start_time": start_time.isoformat(),
+                "end_time": end_time.isoformat(),
+            },
+            data_source={
+                "type": "azure_ai_traces",
+                "trace_ids": trace_ids,
+                "lookback_hours": trace_query_hours,
+            },
+        )
+        print("Eval Run created")
+        pprint(eval_run_object)
 
-                if run.status in {"completed", "failed", "canceled"}:
-                    print("\nEval Run finished!")
-                    print("Final Eval Run Response:")
-                    pprint(run)
-                    break
+        print("\nMonitoring Eval Run status...")
+        while True:
+            run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
+            print(f"Status: {run.status}")
 
-                time.sleep(5)
-                print("Waiting for eval run to complete...")
+            if run.status in {"completed", "failed", "canceled"}:
+                print("\nEval Run finished!")
+                print("Final Eval Run Response:")
+                pprint(run)
+                break
+
+            time.sleep(5)
+            print("Waiting for eval run to complete...")
 
 
 if __name__ == "__main__":

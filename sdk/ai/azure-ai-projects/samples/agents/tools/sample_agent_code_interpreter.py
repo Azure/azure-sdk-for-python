@@ -32,18 +32,18 @@ from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool,
 
 load_dotenv()
 
+endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
 # Load the CSV file to be processed
 asset_file_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
 )
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-with project_client:
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     # Upload the CSV file for the code interpreter to use
     file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))

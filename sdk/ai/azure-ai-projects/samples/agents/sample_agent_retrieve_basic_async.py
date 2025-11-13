@@ -37,39 +37,36 @@ load_dotenv()
 
 
 async def main():
+    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
     agent_name = os.environ["AGENT_NAME"]
     conversation_id = os.environ["CONVERSATION_ID"]
 
-    async with DefaultAzureCredential() as credential:
-        project_client = AIProjectClient(
-            endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-            credential=credential,
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        await project_client.get_openai_client() as openai_client,
+    ):
+        # Retrieves latest version of an existing Agent
+        agent = await project_client.agents.get(agent_name=agent_name)
+        print(f"Agent retrieved (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+
+        # Retrieved a stored conversation
+        conversation = await openai_client.conversations.retrieve(conversation_id=conversation_id)
+        print(f"Retrieved conversation (id: {conversation.id})")
+
+        # Add a new user text message to the conversation
+        await openai_client.conversations.items.create(
+            conversation_id=conversation.id,
+            items=[{"type": "message", "role": "user", "content": "How many feet are in a mile?"}],
         )
+        print(f"Added a user message to the conversation")
 
-        async with project_client:
-            openai_client = await project_client.get_openai_client()
-
-            # Retrieves latest version of an existing Agent
-            agent = await project_client.agents.get(agent_name=agent_name)
-            print(f"Agent retrieved (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
-
-            # Retrieved a stored conversation
-            conversation = await openai_client.conversations.retrieve(conversation_id=conversation_id)
-            print(f"Retrieved conversation (id: {conversation.id})")
-
-            # Add a new user text message to the conversation
-            await openai_client.conversations.items.create(
-                conversation_id=conversation.id,
-                items=[{"type": "message", "role": "user", "content": "How many feet are in a mile?"}],
-            )
-            print(f"Added a user message to the conversation")
-
-            response = await openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                input="",
-            )
-            print(f"Response output: {response.output_text}")
+        response = await openai_client.responses.create(
+            conversation=conversation.id,
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            input="",
+        )
+        print(f"Response output: {response.output_text}")
 
 
 if __name__ == "__main__":

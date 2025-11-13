@@ -35,14 +35,13 @@ from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     agent = project_client.agents.create_version(
         agent_name=os.environ["AZURE_AI_AGENT_NAME"],
@@ -71,8 +70,8 @@ with project_client:
     ]
     eval_object = openai_client.evals.create(
         name="Agent Response Evaluation",
-        data_source_config=data_source_config, # type: ignore
-        testing_criteria=testing_criteria, # type: ignore
+        data_source_config=data_source_config,  # type: ignore
+        testing_criteria=testing_criteria,  # type: ignore
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 

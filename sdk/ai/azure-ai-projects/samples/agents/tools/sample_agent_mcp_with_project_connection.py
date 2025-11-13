@@ -36,14 +36,7 @@ from openai.types.responses.response_input_param import McpApprovalResponse, Res
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-# Get the OpenAI client for responses and conversations
-openai_client = project_client.get_openai_client()
-
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 mcp_tool = MCPTool(
     server_label="api-specs",
@@ -55,7 +48,11 @@ mcp_tool = MCPTool(
 # Create tools list with proper typing for the agent definition
 tools: list[Tool] = [mcp_tool]
 
-with project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     # Create a prompt agent with MCP tool capabilities
     agent = project_client.agents.create_version(

@@ -34,6 +34,7 @@ from pydantic import BaseModel, Field
 
 load_dotenv()
 
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 class CalendarEvent(BaseModel):
     model_config = {"extra": "forbid"}
@@ -41,15 +42,11 @@ class CalendarEvent(BaseModel):
     date: str = Field(description="Date in YYYY-MM-DD format")
     participants: list[str]
 
-
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     response = openai_client.responses.create(
         model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],

@@ -51,15 +51,13 @@ class CalendarEvent(BaseModel):
     date: str = Field(description="Date in YYYY-MM-DD format")
     participants: list[str]
 
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

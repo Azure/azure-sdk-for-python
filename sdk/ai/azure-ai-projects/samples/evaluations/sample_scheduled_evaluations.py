@@ -220,96 +220,96 @@ def schedule_dataset_evaluation() -> None:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
     data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
-    with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-            print("Upload a single file and create a new Dataset to reference the file.")
-            dataset: DatasetVersion = project_client.datasets.upload_file(
-                name=dataset_name or f"eval-data-{datetime.utcnow().strftime('%Y-%m-%d_%H%M%S_UTC')}",
-                version=dataset_version,
-                file_path=data_file,
-            )
-            pprint(dataset)
+    with (
+        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as client,
+    ):
 
-            print("Creating an OpenAI client from the AI Project client")
+        print("Upload a single file and create a new Dataset to reference the file.")
+        dataset: DatasetVersion = project_client.datasets.upload_file(
+            name=dataset_name or f"eval-data-{datetime.utcnow().strftime('%Y-%m-%d_%H%M%S_UTC')}",
+            version=dataset_version,
+            file_path=data_file,
+        )
+        pprint(dataset)
 
-            client = project_client.get_openai_client()
-
-            data_source_config = {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string"},
-                        "response": {"type": "string"},
-                        "context": {"type": "string"},
-                        "ground_truth": {"type": "string"},
-                    },
-                    "required": [],
+        data_source_config = {
+            "type": "custom",
+            "item_schema": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "response": {"type": "string"},
+                    "context": {"type": "string"},
+                    "ground_truth": {"type": "string"},
                 },
-                "include_sample_schema": True,
-            }
+                "required": [],
+            },
+            "include_sample_schema": True,
+        }
 
-            testing_criteria = [
-                {
-                    "type": "azure_ai_evaluator",
-                    "name": "violence",
-                    "evaluator_name": "builtin.violence",
-                    "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-                    "initialization_parameters": {"deployment_name": "{{aoai_deployment_and_model}}"},
-                },
-                {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
-                {
-                    "type": "azure_ai_evaluator",
-                    "name": "coherence",
-                    "evaluator_name": "builtin.coherence",
-                    "initialization_parameters": {"deployment_name": "{{aoai_deployment_and_model}}"},
-                },
-            ]
+        testing_criteria = [
+            {
+                "type": "azure_ai_evaluator",
+                "name": "violence",
+                "evaluator_name": "builtin.violence",
+                "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
+                "initialization_parameters": {"deployment_name": "{{aoai_deployment_and_model}}"},
+            },
+            {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
+            {
+                "type": "azure_ai_evaluator",
+                "name": "coherence",
+                "evaluator_name": "builtin.coherence",
+                "initialization_parameters": {"deployment_name": "{{aoai_deployment_and_model}}"},
+            },
+        ]
 
-            print("Creating Eval Group")
-            eval_object = client.evals.create(
-                name="label model test with dataset ID",
-                data_source_config=data_source_config, # type: ignore # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
-            )
-            print(f"Eval Group created")
+        print("Creating Eval Group")
+        eval_object = client.evals.create(
+            name="label model test with dataset ID",
+            data_source_config=data_source_config,  # type: ignore # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
+        )
+        print(f"Eval Group created")
 
-            print("Get Eval Group by Id")
-            eval_object_response = client.evals.retrieve(eval_object.id)
-            print("Eval Run Response:")
-            pprint(eval_object_response)
+        print("Get Eval Group by Id")
+        eval_object_response = client.evals.retrieve(eval_object.id)
+        print("Eval Run Response:")
+        pprint(eval_object_response)
 
-            print("Creating Eval Run with Dataset ID")
-            eval_run_object = {
-                "eval_id": eval_object.id,
-                "name": "dataset_id_run",
-                "metadata": {"team": "eval-exp", "scenario": "dataset-id-v1"},
-                "data_source": CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl", source=SourceFileID(type="file_id", id=dataset.id if dataset.id else "")
-                ),
-            }
+        print("Creating Eval Run with Dataset ID")
+        eval_run_object = {
+            "eval_id": eval_object.id,
+            "name": "dataset_id_run",
+            "metadata": {"team": "eval-exp", "scenario": "dataset-id-v1"},
+            "data_source": CreateEvalJSONLRunDataSourceParam(
+                type="jsonl", source=SourceFileID(type="file_id", id=dataset.id if dataset.id else "")
+            ),
+        }
 
-            print(f"Eval Run:")
-            pprint(eval_run_object)
-            print("Creating Schedule for dataset evaluation")
-            schedule = Schedule(
-                display_name="Dataset Evaluation Eval Run Schedule",
-                enabled=True,
-                trigger=RecurrenceTrigger(interval=1, schedule=DailyRecurrenceSchedule(hours=[9])),  # Every day at 9 AM
-                task=EvaluationScheduleTask(eval_id=eval_object.id, eval_run=eval_run_object),
-            )
-            schedule_response = project_client.schedules.create_or_update(
-                id="dataset-eval-run-schedule-9am", schedule=schedule
-            )
+        print(f"Eval Run:")
+        pprint(eval_run_object)
+        print("Creating Schedule for dataset evaluation")
+        schedule = Schedule(
+            display_name="Dataset Evaluation Eval Run Schedule",
+            enabled=True,
+            trigger=RecurrenceTrigger(interval=1, schedule=DailyRecurrenceSchedule(hours=[9])),  # Every day at 9 AM
+            task=EvaluationScheduleTask(eval_id=eval_object.id, eval_run=eval_run_object),
+        )
+        schedule_response = project_client.schedules.create_or_update(
+            id="dataset-eval-run-schedule-9am", schedule=schedule
+        )
 
-            print(f"Schedule created for dataset evaluation: {schedule_response.id}")
-            pprint(schedule_response)
+        print(f"Schedule created for dataset evaluation: {schedule_response.id}")
+        pprint(schedule_response)
 
-            schedule_runs = project_client.schedules.list_runs(schedule_id=schedule_response.id)
-            print(f"Listing schedule runs for schedule id: {schedule_response.id}")
-            for run in schedule_runs:
-                pprint(run)
+        schedule_runs = project_client.schedules.list_runs(id=schedule_response.id)
+        print(f"Listing schedule runs for schedule id: {schedule_response.id}")
+        for run in schedule_runs:
+            pprint(run)
 
 
 def schedule_redteam_evaluation() -> None:
@@ -324,90 +324,87 @@ def schedule_redteam_evaluation() -> None:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 
-    with DefaultAzureCredential() as credential:
-        with AIProjectClient(
-            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
-        ) as project_client:
-            print("Creating an OpenAI client from the AI Project client")
-            client = project_client.get_openai_client()
+    with (
+        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as client,
+    ):
 
-            agent_versions = project_client.agents.get(agent_name=agent_name)
-            agent = agent_versions.versions.latest
-            agent_version = agent.version
-            print(f"Retrieved agent: {agent_name}, version: {agent_version}")
-            eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
-            eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
-            data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
+        agent_versions = project_client.agents.get(agent_name=agent_name)
+        agent = agent_versions.versions.latest
+        agent_version = agent.version
+        print(f"Retrieved agent: {agent_name}, version: {agent_version}")
+        eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
+        eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
+        data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
 
-            testing_criteria = _get_agent_safety_evaluation_criteria()
-            print(f"Defining testing criteria for red teaming for agent target")
-            pprint(testing_criteria)
+        testing_criteria = _get_agent_safety_evaluation_criteria()
+        print(f"Defining testing criteria for red teaming for agent target")
+        pprint(testing_criteria)
 
-            print("Creating Eval Group")
-            eval_object = client.evals.create(
-                name=eval_group_name,
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore # type: ignore
-            )
-            print(f"Eval Group created for red teaming: {eval_group_name}")
+        print("Creating Eval Group")
+        eval_object = client.evals.create(
+            name=eval_group_name,
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore # type: ignore
+        )
+        print(f"Eval Group created for red teaming: {eval_group_name}")
 
-            print(f"Get Eval Group by Id: {eval_object.id}")
-            eval_object_response = client.evals.retrieve(eval_object.id)
-            print("Eval Group Response:")
-            pprint(eval_object_response)
+        print(f"Get Eval Group by Id: {eval_object.id}")
+        eval_object_response = client.evals.retrieve(eval_object.id)
+        print("Eval Group Response:")
+        pprint(eval_object_response)
 
-            risk_categories_for_taxonomy = [RiskCategory.PROHIBITED_ACTIONS]
-            target = AzureAIAgentTarget(
-                name=agent_name, version=agent_version, tool_descriptions=_get_tool_descriptions(agent)
-            )
-            agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target) # type: ignore
-            print("Creating Eval Taxonomies")
-            eval_taxonomy_input = EvaluationTaxonomy(
-                description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
-            )
+        risk_categories_for_taxonomy = [RiskCategory.PROHIBITED_ACTIONS]
+        target = AzureAIAgentTarget(
+            name=agent_name, version=agent_version, tool_descriptions=_get_tool_descriptions(agent)
+        )
+        agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target)  # type: ignore
+        print("Creating Eval Taxonomies")
+        eval_taxonomy_input = EvaluationTaxonomy(
+            description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
+        )
 
-            taxonomy = project_client.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
-            taxonomy_path = os.path.join(data_folder, f"taxonomy_{agent_name}.json")
-            # Create the data folder if it doesn't exist
-            os.makedirs(data_folder, exist_ok=True)
-            with open(taxonomy_path, "w") as f:
-                f.write(json.dumps(_to_json_primitive(taxonomy), indent=2))
-            print(f"RedTeaming Taxonomy created for agent: {agent_name}. Taxonomy written to {taxonomy_path}")
-            eval_run_object = {
-                "eval_id": eval_object.id,
-                "name": eval_run_name,
-                "data_source": {
-                    "type": "azure_ai_red_team",
-                    "item_generation_params": {
-                        "type": "red_team_taxonomy",
-                        "attack_strategies": ["Flip", "Base64"],
-                        "num_turns": 5,
-                        "source": {"type": "file_id", "id": taxonomy.id},
-                    },
-                    "target": target.as_dict(),
+        taxonomy = project_client.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
+        taxonomy_path = os.path.join(data_folder, f"taxonomy_{agent_name}.json")
+        # Create the data folder if it doesn't exist
+        os.makedirs(data_folder, exist_ok=True)
+        with open(taxonomy_path, "w") as f:
+            f.write(json.dumps(_to_json_primitive(taxonomy), indent=2))
+        print(f"RedTeaming Taxonomy created for agent: {agent_name}. Taxonomy written to {taxonomy_path}")
+        eval_run_object = {
+            "eval_id": eval_object.id,
+            "name": eval_run_name,
+            "data_source": {
+                "type": "azure_ai_red_team",
+                "item_generation_params": {
+                    "type": "red_team_taxonomy",
+                    "attack_strategies": ["Flip", "Base64"],
+                    "num_turns": 5,
+                    "source": {"type": "file_id", "id": taxonomy.id},
                 },
-            }
+                "target": target.as_dict(),
+            },
+        }
 
-            print("Creating Schedule for RedTeaming Eval Run")
-            schedule = Schedule(
-                display_name="RedTeam Eval Run Schedule",
-                enabled=True,
-                trigger=RecurrenceTrigger(interval=1, schedule=DailyRecurrenceSchedule(hours=[9])),  # Every day at 9 AM
-                task=EvaluationScheduleTask(eval_id=eval_object.id, eval_run=eval_run_object),
-            )
-            schedule_response = project_client.schedules.create_or_update(
-                id="redteam-eval-run-schedule-9am", schedule=schedule
-            )
+        print("Creating Schedule for RedTeaming Eval Run")
+        schedule = Schedule(
+            display_name="RedTeam Eval Run Schedule",
+            enabled=True,
+            trigger=RecurrenceTrigger(interval=1, schedule=DailyRecurrenceSchedule(hours=[9])),  # Every day at 9 AM
+            task=EvaluationScheduleTask(eval_id=eval_object.id, eval_run=eval_run_object),
+        )
+        schedule_response = project_client.schedules.create_or_update(
+            id="redteam-eval-run-schedule-9am", schedule=schedule
+        )
 
-            print(f"Schedule created for red teaming: {schedule_response.id}")
-            pprint(schedule_response)
+        print(f"Schedule created for red teaming: {schedule_response.id}")
+        pprint(schedule_response)
 
-            schedule_runs = project_client.schedules.list_runs(schedule_id=schedule_response.id)
-            print(f"Listing schedule runs for schedule id: {schedule_response.id}")
-            for run in schedule_runs:
-                pprint(run)
-
-            # [END evaluations_sample]
+        schedule_runs = project_client.schedules.list_runs(id=schedule_response.id)
+        print(f"Listing schedule runs for schedule id: {schedule_response.id}")
+        for run in schedule_runs:
+            pprint(run)
 
 
 def _get_tool_descriptions(agent: AgentVersionObject):

@@ -34,17 +34,21 @@ load_dotenv()
 
 
 async def main():
-    credential = DefaultAzureCredential()
-    try:
+
+    async with DefaultAzureCredential() as credential:
+
         # Fetch the Entra ID token with audience as https://ai.azure.com
         access_token = await credential.get_token("https://ai.azure.com")
         endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "").rstrip("/")
+
         async with streamablehttp_client(
             url=f"{endpoint}/mcp_tools?api-version=2025-05-15-preview",
             headers={"Authorization": f"Bearer {access_token.token}"},
         ) as (read_stream, write_stream, _):
+
             # Create a session using the client streams
             async with ClientSession(read_stream, write_stream) as session:
+
                 # Initialize the connection
                 await session.initialize()
                 # List available tools
@@ -72,14 +76,11 @@ async def main():
 
                 # Run the file_search tool
                 # Create a project client
-                project_client = AIProjectClient(
-                    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-                    credential=credential,
-                    api_version="2025-05-15-preview",
-                )
-                async with project_client:
+                async with (
+                        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+                        await project_client.get_openai_client() as openai_client,
+                ):
                     # Create a vector store
-                    openai_client = await project_client.get_openai_client()
                     vector_store = await openai_client.vector_stores.create(
                         name="sample_vector_store",
                     )
@@ -101,9 +102,6 @@ async def main():
                         meta={"vector_store_ids": [vector_store.id]},
                     )
                     print(f"\n\nFile Search Output: {file_search_result.content}")
-    finally:
-        await credential.close()
-
 
 if __name__ == "__main__":
     asyncio.run(main())

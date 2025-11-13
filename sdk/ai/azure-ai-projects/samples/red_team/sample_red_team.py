@@ -44,10 +44,10 @@ model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>
 model_api_key = os.environ["MODEL_API_KEY"]
 model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 
-with AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-) as project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
 
     # [START red_team_sample]
     print("Creating a Red Team scan for direct model testing")

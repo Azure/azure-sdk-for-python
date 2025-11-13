@@ -43,34 +43,35 @@ async def main() -> None:
     ai_search_connection_name = os.environ.get("AI_SEARCH_CONNECTION_NAME", "my-ai-search-connection-name")
     ai_search_index_name = os.environ.get("AI_SEARCH_INDEX_NAME", "my-ai-search-index-name")
 
-    async with DefaultAzureCredential() as credential:
+    async with (
+        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    ):
 
-        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+        print(
+            f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
+        )
+        index = await project_client.indexes.create_or_update(
+            name=index_name,
+            version=index_version,
+            index=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
+        )
+        print(index)
 
-            print(
-                f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
-            )
-            index = await project_client.indexes.create_or_update(
-                name=index_name,
-                version=index_version,
-                index=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
-            )
+        print(f"Get Index `{index_name}` version `{index_version}`:")
+        index = await project_client.indexes.get(name=index_name, version=index_version)
+        print(index)
+
+        print("List latest versions of all Indexes:")
+        async for index in project_client.indexes.list():
             print(index)
 
-            print(f"Get Index `{index_name}` version `{index_version}`:")
-            index = await project_client.indexes.get(name=index_name, version=index_version)
+        print(f"Listing all versions of the Index named `{index_name}`:")
+        async for index in project_client.indexes.list_versions(name=index_name):
             print(index)
 
-            print("List latest versions of all Indexes:")
-            async for index in project_client.indexes.list():
-                print(index)
-
-            print(f"Listing all versions of the Index named `{index_name}`:")
-            async for index in project_client.indexes.list_versions(name=index_name):
-                print(index)
-
-            print(f"Delete Index`{index_name}` version `{index_version}`:")
-            await project_client.indexes.delete(name=index_name, version=index_version)
+        print(f"Delete Index`{index_name}` version `{index_version}`:")
+        await project_client.indexes.delete(name=index_name, version=index_version)
 
 
 if __name__ == "__main__":
