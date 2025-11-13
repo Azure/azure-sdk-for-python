@@ -160,7 +160,8 @@ def main(
     unchanged = True
 
     def edit_changelog_file(content: list[str]):
-        version_line = f"## {version} ({release_date})\n\n"
+        nonlocal unchanged
+        version_line = f"## {version} ({release_date})\n"
         for i in range(0, len(content)):
             if re.match(r"^## \d+\.\d+\.\d+(b\d+)?", content[i]):
                 content[i] = version_line
