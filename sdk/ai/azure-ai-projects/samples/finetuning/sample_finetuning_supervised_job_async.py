@@ -74,6 +74,8 @@ async def main():
             validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
         print(f"Uploaded validation file with ID: {validation_file.id}")
 
+        # For OpenAI model supervised fine-tuning jobs, "Standard" is the default training type.
+        # To use global standard training, uncomment the extra_body parameter below.
         print("Creating supervised fine-tuning job")
         fine_tuning_job = await openai_client.fine_tuning.jobs.create(
             training_file=train_file.id,
@@ -81,10 +83,9 @@ async def main():
             model=model_name,
             method={
                 "type": "supervised",
-                "supervised": {
-                    "hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}
-                },
+                "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
             },
+            # extra_body={"trainingType":"GlobalStandard"}
         )
         print(fine_tuning_job)
 
@@ -114,9 +115,7 @@ async def main():
 
         # Note that to retrieve the checkpoints, job needs to be in terminal state.
         print(f"Listing checkpoints for fine-tuning job: {fine_tuning_job.id}")
-        async for checkpoint in await openai_client.fine_tuning.jobs.checkpoints.list(
-            fine_tuning_job.id, limit=10
-        ):
+        async for checkpoint in await openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id, limit=10):
             print(checkpoint)
 
         print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
@@ -126,9 +125,7 @@ async def main():
         # Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
         # Note: Deployment can only be started after the fine-tuning job completes successfully.
         print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
-        fine_tuned_model_name = (
-            await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
-        ).fine_tuned_model
+        fine_tuned_model_name = (await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)).fine_tuned_model
         deployment_name = "gpt-4-1-fine-tuned"
 
         async with CognitiveServicesManagementClientAsync(
@@ -160,6 +157,7 @@ async def main():
             model=deployment_name, input=[{"role": "user", "content": "Who invented the telephone?"}]
         )
         print(f"Model response: {response.output_text}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

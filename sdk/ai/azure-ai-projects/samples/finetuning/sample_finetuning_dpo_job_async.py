@@ -50,33 +50,33 @@ async def main():
         await project_client.get_openai_client() as openai_client,
     ):
 
-                print("Uploading training file...")
-                with open(training_file_path, "rb") as f:
-                    train_file = await openai_client.files.create(file=f, purpose="fine-tune")
-                print(f"Uploaded training file with ID: {train_file.id}")
+        print("Uploading training file...")
+        with open(training_file_path, "rb") as f:
+            train_file = await openai_client.files.create(file=f, purpose="fine-tune")
+        print(f"Uploaded training file with ID: {train_file.id}")
 
-                print("Uploading validation file...")
-                with open(validation_file_path, "rb") as f:
-                    validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
-                print(f"Uploaded validation file with ID: {validation_file.id}")
+        print("Uploading validation file...")
+        with open(validation_file_path, "rb") as f:
+            validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
+        print(f"Uploaded validation file with ID: {validation_file.id}")
 
-                print("Creating DPO fine-tuning job")
-                fine_tuning_job = await openai_client.fine_tuning.jobs.create(
-                    training_file=train_file.id,
-                    validation_file=validation_file.id,
-                    model=model_name,
-                    method={
-                        "type": "dpo",
-                        "dpo": {
-                            "hyperparameters": {
-                                "n_epochs": 3,
-                                "batch_size": 1,
-                                "learning_rate_multiplier": 1.0,
-                            }
-                        },
-                    },
-                )
-                print(fine_tuning_job)
+        print("Creating DPO fine-tuning job")
+        fine_tuning_job = await openai_client.fine_tuning.jobs.create(
+            training_file=train_file.id,
+            validation_file=validation_file.id,
+            model=model_name,
+            method={
+                "type": "dpo",
+                "dpo": {
+                    "hyperparameters": {
+                        "n_epochs": 3,
+                        "batch_size": 1,
+                        "learning_rate_multiplier": 1.0,
+                    }
+                },
+            },
+        )
+        print(fine_tuning_job)
 
 
 if __name__ == "__main__":

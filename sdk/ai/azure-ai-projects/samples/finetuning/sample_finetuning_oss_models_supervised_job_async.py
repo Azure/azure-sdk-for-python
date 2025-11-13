@@ -8,7 +8,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
     `.fine_tuning.jobs` methods to create supervised fine-tuning jobs using open-source model.
-    Supported open-source models with SFT: Ministral-3b , Llama-3.3-70b , Qwen3-32b , Gpt-oss-20b
+    Supported open-source models with SFT: Ministral-3b
 
 USAGE:
     python sample_finetuning_oss_models_supervised_job_async.py
@@ -50,29 +50,30 @@ async def main():
         await project_client.get_openai_client() as openai_client,
     ):
 
-                print("Uploading training file...")
-                with open(training_file_path, "rb") as f:
-                    train_file = await openai_client.files.create(file=f, purpose="fine-tune")
-                print(f"Uploaded training file with ID: {train_file.id}")
+        print("Uploading training file...")
+        with open(training_file_path, "rb") as f:
+            train_file = await openai_client.files.create(file=f, purpose="fine-tune")
+        print(f"Uploaded training file with ID: {train_file.id}")
 
-                print("Uploading validation file...")
-                with open(validation_file_path, "rb") as f:
-                    validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
-                print(f"Uploaded validation file with ID: {validation_file.id}")
+        print("Uploading validation file...")
+        with open(validation_file_path, "rb") as f:
+            validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
+        print(f"Uploaded validation file with ID: {validation_file.id}")
 
-                print("Creating supervised fine-tuning job")
-                fine_tuning_job = await openai_client.fine_tuning.jobs.create(
-                    training_file=train_file.id,
-                    validation_file=validation_file.id,
-                    model=model_name,
-                    method={
-                        "type": "supervised",
-                        "supervised": {
-                            "hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}
-                        },
-                    },
-                )
-                print(fine_tuning_job)
+        # For OSS model supervised fine-tuning jobs, "GlobalStandard" is the default training type.
+        # To use standard training, uncomment the extra_body parameter below.
+        print("Creating supervised fine-tuning job")
+        fine_tuning_job = await openai_client.fine_tuning.jobs.create(
+            training_file=train_file.id,
+            validation_file=validation_file.id,
+            model=model_name,
+            method={
+                "type": "supervised",
+                "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
+            },
+            # extra_body={"trainingType":"Standard"}
+        )
+        print(fine_tuning_job)
 
 
 if __name__ == "__main__":

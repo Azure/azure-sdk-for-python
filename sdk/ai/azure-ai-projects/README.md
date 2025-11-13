@@ -319,20 +319,24 @@ with open(file_path, "rb") as f:
     uploaded_file = openai_client.files.create(file=f, purpose="fine-tune")
 print(uploaded_file)
 
-print(f"Retrieving file metadata with ID: {uploaded_file.id}")
-retrieved_file = openai_client.files.retrieve(uploaded_file.id)
+print("Waits for the given file to be processed, default timeout is 30 mins")
+processed_file = openai_client.files.wait_for_processing(uploaded_file.id)
+print(processed_file)
+
+print(f"Retrieving file metadata with ID: {processed_file.id}")
+retrieved_file = openai_client.files.retrieve(processed_file.id)
 print(retrieved_file)
 
-print(f"Retrieving file content with ID: {uploaded_file.id}")
-file_content = openai_client.files.content(uploaded_file.id)
+print(f"Retrieving file content with ID: {processed_file.id}")
+file_content = openai_client.files.content(processed_file.id)
 print(file_content.content)
 
 print("Listing all files:")
 for file in openai_client.files.list():
     print(file)
 
-print(f"Deleting file with ID: {uploaded_file.id}")
-deleted_file = openai_client.files.delete(uploaded_file.id)
+print(f"Deleting file with ID: {processed_file.id}")
+deleted_file = openai_client.files.delete(processed_file.id)
 print(f"Successfully deleted file: {deleted_file.id}")
 ```
 
@@ -355,6 +359,8 @@ with open(validation_file_path, "rb") as f:
     validation_file = openai_client.files.create(file=f, purpose="fine-tune")
 print(f"Uploaded validation file with ID: {validation_file.id}")
 
+# For OpenAI model supervised fine-tuning jobs, "Standard" is the default training type.
+# To use global standard training, uncomment the extra_body parameter below.
 print("Creating supervised fine-tuning job")
 fine_tuning_job = openai_client.fine_tuning.jobs.create(
     training_file=train_file.id,
@@ -362,10 +368,9 @@ fine_tuning_job = openai_client.fine_tuning.jobs.create(
     model=model_name,
     method={
         "type": "supervised",
-        "supervised": {
-            "hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}
-        },
+        "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
     },
+    # extra_body={"trainingType":"GlobalStandard"}
 )
 print(fine_tuning_job)
 
@@ -375,6 +380,10 @@ print(retrieved_job)
 
 print("Listing all fine-tuning jobs:")
 for job in openai_client.fine_tuning.jobs.list():
+    print(job)
+
+print("Listing only 10 fine-tuning jobs:")
+for job in openai_client.fine_tuning.jobs.list(limit=10):
     print(job)
 
 print(f"Pausing fine-tuning job with ID: {fine_tuning_job.id}")
@@ -404,15 +413,13 @@ print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
 fine_tuned_model_name = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id).fine_tuned_model
 deployment_name = "gpt-4-1-fine-tuned"
 
-with CognitiveServicesManagementClient(
-    credential=credential, subscription_id=subscription_id
-) as cogsvc_client:
+with CognitiveServicesManagementClient(credential=credential, subscription_id=subscription_id) as cogsvc_client:
 
     deployment_model = DeploymentModel(format="OpenAI", name=fine_tuned_model_name, version="1")
 
     deployment_properties = DeploymentProperties(model=deployment_model)
 
-    deployment_sku = Sku(name="Standard", capacity=250)
+    deployment_sku = Sku(name="GlobalStandard", capacity=100)
 
     deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
 
@@ -423,15 +430,16 @@ with CognitiveServicesManagementClient(
         deployment=deployment_config,
     )
 
-    while deployment.status() not in ["succeeded", "failed"]:
+    while deployment.status() not in ["Succeeded", "Failed"]:
         time.sleep(30)
         print(f"Status: {deployment.status()}")
 
 print(f"Testing fine-tuned model via deployment: {deployment_name}")
-response = openai_client.chat.completions.create(
-    model=deployment_name, messages=[{"role": "user", "content": "Who invented the telephone?"}]
+
+response = openai_client.responses.create(
+    model=deployment_name, input=[{"role": "user", "content": "Who invented the telephone?"}]
 )
-print(f"Model response: {response.choices[0].message.content}")
+print(f"Model response: {response.output_text}")
 ```
 
 <!-- END SNIPPET -->

@@ -65,5 +65,3 @@ with (
     deleted_file = openai_client.files.delete(processed_file.id)
     print(f"Successfully deleted file: {deleted_file.id}")
     # [END files_sample]
-
-            

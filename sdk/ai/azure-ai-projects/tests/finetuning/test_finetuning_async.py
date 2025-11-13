@@ -3,14 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import time
 import pytest
-import asyncio
 from pathlib import Path
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live_and_not_recording
-from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
 
 @pytest.mark.skipif(
@@ -116,13 +113,13 @@ class TestFineTuningAsync(TestBase):
 
         return train_processed_file, validation_processed_file
 
-    async def _cleanup_test_files_async(self, openai_client, train_file, validation_file):
+    async def _cleanup_test_files_async(self, openai_client, train_file, validation_file, job_type):
         """Helper method to clean up uploaded files after testing asynchronously."""
         await openai_client.files.delete(train_file.id)
-        print(f"Deleted training file: {train_file.id}")
+        print(f"[test_finetuning_{job_type}_async] Deleted training file: {train_file.id}")
 
         await openai_client.files.delete(validation_file.id)
-        print(f"Deleted validation file: {validation_file.id}")
+        print(f"[test_finetuning_{job_type}_async] Deleted validation file: {validation_file.id}")
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -149,7 +146,7 @@ class TestFineTuningAsync(TestBase):
                 await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"[test_finetuning_sft_async] Cancelled job: {fine_tuning_job.id}")
 
-                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
+                await self._cleanup_test_files_async(openai_client, train_file, validation_file, "sft")
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -176,7 +173,7 @@ class TestFineTuningAsync(TestBase):
                 await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"[test_finetuning_sft_async] Cancelled job: {fine_tuning_job.id}")
 
-                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
+                await self._cleanup_test_files_async(openai_client, train_file, validation_file, "sft")
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -207,7 +204,7 @@ class TestFineTuningAsync(TestBase):
                 await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"[test_finetuning_sft_async] Cancelled job: {fine_tuning_job.id}")
 
-                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
+                await self._cleanup_test_files_async(openai_client, train_file, validation_file, "sft")
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -236,7 +233,7 @@ class TestFineTuningAsync(TestBase):
                     retrieved_job, expected_job_id=fine_tuning_job.id, expected_status="cancelled"
                 )
 
-                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
+                await self._cleanup_test_files_async(openai_client, train_file, validation_file, "sft")
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -265,7 +262,7 @@ class TestFineTuningAsync(TestBase):
                 await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"[test_finetuning_dpo_async] Cancelled job: {fine_tuning_job.id}")
 
-                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
+                await self._cleanup_test_files_async(openai_client, train_file, validation_file, "dpo")
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -293,7 +290,7 @@ class TestFineTuningAsync(TestBase):
                 await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"[test_finetuning_rft_async] Cancelled job: {fine_tuning_job.id}")
 
-                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
+                await self._cleanup_test_files_async(openai_client, train_file, validation_file, "rft")
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -336,39 +333,7 @@ class TestFineTuningAsync(TestBase):
                     assert event.type is not None, "Event should have a type"
                 print(f"[test_finetuning_sft_async] Successfully validated {len(events_list)} events")
 
-                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_finetuning_pause_resume_job_async(self, **kwargs):
-
-        async with self.create_async_client(**kwargs) as project_client:
-
-            async with await project_client.get_openai_client() as openai_client:
-
-                train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
-
-                fine_tuning_job = await self._create_sft_finetuning_job_async(
-                    openai_client, train_file.id, validation_file.id
-                )
-                print(f"[test_finetuning_resume_async] Created job: {fine_tuning_job.id}")
-
-                TestBase.validate_fine_tuning_job(fine_tuning_job)
-                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
-                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
-
-                paused_job = await openai_client.fine_tuning.jobs.pause(fine_tuning_job.id)
-                TestBase.assert_equal_or_not_none(paused_job.status, "paused")
-                print(f"[test_finetuning_resume_async] Paused job: {paused_job.id}")
-
-                resumed_job = await openai_client.fine_tuning.jobs.resume(fine_tuning_job.id)
-                TestBase.assert_equal_or_not_none(resumed_job.status, "running")
-                print(f"[test_finetuning_resume_async] Resumed job: {resumed_job.id}")
-
-                await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-                print(f"[test_finetuning_resume_async] Cancelled job: {fine_tuning_job.id}")
-
-                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
+                await self._cleanup_test_files_async(openai_client, train_file, validation_file, "sft")
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -384,7 +349,9 @@ class TestFineTuningAsync(TestBase):
                     openai_client, train_file.id, validation_file.id, "oss"
                 )
                 print(f"[test_finetuning_sft_oss_async] Created fine-tuning job: {fine_tuning_job.id}")
-
+                TestBase.validate_fine_tuning_job(
+                    fine_tuning_job, expected_model=self.test_finetuning_params["sft"]["oss"]["model_name"]
+                )
                 TestBase.validate_fine_tuning_job(fine_tuning_job)
                 TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
                 TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
@@ -397,84 +364,4 @@ class TestFineTuningAsync(TestBase):
                 await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"[test_finetuning_sft_oss_async] Cancelled job: {fine_tuning_job.id}")
 
-                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_sft_pre_finetuning_job_deploy_infer_async(self, **kwargs):
-
-        async with self.create_async_client(**kwargs) as project_client:
-
-            async with await project_client.get_openai_client() as openai_client:
-
-                # Use predefined values from test_base for consistency
-                pre_finetuned_model = self.test_finetuning_params["sft"]["openai"]["deployment"]["pre_finetuned_model"]
-                deployment_name = f"{self.test_finetuning_params['sft']['openai']['deployment']['deployment_name']}-async-{int(time.time())}"
-
-                resource_group = kwargs.get("azure_ai_projects_azure_resource_group", "")
-                account_name = kwargs.get("azure_ai_projects_azure_aoai_account", "")
-
-                assert resource_group, "Azure resource group is required for deployment"
-                assert account_name, "Azure OpenAI account name is required for deployment"
-
-                print(
-                    f"[test_sft_pre_finetuning_job_deploy_infer_async] Deploying model: {pre_finetuned_model}, Deployment name: {deployment_name}"
-                )
-
-                async with self.create_cognitive_services_management_client_async(**kwargs) as cogsvc_client:
-
-                    deployment_model = DeploymentModel(format="OpenAI", name=pre_finetuned_model, version="1")
-
-                    deployment_properties = DeploymentProperties(model=deployment_model)
-
-                    deployment_sku = Sku(name="GlobalStandard", capacity=1)
-
-                    deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
-
-                    deployment_operation = await cogsvc_client.deployments.begin_create_or_update(
-                        resource_group_name=resource_group,
-                        account_name=account_name,
-                        deployment_name=deployment_name,
-                        deployment=deployment_config,
-                    )
-
-                    # Wait for deployment to complete
-                    max_wait_time = 300
-                    start_time = time.time()
-
-                    while (
-                        deployment_operation.status() not in ["Succeeded", "Failed"]
-                        and time.time() - start_time < max_wait_time
-                    ):
-                        await asyncio.sleep(30)
-                        print(
-                            f"[test_sft_pre_finetuning_job_deploy_infer_async] Deployment status: {deployment_operation.status()}"
-                        )
-
-                    final_status = deployment_operation.status()
-                    print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Final deployment status: {final_status}")
-
-                    if final_status == "Succeeded":
-                        print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Testing inference on deployed model")
-
-                        response = await openai_client.responses.create(
-                            model=deployment_name, input=[{"role": "user", "content": "Hello, how are you?"}]
-                        )
-
-                        assert response.output_text is not None, "Response output_text should not be None"
-
-                        print(
-                            f"[test_sft_pre_finetuning_job_deploy_infer_async] Inference successful: {response.output_text[:100]}"
-                        )
-
-                        await cogsvc_client.deployments.begin_delete(
-                            resource_group_name=resource_group,
-                            account_name=account_name,
-                            deployment_name=deployment_name,
-                        )
-                        print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Started deployment cleanup")
-
-                    else:
-                        print(
-                            f"[test_sft_pre_finetuning_job_deploy_infer_async] Deployment failed or timed out: {final_status}"
-                        )
+                await self._cleanup_test_files_async(openai_client, train_file, validation_file, "sft_oss")

@@ -68,6 +68,6 @@ async def main() -> None:
         deleted_file = await openai_client.files.delete(processed_file.id)
         print(f"Successfully deleted file: {deleted_file.id}")
 
-                
+
 if __name__ == "__main__":
     asyncio.run(main())

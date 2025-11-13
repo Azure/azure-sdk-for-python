@@ -48,47 +48,47 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-            print("Uploading training file...")
-            with open(training_file_path, "rb") as f:
-                train_file = openai_client.files.create(file=f, purpose="fine-tune")
-            print(f"Uploaded training file with ID: {train_file.id}")
+    print("Uploading training file...")
+    with open(training_file_path, "rb") as f:
+        train_file = openai_client.files.create(file=f, purpose="fine-tune")
+    print(f"Uploaded training file with ID: {train_file.id}")
 
-            print("Uploading validation file...")
-            with open(validation_file_path, "rb") as f:
-                validation_file = openai_client.files.create(file=f, purpose="fine-tune")
-            print(f"Uploaded validation file with ID: {validation_file.id}")
+    print("Uploading validation file...")
+    with open(validation_file_path, "rb") as f:
+        validation_file = openai_client.files.create(file=f, purpose="fine-tune")
+    print(f"Uploaded validation file with ID: {validation_file.id}")
 
-            grader: Dict[str, Any] = {
-                "name": "Response Quality Grader",
-                "type": "score_model",
-                "model": "o3-mini",
-                "input": [
-                    {
-                        "role": "user",
-                        "content": "Evaluate the model's response based on correctness and quality. Rate from 0 to 10.",
-                    }
-                ],
-                "range": [0.0, 10.0],
+    grader: Dict[str, Any] = {
+        "name": "Response Quality Grader",
+        "type": "score_model",
+        "model": "o3-mini",
+        "input": [
+            {
+                "role": "user",
+                "content": "Evaluate the model's response based on correctness and quality. Rate from 0 to 10.",
             }
+        ],
+        "range": [0.0, 10.0],
+    }
 
-            print("Creating reinforcement fine-tuning job")
-            fine_tuning_job = openai_client.fine_tuning.jobs.create(
-                training_file=train_file.id,
-                validation_file=validation_file.id,
-                model=model_name,
-                method={  # type: ignore[arg-type]
-                    "type": "reinforcement",
-                    "reinforcement": {
-                        "grader": grader,  # type: ignore[typeddict-item]
-                        "hyperparameters": {
-                            "n_epochs": 1,
-                            "batch_size": 4,
-                            "learning_rate_multiplier": 2,
-                            "eval_interval": 5,
-                            "eval_samples": 2,
-                            "reasoning_effort": "medium",
-                        },
-                    },
+    print("Creating reinforcement fine-tuning job")
+    fine_tuning_job = openai_client.fine_tuning.jobs.create(
+        training_file=train_file.id,
+        validation_file=validation_file.id,
+        model=model_name,
+        method={  # type: ignore[arg-type]
+            "type": "reinforcement",
+            "reinforcement": {
+                "grader": grader,  # type: ignore[typeddict-item]
+                "hyperparameters": {
+                    "n_epochs": 1,
+                    "batch_size": 4,
+                    "learning_rate_multiplier": 2,
+                    "eval_interval": 5,
+                    "eval_samples": 2,
+                    "reasoning_effort": "medium",
                 },
-            )
-            print(fine_tuning_job)
+            },
+        },
+    )
+    print(fine_tuning_job)
