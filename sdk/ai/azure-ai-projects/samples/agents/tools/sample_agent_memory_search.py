@@ -8,6 +8,7 @@
 DESCRIPTION:
     This sample demonstrates how to integrate memory into a prompt agent,
     by using the Memory Search Tool to retrieve relevant past user messages.
+    This sample uses the synchronous AIProjectClient and OpenAI clients.
 
     For memory management, see also samples in the folder "samples/memories"
     folder.
@@ -58,7 +59,7 @@ with (
     # Delete memory store, if it already exists
     memory_store_name = "my_memory_store"
     try:
-        delete_response = project_client.memory_stores.delete(memory_store_name)
+        project_client.memory_stores.delete(memory_store_name)
         print(f"Memory store `{memory_store_name}` deleted")
     except ResourceNotFoundError:
         pass
@@ -108,7 +109,6 @@ with (
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
-    print(response.output)
 
     # After an inactivity in the conversation, memories will be extracted from the conversation and stored
     print("Waiting for memories to be stored...")
@@ -125,7 +125,6 @@ with (
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {new_response.output_text}")
-    print(new_response.output)
 
     # Clean up
     openai_client.conversations.delete(conversation.id)

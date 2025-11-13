@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Union, Optional, Any, List, overload, IO, cast
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.polling import AsyncPollingMethod, AsyncNoPolling
+from azure.core.polling import AsyncNoPolling
 from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ...models import (
@@ -21,8 +21,8 @@ from ...models import (
     AsyncUpdateMemoriesLROPollingMethod,
 )
 from ._operations import JSON, _Unset, ClsType, MemoryStoresOperations as GenerateMemoryStoresOperations
-from .._validation import api_version_validation
-from .._utils.model_base import _deserialize
+from ..._validation import api_version_validation
+from ..._utils.model_base import _deserialize
 
 
 class MemoryStoresOperations(GenerateMemoryStoresOperations):
