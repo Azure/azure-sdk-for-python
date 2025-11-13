@@ -16,7 +16,7 @@ from ._operations import _TextTranslationClientOperationsMixin as TextTranslatio
 
 class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinGenerated):
 
-    @overload
+    @overload  # type: ignore[override]
     async def translate(
         self,
         body: List[str],
@@ -44,7 +44,7 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload  # type: ignore[override]
     async def translate(
         self,
         body: List[_models.TranslateInputItem],
@@ -63,32 +63,6 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
          value is None.
         :paramtype client_trace_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of TranslatedTextItem
-        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def translate(
-        self,
-        body: IO[bytes],
-        *,
-        client_trace_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> List[_models.TranslatedTextItem]:
-        """Translate text.
-
-        Translates the specified binary content for raw JSON input.
-
-        :param body: Binary stream containing JSON request body. Required.
-        :type body: IO[bytes]
-        :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
-         value is None.
-        :paramtype client_trace_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of TranslatedTextItem
@@ -134,7 +108,7 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
 
         return result.value
 
-    @overload
+    @overload  # type: ignore[override]
     async def transliterate(
         self,
         body: List[str],
@@ -175,7 +149,7 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload  # type: ignore[override]
     async def transliterate(
         self,
         body: List[_models.InputTextItem],
@@ -209,47 +183,6 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
          value is None.
         :paramtype client_trace_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of TransliteratedText
-        :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def transliterate(
-        self,
-        body: IO[bytes],
-        *,
-        language: str,
-        from_script: str,
-        to_script: str,
-        client_trace_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> List[_models.TransliteratedText]:
-        """Transliterate Text.
-
-        Transliterate Text.
-
-        :param body: Defines the content of the request. Required.
-        :type body: IO[bytes]
-        :keyword language: Specifies the language of the text to convert from one script to another.
-         Possible languages are listed in the transliteration scope obtained by querying the service
-         for its supported languages. Required.
-        :paramtype language: str
-        :keyword from_script: Specifies the script used by the input text. Look up supported languages
-         using the transliteration scope,
-         to find input scripts available for the selected language. Required.
-        :paramtype from_script: str
-        :keyword to_script: Specifies the output script. Look up supported languages using the
-         transliteration scope, to find output
-         scripts available for the selected combination of input language and input script. Required.
-        :paramtype to_script: str
-        :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
-         value is None.
-        :paramtype client_trace_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of TransliteratedText
