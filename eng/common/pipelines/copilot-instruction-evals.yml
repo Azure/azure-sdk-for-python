@@ -1,0 +1,20 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - .github/copilot-instructions.md
+      - eng/common/instructions
+
+extends:
+  template: /eng/common/pipelines/templates/jobs/ai-evals.yml
+  parameters:
+    EvalProject: tools/azsdk-cli/Azure.Sdk.Tools.Cli.Evaluations
+    OpenAIEndPoint: 'https://ai-prmarottai3149546654251245.openai.azure.com/'
+    Model: 'gpt-5'
+    RepoName: $(Build.Repository.Name)
+    RepoOwner: 'Azure'
+    RepoCommit: $(System.PullRequest.SourceCommitId)
