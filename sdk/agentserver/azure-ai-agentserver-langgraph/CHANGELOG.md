@@ -1,6 +1,17 @@
 # Release History
 
 
+## 1.0.0b4 (2025-11-13)
+
+### Feature Added
+
+- Adapters support tools
+
+### Bugs Fixed
+
+- Pin azure-ai-projects and azure-ai-agents version to avoid version confliction
+
+
 ## 1.0.0b3 (2025-11-11)
 
 ### Bugs Fixed
