@@ -35,6 +35,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContent,
     SourceFileContentContent,
 )
+from openai.types.eval_create_params import DataSourceConfigCustom
 
 
 load_dotenv()
@@ -53,15 +54,17 @@ def main() -> None:
 
             client = project_client.get_openai_client()
 
-            data_source_config = {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {"response": {"type": "array"}, "ground_truth": {"type": "array"}},
-                    "required": ["response", "ground_truth"],
-                },
-                "include_sample_schema": True,
-            }
+            data_source_config = DataSourceConfigCustom(
+                {
+                    "type": "custom",
+                    "item_schema": {
+                        "type": "object",
+                        "properties": {"response": {"type": "array"}, "ground_truth": {"type": "array"}},
+                        "required": ["response", "ground_truth"],
+                    },
+                    "include_sample_schema": True,
+                }
+            )
 
             testing_criteria = [
                 {
@@ -78,8 +81,8 @@ def main() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Task Navigation Efficiency Evaluator with inline data",
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
+                data_source_config=data_source_config,
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created")
 

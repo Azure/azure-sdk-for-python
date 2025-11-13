@@ -10,7 +10,7 @@ DESCRIPTION:
     from the model, executing the function, and providing results back to get a final response.
 
 USAGE:
-    python sample_agent_responses_function_tool.py
+    python sample_agent_function_tool.py
 
     Before running the sample:
 
@@ -33,8 +33,8 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 
 load_dotenv()
 
-# Define a function tool for the model to use
-func_tool = FunctionTool(
+# [START tool_declaration]
+tool = FunctionTool(
     name="get_horoscope",
     parameters={
         "type": "object",
@@ -50,9 +50,7 @@ func_tool = FunctionTool(
     description="Get today's horoscope for an astrological sign.",
     strict=True,
 )
-
-tools: list[Tool] = [func_tool]
-
+# [END tool_declaration]
 
 def get_horoscope(sign: str) -> str:
     """Generate a horoscope for the given astrological sign."""
@@ -72,7 +70,7 @@ with project_client:
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that can use function tools.",
-            tools=tools,
+            tools=[tool],
         ),
     )
 
