@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b2 (Unreleased)
+
+### Breaking changes
+
+* `get_openai_client()` method on the asynchronous AIProjectClient is no longer an "async" method.
+
 ## 2.0.0b1 (2025-11-11)
 
 ### Features added
