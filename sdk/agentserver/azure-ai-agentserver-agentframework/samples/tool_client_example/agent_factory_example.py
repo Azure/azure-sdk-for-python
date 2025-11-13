@@ -9,11 +9,12 @@ Client at runtime.
 
 import asyncio
 import os
-
+from typing import List
 from dotenv import load_dotenv
+from agent_framework import AIFunction
 from agent_framework.azure import AzureOpenAIChatClient
 
-from azure.ai.agentserver.agentframework import ToolClient, from_agent_framework
+from azure.ai.agentserver.agentframework import from_agent_framework
 from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
@@ -27,17 +28,16 @@ def create_agent_factory():
     allowing it to access the latest tool configuration dynamically.
     """
     
-    async def agent_factory(tool_client: ToolClient):
-        """Factory function that creates an agent using the provided ToolClient.
-        
-        :param tool_client: The ToolClient instance with access to Azure AI tools.
-        :type tool_client: ToolClient
+    async def agent_factory(tools: List[AIFunction]) -> AzureOpenAIChatClient:
+        """Factory function that creates an agent using the provided tools.
+
+        :param tools: The list of AIFunction tools available to the agent.
+        :type tools: List[AIFunction]
         :return: An Agent Framework ChatAgent instance.
         :rtype: ChatAgent
         """
         # List all available tools from the ToolClient
         print("Fetching tools from Azure AI Tool Client via factory...")
-        tools = await tool_client.list_tools()
         print(f"Found {len(tools)} tools:")
         for tool in tools:
             print(f"  - tool: {tool.name}, description: {tool.description}")

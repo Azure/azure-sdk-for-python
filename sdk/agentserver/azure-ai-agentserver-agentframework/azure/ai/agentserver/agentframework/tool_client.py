@@ -54,7 +54,7 @@ class ToolClient:
         :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
         """
         self._tool_client = tool_client
-        self._tools_cache: Optional[List["FoundryTool"]] = None
+        self._aifunction_cache: List[AIFunction] = None
     
     async def list_tools(self) -> List[AIFunction]:
         """List all available tools as Agent Framework tool definitions.
@@ -75,16 +75,18 @@ class ToolClient:
                 tools = await client.list_tools()
         """
         # Get tools from AzureAIToolClient
-        azure_tools = await self._tool_client.list_tools()
-        self._tools_cache = azure_tools
+        if self._aifunction_cache is not None:
+            return self._aifunction_cache
         
+        azure_tools = await self._tool_client.list_tools()
+        self._aifunction_cache = []
+
         # Convert to Agent Framework tool definitions
-        ai_function_tools = []
         for azure_tool in azure_tools:
             ai_function_tool = self._convert_to_agent_framework_tool(azure_tool)
-            ai_function_tools.append(ai_function_tool)
+            self._aifunction_cache.append(ai_function_tool)
 
-        return ai_function_tools
+        return self._aifunction_cache
 
     def _convert_to_agent_framework_tool(self, azure_tool: "FoundryTool") -> AIFunction:
         """Convert an AzureAITool to an Agent Framework AI Function
@@ -149,49 +151,8 @@ class ToolClient:
             "object": dict,
         }
         return type_map.get(json_type, str)
-    
-    async def invoke_tool(
-        self,
-        tool_name: str,
-        tool_input: Dict[str, Any],
-        **kwargs: Any
-    ) -> Any:
-        """Invoke a tool by name with the given input.
-        
-        This method is compatible with Agent Framework's tool invocation format.
-        
-        :param tool_name: Name of the tool to invoke.
-        :type tool_name: str
-        :param tool_input: Dictionary of input parameters for the tool.
-        :type tool_input: Dict[str, Any]
-        :param kwargs: Additional keyword arguments to pass to the tool client.
-        :return: The tool execution result.
-        :rtype: Any
-        :raises KeyError: If the tool name is not found.
-        :raises ~azure.core.exceptions.HttpResponseError:
-            Raised for HTTP communication failures.
-        
-        .. admonition:: Example:
-        
-            .. code-block:: python
-            
-                result = await client.invoke_tool(
-                    tool_name="weather_tool",
-                    tool_input={"location": "Seattle", "units": "celsius"}
-                )
-                print(result)
-        """
-        # Invoke the tool using the tool client
-        result = await self._tool_client.invoke_tool(
-            tool=tool_name,
-            **tool_input,
-            **kwargs
-        )
-        
-        return result
-    
+   
     async def close(self) -> None:
-
         await self._tool_client.close()
     
     async def __aenter__(self) -> "ToolClient":

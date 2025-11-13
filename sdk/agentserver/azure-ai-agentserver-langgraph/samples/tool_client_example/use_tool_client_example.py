@@ -22,16 +22,12 @@ load_dotenv()
 
 
 def create_agent(model, tools, checkpointer):
-    """Create a LangGraph agent based on the version."""
-    # for different langgraph versions
-    langgraph_version = version("langgraph")
-    if langgraph_version < "1.0.0":
+    """Create a LangGraph agent based on available imports."""
+    try:
         from langgraph.prebuilt import create_react_agent
-
         return create_react_agent(model, tools, checkpointer=checkpointer)
-    else:
+    except ImportError:
         from langchain.agents import create_agent
-
         return create_agent(model, tools, checkpointer=checkpointer)
 
 

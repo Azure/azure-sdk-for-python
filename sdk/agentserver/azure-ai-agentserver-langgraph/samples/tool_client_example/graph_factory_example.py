@@ -9,14 +9,15 @@ Azure AI Tool Client at runtime.
 
 import asyncio
 import os
-
+from typing import List
 from dotenv import load_dotenv
 from importlib.metadata import version
 from langchain_openai import AzureChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph
+from langchain_core.tools import StructuredTool
 
-from azure.ai.agentserver.langgraph import ToolClient, from_langgraph
+from azure.ai.agentserver.langgraph import from_langgraph
 from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
@@ -43,12 +44,12 @@ def create_graph_factory():
     a CompiledStateGraph. The graph is created at runtime for every request,
     allowing it to access the latest tool configuration dynamically.
     """
-    
-    async def graph_factory(tool_client: ToolClient) -> CompiledStateGraph:
-        """Factory function that creates a graph using the provided ToolClient.
-        
-        :param tool_client: The ToolClient instance with access to Azure AI tools.
-        :type tool_client: ToolClient
+
+    async def graph_factory(tools: List[StructuredTool]) -> CompiledStateGraph:
+        """Factory function that creates a graph using the provided tools.
+
+        :param tools: The list of StructuredTool instances.
+        :type tools: List[StructuredTool]
         :return: A compiled LangGraph state graph.
         :rtype: CompiledStateGraph
         """
@@ -56,8 +57,6 @@ def create_graph_factory():
         deployment_name = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME", "gpt-4o")
         
         # List all available tools from the ToolClient
-        print("Fetching tools from Azure AI Tool Client via factory...")
-        tools = await tool_client.list_tools()
         print(f"Found {len(tools)} tools:")
         for tool in tools:
             print(f"  - {tool.name}: {tool.description}")

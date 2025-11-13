@@ -64,8 +64,7 @@ class ToolClient:
         :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
         """
         self._tool_client = tool_client
-        self._tools_cache: Optional[List["FoundryTool"]] = None
-        self._langchain_tools_cache: Optional[List[StructuredTool]] = None
+        self._langchain_tools_cache: List[StructuredTool] = None
     
     async def list_tools(self) -> List[StructuredTool]:
         """List all available tools as LangChain BaseTool instances.
@@ -90,17 +89,17 @@ class ToolClient:
                 agent = create_react_agent(model, tools)
         """
         # Get tools from AzureAIToolClient
-        azure_tools = await self._tool_client.list_tools()
-        self._tools_cache = azure_tools
+        if self._langchain_tools_cache is not None:
+            return self._langchain_tools_cache
         
+        azure_tools = await self._tool_client.list_tools()
+        self._langchain_tools_cache = [] 
         # Convert to LangChain StructuredTool instances
-        langchain_tools = []
         for azure_tool in azure_tools:
             langchain_tool = self._convert_to_langchain_tool(azure_tool)
-            langchain_tools.append(langchain_tool)
+            self._langchain_tools_cache.append(langchain_tool)
         
-        self._langchain_tools_cache = langchain_tools
-        return langchain_tools
+        return self._langchain_tools_cache
     
     def _convert_to_langchain_tool(self, azure_tool: "FoundryTool") -> StructuredTool:
         """Convert an AzureAITool to a LangChain StructuredTool.
@@ -198,51 +197,9 @@ class ToolClient:
             "object": dict,
         }
         return type_mapping.get(json_type, str)
-    
-    async def invoke_tool(
-        self,
-        tool_name: str,
-        tool_input: Dict[str, Any],
-        **kwargs: Any
-    ) -> Any:
-        """Invoke a tool by name with the given input.
         
-        This method is compatible with LangGraph's tool invocation format and
-        returns results in LangChain tool result format (as a string).
-        
-        :param tool_name: Name of the tool to invoke.
-        :type tool_name: str
-        :param tool_input: Dictionary of input parameters for the tool.
-        :type tool_input: Dict[str, Any]
-        :param kwargs: Additional keyword arguments to pass to the tool client.
-        :return: The tool execution result as a string (LangChain format).
-        :rtype: str
-        :raises KeyError: If the tool name is not found.
-        :raises ~azure.core.exceptions.HttpResponseError:
-            Raised for HTTP communication failures.
-        
-        .. admonition:: Example:
-        
-            .. code-block:: python
-            
-                result = await client.invoke_tool(
-                    tool_name="weather_tool",
-                    tool_input={"location": "Seattle", "units": "celsius"}
-                )
-                print(result)  # Returns string result
-        """
-        # Invoke the tool using the tool client
-        result = await self._tool_client.invoke_tool(
-            tool=tool_name,
-            **tool_input,
-            **kwargs
-        )
-        
-        # Convert result to string for LangChain compatibility
-        if isinstance(result, dict):
-            import json
-            return json.dumps(result)
-        return str(result)
+    async def close(self) -> None:
+        await self._tool_client.close()
     
     async def __aenter__(self) -> "ToolClient":
         """Async context manager entry."""

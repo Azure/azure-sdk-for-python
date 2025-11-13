@@ -5,7 +5,7 @@
 # mypy: disable-error-code="assignment,arg-type"
 import os
 import re
-from typing import TYPE_CHECKING, Any, Awaitable, Protocol, Union, Optional
+from typing import TYPE_CHECKING, Any, Awaitable, Protocol, Union, Optional, List
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph.state import CompiledStateGraph
@@ -22,6 +22,8 @@ from .models import (
 from .models.utils import is_state_schema_valid
 from .tool_client import ToolClient
 
+from langchain_core.tools import StructuredTool
+
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     
@@ -34,12 +36,12 @@ class GraphFactory(Protocol):
     A graph factory is a callable that takes a ToolClient and returns
     a CompiledStateGraph, either synchronously or asynchronously.
     """
-    
-    def __call__(self, tool_client: ToolClient) -> Union[CompiledStateGraph, Awaitable[CompiledStateGraph]]:
+
+    def __call__(self, tools: List[StructuredTool]) -> Union[CompiledStateGraph, Awaitable[CompiledStateGraph]]:
         """Create a CompiledStateGraph using the provided ToolClient.
-        
-        :param tool_client: The ToolClient instance with access to Azure AI tools.
-        :type tool_client: ToolClient
+
+        :param tools: The list of StructuredTool instances.
+        :type tools: List[StructuredTool]
         :return: A compiled LangGraph state graph, or an awaitable that resolves to one.
         :rtype: Union[CompiledStateGraph, Awaitable[CompiledStateGraph]]
         """
@@ -114,7 +116,7 @@ class LangGraphAdapter(FoundryCBAgent):
             # Close tool_client if it was created for this request
             if tool_client is not None:
                 try:
-                    await tool_client._tool_client.close()
+                    await tool_client.close()
                     logger.debug("Closed tool_client after request processing")
                 except Exception as e:
                     logger.warning(f"Error closing tool_client: {e}")
@@ -132,11 +134,11 @@ class LangGraphAdapter(FoundryCBAgent):
             # Create ToolClient with credentials
             tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info())
             tool_client_wrapper = ToolClient(tool_client)
-            
+            tools = await tool_client_wrapper.list_tools()
             # Call the factory function with ToolClient
             # Support both sync and async factories
             import inspect
-            result = self._graph_or_factory(tool_client_wrapper)
+            result = self._graph_or_factory(tools)
             if inspect.iscoroutine(result):
                 self._resolved_graph = await result
             else:
@@ -170,11 +172,11 @@ class LangGraphAdapter(FoundryCBAgent):
         # Create ToolClient with credentials
         tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info())
         tool_client_wrapper = ToolClient(tool_client)
-        
+        tools = await tool_client_wrapper.list_tools()
         # Call the factory function with ToolClient
         # Support both sync and async factories
         import inspect
-        result = self._graph_or_factory(tool_client_wrapper)
+        result = self._graph_or_factory(tools)
         if inspect.iscoroutine(result):
             graph = await result
         else:

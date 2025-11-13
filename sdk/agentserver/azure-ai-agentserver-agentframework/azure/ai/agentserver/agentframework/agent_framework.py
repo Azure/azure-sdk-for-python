@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import os
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
 import inspect
 
 from agent_framework import AgentProtocol
@@ -28,6 +28,7 @@ from .models.agent_framework_input_converters import AgentFrameworkInputConverte
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
+from agent_framework import AIFunction
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.constants import Constants
 from .tool_client import ToolClient
@@ -45,11 +46,11 @@ class AgentFactory(Protocol):
     an AgentProtocol, either synchronously or asynchronously.
     """
     
-    def __call__(self, tool_client: ToolClient) -> Union[AgentProtocol, Awaitable[AgentProtocol]]:
+    def __call__(self, tools: List[AIFunction]) -> Union[AgentProtocol, Awaitable[AgentProtocol]]:
         """Create an AgentProtocol using the provided ToolClient.
         
-        :param tool_client: The ToolClient instance with access to Azure AI tools.
-        :type tool_client: ToolClient
+        :param tools: The list of AIFunction tools available to the agent.
+        :type tools: List[AIFunction]
         :return: An Agent Framework agent, or an awaitable that resolves to one.
         :rtype: Union[AgentProtocol, Awaitable[AgentProtocol]]
         """
@@ -132,11 +133,9 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             # Create ToolClient with credentials
             tool_client = self.get_tool_client(tools=context.get_tools(), user_info=context.get_user_info())
             tool_client_wrapper = ToolClient(tool_client)
+            tools = await tool_client_wrapper.list_tools()
             
-            # Call the factory function with ToolClient
-            # Support both sync and async factories
-
-            result = self._agent_or_factory(tool_client_wrapper)
+            result = self._agent_or_factory(tools)
             if inspect.iscoroutine(result):
                 self._resolved_agent = await result
             else:
@@ -154,11 +153,10 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         # Create ToolClient with credentials
         tool_client = self.get_tool_client(tools=context.get_tools(), user_info=context.get_user_info())
         tool_client_wrapper = ToolClient(tool_client)
+        tools = await tool_client_wrapper.list_tools()
         
-        # Call the factory function with ToolClient
-        # Support both sync and async factories
         import inspect
-        result = self._agent_or_factory(tool_client_wrapper)
+        result = self._agent_or_factory(tools)
         if inspect.iscoroutine(result):
             agent = await result
         else:
