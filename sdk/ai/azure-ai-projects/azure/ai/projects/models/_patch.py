@@ -6,9 +6,15 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Dict
+from typing import List, Dict, Optional, Any
 from ._models import CustomCredential as CustomCredentialGenerated
-
+from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
+from azure.core.polling import LROPoller, PollingMethod
+from azure.core.polling.base_polling import (
+    LROBasePolling,
+    OperationFailed,
+    _raise_if_bad_http_status_and_method,
+)
 
 class CustomCredential(CustomCredentialGenerated):
     """Custom credential definition.
@@ -23,8 +29,129 @@ class CustomCredential(CustomCredentialGenerated):
     """The secret custom credential keys. Required."""
 
 
+_FINISHED = frozenset(["completed", "superseded"])
+_FAILED = frozenset(["failed"])
+
+class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
+    """Custom LROPoller for Memory Store update operations."""
+
+    _polling_method: "UpdateMemoriesLROPollingMethod"
+
+    @property
+    def update_id(self) -> str:
+        """Returns the update ID associated with the long-running update memories operation.
+
+        :return: Returns the update ID.
+        :rtype: str
+        """
+        return self._polling_method._current_body.update_id
+
+    @property
+    def superseded_by(self) -> Optional[str]:
+        """Returns the ID of the operation that superseded this update.
+
+        :return: Returns the ID of the superseding operation, if it exists.
+        :rtype: Optional[str]
+        """
+        # pylint: disable=protected-access
+        return self._polling_method._current_body.superseded_by if self._polling_method._current_body else None
+
+    @classmethod
+    def from_continuation_token(cls, polling_method: PollingMethod[MemoryStoreUpdateCompletedResult], continuation_token: str, **kwargs: Any) -> "UpdateMemoriesLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token
+        :type continuation_token: str
+        :return: An instance of UpdateMemoriesLROPoller
+        :rtype: UpdateMemoriesLROPoller
+        :raises ~azure.core.exceptions.HttpResponseError: If the continuation token is invalid.
+        """
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
+
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class UpdateMemoriesLROPollingMethod(LROBasePolling):
+    """A custom polling method implementation for Memory Store updates."""
+
+    @property
+    def _current_body(self) -> MemoryStoreUpdateResult:
+        try:
+            return MemoryStoreUpdateResult(self._pipeline_response.http_response.json())
+        except Exception:  # pylint: disable=broad-exception-caught
+            return MemoryStoreUpdateResult()  # type: ignore[call-overload]
+
+    def finished(self) -> bool:
+        """Is this polling finished?
+
+        :return: True/False for whether polling is complete.
+        :rtype: bool
+        """
+        return self._finished(self.status())
+
+    @staticmethod
+    def _finished(status) -> bool:
+        if hasattr(status, "value"):
+            status = status.value
+        return str(status).lower() in _FINISHED
+
+    @staticmethod
+    def _failed(status) -> bool:
+        if hasattr(status, "value"):
+            status = status.value
+        return str(status).lower() in _FAILED
+
+    def get_continuation_token(self) -> str:
+        return self._current_body.update_id
+
+    # pylint: disable=arguments-differ
+    def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:  # type: ignore[override]
+        try:
+            client = kwargs["client"]
+        except KeyError as exc:
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token") from exc
+
+        try:
+            deserialization_callback = kwargs["deserialization_callback"]
+        except KeyError as exc:
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from exc
+
+        return client, continuation_token, deserialization_callback
+
+    def _poll(self) -> None:
+        """Poll status of operation so long as operation is incomplete and
+        we have an endpoint to query.
+
+        :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
+        :raises: BadStatus if response status invalid.
+        :raises: BadResponse if response invalid.
+        """
+
+        if not self.finished():
+            self.update_status()
+        while not self.finished():
+            self._delay()
+            self.update_status()
+
+        if self._failed(self.status()):
+            raise OperationFailed("Operation failed or canceled")
+
+        final_get_url = self._operation.get_final_get_url(self._pipeline_response)
+        if final_get_url:
+            self._pipeline_response = self.request_status(final_get_url)
+            _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
+
+
 __all__: List[str] = [
     "CustomCredential",
+    "UpdateMemoriesLROPollingMethod",
+    "UpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 
 

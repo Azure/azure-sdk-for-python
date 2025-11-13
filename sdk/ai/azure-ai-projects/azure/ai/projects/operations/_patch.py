@@ -11,11 +11,14 @@ from typing import List
 from ._patch_datasets import DatasetsOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
+from ._patch_memories import UpdateMemoriesLROPoller, MemoryStoresOperations
 
 __all__: List[str] = [
     "TelemetryOperations",
     "DatasetsOperations",
     "ConnectionsOperations",
+    "UpdateMemoriesLROPoller",
+    "MemoryStoresOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 
