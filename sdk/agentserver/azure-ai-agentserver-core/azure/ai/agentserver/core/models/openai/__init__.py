@@ -11,6 +11,8 @@ These types are fully documented in the OpenAI SDK documentation.
    This module re-exports OpenAI SDK types. For detailed documentation,
    please refer to the `OpenAI Python SDK documentation <https://github.com/openai/openai-python>`_.
 """
+
+# TODo: make this a protocol
 from openai.types.responses import *  # pylint: disable=unused-wildcard-import
 
 __all__ = [name for name in globals() if not name.startswith("_")]  # type: ignore[var-annotated]
