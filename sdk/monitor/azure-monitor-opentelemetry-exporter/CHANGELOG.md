@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b45 (Unreleased)
+## 1.0.0b45 (2025-11-14)
 
 ### Features Added
 - Added new log record processor to support Trace Based Sampling
@@ -9,8 +9,6 @@
   ([#43588](https://github.com/Azure/azure-sdk-for-python/pull/43588))
 - Added local storage support for multiple users on the same Linux system
   ([#43483](https://github.com/Azure/azure-sdk-for-python/pull/43483))
-
-### Breaking Changes
 
 ### Bugs Fixed
 - Modified logic for message body on Microsoft.ApplicationInsights.MessageData to include default message for messages with empty body and export logs
