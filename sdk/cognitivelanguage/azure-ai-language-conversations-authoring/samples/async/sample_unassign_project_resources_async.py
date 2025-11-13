@@ -5,11 +5,12 @@
 # ------------------------------------
 
 """
-FILE: sample_delete_deployment_async.py
+FILE: sample_unassign_project_resources_async.py
 DESCRIPTION:
-    This sample demonstrates how to delete a deployment in a Conversation Authoring project (async).
+    This sample demonstrates how to unassign specific Azure resources from a Conversation Authoring project (async).
+
 USAGE:
-    python sample_delete_deployment_async.py
+    python sample_unassign_project_resources_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
@@ -23,34 +24,38 @@ NOTE:
       - AZURE_CONVERSATIONS_AUTHORING_KEY
 
 OPTIONAL ENV VARS:
-    PROJECT_NAME      # defaults to "<project-name>"
-    DEPLOYMENT_NAME   # defaults to "<deployment-name>"
+    PROJECT_NAME         # defaults to "<project-name>"
+    RESOURCE_ID          # defaults to "<azure-resource-id>"
 """
 
-# [START conversation_authoring_delete_deployment_async]
+# [START conversation_authoring_unassign_project_resources_async]
 import os
 import asyncio
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
+from azure.ai.language.conversations.authoring.models import ProjectResourceIds
 
 
-async def sample_delete_deployment_async():
+async def sample_unassign_project_resources_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
-    deployment_name = os.environ.get("DEPLOYMENT_NAME", "<deployment-name>")
+    resource_id = os.environ.get("RESOURCE_ID", "<azure-resource-id>")
 
     credential = DefaultAzureCredential()
     async with ConversationAuthoringClient(endpoint, credential=credential) as client:
         project_client = client.get_project_client(project_name)
 
-        # start delete (async long-running operation)
-        poller = await project_client.deployment.begin_delete_deployment(deployment_name=deployment_name)
+        # prepare request body
+        body = ProjectResourceIds(azure_resource_ids=[resource_id])
+
+        # start unassign (async long-running operation)
+        poller = await project_client.project.begin_unassign_project_resources(body=body)
 
         try:
             await poller.result()
-            print("Delete completed.")
+            print("Unassign completed.")
             print(f"done: {poller.done()}")
             print(f"status: {poller.status()}")
         except HttpResponseError as e:
@@ -58,11 +63,11 @@ async def sample_delete_deployment_async():
             print(e.error)
 
 
-# [END conversation_authoring_delete_deployment_async]
+# [END conversation_authoring_unassign_project_resources_async]
 
 
 async def main():
-    await sample_delete_deployment_async()
+    await sample_unassign_project_resources_async()
 
 
 if __name__ == "__main__":

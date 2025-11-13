@@ -32,13 +32,10 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_assign_project_resources_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import (
-    ResourceMetadata,
-    AssignDeploymentResourcesDetails,
-)
+from azure.ai.language.conversations.authoring.models import AssignProjectResourcesDetails, ResourceMetadata
 
 
 async def sample_assign_project_resources_async():
@@ -50,21 +47,22 @@ async def sample_assign_project_resources_async():
     resource_domain = os.environ.get("RESOURCE_DOMAIN", "<custom-domain>")
     resource_region = os.environ.get("RESOURCE_REGION", "<region>")
 
-    # async client (AAD)
     credential = DefaultAzureCredential()
     async with ConversationAuthoringClient(endpoint, credential=credential) as client:
         project_client = client.get_project_client(project_name)
 
-        # build request body
-        resource = ResourceMetadata(
-            azure_resource_id=resource_id,
-            custom_domain=resource_domain,
-            region=resource_region,
+        body = AssignProjectResourcesDetails(
+            metadata=[
+                ResourceMetadata(
+                    azure_resource_id=resource_id,
+                    custom_domain=resource_domain,
+                    region=resource_region,
+                )
+            ]
         )
-        details = AssignDeploymentResourcesDetails(metadata=[resource])
 
         # start assign (async long-running operation)
-        poller = await project_client.project.begin_assign_project_resources(body=details)
+        poller = await project_client.project.begin_assign_project_resources(body=body)
 
         try:
             await poller.result()

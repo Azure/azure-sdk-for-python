@@ -5,11 +5,12 @@
 # ------------------------------------
 
 """
-FILE: sample_delete_deployment_async.py
+FILE: sample_list_assigned_resource_deployments_async.py
 DESCRIPTION:
-    This sample demonstrates how to delete a deployment in a Conversation Authoring project (async).
+    This sample demonstrates how to list all assigned resource deployments for Conversation Authoring projects (async).
+
 USAGE:
-    python sample_delete_deployment_async.py
+    python sample_list_assigned_resource_deployments_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
@@ -21,48 +22,47 @@ NOTE:
     If you want to use AzureKeyCredential instead, set:
       - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
       - AZURE_CONVERSATIONS_AUTHORING_KEY
-
-OPTIONAL ENV VARS:
-    PROJECT_NAME      # defaults to "<project-name>"
-    DEPLOYMENT_NAME   # defaults to "<deployment-name>"
 """
 
-# [START conversation_authoring_delete_deployment_async]
+# [START conversation_authoring_list_assigned_resource_deployments_async]
 import os
 import asyncio
+from datetime import date, datetime
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
+from azure.ai.language.conversations.authoring.models import (
+    AssignedProjectDeploymentsMetadata,
+    AssignedProjectDeploymentMetadata,
+)
 
 
-async def sample_delete_deployment_async():
+async def sample_list_assigned_resource_deployments_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    project_name = os.environ.get("PROJECT_NAME", "<project-name>")
-    deployment_name = os.environ.get("DEPLOYMENT_NAME", "<deployment-name>")
 
     credential = DefaultAzureCredential()
     async with ConversationAuthoringClient(endpoint, credential=credential) as client:
-        project_client = client.get_project_client(project_name)
-
-        # start delete (async long-running operation)
-        poller = await project_client.deployment.begin_delete_deployment(deployment_name=deployment_name)
-
         try:
-            await poller.result()
-            print("Delete completed.")
-            print(f"done: {poller.done()}")
-            print(f"status: {poller.status()}")
+            paged = client.list_assigned_resource_deployments()
+            print("Assigned resource deployments retrieved successfully.")
+
+            async for meta in paged:
+                print(f"\nProject Name: {meta.project_name}")
+                for d in meta.deployments_metadata:
+                    print(f"  Deployment Name: {d.deployment_name}")
+                    print(f"  Last Deployed On: {d.last_deployed_on}")
+                    print(f"  Expires On: {d.deployment_expires_on}")
         except HttpResponseError as e:
             print(f"Operation failed: {e.message}")
             print(e.error)
 
 
-# [END conversation_authoring_delete_deployment_async]
+# [END conversation_authoring_list_assigned_resource_deployments_async]
 
 
 async def main():
-    await sample_delete_deployment_async()
+    await sample_list_assigned_resource_deployments_async()
 
 
 if __name__ == "__main__":

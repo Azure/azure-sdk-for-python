@@ -20,68 +20,6 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AssignDeploymentResourcesDetails(_Model):
-    """Represents the payload for assigning Azure resources to a project.
-
-    :ivar metadata: Represents the metadata for the project resources to be assigned. Required.
-    :vartype metadata: list[~azure.ai.language.conversations.authoring.models.ResourceMetadata]
-    """
-
-    metadata: list["_models.ResourceMetadata"] = rest_field(
-        name="projectResources", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the metadata for the project resources to be assigned. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        metadata: list["_models.ResourceMetadata"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AssignedDeploymentResource(_Model):
-    """Represents the assigned project resource.
-
-    :ivar resource_id: The Azure resource ID of the language or AI resource. Required.
-    :vartype resource_id: str
-    :ivar region: The Azure resource region. Required.
-    :vartype region: str
-    """
-
-    resource_id: str = rest_field(name="azureResourceId", visibility=["read"])
-    """The Azure resource ID of the language or AI resource. Required."""
-    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Azure resource region. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        region: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AssignedProjectDeploymentMetadata(_Model):
     """Represents the metadata for an assigned deployment.
 
@@ -146,6 +84,68 @@ class AssignedProjectDeploymentsMetadata(_Model):
         self,
         *,
         deployments_metadata: list["_models.AssignedProjectDeploymentMetadata"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AssignedProjectResource(_Model):
+    """Represents the assigned project resource.
+
+    :ivar resource_id: The Azure resource ID of the language or AI resource. Required.
+    :vartype resource_id: str
+    :ivar region: The Azure resource region. Required.
+    :vartype region: str
+    """
+
+    resource_id: str = rest_field(name="azureResourceId", visibility=["read"])
+    """The Azure resource ID of the language or AI resource. Required."""
+    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure resource region. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        region: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AssignProjectResourcesDetails(_Model):
+    """Represents the payload for assigning Azure resources to a project.
+
+    :ivar metadata: Represents the metadata for the project resources to be assigned. Required.
+    :vartype metadata: list[~azure.ai.language.conversations.authoring.models.ResourceMetadata]
+    """
+
+    metadata: list["_models.ResourceMetadata"] = rest_field(
+        name="projectResources", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the metadata for the project resources to be assigned. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: list["_models.ResourceMetadata"],
     ) -> None: ...
 
     @overload
@@ -820,38 +820,6 @@ class DataGenerationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteDeploymentDetails(_Model):
-    """Represents the payload for deleting a project deployment.
-
-    :ivar assigned_resource_ids: Represents the Language or AIService resource IDs to unassign from
-     the project or delete the deployment from.
-    :vartype assigned_resource_ids: list[str]
-    """
-
-    assigned_resource_ids: Optional[list[str]] = rest_field(
-        name="assignedResourceIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the Language or AIService resource IDs to unassign from the project or delete the
-     deployment from."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        assigned_resource_ids: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class DeploymentDeleteFromResourcesState(_Model):
     """Represents the state of an existing delete deployment from specific resources job.
 
@@ -947,73 +915,6 @@ class DeploymentResource(_Model):
         resource_id: str,
         region: str,
         assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentResourcesState(_Model):
-    """Represents the state of a project resources job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_on: The creation date time of the job. Required.
-    :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: The last date time the job was updated. Required.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar expires_on: The expiration date time of the job.
-    :vartype expires_on: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.OperationStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_on: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_on: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expires_on: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.OperationStatus"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_on: datetime.datetime,
-        last_updated_on: datetime.datetime,
-        status: Union[str, "_models.OperationStatus"],
-        expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[list[ODataV4Format]] = None,
-        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -2784,7 +2685,7 @@ class ProjectDeployment(_Model):
     :vartype model_training_config_version: str
     :ivar assigned_resources: Represents the metadata of the assigned Azure resources. Required.
     :vartype assigned_resources:
-     list[~azure.ai.language.conversations.authoring.models.AssignedDeploymentResource]
+     list[~azure.ai.language.conversations.authoring.models.AssignedProjectResource]
     """
 
     deployment_name: str = rest_field(name="deploymentName", visibility=["read"])
@@ -2807,7 +2708,7 @@ class ProjectDeployment(_Model):
         name="modelTrainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents model training config version. Required."""
-    assigned_resources: list["_models.AssignedDeploymentResource"] = rest_field(
+    assigned_resources: list["_models.AssignedProjectResource"] = rest_field(
         name="assignedResources", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the metadata of the assigned Azure resources. Required."""
@@ -2821,7 +2722,7 @@ class ProjectDeployment(_Model):
         last_deployed_on: datetime.datetime,
         deployment_expired_on: datetime.date,
         model_training_config_version: str,
-        assigned_resources: list["_models.AssignedDeploymentResource"],
+        assigned_resources: list["_models.AssignedProjectResource"],
     ) -> None: ...
 
     @overload
@@ -2915,6 +2816,105 @@ class ProjectDetails(_Model):
         storage_input_container_name: Optional[str] = None,
         multilingual: Optional[bool] = None,
         description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProjectResourceIds(_Model):
+    """Represents the payload for deleting a project deployment.
+
+    :ivar azure_resource_ids: Represents the Language or AIService resource IDs to unassign from
+     the project or delete the deployment from.
+    :vartype azure_resource_ids: list[str]
+    """
+
+    azure_resource_ids: Optional[list[str]] = rest_field(
+        name="azureResourceIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the Language or AIService resource IDs to unassign from the project or delete the
+     deployment from."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_resource_ids: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProjectResourcesState(_Model):
+    """Represents the state of a project resources job.
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.OperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.OperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.OperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload

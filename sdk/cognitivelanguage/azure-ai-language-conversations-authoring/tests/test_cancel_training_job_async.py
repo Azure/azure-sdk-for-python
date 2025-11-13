@@ -29,7 +29,7 @@ class TestConversationsCancelTrainingAsync(TestConversationsAsync):
         client = await self.create_client(authoring_endpoint, authoring_key)
         try:
             project_name = "Test-data-labels"
-            job_id = "f0f1760a-f9b9-4a7c-924d-57892aa75ebd_638916768000000000"
+            job_id = "122b7341-afaa-4bea-af63-f6c7e0539fcb_638985888000000000"
             project_client = client.get_project_client(project_name)
 
             poller = await project_client.project.begin_cancel_training_job(

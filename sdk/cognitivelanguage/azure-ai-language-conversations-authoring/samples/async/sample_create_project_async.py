@@ -29,7 +29,7 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_create_project_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     CreateProjectOptions,

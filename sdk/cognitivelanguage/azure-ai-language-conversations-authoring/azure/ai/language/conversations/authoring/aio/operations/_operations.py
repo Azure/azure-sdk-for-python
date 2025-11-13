@@ -1400,7 +1400,7 @@ class DeploymentOperations:
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _delete_deployment_from_resources_initial(  # pylint: disable=name-too-long
-        self, deployment_name: str, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, body: Union[_models.ProjectResourceIds, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1466,7 +1466,7 @@ class DeploymentOperations:
     async def begin_delete_deployment_from_resources(
         self,
         deployment_name: str,
-        body: _models.DeleteDeploymentDetails,
+        body: _models.ProjectResourceIds,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1478,7 +1478,7 @@ class DeploymentOperations:
         :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
          The deployment will only be deleted from the specified resources, and will remain for the rest.
          Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails
+        :type body: ~azure.ai.language.conversations.authoring.models.ProjectResourceIds
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1534,7 +1534,7 @@ class DeploymentOperations:
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def begin_delete_deployment_from_resources(
-        self, deployment_name: str, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, body: Union[_models.ProjectResourceIds, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the specified project-assigned resources.
 
@@ -1542,9 +1542,9 @@ class DeploymentOperations:
         :type deployment_name: str
         :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
          The deployment will only be deleted from the specified resources, and will remain for the rest.
-         Is one of the following types: DeleteDeploymentDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails or JSON
-         or IO[bytes]
+         Is one of the following types: ProjectResourceIds, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ProjectResourceIds or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1948,23 +1948,23 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
     )
     def list_project_resources(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AssignedDeploymentResource"]:
+    ) -> AsyncItemPaged["_models.AssignedProjectResource"]:
         """Lists the Language or AIService resources assigned to the project.
 
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AssignedDeploymentResource
+        :return: An iterator like instance of AssignedProjectResource
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AssignedDeploymentResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AssignedProjectResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.AssignedDeploymentResource]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.AssignedProjectResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2017,7 +2017,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.AssignedDeploymentResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.AssignedProjectResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2238,7 +2238,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _assign_project_resources_initial(
-        self, body: Union[_models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AssignProjectResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2301,7 +2301,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def begin_assign_project_resources(
-        self, body: _models.AssignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.AssignProjectResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
         This API is available only via AAD authentication and not supported via subscription key
@@ -2310,7 +2310,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
 
         :param body: The new project resources to be assigned. Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.AssignDeploymentResourcesDetails
+        :type body: ~azure.ai.language.conversations.authoring.models.AssignProjectResourcesDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2366,7 +2366,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def begin_assign_project_resources(
-        self, body: Union[_models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AssignProjectResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
         This API is available only via AAD authentication and not supported via subscription key
@@ -2375,9 +2375,9 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
 
         :param body: The new project resources to be assigned. Is one of the following types:
-         AssignDeploymentResourcesDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.AssignDeploymentResourcesDetails
-         or JSON or IO[bytes]
+         AssignProjectResourcesDetails, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.AssignProjectResourcesDetails or
+         JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2429,7 +2429,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _unassign_project_resources_initial(
-        self, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ProjectResourceIds, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2492,12 +2492,12 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def begin_unassign_project_resources(
-        self, body: _models.DeleteDeploymentDetails, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.ProjectResourceIds, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Unassign resources from a project. This disallows deployment to these resources.
 
         :param body: The list of Language or AIService Azure resource IDs to be unassigned. Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails
+        :type body: ~azure.ai.language.conversations.authoring.models.ProjectResourceIds
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2545,14 +2545,14 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def begin_unassign_project_resources(
-        self, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ProjectResourceIds, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Unassign resources from a project. This disallows deployment to these resources.
 
         :param body: The list of Language or AIService Azure resource IDs to be unassigned. Is one of
-         the following types: DeleteDeploymentDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails or JSON
-         or IO[bytes]
+         the following types: ProjectResourceIds, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ProjectResourceIds or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2604,14 +2604,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def get_assign_project_resources_status(self, job_id: str, **kwargs: Any) -> _models.DeploymentResourcesState:
+    async def get_assign_project_resources_status(self, job_id: str, **kwargs: Any) -> _models.ProjectResourcesState:
         """Gets the status of an existing assign project resources job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models.DeploymentResourcesState
+        :return: ProjectResourcesState. The ProjectResourcesState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ProjectResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2625,7 +2624,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeploymentResourcesState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectResourcesState] = kwargs.pop("cls", None)
 
         _request = build_project_get_assign_project_resources_status_request(
             job_id=job_id,
@@ -2658,7 +2657,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.DeploymentResourcesState, response.json())
+            deserialized = _deserialize(_models.ProjectResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2671,16 +2670,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def get_unassign_project_resources_status(
-        self, job_id: str, **kwargs: Any
-    ) -> _models.DeploymentResourcesState:
+    async def get_unassign_project_resources_status(self, job_id: str, **kwargs: Any) -> _models.ProjectResourcesState:
         """Gets the status of an existing unassign project resources job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models.DeploymentResourcesState
+        :return: ProjectResourcesState. The ProjectResourcesState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ProjectResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2694,7 +2690,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeploymentResourcesState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectResourcesState] = kwargs.pop("cls", None)
 
         _request = build_project_get_unassign_project_resources_status_request(
             job_id=job_id,
@@ -2727,7 +2723,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.DeploymentResourcesState, response.json())
+            deserialized = _deserialize(_models.ProjectResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3146,7 +3142,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def begin_import_method(
+    async def begin_import(
         self,
         body: _models.ExportedProject,
         *,
@@ -3172,7 +3168,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def begin_import_method(
+    async def begin_import(
         self,
         body: JSON,
         *,
@@ -3198,7 +3194,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def begin_import_method(
+    async def begin_import(
         self,
         body: IO[bytes],
         *,
@@ -3224,7 +3220,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    async def begin_import_method(
+    async def begin_import(
         self,
         body: Union[_models.ExportedProject, JSON, IO[bytes]],
         *,

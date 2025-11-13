@@ -5,7 +5,7 @@ from importlib import resources
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import AssignedDeploymentResource
+from azure.ai.language.conversations.authoring.models import AssignedProjectResource
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -20,7 +20,7 @@ class TestConversations(AzureRecordedTestCase):
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 
 
-class TestConversationsDeployProjectSync(TestConversations):
+class TestConversationsListProjectResourcesSync(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
     def test_list_project_resources(self, authoring_endpoint, authoring_key):
@@ -29,8 +29,11 @@ class TestConversationsDeployProjectSync(TestConversations):
         project_name = "EmailApp"
         project_client = client.get_project_client(project_name)
 
-        resources = list(project_client.project.list_project_resources())
-        
-        for resource in resources:
-            assert resource.resource_id
-            assert resource.region
+        # Act
+        paged = project_client.project.list_project_resources()
+
+        # Assert each resource item
+        for res in paged:
+            assert isinstance(res, AssignedProjectResource)
+            assert isinstance(res.resource_id, str) and res.resource_id
+            assert isinstance(res.region, str) and res.region
