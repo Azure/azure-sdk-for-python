@@ -20,8 +20,8 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "azure-monitor-opentelemetry>=1.5.0",
-    "azure-ai-projects",
-    "azure-ai-agents>=1.2.0b5",
+    "azure-ai-projects==1.1.0b4",
+    "azure-ai-agents==1.2.0b6",
     "azure-core>=1.35.0",
     "azure-identity",
     "openai>=1.80.0",
@@ -34,6 +34,9 @@ dependencies = [
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.packages.find]
 exclude = [

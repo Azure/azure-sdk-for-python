@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation
+# pylint: disable=logging-fstring-interpolation,no-name-in-module
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
@@ -15,7 +15,7 @@ from opentelemetry import trace
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
-from azure.ai.agentserver.core.logger import get_logger
+from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger
 from azure.ai.agentserver.core.models import (
     CreateResponse,
     Response as OpenAIResponse,
@@ -167,15 +167,10 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def init_tracing(self):
         exporter = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
-        app_insights_conn_str = os.environ.get(AdapterConstants.APPLICATION_INSIGHTS_CONNECTION_STRING)
+        app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
         project_endpoint = os.environ.get(AdapterConstants.AZURE_AI_PROJECT_ENDPOINT)
 
-        if project_endpoint:
-            project_client = AIProjectClient(endpoint=project_endpoint, credential=DefaultAzureCredential())
-            agent_client = AzureAIAgentClient(project_client=project_client)
-            agent_client.setup_azure_ai_observability()
-        elif exporter or app_insights_conn_str:
-            os.environ["WORKFLOW_ENABLE_OTEL"] = "true"
+        if exporter or app_insights_conn_str:
             from agent_framework.observability import setup_observability
 
             setup_observability(
@@ -183,6 +178,10 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 otlp_endpoint=exporter,
                 applicationinsights_connection_string=app_insights_conn_str,
             )
+        elif project_endpoint:
+            project_client = AIProjectClient(endpoint=project_endpoint, credential=DefaultAzureCredential())
+            agent_client = AzureAIAgentClient(project_client=project_client)
+            agent_client.setup_azure_ai_observability()
         self.tracer = trace.get_tracer(__name__)
 
     async def agent_run(
