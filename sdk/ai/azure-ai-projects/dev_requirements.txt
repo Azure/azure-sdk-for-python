@@ -8,4 +8,5 @@ openai
 opentelemetry-sdk
 azure-core-tracing-opentelemetry
 azure-monitor-opentelemetry
+azure-mgmt-cognitiveservices
 

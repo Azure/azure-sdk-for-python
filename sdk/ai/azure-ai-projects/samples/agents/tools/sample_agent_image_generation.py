@@ -51,13 +51,17 @@ project_client = AIProjectClient(
 
 openai_client = project_client.get_openai_client()
 
+# [START tool_declaration]
+tool = ImageGenTool(quality="low", size="1024x1024")
+# [END tool_declaration]
+
 with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="Generate images based on user prompts",
-            tools=[ImageGenTool(quality="low", size="1024x1024")],
+            tools=[tool],
         ),
         description="Agent for image generation.",
     )
@@ -73,6 +77,7 @@ with project_client:
     print(f"Response created: {response.id}")
 
     # Save the image to a file
+    # [START download_image]
     image_data = [output.result for output in response.output if output.type == "image_generation_call"]
 
     if image_data and image_data[0]:
@@ -82,7 +87,7 @@ with project_client:
 
         with open(file_path, "wb") as f:
             f.write(base64.b64decode(image_data[0]))
-
+        # [END download_image]
         print(f"Image downloaded and saved to: {file_path}")
 
     print("\nCleaning up...")

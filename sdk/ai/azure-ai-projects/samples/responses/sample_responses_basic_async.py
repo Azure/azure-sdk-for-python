@@ -43,7 +43,7 @@ async def main() -> None:
 
         async with project_client:
 
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
 
             async with openai_client:
 

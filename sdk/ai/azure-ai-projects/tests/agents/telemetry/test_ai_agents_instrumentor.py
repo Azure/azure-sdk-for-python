@@ -228,6 +228,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.agent.name", "myagent"),
             ("gen_ai.agent.id", "myagent:" + str(version)),
             ("gen_ai.agent.version", str(version)),
+            ("gen_ai.agent.type", "prompt"),
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
@@ -237,7 +238,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 "name": "gen_ai.system.instruction",
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
-                    "gen_ai.event.content": '{"text": "You are a helpful AI assistant. Be polite and provide accurate information."}',
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "You are a helpful AI assistant. Be polite and provide accurate information."}]}',
                 },
             }
         ]
@@ -320,6 +321,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.agent.name", "myagent"),
             ("gen_ai.agent.id", "myagent:" + str(version)),
             ("gen_ai.agent.version", str(version)),
+            ("gen_ai.agent.type", "prompt"),
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
@@ -335,3 +337,134 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
+
+    @pytest.mark.skip(reason="recordings to be added")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_workflow_agent_creation_with_tracing_content_recording_enabled(self, **kwargs):
+        """Test workflow agent creation with content recording enabled."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        from azure.ai.projects.models import WorkflowAgentDefinition
+
+        with self.create_client(operation_group="tracing", **kwargs) as project_client:
+
+            workflow_yaml = """
+kind: workflow
+trigger:
+  kind: OnConversationStart
+  id: test_workflow
+  actions:
+    - kind: SetVariable
+      id: set_variable
+      variable: Local.TestVar
+      value: "test"
+"""
+
+            agent = project_client.agents.create_version(
+                agent_name="test-workflow-agent",
+                definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            )
+            version = agent.version
+
+            # delete agent
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted workflow agent")
+
+        # ------------------------- Validate "create_agent" span ---------------------------------
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name("create_agent test-workflow-agent")
+        assert len(spans) == 1
+        span = spans[0]
+        expected_attributes = [
+            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "azure.ai.agents"),
+            ("gen_ai.operation.name", "create_agent"),
+            ("server.address", ""),
+            ("gen_ai.agent.name", "test-workflow-agent"),
+            ("gen_ai.agent.id", "test-workflow-agent:" + str(version)),
+            ("gen_ai.agent.version", str(version)),
+            ("gen_ai.agent.type", "workflow"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # Verify workflow event with standard content format
+        events = span.events
+        assert len(events) == 1
+        workflow_event = events[0]
+        assert workflow_event.name == "gen_ai.agent.workflow"
+
+        import json
+
+        event_content = json.loads(workflow_event.attributes["gen_ai.event.content"])
+        assert "content" in event_content
+        assert len(event_content["content"]) == 1
+        assert event_content["content"][0]["type"] == "workflow"
+        assert "workflow" in event_content["content"][0]
+        assert "kind: workflow" in event_content["content"][0]["workflow"]
+
+    @pytest.mark.skip(reason="recordings to be added")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_workflow_agent_creation_with_tracing_content_recording_disabled(self, **kwargs):
+        """Test workflow agent creation with content recording disabled."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        from azure.ai.projects.models import WorkflowAgentDefinition
+
+        with self.create_client(operation_group="agents", **kwargs) as project_client:
+
+            workflow_yaml = """
+kind: workflow
+trigger:
+  kind: OnConversationStart
+  id: test_workflow
+  actions:
+    - kind: SetVariable
+      id: set_variable
+      variable: Local.TestVar
+      value: "test"
+"""
+
+            agent = project_client.agents.create_version(
+                agent_name="test-workflow-agent",
+                definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            )
+            version = agent.version
+
+            # delete agent
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted workflow agent")
+
+        # ------------------------- Validate "create_agent" span ---------------------------------
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name("create_agent test-workflow-agent")
+        assert len(spans) == 1
+        span = spans[0]
+        expected_attributes = [
+            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "azure.ai.agents"),
+            ("gen_ai.operation.name", "create_agent"),
+            ("server.address", ""),
+            ("gen_ai.agent.name", "test-workflow-agent"),
+            ("gen_ai.agent.id", "test-workflow-agent:" + str(version)),
+            ("gen_ai.agent.version", str(version)),
+            ("gen_ai.agent.type", "workflow"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # Verify no workflow event when content recording is disabled
+        events = span.events
+        assert len(events) == 0
