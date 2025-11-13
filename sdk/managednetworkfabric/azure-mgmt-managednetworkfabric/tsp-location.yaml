@@ -1,0 +1,4 @@
+directory: specification/managednetworkfabric/ManagedNetworkFabric.ResourceManager.Management
+commit: ffb44955dd40f9a1826b6d4243678234a7449352
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
