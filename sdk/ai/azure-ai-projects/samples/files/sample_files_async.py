@@ -42,7 +42,7 @@ async def main() -> None:
 
         async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-            async with await project_client.get_openai_client() as openai_client:
+            async with project_client.get_openai_client() as openai_client:
 
                 # [START files_async_sample]
                 print("Uploading file")

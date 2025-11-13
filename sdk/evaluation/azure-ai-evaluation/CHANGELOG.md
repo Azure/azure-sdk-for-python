@@ -8,17 +8,11 @@
 - Fix results for ungrounded_attributes
 - score_mode grader improvements
 
-## 1.13.5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.13.5 (2025-11-10)
 
 ### Bugs Fixed
 
 - **TaskAdherenceEvaluator:** treat tool definitions as optional so evaluations with only query/response inputs no longer raise “Either 'conversation' or individual inputs must be provided.”
-
-### Other Changes
 
 ## 1.13.4 (2025-11-10)
 
