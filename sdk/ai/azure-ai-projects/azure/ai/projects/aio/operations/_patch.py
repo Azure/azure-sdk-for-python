@@ -11,7 +11,7 @@ from typing import List
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
-from ._patch_memories import MemoryStoresOperations
+from ._patch_memories_async import MemoryStoresOperations
 
 __all__: List[str] = [
     "TelemetryOperations",
