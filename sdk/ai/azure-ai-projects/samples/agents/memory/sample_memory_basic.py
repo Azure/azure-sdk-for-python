@@ -27,73 +27,86 @@ USAGE:
        "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
-# import os
-# from dotenv import load_dotenv
-# from azure.identity import DefaultAzureCredential
-# from azure.ai.projects import AIProjectClient
-# from azure.ai.projects.models import (
-#     MemoryStoreDefaultDefinition,
-#     MemoryStoreDefaultOptions,
-#     MemorySearchOptions,
-#     ResponsesUserMessageItemParam,
-#     MemorySearchTool,
-#     PromptAgentDefinition,
-# )
+import os
+from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import (
+    MemoryStoreDefaultDefinition,
+    MemoryStoreDefaultOptions,
+    MemorySearchOptions,
+    ResponsesUserMessageItemParam,
+    MemorySearchTool,
+    PromptAgentDefinition,
+)
 
-# load_dotenv()
+load_dotenv()
 
-# project_client = AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# with project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
 
-#     # Create a memory store
-#     definition = MemoryStoreDefaultDefinition(
-#         chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
-#         embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
-#     )
-#     memory_store = project_client.memory_stores.create(
-#         name="my_memory_store",
-#         description="Example memory store for conversations",
-#         definition=definition,
-#     )
-#     print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
+    # Delete memory store, if it already exists
+    memory_store_name = "my_memory_store"
+    try:
+        delete_response = project_client.memory_stores.delete(memory_store_name)
+        print(f"Deleted memory store: {delete_response.deleted}")
+    except Exception:
+        pass
 
-#     # Set scope to associate the memories with
-#     # You can also use "{{$userId}}"" to take the oid of the request authentication header
-#     scope = "user_123"
+    # Create a memory store
+    definition = MemoryStoreDefaultDefinition(
+        chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
+        embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
+    )
+    memory_store = project_client.memory_stores.create(
+        name=memory_store_name,
+        description="Example memory store for conversations",
+        definition=definition,
+    )
+    print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
+    print(f"  - Chat model: {memory_store.definition.chat_model}")
+    print(f"  - Embedding model: {memory_store.definition.embedding_model}")
 
-#     # Add memories to the memory store
-#     user_message = ResponsesUserMessageItemParam(
-#         content="I prefer dark roast coffee and usually drink it in the morning"
-#     )
-#     update_poller = project_client.memory_stores.begin_update_memories(
-#         name=memory_store.name,
-#         scope=scope,
-#         items=[user_message],  # Pass conversation items that you want to add to memory
-#         update_delay=0,  # Trigger update immediately without waiting for inactivity
-#     )
+    # Set scope to associate the memories with
+    # You can also use "{{$userId}}"" to take the oid of the request authentication header
+    scope = "user_123"
 
-#     # Wait for the update operation to complete, but can also fire and forget
-#     update_result = update_poller.result()
-#     print(f"Updated with {len(update_result.memory_operations)} memory operations")
-#     for operation in update_result.memory_operations:
-#         print(
-#             f"  - Operation: {operation.kind}, Memory ID: {operation.memory_item.memory_id}, Content: {operation.memory_item.content}"
-#         )
+    # Add memories to the memory store
+    user_message = ResponsesUserMessageItemParam(
+        content="I prefer dark roast coffee and usually drink it in the morning"
+    )
+    update_poller = project_client.memory_stores.begin_update_memories(
+        name=memory_store.name,
+        scope=scope,
+        items=[user_message],  # Pass conversation items that you want to add to memory
+        update_delay=0,  # Trigger update immediately without waiting for inactivity
+    )
 
-#     # Retrieve memories from the memory store
-#     query_message = ResponsesUserMessageItemParam(content="What are my coffee preferences?")
-#     search_response = project_client.memory_stores.search_memories(
-#         name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
-#     )
-#     print(f"Found {len(search_response.memories)} memories")
-#     for memory in search_response.memories:
-#         print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
+    # Wait for the update operation to complete, but can also fire and forget
+    update_result = update_poller.result()
+    print(f"Updated with {len(update_result.memory_operations)} memory operations")
+    for operation in update_result.memory_operations:
+        print(
+            f"  - Operation: {operation.kind}, Memory ID: {operation.memory_item.memory_id}, Content: {operation.memory_item.content}"
+        )
 
-#     # Delete memories for a specific scope
-#     delete_scope_response = project_client.memory_stores.delete_scope(name=memory_store.name, scope=scope)
-#     print(f"Deleted memories for scope '{scope}': {delete_scope_response.deleted}")
+    # Retrieve memories from the memory store
+    query_message = ResponsesUserMessageItemParam(content="What are my coffee preferences?")
+    search_response = project_client.memory_stores.search_memories(
+        name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
+    )
+    print(f"Found {len(search_response.memories)} memories")
+    for memory in search_response.memories:
+        print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
-#     # Delete memory store
-#     delete_response = project_client.memory_stores.delete(memory_store.name)
-#     print(f"Deleted: {delete_response.deleted}")
+    # Delete memories for a specific scope
+    delete_scope_response = project_client.memory_stores.delete_scope(name=memory_store.name, scope=scope)
+    print(f"Deleted memories for scope '{scope}': {delete_scope_response.deleted}")
+
+    # Delete memory store
+    delete_response = project_client.memory_stores.delete(memory_store.name)
+    print(f"Deleted: {delete_response.deleted}")

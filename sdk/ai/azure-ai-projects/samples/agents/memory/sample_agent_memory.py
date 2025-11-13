@@ -29,91 +29,107 @@ USAGE:
        "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
-# import os
-# from dotenv import load_dotenv
-# from azure.identity import DefaultAzureCredential
-# from azure.ai.projects import AIProjectClient
-# from azure.ai.projects.models import (
-#     MemoryStoreDefaultDefinition,
-#     MemoryStoreDefaultOptions,
-#     MemorySearchOptions,
-#     ResponsesUserMessageItemParam,
-#     MemorySearchTool,
-#     PromptAgentDefinition,
-# )
+import os
+import time
+from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import (
+    MemoryStoreDefaultDefinition,
+    MemorySearchTool,
+    PromptAgentDefinition,
+    AgentReference,
+)
 
-# load_dotenv()
+load_dotenv()
 
-# project_client = AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# with project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
 
-#     openai_client = project_client.get_openai_client()
+    openai_client = project_client.get_openai_client()
 
-#     # Create a memory store
-#     definition = MemoryStoreDefaultDefinition(
-#         chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
-#         embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
-#     )
-#     memory_store = project_client.memory_stores.create(
-#         name="my_memory_store",
-#         description="Example memory store for conversations",
-#         definition=definition,
-#     )
-#     print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
+    # Delete memory store, if it already exists
+    memory_store_name = "my_memory_store"
+    try:
+        delete_response = project_client.memory_stores.delete(memory_store_name)
+        print(f"Deleted memory store: {delete_response.deleted}")
+    except Exception:
+        pass
 
-#     # Create a prompt agent with memory search tool
-#     agent = project_client.agents.create_version(
-#         agent_name="MyAgent",
-#         definition=PromptAgentDefinition(
-#             model=os.environ["AZURE_AI_AGENT_MODEL_DEPLOYMENT_NAME"],
-#             instructions="You are a helpful assistant that answers general questions",
-#         ),
-#         tools=[
-#             MemorySearchTool(
-#                 memory_store_name=memory_store.name,
-#                 scope="{{$userId}}",
-#                 update_delay=10,  # Wait 5 seconds of inactivity before updating memories
-#                 # In a real application, set this to a higher value like 300 (5 minutes, default)
-#             )
-#         ],
-#     )
-#     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+    # Create a memory store
+    definition = MemoryStoreDefaultDefinition(
+        chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
+        embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
+    )
+    memory_store = project_client.memory_stores.create(
+        name=memory_store_name,
+        description="Example memory store for conversations",
+        definition=definition,
+    )
+    print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
-#     # Create a conversation with the agent with memory tool enabled
-#     conversation = openai_client.conversations.create()
-#     print(f"Created conversation (id: {conversation.id})")
+    # Set scope to associate the memories with
+    # You can also use "{{$userId}}"" to take the oid of the request authentication header
+    scope = "user_123"
 
-#     # Create an agent response to initial user message
-#     response = openai_client.responses.create(
-#         conversation=conversation.id,
-#         extra_body={"agent": AgentReference(name=agent.name).as_dict()},
-#         input=[ResponsesUserMessageItemParam(content="I prefer dark roast coffee")],
-#     )
-#     print(f"Response output: {response.output_text}")
+    # Create a prompt agent with memory search tool
+    agent = project_client.agents.create_version(
+        agent_name="MyAgent",
+        definition=PromptAgentDefinition(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+            tools=[
+                MemorySearchTool(
+                    memory_store_name=memory_store.name,
+                    scope=scope,
+                    update_delay=1,  # Wait 1 second of inactivity before updating memories
+                    # In a real application, set this to a higher value like 300 (5 minutes, default)
+                )
+            ],
+        ),
+    )
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-#     # After an inactivity in the conversation, memories will be extracted from the conversation and stored
-#     sleep(60)
+    # Create a conversation with the agent with memory tool enabled
+    conversation = openai_client.conversations.create()
+    print(f"Created conversation (id: {conversation.id})")
 
-#     # Create a new conversation
-#     new_conversation = openai_client.conversations.create()
-#     print(f"Created new conversation (id: {new_conversation.id})")
+    # Create an agent response to initial user message
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+        input="I prefer dark roast coffee",
+    )
+    print(f"Response output: {response.output_text}")
+    print(response.output)
 
-#     # Create an agent response with stored memories
-#     new_response = openai_client.responses.create(
-#         conversation=new_conversation.id,
-#         extra_body={"agent": AgentReference(name=agent.name).as_dict()},
-#         input=[ResponsesUserMessageItemParam(content="Please order my usual coffee")],
-#     )
-#     print(f"Response output: {new_response.output_text}")
+    # After an inactivity in the conversation, memories will be extracted from the conversation and stored
+    time.sleep(60)
 
-#     # Clean up
-#     openai_client.conversations.delete(conversation.id)
-#     openai_client.conversations.delete(new_conversation.id)
-#     print("Conversations deleted")
+    # Create a new conversation
+    new_conversation = openai_client.conversations.create()
+    print(f"Created new conversation (id: {new_conversation.id})")
 
-#     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-#     print("Agent deleted")
+    # Create an agent response with stored memories
+    new_response = openai_client.responses.create(
+        conversation=new_conversation.id,
+        extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+        input="Please order my usual coffee",
+    )
+    print(f"Response output: {new_response.output_text}")
+    print(new_response.output)
 
-#     project_client.memory_stores.delete(memory_store.name)
-#     print("Memory store deleted")
+    # Clean up
+    openai_client.conversations.delete(conversation.id)
+    openai_client.conversations.delete(new_conversation.id)
+    print("Conversations deleted")
+
+    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+    print("Agent deleted")
+
+    project_client.memory_stores.delete(memory_store.name)
+    print("Memory store deleted")

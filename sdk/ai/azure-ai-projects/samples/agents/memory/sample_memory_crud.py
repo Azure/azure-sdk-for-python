@@ -24,42 +24,53 @@ USAGE:
        "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
-# import os
-# from dotenv import load_dotenv
-# from azure.identity import DefaultAzureCredential
-# from azure.ai.projects import AIProjectClient
-# from azure.ai.projects.models import MemoryStoreDefaultDefinition
+import os
+from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import MemoryStoreDefaultDefinition
 
-# load_dotenv()
+load_dotenv()
 
-# project_client = AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# with project_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
 
-#     # Create Memory Store
-#     definition = MemoryStoreDefaultDefinition(
-#         chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
-#         embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
-#     )
-#     memory_store = project_client.memory_stores.create(
-#         name="my_memory_store", description="Example memory store for conversations", definition=definition
-#     )
-#     print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
+    # Delete memory store, if it already exists
+    memory_store_name = "my_memory_store"
+    try:
+        delete_response = project_client.memory_stores.delete(memory_store_name)
+        print(f"Deleted memory store: {delete_response.deleted}")
+    except Exception:
+        pass
 
-#     # Get Memory Store
-#     get_store = project_client.memory_stores.get(memory_store.name)
-#     print(f"Retrieved: {get_store.name} ({get_store.id}): {get_store.description}")
+    # Create Memory Store
+    definition = MemoryStoreDefaultDefinition(
+        chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
+        embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
+    )
+    memory_store = project_client.memory_stores.create(
+        name=memory_store_name, description="Example memory store for conversations", definition=definition
+    )
+    print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
-#     # Update Memory Store
-#     updated_store = project_client.memory_stores.update(name=memory_store.name, description="Updated description")
-#     print(f"Updated: {updated_store.name} ({updated_store.id}): {updated_store.description}")
+    # Get Memory Store
+    get_store = project_client.memory_stores.get(memory_store.name)
+    print(f"Retrieved: {get_store.name} ({get_store.id}): {get_store.description}")
 
-#     # List Memory Store
-#     memory_stores = list(project_client.memory_stores.list(limit=10))
-#     print(f"Found {len(memory_stores)} memory stores")
-#     for store in memory_stores:
-#         print(f"  - {store.name} ({store.id}): {store.description}")
+    # Update Memory Store
+    updated_store = project_client.memory_stores.update(name=memory_store.name, description="Updated description")
+    print(f"Updated: {updated_store.name} ({updated_store.id}): {updated_store.description}")
 
-#     # Delete Memory Store
-#     delete_response = project_client.memory_stores.delete(memory_store.name)
-#     print(f"Deleted: {delete_response.deleted}")
+    # List Memory Store
+    memory_stores = list(project_client.memory_stores.list(limit=10))
+    print(f"Found {len(memory_stores)} memory stores")
+    for store in memory_stores:
+        print(f"  - {store.name} ({store.id}): {store.description}")
+
+    # Delete Memory Store
+    delete_response = project_client.memory_stores.delete(memory_store.name)
+    print(f"Deleted: {delete_response.deleted}")
