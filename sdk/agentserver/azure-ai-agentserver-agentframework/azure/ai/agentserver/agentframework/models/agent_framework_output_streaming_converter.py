@@ -65,8 +65,8 @@ class _TextContentStreamingState(_BaseStreamingState):
 
     def __init__(self, context: AgentRunContext) -> None:
         self.context = context
-        self.item_id = None
-        self.output_index = None
+        self.item_id: Optional[str] = None
+        self.output_index: Optional[int] = None
         self.text_buffer = ""
         self.text_part_started = False
 
@@ -148,7 +148,7 @@ class _TextContentStreamingState(_BaseStreamingState):
                 text=full_text,
             )
         )
-        final_part = ItemContentOutputText(text=full_text, annotations=[], logprobs=[])
+        final_part = ItemContentOutputText(type="output_text", text=full_text, annotations=[], logprobs=[])
         events.append(
             ResponseContentPartDoneEvent(
                 sequence_number=ctx.next_sequence(),
@@ -199,10 +199,10 @@ class _FunctionCallStreamingState(_BaseStreamingState):
 
     def __init__(self, context: AgentRunContext) -> None:
         self.context = context
-        self.item_id = None
-        self.output_index = None
-        self.call_id = None
-        self.name = None
+        self.item_id: Optional[str] = None
+        self.output_index: Optional[int] = None
+        self.call_id: Optional[str] = None
+        self.name: Optional[str] = None
         self.args_buffer = ""
         self.requires_approval = False
         self.approval_request_id: str | None = None
@@ -216,7 +216,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         self.output_index = ctx._next_output_index
         ctx._next_output_index += 1
 
-        self.call_id = self.call_id or str(uuid.uuid4())
+        self.call_id = self.call_id if self.call_id is not None else str(uuid.uuid4())
         function_item = FunctionToolCallItemResource(
             type="function_call",
             id=self.item_id,
@@ -288,6 +288,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             return events
         assert self.call_id is not None
         done_item = FunctionToolCallItemResource(
+            type="function_call",
             id=self.item_id,
             status="completed",
             call_id=self.call_id,
@@ -337,8 +338,8 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
     ) -> None:
         # Avoid mutable default argument (Ruff B006)
         self.context = context
-        self.item_id = None
-        self.output_index = None
+        self.item_id: Optional[str] = None
+        self.output_index: Optional[int] = None
         self.call_id = call_id
         self.output = output if output is not None else []
 
@@ -411,6 +412,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         str_call_id = self.call_id or ""
         single_output: str = cast(str, self.output[0]) if self.output else ""
         done_item = FunctionToolCallOutputItemResource(
+            type="function_call_output",
             id=self.item_id,
             status="completed",
             call_id=str_call_id,
@@ -550,7 +552,7 @@ class AgentFrameworkOutputStreamingConverter:
         }
         if status == "completed" and self._completed_output_items:
             response_data["output"] = self._completed_output_items
-        return OpenAIResponse(response_data)
+        return OpenAIResponse(**response_data)
 
     # High-level helpers to emit lifecycle events for streaming
     def initial_events(self) -> List[ResponseStreamEvent]:
