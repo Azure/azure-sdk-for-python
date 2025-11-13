@@ -2,9 +2,11 @@
 
 This directory contains sample applications demonstrating various capabilities of the Azure AI VoiceLive SDK.
 
+> **Note:** All samples use async/await patterns as the SDK is now exclusively async.
+
 ## Prerequisites
 
-- Python 3.8 or later
+- Python 3.9 or later
 - An Azure subscription with access to Azure AI VoiceLive
 - Azure AI VoiceLive API key
 
@@ -13,7 +15,7 @@ This directory contains sample applications demonstrating various capabilities o
 1. **Install dependencies**:
 
    ```bash
-   pip install -r ../dev_requirements.txt
+   pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv
    ```
 
 2. **Configure environment variables**:
@@ -41,7 +43,7 @@ This directory contains sample applications demonstrating various capabilities o
 For a complete voice conversation experience, start with the featured sample:
 
 ```bash
-python basic_voice_assistant.py
+python basic_voice_assistant_async.py
 ```
 
 This sample demonstrates:
@@ -66,31 +68,25 @@ See "BASIC_VOICE_ASSISTANT.md" for complete documentation.
 Run any sample directly:
 
 ```bash
-python sample_voicelive_async.py
+python basic_voice_assistant_async.py
 ```
 
 Most samples support additional command-line arguments. For example:
 
 ```bash
-python sample_voicelive_async.py --model gpt-4o-realtime-preview --voice alloy
+python basic_voice_assistant_async.py --model gpt-4o-realtime-preview --voice alloy
 ```
 
 Use the `--help` flag to see all available options:
 
 ```bash
-python sample_voicelive_async.py --help
+python basic_voice_assistant_async.py --help
 ```
 
 ## Sample descriptions
 
-- **basic_voice_assistant.py**: 🌟 **[Featured Sample]** Complete voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
-- **sample_voicelive_async.py**: Demonstrates how to use the Azure VoiceLive async client to interact with the VoiceLive API.
-- **audio_streaming_sample.py**: Shows how to use WebSocket connections for audio streaming with the Azure VoiceLive SDK.
-- **sample_voicelive_audio_async.py**: Demonstrates asynchronous audio processing with the VoiceLive SDK.
-- **session_management_sample.py**: Shows how to manage sessions with the VoiceLive API.
-- **typed_event_handling_sample.py**: Demonstrates handling typed events from the VoiceLive API.
-- **websocket_connection_sample.py**: Shows low-level WebSocket connection handling.
-- **sample_complete_resources.py**: Comprehensive example showing various features of the SDK.
+- **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
+- **async_function_calling_sample.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to handle function calls from the AI model.
 
 ## Troubleshooting
 

@@ -60,7 +60,7 @@ class black(Check):
             config_file_location = os.path.join(REPO_ROOT, "eng/black-pyproject.toml")
 
             if in_ci():
-                if not is_check_enabled(package_dir, "black"):
+                if not is_check_enabled(package_dir, "black", default=False):
                     logger.info(f"Package {package_name} opts-out of black check.")
                     continue
             try:
@@ -76,6 +76,7 @@ class black(Check):
                     stderr=subprocess.PIPE,
                     check=True,
                 )
+
                 if run_result.stderr and "reformatted" in run_result.stderr.decode("utf-8"):
                     if in_ci():
                         logger.info(f"The package {package_name} needs reformat. Run `black` locally to reformat.")

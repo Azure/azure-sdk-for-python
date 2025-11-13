@@ -514,6 +514,38 @@ while run.status in ["queued", "in_progress", "requires_action"]:
 
 <!-- END SNIPPET -->
 
+For scenarios requiring custom approval logic or additional control over MCP tool calls, you can use a `RunHandler` with the `create_and_process` method. This approach allows you to implement custom logic for approving or denying MCP tool calls.
+
+Here's an example that demonstrates manual MCP tool call approval using a `RunHandler`:
+
+<!-- SNIPPET:sample_agents_mcp_in_create_and_process.run_handler -->
+
+```python
+class MyRunHandler(RunHandler):
+    def submit_mcp_tool_approval(
+        self, *, run: ThreadRun, tool_call: RequiredMcpToolCall, **kwargs: Any
+    ) -> ToolApproval:
+        return ToolApproval(
+            tool_call_id=tool_call.id,
+            approve=True,
+            headers=mcp_tool.headers,
+        )
+```
+
+<!-- END SNIPPET -->
+
+To use the RunHandler with `create_and_process` for MCP tools:
+
+<!-- SNIPPET:sample_agents_mcp_in_create_and_process.create_and_process -->
+
+```python
+run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler())
+```
+
+<!-- END SNIPPET -->
+
+For a complete example, see [`sample_agents_mcp_in_create_and_process.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_mcp_in_create_and_process.py).
+
 ### Create Agent with Azure AI Search
 
 Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation. Creating an Agent with Azure AI Search requires an existing Azure AI Search Index. For more information and setup guides, see [Azure AI Search Tool Guide](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search).
@@ -524,7 +556,6 @@ Here is an example to integrate Azure AI Search:
 
 ```python
 conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
-
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
@@ -536,10 +567,7 @@ ai_search = AzureAISearchTool(
     filter="",
 )
 
-# Create agent with AI search tool and process agent run
-agents_client = project_client.agents
-
-agent = agents_client.create_agent(
+agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-agent",
     instructions="You are a helpful agent",
@@ -559,7 +587,7 @@ get sensible result, the index needs to have "embedding", "token", "category" an
 
 ```python
 # Fetch and log all messages
-messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+messages = project_client.agents.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 for message in messages:
     if message.role == MessageRole.AGENT and message.url_citation_annotations:
         placeholder_annotations = {
@@ -633,7 +661,6 @@ When `enable_auto_function_calls` is called, the SDK will automatically invoke f
 - For examples of automatic function calls in action, refer to [`sample_agents_auto_function_call.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_auto_function_call.py) or [`sample_agents_auto_function_call_async.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async/sample_agents_auto_function_call_async.py).
 - If you prefer to manage function execution manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or
 [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions.py).
-
 
 ### Create Agent With Azure Function Call
 
@@ -1365,6 +1392,44 @@ run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.
 ```
 
 <!-- END SNIPPET -->
+
+For scenarios requiring manual approval or custom control over function execution (such as security-sensitive operations), you can use a `RunHandler` with the `create_and_process` method. This approach allows you to implement custom logic to decide whether, when, and how functions should be executed.
+
+Here's an example that demonstrates manual function calls using a `RunHandler`:
+
+<!-- SNIPPET:sample_agents_functions_in_create_and_process.run_handler -->
+
+```python
+class MyRunHandler(RunHandler):
+    def submit_function_call_output(
+        self,
+        *,
+        run: ThreadRun,
+        tool_call: RequiredFunctionToolCall,
+        tool_call_details: RequiredFunctionToolCallDetails,
+        **kwargs: Any,
+    ) -> Any:
+        function_name = tool_call_details.name
+        if function_name == send_email.__name__:
+            # Parse arguments from tool call
+            args_dict = json.loads(tool_call_details.arguments) if tool_call_details.arguments else {}
+            # Call the function directly with the arguments
+            return send_email(**args_dict)
+```
+
+<!-- END SNIPPET -->
+
+To use the RunHandler with `create_and_process`:
+
+<!-- SNIPPET:sample_agents_functions_in_create_and_process.create_and_process -->
+
+```python
+run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler())
+```
+
+<!-- END SNIPPET -->
+
+For a complete example, see [`sample_agents_functions_in_create_and_process.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions_in_create_and_process.py).
 
 With streaming, polling need not be considered. If `function tools` were added to the agents, you should decide to have the function tools called manually or automatically.  Please visit [`manual function call sample`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or [`automatic function call sample`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_iteration_with_toolset.py).    
 

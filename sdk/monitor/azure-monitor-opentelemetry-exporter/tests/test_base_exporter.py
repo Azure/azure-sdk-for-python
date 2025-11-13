@@ -17,6 +17,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     _get_authentication_credential,
     BaseExporter,
     ExportResult,
+    _get_storage_directory,
 )
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
@@ -55,6 +56,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 
 TEST_AUTH_POLICY = "TEST_AUTH_POLICY"
 TEST_TEMP_DIR = "TEST_TEMP_DIR"
+TEST_USER_DIR = "test-user"
 
 
 def throw(exc_type, *args, **kwargs):
@@ -174,15 +176,84 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._timeout, 10)
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
+        storage_directory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
         self.assertEqual(
             base._storage_directory,
-            os.path.join(
-                TEST_TEMP_DIR,
-                "Microsoft/AzureMonitor",
-                "opentelemetry-python-" + "4321abcd-5678-4efa-8abc-1234567890ab",
-            ),
+            storage_directory
         )
-        mock_get_temp_dir.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
+    def test_constructor_no_storage_directory_and_invalid_instrumentation_key(self, mock_get_temp_dir):
+        mock_get_temp_dir.return_value = TEST_TEMP_DIR
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_retention_period=2000,
+        )
+        self.assertEqual(
+            base._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
+        )
+        self.assertEqual(base._distro_version, "1.0.0")
+        self.assertIsNotNone(base.storage)
+        self.assertEqual(base.storage._max_size, 1000)
+        self.assertEqual(base.storage._retention_period, 2000)
+        self.assertEqual(base._storage_maintenance_period, 30)
+        self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
+        self.assertEqual(base._storage_min_retry_interval, 100)
+        storage_directory = _get_storage_directory(instrumentation_key="")
+        self.assertNotEqual(
+            base._storage_directory,
+            storage_directory
+        )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.getpass.getuser")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
+    def test_constructor_no_storage_directory_and_invalid_user_details(self, mock_get_temp_dir, mock_get_user):
+        mock_get_temp_dir.return_value = TEST_TEMP_DIR
+        mock_get_user.side_effect = OSError("failed to resolve user")
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_retention_period=2000,
+        )
+        self.assertEqual(
+            base._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
+        )
+        self.assertEqual(base._distro_version, "1.0.0")
+        self.assertIsNotNone(base.storage)
+        self.assertEqual(base.storage._max_size, 1000)
+        self.assertEqual(base.storage._retention_period, 2000)
+        self.assertEqual(base._storage_maintenance_period, 30)
+        self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
+        self.assertEqual(base._storage_min_retry_interval, 100)
+        storage_directory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(
+            base._storage_directory,
+            storage_directory
+        )
+        mock_get_user.assert_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_disable_offline_storage(self, mock_get_temp_dir):
@@ -304,6 +375,28 @@ class TestBaseExporter(unittest.TestCase):
         transmit_mock.assert_not_called()
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_not_called()
+
+    def test_transmit_from_storage_blob_get_returns_none(self):
+        """Test that when blob.get() returns None, it's handled properly without TypeError."""
+        exporter = BaseExporter()
+        exporter.storage = mock.Mock()
+        blob_mock = mock.Mock()
+        blob_mock.lease.return_value = True
+        
+        blob_mock.get.return_value = None
+        exporter.storage.gets.return_value = [blob_mock]
+        transmit_mock = mock.Mock()
+        exporter._transmit = transmit_mock
+        
+        # This should not raise a TypeError
+        exporter._transmit_from_storage()
+        
+        # Verify that the blob was leased and deleted (since data was None)
+        exporter.storage.gets.assert_called_once()
+        blob_mock.lease.assert_called_once()
+        blob_mock.get.assert_called_once()
+        blob_mock.delete.assert_called_once()  # Corrupted blob should be deleted
+        transmit_mock.assert_not_called()  # No transmission should occur
 
 
     def test_format_storage_telemetry_item(self):

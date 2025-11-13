@@ -34,6 +34,7 @@ from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
+from azure.ai.ml.entities._deployment.deployment_template import DeploymentTemplate
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
 from azure.ai.ml.entities._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
@@ -1101,3 +1102,33 @@ def load_capability_host(
             :caption: Loading a capabilityhost from a YAML config file.
     """
     return cast(CapabilityHost, load_common(CapabilityHost, source, relative_origin, params_override, **kwargs))
+
+
+@experimental
+def load_deployment_template(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    params_override: Optional[List[Dict]] = None,
+    **kwargs: Any,
+) -> DeploymentTemplate:
+    """Construct a DeploymentTemplate object from a YAML file.
+
+    :param source: A path to a local YAML file or an already-open file object containing a deployment
+        template configuration.
+        If the source is a path, it will be opened and read. If the source is an open file, the file will be read
+        directly.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :keyword relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
+        the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
+        source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
+    :paramtype relative_origin: Optional[str]
+    :keyword params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :paramtype params_override: List[Dict]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DeploymentTemplate cannot be successfully validated.
+        Details will be provided in the error message.
+    :return: Loaded DeploymentTemplate object.
+    :rtype: ~azure.ai.ml.entities.DeploymentTemplate
+    """
+    return cast(DeploymentTemplate, load_common(DeploymentTemplate, source, relative_origin, params_override, **kwargs))

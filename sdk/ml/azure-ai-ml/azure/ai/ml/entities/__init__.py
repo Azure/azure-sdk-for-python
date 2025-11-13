@@ -126,6 +126,7 @@ from ._deployment.deployment_settings import (
     OnlineRequestSettings,
     ProbeSettings,
 )
+from ._deployment.deployment_template import DeploymentTemplate
 from ._deployment.model_batch_deployment import ModelBatchDeployment
 from ._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
 from ._deployment.online_deployment import (
@@ -338,6 +339,7 @@ __all__ = [
     "OnlineEndpoint",
     "Deployment",
     "BatchDeployment",
+    "DeploymentTemplate",
     "BatchJob",
     "CodeConfiguration",
     "Endpoint",

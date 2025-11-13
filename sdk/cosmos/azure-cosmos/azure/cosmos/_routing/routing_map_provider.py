@@ -22,7 +22,7 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
-from typing import Dict, Any, Optional
+from typing import Any, Optional
 
 from .. import _base
 from .collection_routing_map import CollectionRoutingMap
@@ -56,8 +56,8 @@ class PartitionKeyRangeCache(object):
             self,
             collection_link: str,
             collection_id: str,
-            feed_options: Optional[Dict[str, Any]],
-            **kwargs: Dict[str, Any]
+            feed_options: Optional[dict[str, Any]],
+            **kwargs: dict[str, Any]
     ):
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if not collection_routing_map:
@@ -84,7 +84,8 @@ class PartitionKeyRangeCache(object):
         :rtype: list
         """
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        self.init_collection_routing_map_if_needed(collection_link, collection_id, feed_options, **kwargs)
+        pk_range_options = _base.format_pk_range_options(feed_options)
+        self.init_collection_routing_map_if_needed(collection_link, collection_id, pk_range_options, **kwargs)
 
         return self._collection_routing_map_by_item[collection_id].get_overlapping_ranges(partition_key_ranges)
 
@@ -92,11 +93,12 @@ class PartitionKeyRangeCache(object):
             self,
             collection_link: str,
             partition_key_range_id: int,
-            feed_options: Dict[str, Any],
-            **kwargs: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+            feed_options: dict[str, Any],
+            **kwargs: dict[str, Any]
+    ) -> Optional[dict[str, Any]]:
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        self.init_collection_routing_map_if_needed(collection_link, collection_id, feed_options, **kwargs)
+        pk_range_options = _base.format_pk_range_options(feed_options)
+        self.init_collection_routing_map_if_needed(collection_link, collection_id, pk_range_options, **kwargs)
 
         return (self._collection_routing_map_by_item[collection_id]
                 .get_range_by_partition_key_range_id(partition_key_range_id))

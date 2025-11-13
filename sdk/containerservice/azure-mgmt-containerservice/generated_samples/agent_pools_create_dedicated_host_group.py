@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-07-01/examples/AgentPoolsCreate_DedicatedHostGroup.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-09-01/examples/AgentPoolsCreate_DedicatedHostGroup.json
 if __name__ == "__main__":
     main()

@@ -1,0 +1,42 @@
+$schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json 
+name: DT-name
+version: 1
+type: deploymenttemplates
+deployment_template_type: Managed
+description: deployment template - with probe routes and port etc
+tags:
+  stage: Open
+environment: azureml://registries/test-reg/environments/test-environment/versions/1 
+model_mount_path: /var/azureml-app 
+request_settings:  
+ request_timeout_ms: 6000 
+ max_concurrent_requests_per_instance: 2 
+scoring_path: /v1/models/half_plus_two:predict 
+scoring_port: 8501 
+liveness_probe: 
+ initial_delay: 300 
+ period: 10 
+ timeout: 2 
+ failure_threshold: 30 
+ success_threshold: 1 
+ scheme: HTTP 
+ method: GET 
+ path: /v1/models/half_plus_two 
+ port: 8501 
+readiness_probe: 
+ initial_delay: 300 
+ period: 10 
+ timeout: 2 
+ failure_threshold: 30 
+ success_threshold: 1 
+ scheme: HTTP 
+ method: GET 
+ path: /v1/models/half_plus_two 
+ port: 8501 
+environment_variables: 
+ MODEL_BASE_PATH: /var/azureml-app/azureml-models/tfs-model1/1 
+ MODEL_NAME: half_plus_two 
+ ENABLE_INFERENCESERVER_DIAGNOSTICSLOG_AML_VISIBILITY: True 
+allowed_instance_type: Standard_DS3_v2 Standard_DS4_v2 
+default_instance_type: Standard_DS3_v2 
+instance_count: 3 

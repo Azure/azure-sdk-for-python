@@ -31,6 +31,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
     ENABLE_LIVE_METRICS_ARG,
+    ENABLE_PERFORMANCE_COUNTERS_ARG,
     LOGGER_NAME_ARG,
     LOGGING_FORMATTER_ARG,
     RESOURCE_ARG,
@@ -42,6 +43,13 @@ from azure.monitor.opentelemetry._constants import (
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
     enable_live_metrics,
+)
+from azure.monitor.opentelemetry.exporter._performance_counters import (  # pylint: disable=import-error,no-name-in-module
+    enable_performance_counters,
+)
+from azure.monitor.opentelemetry.exporter._performance_counters._processor import (  # pylint: disable=import-error,no-name-in-module
+    _PerformanceCountersLogRecordProcessor,
+    _PerformanceCountersSpanProcessor,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pylint: disable=import-error,no-name-in-module
     _QuickpulseLogRecordProcessor,
@@ -95,6 +103,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      to process every span prior to exporting. Will be run sequentially.
     :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
      Defaults to `False`.
+    :keyword bool enable_performance_counters: Boolean value to determine whether to enable performance counters.
+     Defaults to `True`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :keyword list[~opentelemetry.sdk.metrics.view.View] views: List of `View` objects to configure and filter
@@ -135,6 +145,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
+    enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
         traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
         tracer_provider = TracerProvider(
@@ -155,6 +166,9 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
         qsp = _QuickpulseSpanProcessor()
         tracer_provider.add_span_processor(qsp)
+    if enable_performance_counters_config:
+        pcsp = _PerformanceCountersSpanProcessor()
+        tracer_provider.add_span_processor(pcsp)
     trace_exporter = AzureMonitorTraceExporter(**configurations)
     bsp = BatchSpanProcessor(
         trace_exporter,
@@ -196,10 +210,14 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         )
 
         resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
+        enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
             qlp = _QuickpulseLogRecordProcessor()
             logger_provider.add_log_record_processor(qlp)
+        if enable_performance_counters_config:
+            pclp = _PerformanceCountersLogRecordProcessor()
+            logger_provider.add_log_record_processor(pclp)
         log_exporter = AzureMonitorLogExporter(**configurations)
         log_record_processor = BatchLogRecordProcessor(
             log_exporter,
@@ -251,6 +269,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     views: List[View] = configurations[VIEWS_ARG]  # type: ignore
+    enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(
@@ -258,6 +277,8 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
         resource=resource,
         views=views,
     )
+    if enable_performance_counters_config:
+        enable_performance_counters(meter_provider=meter_provider)
     set_meter_provider(meter_provider)
 
 
@@ -336,6 +357,7 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
     instrumentors = [
         ("azure.ai.inference.tracing", "AIInferenceInstrumentor"),
         ("azure.ai.agents.telemetry", "AIAgentsInstrumentor"),
+        ("azure.ai.projects.telemetry", "AIProjectInstrumentor"),
     ]
 
     for module_path, class_name in instrumentors:

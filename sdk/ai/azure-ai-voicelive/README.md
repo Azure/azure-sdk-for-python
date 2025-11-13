@@ -5,7 +5,9 @@ This package provides a **real-time, speech-to-speech** client for Azure AI Voic
 It opens a WebSocket session to stream microphone audio to the service and receive
 typed server events (including audio) for responsive, interruptible conversations.
 
-> **Status:** Preview. APIs are subject to change.
+> **Status:** General Availability (GA). This is a stable release suitable for production use.
+
+> **Important:** As of version 1.0.0, this SDK is **async-only**. The synchronous API has been removed to focus exclusively on async patterns. All examples and samples use `async`/`await` syntax.
 
 ---
 
@@ -21,25 +23,20 @@ Getting started
 
 ### Install
 
+Install the stable GA version:
+
 ```bash
 # Base install (core client only)
 python -m pip install azure-ai-voicelive
 
-# For synchronous streaming (uses websockets)
-python -m pip install "azure-ai-voicelive[websockets]"
-
 # For asynchronous streaming (uses aiohttp)
 python -m pip install "azure-ai-voicelive[aiohttp]"
 
-# For both sync + async scenarios (recommended if unsure)
-python -m pip install "azure-ai-voicelive[all-websockets]" pyaudio python-dotenv
+# For voice samples (includes audio processing)
+python -m pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv
 ```
 
-WebSocket streaming features require additional dependencies.
-Install them with:
-    pip install "azure-ai-voicelive[websockets]"   # for sync
-    pip install "azure-ai-voicelive[aiohttp]"     # for async
-    pip install "azure-ai-voicelive[all-websockets]"  # for both
+The SDK provides async-only WebSocket connections using `aiohttp` for optimal performance and reliability.
 
 ### Authenticate
 
@@ -58,14 +55,20 @@ AZURE_VOICELIVE_ENDPOINT="your-endpoint"
 Then, use the key in your code:
 
 ```python
+import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive import connect
 
-connection = connect(
-    endpoint="your-endpoint",
-    credential=AzureKeyCredential("your-api-key"),
-    model="gpt-4o-realtime-preview"
-)
+async def main():
+    async with connect(
+        endpoint="your-endpoint",
+        credential=AzureKeyCredential("your-api-key"),
+        model="gpt-4o-realtime-preview"
+    ) as connection:
+        # Your async code here
+        pass
+
+asyncio.run(main())
 ```
 
 #### AAD Token Authentication
@@ -73,16 +76,22 @@ connection = connect(
 For production applications, AAD authentication is recommended:
 
 ```python
-from azure.identity import DefaultAzureCredential
+import asyncio
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.voicelive import connect
 
-credential = DefaultAzureCredential()
+async def main():
+    credential = DefaultAzureCredential()
+    
+    async with connect(
+        endpoint="your-endpoint",
+        credential=credential,
+        model="gpt-4o-realtime-preview"
+    ) as connection:
+        # Your async code here
+        pass
 
-connection = connect(
-    endpoint="your-endpoint",
-    credential=credential,
-    model="gpt-4o-realtime-preview"
-)
+asyncio.run(main())
 ```
 
 ---
@@ -90,18 +99,21 @@ connection = connect(
 Key concepts
 ------------
 
-- **VoiceLiveConnection** – Manages an active WebSocket connection to the service
+- **VoiceLiveConnection** – Manages an active async WebSocket connection to the service
 - **Session Management** – Configure conversation parameters:
-  - **SessionResource** – Update session parameters (voice, formats, VAD)
+  - **SessionResource** – Update session parameters (voice, formats, VAD) with async methods
   - **RequestSession** – Strongly-typed session configuration
   - **ServerVad** – Configure voice activity detection
   - **AzureStandardVoice** – Configure voice settings
 - **Audio Handling**:
-  - **InputAudioBufferResource** – Manage audio input to the service
-  - **OutputAudioBufferResource** – Control audio output from the service
+  - **InputAudioBufferResource** – Manage audio input to the service with async methods
+  - **OutputAudioBufferResource** – Control audio output from the service with async methods
 - **Conversation Management**:
-  - **ResponseResource** – Create or cancel model responses
-  - **ConversationResource** – Manage conversation items
+  - **ResponseResource** – Create or cancel model responses with async methods
+  - **ConversationResource** – Manage conversation items with async methods
+- **Error Handling**: 
+  - **ConnectionError** – Base exception for WebSocket connection errors
+  - **ConnectionClosed** – Raised when WebSocket connection is closed
 - **Strongly-Typed Events** – Process service events with type safety:
   - `SESSION_UPDATED`, `RESPONSE_AUDIO_DELTA`, `RESPONSE_DONE`
   - `INPUT_AUDIO_BUFFER_SPEECH_STARTED`, `INPUT_AUDIO_BUFFER_SPEECH_STOPPED`
@@ -112,25 +124,25 @@ Key concepts
 Examples
 --------
 
-### Basic async Voice Assistant (Featured Sample)
+### Basic Voice Assistant (Featured Sample)
 
-The Basic async Voice Assistant sample demonstrates full-featured voice interaction with:
+The Basic Voice Assistant sample demonstrates full-featured voice interaction with:
 
 - Real-time speech streaming
-- Server-side voice activity detection
+- Server-side voice activity detection  
 - Interruption handling
 - High-quality audio processing
 
 ```bash
 # Run the basic voice assistant sample
-# Requires [aiohttp] for async (easiest: [all-websockets])
+# Requires [aiohttp] for async
 python samples/basic_voice_assistant_async.py
 
 # With custom parameters
 python samples/basic_voice_assistant_async.py --model gpt-4o-realtime-preview --voice alloy --instructions "You're a helpful assistant"
 ```
 
-### Minimal async example
+### Minimal example
 
 ```python
 import asyncio
@@ -170,44 +182,6 @@ async def main():
                 break
 
 asyncio.run(main())
-```
-
-### Minimal sync example
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.voicelive import connect
-from azure.ai.voicelive.models import (
-    RequestSession, Modality, InputAudioFormat, OutputAudioFormat, ServerVad, ServerEventType
-)
-
-API_KEY = "your-api-key"
-ENDPOINT = "your-endpoint"
-MODEL = "gpt-4o-realtime-preview"
-
-with connect(
-    endpoint=ENDPOINT,
-    credential=AzureKeyCredential(API_KEY),
-    model=MODEL
-) as conn:
-    session = RequestSession(
-        modalities=[Modality.TEXT, Modality.AUDIO],
-        instructions="You are a helpful assistant.",
-        input_audio_format=InputAudioFormat.PCM16,
-        output_audio_format=OutputAudioFormat.PCM16,
-        turn_detection=ServerVad(
-            threshold=0.5, 
-            prefix_padding_ms=300, 
-            silence_duration_ms=500
-        ),
-    )
-    conn.session.update(session=session)
-
-    # Process events
-    for evt in conn:
-        print(f"Event: {evt.type}")
-        if evt.type == ServerEventType.RESPONSE_DONE:
-            break
 ```
 
 Available Voice Options
@@ -279,12 +253,8 @@ Troubleshooting
   Verify `AZURE_VOICELIVE_ENDPOINT`, network rules, and that your credential has access.
 
 - **Missing WebSocket dependencies:**  
-  If you see:
-    WebSocket streaming features require additional dependencies.
-    Install them with:
-        pip install "azure-ai-voicelive[websockets]"   # for sync
-        pip install "azure-ai-voicelive[aiohttp]"     # for async
-        pip install "azure-ai-voicelive[all-websockets]"  # for both
+  If you see import errors, make sure you have installed the package:
+    pip install azure-ai-voicelive[aiohttp]
 
 - **Auth failures:**  
   For API key, double-check `AZURE_VOICELIVE_API_KEY`. For AAD, ensure the identity is authorized.

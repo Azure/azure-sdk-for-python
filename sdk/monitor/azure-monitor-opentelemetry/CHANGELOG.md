@@ -4,12 +4,21 @@
 
 ### Features Added
 
+- Performance Counters
+  ([#43262](https://github.com/Azure/azure-sdk-for-python/pull/43262))
+- Adding more diagnostic log message IDs
+  ([#43183](https://github.com/Azure/azure-sdk-for-python/pull/43183))
+- Enable Azure AI Project instrumentation
+    ([#43869](https://github.com/Azure/azure-sdk-for-python/pull/43869))
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 - Fix detector version
   ([#43044](https://github.com/Azure/azure-sdk-for-python/pull/43044))
+- Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
+  ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
 
 ### Other Changes
 

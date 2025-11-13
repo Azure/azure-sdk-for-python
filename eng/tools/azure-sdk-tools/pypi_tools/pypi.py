@@ -81,3 +81,21 @@ class PyPIClient:
         versions = self.get_ordered_versions(package_name)
         stable_releases = [version for version in versions if not version.is_prerelease]
         return (versions[-1], stable_releases[-1])
+
+
+def retrieve_versions_from_pypi(package_name: str) -> List[str]:
+    """
+    Retrieve all published versions on PyPI for the package.
+
+    :param str package_name: The name of the package.
+    :rtype: List[str]
+    :return: List of all version strings (sorted ascending).
+    """
+    try:
+        client = PyPIClient()
+        all_versions = client.get_ordered_versions(package_name)
+        # Return all versions as strings
+        return [str(v) for v in all_versions]
+    except Exception as ex:
+        logging.warning("Failed to retrieve PyPI data for %s: %s", package_name, ex)
+        return []

@@ -14,21 +14,24 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+       Microsoft Foundry project.
     2) CONNECTION_NAME - The name of a connection, as found in the "Connected resources" tab
-       in the Management Center of your AI Foundry project.
+       in the Management Center of your Microsoft Foundry project.
 """
 
 import os
+from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ConnectionType
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
+load_dotenv()
+
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 connection_name = os.environ["CONNECTION_NAME"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:

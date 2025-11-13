@@ -95,7 +95,6 @@ resource webRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (prov
   properties: {
     principalId: testApplicationOid
     roleDefinitionId: websiteContributor
-    principalType: 'ServicePrincipal'
   }
 }
 
@@ -105,7 +104,6 @@ resource webRole2 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (pro
   properties: {
     principalId: testApplicationOid
     roleDefinitionId: websiteContributor
-    principalType: 'ServicePrincipal'
   }
 }
 
@@ -304,7 +302,7 @@ resource kubernetesCluster 'Microsoft.ContainerService/managedClusters@2023-06-0
       {
         name: 'agentpool'
         count: 1
-        vmSize: 'Standard_D2s_v3'
+        vmSize: 'Standard_D2s_v6'
         osDiskSizeGB: 128
         osDiskType: 'Managed'
         kubeletDiskType: 'OS'

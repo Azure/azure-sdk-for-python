@@ -50,7 +50,7 @@ def main():
                         "routes": [
                             {"action": {"prefixRewrite": "/v1/api"}, "match": {"caseSensitive": True, "path": "/v1"}}
                         ],
-                        "targets": [{"containerApp": "capp-1", "revision": "rev-1", "weight": 100}],
+                        "targets": [{"containerApp": "capp-1", "revision": "capp-1--0000001"}],
                     }
                 ],
             }
@@ -59,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/HttpRouteConfig_Patch.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/HttpRouteConfig_Patch.json
 if __name__ == "__main__":
     main()

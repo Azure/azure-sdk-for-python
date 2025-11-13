@@ -7,10 +7,10 @@
   "include": [
     {
       "SplitTestConfig": {
-        "Ubuntu2404_39_split": {
+        "Ubuntu2404_314_split": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.14",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosSplit"
@@ -73,10 +73,10 @@
     },
     {
       "PyPyConfig": {
-        "ubuntu2404_pypy39_query": {
+        "ubuntu2404_pypy311_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "pypy3.9",
+          "PythonVersion": "pypy3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosQuery"
@@ -117,10 +117,10 @@
     },
     {
       "WindowsConfig": {
-        "Windows2022_39": {
+        "Windows2022_314": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.14",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosMultiRegion"

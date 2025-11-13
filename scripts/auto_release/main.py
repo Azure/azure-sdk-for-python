@@ -161,8 +161,7 @@ class CodegenTestPR:
             json.dump(input_data, file)
 
         # generate code(be careful about the order)
-        print_exec("python scripts/dev_setup.py -p azure-core")
-        print_check(f"python -m packaging_tools.sdk_generator {self.autorest_result} {self.autorest_result}")
+        print_check(f"sdk_generator {self.autorest_result} {self.autorest_result}")
 
         generate_result = self.get_autorest_result()
         self.tag_is_stable = generate_result["packages"][0]["tagIsStable"]
@@ -220,6 +219,7 @@ class CodegenTestPR:
             "azure-mgmt-resource-templatespecs",
             "azure-mgmt-resource-deploymentscripts",
             "azure-mgmt-resource-deployments",
+            "azure-mgmt-recoveryservicesbackup-passivestamp",
         ]:
             return
         if self.from_swagger:

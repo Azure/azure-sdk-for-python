@@ -33,7 +33,6 @@ dependencies = [
 generate_package = "packaging_tools.generate_package:generate_main"
 generate_sdk = "packaging_tools.generate_sdk:generate_main"
 generate_client = "packaging_tools.generate_client:generate_main"
-multiapi_combiner = "packaging_tools.multiapi_combiner:combine"
 perfstress = "devtools_testutils.perfstress_tests:run_perfstress_cmd"
 perfstressdebug = "devtools_testutils.perfstress_tests:run_perfstress_debug_cmd"
 sdk_generator = "packaging_tools.sdk_generator:generate_main"
@@ -54,9 +53,13 @@ build = ["setuptools", "pyparsing", "certifi", "cibuildwheel", "pkginfo", "build
 conda = ["beautifulsoup4"]
 systemperf = ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"]
 ghtools = ["GitPython", "PyGithub>=1.59.0", "requests>=2.0"]
+sdkgenerator = ["tox"]
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.setuptools.package-data]
+"packaging_tools.templates.packaging_files" = ["*"]
 
 [tool.setuptools.packages.find]
 where = ["."]

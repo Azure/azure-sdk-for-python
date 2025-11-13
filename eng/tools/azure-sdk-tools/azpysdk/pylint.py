@@ -3,26 +3,29 @@ import os
 import sys
 
 from typing import Optional, List
+import subprocess
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.functions import install_into_venv
+from ci_tools.functions import install_into_venv, get_pip_command
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
-from ci_tools.logging import logger
+from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "3.2.7"
 PYGITHUB_VERSION = "1.59.0"
 
+
 class pylint(Check):
     def __init__(self) -> None:
         super().__init__()
 
-    def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
-        """Register the pylint check. The pylint check installs pylint and runs pylint against the target package.
-        """
+    def register(
+        self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
+    ) -> None:
+        """Register the pylint check. The pylint check installs pylint and runs pylint against the target package."""
         parents = parent_parsers or []
         p = subparsers.add_parser("pylint", parents=parents, help="Run the pylint check")
         p.set_defaults(func=self.run)
@@ -52,7 +55,14 @@ class pylint(Check):
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
             try:
-                install_into_venv(executable, ["azure-pylint-guidelines-checker==0.5.6", "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"], package_dir)
+                install_into_venv(
+                    executable,
+                    [
+                        "azure-pylint-guidelines-checker==0.5.6",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+                    ],
+                    package_dir,
+                )
             except CalledProcessError as e:
                 logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
@@ -64,7 +74,7 @@ class pylint(Check):
                 cache_dir=None,
                 work_dir=staging_directory,
                 force_create=False,
-                package_type="wheel",
+                package_type="sdist",
                 pre_download_disabled=False,
                 python_executable=executable,
             )
@@ -80,19 +90,21 @@ class pylint(Check):
                 logger.error(f"Failed to install pylint: {e}")
                 return e.returncode
 
+            self.pip_freeze(executable)
+
             top_level_module = parsed.namespace.split(".")[0]
 
             if in_ci():
                 if not is_check_enabled(package_dir, "pylint"):
-                    logger.info(
-                        f"Package {package_name} opts-out of pylint check."
-                    )
+                    logger.info(f"Package {package_name} opts-out of pylint check.")
                     continue
 
-            rcFileLocation = os.path.join(REPO_ROOT, "eng/pylintrc") if args.next else os.path.join(REPO_ROOT, "pylintrc")
+            rcFileLocation = (
+                os.path.join(REPO_ROOT, "eng/pylintrc") if args.next else os.path.join(REPO_ROOT, "pylintrc")
+            )
 
             try:
-                results.append(check_call(
+                logger.info(
                     [
                         executable,
                         "-m",
@@ -101,19 +113,36 @@ class pylint(Check):
                         "--output-format=parseable",
                         os.path.join(package_dir, top_level_module),
                     ]
-                ))
+                )
+
+                results.append(
+                    check_call(
+                        [
+                            executable,
+                            "-m",
+                            "pylint",
+                            "--rcfile={}".format(rcFileLocation),
+                            "--output-format=parseable",
+                            os.path.join(package_dir, top_level_module),
+                        ]
+                    )
+                )
             except CalledProcessError as e:
                 logger.error(
-                    "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(package_name, e.returncode)
+                    "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                        package_name, e.returncode
+                    )
                 )
                 if args.next and in_ci():
                     from gh_tools.vnext_issue_creator import create_vnext_issue
+
                     create_vnext_issue(package_dir, "pylint")
 
                 results.append(e.returncode)
 
             if args.next and in_ci():
                 from gh_tools.vnext_issue_creator import close_vnext_issue
+
                 close_vnext_issue(package_name, "pylint")
 
         return max(results) if results else 0

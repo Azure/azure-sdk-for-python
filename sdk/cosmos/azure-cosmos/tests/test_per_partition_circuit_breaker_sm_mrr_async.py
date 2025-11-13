@@ -8,7 +8,7 @@ from typing import Dict, Any
 
 import pytest
 from azure.core.pipeline.transport._aiohttp import AioHttpTransport
-from azure.core.exceptions import ServiceResponseError
+from azure.core.exceptions import ServiceResponseError, ServiceRequestError
 
 import test_config
 from azure.cosmos import _partition_health_tracker, _location_cache
@@ -184,8 +184,8 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
 
     @pytest.mark.parametrize("read_operation, write_operation", operations())
     async def test_service_request_error_async(self, read_operation, write_operation):
-        # the region should be tried 4 times before failing over and mark the partition as unavailable
-        # the region should not be marked as unavailable
+        # the region should be tried 4 times before failing over and mark the region as unavailable
+        # the partition should not be marked as unavailable
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down())
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
         container = setup['col']
@@ -219,14 +219,14 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
 
         custom_transport.add_fault(predicate,
                                    lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
-        # The global endpoint would be used for the write operation in single region write
-        expected_uri = self.host
-        await perform_write_operation(write_operation,
-                                      container,
-                                      fault_injection_container,
-                                      str(uuid.uuid4()),
-                                      PK_VALUE,
-                                      expected_uri)
+        # for single write region account if regional endpoint is down there will be write unavailability
+        with pytest.raises(ServiceRequestError):
+            await perform_write_operation(write_operation,
+                                          container,
+                                          fault_injection_container,
+                                          str(uuid.uuid4()),
+                                          PK_VALUE,
+                                          expected_uri)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
         validate_unhealthy_partitions(global_endpoint_manager, 0)

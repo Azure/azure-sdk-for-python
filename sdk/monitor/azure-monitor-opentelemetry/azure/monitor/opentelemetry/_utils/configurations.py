@@ -33,6 +33,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_TRACING_ARG,
     DISTRO_VERSION_ARG,
     ENABLE_LIVE_METRICS_ARG,
+    ENABLE_PERFORMANCE_COUNTERS_ARG,
     INSTRUMENTATION_OPTIONS_ARG,
     LOGGER_NAME_ARG,
     LOGGER_NAME_ENV_ARG,
@@ -76,6 +77,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_instrumentation_options(configurations)
     _default_span_processors(configurations)
     _default_enable_live_metrics(configurations)
+    _default_enable_performance_counters(configurations)
     _default_views(configurations)
 
     return configurations
@@ -218,6 +220,10 @@ def _default_span_processors(configurations):
 
 def _default_enable_live_metrics(configurations):
     configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)
+
+
+def _default_enable_performance_counters(configurations):
+    configurations.setdefault(ENABLE_PERFORMANCE_COUNTERS_ARG, True)
 
 
 def _default_views(configurations):

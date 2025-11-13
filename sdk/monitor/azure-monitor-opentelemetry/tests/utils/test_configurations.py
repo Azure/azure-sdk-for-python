@@ -70,6 +70,7 @@ class TestConfigurations(TestCase):
                 }
             },
             enable_live_metrics=True,
+            enable_performance_counters=False,
             views=["test_view"],
             logger_name="test_logger",
             span_processors=["test_processor"],
@@ -102,6 +103,7 @@ class TestConfigurations(TestCase):
         )
         self.assertEqual(configurations["storage_directory"], "test_directory")
         self.assertEqual(configurations["enable_live_metrics"], True)
+        self.assertEqual(configurations["enable_performance_counters"], False)
         self.assertEqual(configurations["views"], ["test_view"])
         self.assertEqual(configurations["logger_name"], "test_logger")
         self.assertEqual(configurations["span_processors"], ["test_processor"])
@@ -135,6 +137,7 @@ class TestConfigurations(TestCase):
         self.assertTrue("credential" not in configurations)
         self.assertTrue("storage_directory" not in configurations)
         self.assertEqual(configurations["enable_live_metrics"], False)
+        self.assertEqual(configurations["enable_performance_counters"], True)
         self.assertEqual(configurations["logger_name"], "")
         self.assertEqual(configurations["span_processors"], [])
         self.assertEqual(configurations["views"], [])

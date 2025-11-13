@@ -15,7 +15,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, SupportedLanguages
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._constants import TokenScope
 

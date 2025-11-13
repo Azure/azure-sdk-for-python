@@ -11,6 +11,7 @@
         "azure.mgmt.iothub.models.CertificateVerificationDescription": null,
         "azure.mgmt.iothub.models.CertificateWithNonceDescription": null,
         "azure.mgmt.iothub.models.CloudToDeviceProperties": null,
+        "azure.mgmt.iothub.models.DeviceRegistry": null,
         "azure.mgmt.iothub.models.EncryptionPropertiesDescription": null,
         "azure.mgmt.iothub.models.EndpointHealthData": null,
         "azure.mgmt.iothub.models.EndpointHealthDataListResult": null,

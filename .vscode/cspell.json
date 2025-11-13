@@ -939,11 +939,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [
-        "qnas",
-        "qnamaker",
-        "ADTO"
-      ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram" ],
       "caseSensitive": false
     },
     {
@@ -1218,7 +1214,12 @@
         "nbconvert",
         "rollupby",
         "milli",
-        "resourceid"
+        "resourceid",
+        "Exceps",
+        "processiorate",
+        "processiobytessec",
+        "iowait",
+        "softirq"
       ]
     },
     {
@@ -1238,7 +1239,8 @@
         "psutil",
         "psycopg",
         "uninstrument",
-        "uninstrumented"
+        "uninstrumented",
+        "scputimes"
       ]
     },
     {
@@ -1248,6 +1250,8 @@
         "ikey",
         "msecs",
         "mycontainer",
+        "pclp",
+        "pcsp",
         "semconv",
         "updown",
         "uvicorn"
@@ -1713,7 +1717,26 @@
         "getopenidmetadata",
         "getopenidmetadataasync",
         "aikcert",
-        "shareduks"
+        "shareduks",
+        "PKIX",
+        "tcbbaselines",
+        "Iiwg",
+        "Ijog",
+        "Ghvc",
+        "MCIs",
+        "Mdxl",
+        "Dxxf",
+        "PYSN",
+        "Aiandr",
+        "Ijoic",
+        "Jjcn",
+        "QLTI",
+        "Hhnc",
+        "Mkxzellr",
+        "Sjhual",
+        "Inki",
+        "NGZZN",
+        "Igog",
       ]
     },
     {
@@ -1908,6 +1931,14 @@
         "moduleid",
         "onvif",
         "Onvif"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/**",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify"
       ]
     },
     {

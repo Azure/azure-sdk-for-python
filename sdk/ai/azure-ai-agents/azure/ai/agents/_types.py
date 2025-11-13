@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,12 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Literal, TYPE_CHECKING, Union
+from typing import Literal, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
 MCPRequiredApproval = Union[str, Literal["never"], Literal["always"], "_models.MCPApprovalPerTool"]
-MessageInputContent = Union[str, List["_models.MessageInputContentBlock"]]
+MessageInputContent = Union[str, list["_models.MessageInputContentBlock"]]
 MessageAttachmentToolDefinition = Union["_models.CodeInterpreterToolDefinition", "_models.FileSearchToolDefinition"]
 AgentsToolChoiceOption = Union[str, str, "_models.AgentsToolChoiceOptionMode", "_models.AgentsNamedToolChoice"]
 AgentsResponseFormatOption = Union[

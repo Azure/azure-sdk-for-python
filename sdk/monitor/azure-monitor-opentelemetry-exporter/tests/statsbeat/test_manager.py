@@ -514,6 +514,10 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertIsNone(self.manager._config)
         mock_meter_provider.shutdown.assert_called_once()
         mock_set_shutdown.assert_called_once_with(True)
+        
+        # Singleton is not cleared upon shutdown
+        manager2 = StatsbeatManager()
+        self.assertIs(self.manager, manager2)
 
     @patch('azure.monitor.opentelemetry.exporter.statsbeat._state.set_statsbeat_shutdown')
     def test_shutdown_meter_provider_exception(self, mock_set_shutdown):
@@ -628,14 +632,16 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_meter_provider = Mock()
         self.manager._meter_provider = mock_meter_provider
         self.manager._metrics = Mock()
-        self.manager._config = Mock()
+        config_mock = Mock()
+        self.manager._config = config_mock
         
         self.manager._cleanup(shutdown_meter_provider=True)
         
         self.assertFalse(self.manager._initialized)
         self.assertIsNone(self.manager._meter_provider)
         self.assertIsNone(self.manager._metrics)
-        self.assertIsNone(self.manager._config)
+        # Config is intact for potential re-initialization
+        self.assertEqual(self.manager._config, config_mock)
         mock_meter_provider.shutdown.assert_called_once()
 
     def test_cleanup_without_shutdown(self):
@@ -645,14 +651,16 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_meter_provider = Mock()
         self.manager._meter_provider = mock_meter_provider
         self.manager._metrics = Mock()
-        self.manager._config = Mock()
+        config_mock = Mock()
+        self.manager._config = config_mock
         
         self.manager._cleanup(shutdown_meter_provider=False)
         
         self.assertFalse(self.manager._initialized)
         self.assertIsNone(self.manager._meter_provider)
         self.assertIsNone(self.manager._metrics)
-        self.assertIsNone(self.manager._config)
+        # Config is intact for potential re-initialization
+        self.assertEqual(self.manager._config, config_mock)
         mock_meter_provider.shutdown.assert_not_called()
 
     def test_cleanup_meter_provider_exception(self):
@@ -663,7 +671,8 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_meter_provider.shutdown.side_effect = Exception("Cleanup error")
         self.manager._meter_provider = mock_meter_provider
         self.manager._metrics = Mock()
-        self.manager._config = Mock()
+        config_mock = Mock()
+        self.manager._config = config_mock
         
         # Should not raise exception
         self.manager._cleanup(shutdown_meter_provider=True)
@@ -671,6 +680,6 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
         self.assertIsNone(self.manager._meter_provider)
         self.assertIsNone(self.manager._metrics)
-        self.assertIsNone(self.manager._config)
+        # Config is intact for potential re-initialization
+        self.assertEqual(self.manager._config, config_mock)
         mock_meter_provider.shutdown.assert_called_once()
-    

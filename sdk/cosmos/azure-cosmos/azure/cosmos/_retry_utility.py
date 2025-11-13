@@ -30,7 +30,7 @@ from azure.core.exceptions import AzureError, ClientAuthenticationError, Service
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import _container_recreate_retry_policy, _database_account_retry_policy
+from . import _container_recreate_retry_policy, _health_check_retry_policy
 from . import _default_retry_policy
 from . import _endpoint_discovery_retry_policy
 from . import _gone_retry_policy
@@ -71,8 +71,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
     )
-    database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
-        client.connection_policy
+    health_check_retry_policy = _health_check_retry_policy.HealthCheckRetryPolicy(
+        client.connection_policy, *args
     )
     resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
         client.connection_policy.RetryOptions.MaxRetryAttemptCount,
@@ -137,8 +137,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     not result[0]['Offers'] and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
-                response = exceptions.InternalException(status_code=StatusCodes.NOT_FOUND,
-                                                        headers={HttpHeaders.SubStatus:
+                response = exceptions._InternalCosmosException(status_code=StatusCodes.NOT_FOUND,
+                                                               headers={HttpHeaders.SubStatus:
                                                                      SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND})
                 e_offer = exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
@@ -162,7 +162,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 # update session token for relevant operations
                 client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
-                retry_policy = database_account_retry_policy
+                retry_policy = health_check_retry_policy
             # Re-assign retry policy based on error code
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
                     [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
@@ -235,16 +235,14 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
-                if args:
-                    global_endpoint_manager.record_failure(args[0])
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
             if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 if args:
@@ -297,9 +295,9 @@ def _handle_service_response_retries(request, client, response_retry_policy, exc
         raise exception
 
 def is_write_retryable(request_params, client):
-    return (request_params.retry_write or
-            client.connection_policy.RetryNonIdempotentWrites and
-            not request_params.operation_type == _OperationType.Patch)
+    return (request_params.retry_write > 0 or
+            (client.connection_policy.RetryNonIdempotentWrites > 0 and
+            not request_params.operation_type == _OperationType.Patch))
 
 def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
     if absolute is not None:

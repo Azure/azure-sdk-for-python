@@ -20,11 +20,11 @@ class TestHDInsightManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_cluster(self, resource_group):
+    def test_private_link_resources_list_by_cluster(self, resource_group):
         response = self.client.private_link_resources.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestHDInsightManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_link_resources_get(self, resource_group):
         response = self.client.private_link_resources.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             private_link_resource_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself

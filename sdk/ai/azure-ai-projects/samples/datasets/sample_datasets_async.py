@@ -15,11 +15,11 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity aiohttp
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+       Microsoft Foundry project.
     2) CONNECTION_NAME - Required. The name of the Azure Storage Account connection to use for uploading files.
     3) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     4) DATASET_VERSION_1 - Optional. The first version of the Dataset to create and use in this sample.
@@ -30,9 +30,12 @@ USAGE:
 import asyncio
 import os
 import re
+from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import DatasetVersion
+
+load_dotenv()
 
 # Construct the paths to the data folder and data file used in this sample
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -42,7 +45,7 @@ data_file = os.path.join(data_folder, "data_file1.txt")
 
 async def main() -> None:
 
-    endpoint = os.environ["PROJECT_ENDPOINT"]
+    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
     connection_name = os.environ["CONNECTION_NAME"]
     dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
     dataset_version_1 = os.environ.get("DATASET_VERSION_1", "1.0")

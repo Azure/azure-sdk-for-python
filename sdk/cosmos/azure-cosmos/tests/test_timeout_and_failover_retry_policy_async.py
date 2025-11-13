@@ -105,8 +105,8 @@ class TestTimeoutRetryPolicyAsync:
         self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
         fake_endpoint = "other-region"
-        regional_routing_context = RegionalRoutingContext(self.host, self.host)
-        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint, fake_endpoint)
+        regional_routing_context = RegionalRoutingContext(self.host)
+        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint)
         region_1 = "East US"
         region_2 = "West US"
         original_location_cache.account_read_locations = [region_1, region_2]

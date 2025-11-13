@@ -10,6 +10,7 @@ from ci_tools.versioning.version_shared import set_version_py, set_dev_classifie
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 from ci_tools.logging import logger, configure_logging, run_logged
 
+
 def build_package() -> None:
     parser = argparse.ArgumentParser(
         description="""This is a secondary entrypoint for the "build" action. This command is used to install dependencies and build a specific package within the azure-sdk-for-python repository.""",
@@ -53,14 +54,8 @@ def build_package() -> None:
     if args.package_type == "whl":
         enable_sdist = False
 
-    build_packages(
-        [target_package.folder],
-        artifact_directory,
-        False,
-        DEFAULT_BUILD_ID,
-        enable_wheel,
-        enable_sdist
-    )
+    build_packages([target_package.folder], artifact_directory, False, DEFAULT_BUILD_ID, enable_wheel, enable_sdist)
+
 
 def build() -> None:
     parser = argparse.ArgumentParser(
@@ -166,7 +161,7 @@ def build() -> None:
         target_dir,
         args.package_filter_string,
         filter_type="Build",
-        compatibility_filter=True,
+        compatibility_filter=False,
         include_inactive=args.inactive,
     )
 
@@ -174,14 +169,7 @@ def build() -> None:
 
     build_id = format_build_id(args.build_id or DEFAULT_BUILD_ID)
 
-    build_packages(
-        targeted_packages,
-        artifact_directory,
-        str_to_bool(args.is_dev_build),
-        build_id,
-        True,
-        True
-    )
+    build_packages(targeted_packages, artifact_directory, str_to_bool(args.is_dev_build), build_id, True, True)
 
 
 def cleanup_build_artifacts(build_folder):
@@ -203,7 +191,7 @@ def build_packages(
     is_dev_build: bool = False,
     build_id: str = "",
     enable_wheel: bool = True,
-    enable_sdist: bool = True
+    enable_sdist: bool = True,
 ):
     logger.info(f"Generating {targeted_packages} using python{sys.version}")
 
@@ -251,15 +239,49 @@ def create_package(
         # given the additional requirements of the package, we should install them in the current environment before attempting to build the package
         # we assume the presence of `wheel`, `build`, `setuptools>=61.0.0`
         pip_output = get_pip_list_output(sys.executable)
-        necessary_install_requirements = [req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()]
-        run_logged([sys.executable, "-m", "pip", "install", *necessary_install_requirements], cwd=setup_parsed.folder, check=False, should_stream_to_console=should_log_build_output)
-        run_logged([sys.executable, "-m", "build", f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}", "-o", dist], cwd=setup_parsed.folder, check=True, should_stream_to_console=should_log_build_output)
+        necessary_install_requirements = [
+            req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()
+        ]
+        run_logged(
+            [sys.executable, "-m", "pip", "install", *necessary_install_requirements],
+            cwd=setup_parsed.folder,
+            check=False,
+            should_stream_to_console=should_log_build_output,
+        )
+        run_logged(
+            [
+                sys.executable,
+                "-m",
+                "build",
+                f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}",
+                "-o",
+                dist,
+            ],
+            cwd=setup_parsed.folder,
+            check=True,
+            should_stream_to_console=should_log_build_output,
+        )
     else:
         if enable_wheel:
             if setup_parsed.ext_modules:
-                run_logged([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True, should_stream_to_console=should_log_build_output)
+                run_logged(
+                    [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
+                    cwd=setup_parsed.folder,
+                    check=True,
+                    should_stream_to_console=should_log_build_output,
+                )
             else:
-                run_logged([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_parsed.folder, check=True, should_stream_to_console=should_log_build_output)
+                run_logged(
+                    [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
+                    cwd=setup_parsed.folder,
+                    check=True,
+                    should_stream_to_console=should_log_build_output,
+                )
 
         if enable_sdist:
-            run_logged([sys.executable, "setup.py", "sdist", "-d", dist], cwd=setup_parsed.folder, check=True, should_stream_to_console=should_log_build_output)
+            run_logged(
+                [sys.executable, "setup.py", "sdist", "-d", dist],
+                cwd=setup_parsed.folder,
+                check=True,
+                should_stream_to_console=should_log_build_output,
+            )

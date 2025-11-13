@@ -15,11 +15,11 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+       Microsoft Foundry project.
     2) CONNECTION_NAME - Required. The name of the Azure Storage Account connection to use for uploading files.
     3) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     4) DATASET_VERSION_1 - Optional. The first version of the Dataset to create and use in this sample.
@@ -29,11 +29,14 @@ USAGE:
 
 import os
 import re
+from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import DatasetVersion
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
+load_dotenv()
+
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 connection_name = os.environ["CONNECTION_NAME"]
 dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
 dataset_version_1 = os.environ.get("DATASET_VERSION_1", "1.0")

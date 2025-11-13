@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -79,53 +79,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             try:
                 batch_error = err.errors.pop()
                 if code:
-                    # self.assertEqual(batch_error.error.code, code)
                     assert batch_error.error.code == code
             except IndexError:
                 pytest.fail("Inner BatchErrorException expected but not exist")
         except Exception as err:
             pytest.fail("Expected CreateTasksError, instead got: {!r}".format(err))
-    
-    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
-    @client_setup
-    @recorded_by_proxy_async
-    async def test_batch_certificates(self, client: BatchClient, **kwargs):
-        # Test Add Certificate
-        certificate = models.BatchCertificate(
-            thumbprint="cff2ab63c8c955aaf71989efa641b906558d9fb7",
-            thumbprint_algorithm="sha1",
-            data="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",
-            certificate_format=models.BatchCertificateFormat.PFX,
-            password="nodesdk",
-        )
-
-        response = await wrap_result(client.create_certificate(certificate))
-        assert response is None
-
-        # Test List Certificates
-        certs = await wrap_list_result(client.list_certificates())
-        test_cert = [c for c in certs if c.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"]
-        assert len(test_cert) == 1
-
-        # Test Get Certificate
-        cert = await wrap_result(client.get_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
-        assert cert.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"
-        assert cert.thumbprint_algorithm == "sha1"
-        assert cert.delete_certificate_error is None
-
-        # Test Cancel Certificate Delete
-        await self.assertBatchError(
-            "CertificateStateActive",
-            client.cancel_certificate_deletion,
-            "sha1",
-            "cff2ab63c8c955aaf71989efa641b906558d9fb7",
-        )
-
-        # Test Delete Certificate
-        response = await wrap_result(client.delete_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
-        assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -142,11 +100,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 elevation_level=models.ElevationLevel.ADMIN,
             ),
         ]
-        test_iaas_pool = models.BatchPoolCreateContent(
+        test_iaas_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_iaas_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
+                image_reference=models.BatchVmImageReference(
                     publisher="MicrosoftWindowsServer",
                     offer="WindowsServer",
                     sku="2016-Datacenter-smalldisk",
@@ -181,13 +139,15 @@ class TestBatch(AzureMgmtRecordedTestCase):
             "/virtualNetworks/vnet1"
             "/subnets/subnet1"
         )
-        test_network_pool = models.BatchPoolCreateContent(
+        test_network_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
             vm_size=DEFAULT_VM_SIZE,
             network_configuration=network_config,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
-                node_agent_sku_id="batch.node.ubuntu 18.04",
+                image_reference=models.BatchVmImageReference(
+                    publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+                ),
+                node_agent_sku_id="batch.node.ubuntu 22.04",
             ),
         )
         await self.assertBatchError(
@@ -197,11 +157,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             timeout=45,
         )
 
-        test_image_pool = models.BatchPoolCreateContent(
+        test_image_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_image_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
+                image_reference=models.BatchVmImageReference(
                     virtual_machine_image_id="/subscriptions/00000000-0000-0000-0000-000000000000"
                     "/resourceGroups/test"
                     "/providers/Microsoft.Compute"
@@ -209,19 +169,21 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     "/images/FakeImage"
                     "/versions/version"
                 ),
-                node_agent_sku_id="batch.node.ubuntu 18.04",
+                node_agent_sku_id="batch.node.ubuntu 22.04",
             ),
         )
         await self.assertBatchError("InvalidPropertyValue", client.create_pool, pool=test_image_pool, timeout=45)
 
         # Test Create Pool with Data Disk
         data_disk = models.DataDisk(logical_unit_number=1, disk_size_gb=50)
-        test_disk_pool = models.BatchPoolCreateContent(
+        test_disk_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_disk_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
-                node_agent_sku_id="batch.node.ubuntu 18.04",
+                image_reference=models.BatchVmImageReference(
+                    publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+                ),
+                node_agent_sku_id="batch.node.ubuntu 22.04",
                 data_disks=[data_disk],
             ),
             target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
@@ -236,15 +198,17 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert disk_pool.target_node_communication_mode == models.BatchNodeCommunicationMode.CLASSIC
 
         # Test Create Pool with Azure Disk Encryption
-        test_ade_pool = models.BatchPoolCreateContent(
+        test_ade_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_ade_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                image_reference=models.BatchVmImageReference(
+                    publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+                ),
                 disk_encryption_configuration=models.DiskEncryptionConfiguration(
                     targets=[models.DiskEncryptionTarget.TEMPORARY_DISK]
                 ),
-                node_agent_sku_id="batch.node.ubuntu 18.04",
+                node_agent_sku_id="batch.node.ubuntu 22.04",
             ),
         )
         response = await wrap_result(client.create_pool(test_ade_pool))
@@ -283,11 +247,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_batch_create_pool_with_blobfuse_mount(self, client: BatchClient, **kwargs):
         # Test Create Iaas Pool
-        test_iaas_pool = models.BatchPoolCreateContent(
+        test_iaas_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_iaas_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
+                image_reference=models.BatchVmImageReference(
                     publisher="MicrosoftWindowsServer",
                     offer="WindowsServer",
                     sku="2016-Datacenter-smalldisk",
@@ -322,12 +286,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @client_setup
     @recorded_by_proxy_async
     async def test_batch_update_pools(self, client: BatchClient, **kwargs):
-        test_paas_pool = models.BatchPoolCreateContent(
+        test_paas_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_paas_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                node_agent_sku_id="batch.node.ubuntu 18.04",
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                node_agent_sku_id="batch.node.ubuntu 22.04",
+                image_reference=models.BatchVmImageReference(
+                    publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+                ),
             ),
             start_task=models.BatchStartTask(
                 command_line='cmd.exe /c "echo hello world"',
@@ -342,17 +308,17 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Update Pool Options
-        params = models.BatchPoolReplaceContent(
+        params = models.BatchPoolReplaceOptions(
             certificate_references=[],
             application_package_references=[],
-            metadata=[models.MetadataItem(name="foo", value="bar")],
+            metadata=[models.BatchMetadataItem(name="foo", value="bar")],
             target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
         response = await wrap_result(client.replace_pool_properties(test_paas_pool.id, params))
         assert response is None
 
         # Test Patch Pool Options
-        params = models.BatchPoolUpdateContent(metadata=[models.MetadataItem(name="foo2", value="bar2")])
+        params = models.BatchPoolUpdateOptions(metadata=[models.BatchMetadataItem(name="foo2", value="bar2")])
         response = await wrap_result(client.update_pool(test_paas_pool.id, params))
         assert response is None
 
@@ -366,7 +332,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.ACTIVE
         assert pool.allocation_state == models.AllocationState.STEADY
-        # assert pool.vm_configuration.node_agent_sku_id == "batch.node.ubuntu 18.04"
         assert pool.vm_size == DEFAULT_VM_SIZE
         assert pool.start_task is None
         assert pool.metadata is not None
@@ -382,9 +347,16 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.allocation_state is None
         assert pool.vm_size is None
 
-        # Test Delete Pool
-        response = await wrap_result(client.delete_pool(test_paas_pool.id))
-        assert response is None
+        poller = await wrap_result(client.begin_delete_pool(pool_id=test_paas_pool.id, polling_interval=5))
+        assert poller is not None
+
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -399,7 +371,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await wrap_result(
             client.enable_pool_auto_scale(
                 batch_pool.name,
-                models.BatchPoolEnableAutoScaleContent(
+                models.BatchPoolEnableAutoScaleOptions(
                     auto_scale_formula="$TargetDedicatedNodes=2",
                     auto_scale_evaluation_interval=interval,
                 ),
@@ -412,7 +384,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         result = await wrap_result(
             client.evaluate_pool_auto_scale(
                 batch_pool.name,
-                models.BatchPoolEvaluateAutoScaleContent(auto_scale_formula="$TargetDedicatedNodes=3"),
+                models.BatchPoolEvaluateAutoScaleOptions(auto_scale_formula="$TargetDedicatedNodes=3"),
             )
         )
         assert isinstance(result, models.AutoScaleRun)
@@ -431,13 +403,24 @@ class TestBatch(AzureMgmtRecordedTestCase):
         while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
             pool = await wrap_result(client.get_pool(batch_pool.name))
-        params = models.BatchPoolResizeContent(target_dedicated_nodes=0, target_low_priority_nodes=2)
-        response = await wrap_result(client.resize_pool(batch_pool.name, params))
-        assert response is None
+        params = models.BatchPoolResizeOptions(target_dedicated_nodes=0, target_low_priority_nodes=2)
 
-        # Test Stop Pool Resize
-        response = await wrap_result(client.stop_pool_resize(batch_pool.name))
-        assert response is None
+        # LRO for resizing
+        poller = await wrap_result(client.begin_resize_pool(batch_pool.name, params, polling_interval=5))
+        assert poller is not None
+
+        poller = await wrap_result(client.begin_stop_pool_resize(batch_pool.name, polling_interval=5))
+        assert poller is not None
+
+        # Wait for LRO completion
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
         pool = await wrap_result(client.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
@@ -454,13 +437,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         job_spec = models.BatchJobSpecification(
             pool_info=models.BatchPoolInfo(pool_id="pool_id"),
             constraints=models.BatchJobConstraints(max_task_retry_count=2),
-            on_all_tasks_complete=models.OnAllBatchTasksComplete.TERMINATE_JOB,
+            all_tasks_complete_mode=models.BatchAllTasksCompleteMode.TERMINATE_JOB,
         )
         schedule = models.BatchJobScheduleConfiguration(
             start_window=datetime.timedelta(hours=1),
             recurrence_interval=datetime.timedelta(days=1),
         )
-        params = models.BatchJobScheduleCreateContent(id=schedule_id, schedule=schedule, job_specification=job_spec)
+        params = models.BatchJobScheduleCreateOptions(id=schedule_id, schedule=schedule, job_specification=job_spec)
         response = await wrap_result(client.create_job_schedule(params))
         assert response is None
 
@@ -499,17 +482,33 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Patch Job Schedule
         schedule = models.BatchJobScheduleConfiguration(recurrence_interval=datetime.timedelta(hours=5))
-        params = models.BatchJobScheduleUpdateContent(schedule=schedule)
+        params = models.BatchJobScheduleUpdateOptions(schedule=schedule)
         response = await wrap_result(client.update_job_schedule(schedule_id, params))
         assert response is None
 
-        # Test Terminate Job Schedule
-        response = await wrap_result(client.terminate_job_schedule(schedule_id))
-        assert response is None
+        # Test Terminate Job Schedule using LRO
+        poller = await wrap_result(client.begin_terminate_job_schedule(job_schedule_id=schedule_id, polling_interval=5))
+        assert poller is not None
 
-        # Test Delete Job Schedule
-        response = await wrap_result(client.delete_job_schedule(schedule_id))
-        assert response is None
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
+        # Test Delete Job using LRO
+        poller = await wrap_result(client.begin_delete_job_schedule(job_schedule_id=schedule_id, polling_interval=5))
+        assert poller is not None
+
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -521,7 +520,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         network_config = models.NetworkConfiguration(
             endpoint_configuration=models.BatchPoolEndpointConfiguration(
                 inbound_nat_pools=[
-                    models.InboundNatPool(
+                    models.BatchInboundNatPool(
                         name="TestEndpointConfig",
                         protocol=models.InboundEndpointProtocol.UDP,
                         backend_port=64444,
@@ -539,10 +538,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
             )
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
-            node_agent_sku_id="batch.node.ubuntu 18.04",
-            image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+            node_agent_sku_id="batch.node.ubuntu 22.04",
+            image_reference=models.BatchVmImageReference(
+                publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+            ),
         )
-        pool = models.BatchPoolCreateContent(
+        pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
             target_dedicated_nodes=1,
             vm_size=DEFAULT_VM_SIZE,
@@ -590,7 +591,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert node.node_agent_info.version is not None
 
         # Test Upload Log
-        config = models.UploadBatchServiceLogsContent(
+        config = models.UploadBatchServiceLogsOptions(
             container_url="https://computecontainer.blob.core.windows.net/",
             start_time=datetime.datetime.utcnow() - datetime.timedelta(minutes=6),
         )
@@ -609,8 +610,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.disable_node_scheduling(
                 batch_pool.name,
                 nodes[0].id,
-                models.BatchNodeDisableSchedulingContent(
-                    node_disable_scheduling_option=models.BatchNodeDisableSchedulingOption.terminate
+                models.BatchNodeDisableSchedulingOptions(
+                    node_disable_scheduling_option=models.BatchNodeDisableSchedulingOption.TERMINATE
                 ),
             )
         )
@@ -620,15 +621,24 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await wrap_result(client.enable_node_scheduling(batch_pool.name, nodes[0].id))
         assert response is None
 
-        # Test Reboot Node
-        response = await wrap_result(
-            client.reboot_node(
+        # Test LRO reboot node
+        poller = await wrap_result(
+            client.begin_reboot_node(
                 batch_pool.name,
                 nodes[0].id,
-                models.BatchNodeRebootContent(node_reboot_option=models.BatchNodeRebootOption.TERMINATE),
+                models.BatchNodeRebootOptions(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
+                polling_interval=5,
             )
         )
-        assert response is None
+        assert poller is not None
+
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
 
         # Test Reimage Node
         # TODO: check to see if reimage is removed from service
@@ -637,13 +647,21 @@ class TestBatch(AzureMgmtRecordedTestCase):
         #     client.reimage_node,
         #     batch_pool.name,
         #     nodes[1].id,
-        #     models.BatchNodeReimageParameters(node_reimage_option=models.BatchNodeReimageOption.terminate),
+        #     models.BatchNodeReimageOptions(node_reimage_option=models.BatchNodeReimageOption.TERMINATE),
         # )
 
         # Test Remove Nodes
-        options = models.BatchNodeRemoveContent(node_list=[n.id for n in nodes])
-        response = await wrap_result(client.remove_nodes(batch_pool.name, options))
-        assert response is None
+        options = models.BatchNodeRemoveOptions(node_ids=[n.id for n in nodes])
+        poller = await wrap_result(client.begin_remove_nodes(batch_pool.name, options))
+        assert poller is not None
+
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -655,7 +673,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         network_config = models.NetworkConfiguration(
             endpoint_configuration=models.BatchPoolEndpointConfiguration(
                 inbound_nat_pools=[
-                    models.InboundNatPool(
+                    models.BatchInboundNatPool(
                         name="TestEndpointConfig",
                         protocol=models.InboundEndpointProtocol.UDP,
                         backend_port=64444,
@@ -680,11 +698,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
             auto_upgrade_minor_version=True,
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
-            node_agent_sku_id="batch.node.ubuntu 18.04",
+            node_agent_sku_id="batch.node.ubuntu 22.04",
             extensions=[extension],
-            image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+            image_reference=models.BatchVmImageReference(
+                publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+            ),
         )
-        batch_pool = models.BatchPoolCreateContent(
+        batch_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
             target_dedicated_nodes=1,
             vm_size=DEFAULT_VM_SIZE,
@@ -731,12 +751,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Add User
         user_name = "BatchPythonSDKUser"
         nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
-        user = models.BatchNodeUserCreateContent(name=user_name, password="secret", is_admin=False)
+        user = models.BatchNodeUserCreateOptions(name=user_name, password="secret", is_admin=False)
+        assert nodes[0].id is not None  # TODO: typespec fix for id possibly None
         response = await wrap_result(client.create_node_user(batch_pool.name, nodes[0].id, user))
         assert response is None
 
         # Test Update User
-        user = models.BatchNodeUserUpdateContent(password="liilef#$DdRGSa_ewkjh")
+        user = models.BatchNodeUserUpdateOptions(password="liilef#$DdRGSa_ewkjh")
         response = await wrap_result(client.replace_node_user(batch_pool.name, nodes[0].id, user_name, user))
         assert response is None
 
@@ -795,7 +816,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         node = nodes[0].id
         assert node is not None
         task_id = "test_task"
-        task_param = models.BatchTaskCreateContent(id=task_id, command_line='cmd /c "echo hello world"')
+        task_param = models.BatchTaskCreateOptions(id=task_id, command_line='cmd /c "echo hello world"')
         response = await wrap_result(client.create_task(batch_job.id, task_param))
         assert response is None
         task = await wrap_result(client.get_task(batch_job.id, task_id))
@@ -814,7 +835,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         else:
             raise ValueError("File path is None")
         assert props.content_length is not None
-        # assert props.content_type is not None # add content-type to typespec
+        # assert props.content_type is not None # TODO: add content-type to typespec
 
         # Test Get File from Batch Node
         file_length = 0
@@ -827,7 +848,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Delete File from Batch Node
         response = await wrap_result(
             client.delete_node_file(batch_pool.name, node, only_files[1].name)
-        )  # TODO: maybe delete stderr to use in the next test for content_length (against "hello world")
+        )  # TODO: delete stderr to use in test for content_length (against "hello world")
         assert response is None
 
         # Test List Files from Task
@@ -843,7 +864,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         else:
             raise ValueError("File path is None")
         assert props.content_length is not None
-        # assert props.content_type is not None # add content-type to typespec
+        # assert props.content_type is not None # TODO: add content-type to typespec
 
         # Test Get File from Task
         file_length = 0
@@ -859,7 +880,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @JobPreparer(on_task_failure=models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION)
+    @JobPreparer(task_failure_mode=models.BatchTaskFailureMode.PERFORM_EXIT_OPTIONS_JOB_ACTION)
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
@@ -870,19 +891,19 @@ class TestBatch(AzureMgmtRecordedTestCase):
             exit_codes=[
                 models.ExitCodeMapping(
                     code=1,
-                    exit_options=models.ExitOptions(job_action=models.BatchJobAction.TERMINATE),
+                    exit_options=models.ExitOptions(job_action=models.BatchJobActionKind.TERMINATE),
                 )
             ],
             exit_code_ranges=[
                 models.ExitCodeRangeMapping(
                     start=2,
                     end=4,
-                    exit_options=models.ExitOptions(job_action=models.BatchJobAction.DISABLE),
+                    exit_options=models.ExitOptions(job_action=models.BatchJobActionKind.DISABLE),
                 )
             ],
-            default=models.ExitOptions(job_action=models.BatchJobAction.NONE),
+            default=models.ExitOptions(job_action=models.BatchJobActionKind.NONE),
         )
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task1_"),
             command_line='cmd /c "echo hello world"',
             exit_conditions=exit_conditions,
@@ -898,10 +919,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert isinstance(task, models.BatchTask)
         assert task.exit_conditions is not None
         assert task.exit_conditions.default is not None
-        assert task.exit_conditions.default.job_action == models.BatchJobAction.NONE
+        assert task.exit_conditions.default.job_action == models.BatchJobActionKind.NONE
         assert task.exit_conditions.exit_codes is not None
         assert task.exit_conditions.exit_codes[0].code == 1
-        assert task.exit_conditions.exit_codes[0].exit_options.job_action == models.BatchJobAction.TERMINATE
+        assert task.exit_conditions.exit_codes[0].exit_options.job_action == models.BatchJobActionKind.TERMINATE
 
         # Test Create Task with Output Files
         container_url = "https://test.blob.core.windows.net:443/test-container"
@@ -929,7 +950,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
             ),
         ]
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task2_"),
             command_line='cmd /c "echo hello world"',
             output_files=outputs,
@@ -943,7 +964,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         auto_user = models.AutoUserSpecification(
             scope=models.AutoUserScope.TASK, elevation_level=models.ElevationLevel.ADMIN
         )
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task3_"),
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(auto_user=auto_user),
@@ -955,7 +976,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert task.user_identity.auto_user.elevation_level == models.ElevationLevel.ADMIN
 
         # Test Create Task with Container Settings
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task5_"),
             command_line='cmd /c "echo hello world"',
             container_settings=models.BatchTaskContainerSettings(
@@ -970,7 +991,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert task.container_settings.registry.username == "username"
 
         # Test Create Task with Run-As-User
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task6_"),
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(username="task-user"),
@@ -984,15 +1005,16 @@ class TestBatch(AzureMgmtRecordedTestCase):
         tasks = []
         for i in range(7, 10):
             tasks.append(
-                models.BatchTaskCreateContent(
+                models.BatchTaskCreateOptions(
                     id=self.get_resource_name("batch_task{}_".format(i)),
                     command_line='cmd /c "echo hello world"',
                 )
             )
         result = await wrap_result(client.create_tasks(batch_job.id, task_collection=tasks))
-        assert isinstance(result, models.BatchTaskAddCollectionResult)
-        assert len(result.value) == 3
-        assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
+        assert isinstance(result, models.BatchCreateTaskCollectionResult)
+        assert result.values_property is not None
+        assert len(result.values_property) == 3
+        assert result.values_property[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
 
         # Test List Tasks
         tasks = list(await wrap_list_result(client.list_tasks(batch_job.id)))
@@ -1045,7 +1067,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 file_path="resourceFile{}".format(str(i)),
             )
             resource_files.append(resource_file)
-        task = models.BatchTaskCreateContent(id=task_id, command_line="sleep 1", resource_files=resource_files)
+        task = models.BatchTaskCreateOptions(id=task_id, command_line="sleep 1", resource_files=resource_files)
         tasks_to_add.append(task)
         await self.assertCreateTasksError(
             "RequestBodyTooLarge",
@@ -1072,17 +1094,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
             )
             resource_files.append(resource_file)
         for i in range(733):
-            task = models.BatchTaskCreateContent(
+            task = models.BatchTaskCreateOptions(
                 id=task_id + str(i),
                 command_line="sleep 1",
                 resource_files=resource_files,
             )
             tasks_to_add.append(task)
         result = await wrap_result(client.create_tasks(batch_job.id, tasks_to_add))
-        assert isinstance(result, models.BatchTaskAddCollectionResult)
-        assert len(result.value) == 733
-        assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
-        assert all(t.status.lower() == models.BatchTaskAddStatus.SUCCESS for t in result.value)
+        assert isinstance(result, models.BatchCreateTaskCollectionResult)
+        assert result.values_property is not None
+        assert len(result.values_property) == 733
+        assert result.values_property[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
+        assert all(t.status.lower() == models.BatchTaskAddStatus.SUCCESS for t in result.values_property)
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -1096,19 +1119,19 @@ class TestBatch(AzureMgmtRecordedTestCase):
             pool=models.BatchPoolSpecification(
                 vm_size=DEFAULT_VM_SIZE,
                 virtual_machine_configuration=models.VirtualMachineConfiguration(
-                    image_reference=models.ImageReference(
+                    image_reference=models.BatchVmImageReference(
                         publisher="Canonical",
-                        offer="UbuntuServer",
-                        sku="18.04-LTS",
+                        offer="0001-com-ubuntu-server-jammy",
+                        sku="22_04-lts",
                         version="latest",
                     ),
-                    node_agent_sku_id="batch.node.ubuntu 18.04",
+                    node_agent_sku_id="batch.node.ubuntu 22.04",
                 ),
             ),
         )
         job_prep = models.BatchJobPreparationTask(command_line='cmd /c "echo hello world"')
         job_release = models.BatchJobReleaseTask(command_line='cmd /c "echo goodbye world"')
-        job_param = models.BatchJobCreateContent(
+        job_param = models.BatchJobCreateOptions(
             id=self.get_resource_name("batch_job1_"),
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
             job_preparation_task=job_prep,
@@ -1131,7 +1154,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Patch Job
-        options = models.BatchJobUpdateContent(priority=900)
+        options = models.BatchJobUpdateOptions(priority=900)
         response = await wrap_result(client.update_job(job_param.id, options))
         assert response is None
 
@@ -1142,46 +1165,147 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert job.priority == 900
 
         # Test Create Job with Auto Complete
-        job_auto_param = models.BatchJobCreateContent(
+        job_auto_param = models.BatchJobCreateOptions(
             id=self.get_resource_name("batch_job2_"),
-            on_all_tasks_complete=models.OnAllBatchTasksComplete.TERMINATE_JOB,
-            on_task_failure=models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION,
+            all_tasks_complete_mode=models.BatchAllTasksCompleteMode.TERMINATE_JOB,
+            task_failure_mode=models.BatchTaskFailureMode.PERFORM_EXIT_OPTIONS_JOB_ACTION,
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
         )
         response = await wrap_result(client.create_job(job_auto_param))
         assert response is None
         job = await wrap_result(client.get_job(job_auto_param.id))
         assert isinstance(job, models.BatchJob)
-        assert job.on_all_tasks_complete == models.OnAllBatchTasksComplete.TERMINATE_JOB
-        assert job.on_task_failure == models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION
+        assert job.all_tasks_complete_mode == models.BatchAllTasksCompleteMode.TERMINATE_JOB
+        assert job.task_failure_mode == models.BatchTaskFailureMode.PERFORM_EXIT_OPTIONS_JOB_ACTION
 
         # Test List Jobs
         jobs = await wrap_list_result(client.list_jobs())
         assert isinstance(jobs, Iterable)
         assert len(list(jobs)) == 2
 
-        # Test Disable Job
-        response = await wrap_result(
-            client.disable_job(
+        # Test LRO disable job
+        poller = await wrap_result(
+            client.begin_disable_job(
                 job_id=job_param.id,
-                content=models.BatchJobDisableContent(disable_tasks="requeue"),
+                disable_options=models.BatchJobDisableOptions(disable_tasks="requeue"),
+                polling_interval=5,
             )
         )
-        assert response is None
+        assert poller is not None
 
-        # Test Enable Job
-        response = await wrap_result(client.enable_job(job_param.id))
-        assert response is None
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
+        # Test LRO enable job
+        poller = await wrap_result(client.begin_enable_job(job_id=job_param.id, polling_interval=5))
+        assert poller is not None
+
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
 
         # Prep and release task status
         task_status = await wrap_list_result(client.list_job_preparation_and_release_task_status(job_param.id))
         assert isinstance(task_status, Iterable)
         assert list(task_status) == []
 
-        # Test Terminate Job
-        response = await wrap_result(client.terminate_job(job_param.id))
-        assert response is None
+        # Test Terminate Job using LRO
+        # TODO: default for termination_reason wasn't set so manually adding it. check on why default isn't working
+        poller = await wrap_result(
+            client.begin_terminate_job(
+                job_id=job_param.id,
+                options=models.BatchJobTerminateOptions(termination_reason='UserTerminate'),
+                polling_interval=5
+            )
+        )
+        assert poller is not None
 
-        # Test Delete Job
-        response = await wrap_result(client.delete_job(job_auto_param.id))
-        assert response is None
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        # waiting for completion
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
+        # Test Delete Job using LRO
+        poller = await wrap_result(client.begin_delete_job(job_id=job_auto_param.id, polling_interval=5))
+        assert poller is not None
+
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
+    @client_setup
+    @recorded_by_proxy_async
+    async def test_batch_exception_policy(self, client: BatchClient, **kwargs):
+        # Test Resource Not Found Error (404)
+        try:
+            await wrap_result(client.get_pool("non-existent-pool-id"))
+            self.fail("Expected ResourceNotFoundError but no exception was raised")
+        except azure.core.exceptions.ResourceNotFoundError as e:
+            assert e.response is not None
+            assert hasattr(e, "model")
+            assert "(PoolNotFound) The specified pool does not exist." in str(e)
+            if hasattr(e, "error") and hasattr(e.error, "code"):
+                assert e.error.code in ["PoolNotFound"]
+
+        # Test Resource Exists Error (409)
+        job_id = self.get_resource_name("batch_test_job_")
+        auto_pool = models.BatchAutoPoolSpecification(
+            pool_lifetime_option=models.BatchPoolLifetimeOption.JOB,
+            pool=models.BatchPoolSpecification(
+                vm_size=DEFAULT_VM_SIZE,
+                virtual_machine_configuration=models.VirtualMachineConfiguration(
+                    image_reference=models.BatchVmImageReference(
+                        publisher="Canonical",
+                        offer="0001-com-ubuntu-server-jammy",
+                        sku="22_04-lts",
+                        version="latest",
+                    ),
+                    node_agent_sku_id="batch.node.ubuntu 22.04",
+                ),
+            ),
+        )
+
+        job_param = models.BatchJobCreateOptions(
+            id=job_id,
+            pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
+        )
+
+        # creating the job for the first time
+        await wrap_result(client.create_job(job_param))
+
+        try:
+            # trying to create the same job again but should fail
+            await wrap_result(client.create_job(job_param))
+            self.fail("Expected ResourceExistsError but no exception was raised")
+        except azure.core.exceptions.ResourceExistsError as e:
+            assert e.response is not None
+            assert hasattr(e, "model")
+            assert "(JobExists) The specified job already exists." in str(e)
+            if hasattr(e, "error") and hasattr(e.error, "code"):
+                assert e.error.code in ["JobExists"]
+        finally:
+            try:
+                await wrap_result(client.delete_job(job_id))
+            except:
+                pass

@@ -1,5 +1,11 @@
 # Release History
 
+## 4.0.0b24 (2025-10-09)
+
+### Bugs Fixed
+
+- Exclude `generated_samples` and `generated_tests` from wheel
+
 ## 4.0.0b23 (2025-09-10)
 
 ### Features Added
