@@ -15,6 +15,7 @@ JSONDIFF_VERSION = "1.2.0"
 REPO_ROOT = discover_repo_root()
 BREAKING_CHECKER_PATH = os.path.join(REPO_ROOT, "scripts", "breaking_changes_checker")
 
+
 class breaking(Check):
     def __init__(self) -> None:
         super().__init__()
@@ -36,7 +37,6 @@ class breaking(Check):
 
         results: List[int] = []
 
-
         for parsed in targeted:
             package_dir = parsed.folder
             package_name = parsed.name
@@ -53,7 +53,9 @@ class breaking(Check):
                     package_dir,
                 )
             except CalledProcessError as e:
-                logger.error(f"Failed to install jsondiff or breaking change checker while processing {package_name}: {e}")
+                logger.error(
+                    f"Failed to install jsondiff or breaking change checker while processing {package_name}: {e}"
+                )
                 results.append(1)
                 continue
 
