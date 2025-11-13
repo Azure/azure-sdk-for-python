@@ -1,7 +1,3 @@
 {
-  "apiVersion": "2025-05-01",
-  "commit": "08a510e768ebd24b415dd642416cf955b70c4069",
-  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/keyvault/KeyVault.Management",
-  "emitterVersion": "0.52.2"
+  "apiVersion": "2025-05-01"
 }

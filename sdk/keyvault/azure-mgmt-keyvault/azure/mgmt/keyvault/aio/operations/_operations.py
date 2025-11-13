@@ -1149,6 +1149,7 @@ class VaultsOperations:
         _request = build_vaults_get_deleted_request(
             vault_name=vault_name,
             location=location,
+            subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1205,6 +1206,7 @@ class VaultsOperations:
         _request = build_vaults_purge_deleted_request(
             vault_name=vault_name,
             location=location,
+            subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1442,7 +1444,7 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = api_version
+                _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
@@ -3008,6 +3010,7 @@ class ManagedHsmsOperations:
         _request = build_managed_hsms_get_deleted_request(
             name=name,
             location=location,
+            subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3064,6 +3067,7 @@ class ManagedHsmsOperations:
         _request = build_managed_hsms_purge_deleted_request(
             name=name,
             location=location,
+            subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

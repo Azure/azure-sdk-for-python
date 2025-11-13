@@ -2662,7 +2662,7 @@ class Operation(_Model):
         if key in self.__flattened_items:
             if self.operation_properties is None:
                 self.operation_properties = self._attr_to_rest_field["operation_properties"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.operation_properties, key, value)
         else:
             super().__setattr__(key, value)
 

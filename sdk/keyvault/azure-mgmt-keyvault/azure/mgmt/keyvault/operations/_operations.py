@@ -270,7 +270,9 @@ def build_vaults_update_access_policy_request(  # pylint: disable=name-too-long
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_vaults_get_deleted_request(vault_name: str, location: str, **kwargs: Any) -> HttpRequest:
+def build_vaults_get_deleted_request(
+    vault_name: str, location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -282,6 +284,7 @@ def build_vaults_get_deleted_request(vault_name: str, location: str, **kwargs: A
     path_format_arguments = {
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
         "location": _SERIALIZER.url("location", location, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -295,7 +298,9 @@ def build_vaults_get_deleted_request(vault_name: str, location: str, **kwargs: A
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_vaults_purge_deleted_request(vault_name: str, location: str, **kwargs: Any) -> HttpRequest:
+def build_vaults_purge_deleted_request(
+    vault_name: str, location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
@@ -304,6 +309,7 @@ def build_vaults_purge_deleted_request(vault_name: str, location: str, **kwargs:
     path_format_arguments = {
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
         "location": _SERIALIZER.url("location", location, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -702,7 +708,9 @@ def build_managed_hsms_list_by_subscription_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_managed_hsms_get_deleted_request(name: str, location: str, **kwargs: Any) -> HttpRequest:
+def build_managed_hsms_get_deleted_request(
+    name: str, location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -714,6 +722,7 @@ def build_managed_hsms_get_deleted_request(name: str, location: str, **kwargs: A
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
         "location": _SERIALIZER.url("location", location, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -727,7 +736,9 @@ def build_managed_hsms_get_deleted_request(name: str, location: str, **kwargs: A
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_managed_hsms_purge_deleted_request(name: str, location: str, **kwargs: Any) -> HttpRequest:
+def build_managed_hsms_purge_deleted_request(
+    name: str, location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
@@ -736,6 +747,7 @@ def build_managed_hsms_purge_deleted_request(name: str, location: str, **kwargs:
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
         "location": _SERIALIZER.url("location", location, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2483,6 +2495,7 @@ class VaultsOperations:
         _request = build_vaults_get_deleted_request(
             vault_name=vault_name,
             location=location,
+            subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2539,6 +2552,7 @@ class VaultsOperations:
         _request = build_vaults_purge_deleted_request(
             vault_name=vault_name,
             location=location,
+            subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2776,7 +2790,7 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = api_version
+                _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
@@ -4340,6 +4354,7 @@ class ManagedHsmsOperations:
         _request = build_managed_hsms_get_deleted_request(
             name=name,
             location=location,
+            subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4396,6 +4411,7 @@ class ManagedHsmsOperations:
         _request = build_managed_hsms_purge_deleted_request(
             name=name,
             location=location,
+            subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
