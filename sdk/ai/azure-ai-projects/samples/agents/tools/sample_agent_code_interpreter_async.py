@@ -49,7 +49,7 @@ async def main() -> None:
 
         try:
             async with project_client:
-                openai_client = await project_client.get_openai_client()
+                openai_client = project_client.get_openai_client()
 
                 # Upload the CSV file for the code interpreter to use
                 with open(asset_file_path, "rb") as file_data:

@@ -38,6 +38,10 @@ project_client = AIProjectClient(
 
 openai_client = project_client.get_openai_client()
 
+# [START tool_declaration]
+tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
+# [END tool_declaration]
+
 with project_client:
     # Create Agent with web search tool
     agent = project_client.agents.create_version(
@@ -45,9 +49,7 @@ with project_client:
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that can search the web",
-            tools=[
-                WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
-            ],
+            tools=[tool],
         ),
         description="Agent for web search.",
     )

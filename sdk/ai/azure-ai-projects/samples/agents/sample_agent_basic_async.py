@@ -46,7 +46,7 @@ async def main() -> None:
 
         async with project_client:
 
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
 
             agent = await project_client.agents.create_version(
                 agent_name="MyAgent",
