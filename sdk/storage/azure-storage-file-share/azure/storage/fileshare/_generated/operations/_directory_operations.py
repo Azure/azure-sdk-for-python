@@ -58,7 +58,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -126,7 +126,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -167,7 +167,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -217,7 +217,7 @@ def build_set_properties_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -281,7 +281,7 @@ def build_set_metadata_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -330,7 +330,7 @@ def build_list_files_and_directories_segment_request(  # pylint: disable=name-to
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -386,7 +386,7 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -437,7 +437,7 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -498,7 +498,7 @@ def build_rename_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -700,7 +700,10 @@ class DirectoryOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -793,7 +796,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -882,7 +888,10 @@ class DirectoryOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1005,7 +1014,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1097,7 +1109,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1199,7 +1214,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1290,7 +1308,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1380,7 +1401,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1535,7 +1559,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
