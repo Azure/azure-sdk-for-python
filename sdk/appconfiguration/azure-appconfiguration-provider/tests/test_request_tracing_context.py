@@ -251,109 +251,117 @@ class TestRequestTracingContext(unittest.TestCase):
         self.assertEqual(self.context.feature_filter_usage, {})
 
 
-class TestCreateCorrelationContextHeader(unittest.TestCase):
+class TestUpdateCorrelationContextHeader(unittest.TestCase):
     """Test the update_correlation_context_header method."""
 
     def setUp(self):
         """Set up test environment."""
         self.context = _RequestTracingContext()
+        self.headers = {}
 
-    def test_disabled_tracing_returns_empty_string(self):
+    def test_disabled_tracing(self):
         """Test that disabled tracing returns empty string."""
         with patch.dict(os.environ, {REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE: "true"}):
-            headers = {}
-            result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False)
-            self.assertEqual(result, headers)  # Should return headers unchanged
+            result = self.context.update_correlation_context_header(
+                self.headers, RequestType.STARTUP, 0, False, False
+            )
+            self.assertEqual(result, self.headers)
             self.assertNotIn("Correlation-Context", result)
 
     def test_basic_correlation_context(self):
         """Test basic correlation context generation."""
-        headers = {}
-        result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False)
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.STARTUP, 0, False, False
+        )
         self.assertIn("Correlation-Context", result)
         self.assertIn("RequestType=Startup", result["Correlation-Context"])
 
-    def test_correlation_context_with_replica_count(self):
+    def test_with_replica_count(self):
         """Test correlation context with replica count."""
-        headers = {}
-        result = self.context.update_correlation_context_header(headers, RequestType.WATCH, 3, False, False)
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.WATCH, 3, False, False
+        )
         self.assertIn("Correlation-Context", result)
         self.assertIn("RequestType=Watch", result["Correlation-Context"])
         self.assertIn("ReplicaCount=3", result["Correlation-Context"])
 
-    def test_correlation_context_with_host_type(self):
+    def test_with_host_type(self):
         """Test correlation context with host type detection."""
-        with patch.object(_RequestTracingContext, "get_host_type", return_value=HostType.AZURE_FUNCTION):
-            # Update host_type since it's not automatically set
-            self.context.host_type = HostType.AZURE_FUNCTION
-            headers = {}
-            result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False)
-            self.assertIn("Correlation-Context", result)
-            self.assertIn("Host=AzureFunction", result["Correlation-Context"])
+        self.context.host_type = HostType.AZURE_FUNCTION
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.STARTUP, 0, False, False
+        )
+        self.assertIn("Correlation-Context", result)
+        self.assertIn("Host=AzureFunction", result["Correlation-Context"])
 
-    def test_correlation_context_with_feature_filters(self):
+    def test_with_feature_filters(self):
         """Test correlation context with feature filters."""
         self.context.feature_filter_usage = {
             CUSTOM_FILTER_KEY: True,
             PERCENTAGE_FILTER_KEY: True,
         }
-        headers = {}
-        result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False)
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.STARTUP, 0, False, False
+        )
         self.assertIn("Correlation-Context", result)
         self.assertIn("Filter=", result["Correlation-Context"])
         self.assertIn(CUSTOM_FILTER_KEY, result["Correlation-Context"])
         self.assertIn(PERCENTAGE_FILTER_KEY, result["Correlation-Context"])
 
-    def test_correlation_context_with_max_variants(self):
+    def test_with_max_variants(self):
         """Test correlation context with max variants."""
         self.context.max_variants = 5
-        headers = {}
-        result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False)
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.STARTUP, 0, False, False
+        )
         self.assertIn("Correlation-Context", result)
         self.assertIn("MaxVariants=5", result["Correlation-Context"])
 
-    def test_correlation_context_with_ff_features(self):
+    def test_with_ff_features(self):
         """Test correlation context with feature flag features."""
         self.context.uses_seed = True
         self.context.uses_telemetry = True
-        headers = {}
-        result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False)
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.STARTUP, 0, False, False
+        )
         self.assertIn("Correlation-Context", result)
         self.assertIn("FFFeatures=", result["Correlation-Context"])
         self.assertIn(FEATURE_FLAG_USES_SEED_TAG, result["Correlation-Context"])
         self.assertIn(FEATURE_FLAG_USES_TELEMETRY_TAG, result["Correlation-Context"])
 
     @patch("azure.appconfiguration.provider._request_tracing_context.version")
-    def test_correlation_context_with_version(self, mock_version):
+    def test_with_feature_management_version(self, mock_version):
         """Test correlation context with feature management version."""
         mock_version.return_value = "1.0.0"
         self.context.feature_management_version = "1.0.0"
-        headers = {}
-        result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False)
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.STARTUP, 0, False, True, False
+        )
         self.assertIn("Correlation-Context", result)
         self.assertIn("FMPyVer=1.0.0", result["Correlation-Context"])
 
-    def test_correlation_context_with_general_features(self):
+    def test_with_general_features(self):
         """Test correlation context with general features."""
         self.context.uses_load_balancing = True
         self.context.uses_ai_configuration = True
-        headers = {}
-        result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False)
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.STARTUP, 0, False, False
+        )
         self.assertIn("Correlation-Context", result)
         self.assertIn("Features=LB+AI", result["Correlation-Context"])
 
-    def test_correlation_context_with_tags(self):
-        """Test correlation context with various tags."""
-        self.context.is_key_vault_configured = True
-        self.context.is_failover_request = True
-
-        headers = {}
-        result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, True, False, True)
+    def test_with_key_vault_and_failover(self):
+        """Test correlation context with key vault and failover tags."""
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.STARTUP, 2, True, False, True
+        )
         self.assertIn("Correlation-Context", result)
+        self.assertIn("RequestType=Startup", result["Correlation-Context"])
+        self.assertIn("ReplicaCount=2", result["Correlation-Context"])
         self.assertIn("UsesKeyVault", result["Correlation-Context"])
         self.assertIn("Failover", result["Correlation-Context"])
 
-    def test_correlation_context_comprehensive(self):
+    def test_comprehensive_correlation_context(self):
         """Test correlation context with all features enabled."""
         # Set up all possible features
         self.context.host_type = HostType.AZURE_WEB_APP
@@ -365,8 +373,9 @@ class TestCreateCorrelationContextHeader(unittest.TestCase):
         self.context.is_key_vault_configured = True
         self.context.is_failover_request = True
 
-        headers = {}
-        result = self.context.update_correlation_context_header(headers, RequestType.WATCH, 2, True, True, True)
+        result = self.context.update_correlation_context_header(
+            self.headers, RequestType.WATCH, 2, True, True, True
+        )
 
         # Verify all components are present
         self.assertIn("Correlation-Context", result)
@@ -381,76 +390,6 @@ class TestCreateCorrelationContextHeader(unittest.TestCase):
         self.assertIn("Features=LB", correlation_context)
         self.assertIn("UsesKeyVault", correlation_context)
         self.assertIn("Failover", correlation_context)
-
-
-class TestUpdateCorrelationContextHeader(unittest.TestCase):
-    """Test the update_correlation_context_header method."""
-
-    def setUp(self):
-        """Set up test environment."""
-        self.context = _RequestTracingContext()
-        self.headers = {}
-
-    def test_update_correlation_context_header_basic(self):
-        """Test basic correlation context header update."""
-        result = self.context.update_correlation_context_header(
-            self.headers,
-            RequestType.STARTUP,
-            2,  # replica_count
-            True,  # uses_key_vault
-            True,  # feature_flag_enabled
-            False,  # is_failover_request
-        )
-
-        self.assertIn("Correlation-Context", result)
-        self.assertIn("RequestType=Startup", result["Correlation-Context"])
-        self.assertIn("ReplicaCount=2", result["Correlation-Context"])
-        self.assertIn("UsesKeyVault", result["Correlation-Context"])
-
-    @patch("azure.appconfiguration.provider._request_tracing_context.version")
-    def test_update_correlation_context_header_with_version(self, mock_version):
-        """Test correlation context header update with feature management version."""
-        mock_version.return_value = "1.0.0"
-
-        result = self.context.update_correlation_context_header(
-            self.headers,
-            RequestType.STARTUP,
-            0,  # replica_count
-            False,  # uses_key_vault
-            True,  # feature_flag_enabled
-            False,  # is_failover_request
-        )
-
-        self.assertIn("Correlation-Context", result)
-        self.assertIn("FMPyVer=1.0.0", result["Correlation-Context"])
-
-    def test_update_correlation_context_header_failover(self):
-        """Test correlation context header update with failover request."""
-        result = self.context.update_correlation_context_header(
-            self.headers,
-            RequestType.WATCH,
-            1,  # replica_count
-            False,  # uses_key_vault
-            False,  # feature_flag_enabled
-            True,  # is_failover_request
-        )
-
-        self.assertIn("Correlation-Context", result)
-        self.assertIn("Failover", result["Correlation-Context"])
-
-    def test_update_correlation_context_header_disabled_tracing(self):
-        """Test correlation context header update with disabled tracing."""
-        with patch.dict(os.environ, {REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE: "true"}):
-            result = self.context.update_correlation_context_header(
-                self.headers,
-                RequestType.STARTUP,
-                1,  # replica_count
-                False,  # uses_key_vault
-                False,  # feature_flag_enabled
-                False,  # is_failover_request
-            )
-
-            self.assertNotIn("Correlation-Context", result)
 
     def test_snapshot_reference_tag_constant(self):
         """Test that the snapshot reference tag constant has the expected value."""
@@ -517,12 +456,77 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
 
         # Check if correlation context header exists and contains snapshot reference tag
         correlation_header = updated_headers.get("Correlation-Context", "")
-        assert "RequestType=Startup" in correlation_header
-        assert SNAPSHOT_REFERENCE_TAG in correlation_header
+        self.assertIn("RequestType=Startup", correlation_header)
+        self.assertIn(SNAPSHOT_REFERENCE_TAG, correlation_header)
+
+
+class TestSnapshotReferenceTracking(unittest.TestCase):
+    """Test snapshot reference tracking in request tracing context."""
+
+    def test_snapshot_reference_tag_constant(self):
+        """Test that the snapshot reference tag constant has the expected value."""
+        self.assertEqual(SNAPSHOT_REFERENCE_TAG, "UsesSnapshotReference=true")
+
+    def test_initialization(self):
+        """Test that request tracing context initializes snapshot reference tracking."""
+        context = _RequestTracingContext()
+        self.assertFalse(context.uses_snapshot_reference)
+
+    def test_set_snapshot_reference_usage(self):
+        """Test setting snapshot reference usage in tracing context."""
+        context = _RequestTracingContext()
+
+        # Initially false
+        self.assertFalse(context.uses_snapshot_reference)
+
+        # Set to true
+        context.uses_snapshot_reference = True
+        self.assertTrue(context.uses_snapshot_reference)
+
+        # Set back to false
+        context.uses_snapshot_reference = False
+        self.assertFalse(context.uses_snapshot_reference)
+
+    def test_correlation_context_without_snapshot_reference(self):
+        """Test correlation context header when not using snapshot references."""
+        context = _RequestTracingContext()
+        context.uses_snapshot_reference = False
+
+        headers = {}
+        updated_headers = context.update_correlation_context_header(
+            headers=headers,
+            request_type="Startup",
+            replica_count=0,
+            uses_key_vault=False,
+            feature_flag_enabled=False,
+            is_failover_request=False,
+        )
+
+        correlation_header = updated_headers.get("Correlation-Context", "")
+        self.assertIn("RequestType=Startup", correlation_header)
+        self.assertNotIn(SNAPSHOT_REFERENCE_TAG, correlation_header)
+
+    def test_correlation_context_with_snapshot_reference(self):
+        """Test correlation context header when using snapshot references."""
+        context = _RequestTracingContext()
+        context.uses_snapshot_reference = True
+
+        headers = {}
+        updated_headers = context.update_correlation_context_header(
+            headers=headers,
+            request_type="Startup",
+            replica_count=0,
+            uses_key_vault=False,
+            feature_flag_enabled=False,
+            is_failover_request=False,
+        )
+
+        correlation_header = updated_headers.get("Correlation-Context", "")
+        self.assertIn("RequestType=Startup", correlation_header)
+        self.assertIn(SNAPSHOT_REFERENCE_TAG, correlation_header)
 
     def test_snapshot_reference_detection_in_provider_base(self):
         """Test that snapshot reference detection works in provider base."""
-
         # Test with snapshot reference content type
         snapshot_ref_setting = ConfigurationSetting(
             key="SnapshotRef1",
@@ -530,7 +534,7 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
             content_type=SNAPSHOT_REF_CONTENT_TYPE,
         )
 
-        assert (
+        self.assertTrue(
             snapshot_ref_setting.content_type
             and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in snapshot_ref_setting.content_type
         )
@@ -542,39 +546,32 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
             content_type="application/vnd.microsoft.appconfig.kv+json",
         )
 
-        assert not (
+        self.assertFalse(
             regular_setting.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in regular_setting.content_type
         )
 
     def test_tracing_context_updated_during_processing(self):
         """Test that tracing context is updated when processing configuration with snapshot references."""
-
-        # Create provider instance with mocked dependencies
         provider = Mock(spec=AzureAppConfigurationProviderBase)
         provider._tracing_context = _RequestTracingContext()
 
-        # Create a mock configuration setting with actual snapshot reference content type
         setting = ConfigurationSetting(
             key="SnapshotRef1",
             value='{"snapshot_name": "test-snapshot"}',
-            content_type=SNAPSHOT_REF_CONTENT_TYPE,  # Use the actual constant
+            content_type=SNAPSHOT_REF_CONTENT_TYPE,
         )
 
-        # Simulate checking for snapshot reference content type using the real logic
+        # Simulate checking for snapshot reference content type
         if setting.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in setting.content_type:
             provider._tracing_context.uses_snapshot_reference = True
 
-        # Verify tracing context was updated
-        assert provider._tracing_context.uses_snapshot_reference is True
+        self.assertTrue(provider._tracing_context.uses_snapshot_reference)
 
     def test_tracing_context_not_updated_for_regular_settings(self):
         """Test that tracing context is not updated for regular settings."""
-
-        # Create provider instance with mocked dependencies
         provider = Mock(spec=AzureAppConfigurationProviderBase)
         provider._tracing_context = _RequestTracingContext()
 
-        # Create a regular configuration setting
         setting = ConfigurationSetting(
             key="RegularKey",
             value="RegularValue",
@@ -585,15 +582,13 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
         if setting.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in setting.content_type:
             provider._tracing_context.uses_snapshot_reference = True
 
-        # Verify tracing context was not updated
-        assert provider._tracing_context.uses_snapshot_reference is False
+        self.assertFalse(provider._tracing_context.uses_snapshot_reference)
 
-    def test_correlation_context_header_format_with_multiple_tags(self):
+    def test_correlation_context_with_multiple_tags(self):
         """Test correlation context header format when multiple tags are present."""
         context = _RequestTracingContext()
         context.uses_snapshot_reference = True
 
-        # Test updating headers with multiple features enabled
         headers = {}
         updated_headers = context.update_correlation_context_header(
             headers=headers,
@@ -604,10 +599,9 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
             is_failover_request=True,
         )
 
-        # Verify the header contains expected components
         correlation_header = updated_headers.get("Correlation-Context", "")
-        assert "RequestType=Startup" in correlation_header
-        assert "ReplicaCount=2" in correlation_header
-        assert "UsesKeyVault" in correlation_header  # Tag format
-        assert "Failover" in correlation_header  # Tag format
-        assert SNAPSHOT_REFERENCE_TAG in correlation_header
+        self.assertIn("RequestType=Startup", correlation_header)
+        self.assertIn("ReplicaCount=2", correlation_header)
+        self.assertIn("UsesKeyVault", correlation_header)
+        self.assertIn("Failover", correlation_header)
+        self.assertIn(SNAPSHOT_REFERENCE_TAG, correlation_header)
