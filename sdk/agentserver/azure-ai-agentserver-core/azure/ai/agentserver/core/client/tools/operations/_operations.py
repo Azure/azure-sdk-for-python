@@ -28,7 +28,7 @@ from azure.core.exceptions import (
 logger = logging.getLogger(__name__)
 
 # Shared constants
-API_VERSION = "2025-05-15-preview"
+API_VERSION = "2025-11-15-preview"
 MCP_ENDPOINT_PATH = "/mcp_tools"
 
 # Tool-specific property key overrides

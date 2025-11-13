@@ -42,7 +42,7 @@ async def quickstart():
         raise ValueError(
             "AZURE_AI_PROJECT_ENDPOINT environment variable is required. "
             "Set it to your Azure AI project endpoint, e.g., "
-            "https://<your-project>.api.azureml.ms"
+             "https://<your-account>.services.ai.azure.com/api/projects/<your-project>"
         )
     
     # Create Azure credentials
