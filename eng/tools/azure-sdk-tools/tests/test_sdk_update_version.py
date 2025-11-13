@@ -183,4 +183,3 @@ def test_invalid_release_date_uses_current_date():
         assert today in first_line, f"Expected fallback date {today} in changelog line"
     finally:
         shutil.rmtree(temp_dir)
-
