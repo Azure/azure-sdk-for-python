@@ -33,20 +33,20 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             self._exporter,
             options={}
         )
-        self.assertFalse(processor._enable_trace_based_sampling)
+        self.assertFalse(processor._enable_trace_based_sampling_for_logs)
 
     def test_processor_initialization_with_trace_based_sampling(self):
         """Test processor initialization with trace-based sampling enabled."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter,
-            options={"enable_trace_based_sampling": True}
+            options={"enable_trace_based_sampling_for_logs": True}
         )
-        self.assertTrue(processor._enable_trace_based_sampling)
+        self.assertTrue(processor._enable_trace_based_sampling_for_logs)
 
     def test_processor_initialization_without_options(self):
         """Test processor initialization without options."""
         processor = _AzureBatchLogRecordProcessor(self._exporter)
-        self.assertIsNone(processor._enable_trace_based_sampling)
+        self.assertIsNone(processor._enable_trace_based_sampling_for_logs)
 
     def test_on_emit_with_trace_based_sampling_disabled(self):
         """Test on_emit does not filter logs when trace-based sampling is disabled."""
@@ -87,7 +87,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         """Test on_emit filters logs when trace-based sampling is enabled and trace is unsampled.""" # cspell:disable-line
         processor = _AzureBatchLogRecordProcessor(
             self._exporter,
-            options={"enable_trace_based_sampling": True}
+            options={"enable_trace_based_sampling_for_logs": True}
         )
         
         mock_context = mock.Mock()
@@ -123,7 +123,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         """Test on_emit does not filter logs when trace-based sampling is enabled and trace is sampled."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter,
-            options={"enable_trace_based_sampling": True}
+            options={"enable_trace_based_sampling_for_logs": True}
         )
         
         mock_context = mock.Mock()
@@ -158,7 +158,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         """Test on_emit does not filter logs with invalid span context."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter,
-            options={"enable_trace_based_sampling": True}
+            options={"enable_trace_based_sampling_for_logs": True}
         )
         
         mock_context = mock.Mock()
@@ -192,7 +192,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         """Test on_emit does not filter logs when there is no log record context."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter,
-            options={"enable_trace_based_sampling": True}
+            options={"enable_trace_based_sampling_for_logs": True}
         )
 
         log_record = _logs.LogData(
@@ -218,7 +218,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         """Integration test: verify processor handles multiple log records correctly with trace-based sampling."""
         processor = _AzureBatchLogRecordProcessor(
             self._exporter,
-            options={"enable_trace_based_sampling": True}
+            options={"enable_trace_based_sampling_for_logs": True}
         )
         
         mock_context = mock.Mock()

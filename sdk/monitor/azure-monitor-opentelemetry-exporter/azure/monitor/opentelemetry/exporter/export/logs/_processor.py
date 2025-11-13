@@ -4,7 +4,7 @@
 from typing import Optional, Dict, Any
 
 from opentelemetry.sdk._logs import LogRecordProcessor, LogData
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, LogExporter
 from opentelemetry.trace import get_current_span
 
 
@@ -13,18 +13,18 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
 
     def __init__(
         self,
-        log_exporter: LogRecordProcessor,
+        log_exporter: LogExporter,
         options: Optional[Dict[str, Any]] = None,
     ):
         """Initialize the Azure Monitor Log Record Processor.
 
         :param exporter: The LogRecordExporter to use for exporting logs.
         :param options: Optional configuration dictionary. Supported options:
-                        - enable_trace_based_sampling(bool): Enable trace-based sampling for logs.
+                        - enable_trace_based_sampling_for_logs(bool): Enable trace-based sampling for logs.
         """
         super().__init__(log_exporter)
         self._options = options or {}
-        self._enable_trace_based_sampling = self._options.get("enable_trace_based_sampling")
+        self._enable_trace_based_sampling_for_logs = self._options.get("enable_trace_based_sampling_for_logs")
 
     def on_emit(self, log_data: LogData) -> None:
         # cspell: disable
@@ -39,7 +39,7 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
         """
 
         # cspell: enable
-        if self._enable_trace_based_sampling:
+        if self._enable_trace_based_sampling_for_logs:
             if hasattr(log_data, "log_record") and log_data.log_record is not None:
                 if hasattr(log_data.log_record, "context") and log_data.log_record.context is not None:
                     span = get_current_span(log_data.log_record.context)

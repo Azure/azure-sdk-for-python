@@ -536,7 +536,7 @@ class TestConfigure(unittest.TestCase):
             "logger_name": "test",
             "resource": TEST_RESOURCE,
             "logging_formatter": formatter_init_mock,
-            "enable_trace_based_sampling": False,
+            "enable_trace_based_sampling_for_logs": False,
         }
 
         # Patch all the necessary modules and imports
@@ -546,7 +546,7 @@ class TestConfigure(unittest.TestCase):
                 LoggerProvider=lp_mock,
                 LoggingHandler=logging_handler_mock
             ),
-            'azure.monitor.opentelemetry.exporter.export.logs': Mock(_AzureBatchLogRecordProcessor=blrp_mock),
+            'azure.monitor.opentelemetry.exporter.export.logs._processor': Mock(_AzureBatchLogRecordProcessor=blrp_mock),
             'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
             'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
             'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
@@ -557,7 +557,7 @@ class TestConfigure(unittest.TestCase):
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock, False)
+        blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False})
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 2)
         lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
@@ -607,14 +607,14 @@ class TestConfigure(unittest.TestCase):
             "logger_name": "test",
             "resource": TEST_RESOURCE,
             "logging_formatter": None,
-            "enable_trace_based_sampling": False,
+            "enable_trace_based_sampling_for_logs": True,
         }
         
         # Patch all the necessary modules and imports
         with patch.dict('sys.modules', {
             'opentelemetry._logs': Mock(set_logger_provider=set_logger_provider_mock),
             'opentelemetry.sdk._logs': Mock(LoggerProvider=lp_mock),
-            'azure.monitor.opentelemetry.exporter.export.logs': Mock(_AzureBatchLogRecordProcessor=blrp_mock),
+            'azure.monitor.opentelemetry.exporter.export.logs._processor': Mock(_AzureBatchLogRecordProcessor=blrp_mock),
             'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
             'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
             'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
@@ -625,7 +625,7 @@ class TestConfigure(unittest.TestCase):
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock, False)
+        blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": True})
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 2)
         lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
         get_logger_mock.assert_called_once_with("test")
@@ -669,7 +669,7 @@ class TestConfigure(unittest.TestCase):
             "logger_name": "test",
             "resource": TEST_RESOURCE,
             "logging_formatter": formatter_init_mock,
-            "enable_trace_based_sampling": True,
+            "enable_trace_based_sampling_for_logs": False,
         }
 
         # Patch all the necessary modules and imports
@@ -679,7 +679,7 @@ class TestConfigure(unittest.TestCase):
                 LoggerProvider=lp_mock,
                 LoggingHandler=logging_handler_mock
             ),
-            'azure.monitor.opentelemetry.exporter.export.logs': Mock(_AzureBatchLogRecordProcessor=blrp_mock),
+            'azure.monitor.opentelemetry.exporter.export.logs._processor': Mock(_AzureBatchLogRecordProcessor=blrp_mock),
             'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
             'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
             'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
@@ -690,7 +690,7 @@ class TestConfigure(unittest.TestCase):
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock, True)
+        blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False})
         lp_init_mock.add_log_record_processor.assert_called_once_with(blrp_init_mock)
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
         logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)

@@ -206,7 +206,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     try:
         from opentelemetry._logs import set_logger_provider
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-        from azure.monitor.opentelemetry.exporter.export.logs import _AzureBatchLogRecordProcessor
+        from azure.monitor.opentelemetry.exporter.export.logs._processor import _AzureBatchLogRecordProcessor
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
             AzureMonitorLogExporter
@@ -215,7 +215,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
         enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
-        enable_trace_based_sampling = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
+        enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
             qlp = _QuickpulseLogRecordProcessor()
             logger_provider.add_log_record_processor(qlp)
@@ -225,7 +225,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         log_exporter = AzureMonitorLogExporter(**configurations)
         log_record_processor = _AzureBatchLogRecordProcessor(
             log_exporter,
-            enable_trace_based_sampling,
+            {"enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs},
         )
         logger_provider.add_log_record_processor(log_record_processor)
         set_logger_provider(logger_provider)
