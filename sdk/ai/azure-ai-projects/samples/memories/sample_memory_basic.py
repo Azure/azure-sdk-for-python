@@ -68,8 +68,9 @@ with (
         definition=definition,
     )
     print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
-    print(f"  - Chat model: {memory_store.definition.chat_model}")
-    print(f"  - Embedding model: {memory_store.definition.embedding_model}")
+    if isinstance(memory_store.definition, MemoryStoreDefaultDefinition):
+        print(f"  - Chat model: {memory_store.definition.chat_model}")
+        print(f"  - Embedding model: {memory_store.definition.embedding_model}")
 
     # Set scope to associate the memories with
     # You can also use "{{$userId}}"" to take the oid of the request authentication header

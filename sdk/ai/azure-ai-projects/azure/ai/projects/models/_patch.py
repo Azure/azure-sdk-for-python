@@ -227,7 +227,7 @@ class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
 class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom AsyncLROPoller for Memory Store update operations."""
 
-    _polling_method: "UpdateMemoriesLROPollingMethod"
+    _polling_method: "AsyncUpdateMemoriesLROPollingMethod"
 
     @property
     def update_id(self) -> str:
