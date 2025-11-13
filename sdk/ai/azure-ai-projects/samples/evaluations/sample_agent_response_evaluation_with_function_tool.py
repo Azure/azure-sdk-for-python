@@ -67,6 +67,7 @@ def get_horoscope(sign: str) -> str:
     """Generate a horoscope for the given astrological sign."""
     return f"{sign}: Next Tuesday you will befriend a baby otter."
 
+
 project_client = AIProjectClient(
     endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
@@ -126,9 +127,7 @@ with project_client:
             "type": "azure_ai_evaluator",
             "name": "tool_call_accuracy",
             "evaluator_name": "builtin.tool_call_accuracy",
-            "initialization_parameters": {
-                "deployment_name": f"{model_deployment_name}"
-            }
+            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
         }
     ]
     eval_object = openai_client.evals.create(
