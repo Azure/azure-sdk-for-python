@@ -19,9 +19,7 @@
   - Added enum `RuntimeUpgradeKind`
   - Model `ApplicationsOperations` added method `begin_fetch_health`
   - Model `ApplicationsOperations` added method `begin_restart_deployed_code_package`
-  - Model `ApplicationsOperations` added method `begin_update`
   - Model `ApplicationsOperations` added method `begin_update_upgrade`
-  - Model `ManagedClustersOperations` added method `begin_update`
   - Model `ServicesOperations` added method `begin_restart_replica`
 
 ### Breaking Changes
