@@ -240,7 +240,7 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         This method automatically converts different input types into the required TranslateBody format.
         """
         request_body: Union[_models.TranslateBody, IO[bytes]]
-        
+
         if isinstance(body, list):
             if all(isinstance(item, _models.TranslateInputItem) for item in body):
                 # Handle List[TranslateInputItem]
@@ -249,25 +249,20 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
                 # Handle List[str] - convert to TranslateInputItem with targets
                 targets = [_models.TranslationTarget(language=lang) for lang in (to_language or [])]
                 inputs = [
-                    _models.TranslateInputItem(
-                        text=cast(str, text), 
-                        targets=targets, 
-                        language=from_language
-                    ) 
+                    _models.TranslateInputItem(text=cast(str, text), targets=targets, language=from_language)
                     for text in cast(List[str], body)
                 ]
                 request_body = _models.TranslateBody(inputs=inputs)
             else:
-                raise ValueError("Invalid body type: list must contain either all strings or all TranslateInputItem objects")
+                raise ValueError(
+                    "Invalid body type: list must contain either all strings or all TranslateInputItem objects"
+                )
         else:
             # Handle IO[bytes]
             request_body = cast(Union[_models.TranslateBody, IO[bytes]], body)
 
         result = await super().translate(
-            body=request_body, 
-            content_type=content_type, 
-            client_trace_id=client_trace_id, 
-            **kwargs
+            body=request_body, content_type=content_type, client_trace_id=client_trace_id, **kwargs
         )
 
         return result.value

@@ -7,7 +7,13 @@
 import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.ai.translation.text.models import TranslateInputItem, TranslationTarget, TextType, ProfanityAction, ProfanityMarker
+from azure.ai.translation.text.models import (
+    TranslateInputItem,
+    TranslationTarget,
+    TextType,
+    ProfanityAction,
+    ProfanityMarker,
+)
 from preparer import TextTranslationPreparer
 from testcase import TextTranslationTest
 
@@ -54,7 +60,7 @@ class TestTranslationAsync(TextTranslationTest):
         assert response[0].detected_language.score == 1
         assert response[0].translations[0].language == "cs"
         assert response[0].translations[0].text is not None
-    
+
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_translate_using_llm(self, **kwargs):
@@ -64,9 +70,7 @@ class TestTranslationAsync(TextTranslationTest):
         client = self.create_async_client(endpoint, apikey, region)
 
         input_text_element = TranslateInputItem(
-            text="Hola mundo",
-            targets=[TranslationTarget(language="cs", deployment_name="gpt-4o-mini")],
-            language="es"
+            text="Hola mundo", targets=[TranslationTarget(language="cs", deployment_name="gpt-4o-mini")], language="es"
         )
         async with client:
             response = await client.translate(body=[input_text_element])
@@ -88,7 +92,7 @@ class TestTranslationAsync(TextTranslationTest):
             text="<span class=notranslate>今天是怎么回事是</span>非常可怕的",
             targets=[TranslationTarget(language="en")],
             language="zh-chs",
-            text_type=TextType.HTML
+            text_type=TextType.HTML,
         )
         async with client:
             response = await client.translate(body=[input_text_element])
@@ -109,7 +113,7 @@ class TestTranslationAsync(TextTranslationTest):
             text="hudha akhtabar.",
             targets=[TranslationTarget(language="zh-Hans", script="Latn")],
             language="ar",
-            script="Latn"
+            script="Latn",
         )
         async with client:
             response = await client.translate(body=[input_text_element])
@@ -185,7 +189,7 @@ class TestTranslationAsync(TextTranslationTest):
         input_text_element = TranslateInputItem(
             text="<html><body>This <b>is</b> a test.</body></html>",
             targets=[TranslationTarget(language=lang) for lang in to_language],
-            text_type=TextType.HTML
+            text_type=TextType.HTML,
         )
         async with client:
             response = await client.translate(body=[input_text_element])
@@ -208,11 +212,9 @@ class TestTranslationAsync(TextTranslationTest):
             text="shit this is fucking crazy",
             targets=[
                 TranslationTarget(
-                    language="zh-cn", 
-                    profanity_action=ProfanityAction.MARKED, 
-                    profanity_marker=ProfanityMarker.ASTERISK
+                    language="zh-cn", profanity_action=ProfanityAction.MARKED, profanity_marker=ProfanityMarker.ASTERISK
                 )
-            ]
+            ],
         )
         async with client:
             response = await client.translate(body=[input_text_element])
@@ -222,7 +224,9 @@ class TestTranslationAsync(TextTranslationTest):
         assert response[0].detected_language is not None
         assert response[0].detected_language.language == "en"
         assert response[0].detected_language.score > 0.5
-        assert "***" in response[0].translations[0].text # Created bug: https://machinetranslation.visualstudio.com/MachineTranslation/_workitems/edit/164493
+        assert (
+            "***" in response[0].translations[0].text
+        )  # Created bug: https://machinetranslation.visualstudio.com/MachineTranslation/_workitems/edit/164493
 
     @pytest.mark.live_test_only
     @TextTranslationPreparer()
