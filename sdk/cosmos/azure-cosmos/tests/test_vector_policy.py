@@ -61,7 +61,7 @@ class TestVectorPolicy(unittest.TestCase):
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
                 {"path": "/vector2", "type": "quantizedFlat", "quantizerType": "product", "quantizationByteSize": 8},
-                {"path": "/vector3", "type": "diskANN", "quantizationByteSize": 8, "vectorIndexShardKey": ["/city"], "indexingSearchListSize": 50}
+                {"path": "/vector3", "type": "diskANN", "quantizerType": "product", "quantizationByteSize": 8, "vectorIndexShardKey": ["/city"], "indexingSearchListSize": 50}
             ]
         }
         vector_embedding_policy = {
@@ -101,7 +101,7 @@ class TestVectorPolicy(unittest.TestCase):
         # Pass a vector indexing policy with hierarchical vectorIndexShardKey value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "diskANN", 'quantizationByteSize': 64, 'indexingSearchListSize': 100, "vectorIndexShardKey": ["/country/city"]}]
+                {"path": "/vector2", "type": "diskANN", "quantizerType": "product", 'quantizationByteSize': 64, 'indexingSearchListSize': 100, "vectorIndexShardKey": ["/country/city"]}]
         }
         container_id = "vector_container" + str(uuid.uuid4())
         created_container = self.test_db.create_container(
@@ -442,7 +442,7 @@ class TestVectorPolicy(unittest.TestCase):
             pytest.fail("Container replace should have failed for new embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert ("The Vector Embedding Policy cannot be changed in Collection Replace"
+            assert ("Paths in existing embedding policy cannot be modified in Collection Replace"
                     in e.http_error_message)
         self.test_db.delete_container(container_id)
 

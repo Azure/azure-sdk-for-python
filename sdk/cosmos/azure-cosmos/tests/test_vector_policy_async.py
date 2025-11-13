@@ -53,7 +53,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
 
                 {"path": "/vector2", "type": "quantizedFlat", "quantizerType": "product", "quantizationByteSize": 64, "vectorIndexShardKey": ["/city"]},
 
-                {"path": "/vector3", "type": "diskANN", "quantizationByteSize": 8, "indexingSearchListSize": 50}
+                {"path": "/vector3", "type": "diskANN", "quantizerType": "product", "quantizationByteSize": 8, "indexingSearchListSize": 50}
             ]
         }
         vector_embedding_policy = {
@@ -373,7 +373,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container replace should have failed for new embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert ("The Vector Embedding Policy cannot be changed in Collection Replace"
+            assert ("Paths in existing embedding policy cannot be modified in Collection Replace"
                     in e.http_error_message)
         await self.test_db.delete_container(container_id)
 
