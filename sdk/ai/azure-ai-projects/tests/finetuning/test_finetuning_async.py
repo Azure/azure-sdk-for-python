@@ -100,19 +100,21 @@ class TestFineTuningAsync(TestBase):
 
         with open(training_file_path, "rb") as f:
             train_file = await openai_client.files.create(file=f, purpose="fine-tune")
-        assert train_file is not None
-        assert train_file.id is not None
-        TestBase.assert_equal_or_not_none(train_file.status, "pending")
-        print(f"[test_finetuning_{job_type}_async] Uploaded training file: {train_file.id}")
+        train_processed_file = await openai_client.files.wait_for_processing(train_file.id)
+        assert train_processed_file is not None
+        assert train_processed_file.id is not None
+        TestBase.assert_equal_or_not_none(train_processed_file.status, "processed")
+        print(f"[test_finetuning_{job_type}_async] Uploaded training file: {train_processed_file.id}")
 
         with open(validation_file_path, "rb") as f:
             validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
-        assert validation_file is not None
-        assert validation_file.id is not None
-        TestBase.assert_equal_or_not_none(validation_file.status, "pending")
-        print(f"[test_finetuning_{job_type}_async] Uploaded validation file: {validation_file.id}")
+        validation_processed_file = await openai_client.files.wait_for_processing(validation_file.id)
+        assert validation_processed_file is not None
+        assert validation_processed_file.id is not None
+        TestBase.assert_equal_or_not_none(validation_processed_file.status, "processed")
+        print(f"[test_finetuning_{job_type}_async] Uploaded validation file: {validation_processed_file.id}")
 
-        return train_file, validation_file
+        return train_processed_file, validation_processed_file
 
     async def _cleanup_test_files_async(self, openai_client, train_file, validation_file):
         """Helper method to clean up uploaded files after testing asynchronously."""
@@ -131,9 +133,6 @@ class TestFineTuningAsync(TestBase):
             async with await project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
 
                 fine_tuning_job = await self._create_sft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id
@@ -162,9 +161,6 @@ class TestFineTuningAsync(TestBase):
 
                 train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
 
-                # Wait for files to be processed
-                time.sleep(10)
-
                 fine_tuning_job = await self._create_sft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id
                 )
@@ -191,9 +187,6 @@ class TestFineTuningAsync(TestBase):
             async with await project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
 
                 fine_tuning_job = await self._create_sft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id
@@ -226,9 +219,6 @@ class TestFineTuningAsync(TestBase):
 
                 train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
 
-                # Wait for files to be processed
-                time.sleep(10)
-
                 fine_tuning_job = await self._create_sft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id
                 )
@@ -257,9 +247,6 @@ class TestFineTuningAsync(TestBase):
             async with await project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = await self._upload_test_files_async(openai_client, "dpo")
-
-                # Wait for completion of uploading of files
-                time.sleep(10)
 
                 fine_tuning_job = await self._create_dpo_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id
@@ -290,9 +277,6 @@ class TestFineTuningAsync(TestBase):
 
                 train_file, validation_file = await self._upload_test_files_async(openai_client, "rft")
 
-                # Wait for completion of uploading of files
-                time.sleep(10)
-
                 fine_tuning_job = await self._create_rft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id
                 )
@@ -320,9 +304,6 @@ class TestFineTuningAsync(TestBase):
             async with await project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
 
                 fine_tuning_job = await self._create_sft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id
@@ -367,9 +348,6 @@ class TestFineTuningAsync(TestBase):
 
                 train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
 
-                # Wait for files to be processed
-                time.sleep(10)
-
                 fine_tuning_job = await self._create_sft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id
                 )
@@ -401,9 +379,6 @@ class TestFineTuningAsync(TestBase):
             async with await project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
 
                 fine_tuning_job = await self._create_sft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id, "oss"
@@ -439,8 +414,8 @@ class TestFineTuningAsync(TestBase):
                 resource_group = kwargs.get("azure_ai_projects_azure_resource_group", "")
                 account_name = kwargs.get("azure_ai_projects_azure_aoai_account", "")
 
-                assert resource_group, "Azure resource group is required for deployment test"
-                assert account_name, "Azure OpenAI account name is required for deployment test"
+                assert resource_group, "Azure resource group is required for deployment"
+                assert account_name, "Azure OpenAI account name is required for deployment"
 
                 print(
                     f"[test_sft_pre_finetuning_job_deploy_infer_async] Deploying model: {pre_finetuned_model}, Deployment name: {deployment_name}"
@@ -452,7 +427,7 @@ class TestFineTuningAsync(TestBase):
 
                     deployment_properties = DeploymentProperties(model=deployment_model)
 
-                    deployment_sku = Sku(name="Standard", capacity=1)
+                    deployment_sku = Sku(name="GlobalStandard", capacity=1)
 
                     deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
 
@@ -468,7 +443,7 @@ class TestFineTuningAsync(TestBase):
                     start_time = time.time()
 
                     while (
-                        deployment_operation.status() not in ["succeeded", "failed"]
+                        deployment_operation.status() not in ["Succeeded", "Failed"]
                         and time.time() - start_time < max_wait_time
                     ):
                         await asyncio.sleep(30)
@@ -479,22 +454,17 @@ class TestFineTuningAsync(TestBase):
                     final_status = deployment_operation.status()
                     print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Final deployment status: {final_status}")
 
-                    if final_status == "succeeded":
+                    if final_status == "Succeeded":
                         print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Testing inference on deployed model")
 
-                        response = await openai_client.chat.completions.create(
-                            model=deployment_name,
-                            messages=[{"role": "user", "content": "Hello, how are you?"}],
-                            max_tokens=50,
+                        response = await openai_client.responses.create(
+                            model=deployment_name, input=[{"role": "user", "content": "Hello, how are you?"}]
                         )
 
-                        assert response.choices is not None, "Response choices should not be None"
-                        assert len(response.choices) > 0, "Response should have at least one choice"
-                        assert response.choices[0].message is not None, "Message should not be None"
-                        assert response.choices[0].message.content is not None, "Message content should not be None"
+                        assert response.output_text is not None, "Response output_text should not be None"
 
                         print(
-                            f"[test_sft_pre_finetuning_job_deploy_infer_async] Inference successful: {response.choices[0].message.content[:100]}"
+                            f"[test_sft_pre_finetuning_job_deploy_infer_async] Inference successful: {response.output_text[:100]}"
                         )
 
                         await cogsvc_client.deployments.begin_delete(

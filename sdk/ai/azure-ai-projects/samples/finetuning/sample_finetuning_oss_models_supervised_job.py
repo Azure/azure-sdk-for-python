@@ -41,11 +41,11 @@ validation_file_path = os.environ.get(
     "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "sft_validation_set.jsonl")
 )
 
-with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
-
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-
-        with project_client.get_openai_client() as openai_client:
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
             # [START finetuning_oss_model_supervised_job_sample]
             print("Uploading training file...")

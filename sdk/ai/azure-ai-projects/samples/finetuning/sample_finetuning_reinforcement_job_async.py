@@ -44,11 +44,11 @@ validation_file_path = os.environ.get(
 
 
 async def main():
-    async with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
-
-        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-
-            async with await project_client.get_openai_client() as openai_client:
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        await project_client.get_openai_client() as openai_client,
+    ):
 
                 print("Uploading training file...")
                 with open(training_file_path, "rb") as f:

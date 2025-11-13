@@ -44,13 +44,12 @@ validation_file_path = os.environ.get(
 
 
 async def main():
-    async with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        await project_client.get_openai_client() as openai_client,
+    ):
 
-        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-
-            async with await project_client.get_openai_client() as openai_client:
-
-                # [START finetuning_oss_model_supervised_job_async_sample]
                 print("Uploading training file...")
                 with open(training_file_path, "rb") as f:
                     train_file = await openai_client.files.create(file=f, purpose="fine-tune")
@@ -74,7 +73,6 @@ async def main():
                     },
                 )
                 print(fine_tuning_job)
-                # [END finetuning_oss_model_supervised_job_async_sample]
 
 
 if __name__ == "__main__":

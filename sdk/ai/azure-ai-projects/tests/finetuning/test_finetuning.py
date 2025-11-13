@@ -96,19 +96,21 @@ class TestFineTuning(TestBase):
 
         with open(training_file_path, "rb") as f:
             train_file = openai_client.files.create(file=f, purpose="fine-tune")
-        assert train_file is not None
-        assert train_file.id is not None
-        TestBase.assert_equal_or_not_none(train_file.status, "pending")
-        print(f"[test_finetuning_{job_type}] Uploaded training file: {train_file.id}")
-
+        train_processed_file = openai_client.files.wait_for_processing(train_file.id)
+        assert train_processed_file is not None
+        assert train_processed_file.id is not None
+        TestBase.assert_equal_or_not_none(train_processed_file.status, "processed")
+        print(f"[test_finetuning_{job_type}] Uploaded training file: {train_processed_file.id}")
+        
         with open(validation_file_path, "rb") as f:
             validation_file = openai_client.files.create(file=f, purpose="fine-tune")
-        assert validation_file is not None
-        assert validation_file.id is not None
-        TestBase.assert_equal_or_not_none(validation_file.status, "pending")
-        print(f"[test_finetuning_{job_type}] Uploaded validation file: {validation_file.id}")
-
-        return train_file, validation_file
+        validation_processed_file = openai_client.files.wait_for_processing(validation_file.id)
+        assert validation_processed_file is not None
+        assert validation_processed_file.id is not None
+        TestBase.assert_equal_or_not_none(validation_processed_file.status, "processed")
+        print(f"[test_finetuning_{job_type}] Uploaded validation file: {validation_processed_file.id}")
+        
+        return train_processed_file, validation_processed_file
 
     def _cleanup_test_files(self, openai_client, train_file, validation_file):
         """Helper method to clean up uploaded files after testing."""
@@ -126,11 +128,8 @@ class TestFineTuning(TestBase):
 
             with project_client.get_openai_client() as openai_client:
 
-                train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
-
+                train_file, validation_file = self._upload_test_files(openai_client, "sft")  
+                       
                 fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
                 print(f"[test_finetuning_sft] Created fine-tuning job: {fine_tuning_job.id}")
 
@@ -155,10 +154,7 @@ class TestFineTuning(TestBase):
             with project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
-
+                
                 fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
                 print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
 
@@ -183,9 +179,6 @@ class TestFineTuning(TestBase):
             with project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
 
                 fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
                 print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
@@ -212,10 +205,7 @@ class TestFineTuning(TestBase):
             with project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
-
+                
                 fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
                 print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
 
@@ -228,7 +218,9 @@ class TestFineTuning(TestBase):
                 retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
                 print(f"[test_finetuning_sft] Verified cancellation persisted for job: {retrieved_job.id}")
                 TestBase.validate_fine_tuning_job(
-                    retrieved_job, expected_job_id=fine_tuning_job.id, expected_status="cancelled"
+                    retrieved_job,
+                    expected_job_id=fine_tuning_job.id,
+                    expected_status="cancelled"
                 )
 
                 self._cleanup_test_files(openai_client, train_file, validation_file)
@@ -242,10 +234,7 @@ class TestFineTuning(TestBase):
             with project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = self._upload_test_files(openai_client, "dpo")
-
-                # Wait for completion of uploading of files
-                time.sleep(10)
-
+                
                 fine_tuning_job = self._create_dpo_finetuning_job(openai_client, train_file.id, validation_file.id)
                 print(f"[test_finetuning_dpo] Created DPO fine-tuning job: {fine_tuning_job.id}")
                 print(fine_tuning_job)
@@ -272,10 +261,7 @@ class TestFineTuning(TestBase):
             with project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = self._upload_test_files(openai_client, "rft")
-
-                # Wait for completion of uploading of files
-                time.sleep(10)
-
+                
                 fine_tuning_job = self._create_rft_finetuning_job(openai_client, train_file.id, validation_file.id)
                 print(f"[test_finetuning_rft] Created RFT fine-tuning job: {fine_tuning_job.id}")
 
@@ -301,10 +287,7 @@ class TestFineTuning(TestBase):
             with project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
-
+                
                 fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
                 print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
 
@@ -342,10 +325,7 @@ class TestFineTuning(TestBase):
             with project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
-
+                
                 fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
                 print(f"[test_finetuning_resume] Created job: {fine_tuning_job.id}")
 
@@ -375,9 +355,6 @@ class TestFineTuning(TestBase):
             with project_client.get_openai_client() as openai_client:
 
                 train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                # Wait for files to be processed
-                time.sleep(10)
 
                 fine_tuning_job = self._create_sft_finetuning_job(
                     openai_client, train_file.id, validation_file.id, "oss"
@@ -410,8 +387,8 @@ class TestFineTuning(TestBase):
                 resource_group = kwargs.get("azure_ai_projects_azure_resource_group", "")
                 account_name = kwargs.get("azure_ai_projects_azure_aoai_account", "")
 
-                assert resource_group, "Azure resource group is required for deployment test"
-                assert account_name, "Azure OpenAI account name is required for deployment test"
+                assert resource_group, "Azure resource group is required for deployment"
+                assert account_name, "Azure OpenAI account name is required for deployment"
 
                 print(
                     f"[test_sft_pre_finetuning_job_deploy_infer] Deploying model: {pre_finetuned_model}, Deployment name: {deployment_name}"
@@ -423,7 +400,7 @@ class TestFineTuning(TestBase):
 
                     deployment_properties = DeploymentProperties(model=deployment_model)
 
-                    deployment_sku = Sku(name="Standard", capacity=1)
+                    deployment_sku = Sku(name="GlobalStandard", capacity=1)
 
                     deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
 
@@ -439,7 +416,7 @@ class TestFineTuning(TestBase):
                     start_time = time.time()
 
                     while (
-                        deployment_operation.status() not in ["succeeded", "failed"]
+                        deployment_operation.status() not in ["Succeeded", "Failed"]
                         and time.time() - start_time < max_wait_time
                     ):
                         time.sleep(30)
@@ -450,22 +427,17 @@ class TestFineTuning(TestBase):
                     final_status = deployment_operation.status()
                     print(f"[test_sft_pre_finetuning_job_deploy_infer] Final deployment status: {final_status}")
 
-                    if final_status == "succeeded":
+                    if final_status == "Succeeded":
                         print(f"[test_sft_pre_finetuning_job_deploy_infer] Testing inference on deployed model")
 
-                        response = openai_client.chat.completions.create(
-                            model=deployment_name,
-                            messages=[{"role": "user", "content": "Hello, how are you?"}],
-                            max_tokens=50,
+                        response = openai_client.responses.create(
+                            model=deployment_name, input=[{"role": "user", "content": "Hello, how are you?"}]
                         )
 
-                        assert response.choices is not None, "Response choices should not be None"
-                        assert len(response.choices) > 0, "Response should have at least one choice"
-                        assert response.choices[0].message is not None, "Message should not be None"
-                        assert response.choices[0].message.content is not None, "Message content should not be None"
+                        assert response.output_text is not None, "Response output_text should not be None"
 
                         print(
-                            f"[test_sft_pre_finetuning_job_deploy_infer] Inference successful: {response.choices[0].message.content[:100]}"
+                            f"[test_sft_pre_finetuning_job_deploy_infer] Inference successful: {response.output_text[:100]}"
                         )
 
                         # Clean up deployment

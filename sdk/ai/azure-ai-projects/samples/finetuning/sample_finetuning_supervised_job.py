@@ -56,12 +56,11 @@ subscription_id = os.environ["AZURE_AI_PROJECTS_AZURE_SUBSCRIPTION_ID"]
 resource_group = os.environ["AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP"]
 account_name = os.environ["AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT"]
 
-with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
-
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-
-        with project_client.get_openai_client() as openai_client:
-
+with (
+    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
             # [START finetuning_supervised_job_sample]
             print("Uploading training file...")
             with open(training_file_path, "rb") as f:
@@ -119,6 +118,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
             cancelled_job = openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
             print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
+            
 
             # Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
             # Note: Deployment can only be started after the fine-tuning job completes successfully.
@@ -134,7 +134,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
                 deployment_properties = DeploymentProperties(model=deployment_model)
 
-                deployment_sku = Sku(name="Standard", capacity=250)
+                deployment_sku = Sku(name="GlobalStandard", capacity=100)
 
                 deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
 
@@ -145,13 +145,17 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                     deployment=deployment_config,
                 )
 
-                while deployment.status() not in ["succeeded", "failed"]:
+                while deployment.status() not in ["Succeeded", "Failed"]:
                     time.sleep(30)
                     print(f"Status: {deployment.status()}")
-
+            
             print(f"Testing fine-tuned model via deployment: {deployment_name}")
-            response = openai_client.chat.completions.create(
-                model=deployment_name, messages=[{"role": "user", "content": "Who invented the telephone?"}]
+
+            response = openai_client.responses.create(
+                model=deployment_name, input=[{"role": "user", "content": "Who invented the telephone?"}]
             )
-            print(f"Model response: {response.choices[0].message.content}")
+            print(f"Model response: {response.output_text}")
             # [END finetuning_supervised_job_sample]
+
+            
+            
