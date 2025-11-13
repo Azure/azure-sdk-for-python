@@ -1,0 +1,5 @@
+directory: specification/cognitiveservices/data-plane/LanguageQuestionAnswering
+commit: 5e36c7f1e3e8710fcaa0e7ae44d8742d9a91e665
+additionalDirectories: []
+repo: Azure/azure-rest-api-specs
+
