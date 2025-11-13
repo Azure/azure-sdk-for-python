@@ -106,8 +106,11 @@ async def quickstart():
     # Pass the factory function to from_langgraph instead of a compiled graph
     # The graph will be created on every agent run with access to ToolClient
     print("Creating LangGraph adapter with factory function...")
-    adapter = from_langgraph(graph_factory, credentials=credential, tools=[{"type": "image_generation", "model":"gpt-image-1"}], project_endpoint=project_endpoint)
-    
+    # Get project connection ID from environment
+    tool_connection_id = os.getenv("AZURE_AI_PROJECT_TOOL_CONNECTION_ID")
+
+    adapter = from_langgraph(graph_factory, credentials=credential, tools=[{"type": "mcp", "project_connection_id": tool_connection_id}])
+
     print("Adapter created! Graph will be built on every request.")
     return adapter
 
