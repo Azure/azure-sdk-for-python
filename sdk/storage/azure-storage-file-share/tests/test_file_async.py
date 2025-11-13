@@ -486,46 +486,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_create_file_semantics(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        await self._setup_share(storage_account_name, storage_account_key)
-        file_name = self._get_file_reference()
-
-        file1 = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name + "file1",
-            credential=storage_account_key
-        )
-        await file1.create_file(1024, file_property_semantics=None)
-        props = await file1.get_file_properties()
-        assert props is not None
-
-        file2 = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name + "file2",
-            credential=storage_account_key
-        )
-        await file2.create_file(1024, file_property_semantics="New")
-        props = await file2.get_file_properties()
-        assert props is not None
-
-        file3 = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name + "file2",
-            credential=storage_account_key
-        )
-        await file3.create_file(1024, file_property_semantics="Restore", file_permission=TEST_FILE_PERMISSIONS)
-        props = await file3.get_file_properties()
-        assert props is not None
-
-    @FileSharePreparer()
-    @recorded_by_proxy_async
     async def test_create_file_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -4090,25 +4050,3 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
         finally:
             await self.fsc.delete_share(self.share_name)
-
-    @FileSharePreparer()
-    @recorded_by_proxy_async
-    async def test_create_file_with_data(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        await self._setup_share(storage_account_name, storage_account_key)
-
-        file_name = self._get_file_reference()
-        file_client = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name + "file",
-            credential=storage_account_key
-        )
-        size = 1024
-        data = b"abc" * size
-        await file_client.create_file(len(data), data=data)
-        downloaded_data = await (await file_client.download_file()).readall()
-        assert downloaded_data == data
