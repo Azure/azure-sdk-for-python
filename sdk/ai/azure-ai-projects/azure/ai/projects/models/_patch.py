@@ -7,8 +7,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Dict, Optional, Any, Tuple
-from ._models import CustomCredential as CustomCredentialGenerated
-from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -16,6 +14,8 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from ._models import CustomCredential as CustomCredentialGenerated
+from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 
 
 class CustomCredential(CustomCredentialGenerated):
@@ -189,7 +189,7 @@ class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
         :return: Returns the update ID.
         :rtype: str
         """
-        return self._polling_method._current_body.update_id
+        return self._polling_method._current_body.update_id  # pylint: disable=protected-access
 
     @property
     def superseded_by(self) -> Optional[str]:
@@ -198,8 +198,9 @@ class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
         :return: Returns the ID of the superseding operation, if it exists.
         :rtype: Optional[str]
         """
-        # pylint: disable=protected-access
-        return self._polling_method._current_body.superseded_by if self._polling_method._current_body else None
+        return (
+            self._polling_method._current_body.superseded_by if self._polling_method._current_body else None  # pylint: disable=protected-access
+        )
 
     @classmethod
     def from_continuation_token(
@@ -236,7 +237,7 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         :return: Returns the update ID.
         :rtype: str
         """
-        return self._polling_method._current_body.update_id
+        return self._polling_method._current_body.update_id  # pylint: disable=protected-access
 
     @property
     def superseded_by(self) -> Optional[str]:
@@ -245,8 +246,9 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         :return: Returns the ID of the superseding operation, if it exists.
         :rtype: Optional[str]
         """
-        # pylint: disable=protected-access
-        return self._polling_method._current_body.superseded_by if self._polling_method._current_body else None
+        return (
+            self._polling_method._current_body.superseded_by if self._polling_method._current_body else None  # pylint: disable=protected-access
+        )
 
     @classmethod
     def from_continuation_token(

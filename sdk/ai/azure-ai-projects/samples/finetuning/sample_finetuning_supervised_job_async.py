@@ -7,9 +7,9 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
-    .fine_tuning.jobs methods to create, get, list, cancel, pause, resume, list events 
+    .fine_tuning.jobs methods to create, get, list, cancel, pause, resume, list events
     and list checkpoints supervised fine-tuning jobs.
-    It also shows how to deploy the fine-tuned model using Azure Cognitive Services Management 
+    It also shows how to deploy the fine-tuned model using Azure Cognitive Services Management
     Client and perform inference on the deployed model.
     Supported OpenAI models: GPT 4o, 4o-mini, 4.1, 4.1-mini
 

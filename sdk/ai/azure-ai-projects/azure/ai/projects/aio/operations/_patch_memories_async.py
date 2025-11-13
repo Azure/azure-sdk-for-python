@@ -174,7 +174,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
             )
             await raw_result.http_response.read()  # type: ignore
 
-            raw_result.http_response.status_code = 202   # type: ignore
+            raw_result.http_response.status_code = 202  # type: ignore
             raw_result.http_response.headers["Operation-Location"] = (  # type: ignore
                 f"{self._config.endpoint}/memory_stores/{name}/updates/{raw_result.http_response.json().get('update_id')}?api-version=2025-11-15-preview"  # type: ignore
             )
@@ -224,7 +224,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
             )
         return AsyncUpdateMemoriesLROPoller(
             self._client,
-            raw_result,
+            raw_result,  # type: ignore[possibly-undefined]
             get_long_running_output,
             polling_method,  # pylint: disable=possibly-used-before-assignment
         )

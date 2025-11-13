@@ -231,7 +231,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
             )
         return UpdateMemoriesLROPoller(
             self._client,
-            raw_result,
+            raw_result,  # type: ignore[possibly-undefined]
             get_long_running_output,
             polling_method,  # pylint: disable=possibly-used-before-assignment
         )
