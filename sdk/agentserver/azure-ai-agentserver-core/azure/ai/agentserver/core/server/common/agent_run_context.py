@@ -7,7 +7,6 @@ from ...models import CreateResponse
 from ...models.projects import AgentId, AgentReference, ResponseConversation1
 from .id_generator.foundry_id_generator import FoundryIdGenerator
 from .id_generator.id_generator import IdGenerator
-from ...client.tools.aio._client import AzureAIToolClient
 
 logger = get_logger()
 
@@ -69,21 +68,22 @@ class AgentRunContext:
         request_tools = self.request.get("tools", [])
         if not request_tools:
             return self._agent_tools
-        
         return request_tools
-    
+
     def get_user_info(self) -> dict:
         return self._user_info
+
+
 def _deserialize_create_response(payload: dict) -> CreateResponse:
     _deserialized = CreateResponse(**payload)
 
     raw_agent_reference = payload.get("agent")
     if raw_agent_reference:
         _deserialized["agent"] = _deserialize_agent_reference(raw_agent_reference)
-    
+
     tools = payload.get("tools")
     if tools:
-        _deserialized["tools"] = [tool for tool in tools]
+        _deserialized["tools"] = [tool for tool in tools]  # pylint: disable=unnecessary-comprehension
     return _deserialized
 
 

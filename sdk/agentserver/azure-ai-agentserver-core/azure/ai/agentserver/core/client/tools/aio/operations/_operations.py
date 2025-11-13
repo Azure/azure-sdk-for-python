@@ -1,4 +1,7 @@
-
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+# mypy: ignore-errors
 
 import json
 from typing import Any, Dict, List, Mapping, MutableMapping

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
+# mypy: disable-error-code="name-defined,annotation-unchecked,arg-type"
 import inspect
 import json
 import os
@@ -333,7 +334,9 @@ class FoundryCBAgent:
         provider.add_span_processor(processor)
         logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
 
-    def get_tool_client(self, tools: Optional[list[ToolDefinition]], user_info: Optional[UserInfo]) -> AzureAIToolClient:
+    def get_tool_client(
+            self, tools: Optional[list[ToolDefinition]], user_info: Optional[UserInfo]
+        ) -> AzureAIToolClient:
         if not self.credentials:
             raise ValueError("Credentials are required to create Tool Client.")
         return AzureAIToolClient(
@@ -343,7 +346,7 @@ class FoundryCBAgent:
             user = user_info,
         )
 
-    
+
 def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
     event_data = json.dumps(event.as_dict())
     if event.type:
