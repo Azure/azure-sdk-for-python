@@ -1,5 +1,13 @@
 # Release History
 
+## 1.13.6 (2025-11-12)
+
+### Bugs Fixed
+
+- Added detection and retry handling for network errors wrapped in generic exceptions with "Error sending prompt with conversation ID" message
+- Fix results for ungrounded_attributes
+- score_mode grader improvements
+
 ## 1.13.5 (Unreleased)
 
 ### Features Added
