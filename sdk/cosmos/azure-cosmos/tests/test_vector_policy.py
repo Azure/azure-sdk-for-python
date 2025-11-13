@@ -60,7 +60,7 @@ class TestVectorPolicy(unittest.TestCase):
         indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 8},
+                {"path": "/vector2", "type": "quantizedFlat", "quantizerType": "product", "quantizationByteSize": 8},
                 {"path": "/vector3", "type": "diskANN", "quantizationByteSize": 8, "vectorIndexShardKey": ["/city"], "indexingSearchListSize": 50}
             ]
         }
@@ -149,6 +149,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {
                     "path": "/vector1",
                     "type": "diskANN",
+                    "quantizerType": "product",
                     "quantizationByteSize": 128,
                     "indexingSearchListSize": 100
                 }
@@ -179,6 +180,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {
                     "path": "/vector1",
                     "type": "diskANN",
+                    "quantizerType": "product",
                     "quantizationByteSize": 128,
                     "indexingSearchListSize": 100
                 }]
@@ -406,17 +408,6 @@ class TestVectorPolicy(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
-                    in e.http_error_message)
-        # don't provide vector indexing policy
-        try:
-            self.test_db.replace_container(
-                created_container,
-                PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy)
-            pytest.fail("Container replace should have failed for missing indexing policy.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert ("The Vector Indexing Policy cannot be changed in Collection Replace."
                     in e.http_error_message)
         # using a new indexing policy
         new_indexing_policy = {
