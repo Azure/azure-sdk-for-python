@@ -51,7 +51,7 @@ with project_client:
     file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
     tool = CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))
     # [END tool_declaration]
-    
+
     print(f"File uploaded (id: {file.id})")
 
     # Create agent with code interpreter tool
