@@ -115,10 +115,10 @@ async def sample_text_custom_multi_label_classification_async():
                     print(f"Kind: {op_result.kind}")
 
                     results = op_result.results
-                    for doc in (results.documents or []):
+                    for doc in results.documents or []:
                         print(f"\nDocument ID: {doc.id}")
                         print("Predicted Labels:")
-                        for cls_item in (doc.class_property or []):
+                        for cls_item in doc.class_property or []:
                             print(f"  Category: {cls_item.category}")
                             print(f"  Confidence score: {cls_item.confidence_score}")
                 else:
@@ -129,6 +129,8 @@ async def sample_text_custom_multi_label_classification_async():
                         )
                     except Exception:
                         print("\n[Other action present]")
+
+
 # [END text_custom_multi_label_classification_async]
 
 

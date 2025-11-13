@@ -1,0 +1,2 @@
+-e ../../../eng/tools/azure-sdk-tools
+python-dotenv
