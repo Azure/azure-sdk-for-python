@@ -5,6 +5,7 @@ resources in your Microsoft Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on methods on the `.agents` client property.
 * **Enhance Agents with specialized tools**:
+  * Agent Memory Search
   * Agent-to-Agent (A2A)
   * Azure AI Search
   * Bing Custom Search
