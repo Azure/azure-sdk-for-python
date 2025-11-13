@@ -263,7 +263,7 @@ extends:
                         - conda-forge
                       checkout:
                         - package: azure-ai-ml
-                          version: 1.30.1
+                          version: 1.30.0
                     - name: azure-ai-contentsafety
                       common_root: azure
                       service: contentsafety
