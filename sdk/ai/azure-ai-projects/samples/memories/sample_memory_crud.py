@@ -6,7 +6,8 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to perform CRUD operations on a memory store using the Azure AI Projects SDK.
+    This sample demonstrates how to perform CRUD operations on a memory store
+    using the synchronous AIProjectClient.
 
 USAGE:
     python sample_memory_crud.py
@@ -26,6 +27,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import MemoryStoreDefaultDefinition
@@ -42,9 +44,9 @@ with (
     # Delete memory store, if it already exists
     memory_store_name = "my_memory_store"
     try:
-        delete_response = project_client.memory_stores.delete(memory_store_name)
-        print(f"Deleted memory store: {delete_response.deleted}")
-    except Exception:
+        project_client.memory_stores.delete(memory_store_name)
+        print(f"Memory store `{memory_store_name}` deleted")
+    except ResourceNotFoundError:
         pass
 
     # Create Memory Store
