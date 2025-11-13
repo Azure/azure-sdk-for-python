@@ -61,7 +61,7 @@ async def main():
     computer_use_tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
 
     async with (
-        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         await project_client.get_openai_client() as openai_client,
     ):

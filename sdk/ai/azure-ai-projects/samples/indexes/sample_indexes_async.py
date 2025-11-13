@@ -44,7 +44,7 @@ async def main() -> None:
     ai_search_index_name = os.environ.get("AI_SEARCH_INDEX_NAME", "my-ai-search-index-name")
 
     async with (
-        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
 

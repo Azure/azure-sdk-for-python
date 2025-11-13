@@ -36,7 +36,7 @@ load_dotenv()
 async def main() -> None:
 
     async with (
-        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        DefaultAzureCredential() as credential,
         AsyncOpenAI(
             base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai",
             api_key=get_bearer_token_provider(credential, "https://ai.azure.com/.default"),

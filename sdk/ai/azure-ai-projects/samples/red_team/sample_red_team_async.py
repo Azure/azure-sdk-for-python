@@ -50,7 +50,7 @@ async def sample_red_team_async() -> None:
     model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 
     async with (
-        DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+        DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
 
