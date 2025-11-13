@@ -54,6 +54,27 @@ class TestTranslationAsync(TextTranslationTest):
         assert response[0].detected_language.score == 1
         assert response[0].translations[0].language == "cs"
         assert response[0].translations[0].text is not None
+    
+    @TextTranslationPreparer()
+    @recorded_by_proxy_async
+    async def test_translate_using_llm(self, **kwargs):
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
+        client = self.create_async_client(endpoint, apikey, region)
+
+        input_text_element = TranslateInputItem(
+            text="Hola mundo",
+            targets=[TranslationTarget(language="cs", deployment_name="gpt-4o-mini")],
+            language="es"
+        )
+        async with client:
+            response = await client.translate(body=[input_text_element])
+
+        assert len(response) == 1
+        assert len(response[0].translations) == 1
+        assert response[0].translations[0].language == "cs"
+        assert response[0].translations[0].text is not None
 
     @TextTranslationPreparer()
     @recorded_by_proxy_async
