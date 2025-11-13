@@ -53,6 +53,8 @@ class ToolClient:
                     tool_name="my_tool",
                     tool_input={"param": "value"}
                 )
+
+    :meta private:
     """
     
     def __init__(self, tool_client: "AzureAIToolClient") -> None:
