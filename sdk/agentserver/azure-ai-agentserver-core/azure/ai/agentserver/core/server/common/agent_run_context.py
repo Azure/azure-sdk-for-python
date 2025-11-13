@@ -1,23 +1,27 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Any
 from ...logger import get_logger
 from ...models import CreateResponse
 from ...models.projects import AgentId, AgentReference, ResponseConversation1
 from .id_generator.foundry_id_generator import FoundryIdGenerator
 from .id_generator.id_generator import IdGenerator
+from ...client.tools.aio._client import AzureAIToolClient
 
 logger = get_logger()
 
 
 class AgentRunContext:
-    def __init__(self, payload: dict):
+    def __init__(self, payload: dict, **kwargs: Any) -> None:
         self._raw_payload = payload
         self._request = _deserialize_create_response(payload)
         self._id_generator = FoundryIdGenerator.from_request(payload)
         self._response_id = self._id_generator.response_id
         self._conversation_id = self._id_generator.conversation_id
         self._stream = self.request.get("stream", False)
+        self._user_info = kwargs.get("user_info", {})
+        self._agent_tools = kwargs.get("agent_tools", [])
 
     @property
     def raw_payload(self) -> dict:
@@ -60,13 +64,26 @@ class AgentRunContext:
             return None  # type: ignore
         return ResponseConversation1(id=self._conversation_id)
 
-
+    def get_tools(self) -> list:
+        # request tools take precedence over agent tools
+        request_tools = self.request.get("tools", [])
+        if not request_tools:
+            return self._agent_tools
+        
+        return request_tools
+    
+    def get_user_info(self) -> dict:
+        return self._user_info
 def _deserialize_create_response(payload: dict) -> CreateResponse:
     _deserialized = CreateResponse(**payload)
 
     raw_agent_reference = payload.get("agent")
     if raw_agent_reference:
         _deserialized["agent"] = _deserialize_agent_reference(raw_agent_reference)
+    
+    tools = payload.get("tools")
+    if tools:
+        _deserialized["tools"] = [tool for tool in tools]
     return _deserialized
 
 
