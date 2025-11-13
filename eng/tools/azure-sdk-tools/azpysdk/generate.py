@@ -10,8 +10,6 @@ from ci_tools.functions import install_into_venv
 from ci_tools.variables import set_envvar_defaults
 from ci_tools.logging import logger
 
-TOMLI_VERSION = "2.0.1"
-
 
 class generate(Check):
     def __init__(self) -> None:
@@ -44,13 +42,6 @@ class generate(Check):
             self.install_dev_reqs(executable, args, package_dir)
 
             try:
-                install_into_venv(executable, [f"tomli=={TOMLI_VERSION}"], package_dir)
-            except CalledProcessError as e:
-                logger.error(f"Failed to install tomli in the virtual environment for {package_name}: {e}")
-                results.append(e.returncode)
-                continue
-
-            try:
                 self.generate(Path(package_dir))
             except ValueError as e:
                 logger.error(f"Generation failed for {package_name}: {e}")
@@ -69,13 +60,18 @@ class generate(Check):
 
     def generate_autorest(self, folder: Path) -> None:
         readme_path = folder / "swagger" / "README.md"
-        completed_process = run(
-            f"autorest {readme_path} --python-sdks-folder=../../",
-            cwd=folder,
-            shell=True,
-        )
-        if completed_process.returncode != 0:
-            raise ValueError("Something happened with autorest: " + str(completed_process))
+
+        try:
+            run(
+                ["autorest", str(readme_path), "--python-sdks-folder=../../"],
+                cwd=folder,
+                shell=False,
+            )
+        except FileNotFoundError:
+            raise ValueError("autorest is not installed. Please install autorest before running this command.")
+        except CalledProcessError as e:
+            raise ValueError(f"autorest encountered an unexpected error: {e}")
+
         logger.info("Autorest done")
 
     def generate_typespec(self, folder: Path) -> None:
@@ -89,12 +85,13 @@ class generate(Check):
                 "https://github.com/Azure/azure-sdk-tools/tree/main/tools/tsp-client/README.md"
             )
 
-        completed_process = run("tsp-client update", cwd=folder, shell=True, stderr=PIPE)
-        if completed_process.returncode != 0:
-            if "'tsp-client' is not recognized" in completed_process.stderr.decode("utf-8"):
-                raise ValueError(
-                    "tsp-client is not installed. Please run: npm install -g @azure-tools/typespec-client-generator-cli"
-                )
-            raise ValueError("Something happened with tsp-client update step: " + str(completed_process))
+        try:
+            run(["tsp-client", "update"], cwd=folder, check=True, stderr=PIPE, shell=False)
+        except FileNotFoundError as e:
+            raise ValueError(
+                "tsp-client is not installed. Please run: npm install -g @azure-tools/typespec-client-generator-cli"
+            )
+        except CalledProcessError as e:
+            raise ValueError(f"tsp-client encountered an unexpected error: {e}")
 
         logger.info("TypeSpec generate done")
