@@ -2101,6 +2101,8 @@ def _convert_results_to_aoai_evaluation_results(
                     metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"]
+                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["eci"]
+                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["ungrounded_attributes"]
                 ):
                     copy_label = label
                     if copy_label is not None and isinstance(copy_label, bool) and copy_label == True:
