@@ -95,7 +95,7 @@ class _TextContentStreamingState(_BaseStreamingState):
         )
 
         if not self.text_part_started:
-            empty_part = ItemContentOutputText(text="", annotations=[], logprobs=[])
+            empty_part = ItemContentOutputText(type="output_text", text="", annotations=[], logprobs=[])
             events.append(
                 ResponseContentPartAddedEvent(
                     sequence_number=ctx.next_sequence(),
@@ -218,6 +218,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
 
         self.call_id = self.call_id or str(uuid.uuid4())
         function_item = FunctionToolCallItemResource(
+            type="function_call",
             id=self.item_id,
             status="in_progress",
             call_id=self.call_id,
@@ -351,6 +352,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
 
         self.call_id = self.call_id or str(uuid.uuid4())
         item = FunctionToolCallOutputItemResource(
+            type="function_call_output",
             id=self.item_id,
             status="in_progress",
             call_id=self.call_id,
