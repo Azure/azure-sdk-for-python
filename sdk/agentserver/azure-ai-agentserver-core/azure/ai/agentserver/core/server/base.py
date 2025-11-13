@@ -337,6 +337,7 @@ class FoundryCBAgent:
     def get_tool_client(
             self, tools: Optional[list[ToolDefinition]], user_info: Optional[UserInfo]
         ) -> AzureAIToolClient:
+        logger.debug("Creating AzureAIToolClient with tools: %s", tools)
         if not self.credentials:
             raise ValueError("Credentials are required to create Tool Client.")
         return AzureAIToolClient(

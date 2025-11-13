@@ -3,13 +3,16 @@
 # ---------------------------------------------------------
 """Tool client for integrating AzureAIToolClient with Agent Framework."""
 
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from agent_framework import AIFunction
-from pydantic import BaseModel, Field, create_model
-
+from pydantic import Field, create_model
+from azure.ai.agentserver.core.logger import get_logger
 if TYPE_CHECKING:
     from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient, FoundryTool
 
+logger = get_logger()
+
+# pylint: disable=client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 class ToolClient:
     """Client that integrates AzureAIToolClient with Agent Framework.
     
@@ -46,7 +49,7 @@ class ToolClient:
 
     :meta private:
     """
-    
+
     def __init__(self, tool_client: "AzureAIToolClient") -> None:
         """Initialize the ToolClient.
         
@@ -55,7 +58,7 @@ class ToolClient:
         """
         self._tool_client = tool_client
         self._aifunction_cache: List[AIFunction] = None
-    
+
     async def list_tools(self) -> List[AIFunction]:
         """List all available tools as Agent Framework tool definitions.
         
@@ -77,7 +80,7 @@ class ToolClient:
         # Get tools from AzureAIToolClient
         if self._aifunction_cache is not None:
             return self._aifunction_cache
-        
+
         azure_tools = await self._tool_client.list_tools()
         self._aifunction_cache = []
 
@@ -98,34 +101,40 @@ class ToolClient:
         """
         # Get the input schema from the tool descriptor
         input_schema = azure_tool.input_schema or {}
-        
+
         # Create a Pydantic model from the input schema
         properties = input_schema.get("properties", {})
         required_fields = set(input_schema.get("required", []))
-        
+
         # Build field definitions for the Pydantic model
         field_definitions: Dict[str, Any] = {}
         for field_name, field_info in properties.items():
             field_type = self._json_schema_type_to_python(field_info.get("type", "string"))
             field_description = field_info.get("description", "")
             is_required = field_name in required_fields
-            
+
             if is_required:
                 field_definitions[field_name] = (field_type, Field(description=field_description))
             else:
-                field_definitions[field_name] = (Optional[field_type], Field(default=None, description=field_description))
-        
+                field_definitions[field_name] = (Optional[field_type],
+                                                 Field(default=None, description=field_description))
+
         # Create the Pydantic model dynamically
         input_model = create_model(
             f"{azure_tool.name}_input",
             **field_definitions
         )
-        
+
         # Create a wrapper function that calls the Azure tool
         async def tool_func(**kwargs: Any) -> Any:
-            """Dynamically generated function to invoke the Azure AI tool."""
-            return await self.invoke_tool(azure_tool.name, kwargs)
-        
+            """Dynamically generated function to invoke the Azure AI tool.
+
+            :return: The result from the tool invocation.
+            :rtype: Any
+            """
+            logger.debug("Invoking tool: %s with input: %s", azure_tool.name, kwargs)
+            return await azure_tool.ainvoke(kwargs)
+
         # Create and return the AIFunction
         return AIFunction(
             name=azure_tool.name,
@@ -133,7 +142,7 @@ class ToolClient:
             func=tool_func,
             input_model=input_model
         )
-    
+
     def _json_schema_type_to_python(self, json_type: str) -> type:
         """Convert JSON schema type to Python type.
         
@@ -151,14 +160,23 @@ class ToolClient:
             "object": dict,
         }
         return type_map.get(json_type, str)
-   
+
     async def close(self) -> None:
+        """Close the tool client and release resources."""
         await self._tool_client.close()
-    
+
     async def __aenter__(self) -> "ToolClient":
-        """Async context manager entry."""
+        """Async context manager entry.
+
+        :return: The ToolClient instance.
+        :rtype: ToolClient
+        """
         return self
-    
+
     async def __aexit__(self, *exc_details: Any) -> None:
-        """Async context manager exit."""
+        """Async context manager exit.
+
+        :param exc_details: Exception details if an exception occurred.
+        :type exc_details: Any
+        """
         await self.close()

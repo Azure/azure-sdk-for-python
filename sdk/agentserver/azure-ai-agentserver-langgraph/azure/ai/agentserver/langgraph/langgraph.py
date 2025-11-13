@@ -8,6 +8,7 @@ import re
 from typing import TYPE_CHECKING, Any, Awaitable, Protocol, Union, Optional, List
 
 from langchain_core.runnables import RunnableConfig
+from langchain_core.tools import StructuredTool
 from langgraph.graph.state import CompiledStateGraph
 
 from azure.ai.agentserver.core.constants import Constants
@@ -22,11 +23,9 @@ from .models import (
 from .models.utils import is_state_schema_valid
 from .tool_client import ToolClient
 
-from langchain_core.tools import StructuredTool
-
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    
+
 logger = get_logger()
 
 
@@ -53,11 +52,18 @@ class LangGraphAdapter(FoundryCBAgent):
     Adapter for LangGraph Agent.
     """
 
-    def __init__(self, graph: Union[CompiledStateGraph, GraphFactory], credentials: "Optional[AsyncTokenCredential]" = None, state_converter: "Optional[LanggraphStateConverter]" = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        graph: Union[CompiledStateGraph, GraphFactory],
+        credentials: "Optional[AsyncTokenCredential]" = None,
+        state_converter: "Optional[LanggraphStateConverter]" = None,
+        **kwargs: Any
+    ) -> None:
         """
         Initialize the LangGraphAdapter with a CompiledStateGraph or a function that returns one.
 
-        :param graph: The LangGraph StateGraph to adapt, or a callable that takes ToolClient and returns CompiledStateGraph (sync or async).
+        :param graph: The LangGraph StateGraph to adapt, or a callable that takes ToolClient
+            and returns CompiledStateGraph (sync or async).
         :type graph: Union[CompiledStateGraph, GraphFactory]
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
@@ -68,7 +74,7 @@ class LangGraphAdapter(FoundryCBAgent):
         self._graph_or_factory: Union[CompiledStateGraph, GraphFactory] = graph
         self._resolved_graph: "Optional[CompiledStateGraph]" = None
         self.azure_ai_tracer = None
-        
+
         # If graph is already compiled, validate and set up state converter
         if isinstance(graph, CompiledStateGraph):
             self._resolved_graph = graph
@@ -105,7 +111,7 @@ class LangGraphAdapter(FoundryCBAgent):
                 graph = self._resolved_graph
             else:
                 graph = self._resolved_graph
-            
+
             input_data = self.state_converter.request_to_state(context)
             logger.debug(f"Converted input data: {input_data}")
             if not context.stream:
@@ -122,15 +128,17 @@ class LangGraphAdapter(FoundryCBAgent):
                     logger.warning(f"Error closing tool_client: {e}")
 
     async def _resolve_graph(self, context: AgentRunContext):
-        """
-        Resolve the graph if it's a factory function (for single-use/first-time resolution).
+        """Resolve the graph if it's a factory function (for single-use/first-time resolution).
         Creates a ToolClient and calls the factory function with it.
         This is used for the initial resolution to set up state_converter.
+
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
         """
         if callable(self._graph_or_factory):
             logger.debug("Resolving graph from factory function")
-            
-            
+
+
             # Create ToolClient with credentials
             tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info())
             tool_client_wrapper = ToolClient(tool_client)
@@ -143,14 +151,14 @@ class LangGraphAdapter(FoundryCBAgent):
                 self._resolved_graph = await result
             else:
                 self._resolved_graph = result
-            
+
             # Validate and set up state converter if not already set from initialization
             if not self.state_converter:
                 if is_state_schema_valid(self._resolved_graph.builder.state_schema):
                     self.state_converter = LanggraphMessageStateConverter()
                 else:
                     raise ValueError("state_converter is required for non-MessagesState graph.")
-            
+
             logger.debug("Graph resolved successfully")
         else:
             # Should not reach here, but just in case
@@ -168,7 +176,7 @@ class LangGraphAdapter(FoundryCBAgent):
         :rtype: tuple[CompiledStateGraph, ToolClient]
         """
         logger.debug("Resolving fresh graph from factory function for request")
-        
+
         # Create ToolClient with credentials
         tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info())
         tool_client_wrapper = ToolClient(tool_client)
@@ -181,14 +189,14 @@ class LangGraphAdapter(FoundryCBAgent):
             graph = await result
         else:
             graph = result
-        
+
         # Ensure state converter is set up (use existing one or create new)
         if not self.state_converter:
             if is_state_schema_valid(graph.builder.state_schema):
                 self.state_converter = LanggraphMessageStateConverter()
             else:
                 raise ValueError("state_converter is required for non-MessagesState graph.")
-        
+
         logger.debug("Fresh graph resolved successfully for request")
         return graph, tool_client_wrapper
 
@@ -245,7 +253,13 @@ class LangGraphAdapter(FoundryCBAgent):
             logger.error(f"Error during agent run: {e}")
             raise e
 
-    async def agent_run_astream(self, input_data: dict, context: AgentRunContext, graph: CompiledStateGraph, tool_client: "Optional[ToolClient]" = None):
+    async def agent_run_astream(
+        self,
+        input_data: dict,
+        context: AgentRunContext,
+        graph: CompiledStateGraph,
+        tool_client: "Optional[ToolClient]" = None
+    ):
         """
         Run the agent with streaming response.
 
@@ -275,7 +289,7 @@ class LangGraphAdapter(FoundryCBAgent):
             # Close tool_client if provided
             if tool_client is not None:
                 try:
-                    await tool_client._tool_client.close()
+                    await tool_client.close()
                     logger.debug("Closed tool_client after streaming completed")
                 except Exception as e:
                     logger.warning(f"Error closing tool_client in stream: {e}")
