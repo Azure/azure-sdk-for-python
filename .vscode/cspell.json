@@ -819,10 +819,7 @@
     },
     {
       "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
-      "words": [
-        "ctxt",
-        "somethingstuid"
-      ]
+      "words": [ "ctxt", "somethingstuid" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-textanalytics/**",
@@ -894,47 +891,24 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": [
-        "conv",
-        "summ",
-        "Enviar",
-        "presentación",
-        "CLU's"
-      ],
+      "words": [ "conv", "summ", "Enviar", "presentación", "CLU's"],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
-      "words": [
-        "undoc"
-      ]
+      "words": [ "undoc" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
-      "words": [
-        "ctxt",
-        "wday",
-        "mday",
-        "astimezone",
-        "unflattened",
-        "JSONify",
-        "deseralize"
-      ]
+      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-textanalytics-authoring/**",
-      "words": [
-        "unassigning",
-        "Customtextummarization",
-        "cmatrix",
-        "accb"
-      ]
+      "words": [ "unassigning", "Customtextummarization", "cmatrix", "accb" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
-      "words": [
-        "unassigning"
-      ],
+      "words": [ "unassigning" ],
       "caseSensitive": false
     },
     {
@@ -944,29 +918,15 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
-      "words": [
-        "groovin",
-        "Olufsen"
-      ]
+      "words": [ "groovin", "Olufsen" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/**/_serialization.py",
-      "words": [
-        "ctxt",
-        "wday",
-        "mday",
-        "astimezone",
-        "unflattened",
-        "JSONify",
-        "deseralize"
-      ]
+      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
-      "words": [
-        "Apim",
-        "cognituve"
-      ]
+      "words": [ "Apim", "cognituve" ]
     },
     {
       "filename": "sdk/communication/**",
@@ -2226,16 +2186,7 @@
     },
     {
       "filename": "sdk/ai/azure-ai-voicelive/**",
-      "words": [
-        "viseme",
-        "VISEME",
-        "ulaw",
-        "ULAW",
-        "logprobs",
-        "pyaudio",
-        "PyAudio",
-        "libasound"
-      ]
+      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound"]
     }
   ],
   "allowCompoundWords": true
