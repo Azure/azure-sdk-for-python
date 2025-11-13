@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, create_model
 if TYPE_CHECKING:
     from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient, FoundryTool
 
-
+# pylint: disable=client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 class ToolClient:
     """Client that integrates AzureAIToolClient with LangGraph.
     
@@ -56,7 +56,7 @@ class ToolClient:
 
     :meta private:
     """
-    
+
     def __init__(self, tool_client: "AzureAIToolClient") -> None:
         """Initialize the ToolClient.
         
@@ -65,7 +65,7 @@ class ToolClient:
         """
         self._tool_client = tool_client
         self._langchain_tools_cache: List[StructuredTool] = None
-    
+
     async def list_tools(self) -> List[StructuredTool]:
         """List all available tools as LangChain BaseTool instances.
         
@@ -91,16 +91,16 @@ class ToolClient:
         # Get tools from AzureAIToolClient
         if self._langchain_tools_cache is not None:
             return self._langchain_tools_cache
-        
+
         azure_tools = await self._tool_client.list_tools()
-        self._langchain_tools_cache = [] 
+        self._langchain_tools_cache = []
         # Convert to LangChain StructuredTool instances
         for azure_tool in azure_tools:
             langchain_tool = self._convert_to_langchain_tool(azure_tool)
             self._langchain_tools_cache.append(langchain_tool)
-        
+
         return self._langchain_tools_cache
-    
+
     def _convert_to_langchain_tool(self, azure_tool: "FoundryTool") -> StructuredTool:
         """Convert an AzureAITool to a LangChain StructuredTool.
         
@@ -111,23 +111,27 @@ class ToolClient:
         """
         # Get the input schema from the tool descriptor
         input_schema = azure_tool.input_schema or {}
-        
+
         # Create a Pydantic model for the tool's input schema
         args_schema = self._create_pydantic_model(
             tool_name=azure_tool.name,
             schema=input_schema
         )
-        
+
         # Create an async function that invokes the tool
         async def tool_func(**kwargs: Any) -> str:
-            """Invoke the Azure AI tool."""
+            """Invoke the Azure AI tool.
+
+            :return: The result from the tool invocation as a string.
+            :rtype: str
+            """
             result = await azure_tool(**kwargs)
             # Convert result to string for LangChain compatibility
             if isinstance(result, dict):
                 import json
                 return json.dumps(result)
             return str(result)
-        
+
         # Create a StructuredTool with the async function
         structured_tool = StructuredTool(
             name=azure_tool.name,
@@ -135,9 +139,9 @@ class ToolClient:
             coroutine=tool_func,
             args_schema=args_schema,
         )
-        
+
         return structured_tool
-    
+
     def _create_pydantic_model(
         self,
         tool_name: str,
@@ -155,16 +159,16 @@ class ToolClient:
         # Get properties from schema
         properties = schema.get("properties", {})
         required_fields = schema.get("required", [])
-        
+
         # Build field definitions for Pydantic model
         field_definitions = {}
         for prop_name, prop_schema in properties.items():
             prop_type = self._json_type_to_python_type(prop_schema.get("type", "string"))
             prop_description = prop_schema.get("description", "")
-            
+
             # Determine if field is required
             is_required = prop_name in required_fields
-            
+
             if is_required:
                 field_definitions[prop_name] = (
                     prop_type,
@@ -175,11 +179,11 @@ class ToolClient:
                     Optional[prop_type],
                     Field(None, description=prop_description)
                 )
-        
+
         # Create the model dynamically
         model_name = f"{tool_name.replace('-', '_').replace(' ', '_').title()}Input"
         return create_model(model_name, **field_definitions)
-    
+
     def _json_type_to_python_type(self, json_type: str) -> type:
         """Convert JSON schema type to Python type.
         
@@ -197,15 +201,24 @@ class ToolClient:
             "object": dict,
         }
         return type_mapping.get(json_type, str)
-        
+
     async def close(self) -> None:
         await self._tool_client.close()
-    
+
     async def __aenter__(self) -> "ToolClient":
-        """Async context manager entry."""
+        """Async context manager entry.
+
+        :return: The ToolClient instance.
+        :rtype: ToolClient
+        """
         return self
-    
+
     async def __aexit__(self, *exc_details: Any) -> None:
-        """Async context manager exit."""
+        """Async context manager exit.
+
+        :param exc_details: Exception details if an exception occurred.
+        :type exc_details: Any
+        :return: None
+        :rtype: None
+        """
         # The tool_client lifecycle is managed externally
-        pass
