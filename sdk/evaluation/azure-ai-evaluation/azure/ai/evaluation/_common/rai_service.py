@@ -985,75 +985,6 @@ def _build_sync_eval_payload(
 
     return sync_eval_payload
 
-
-def _parse_sync_eval_result(
-    eval_result, metric_name: str, metric_display_name: Optional[str] = None
-) -> Dict[str, Union[str, float]]:
-    """Parse the result from sync_evals response (EvalRunOutputItem) into the standard format.
-
-    :param eval_result: The result from sync_evals.create() call (EvalRunOutputItem).
-    :param metric_name: The evaluation metric name.
-    :type metric_name: str
-    :param metric_display_name: The display name for the metric.
-    :type metric_display_name: Optional[str]
-    :return: The parsed result in standard format compatible with parse_response.
-    :rtype: Dict[str, Union[str, float]]
-    """
-    # Handle EvalRunOutputItem structure
-    # Expected structure: {'results': [{'name': 'violence', 'score': 0.0, 'reason': '...', ...}]}
-
-    display_name = metric_display_name or metric_name
-
-    # Handle both dict and object formats
-    if hasattr(eval_result, "results"):
-        results = eval_result.results
-    elif isinstance(eval_result, dict) and "results" in eval_result:
-        results = eval_result["results"]
-    else:
-        return {}
-
-    if not results or len(results) == 0:
-        return {}
-
-    # Find the result for our specific metric
-    target_result = None
-    for result_item in results:
-        if isinstance(result_item, dict):
-            if result_item.get("name") == metric_name or result_item.get("metric") == metric_name:
-                target_result = result_item
-                break
-        elif hasattr(result_item, "name") and result_item.name == metric_name:
-            target_result = result_item
-            break
-
-    if not target_result:
-        return {}
-
-    # Extract values from the result item
-    if isinstance(target_result, dict):
-        score = target_result.get("score", math.nan)
-        reason = target_result.get("reason", "")
-        # Also check properties.reasoning for additional reason text
-        if not reason and "properties" in target_result:
-            props = target_result["properties"]
-            if isinstance(props, dict):
-                reason = props.get("reasoning", props.get("scoreProperties", {}).get("reasoning", ""))
-    else:
-        score = getattr(target_result, "score", math.nan)
-        reason = getattr(target_result, "reason", "")
-        if not reason and hasattr(target_result, "properties"):
-            props = target_result.properties
-            if isinstance(props, dict):
-                reason = props.get("reasoning", props.get("scoreProperties", {}).get("reasoning", ""))
-
-    # Convert score to severity level using existing logic
-    harm_score = score if not math.isnan(score) else math.nan
-    severity_level = get_harm_severity_level(harm_score) if not math.isnan(harm_score) else math.nan
-
-    # Return in the standard format expected by the red team processor
-    return {display_name: severity_level, f"{display_name}_score": harm_score, f"{display_name}_reason": reason}
-
-
 async def evaluate_with_rai_service_sync(
     data: dict,
     metric_name: str,
@@ -1126,6 +1057,181 @@ async def evaluate_with_rai_service_sync(
 
     # Return the raw EvalRunOutputItem for downstream processing
     return eval_result
+
+
+def _build_sync_eval_multimodal_payload(messages, metric_name: str) -> Dict:
+    """Build the sync_evals payload for multimodal evaluations.
+
+    :param messages: The conversation messages to evaluate.
+    :type messages: list
+    :param metric_name: The evaluation metric name.
+    :type metric_name: str
+    :return: The payload formatted for sync_evals requests.
+    :rtype: Dict
+    """
+
+    normalized_messages = messages
+    if normalized_messages and not isinstance(normalized_messages[0], dict):
+        try:
+            from azure.ai.inference.models import ChatRequestMessage
+        except ImportError as ex:
+            error_message = (
+                "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
+            )
+            raise MissingRequiredPackage(message=error_message) from ex
+
+        if isinstance(normalized_messages[0], ChatRequestMessage):
+            normalized_messages = [message.as_dict() for message in normalized_messages]
+
+    filtered_messages = [message for message in normalized_messages if message.get("role") != "system"]
+    assistant_messages = [message for message in normalized_messages if message.get("role") == "assistant"]
+    user_messages = [message for message in normalized_messages if message.get("role") == "user"]
+    content_type = retrieve_content_type(assistant_messages, metric_name)
+
+    def _extract_text_content(message_content):
+        if message_content is None:
+            return ""
+        if isinstance(message_content, str):
+            return message_content
+        if isinstance(message_content, list):
+            text_parts = []
+            for part in message_content:
+                if isinstance(part, dict):
+                    if part.get("text"):
+                        text_parts.append(part["text"])
+                    elif part.get("type") in {"image_url", "input_image"}:
+                        image_part = part.get("image_url") or part.get("image")
+                        text_parts.append(json.dumps(image_part))
+                    elif part.get("type") == "input_text" and part.get("text"):
+                        text_parts.append(part["text"])
+                    else:
+                        text_parts.append(json.dumps(part))
+                else:
+                    text_parts.append(str(part))
+            return "\n".join([text for text in text_parts if text])
+        if isinstance(message_content, dict):
+            if message_content.get("text"):
+                return message_content["text"]
+            return json.dumps(message_content)
+        return str(message_content)
+
+    last_assistant_text = _extract_text_content(assistant_messages[-1].get("content")) if assistant_messages else ""
+    last_user_text = _extract_text_content(user_messages[-1].get("content")) if user_messages else ""
+
+    template_messages = []
+    if last_user_text:
+        template_messages.append(
+            {
+                "type": "message",
+                "role": "user",
+                "content": {"text": "{{item.query}}"},
+            }
+        )
+    template_messages.append(
+        {
+            "type": "message",
+            "role": "assistant",
+            "content": {"text": "{{item.response}}"},
+        }
+    )
+
+    item_content = {
+        "messages": filtered_messages,
+        "content_type": content_type,
+        "query": last_user_text,
+        "response": last_assistant_text,
+    }
+
+    input_messages = {
+        "type": "template",
+        "template": template_messages,
+    }
+
+    payload = {
+        "name": f"Safety Eval - {metric_name}",
+        "data_source": {
+            "type": "jsonl",
+            "input_messages": input_messages,
+            "source": {"type": "file_content", "content": {"item": item_content}},
+        },
+        "testing_criteria": [
+            {
+                "type": "azure_ai_evaluator",
+                "name": metric_name,
+                "evaluator_name": metric_name,
+                "data_mapping": {
+                    "query": "{{item.query}}",
+                    "response": "{{item.response}}",
+                    "content_type": "{{item.content_type}}",
+                },
+            }
+        ],
+    }
+
+    return payload
+
+
+async def evaluate_with_rai_service_sync_multimodal(
+    messages,
+    metric_name: str,
+    project_scope: Union[str, AzureAIProject],
+    credential: TokenCredential,
+    scan_session_id: Optional[str] = None,
+):
+    """Evaluate multimodal content using the sync_evals endpoint.
+
+    :param messages: The normalized list of conversation messages.
+    :type messages: list
+    :param metric_name: The evaluation metric to use.
+    :type metric_name: str
+    :param project_scope: Azure AI project scope or endpoint.
+    :type project_scope: Union[str, AzureAIProject]
+    :param credential: Azure authentication credential.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param scan_session_id: Optional scan session identifier for correlation.
+    :type scan_session_id: Optional[str]
+    :return: The EvalRunOutputItem or legacy response payload.
+    :rtype: Union[Dict, EvalRunOutputItem]
+    """
+
+    api_version = "2025-10-15-preview"
+    sync_eval_payload = _build_sync_eval_multimodal_payload(messages, metric_name)
+
+    if is_onedp_project(project_scope):
+        client = AIProjectClient(
+            endpoint=project_scope,
+            credential=credential,
+            user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
+        )
+
+        headers = {"x-ms-client-request-id": scan_session_id} if scan_session_id else None
+        if headers:
+            return client.sync_evals.create(eval=sync_eval_payload, headers=headers)
+        return client.sync_evals.create(eval=sync_eval_payload)
+
+    token = await fetch_or_reuse_token(credential)
+    rai_svc_url = await get_rai_svc_url(project_scope, token)
+    await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
+
+    url = rai_svc_url + f"/sync_evals:run?api-version={api_version}"
+    headers = {
+        "aml-user-token": token,
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json",
+    }
+    if scan_session_id:
+        headers["x-ms-client-request-id"] = scan_session_id
+
+    sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
+
+    with get_http_client() as client:
+        http_response = client.post(url, data=sync_eval_payload_json, headers=headers)
+
+    if http_response.status_code != 200:
+        LOGGER.error("Fail evaluating with error message: %s", http_response.text())
+        http_response.raise_for_status()
+
+    return http_response.json()
 
 
 async def evaluate_with_rai_service_multimodal(

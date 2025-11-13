@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, TypeVar, Union, Optional
+from typing import Any, Dict, TypeVar, Union, Optional
 
 from typing_extensions import override
 
@@ -11,7 +11,10 @@ from azure.ai.evaluation._common.constants import (
     Tasks,
     _InternalAnnotationTasks,
 )
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync, evaluate_with_rai_service_multimodal
+from azure.ai.evaluation._common.rai_service import (
+    evaluate_with_rai_service_sync,
+    evaluate_with_rai_service_sync_multimodal,
+)
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
@@ -131,7 +134,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         # Run score computation based on supplied metric.
         # Convert enum to string value for the multimodal endpoint
         metric_value = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
-        result = await evaluate_with_rai_service_multimodal(
+        result = await evaluate_with_rai_service_sync_multimodal(
             messages=messages,
             metric_name=metric_value,
             project_scope=self._azure_ai_project,
@@ -218,13 +221,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                             f"{self._eval_metric.value}_reason": reason,
                         }
 
-                        # Code vulnerability and ungrounded attributes also include details
-                        if self._eval_metric in [
-                            EvaluationMetrics.CODE_VULNERABILITY,
-                            EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
-                        ]:
-                            details = result_dict.get("details", {})
-                            parsed_result[f"{self._eval_metric.value}_details"] = details
+                        details_source = result_dict.get("details")
+                        if not details_source:
+                            properties = result_dict.get("properties", {})
+                            if isinstance(properties, dict):
+                                details_source = properties.get("scoreProperties")
+
+                        if details_source and isinstance(details_source, dict):
+                            parsed_result[f"{self._eval_metric.value}_details"] = _prepare_details(details_source)
 
                         return parsed_result
 
@@ -289,3 +293,33 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         if self._eval_metric == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
             return Tasks.UNGROUNDED_ATTRIBUTES
         return Tasks.CONTENT_HARM
+
+
+def _coerce_string_boolean(value: Any) -> Any:
+    """Convert common string boolean values to their bool equivalents."""
+
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered == "true":
+            return True
+        if lowered == "false":
+            return False
+    return value
+
+
+def _prepare_details(details: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize detail keys and coerce string booleans recursively."""
+
+    normalized: Dict[str, Any] = {}
+    for key, value in details.items():
+        normalized_key = key.replace("-", "_") if isinstance(key, str) else key
+        normalized[normalized_key] = _prepare_detail_value(value)
+    return normalized
+
+
+def _prepare_detail_value(value: Any) -> Any:
+    if isinstance(value, dict):
+        return _prepare_details(value)
+    if isinstance(value, list):
+        return [_prepare_detail_value(item) for item in value]
+    return _coerce_string_boolean(value)
