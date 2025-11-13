@@ -6,10 +6,9 @@ from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, get_pip_command
+from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
-from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
-from ci_tools.environment_exclusions import is_check_enabled
+from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
 
 JSONDIFF_VERSION = "1.2.0"
@@ -78,9 +77,7 @@ class breaking(Check):
                     package_dir,
                 ]
                 check_call([executable] + cmd)
-                logger.info(f"No breaking changes detected for {package_name}.")
             except CalledProcessError as e:
-                logger.error(f"Breaking changes detected for {package_name}: {e}")
                 results.append(1)
                 continue
 
