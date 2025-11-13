@@ -11,7 +11,7 @@ DESCRIPTION:
     for Tool Success evaluator using inline dataset content.
 
 USAGE:
-    python sample_tool_success.py
+    python sample_tool_call_success.py
 
     Before running the sample:
 
@@ -31,11 +31,13 @@ from pprint import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
+from openai.types.eval_create_params import DataSourceConfigCustom
 
 
 load_dotenv()
@@ -53,26 +55,28 @@ def main() -> None:
 
             client = project_client.get_openai_client()
 
-            data_source_config = {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {
-                        "tool_definitions": {
-                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
+            data_source_config = DataSourceConfigCustom(
+                {
+                    "type": "custom",
+                    "item_schema": {
+                        "type": "object",
+                        "properties": {
+                            "tool_definitions": {
+                                "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
+                            },
+                            "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                         },
-                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "required": ["response"],
                     },
-                    "required": ["response"],
-                },
-                "include_sample_schema": True,
-            }
+                    "include_sample_schema": True,
+                }
+            )
 
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
-                    "name": "tool_success",
-                    "evaluator_name": "builtin.tool_success",
+                    "name": "tool_call_success",
+                    "evaluator_name": "builtin.tool_call_success",
                     "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {"tool_definitions": "{{item.tool_definitions}}", "response": "{{item.response}}"},
                 }
@@ -80,9 +84,9 @@ def main() -> None:
 
             print("Creating Eval Group")
             eval_object = client.evals.create(
-                name="Test Tool Success Evaluator with inline data",
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
+                name="Test Tool Call Success Evaluator with inline data",
+                data_source_config=data_source_config,
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created")
 

@@ -45,21 +45,21 @@ project_client = AIProjectClient(
 
 openai_client = project_client.get_openai_client()
 
+# [START tool_declaration]
+tool = MicrosoftFabricAgentTool(
+    fabric_dataagent_preview=FabricDataAgentToolParameters(
+        project_connections=[ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])]
+    )
+)
+# [END tool_declaration]
+
 with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant.",
-            tools=[
-                MicrosoftFabricAgentTool(
-                    fabric_dataagent_preview=FabricDataAgentToolParameters(
-                        project_connections=[
-                            ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])
-                        ]
-                    )
-                )
-            ],
+            tools=[tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")

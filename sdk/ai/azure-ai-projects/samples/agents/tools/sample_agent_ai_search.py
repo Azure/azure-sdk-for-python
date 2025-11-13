@@ -47,6 +47,20 @@ project_client = AIProjectClient(
 
 openai_client = project_client.get_openai_client()
 
+# [START tool_declaration]
+tool = AzureAISearchAgentTool(
+    azure_ai_search=AzureAISearchToolResource(
+        indexes=[
+            AISearchIndexResource(
+                project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
+                index_name=os.environ["AI_SEARCH_INDEX_NAME"],
+                query_type=AzureAISearchQueryType.SIMPLE,
+            ),
+        ]
+    )
+)
+# [END tool_declaration]
+
 with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
@@ -54,19 +68,7 @@ with project_client:
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="""You are a helpful assistant. You must always provide citations for
             answers using the tool and render them as: `[message_idx:search_idx†source]`.""",
-            tools=[
-                AzureAISearchAgentTool(
-                    azure_ai_search=AzureAISearchToolResource(
-                        indexes=[
-                            AISearchIndexResource(
-                                project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
-                                index_name=os.environ["AI_SEARCH_INDEX_NAME"],
-                                query_type=AzureAISearchQueryType.SIMPLE,
-                            ),
-                        ]
-                    )
-                )
-            ],
+            tools=[tool],
         ),
         description="You are a helpful agent.",
     )
