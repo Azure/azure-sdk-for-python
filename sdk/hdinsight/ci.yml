@@ -31,5 +31,3 @@ extends:
     Artifacts:
     - name: azure-mgmt-hdinsight
       safeName: azuremgmthdinsight
-    - name: azure-mgmt-hdinsightcontainers
-      safeName: azuremgmthdinsightcontainers
