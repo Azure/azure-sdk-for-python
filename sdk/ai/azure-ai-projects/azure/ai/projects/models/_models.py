@@ -10065,126 +10065,126 @@ class RedTeam(_Model):
 class Response(_Model):
     """Response.
 
-        :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Required.
-        :vartype metadata: dict[str, str]
-        :ivar temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output more random, while lower values like 0.2 will make it more focused and
-         deterministic.
-         We generally recommend altering this or ``top_p`` but not both. Required.
-        :vartype temperature: float
-        :ivar top_p: An alternative to sampling with temperature, called nucleus sampling,
-         where the model considers the results of the tokens with top_p probability
-         mass. So 0.1 means only the tokens comprising the top 10% probability mass
-         are considered.
-         We generally recommend altering this or ``temperature`` but not both. Required.
-        :vartype top_p: float
-        :ivar user: A unique identifier representing your end-user, which can help OpenAI to monitor
-         and detect abuse. `Learn more about safety best practices
-         <https://platform.openai.com/docs/guides/safety-best-practices#end-user-ids>`_. Required.
-        :vartype user: str
-        :ivar service_tier: Note: service_tier is not applicable to Azure OpenAI. Known values are:
-         "auto", "default", "flex", "scale", and "priority".
-        :vartype service_tier: str or ~azure.ai.projects.models.ServiceTier
-        :ivar top_logprobs: An integer between 0 and 20 specifying the number of most likely tokens to
-         return at each token position, each with an associated log probability.
-        :vartype top_logprobs: int
-        :ivar previous_response_id: The unique ID of the previous response to the model. Use this to
-         create multi-turn conversations. Learn more about
-         `managing conversation state <https://platform.openai.com/docs/guides/conversation-state>`_.
-        :vartype previous_response_id: str
-        :ivar model: The model deployment to use for the creation of this response.
-        :vartype model: str
-        :ivar reasoning:
-        :vartype reasoning: ~azure.ai.projects.models.Reasoning
-        :ivar background: Whether to run the model response in the background.
-         `Learn more about background responses <https://platform.openai.com/docs/guides/background>`_.
-        :vartype background: bool
-        :ivar max_output_tokens: An upper bound for the number of tokens that can be generated for a
-         response, including visible output tokens and `reasoning tokens
-         <https://platform.openai.com/docs/guides/reasoning>`_.
-        :vartype max_output_tokens: int
-        :ivar max_tool_calls: The maximum number of total calls to built-in tools that can be processed
-         in a response. This maximum number applies across all built-in tool calls, not per individual
-         tool. Any further attempts to call a tool by the model will be ignored.
-        :vartype max_tool_calls: int
-        :ivar text: Configuration options for a text response from the model. Can be plain
-         text or structured JSON data. See `Text inputs and outputs
-         <https://platform.openai.com/docs/guides/text>`_
-         and `Structured Outputs <https://platform.openai.com/docs/guides/structured-outputs>`_.
-        :vartype text: ~azure.ai.projects.models.ResponseText
-        :ivar tools: An array of tools the model may call while generating a response. You
-         can specify which tool to use by setting the _tool_choice_ parameter.
-         The two categories of tools you can provide the model are:
+    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters. Required.
+    :vartype metadata: dict[str, str]
+    :ivar temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+     will make the output more random, while lower values like 0.2 will make it more focused and
+     deterministic.
+     We generally recommend altering this or ``top_p`` but not both. Required.
+    :vartype temperature: float
+    :ivar top_p: An alternative to sampling with temperature, called nucleus sampling,
+     where the model considers the results of the tokens with top_p probability
+     mass. So 0.1 means only the tokens comprising the top 10% probability mass
+     are considered.
+     We generally recommend altering this or ``temperature`` but not both. Required.
+    :vartype top_p: float
+    :ivar user: A unique identifier representing your end-user, which can help OpenAI to monitor
+     and detect abuse. `Learn more about safety best practices
+     <https://platform.openai.com/docs/guides/safety-best-practices#end-user-ids>`_. Required.
+    :vartype user: str
+    :ivar service_tier: Note: service_tier is not applicable to Azure OpenAI. Known values are:
+     "auto", "default", "flex", "scale", and "priority".
+    :vartype service_tier: str or ~azure.ai.projects.models.ServiceTier
+    :ivar top_logprobs: An integer between 0 and 20 specifying the number of most likely tokens to
+     return at each token position, each with an associated log probability.
+    :vartype top_logprobs: int
+    :ivar previous_response_id: The unique ID of the previous response to the model. Use this to
+     create multi-turn conversations. Learn more about
+     `managing conversation state <https://platform.openai.com/docs/guides/conversation-state>`_.
+    :vartype previous_response_id: str
+    :ivar model: The model deployment to use for the creation of this response.
+    :vartype model: str
+    :ivar reasoning:
+    :vartype reasoning: ~azure.ai.projects.models.Reasoning
+    :ivar background: Whether to run the model response in the background.
+     `Learn more about background responses <https://platform.openai.com/docs/guides/background>`_.
+    :vartype background: bool
+    :ivar max_output_tokens: An upper bound for the number of tokens that can be generated for a
+     response, including visible output tokens and `reasoning tokens
+     <https://platform.openai.com/docs/guides/reasoning>`_.
+    :vartype max_output_tokens: int
+    :ivar max_tool_calls: The maximum number of total calls to built-in tools that can be processed
+     in a response. This maximum number applies across all built-in tool calls, not per individual
+     tool. Any further attempts to call a tool by the model will be ignored.
+    :vartype max_tool_calls: int
+    :ivar text: Configuration options for a text response from the model. Can be plain
+     text or structured JSON data. See `Text inputs and outputs
+     <https://platform.openai.com/docs/guides/text>`_
+     and `Structured Outputs <https://platform.openai.com/docs/guides/structured-outputs>`_.
+    :vartype text: ~azure.ai.projects.models.ResponseText
+    :ivar tools: An array of tools the model may call while generating a response. You
+     can specify which tool to use by setting the _tool_choice_ parameter.
+     The two categories of tools you can provide the model are:
 
-         * Built-in tools: Tools that are provided by OpenAI that extend the
-           model's capabilities, like web search or file search.
-         * Function calls (custom tools): Functions that are defined by you,
-           enabling the model to call your own code.
-        :vartype tools: list[~azure.ai.projects.models.Tool]
-        :ivar tool_choice: How the model should select which tool (or tools) to use when generating
-         a response. See the tools parameter to see how to specify which tools
-         the model can call. Is either a Union[str, "_models.ToolChoiceOptions"] type or a
-         ToolChoiceObject type.
-        :vartype tool_choice: str or ~azure.ai.projects.models.ToolChoiceOptions or
-         ~azure.ai.projects.models.ToolChoiceObject
-        :ivar prompt:
-        :vartype prompt: ~azure.ai.projects.models.Prompt
-        :ivar truncation: The truncation strategy to use for the model response.
-         * `auto`: If the context of this response and previous ones exceeds
-         the model's context window size, the model will truncate the
-         response to fit the context window by dropping input items in the
-         middle of the conversation.
-         * `disabled` (default): If a model response will exceed the context window
-         size for a model, the request will fail with a 400 error. Is either a Literal["auto"] type or a Literal["disabled"] type.
-        :vartype truncation: str or str
-        :ivar id: Unique identifier for this Response. Required.
-        :vartype id: str
-        :ivar object: The object type of this resource - always set to ``response``. Required. Default
-         value is "response".
-        :vartype object: str
-        :ivar status: The status of the response generation. One of ``completed``, ``failed``,
-         ``in_progress``, ``cancelled``, ``queued``, or ``incomplete``. Is one of the following types:
-         Literal["completed"], Literal["failed"], Literal["in_progress"], Literal["cancelled"],
-         Literal["queued"], Literal["incomplete"]
-        :vartype status: str or str or str or str or str or str
-        :ivar created_at: Unix timestamp (in seconds) of when this Response was created. Required.
-        :vartype created_at: ~datetime.datetime
-        :ivar error: Required.
-        :vartype error: ~azure.ai.projects.models.ResponseError
-        :ivar incomplete_details: Details about why the response is incomplete. Required.
-        :vartype incomplete_details: ~azure.ai.projects.models.ResponseIncompleteDetails1
-        :ivar output: An array of content items generated by the model.
-         * The length and order of items in the `output` array is dependent on the model's response.
-         * Rather than accessing the first item in the `output` array and
-         assuming it's an `assistant` message with the content generated by
-         the model, you might consider using the `output_text` property where
-         supported in SDKs. Required.
-        :vartype output: list[~azure.ai.projects.models.ItemResource]
-        :ivar instructions: A system (or developer) message inserted into the model's context.
-         When using along with ``previous_response_id``, the instructions from a previous
-         response will not be carried over to the next response. This makes it simple
-         to swap out system (or developer) messages in new responses. Required. Is either a str type or
-         a [ItemParam] type.
-        :vartype instructions: str or list[~azure.ai.projects.models.ItemParam]
-        :ivar output_text: SDK-only convenience property that contains the aggregated text output
-         from all ``output_text`` items in the ``output`` array, if any are present.
-         Supported in the Python and JavaScript SDKs.
-        :vartype output_text: str
-        :ivar usage:
-        :vartype usage: ~azure.ai.projects.models.ResponseUsage
-        :ivar parallel_tool_calls: Whether to allow the model to run tool calls in parallel. Required.
-        :vartype parallel_tool_calls: bool
-        :ivar conversation: Required.
-        :vartype conversation: ~azure.ai.projects.models.ResponseConversation1
-        :ivar agent: The agent used for this response.
-        :vartype agent: ~azure.ai.projects.models.AgentId
-        :ivar structured_inputs: The structured inputs to the response that can participate in prompt
-         template substitution or tool argument bindings.
-        :vartype structured_inputs: dict[str, any]
+     * Built-in tools: Tools that are provided by OpenAI that extend the
+       model's capabilities, like web search or file search.
+     * Function calls (custom tools): Functions that are defined by you,
+       enabling the model to call your own code.
+    :vartype tools: list[~azure.ai.projects.models.Tool]
+    :ivar tool_choice: How the model should select which tool (or tools) to use when generating
+     a response. See the tools parameter to see how to specify which tools
+     the model can call. Is either a Union[str, "_models.ToolChoiceOptions"] type or a
+     ToolChoiceObject type.
+    :vartype tool_choice: str or ~azure.ai.projects.models.ToolChoiceOptions or
+     ~azure.ai.projects.models.ToolChoiceObject
+    :ivar prompt:
+    :vartype prompt: ~azure.ai.projects.models.Prompt
+    :ivar truncation: The truncation strategy to use for the model response.
+     * `auto`: If the context of this response and previous ones exceeds
+     the model's context window size, the model will truncate the
+     response to fit the context window by dropping input items in the
+     middle of the conversation.
+     * `disabled` (default): If a model response will exceed the context window
+     size for a model, the request will fail with a 400 error. Is either a Literal["auto"] type or a Literal["disabled"] type.
+    :vartype truncation: str or str
+    :ivar id: Unique identifier for this Response. Required.
+    :vartype id: str
+    :ivar object: The object type of this resource - always set to ``response``. Required. Default
+     value is "response".
+    :vartype object: str
+    :ivar status: The status of the response generation. One of ``completed``, ``failed``,
+     ``in_progress``, ``cancelled``, ``queued``, or ``incomplete``. Is one of the following types:
+     Literal["completed"], Literal["failed"], Literal["in_progress"], Literal["cancelled"],
+     Literal["queued"], Literal["incomplete"]
+    :vartype status: str or str or str or str or str or str
+    :ivar created_at: Unix timestamp (in seconds) of when this Response was created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar error: Required.
+    :vartype error: ~azure.ai.projects.models.ResponseError
+    :ivar incomplete_details: Details about why the response is incomplete. Required.
+    :vartype incomplete_details: ~azure.ai.projects.models.ResponseIncompleteDetails1
+    :ivar output: An array of content items generated by the model.
+     * The length and order of items in the `output` array is dependent on the model's response.
+     * Rather than accessing the first item in the `output` array and
+     assuming it's an `assistant` message with the content generated by
+     the model, you might consider using the `output_text` property where
+     supported in SDKs. Required.
+    :vartype output: list[~azure.ai.projects.models.ItemResource]
+    :ivar instructions: A system (or developer) message inserted into the model's context.
+     When using along with ``previous_response_id``, the instructions from a previous
+     response will not be carried over to the next response. This makes it simple
+     to swap out system (or developer) messages in new responses. Required. Is either a str type or
+     a [ItemParam] type.
+    :vartype instructions: str or list[~azure.ai.projects.models.ItemParam]
+    :ivar output_text: SDK-only convenience property that contains the aggregated text output
+     from all ``output_text`` items in the ``output`` array, if any are present.
+     Supported in the Python and JavaScript SDKs.
+    :vartype output_text: str
+    :ivar usage:
+    :vartype usage: ~azure.ai.projects.models.ResponseUsage
+    :ivar parallel_tool_calls: Whether to allow the model to run tool calls in parallel. Required.
+    :vartype parallel_tool_calls: bool
+    :ivar conversation: Required.
+    :vartype conversation: ~azure.ai.projects.models.ResponseConversation1
+    :ivar agent: The agent used for this response.
+    :vartype agent: ~azure.ai.projects.models.AgentId
+    :ivar structured_inputs: The structured inputs to the response that can participate in prompt
+     template substitution or tool argument bindings.
+    :vartype structured_inputs: dict[str, any]
     """
 
     metadata: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])

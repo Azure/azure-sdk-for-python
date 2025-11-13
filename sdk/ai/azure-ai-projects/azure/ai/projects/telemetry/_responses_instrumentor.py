@@ -527,7 +527,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         event_body: Dict[str, Any] = {}
 
         if _trace_responses_content and tool_outputs:
-            tool_call_outputs = []
+            content_items = []
             for output_item in tool_outputs:
                 try:
                     tool_output: Dict[str, Any] = {}
@@ -573,14 +573,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         else:
                             tool_output["output"] = output_value
 
-                    tool_call_outputs.append(tool_output)
+                    # Use standard content format: {"type": "tool_call_output", "tool_call_output": {...}}
+                    content_items.append({"type": "tool_call_output", "tool_call_output": tool_output})
                 except Exception:  # pylint: disable=broad-exception-caught
                     # Skip items that can't be processed
                     logger.debug("Failed to process tool output item: %s", output_item, exc_info=True)
                     continue
 
-            if tool_call_outputs:
-                event_body["tool_call_outputs"] = tool_call_outputs
+            if content_items:
+                event_body["content"] = content_items
 
         attributes = self._create_event_attributes(
             conversation_id=conversation_id,
@@ -2925,7 +2926,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
         # Handle different item types
         if item_type == "function_call_output":
-            # Function tool output - use tool_call_outputs format
+            # Function tool output - use standard content format
             role = "tool"  # Override role for tool outputs
             if _trace_responses_content:
                 tool_output: Dict[str, Any] = {
@@ -2949,7 +2950,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     else:
                         tool_output["output"] = output_value
 
-                event_body["tool_call_outputs"] = [tool_output]
+                # Use standard content format: {"type": "tool_call_output", "tool_call_output": {...}}
+                event_body["content"] = [{"type": "tool_call_output", "tool_call_output": tool_output}]
 
             event_name = "gen_ai.tool.message"
 
