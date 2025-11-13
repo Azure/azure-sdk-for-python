@@ -5,11 +5,9 @@
 # ------------------------------------
 
 from dotenv import load_dotenv
-import json
 import os
 import time
 from pprint import pprint
-from samples.evaluation.sample_agentic_evaluators.sample_generic_agentic_evaluator.agent_utils import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -18,6 +16,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContent,
     SourceFileContentContent,
 )
+from openai.types.eval_create_params import DataSourceConfigCustom
 
 
 load_dotenv()
@@ -26,7 +25,7 @@ load_dotenv()
 def run_evaluator(
     evaluator_name: str,
     evaluation_contents: list[SourceFileContentContent],
-    data_source_config: dict,
+    data_source_config: DataSourceConfigCustom,
     initialization_parameters: dict[str, str],
     data_mapping: dict[str, str],
 ) -> None:
@@ -53,8 +52,8 @@ def run_evaluator(
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name=f"Test {evaluator_name} Evaluator with inline data",
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
+                data_source_config=data_source_config,
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created")
 
