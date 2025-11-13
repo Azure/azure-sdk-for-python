@@ -17,7 +17,8 @@
       "DETFL",
       "SETFL",
       "Planifica",
-      "mcptools"
+      "mcptools",
+      "ainvoke"
     ],
     "ignorePaths": [
       "*.csv",
