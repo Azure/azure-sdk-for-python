@@ -41,7 +41,7 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "azure-core": "1.11.0",
     "requests": "2.19.0",
     "six": "1.12.0",
-    "cryptography": "38.0.3",
+    "cryptography": "41.0.0",
     "msal": "1.23.0",
     "azure-storage-file-datalake": "12.2.0",
 }

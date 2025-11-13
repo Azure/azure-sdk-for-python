@@ -631,6 +631,7 @@ def run_sample():
         read_items(container)
         query_items(container, 'SalesOrder1')
         query_items_with_continuation_token(container)
+        query_items_with_feed_ranges_and_pagination(container)
         query_items_single_partition_with_pagination(container)
         query_items_cross_partition_with_pagination(container)
         replace_item(container, 'SalesOrder1')

@@ -10,3 +10,4 @@ need_azuremgmtcore = true
 sample_link = ""
 exclude_folders = ""
 title = "HDInsightContainersMgmtClient"
+auto_update = false

@@ -137,9 +137,7 @@ async def sample_conversation_pii_with_entity_mask_policy_async():
                                         all_ok = False
                                     # 2) mask should appear like [Person] or [Person-1]
                                     expected_mask_pattern = rf"\[{re.escape(entity.category)}-?\d*\]"
-                                    if not re.search(
-                                        expected_mask_pattern, redacted_text, flags=re.IGNORECASE
-                                    ):
+                                    if not re.search(expected_mask_pattern, redacted_text, flags=re.IGNORECASE):
                                         print(
                                             f"WARNING: Expected entity mask similar to "
                                             f"'[{entity.category}]' but got: {redacted_text}"
@@ -147,6 +145,8 @@ async def sample_conversation_pii_with_entity_mask_policy_async():
                                         all_ok = False
                                 if all_ok:
                                     redacted_verified.append(redacted_text)
+
+
 # [END conversation_pii_with_entity_mask_policy_async]
 
 

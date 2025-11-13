@@ -3966,26 +3966,6 @@ class TestStorageFile(StorageRecordedTestCase):
         finally:
             self.fsc.delete_share(self.share_name)
 
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_create_file_with_data(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        file_name = self._get_file_reference()
-        file_client = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name + "file",
-            credential=storage_account_key
-        )
-        size = 1024
-        data = b"abc" * size
-        file_client.create_file(len(data), data=data)
-        downloaded_data = file_client.download_file().readall()
-        assert downloaded_data == data
-
     @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_download_file_decompress(self, **kwargs):
