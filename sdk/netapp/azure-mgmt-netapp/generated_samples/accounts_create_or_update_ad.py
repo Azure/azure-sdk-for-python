@@ -44,7 +44,7 @@ def main():
                         "ldapOverTLS": False,
                         "ldapSigning": False,
                         "organizationalUnit": "OU=Engineering",
-                        "password": "<REDACTED>",
+                        "password": "ad_password",
                         "site": "SiteName",
                         "smbServerName": "SMBServer",
                         "username": "ad_user_name",
@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/Accounts_CreateOrUpdateAD.json
+# x-ms-original-file: 2025-09-01/Accounts_CreateOrUpdateAD.json
 if __name__ == "__main__":
     main()

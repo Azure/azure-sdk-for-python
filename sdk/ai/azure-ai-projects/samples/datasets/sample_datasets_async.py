@@ -15,11 +15,11 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity aiohttp python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry project.
     2) CONNECTION_NAME - Required. The name of the Azure Storage Account connection to use for uploading files.
     3) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     4) DATASET_VERSION_1 - Optional. The first version of the Dataset to create and use in this sample.

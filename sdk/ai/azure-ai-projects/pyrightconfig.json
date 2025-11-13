@@ -8,8 +8,6 @@
     "./../../core/azure-core",
     "./../../evaluation/azure-ai-evaluation",
     "./../../identity/azure-identity",
-    "./../../monitor/azure-monitor-opentelemetry",
-    "./../azure-ai-inference",
-    "./../azure-ai-agents"
+    "./../../monitor/azure-monitor-opentelemetry"
   ]
 }
