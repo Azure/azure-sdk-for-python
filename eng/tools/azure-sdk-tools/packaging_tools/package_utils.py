@@ -64,7 +64,8 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
             last_version = str(last_stable_release) if last_stable_release else str(last_release)
         else:
             last_version = str(last_release)
-    except:
+    except Exception as e:
+        _LOGGER.warning(f"Failed to get version info from PyPI for {package_name}: {e}")
         last_version = ""
         last_stable_release = ""
     return last_version, str(last_stable_release)

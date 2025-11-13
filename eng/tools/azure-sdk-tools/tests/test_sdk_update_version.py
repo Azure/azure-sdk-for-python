@@ -163,8 +163,10 @@ def test_invalid_release_type_defaults_to_beta_flow():
         # release_type invalid; treated as beta; initial version should be computed preview
         update_version_main(pkg, release_type="foo")
         assert 'VERSION = "1.0.0b1"' in (pkg / "_version.py").read_text()
-        first_line = (pkg / "CHANGELOG.md").read_text().splitlines()[0]
-        assert first_line.startswith("## 1.0.0b1 (")
+        lines = (pkg / "CHANGELOG.md").read_text()
+        assert lines.splitlines()[0].startswith("## 1.0.0b1 (")
+        # Unreleased should be replaced with date
+        assert "## 0.0.0 (Unreleased)" not in "".join(lines)
     finally:
         shutil.rmtree(temp_dir)
 
