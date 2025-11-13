@@ -1,5 +1,13 @@
 # Release History
 
+## 9.1.0b3 (2025-12-21)
+
+### Breaking Changes
+
+  - Model `GatewaySettings` deleted or renamed its instance variable `rest_auth_entra_users`
+  - Model `UpdateGatewaySettingsParameters` deleted or renamed its instance variable `rest_auth_entra_users`
+  - Deleted or renamed model `EntraUserInfo`
+
 ## 9.1.0b2 (2025-10-15)
 
 ### Features Added

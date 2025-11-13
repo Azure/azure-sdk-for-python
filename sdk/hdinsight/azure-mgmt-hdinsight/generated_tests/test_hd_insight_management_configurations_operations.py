@@ -24,7 +24,7 @@ class TestHDInsightManagementConfigurationsOperations(AzureMgmtRecordedTestCase)
         response = self.client.configurations.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestHDInsightManagementConfigurationsOperations(AzureMgmtRecordedTestCase)
             cluster_name="str",
             configuration_name="str",
             parameters={"str": "str"},
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestHDInsightManagementConfigurationsOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             cluster_name="str",
             configuration_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself

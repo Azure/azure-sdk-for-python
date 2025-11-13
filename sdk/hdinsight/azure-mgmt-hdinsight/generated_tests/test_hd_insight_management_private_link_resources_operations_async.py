@@ -25,7 +25,7 @@ class TestHDInsightManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecord
         response = await self.client.private_link_resources.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestHDInsightManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             cluster_name="str",
             private_link_resource_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself

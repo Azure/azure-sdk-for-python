@@ -2339,49 +2339,6 @@ class EncryptionInTransitProperties(_serialization.Model):
         self.is_encryption_in_transit_enabled = is_encryption_in_transit_enabled
 
 
-class EntraUserInfo(_serialization.Model):
-    """Details of an Entra user for gateway access.
-
-    :ivar object_id: The unique object ID of the Entra user or client ID of the enterprise
-     applications.
-    :vartype object_id: str
-    :ivar display_name: The display name of the Entra user.
-    :vartype display_name: str
-    :ivar upn: The User Principal Name (UPN) of the Entra user. It may be empty in certain cases,
-     such as for enterprise applications.
-    :vartype upn: str
-    """
-
-    _attribute_map = {
-        "object_id": {"key": "objectId", "type": "str"},
-        "display_name": {"key": "displayName", "type": "str"},
-        "upn": {"key": "upn", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        object_id: Optional[str] = None,
-        display_name: Optional[str] = None,
-        upn: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword object_id: The unique object ID of the Entra user or client ID of the enterprise
-         applications.
-        :paramtype object_id: str
-        :keyword display_name: The display name of the Entra user.
-        :paramtype display_name: str
-        :keyword upn: The User Principal Name (UPN) of the Entra user. It may be empty in certain
-         cases, such as for enterprise applications.
-        :paramtype upn: str
-        """
-        super().__init__(**kwargs)
-        self.object_id = object_id
-        self.display_name = display_name
-        self.upn = upn
-
-
 class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
@@ -2542,8 +2499,6 @@ class GatewaySettings(_serialization.Model):
     :vartype user_name: str
     :ivar password: The gateway settings user password.
     :vartype password: str
-    :ivar rest_auth_entra_users: List of Entra users for gateway access.
-    :vartype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
     """
 
     _validation = {
@@ -2556,19 +2511,14 @@ class GatewaySettings(_serialization.Model):
         "is_credential_enabled": {"key": "restAuthCredential\\.isEnabled", "type": "str"},
         "user_name": {"key": "restAuthCredential\\.username", "type": "str"},
         "password": {"key": "restAuthCredential\\.password", "type": "str"},
-        "rest_auth_entra_users": {"key": "restAuthEntraUsers", "type": "[EntraUserInfo]"},
     }
 
-    def __init__(self, *, rest_auth_entra_users: Optional[list["_models.EntraUserInfo"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword rest_auth_entra_users: List of Entra users for gateway access.
-        :paramtype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.is_credential_enabled: Optional[str] = None
         self.user_name: Optional[str] = None
         self.password: Optional[str] = None
-        self.rest_auth_entra_users = rest_auth_entra_users
 
 
 class HardwareProfile(_serialization.Model):
@@ -4501,8 +4451,7 @@ class UpdateClusterIdentityCertificateParameters(_serialization.Model):  # pylin
 
 
 class UpdateGatewaySettingsParameters(_serialization.Model):
-    """The update gateway settings request parameters. Note either basic or entra user should be
-    provided at a time.
+    """The update gateway settings request parameters.
 
     :ivar is_credential_enabled: Indicates whether or not the gateway settings based authorization
      is enabled.
@@ -4511,15 +4460,12 @@ class UpdateGatewaySettingsParameters(_serialization.Model):
     :vartype user_name: str
     :ivar password: The gateway settings user password.
     :vartype password: str
-    :ivar rest_auth_entra_users: List of Entra users for gateway access.
-    :vartype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
     """
 
     _attribute_map = {
         "is_credential_enabled": {"key": "restAuthCredential\\.isEnabled", "type": "bool"},
         "user_name": {"key": "restAuthCredential\\.username", "type": "str"},
         "password": {"key": "restAuthCredential\\.password", "type": "str"},
-        "rest_auth_entra_users": {"key": "restAuthEntraUsers", "type": "[EntraUserInfo]"},
     }
 
     def __init__(
@@ -4528,7 +4474,6 @@ class UpdateGatewaySettingsParameters(_serialization.Model):
         is_credential_enabled: bool = True,
         user_name: Optional[str] = None,
         password: Optional[str] = None,
-        rest_auth_entra_users: Optional[list["_models.EntraUserInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4539,14 +4484,11 @@ class UpdateGatewaySettingsParameters(_serialization.Model):
         :paramtype user_name: str
         :keyword password: The gateway settings user password.
         :paramtype password: str
-        :keyword rest_auth_entra_users: List of Entra users for gateway access.
-        :paramtype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
         """
         super().__init__(**kwargs)
         self.is_credential_enabled = is_credential_enabled
         self.user_name = user_name
         self.password = password
-        self.rest_auth_entra_users = rest_auth_entra_users
 
 
 class Usage(_serialization.Model):

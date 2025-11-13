@@ -24,7 +24,7 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
         response = self.client.applications.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             application_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -152,7 +152,7 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -165,7 +165,7 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             application_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -179,7 +179,7 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
             cluster_name="str",
             application_name="str",
             operation_id="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself

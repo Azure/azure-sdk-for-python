@@ -25,7 +25,7 @@ class TestHDInsightManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.virtual_machines.list_hosts(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestHDInsightManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 hosts=["str"],
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -53,7 +53,7 @@ class TestHDInsightManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             cluster_name="str",
             operation_id="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself

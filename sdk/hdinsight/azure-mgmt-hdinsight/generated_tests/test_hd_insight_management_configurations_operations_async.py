@@ -25,7 +25,7 @@ class TestHDInsightManagementConfigurationsOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.configurations.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestHDInsightManagementConfigurationsOperationsAsync(AzureMgmtRecordedTest
                 cluster_name="str",
                 configuration_name="str",
                 parameters={"str": "str"},
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -54,7 +54,7 @@ class TestHDInsightManagementConfigurationsOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             cluster_name="str",
             configuration_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself

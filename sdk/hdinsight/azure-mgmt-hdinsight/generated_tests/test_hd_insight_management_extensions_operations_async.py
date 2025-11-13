@@ -27,7 +27,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 parameters={"primaryKey": "str", "workspaceId": "str"},
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.extensions.get_monitoring_status(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
             await self.client.extensions.begin_disable_monitoring(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -76,7 +76,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
                     },
                     "workspaceId": "str",
                 },
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -89,7 +89,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.extensions.get_azure_monitor_status(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
             await self.client.extensions.begin_disable_azure_monitor(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -125,7 +125,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
                     },
                     "workspaceId": "str",
                 },
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -138,7 +138,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.extensions.get_azure_monitor_agent_status(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -151,7 +151,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
             await self.client.extensions.begin_disable_azure_monitor_agent(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -167,7 +167,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
                 cluster_name="str",
                 extension_name="str",
                 parameters={"primaryKey": "str", "workspaceId": "str"},
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -181,7 +181,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             cluster_name="str",
             extension_name="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -195,7 +195,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 extension_name="str",
-                api_version="2025-01-15-preview",
+                api_version="2024-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -210,7 +210,7 @@ class TestHDInsightManagementExtensionsOperationsAsync(AzureMgmtRecordedTestCase
             cluster_name="str",
             extension_name="str",
             operation_id="str",
-            api_version="2025-01-15-preview",
+            api_version="2024-08-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -51,7 +51,6 @@
         "azure.mgmt.hdinsight.models.DiskBillingMeters": null,
         "azure.mgmt.hdinsight.models.DiskEncryptionProperties": null,
         "azure.mgmt.hdinsight.models.EncryptionInTransitProperties": null,
-        "azure.mgmt.hdinsight.models.EntraUserInfo": null,
         "azure.mgmt.hdinsight.models.ErrorResponse": null,
         "azure.mgmt.hdinsight.models.Errors": null,
         "azure.mgmt.hdinsight.models.ExcludedServicesConfig": null,
