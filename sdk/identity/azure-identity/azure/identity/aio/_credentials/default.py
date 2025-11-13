@@ -72,6 +72,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     6. The identity currently logged in to the Azure CLI.
     7. The identity currently logged in to Azure PowerShell.
     8. The identity currently logged in to the Azure Developer CLI.
+    9. Brokered authentication. On Windows and WSL only, this uses the default account logged in via
+       Web Account Manager (WAM) if the `azure-identity-broker` package is installed.
 
     This default behavior is configurable with keyword arguments.
 
