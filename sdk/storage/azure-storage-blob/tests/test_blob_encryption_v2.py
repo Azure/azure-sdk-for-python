@@ -211,7 +211,6 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
-        # Cannot directly set content settings on encrypted blobs
         blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
 
         result = blob.download_blob(decompress=False).readall()

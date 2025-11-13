@@ -214,7 +214,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
-        # Cannot directly set content settings on encrypted blobs
         await blob.upload_blob(data=compressed_data, overwrite=True, content_setting=content_settings)
 
         result = await (await blob.download_blob(decompress=False)).readall()

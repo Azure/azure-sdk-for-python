@@ -310,7 +310,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         # Decompression does not work with client-side encryption
         if decompress is not None:
-            self._request_options['decompress'] = False
+            self._request_options['decompress'] = decompress
 
     async def _setup(self) -> None:
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
