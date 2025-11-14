@@ -92,7 +92,7 @@ class _TextContentStreamingState(_BaseStreamingState):
             ResponseOutputItemAddedEvent(
                 type="response.output_item.added",
                 sequence_number=ctx.next_sequence(),
-                output_index=self.output_index,
+                output_index=cast(int,self.output_index),
                 item=message_item,
             )
         )
@@ -104,7 +104,7 @@ class _TextContentStreamingState(_BaseStreamingState):
                     type="response.content_part.added",
                     sequence_number=ctx.next_sequence(),
                     item_id=self.item_id,
-                    output_index=self.output_index,
+                    output_index=cast(int,self.output_index),
                     content_index=0,
                     part=empty_part,
                 )
@@ -127,7 +127,7 @@ class _TextContentStreamingState(_BaseStreamingState):
         assert self.output_index is not None, "Text state not initialized: missing output_index"
         events.append(
             ResponseTextDeltaEvent(
-                type="response.text.delta",
+                type="response.output_text.delta",
                 sequence_number=ctx.next_sequence(),
                 item_id=self.item_id,
                 output_index=self.output_index,
@@ -146,7 +146,7 @@ class _TextContentStreamingState(_BaseStreamingState):
         assert self.item_id is not None and self.output_index is not None
         events.append(
             ResponseTextDoneEvent(
-                type="response.text.done",
+                type="response.output_text.done",
                 sequence_number=ctx.next_sequence(),
                 item_id=self.item_id,
                 output_index=self.output_index,
@@ -237,7 +237,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             ResponseOutputItemAddedEvent(
                 type="response.output_item.added",
                 sequence_number=ctx.next_sequence(),
-                output_index=self.output_index,
+                output_index=cast(int,self.output_index),
                 item=function_item,
             )
         )
@@ -375,7 +375,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
             ResponseOutputItemAddedEvent(
                 type="response.output_item.added",
                 sequence_number=ctx.next_sequence(),
-                output_index=self.output_index,
+                output_index=cast(int,self.output_index),
                 item=item,
             )
         )
