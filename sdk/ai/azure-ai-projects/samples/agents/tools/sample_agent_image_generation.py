@@ -26,12 +26,14 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
-       the "Models + endpoints" tab in your Microsoft Foundry project.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model (e.g., gpt-4o, gpt-4o-mini, gpt-5o, gpt-5o-mini)
+       used by the agent for understanding and responding to prompts. This is NOT the image generation model.
 
     NOTE:
-    - Image generation must have "gpt-image-1" deployment specified in the header when creating response at this moment
-    - The generated image will be saved as "microsoft.png" in the current directory
+    - Image generation requires a separate "gpt-image-1" deployment which is specified in the
+      x-ms-oai-image-generation-deployment header when creating the response.
+    - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1".
+    - The generated image will be saved as "microsoft.png" in the current directory.
 """
 
 import base64
