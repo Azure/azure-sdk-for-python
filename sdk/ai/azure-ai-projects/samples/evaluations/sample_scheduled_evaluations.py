@@ -212,9 +212,7 @@ def assign_rbac():
 
 
 def schedule_dataset_evaluation() -> None:
-    endpoint = os.environ[
-        "AZURE_AI_PROJECT_ENDPOINT"
-    ]
+    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
     dataset_name = os.environ.get("DATASET_NAME", "")
     dataset_version = os.environ.get("DATASET_VERSION", "1")
     # Construct the paths to the data folder and data file used in this sample
@@ -271,8 +269,8 @@ def schedule_dataset_evaluation() -> None:
             print("Creating evaluation")
             eval_object = client.evals.create(
                 name="label model test with dataset ID",
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
+                data_source_config=data_source_config,  # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Evaluation created")
 
@@ -325,9 +323,7 @@ def schedule_dataset_evaluation() -> None:
 def schedule_redteam_evaluation() -> None:
     load_dotenv()
     #
-    endpoint = os.environ.get(
-        "AZURE_AI_PROJECT_ENDPOINT", ""
-    )
+    endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
     agent_name = os.environ.get("AGENT_NAME", "")
 
     # Construct the paths to the data folder and data file used in this sample
@@ -335,9 +331,7 @@ def schedule_redteam_evaluation() -> None:
     data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(
-            endpoint=endpoint, credential=credential
-        ) as project_client:
+        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
             print("Creating an OpenAI client from the AI Project client")
             client = project_client.get_openai_client()
 
@@ -348,7 +342,9 @@ def schedule_redteam_evaluation() -> None:
                     instructions="You are a helpful assistant that answers general questions",
                 ),
             )
-            print(f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})")
+            print(
+                f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
+            )
 
             eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
             eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
@@ -361,8 +357,8 @@ def schedule_redteam_evaluation() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name=eval_group_name,
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore # type: ignore
+                data_source_config=data_source_config,  # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore # type: ignore
             )
             print(f"Eval Group created for red teaming: {eval_group_name}")
 
@@ -375,7 +371,7 @@ def schedule_redteam_evaluation() -> None:
             target = AzureAIAgentTarget(
                 name=agent_name, version=agent_version.version, tool_descriptions=_get_tool_descriptions(agent_version)
             )
-            agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target) # type: ignore
+            agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target)  # type: ignore
             print("Creating Eval Taxonomies")
             eval_taxonomy_input = EvaluationTaxonomy(
                 description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input

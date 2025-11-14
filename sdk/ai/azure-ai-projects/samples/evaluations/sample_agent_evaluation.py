@@ -44,7 +44,7 @@ project_client = AIProjectClient(
 
 with project_client:
 
-     # [START agent_evaluation_basic]
+    # [START agent_evaluation_basic]
     openai_client = project_client.get_openai_client()
 
     agent = project_client.agents.create_version(
@@ -71,8 +71,8 @@ with project_client:
     ]
     eval_object = openai_client.evals.create(
         name="Agent Evaluation",
-        data_source_config=data_source_config, # type: ignore
-        testing_criteria=testing_criteria, # type: ignore
+        data_source_config=data_source_config,  # type: ignore
+        testing_criteria=testing_criteria,  # type: ignore
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
@@ -99,7 +99,7 @@ with project_client:
     }
 
     agent_eval_run = openai_client.evals.runs.create(
-        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source # type: ignore
+        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore
     )
     print(f"Evaluation run created (id: {agent_eval_run.id})")
     # [END agent_evaluation_basic]
@@ -128,4 +128,3 @@ with project_client:
 
     project_client.agents.delete(agent_name=agent.name)
     print("Agent deleted")
-    

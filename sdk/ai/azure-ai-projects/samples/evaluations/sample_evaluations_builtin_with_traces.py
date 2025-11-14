@@ -44,9 +44,7 @@ from pprint import pprint
 load_dotenv()
 
 
-endpoint = os.environ[
-    "AZURE_AI_PROJECT_ENDPOINT"
-]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 appinsights_resource_id = os.environ[
     "APPINSIGHTS_RESOURCE_ID"
 ]  # Sample : /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>
@@ -139,10 +137,7 @@ def main() -> None:
         print(f"  - {trace_id}")
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(
-            endpoint=endpoint,
-            credential=credential
-        ) as project_client:
+        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
             client = project_client.get_openai_client()
             data_source_config = {
                 "type": "azure_ai_source",
@@ -163,8 +158,8 @@ def main() -> None:
             print("\nCreating Eval Group")
             eval_object = client.evals.create(
                 name="agent_trace_eval_group",
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
+                data_source_config=data_source_config,  # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print("Eval Group created")
 
@@ -175,7 +170,7 @@ def main() -> None:
 
             print("\nCreating Eval Run with trace IDs")
             run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            data_source={
+            data_source = {
                 "type": "azure_ai_traces",
                 "trace_ids": trace_ids,
                 "lookback_hours": trace_query_hours,
@@ -188,7 +183,7 @@ def main() -> None:
                     "start_time": start_time.isoformat(),
                     "end_time": end_time.isoformat(),
                 },
-                data_source=data_source # type: ignore
+                data_source=data_source,  # type: ignore
             )
             print("Eval Run created")
             pprint(eval_run_object)

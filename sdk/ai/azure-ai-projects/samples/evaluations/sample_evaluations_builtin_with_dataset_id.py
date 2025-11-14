@@ -43,9 +43,7 @@ from datetime import datetime
 load_dotenv()
 
 
-endpoint = os.environ[
-    "AZURE_AI_PROJECT_ENDPOINT"
-]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
 dataset_name = os.environ.get("DATASET_NAME", "")
 dataset_version = os.environ.get("DATASET_VERSION", "1")
@@ -106,8 +104,8 @@ with DefaultAzureCredential() as credential:
         print("Creating evaluation")
         eval_object = client.evals.create(
             name="label model test with dataset ID",
-            data_source_config=data_source_config, # type: ignore
-            testing_criteria=testing_criteria, # type: ignore
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 

@@ -53,8 +53,8 @@ def run_evaluator(
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name=f"Test {evaluator_name} Evaluator with inline data",
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
+                data_source_config=data_source_config,  # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created")
 

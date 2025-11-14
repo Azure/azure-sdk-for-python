@@ -20,14 +20,14 @@ USAGE:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Optional. The name of the model deployment to use for evaluation.
-       
+
     For Custom Prompt Based Evaluators:
-    
+
         Following are the possible outputs that can be used in the prompt definition:
-        
+
         result could be int, float or boolean based on the metric type defined.
         reason is a brief explanation for the score. (Optional)
-        
+
         - An ordinal metric with a score from 1 to 5 (int)
             ### Output Format (JSON):
             {
@@ -48,7 +48,7 @@ USAGE:
                 "result": "true",
                 "reason": "<brief explanation for the score>"
             }
-            
+
             ### Output Format (JSON):
             {
                 "result": "false",
@@ -74,9 +74,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-endpoint = os.environ[
-    "AZURE_AI_PROJECT_ENDPOINT"
-]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
 with DefaultAzureCredential() as credential:
@@ -190,8 +188,8 @@ with DefaultAzureCredential() as credential:
         print("Creating evaluation")
         eval_object = client.evals.create(
             name="label model test with inline data",
-            data_source_config=data_source_config, # type: ignore
-            testing_criteria=testing_criteria, # type: ignore
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
         pprint(eval_object)
@@ -268,7 +266,6 @@ with DefaultAzureCredential() as credential:
             name=prompt_evaluator.name,
             version=prompt_evaluator.version,
         )
-
 
         client.evals.delete(eval_id=eval_object.id)
         print("Evaluation deleted")

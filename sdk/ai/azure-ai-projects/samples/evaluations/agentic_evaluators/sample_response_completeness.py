@@ -76,8 +76,8 @@ def main() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Response Completeness Evaluator with inline data",
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
+                data_source_config=data_source_config,  # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created")
 
@@ -87,9 +87,7 @@ def main() -> None:
             pprint(eval_object_response)
 
             # Complete response example
-            complete_response = (
-                "Itinerary: Day 1 check out the downtown district of the city on train; for Day 2, we can rest in hotel."
-            )
+            complete_response = "Itinerary: Day 1 check out the downtown district of the city on train; for Day 2, we can rest in hotel."
             complete_ground_truth = (
                 "Itinerary: Day 1 take a train to visit the downtown area for city sightseeing; Day 2 rests in hotel."
             )

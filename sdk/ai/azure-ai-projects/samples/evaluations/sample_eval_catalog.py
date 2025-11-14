@@ -41,9 +41,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-endpoint = os.environ[
-    "AZURE_AI_PROJECT_ENDPOINT"
-]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 with DefaultAzureCredential() as credential:
 
