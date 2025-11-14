@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@azure-tools/js-sdk-release-tools": "2.14.9"
+  }
+}
