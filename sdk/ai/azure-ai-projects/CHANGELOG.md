@@ -7,7 +7,11 @@
 ### Breaking changes
 
 * `get_openai_client()` method on the asynchronous AIProjectClient is no longer an "async" method.
-* tracing: tool call output event content format updated to be in line with other events
+* tracing: tool call output event content format updated to be in line with other events.
+
+### Sample updates
+* In all samples, credential, project client, and openai client are combined into one context manager.
+* Remove `await` while calling `get_openai_client()` for samples using asynchronous clients. 
 
 ### Bugs Fixed
 
