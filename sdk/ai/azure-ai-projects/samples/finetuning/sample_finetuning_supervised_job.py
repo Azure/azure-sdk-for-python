@@ -83,8 +83,9 @@ with (
             "type": "supervised",
             "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
         },
-        
-        extra_body={"trainingType":"Standard"} # Removing this field would lead to the default trainingType behaviour, which may change in the future.
+        extra_body={
+            "trainingType": "Standard"
+        },  # Removing this field would lead to the default trainingType behaviour, which may change in the future.
     )
     print(fine_tuning_job)
 

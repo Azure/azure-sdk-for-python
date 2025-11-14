@@ -753,7 +753,7 @@ with open(validation_file_path, "rb") as f:
 print(f"Uploaded validation file with ID: {validation_file.id}")
 
 # For OpenAI model supervised fine-tuning jobs, "Standard" is the default training type.
-# To use global standard training, uncomment the extra_body parameter below.
+# To use global standard training, use GlobalStandard as the training type.
 print("Creating supervised fine-tuning job")
 fine_tuning_job = openai_client.fine_tuning.jobs.create(
     training_file=train_file.id,
@@ -763,7 +763,9 @@ fine_tuning_job = openai_client.fine_tuning.jobs.create(
         "type": "supervised",
         "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
     },
-    # extra_body={"trainingType":"GlobalStandard"}
+    extra_body={
+        "trainingType": "Standard"
+    },  # Removing this field would lead to the default trainingType behaviour, which may change in the future.
 )
 print(fine_tuning_job)
 

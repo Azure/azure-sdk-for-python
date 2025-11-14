@@ -17,7 +17,7 @@ from devtools_testutils import is_live_and_not_recording
 class TestFineTuningAsync(TestBase):
 
     async def _create_sft_finetuning_job_async(
-        self, openai_client, train_file_id, validation_file_id,training_type, model_type
+        self, openai_client, train_file_id, validation_file_id, training_type, model_type
     ):
         """Helper method to create a supervised fine-tuning job asynchronously."""
         return await openai_client.fine_tuning.jobs.create(

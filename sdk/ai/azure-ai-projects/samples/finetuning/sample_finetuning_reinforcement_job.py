@@ -92,6 +92,8 @@ with (
                 },
             },
         },
-        extra_body={"trainingType":"Standard"} # Removing this field would lead to the default trainingType behaviour, which may change in the future.
+        extra_body={
+            "trainingType": "Standard"
+        },  # Removing this field would lead to the default trainingType behaviour, which may change in the future.
     )
     print(fine_tuning_job)
