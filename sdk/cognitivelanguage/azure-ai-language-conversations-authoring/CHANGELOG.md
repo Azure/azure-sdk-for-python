@@ -3,20 +3,30 @@
 ## 1.0.0b2 (2025-11-14)
 
 ### Features Added
-- Added support for service version 2024-05-01, 2024-11-01, 2024-11-15-preview,2025-05-15-preview.
-
+- Added support for service version 2025-11-15-preview.
 
 ### Breaking Changes
-- Changed parameter type from `DeleteDeploymentOptions` to `ProjectResourceIds` when calling `DeleteDeploymentFromResources`, with property name changed from `assignedResourceIds` to `azureResourceIds`.
-- Changed function name from `list_deployment_Resources` to `list_project_resources`, change its return type from `AssignedDeploymentResource` to `ProjectResourceInfo`.
-- changed function name from `assign_deployment_resources` to `assign_project_resources`
-- changed function name from `unassign_deployment_resources` to `unassign_project_resources`, changed its parameter type from `UnassignDeploymentOptions` to `ProjectAzureResourceIds`
-- changed function name from `get_assign_deployment_resources_status` to `get_assign_project_resources_status`, change its return type from `DeploymentResourcesJobState` to `ProjectResourcesJobState`.
-- changed function name from `get_unassign_deployment_resources_status` to `get_unassign_project_resources_status`, change its return type from `DeploymentResourcesJobState` to `ProjectResourcesJobState`.
+- Changed parameter type from `DeleteDeploymentDetails` to `ProjectResourceIds` when calling `begin_delete_deployment_from_resources`, with property name changed from `assigned_resource_ids` to `azure_resource_ids`.
+
+- Changed function name from `list_deployment_Resources` to `list_project_resources`, change its return type from `AssignedDeploymentResource` to `AssignedProjectResource`.
+
+- Changed function name from `begin_assign_deployment_resources` to `begin_assign_project_resources`, and its paramter type from `AssignDeploymentResourcesDetails` to `AssignProjectResourcesDetails`.
+
+- Changed function name from `begin_unassign_deployment_resources` to `begin_unassign_project_resources`, changed its parameter type from `UnassignDeploymentResourcesDetails` to `ProjectResourceIds`.
+
+- Changed function name from `get_assign_deployment_resources_status` to `get_assign_project_resources_status`, change its return type from `DeploymentResourcesState` to `ProjectResourcesState`.
+
+- Changed function name from `get_unassign_deployment_resources_status` to `get_unassign_project_resources_status`, change its return type from `DeploymentResourcesState` to `ProjectResourcesState`.
 
 ### Other Changes
-* This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
-
+- Add samples for the following functions(sync and async):
+    - list_assigned_resource_deployments
+    - list_project_resources
+    - delete_deployment_from_resources
+    - get_assign_project_resources_status
+    - get_unassign_project_resources_status
+    - get_deployment_delete_from_resources_status
+      
 ## 1.0.0b1 (2025-09-05)
 
 ### Features Added
