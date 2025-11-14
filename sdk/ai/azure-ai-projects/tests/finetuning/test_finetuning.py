@@ -15,7 +15,9 @@ from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 )
 class TestFineTuning(TestBase):
 
-    def _create_sft_finetuning_job(self, openai_client, train_file_id, validation_file_id, model_type="openai"):
+    def _create_sft_finetuning_job(
+        self, openai_client, train_file_id, validation_file_id, model_type="openai", training_type="Standard"
+    ):
         """Helper method to create a supervised fine-tuning job."""
         return openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
@@ -31,6 +33,7 @@ class TestFineTuning(TestBase):
                     }
                 },
             },
+            extra_body={"trainingType": training_type},
         )
 
     def _create_dpo_finetuning_job(self, openai_client, train_file_id, validation_file_id):
@@ -49,6 +52,7 @@ class TestFineTuning(TestBase):
                     }
                 },
             },
+            extra_body={"trainingType": "Standard"},
         )
 
     def _create_rft_finetuning_job(self, openai_client, train_file_id, validation_file_id):
@@ -84,6 +88,7 @@ class TestFineTuning(TestBase):
                     },
                 },
             },
+            extra_body={"trainingType": "Standard"},
         )
 
     def _upload_test_files(self, openai_client, job_type="sft"):
@@ -323,7 +328,7 @@ class TestFineTuning(TestBase):
                 train_file, validation_file = self._upload_test_files(openai_client, "sft")
 
                 fine_tuning_job = self._create_sft_finetuning_job(
-                    openai_client, train_file.id, validation_file.id, "oss"
+                    openai_client, train_file.id, validation_file.id, "oss", "GlobalStandard"
                 )
                 print(f"[test_finetuning_sft_oss] Created fine-tuning job: {fine_tuning_job.id}")
 
