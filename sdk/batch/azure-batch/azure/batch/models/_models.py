@@ -214,9 +214,8 @@ class AutoUserSpecification(_Model):
 
     :ivar scope: The scope for the auto user. The default value is pool. If the pool is running
      Windows a value of Task should be specified if stricter isolation between tasks is required.
-     For example, if the task mutates the registry in a way which could impact other tasks, or if
-     certificates have been specified on the pool which should not be accessible by normal tasks but
-     should be accessible by StartTasks. Known values are: "task" and "pool".
+     For example, if the task mutates the registry in a way which could impact other tasks. Known
+     values are: "task" and "pool".
     :vartype scope: str or ~azure.batch.models.AutoUserScope
     :ivar elevation_level: The elevation level of the auto user. The default value is nonAdmin.
      Known values are: "nonadmin" and "admin".
@@ -228,9 +227,8 @@ class AutoUserSpecification(_Model):
     )
     """The scope for the auto user. The default value is pool. If the pool is running Windows a value
      of Task should be specified if stricter isolation between tasks is required. For example, if
-     the task mutates the registry in a way which could impact other tasks, or if certificates have
-     been specified on the pool which should not be accessible by normal tasks but should be
-     accessible by StartTasks. Known values are: \"task\" and \"pool\"."""
+     the task mutates the registry in a way which could impact other tasks. Known values are:
+     \"task\" and \"pool\"."""
     elevation_level: Optional[Union[str, "_models.ElevationLevel"]] = rest_field(
         name="elevationLevel", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -569,247 +567,6 @@ class BatchAutoPoolSpecification(_Model):
         auto_pool_id_prefix: Optional[str] = None,
         keep_alive: Optional[bool] = None,
         pool: Optional["_models.BatchPoolSpecification"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BatchCertificate(_Model):
-    """A Certificate that can be installed on Compute Nodes and can be used to
-    authenticate operations on the machine.
-
-    :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits (it may include spaces but these are removed). Required.
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint. This must be sha1.
-     Required.
-    :vartype thumbprint_algorithm: str
-    :ivar url: The URL of the Certificate.
-    :vartype url: str
-    :ivar state: The state of the Certificate. Known values are: "active", "deleting", and
-     "deletefailed".
-    :vartype state: str or ~azure.batch.models.BatchCertificateState
-    :ivar state_transition_time: The time at which the Certificate entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar previous_state: The previous state of the Certificate. This property is not set if the
-     Certificate is in its initial active state. Known values are: "active", "deleting", and
-     "deletefailed".
-    :vartype previous_state: str or ~azure.batch.models.BatchCertificateState
-    :ivar previous_state_transition_time: The time at which the Certificate entered its previous
-     state. This property is not set if the Certificate is in its initial Active state.
-    :vartype previous_state_transition_time: ~datetime.datetime
-    :ivar public_data: The public part of the Certificate as a base-64 encoded .cer file.
-    :vartype public_data: str
-    :ivar delete_certificate_error: The error that occurred on the last attempt to delete this
-     Certificate. This property is set only if the Certificate is in the DeleteFailed state.
-    :vartype delete_certificate_error: ~azure.batch.models.BatchCertificateDeleteError
-    :ivar data: The base64-encoded contents of the Certificate. The maximum size is 10KB. Required.
-    :vartype data: bytes
-    :ivar certificate_format: The format of the Certificate data. Known values are: "pfx" and
-     "cer".
-    :vartype certificate_format: str or ~azure.batch.models.BatchCertificateFormat
-    :ivar password: The password to access the Certificate's private key. This must be omitted if
-     the Certificate format is cer.
-    :vartype password: str
-    """
-
-    thumbprint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex digits (it may
-     include spaces but these are removed). Required."""
-    thumbprint_algorithm: str = rest_field(
-        name="thumbprintAlgorithm", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The algorithm used to derive the thumbprint. This must be sha1. Required."""
-    url: Optional[str] = rest_field(visibility=["read"])
-    """The URL of the Certificate."""
-    state: Optional[Union[str, "_models.BatchCertificateState"]] = rest_field(visibility=["read"])
-    """The state of the Certificate. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="stateTransitionTime", visibility=["read"], format="rfc3339"
-    )
-    """The time at which the Certificate entered its current state."""
-    previous_state: Optional[Union[str, "_models.BatchCertificateState"]] = rest_field(
-        name="previousState", visibility=["read"]
-    )
-    """The previous state of the Certificate. This property is not set if the Certificate is in its
-     initial active state. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
-    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", visibility=["read"], format="rfc3339"
-    )
-    """The time at which the Certificate entered its previous state. This property is not set if the
-     Certificate is in its initial Active state."""
-    public_data: Optional[str] = rest_field(name="publicData", visibility=["read"])
-    """The public part of the Certificate as a base-64 encoded .cer file."""
-    delete_certificate_error: Optional["_models.BatchCertificateDeleteError"] = rest_field(
-        name="deleteCertificateError", visibility=["read"]
-    )
-    """The error that occurred on the last attempt to delete this Certificate. This property is set
-     only if the Certificate is in the DeleteFailed state."""
-    data: bytes = rest_field(visibility=["create"], format="base64")
-    """The base64-encoded contents of the Certificate. The maximum size is 10KB. Required."""
-    certificate_format: Optional[Union[str, "_models.BatchCertificateFormat"]] = rest_field(
-        name="certificateFormat", visibility=["create"]
-    )
-    """The format of the Certificate data. Known values are: \"pfx\" and \"cer\"."""
-    password: Optional[str] = rest_field(visibility=["create"])
-    """The password to access the Certificate's private key. This must be omitted if the Certificate
-     format is cer."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        thumbprint: str,
-        thumbprint_algorithm: str,
-        data: bytes,
-        certificate_format: Optional[Union[str, "_models.BatchCertificateFormat"]] = None,
-        password: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BatchCertificateDeleteError(_Model):
-    """An error encountered by the Batch service when deleting a Certificate.
-
-    :ivar code: An identifier for the Certificate deletion error. Codes are invariant and are
-     intended to be consumed programmatically.
-    :vartype code: str
-    :ivar message: A message describing the Certificate deletion error, intended to be suitable for
-     display in a user interface.
-    :vartype message: str
-    :ivar values_property: A list of additional error details related to the Certificate deletion
-     error. This list includes details such as the active Pools and Compute Nodes referencing this
-     Certificate. However, if a large number of resources reference the Certificate, the list
-     contains only about the first hundred.
-    :vartype values_property: list[~azure.batch.models.NameValuePair]
-    """
-
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An identifier for the Certificate deletion error. Codes are invariant and are intended to be
-     consumed programmatically."""
-    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A message describing the Certificate deletion error, intended to be suitable for display in a
-     user interface."""
-    values_property: Optional[list["_models.NameValuePair"]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A list of additional error details related to the Certificate deletion error. This list
-     includes details such as the active Pools and Compute Nodes referencing this Certificate.
-     However, if a large number of resources reference the Certificate, the list contains only about
-     the first hundred."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        values_property: Optional[list["_models.NameValuePair"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BatchCertificateReference(_Model):
-    """A reference to a Certificate to be installed on Compute Nodes in a Pool. Warning: This object
-    is deprecated and will be removed after February, 2024. Please use the `Azure KeyVault
-    Extension <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_
-    instead.
-
-    :ivar thumbprint: The thumbprint of the Certificate. Required.
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: The algorithm with which the thumbprint is associated. This must be
-     sha1. Required.
-    :vartype thumbprint_algorithm: str
-    :ivar store_location: The location of the Certificate store on the Compute Node into which to
-     install the Certificate. The default value is currentuser. This property is applicable only for
-     Pools configured with Windows Compute Nodes (that is, created with cloudServiceConfiguration,
-     or with virtualMachineConfiguration using a Windows Image reference). For Linux Compute Nodes,
-     the Certificates are stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For
-     Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
-     directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory. Known
-     values are: "currentuser" and "localmachine".
-    :vartype store_location: str or ~azure.batch.models.BatchCertificateStoreLocation
-    :ivar store_name: The name of the Certificate store on the Compute Node into which to install
-     the Certificate. This property is applicable only for Pools configured with Windows Compute
-     Nodes (that is, created with cloudServiceConfiguration, or with virtualMachineConfiguration
-     using a Windows Image reference). Common store names include: My, Root, CA, Trust, Disallowed,
-     TrustedPeople, TrustedPublisher, AuthRoot, AddressBook, but any custom store name can also be
-     used. The default value is My.
-    :vartype store_name: str
-    :ivar visibility: Which user Accounts on the Compute Node should have access to the private
-     data of the Certificate. You can specify more than one visibility in this collection. The
-     default is all Accounts.
-    :vartype visibility: list[str or ~azure.batch.models.BatchCertificateVisibility]
-    """
-
-    thumbprint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The thumbprint of the Certificate. Required."""
-    thumbprint_algorithm: str = rest_field(
-        name="thumbprintAlgorithm", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The algorithm with which the thumbprint is associated. This must be sha1. Required."""
-    store_location: Optional[Union[str, "_models.BatchCertificateStoreLocation"]] = rest_field(
-        name="storeLocation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The location of the Certificate store on the Compute Node into which to install the
-     Certificate. The default value is currentuser. This property is applicable only for Pools
-     configured with Windows Compute Nodes (that is, created with cloudServiceConfiguration, or with
-     virtualMachineConfiguration using a Windows Image reference). For Linux Compute Nodes, the
-     Certificates are stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For
-     Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
-     directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory. Known
-     values are: \"currentuser\" and \"localmachine\"."""
-    store_name: Optional[str] = rest_field(name="storeName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the Certificate store on the Compute Node into which to install the Certificate.
-     This property is applicable only for Pools configured with Windows Compute Nodes (that is,
-     created with cloudServiceConfiguration, or with virtualMachineConfiguration using a Windows
-     Image reference). Common store names include: My, Root, CA, Trust, Disallowed, TrustedPeople,
-     TrustedPublisher, AuthRoot, AddressBook, but any custom store name can also be used. The
-     default value is My."""
-    visibility: Optional[list[Union[str, "_models.BatchCertificateVisibility"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Which user Accounts on the Compute Node should have access to the private data of the
-     Certificate. You can specify more than one visibility in this collection. The default is all
-     Accounts."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        thumbprint: str,
-        thumbprint_algorithm: str,
-        store_location: Optional[Union[str, "_models.BatchCertificateStoreLocation"]] = None,
-        store_name: Optional[str] = None,
-        visibility: Optional[list[Union[str, "_models.BatchCertificateVisibility"]]] = None,
     ) -> None: ...
 
     @overload
@@ -1171,30 +928,30 @@ class BatchJob(_Model):
 
     :ivar id: A string that uniquely identifies the Job within the Account. The ID is
      case-preserving and case-insensitive (that is, you may not have two IDs within an Account that
-     differ only by case).
+     differ only by case). Required.
     :vartype id: str
     :ivar display_name: The display name for the Job.
     :vartype display_name: str
     :ivar uses_task_dependencies: Whether Tasks in the Job can define dependencies on each other.
      The default is false.
     :vartype uses_task_dependencies: bool
-    :ivar url: The URL of the Job.
+    :ivar url: The URL of the Job. Required.
     :vartype url: str
     :ivar e_tag: The ETag of the Job. This is an opaque string. You can use it to detect whether
      the Job has changed between requests. In particular, you can be pass the ETag when updating a
      Job to specify that your changes should take effect only if nobody else has modified the Job in
-     the meantime.
+     the meantime. Required.
     :vartype e_tag: str
     :ivar last_modified: The last modified time of the Job. This is the last time at which the Job
      level data, such as the Job state or priority, changed. It does not factor in task-level
-     changes such as adding new Tasks or Tasks changing state.
+     changes such as adding new Tasks or Tasks changing state. Required.
     :vartype last_modified: ~datetime.datetime
-    :ivar creation_time: The creation time of the Job.
+    :ivar creation_time: The creation time of the Job. Required.
     :vartype creation_time: ~datetime.datetime
-    :ivar state: The current state of the Job. Known values are: "active", "disabling", "disabled",
-     "enabling", "terminating", "completed", and "deleting".
+    :ivar state: The current state of the Job. Required. Known values are: "active", "disabling",
+     "disabled", "enabling", "terminating", "completed", and "deleting".
     :vartype state: str or ~azure.batch.models.BatchJobState
-    :ivar state_transition_time: The time at which the Job entered its current state.
+    :ivar state_transition_time: The time at which the Job entered its current state. Required.
     :vartype state_transition_time: ~datetime.datetime
     :ivar previous_state: The previous state of the Job. This property is not set if the Job is in
      its initial Active state. Known values are: "active", "disabling", "disabled", "enabling",
@@ -1207,13 +964,15 @@ class BatchJob(_Model):
      -1000 being the lowest priority and 1000 being the highest priority. The default value is 0.
     :vartype priority: int
     :ivar allow_task_preemption: Whether Tasks in this job can be preempted by other high priority
-     jobs. If the value is set to True, other high priority jobs submitted to the system will take
+     jobs. (This property is not available by default. Please contact support for more information)
+     If the value is set to True, other high priority jobs submitted to the system will take
      precedence and will be able requeue tasks from this job. You can update a job's
      allowTaskPreemption after it has been created using the update job API.
     :vartype allow_task_preemption: bool
     :ivar max_parallel_tasks: The maximum number of tasks that can be executed in parallel for the
-     job. The value of maxParallelTasks must be -1 or greater than 0 if specified. If not specified,
-     the default value is -1, which means there's no limit to the number of tasks that can be run at
+     job. (This property is not available by default. Please contact support for more information)
+     The value of maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the
+     default value is -1, which means there's no limit to the number of tasks that can be run at
      once. You can update a job's maxParallelTasks after it has been created using the update job
      API.
     :vartype max_parallel_tasks: int
@@ -1244,7 +1003,8 @@ class BatchJob(_Model):
      error starting the Task, for example due to a resource file download error. The default is
      noaction. Known values are: "noaction" and "performexitoptionsjobaction".
     :vartype task_failure_mode: str or ~azure.batch.models.BatchTaskFailureMode
-    :ivar network_configuration: The network configuration for the Job.
+    :ivar network_configuration: (This property is not available by default. Please contact support
+     for more information) The network configuration for the Job.
     :vartype network_configuration: ~azure.batch.models.BatchJobNetworkConfiguration
     :ivar metadata: A list of name-value pairs associated with the Job as metadata. The Batch
      service does not assign any meaning to metadata; it is solely for the use of user code.
@@ -1258,34 +1018,34 @@ class BatchJob(_Model):
     :vartype job_statistics: ~azure.batch.models.BatchJobStatistics
     """
 
-    id: Optional[str] = rest_field(visibility=["read"])
+    id: str = rest_field(visibility=["read"])
     """A string that uniquely identifies the Job within the Account. The ID is case-preserving and
      case-insensitive (that is, you may not have two IDs within an Account that differ only by
-     case)."""
+     case). Required."""
     display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
     """The display name for the Job."""
     uses_task_dependencies: Optional[bool] = rest_field(name="usesTaskDependencies", visibility=["read"])
     """Whether Tasks in the Job can define dependencies on each other. The default is false."""
-    url: Optional[str] = rest_field(visibility=["read"])
-    """The URL of the Job."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    url: str = rest_field(visibility=["read"])
+    """The URL of the Job. Required."""
+    e_tag: str = rest_field(name="eTag", visibility=["read"])
     """The ETag of the Job. This is an opaque string. You can use it to detect whether the Job has
      changed between requests. In particular, you can be pass the ETag when updating a Job to
      specify that your changes should take effect only if nobody else has modified the Job in the
-     meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
+     meantime. Required."""
+    last_modified: datetime.datetime = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
     """The last modified time of the Job. This is the last time at which the Job level data, such as
      the Job state or priority, changed. It does not factor in task-level changes such as adding new
-     Tasks or Tasks changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
-    """The creation time of the Job."""
-    state: Optional[Union[str, "_models.BatchJobState"]] = rest_field(visibility=["read"])
-    """The current state of the Job. Known values are: \"active\", \"disabling\", \"disabled\",
-     \"enabling\", \"terminating\", \"completed\", and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(
+     Tasks or Tasks changing state. Required."""
+    creation_time: datetime.datetime = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
+    """The creation time of the Job. Required."""
+    state: Union[str, "_models.BatchJobState"] = rest_field(visibility=["read"])
+    """The current state of the Job. Required. Known values are: \"active\", \"disabling\",
+     \"disabled\", \"enabling\", \"terminating\", \"completed\", and \"deleting\"."""
+    state_transition_time: datetime.datetime = rest_field(
         name="stateTransitionTime", visibility=["read"], format="rfc3339"
     )
-    """The time at which the Job entered its current state."""
+    """The time at which the Job entered its current state. Required."""
     previous_state: Optional[Union[str, "_models.BatchJobState"]] = rest_field(
         name="previousState", visibility=["read"]
     )
@@ -1303,14 +1063,16 @@ class BatchJob(_Model):
     allow_task_preemption: Optional[bool] = rest_field(
         name="allowTaskPreemption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether Tasks in this job can be preempted by other high priority jobs. If the value is set to
-     True, other high priority jobs submitted to the system will take precedence and will be able
-     requeue tasks from this job. You can update a job's allowTaskPreemption after it has been
-     created using the update job API."""
+    """Whether Tasks in this job can be preempted by other high priority jobs. (This property is not
+     available by default. Please contact support for more information) If the value is set to True,
+     other high priority jobs submitted to the system will take precedence and will be able requeue
+     tasks from this job. You can update a job's allowTaskPreemption after it has been created using
+     the update job API."""
     max_parallel_tasks: Optional[int] = rest_field(
         name="maxParallelTasks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The maximum number of tasks that can be executed in parallel for the job. The value of
+    """The maximum number of tasks that can be executed in parallel for the job. (This property is not
+     available by default. Please contact support for more information) The value of
      maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the default value
      is -1, which means there's no limit to the number of tasks that can be run at once. You can
      update a job's maxParallelTasks after it has been created using the update job API."""
@@ -1355,7 +1117,8 @@ class BatchJob(_Model):
     network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(
         name="networkConfiguration", visibility=["read"]
     )
-    """The network configuration for the Job."""
+    """(This property is not available by default. Please contact support for more information) The
+     network configuration for the Job."""
     metadata: Optional[list["_models.BatchMetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1467,13 +1230,15 @@ class BatchJobCreateOptions(_Model):
      -1000 being the lowest priority and 1000 being the highest priority. The default value is 0.
     :vartype priority: int
     :ivar allow_task_preemption: Whether Tasks in this job can be preempted by other high priority
-     jobs. If the value is set to True, other high priority jobs submitted to the system will take
+     jobs. (This property is not available by default. Please contact support for more information)
+     If the value is set to True, other high priority jobs submitted to the system will take
      precedence and will be able requeue tasks from this job. You can update a job's
      allowTaskPreemption after it has been created using the update job API.
     :vartype allow_task_preemption: bool
     :ivar max_parallel_tasks: The maximum number of tasks that can be executed in parallel for the
-     job. The value of maxParallelTasks must be -1 or greater than 0 if specified. If not specified,
-     the default value is -1, which means there's no limit to the number of tasks that can be run at
+     job. (This property is not available by default. Please contact support for more information)
+     The value of maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the
+     default value is -1, which means there's no limit to the number of tasks that can be run at
      once. You can update a job's maxParallelTasks after it has been created using the update job
      API.
     :vartype max_parallel_tasks: int
@@ -1522,7 +1287,8 @@ class BatchJobCreateOptions(_Model):
      error starting the Task, for example due to a resource file download error. The default is
      noaction. Known values are: "noaction" and "performexitoptionsjobaction".
     :vartype task_failure_mode: str or ~azure.batch.models.BatchTaskFailureMode
-    :ivar network_configuration: The network configuration for the Job.
+    :ivar network_configuration: (This property is not available by default. Please contact support
+     for more information) The network configuration for the Job.
     :vartype network_configuration: ~azure.batch.models.BatchJobNetworkConfiguration
     :ivar metadata: A list of name-value pairs associated with the Job as metadata. The Batch
      service does not assign any meaning to metadata; it is solely for the use of user code.
@@ -1549,14 +1315,16 @@ class BatchJobCreateOptions(_Model):
     allow_task_preemption: Optional[bool] = rest_field(
         name="allowTaskPreemption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether Tasks in this job can be preempted by other high priority jobs. If the value is set to
-     True, other high priority jobs submitted to the system will take precedence and will be able
-     requeue tasks from this job. You can update a job's allowTaskPreemption after it has been
-     created using the update job API."""
+    """Whether Tasks in this job can be preempted by other high priority jobs. (This property is not
+     available by default. Please contact support for more information) If the value is set to True,
+     other high priority jobs submitted to the system will take precedence and will be able requeue
+     tasks from this job. You can update a job's allowTaskPreemption after it has been created using
+     the update job API."""
     max_parallel_tasks: Optional[int] = rest_field(
         name="maxParallelTasks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The maximum number of tasks that can be executed in parallel for the job. The value of
+    """The maximum number of tasks that can be executed in parallel for the job. (This property is not
+     available by default. Please contact support for more information) The value of
      maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the default value
      is -1, which means there's no limit to the number of tasks that can be run at once. You can
      update a job's maxParallelTasks after it has been created using the update job API."""
@@ -1621,7 +1389,8 @@ class BatchJobCreateOptions(_Model):
     network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(
         name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The network configuration for the Job."""
+    """(This property is not available by default. Please contact support for more information) The
+     network configuration for the Job."""
     metadata: Optional[list["_models.BatchMetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2043,7 +1812,8 @@ class BatchJobManagerTask(_Model):
 
 
 class BatchJobNetworkConfiguration(_Model):
-    """The network configuration for the Job.
+    """(This property is not available by default. Please contact support for more information) The
+    network configuration for the Job.
 
     :ivar subnet_id: The ARM resource identifier of the virtual network subnet which Compute Nodes
      running Tasks from the Job will join for the duration of the Task. The virtual network must be
@@ -2778,27 +2548,29 @@ class BatchJobSchedule(_Model):
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
     specification used to create each Job.
 
-    :ivar id: A string that uniquely identifies the schedule within the Account.
+    :ivar id: A string that uniquely identifies the schedule within the Account. Required.
     :vartype id: str
     :ivar display_name: The display name for the schedule.
     :vartype display_name: str
-    :ivar url: The URL of the Job Schedule.
+    :ivar url: The URL of the Job Schedule. Required.
     :vartype url: str
     :ivar e_tag: The ETag of the Job Schedule. This is an opaque string. You can use it to detect
      whether the Job Schedule has changed between requests. In particular, you can be pass the ETag
      with an Update Job Schedule request to specify that your changes should take effect only if
-     nobody else has modified the schedule in the meantime.
+     nobody else has modified the schedule in the meantime. Required.
     :vartype e_tag: str
     :ivar last_modified: The last modified time of the Job Schedule. This is the last time at which
      the schedule level data, such as the Job specification or recurrence information, changed. It
      does not factor in job-level changes such as new Jobs being created or Jobs changing state.
+     Required.
     :vartype last_modified: ~datetime.datetime
-    :ivar creation_time: The creation time of the Job Schedule.
+    :ivar creation_time: The creation time of the Job Schedule. Required.
     :vartype creation_time: ~datetime.datetime
-    :ivar state: The current state of the Job Schedule. Known values are: "active", "completed",
-     "disabled", "terminating", and "deleting".
+    :ivar state: The current state of the Job Schedule. Required. Known values are: "active",
+     "completed", "disabled", "terminating", and "deleting".
     :vartype state: str or ~azure.batch.models.BatchJobScheduleState
     :ivar state_transition_time: The time at which the Job Schedule entered the current state.
+     Required.
     :vartype state_transition_time: ~datetime.datetime
     :ivar previous_state: The previous state of the Job Schedule. This property is not present if
      the Job Schedule is in its initial active state. Known values are: "active", "completed",
@@ -2813,7 +2585,7 @@ class BatchJobSchedule(_Model):
     :ivar job_specification: The details of the Jobs to be created on this schedule. Required.
     :vartype job_specification: ~azure.batch.models.BatchJobSpecification
     :ivar execution_info: Information about Jobs that have been and will be run under this
-     schedule.
+     schedule. Required.
     :vartype execution_info: ~azure.batch.models.BatchJobScheduleExecutionInfo
     :ivar metadata: A list of name-value pairs associated with the schedule as metadata. The Batch
      service does not assign any meaning to metadata; it is solely for the use of user code.
@@ -2824,30 +2596,30 @@ class BatchJobSchedule(_Model):
     :vartype job_schedule_statistics: ~azure.batch.models.BatchJobScheduleStatistics
     """
 
-    id: Optional[str] = rest_field(visibility=["read"])
-    """A string that uniquely identifies the schedule within the Account."""
+    id: str = rest_field(visibility=["read"])
+    """A string that uniquely identifies the schedule within the Account. Required."""
     display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
     """The display name for the schedule."""
-    url: Optional[str] = rest_field(visibility=["read"])
-    """The URL of the Job Schedule."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    url: str = rest_field(visibility=["read"])
+    """The URL of the Job Schedule. Required."""
+    e_tag: str = rest_field(name="eTag", visibility=["read"])
     """The ETag of the Job Schedule. This is an opaque string. You can use it to detect whether the
      Job Schedule has changed between requests. In particular, you can be pass the ETag with an
      Update Job Schedule request to specify that your changes should take effect only if nobody else
-     has modified the schedule in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
+     has modified the schedule in the meantime. Required."""
+    last_modified: datetime.datetime = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
     """The last modified time of the Job Schedule. This is the last time at which the schedule level
      data, such as the Job specification or recurrence information, changed. It does not factor in
-     job-level changes such as new Jobs being created or Jobs changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
-    """The creation time of the Job Schedule."""
-    state: Optional[Union[str, "_models.BatchJobScheduleState"]] = rest_field(visibility=["read"])
-    """The current state of the Job Schedule. Known values are: \"active\", \"completed\",
+     job-level changes such as new Jobs being created or Jobs changing state. Required."""
+    creation_time: datetime.datetime = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
+    """The creation time of the Job Schedule. Required."""
+    state: Union[str, "_models.BatchJobScheduleState"] = rest_field(visibility=["read"])
+    """The current state of the Job Schedule. Required. Known values are: \"active\", \"completed\",
      \"disabled\", \"terminating\", and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(
+    state_transition_time: datetime.datetime = rest_field(
         name="stateTransitionTime", visibility=["read"], format="rfc3339"
     )
-    """The time at which the Job Schedule entered the current state."""
+    """The time at which the Job Schedule entered the current state. Required."""
     previous_state: Optional[Union[str, "_models.BatchJobScheduleState"]] = rest_field(
         name="previousState", visibility=["read"]
     )
@@ -2868,10 +2640,8 @@ class BatchJobSchedule(_Model):
         name="jobSpecification", visibility=["read", "create", "update", "delete", "query"]
     )
     """The details of the Jobs to be created on this schedule. Required."""
-    execution_info: Optional["_models.BatchJobScheduleExecutionInfo"] = rest_field(
-        name="executionInfo", visibility=["read"]
-    )
-    """Information about Jobs that have been and will be run under this schedule."""
+    execution_info: "_models.BatchJobScheduleExecutionInfo" = rest_field(name="executionInfo", visibility=["read"])
+    """Information about Jobs that have been and will be run under this schedule. Required."""
     metadata: Optional[list["_models.BatchMetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3402,13 +3172,15 @@ class BatchJobSpecification(_Model):
      Job API.
     :vartype priority: int
     :ivar allow_task_preemption: Whether Tasks in this job can be preempted by other high priority
-     jobs. If the value is set to True, other high priority jobs submitted to the system will take
+     jobs. (This property is not available by default. Please contact support for more information)
+     If the value is set to True, other high priority jobs submitted to the system will take
      precedence and will be able requeue tasks from this job. You can update a job's
      allowTaskPreemption after it has been created using the update job API.
     :vartype allow_task_preemption: bool
     :ivar max_parallel_tasks: The maximum number of tasks that can be executed in parallel for the
-     job. The value of maxParallelTasks must be -1 or greater than 0 if specified. If not specified,
-     the default value is -1, which means there's no limit to the number of tasks that can be run at
+     job. (This property is not available by default. Please contact support for more information)
+     The value of maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the
+     default value is -1, which means there's no limit to the number of tasks that can be run at
      once. You can update a job's maxParallelTasks after it has been created using the update job
      API.
     :vartype max_parallel_tasks: int
@@ -3433,7 +3205,8 @@ class BatchJobSpecification(_Model):
      resource file download error. The default is noaction. Known values are: "noaction" and
      "performexitoptionsjobaction".
     :vartype task_failure_mode: str or ~azure.batch.models.BatchTaskFailureMode
-    :ivar network_configuration: The network configuration for the Job.
+    :ivar network_configuration: (This property is not available by default. Please contact support
+     for more information) The network configuration for the Job.
     :vartype network_configuration: ~azure.batch.models.BatchJobNetworkConfiguration
     :ivar constraints: The execution constraints for Jobs created under this schedule.
     :vartype constraints: ~azure.batch.models.BatchJobConstraints
@@ -3476,14 +3249,16 @@ class BatchJobSpecification(_Model):
     allow_task_preemption: Optional[bool] = rest_field(
         name="allowTaskPreemption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether Tasks in this job can be preempted by other high priority jobs. If the value is set to
-     True, other high priority jobs submitted to the system will take precedence and will be able
-     requeue tasks from this job. You can update a job's allowTaskPreemption after it has been
-     created using the update job API."""
+    """Whether Tasks in this job can be preempted by other high priority jobs. (This property is not
+     available by default. Please contact support for more information) If the value is set to True,
+     other high priority jobs submitted to the system will take precedence and will be able requeue
+     tasks from this job. You can update a job's allowTaskPreemption after it has been created using
+     the update job API."""
     max_parallel_tasks: Optional[int] = rest_field(
         name="maxParallelTasks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The maximum number of tasks that can be executed in parallel for the job. The value of
+    """The maximum number of tasks that can be executed in parallel for the job. (This property is not
+     available by default. Please contact support for more information) The value of
      maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the default value
      is -1, which means there's no limit to the number of tasks that can be run at once. You can
      update a job's maxParallelTasks after it has been created using the update job API."""
@@ -3518,7 +3293,8 @@ class BatchJobSpecification(_Model):
     network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(
         name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The network configuration for the Job."""
+    """(This property is not available by default. Please contact support for more information) The
+     network configuration for the Job."""
     constraints: Optional["_models.BatchJobConstraints"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3781,13 +3557,15 @@ class BatchJobUpdateOptions(_Model):
      of the Job is left unchanged.
     :vartype priority: int
     :ivar allow_task_preemption: Whether Tasks in this job can be preempted by other high priority
-     jobs. If the value is set to True, other high priority jobs submitted to the system will take
+     jobs. (This property is not available by default. Please contact support for more information)
+     If the value is set to True, other high priority jobs submitted to the system will take
      precedence and will be able requeue tasks from this job. You can update a job's
      allowTaskPreemption after it has been created using the update job API.
     :vartype allow_task_preemption: bool
     :ivar max_parallel_tasks: The maximum number of tasks that can be executed in parallel for the
-     job. The value of maxParallelTasks must be -1 or greater than 0 if specified. If not specified,
-     the default value is -1, which means there's no limit to the number of tasks that can be run at
+     job. (This property is not available by default. Please contact support for more information)
+     The value of maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the
+     default value is -1, which means there's no limit to the number of tasks that can be run at
      once. You can update a job's maxParallelTasks after it has been created using the update job
      API.
     :vartype max_parallel_tasks: int
@@ -3811,7 +3589,8 @@ class BatchJobUpdateOptions(_Model):
     :ivar metadata: A list of name-value pairs associated with the Job as metadata. If omitted, the
      existing Job metadata is left unchanged.
     :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
-    :ivar network_configuration: The network configuration for the Job.
+    :ivar network_configuration: (This property is not available by default. Please contact support
+     for more information) The network configuration for the Job.
     :vartype network_configuration: ~azure.batch.models.BatchJobNetworkConfiguration
     """
 
@@ -3822,14 +3601,16 @@ class BatchJobUpdateOptions(_Model):
     allow_task_preemption: Optional[bool] = rest_field(
         name="allowTaskPreemption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether Tasks in this job can be preempted by other high priority jobs. If the value is set to
-     True, other high priority jobs submitted to the system will take precedence and will be able
-     requeue tasks from this job. You can update a job's allowTaskPreemption after it has been
-     created using the update job API."""
+    """Whether Tasks in this job can be preempted by other high priority jobs. (This property is not
+     available by default. Please contact support for more information) If the value is set to True,
+     other high priority jobs submitted to the system will take precedence and will be able requeue
+     tasks from this job. You can update a job's allowTaskPreemption after it has been created using
+     the update job API."""
     max_parallel_tasks: Optional[int] = rest_field(
         name="maxParallelTasks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The maximum number of tasks that can be executed in parallel for the job. The value of
+    """The maximum number of tasks that can be executed in parallel for the job. (This property is not
+     available by default. Please contact support for more information) The value of
      maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the default value
      is -1, which means there's no limit to the number of tasks that can be run at once. You can
      update a job's maxParallelTasks after it has been created using the update job API."""
@@ -3864,7 +3645,8 @@ class BatchJobUpdateOptions(_Model):
     network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(
         name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The network configuration for the Job."""
+    """(This property is not available by default. Please contact support for more information) The
+     network configuration for the Job."""
 
     @overload
     def __init__(
@@ -3930,14 +3712,14 @@ class BatchNode(_Model):
 
     :ivar id: The ID of the Compute Node. Every Compute Node that is added to a Pool is assigned a
      unique ID. Whenever a Compute Node is removed from a Pool, all of its local files are deleted,
-     and the ID is reclaimed and could be reused for new Compute Nodes.
+     and the ID is reclaimed and could be reused for new Compute Nodes. Required.
     :vartype id: str
-    :ivar url: The URL of the Compute Node.
+    :ivar url: The URL of the Compute Node. Required.
     :vartype url: str
     :ivar state: The current state of the Compute Node. The Spot/Low-priority Compute Node has been
      preempted. Tasks which were running on the Compute Node when it was preempted will be
-     rescheduled when another Compute Node becomes available. Known values are: "idle", "rebooting",
-     "reimaging", "running", "unusable", "creating", "starting", "waitingforstarttask",
+     rescheduled when another Compute Node becomes available. Required. Known values are: "idle",
+     "rebooting", "reimaging", "running", "unusable", "creating", "starting", "waitingforstarttask",
      "starttaskfailed", "unknown", "leavingpool", "offline", "preempted", "upgradingos",
      "deallocated", and "deallocating".
     :vartype state: str or ~azure.batch.models.BatchNodeState
@@ -3945,32 +3727,39 @@ class BatchNode(_Model):
      are: "enabled" and "disabled".
     :vartype scheduling_state: str or ~azure.batch.models.SchedulingState
     :ivar state_transition_time: The time at which the Compute Node entered its current state.
+     Required.
     :vartype state_transition_time: ~datetime.datetime
     :ivar last_boot_time: The last time at which the Compute Node was started. This property may
-     not be present if the Compute Node state is unusable.
+     not be present if the Compute Node state is unusable. Required.
     :vartype last_boot_time: ~datetime.datetime
     :ivar allocation_time: The time at which this Compute Node was allocated to the Pool. This is
      the time when the Compute Node was initially allocated and doesn't change once set. It is not
-     updated when the Compute Node is service healed or preempted.
+     updated when the Compute Node is service healed or preempted. Required.
     :vartype allocation_time: ~datetime.datetime
     :ivar ip_address: The IP address that other Nodes can use to communicate with this Compute
      Node. Every Compute Node that is added to a Pool is assigned a unique IP address. Whenever a
      Compute Node is removed from a Pool, all of its local files are deleted, and the IP address is
-     reclaimed and could be reused for new Compute Nodes.
+     reclaimed and could be reused for new Compute Nodes. Required.
     :vartype ip_address: str
+    :ivar ipv6_address: The IPv6 address that other Nodes can use to communicate with this Compute
+     Node. Every Compute Node that is added to a Pool is assigned a unique IP address. Whenever a
+     Compute Node is removed from a Pool, all of its local files are deleted, and the IP address is
+     reclaimed and could be reused for new Compute Nodes. This property will not be present if the
+     Pool is not configured for IPv6. Required.
+    :vartype ipv6_address: str
     :ivar affinity_id: An identifier which can be passed when adding a Task to request that the
      Task be scheduled on this Compute Node. Note that this is just a soft affinity. If the target
      Compute Node is busy or unavailable at the time the Task is scheduled, then the Task will be
-     scheduled elsewhere.
+     scheduled elsewhere. Required.
     :vartype affinity_id: str
     :ivar vm_size: The size of the virtual machine hosting the Compute Node. For information about
      available sizes of virtual machines in Pools, see Choose a VM size for Compute Nodes in an
      Azure Batch Pool (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
-     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_).
+     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_). Required.
     :vartype vm_size: str
     :ivar total_tasks_run: The total number of Job Tasks completed on the Compute Node. This
      includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
-     Tasks.
+     Tasks. Required.
     :vartype total_tasks_run: int
     :ivar running_tasks_count: The total number of currently running Job Tasks on the Compute Node.
      This includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
@@ -3992,17 +3781,6 @@ class BatchNode(_Model):
     :ivar start_task_info: Runtime information about the execution of the StartTask on the Compute
      Node.
     :vartype start_task_info: ~azure.batch.models.BatchStartTaskInfo
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
     :ivar errors: The list of errors that are currently being encountered by the Compute Node.
     :vartype errors: list[~azure.batch.models.BatchNodeError]
     :ivar is_dedicated: Whether this Compute Node is a dedicated Compute Node. If false, the
@@ -4011,172 +3789,97 @@ class BatchNode(_Model):
     :ivar endpoint_configuration: The endpoint configuration for the Compute Node.
     :vartype endpoint_configuration: ~azure.batch.models.BatchNodeEndpointConfiguration
     :ivar node_agent_info: Information about the Compute Node agent version and the time the
-     Compute Node upgraded to a new version.
+     Compute Node upgraded to a new version. Required.
     :vartype node_agent_info: ~azure.batch.models.BatchNodeAgentInfo
-    :ivar virtual_machine_info: Info about the current state of the virtual machine.
+    :ivar virtual_machine_info: Info about the current state of the virtual machine. Required.
     :vartype virtual_machine_info: ~azure.batch.models.VirtualMachineInfo
     """
 
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    id: str = rest_field(visibility=["read"])
     """The ID of the Compute Node. Every Compute Node that is added to a Pool is assigned a unique ID.
      Whenever a Compute Node is removed from a Pool, all of its local files are deleted, and the ID
-     is reclaimed and could be reused for new Compute Nodes."""
-    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL of the Compute Node."""
-    state: Optional[Union[str, "_models.BatchNodeState"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+     is reclaimed and could be reused for new Compute Nodes. Required."""
+    url: str = rest_field(visibility=["read"])
+    """The URL of the Compute Node. Required."""
+    state: Union[str, "_models.BatchNodeState"] = rest_field(visibility=["read"])
     """The current state of the Compute Node. The Spot/Low-priority Compute Node has been preempted.
      Tasks which were running on the Compute Node when it was preempted will be rescheduled when
-     another Compute Node becomes available. Known values are: \"idle\", \"rebooting\",
+     another Compute Node becomes available. Required. Known values are: \"idle\", \"rebooting\",
      \"reimaging\", \"running\", \"unusable\", \"creating\", \"starting\", \"waitingforstarttask\",
      \"starttaskfailed\", \"unknown\", \"leavingpool\", \"offline\", \"preempted\", \"upgradingos\",
      \"deallocated\", and \"deallocating\"."""
     scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = rest_field(
-        name="schedulingState", visibility=["read", "create", "update", "delete", "query"]
+        name="schedulingState", visibility=["read"]
     )
     """Whether the Compute Node is available for Task scheduling. Known values are: \"enabled\" and
      \"disabled\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="stateTransitionTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    state_transition_time: datetime.datetime = rest_field(
+        name="stateTransitionTime", visibility=["read"], format="rfc3339"
     )
-    """The time at which the Compute Node entered its current state."""
-    last_boot_time: Optional[datetime.datetime] = rest_field(
-        name="lastBootTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
+    """The time at which the Compute Node entered its current state. Required."""
+    last_boot_time: datetime.datetime = rest_field(name="lastBootTime", visibility=["read"], format="rfc3339")
     """The last time at which the Compute Node was started. This property may not be present if the
-     Compute Node state is unusable."""
-    allocation_time: Optional[datetime.datetime] = rest_field(
-        name="allocationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
+     Compute Node state is unusable. Required."""
+    allocation_time: datetime.datetime = rest_field(name="allocationTime", visibility=["read"], format="rfc3339")
     """The time at which this Compute Node was allocated to the Pool. This is the time when the
      Compute Node was initially allocated and doesn't change once set. It is not updated when the
-     Compute Node is service healed or preempted."""
-    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read", "create", "update", "delete", "query"])
+     Compute Node is service healed or preempted. Required."""
+    ip_address: str = rest_field(name="ipAddress", visibility=["read"])
     """The IP address that other Nodes can use to communicate with this Compute Node. Every Compute
      Node that is added to a Pool is assigned a unique IP address. Whenever a Compute Node is
      removed from a Pool, all of its local files are deleted, and the IP address is reclaimed and
-     could be reused for new Compute Nodes."""
-    affinity_id: Optional[str] = rest_field(
-        name="affinityId", visibility=["read", "create", "update", "delete", "query"]
-    )
+     could be reused for new Compute Nodes. Required."""
+    ipv6_address: str = rest_field(name="ipv6Address", visibility=["read"])
+    """The IPv6 address that other Nodes can use to communicate with this Compute Node. Every Compute
+     Node that is added to a Pool is assigned a unique IP address. Whenever a Compute Node is
+     removed from a Pool, all of its local files are deleted, and the IP address is reclaimed and
+     could be reused for new Compute Nodes. This property will not be present if the Pool is not
+     configured for IPv6. Required."""
+    affinity_id: str = rest_field(name="affinityId", visibility=["read"])
     """An identifier which can be passed when adding a Task to request that the Task be scheduled on
      this Compute Node. Note that this is just a soft affinity. If the target Compute Node is busy
-     or unavailable at the time the Task is scheduled, then the Task will be scheduled elsewhere."""
-    vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
+     or unavailable at the time the Task is scheduled, then the Task will be scheduled elsewhere.
+     Required."""
+    vm_size: str = rest_field(name="vmSize", visibility=["read"])
     """The size of the virtual machine hosting the Compute Node. For information about available sizes
      of virtual machines in Pools, see Choose a VM size for Compute Nodes in an Azure Batch Pool
      (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
-     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_)."""
-    total_tasks_run: Optional[int] = rest_field(
-        name="totalTasksRun", visibility=["read", "create", "update", "delete", "query"]
-    )
+     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_). Required."""
+    total_tasks_run: int = rest_field(name="totalTasksRun", visibility=["read"])
     """The total number of Job Tasks completed on the Compute Node. This includes Job Manager Tasks
-     and normal Tasks, but not Job Preparation, Job Release or Start Tasks."""
-    running_tasks_count: Optional[int] = rest_field(
-        name="runningTasksCount", visibility=["read", "create", "update", "delete", "query"]
-    )
+     and normal Tasks, but not Job Preparation, Job Release or Start Tasks. Required."""
+    running_tasks_count: Optional[int] = rest_field(name="runningTasksCount", visibility=["read"])
     """The total number of currently running Job Tasks on the Compute Node. This includes Job Manager
      Tasks and normal Tasks, but not Job Preparation, Job Release or Start Tasks."""
-    running_task_slots_count: Optional[int] = rest_field(
-        name="runningTaskSlotsCount", visibility=["read", "create", "update", "delete", "query"]
-    )
+    running_task_slots_count: Optional[int] = rest_field(name="runningTaskSlotsCount", visibility=["read"])
     """The total number of scheduling slots used by currently running Job Tasks on the Compute Node.
      This includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
      Tasks."""
-    total_tasks_succeeded: Optional[int] = rest_field(
-        name="totalTasksSucceeded", visibility=["read", "create", "update", "delete", "query"]
-    )
+    total_tasks_succeeded: Optional[int] = rest_field(name="totalTasksSucceeded", visibility=["read"])
     """The total number of Job Tasks which completed successfully (with exitCode 0) on the Compute
      Node. This includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or
      Start Tasks."""
-    recent_tasks: Optional[list["_models.BatchTaskInfo"]] = rest_field(
-        name="recentTasks", visibility=["read", "create", "update", "delete", "query"]
-    )
+    recent_tasks: Optional[list["_models.BatchTaskInfo"]] = rest_field(name="recentTasks", visibility=["read"])
     """A list of Tasks whose state has recently changed. This property is present only if at least one
      Task has run on this Compute Node since it was assigned to the Pool."""
-    start_task: Optional["_models.BatchStartTask"] = rest_field(
-        name="startTask", visibility=["read", "create", "update", "delete", "query"]
-    )
+    start_task: Optional["_models.BatchStartTask"] = rest_field(name="startTask", visibility=["read"])
     """The Task specified to run on the Compute Node as it joins the Pool."""
-    start_task_info: Optional["_models.BatchStartTaskInfo"] = rest_field(
-        name="startTaskInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
+    start_task_info: Optional["_models.BatchStartTaskInfo"] = rest_field(name="startTaskInfo", visibility=["read"])
     """Runtime information about the execution of the StartTask on the Compute Node."""
-    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
-        name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
-    errors: Optional[list["_models.BatchNodeError"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    errors: Optional[list["_models.BatchNodeError"]] = rest_field(visibility=["read"])
     """The list of errors that are currently being encountered by the Compute Node."""
-    is_dedicated: Optional[bool] = rest_field(
-        name="isDedicated", visibility=["read", "create", "update", "delete", "query"]
-    )
+    is_dedicated: Optional[bool] = rest_field(name="isDedicated", visibility=["read"])
     """Whether this Compute Node is a dedicated Compute Node. If false, the Compute Node is a
      Spot/Low-priority Compute Node."""
     endpoint_configuration: Optional["_models.BatchNodeEndpointConfiguration"] = rest_field(
-        name="endpointConfiguration", visibility=["read", "create", "update", "delete", "query"]
+        name="endpointConfiguration", visibility=["read"]
     )
     """The endpoint configuration for the Compute Node."""
-    node_agent_info: Optional["_models.BatchNodeAgentInfo"] = rest_field(
-        name="nodeAgentInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
+    node_agent_info: "_models.BatchNodeAgentInfo" = rest_field(name="nodeAgentInfo", visibility=["read"])
     """Information about the Compute Node agent version and the time the Compute Node upgraded to a
-     new version."""
-    virtual_machine_info: Optional["_models.VirtualMachineInfo"] = rest_field(
-        name="virtualMachineInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Info about the current state of the virtual machine."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        url: Optional[str] = None,
-        state: Optional[Union[str, "_models.BatchNodeState"]] = None,
-        scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        last_boot_time: Optional[datetime.datetime] = None,
-        allocation_time: Optional[datetime.datetime] = None,
-        ip_address: Optional[str] = None,
-        affinity_id: Optional[str] = None,
-        vm_size: Optional[str] = None,
-        total_tasks_run: Optional[int] = None,
-        running_tasks_count: Optional[int] = None,
-        running_task_slots_count: Optional[int] = None,
-        total_tasks_succeeded: Optional[int] = None,
-        recent_tasks: Optional[list["_models.BatchTaskInfo"]] = None,
-        start_task: Optional["_models.BatchStartTask"] = None,
-        start_task_info: Optional["_models.BatchStartTaskInfo"] = None,
-        certificate_references: Optional[list["_models.BatchCertificateReference"]] = None,
-        errors: Optional[list["_models.BatchNodeError"]] = None,
-        is_dedicated: Optional[bool] = None,
-        endpoint_configuration: Optional["_models.BatchNodeEndpointConfiguration"] = None,
-        node_agent_info: Optional["_models.BatchNodeAgentInfo"] = None,
-        virtual_machine_info: Optional["_models.VirtualMachineInfo"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+     new version. Required."""
+    virtual_machine_info: "_models.VirtualMachineInfo" = rest_field(name="virtualMachineInfo", visibility=["read"])
+    """Info about the current state of the virtual machine. Required."""
 
 
 class BatchNodeAgentInfo(_Model):
@@ -4726,6 +4429,10 @@ class BatchNodeReimageOptions(_Model):
 class BatchNodeRemoteLoginSettings(_Model):
     """The remote login settings for a Compute Node.
 
+    :ivar ipv6_remote_login_ip_address: The IPv6 address used for remote login to the Compute Node.
+    :vartype ipv6_remote_login_ip_address: str
+    :ivar ipv6_remote_login_port: The port used for remote login to the Compute Node.
+    :vartype ipv6_remote_login_port: int
     :ivar remote_login_ip_address: The IP address used for remote login to the Compute Node.
      Required.
     :vartype remote_login_ip_address: str
@@ -4733,6 +4440,14 @@ class BatchNodeRemoteLoginSettings(_Model):
     :vartype remote_login_port: int
     """
 
+    ipv6_remote_login_ip_address: Optional[str] = rest_field(
+        name="ipv6RemoteLoginIPAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The IPv6 address used for remote login to the Compute Node."""
+    ipv6_remote_login_port: Optional[int] = rest_field(
+        name="ipv6RemoteLoginPort", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The port used for remote login to the Compute Node."""
     remote_login_ip_address: str = rest_field(
         name="remoteLoginIPAddress", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4748,6 +4463,8 @@ class BatchNodeRemoteLoginSettings(_Model):
         *,
         remote_login_ip_address: str,
         remote_login_port: int,
+        ipv6_remote_login_ip_address: Optional[str] = None,
+        ipv6_remote_login_port: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -5053,27 +4770,28 @@ class BatchPool(_Model):
     :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
      combination of alphanumeric characters including hyphens and underscores, and cannot contain
      more than 64 characters. The ID is case-preserving and case-insensitive (that is, you may not
-     have two IDs within an Account that differ only by case).
+     have two IDs within an Account that differ only by case). Required.
     :vartype id: str
-    :ivar display_name: The display name for the Pool. The display name need not be unique and can
-     contain any Unicode characters up to a maximum length of 1024.
+    :ivar display_name: The display name need not be unique and can contain any Unicode characters
+     up to a maximum length of 1024.
     :vartype display_name: str
-    :ivar url: The URL of the Pool.
+    :ivar url: The URL of the Pool. Required.
     :vartype url: str
     :ivar e_tag: The ETag of the Pool. This is an opaque string. You can use it to detect whether
      the Pool has changed between requests. In particular, you can be pass the ETag when updating a
      Pool to specify that your changes should take effect only if nobody else has modified the Pool
-     in the meantime.
+     in the meantime. Required.
     :vartype e_tag: str
     :ivar last_modified: The last modified time of the Pool. This is the last time at which the
      Pool level data, such as the targetDedicatedNodes or enableAutoscale settings, changed. It does
-     not factor in node-level changes such as a Compute Node changing state.
+     not factor in node-level changes such as a Compute Node changing state. Required.
     :vartype last_modified: ~datetime.datetime
-    :ivar creation_time: The creation time of the Pool.
+    :ivar creation_time: The creation time of the Pool. Required.
     :vartype creation_time: ~datetime.datetime
-    :ivar state: The current state of the Pool. Known values are: "active" and "deleting".
+    :ivar state: The current state of the Pool. Required. Known values are: "active" and
+     "deleting".
     :vartype state: str or ~azure.batch.models.BatchPoolState
-    :ivar state_transition_time: The time at which the Pool entered its current state.
+    :ivar state_transition_time: The time at which the Pool entered its current state. Required.
     :vartype state_transition_time: ~datetime.datetime
     :ivar allocation_state: Whether the Pool is resizing. Known values are: "steady", "resizing",
      and "stopping".
@@ -5082,11 +4800,10 @@ class BatchPool(_Model):
      allocation state.
     :vartype allocation_state_transition_time: ~datetime.datetime
     :ivar vm_size: The size of virtual machines in the Pool. All virtual machines in a Pool are the
-     same size. For information about available VM sizes, see Sizes for Virtual Machines in Azure
-     (`https://learn.microsoft.com/azure/virtual-machines/sizes/overview
-     <https://learn.microsoft.com/azure/virtual-machines/sizes/overview>`_). Batch supports all
-     Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
-     STANDARD_DSV2 series).
+     same size. For information about available sizes of virtual machines in Pools, see Choose a VM
+     size for Compute Nodes in an Azure Batch Pool
+     (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
+     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_). Required.
     :vartype vm_size: str
     :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
      property must be specified.
@@ -5099,15 +4816,12 @@ class BatchPool(_Model):
      This property is set only if one or more errors occurred during the last Pool resize, and only
      when the Pool allocationState is Steady.
     :vartype resize_errors: list[~azure.batch.models.ResizeError]
-    :ivar resource_tags: The user-specified tags associated with the pool. The user-defined tags to
-     be associated with the Azure Batch Pool. When specified, these tags are propagated to the
-     backing Azure resources associated with the pool. This property can only be specified when the
-     Batch account was created with the poolAllocationMode property set to 'UserSubscription'.
-    :vartype resource_tags: dict[str, str]
     :ivar current_dedicated_nodes: The number of dedicated Compute Nodes currently in the Pool.
+     Required.
     :vartype current_dedicated_nodes: int
     :ivar current_low_priority_nodes: The number of Spot/Low-priority Compute Nodes currently in
      the Pool. Spot/Low-priority Compute Nodes which have been preempted are included in this count.
+     Required.
     :vartype current_low_priority_nodes: int
     :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
     :vartype target_dedicated_nodes: int
@@ -5130,25 +4844,14 @@ class BatchPool(_Model):
      This property is set only if the Pool automatically scales, i.e. enableAutoScale is true.
     :vartype auto_scale_run: ~azure.batch.models.AutoScaleRun
     :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
-     Compute Nodes. This imposes restrictions on which Compute Nodes can be assigned to the Pool.
-     Specifying this value can reduce the chance of the requested number of Compute Nodes to be
-     allocated in the Pool.
+     Compute Nodes. Enabling inter-node communication limits the maximum size of the Pool due to
+     deployment restrictions on the Compute Nodes of the Pool. This may result in the Pool not
+     reaching its desired size. The default value is false.
     :vartype enable_inter_node_communication: bool
     :ivar network_configuration: The network configuration for the Pool.
     :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
     :ivar start_task: A Task specified to run on each Compute Node as it joins the Pool.
     :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
     :ivar application_package_references: The list of Packages to be installed on each Compute Node
      in the Pool. Changes to Package references affect all new Nodes joining the Pool, but do not
      affect Compute Nodes that are already in the Pool until they are rebooted or reimaged. There is
@@ -5172,53 +4875,46 @@ class BatchPool(_Model):
      available. The Batch service performs periodic roll-up of statistics. The typical delay is
      about 30 minutes.
     :vartype pool_statistics: ~azure.batch.models.BatchPoolStatistics
-    :ivar mount_configuration: A list of file systems to mount on each node in the pool. This
-     supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+    :ivar mount_configuration: Mount storage using specified file system for the entire lifetime of
+     the pool. Mount the storage using Azure fileshare, NFS, CIFS or Blobfuse based file system.
     :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
     :ivar identity: The identity of the Batch pool, if configured. The list of user identities
      associated with the Batch pool. The user identity dictionary key references will be ARM
      resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype identity: ~azure.batch.models.BatchPoolIdentity
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. If
-     omitted, the default value is Default. Known values are: "default", "classic", and
-     "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
-    :ivar current_node_communication_mode: The current state of the pool communication mode. Known
-     values are: "default", "classic", and "simplified".
-    :vartype current_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
     :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
      manual, or rolling.
     :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
     """
 
-    id: Optional[str] = rest_field(visibility=["read"])
+    id: str = rest_field(visibility=["read"])
     """A string that uniquely identifies the Pool within the Account. The ID can contain any
      combination of alphanumeric characters including hyphens and underscores, and cannot contain
      more than 64 characters. The ID is case-preserving and case-insensitive (that is, you may not
-     have two IDs within an Account that differ only by case)."""
+     have two IDs within an Account that differ only by case). Required."""
     display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
-    """The display name for the Pool. The display name need not be unique and can contain any Unicode
-     characters up to a maximum length of 1024."""
-    url: Optional[str] = rest_field(visibility=["read"])
-    """The URL of the Pool."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """The display name need not be unique and can contain any Unicode characters up to a maximum
+     length of 1024."""
+    url: str = rest_field(visibility=["read"])
+    """The URL of the Pool. Required."""
+    e_tag: str = rest_field(name="eTag", visibility=["read"])
     """The ETag of the Pool. This is an opaque string. You can use it to detect whether the Pool has
      changed between requests. In particular, you can be pass the ETag when updating a Pool to
      specify that your changes should take effect only if nobody else has modified the Pool in the
-     meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
+     meantime. Required."""
+    last_modified: datetime.datetime = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
     """The last modified time of the Pool. This is the last time at which the Pool level data, such as
      the targetDedicatedNodes or enableAutoscale settings, changed. It does not factor in node-level
-     changes such as a Compute Node changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
-    """The creation time of the Pool."""
-    state: Optional[Union[str, "_models.BatchPoolState"]] = rest_field(visibility=["read"])
-    """The current state of the Pool. Known values are: \"active\" and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(
+     changes such as a Compute Node changing state. Required."""
+    creation_time: datetime.datetime = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
+    """The creation time of the Pool. Required."""
+    state: Union[str, "_models.BatchPoolState"] = rest_field(visibility=["read"])
+    """The current state of the Pool. Required. Known values are: \"active\" and \"deleting\"."""
+    state_transition_time: datetime.datetime = rest_field(
         name="stateTransitionTime", visibility=["read"], format="rfc3339"
     )
-    """The time at which the Pool entered its current state."""
+    """The time at which the Pool entered its current state. Required."""
     allocation_state: Optional[Union[str, "_models.AllocationState"]] = rest_field(
         name="allocationState", visibility=["read"]
     )
@@ -5227,13 +4923,12 @@ class BatchPool(_Model):
         name="allocationStateTransitionTime", visibility=["read"], format="rfc3339"
     )
     """The time at which the Pool entered its current allocation state."""
-    vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read"])
+    vm_size: str = rest_field(name="vmSize", visibility=["read"])
     """The size of virtual machines in the Pool. All virtual machines in a Pool are the same size. For
-     information about available VM sizes, see Sizes for Virtual Machines in Azure
-     (`https://learn.microsoft.com/azure/virtual-machines/sizes/overview
-     <https://learn.microsoft.com/azure/virtual-machines/sizes/overview>`_). Batch supports all
-     Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
-     STANDARD_DSV2 series)."""
+     information about available sizes of virtual machines in Pools, see Choose a VM size for
+     Compute Nodes in an Azure Batch Pool
+     (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
+     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_). Required."""
     virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = rest_field(
         name="virtualMachineConfiguration", visibility=["read"]
     )
@@ -5246,16 +4941,11 @@ class BatchPool(_Model):
     """A list of errors encountered while performing the last resize on the Pool. This property is set
      only if one or more errors occurred during the last Pool resize, and only when the Pool
      allocationState is Steady."""
-    resource_tags: Optional[dict[str, str]] = rest_field(name="resourceTags", visibility=["read"])
-    """The user-specified tags associated with the pool. The user-defined tags to be associated with
-     the Azure Batch Pool. When specified, these tags are propagated to the backing Azure resources
-     associated with the pool. This property can only be specified when the Batch account was
-     created with the poolAllocationMode property set to 'UserSubscription'."""
-    current_dedicated_nodes: Optional[int] = rest_field(name="currentDedicatedNodes", visibility=["read"])
-    """The number of dedicated Compute Nodes currently in the Pool."""
-    current_low_priority_nodes: Optional[int] = rest_field(name="currentLowPriorityNodes", visibility=["read"])
+    current_dedicated_nodes: int = rest_field(name="currentDedicatedNodes", visibility=["read"])
+    """The number of dedicated Compute Nodes currently in the Pool. Required."""
+    current_low_priority_nodes: int = rest_field(name="currentLowPriorityNodes", visibility=["read"])
     """The number of Spot/Low-priority Compute Nodes currently in the Pool. Spot/Low-priority Compute
-     Nodes which have been preempted are included in this count."""
+     Nodes which have been preempted are included in this count. Required."""
     target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes", visibility=["read"])
     """The desired number of dedicated Compute Nodes in the Pool."""
     target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes", visibility=["read"])
@@ -5280,9 +4970,10 @@ class BatchPool(_Model):
     enable_inter_node_communication: Optional[bool] = rest_field(
         name="enableInterNodeCommunication", visibility=["read"]
     )
-    """Whether the Pool permits direct communication between Compute Nodes. This imposes restrictions
-     on which Compute Nodes can be assigned to the Pool. Specifying this value can reduce the chance
-     of the requested number of Compute Nodes to be allocated in the Pool."""
+    """Whether the Pool permits direct communication between Compute Nodes. Enabling inter-node
+     communication limits the maximum size of the Pool due to deployment restrictions on the Compute
+     Nodes of the Pool. This may result in the Pool not reaching its desired size. The default value
+     is false."""
     network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(
         name="networkConfiguration", visibility=["read"]
     )
@@ -5291,19 +4982,6 @@ class BatchPool(_Model):
         name="startTask", visibility=["read", "create", "update", "delete", "query"]
     )
     """A Task specified to run on each Compute Node as it joins the Pool."""
-    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
-        name="certificateReferences", visibility=["read"]
-    )
-    """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read"]
     )
@@ -5332,22 +5010,12 @@ class BatchPool(_Model):
     mount_configuration: Optional[list["_models.MountConfiguration"]] = rest_field(
         name="mountConfiguration", visibility=["read"]
     )
-    """A list of file systems to mount on each node in the pool. This supports Azure Files, NFS,
-     CIFS/SMB, and Blobfuse."""
+    """Mount storage using specified file system for the entire lifetime of the pool. Mount the
+     storage using Azure fileshare, NFS, CIFS or Blobfuse based file system."""
     identity: Optional["_models.BatchPoolIdentity"] = rest_field(visibility=["read"])
     """The identity of the Batch pool, if configured. The list of user identities associated with the
      Batch pool. The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'."""
-    target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The desired node communication mode for the pool. If omitted, the default value is Default.
-     Known values are: \"default\", \"classic\", and \"simplified\"."""
-    current_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="currentNodeCommunicationMode", visibility=["read"]
-    )
-    """The current state of the pool communication mode. Known values are: \"default\", \"classic\",
-     and \"simplified\"."""
     upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(
         name="upgradePolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5358,7 +5026,6 @@ class BatchPool(_Model):
         self,
         *,
         start_task: Optional["_models.BatchStartTask"] = None,
-        target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = None,
         upgrade_policy: Optional["_models.UpgradePolicy"] = None,
     ) -> None: ...
 
@@ -5401,11 +5068,6 @@ class BatchPoolCreateOptions(_Model):
      minutes, the Batch service returns an error; if you are calling the REST API directly, the HTTP
      status code is 400 (Bad Request).
     :vartype resize_timeout: ~datetime.timedelta
-    :ivar resource_tags: The user-specified tags associated with the pool. The user-defined tags to
-     be associated with the Azure Batch Pool. When specified, these tags are propagated to the
-     backing Azure resources associated with the pool. This property can only be specified when the
-     Batch account was created with the poolAllocationMode property set to 'UserSubscription'.
-    :vartype resource_tags: dict[str, str]
     :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool. This
      property must not be specified if enableAutoScale is set to true. If enableAutoScale is set to
      false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
@@ -5445,17 +5107,6 @@ class BatchPoolCreateOptions(_Model):
     :ivar start_task: A Task specified to run on each Compute Node as it joins the Pool. The Task
      runs when the Compute Node is added to the Pool or when the Compute Node is restarted.
     :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
     :ivar application_package_references: The list of Packages to be installed on each Compute Node
      in the Pool. When creating a pool, the package's application ID must be fully qualified
      (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
@@ -5479,10 +5130,6 @@ class BatchPoolCreateOptions(_Model):
     :ivar mount_configuration: Mount storage using specified file system for the entire lifetime of
      the pool. Mount the storage using Azure fileshare, NFS, CIFS or Blobfuse based file system.
     :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. If
-     omitted, the default value is Default. Known values are: "default", "classic", and
-     "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
     :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
      manual, or rolling.
     :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
@@ -5518,13 +5165,6 @@ class BatchPoolCreateOptions(_Model):
      The minimum value is 5 minutes. If you specify a value less than 5 minutes, the Batch service
      returns an error; if you are calling the REST API directly, the HTTP status code is 400 (Bad
      Request)."""
-    resource_tags: Optional[dict[str, str]] = rest_field(
-        name="resourceTags", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The user-specified tags associated with the pool. The user-defined tags to be associated with
-     the Azure Batch Pool. When specified, these tags are propagated to the backing Azure resources
-     associated with the pool. This property can only be specified when the Batch account was
-     created with the poolAllocationMode property set to 'UserSubscription'."""
     target_dedicated_nodes: Optional[int] = rest_field(
         name="targetDedicatedNodes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5578,19 +5218,6 @@ class BatchPoolCreateOptions(_Model):
     )
     """A Task specified to run on each Compute Node as it joins the Pool. The Task runs when the
      Compute Node is added to the Pool or when the Compute Node is restarted."""
-    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
-        name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5625,11 +5252,6 @@ class BatchPoolCreateOptions(_Model):
     )
     """Mount storage using specified file system for the entire lifetime of the pool. Mount the
      storage using Azure fileshare, NFS, CIFS or Blobfuse based file system."""
-    target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The desired node communication mode for the pool. If omitted, the default value is Default.
-     Known values are: \"default\", \"classic\", and \"simplified\"."""
     upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(
         name="upgradePolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5644,7 +5266,6 @@ class BatchPoolCreateOptions(_Model):
         display_name: Optional[str] = None,
         virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
         resize_timeout: Optional[datetime.timedelta] = None,
-        resource_tags: Optional[dict[str, str]] = None,
         target_dedicated_nodes: Optional[int] = None,
         target_low_priority_nodes: Optional[int] = None,
         enable_auto_scale: Optional[bool] = None,
@@ -5653,14 +5274,12 @@ class BatchPoolCreateOptions(_Model):
         enable_inter_node_communication: Optional[bool] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
         start_task: Optional["_models.BatchStartTask"] = None,
-        certificate_references: Optional[list["_models.BatchCertificateReference"]] = None,
         application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
         task_slots_per_node: Optional[int] = None,
         task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = None,
         user_accounts: Optional[list["_models.UserAccount"]] = None,
         metadata: Optional[list["_models.BatchMetadataItem"]] = None,
         mount_configuration: Optional[list["_models.MountConfiguration"]] = None,
-        target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = None,
         upgrade_policy: Optional["_models.UpgradePolicy"] = None,
     ) -> None: ...
 
@@ -5862,6 +5481,39 @@ class BatchPoolIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
+class BatchPoolIdentityReference(_Model):
+    """The reference of one of the pool identities to encrypt Disk. This identity will be used to
+    access the key vault.
+
+    :ivar resource_id: The ARM resource id of the user assigned identity. This reference must be
+     included in the pool identities.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource id of the user assigned identity. This reference must be included in the pool
+     identities."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BatchPoolInfo(_Model):
     """Specifies how a Job should be assigned to a Pool.
 
@@ -5969,22 +5621,6 @@ class BatchPoolReplaceOptions(_Model):
      present, it overwrites any existing StartTask. If omitted, any existing StartTask is removed
      from the Pool.
     :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: This list replaces any existing Certificate references configured
-     on the Pool.
-     If you specify an empty collection, any existing Certificate references are removed from the
-     Pool.
-     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-     Required.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
     :ivar application_package_references: The list of Application Packages to be installed on each
      Compute Node in the Pool. The list replaces any existing Application Package references on the
      Pool. Changes to Application Package references affect all new Compute Nodes joining the Pool,
@@ -5999,10 +5635,6 @@ class BatchPoolReplaceOptions(_Model):
      replaces any existing metadata configured on the Pool. If omitted, or if you specify an empty
      collection, any existing metadata is removed from the Pool. Required.
     :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. This
-     setting replaces any existing targetNodeCommunication setting on the Pool. If omitted, the
-     existing setting is default. Known values are: "default", "classic", and "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
     """
 
     start_task: Optional["_models.BatchStartTask"] = rest_field(
@@ -6011,23 +5643,6 @@ class BatchPoolReplaceOptions(_Model):
     """A Task to run on each Compute Node as it joins the Pool. The Task runs when the Compute Node is
      added to the Pool or when the Compute Node is restarted. If this element is present, it
      overwrites any existing StartTask. If omitted, any existing StartTask is removed from the Pool."""
-    certificate_references: list["_models.BatchCertificateReference"] = rest_field(
-        name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This list replaces any existing Certificate references configured on the Pool.
-     If you specify an empty collection, any existing Certificate references are removed from the
-     Pool.
-     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-     Required."""
     application_package_references: list["_models.BatchApplicationPackageReference"] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6042,22 +5657,14 @@ class BatchPoolReplaceOptions(_Model):
     """A list of name-value pairs associated with the Pool as metadata. This list replaces any
      existing metadata configured on the Pool. If omitted, or if you specify an empty collection,
      any existing metadata is removed from the Pool. Required."""
-    target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The desired node communication mode for the pool. This setting replaces any existing
-     targetNodeCommunication setting on the Pool. If omitted, the existing setting is default. Known
-     values are: \"default\", \"classic\", and \"simplified\"."""
 
     @overload
     def __init__(
         self,
         *,
-        certificate_references: list["_models.BatchCertificateReference"],
         application_package_references: list["_models.BatchApplicationPackageReference"],
         metadata: list["_models.BatchMetadataItem"],
         start_task: Optional["_models.BatchStartTask"] = None,
-        target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -6280,11 +5887,6 @@ class BatchPoolSpecification(_Model):
      minutes, the Batch service rejects the request with an error; if you are calling the REST API
      directly, the HTTP status code is 400 (Bad Request).
     :vartype resize_timeout: ~datetime.timedelta
-    :ivar resource_tags: The user-specified tags associated with the pool.The user-defined tags to
-     be associated with the Azure Batch Pool. When specified, these tags are propagated to the
-     backing Azure resources associated with the pool. This property can only be specified when the
-     Batch account was created with the poolAllocationMode property set to 'UserSubscription'.
-    :vartype resource_tags: str
     :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool. This
      property must not be specified if enableAutoScale is set to true. If enableAutoScale is set to
      false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
@@ -6322,16 +5924,6 @@ class BatchPoolSpecification(_Model):
     :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
      the Compute Node is added to the Pool or when the Compute Node is restarted.
     :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment variable
-     AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
-     with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
-     (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024.
-     Please use the `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
     :ivar application_package_references: The list of Packages to be installed on each Compute Node
      in the Pool. When creating a pool, the package's application ID must be fully qualified
      (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
@@ -6348,10 +5940,6 @@ class BatchPoolSpecification(_Model):
     :ivar mount_configuration: A list of file systems to mount on each node in the pool. This
      supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
     :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. If
-     omitted, the default value is Default. Known values are: "default", "classic", and
-     "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
     :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
      manual, or rolling.
     :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
@@ -6391,13 +5979,6 @@ class BatchPoolSpecification(_Model):
      The minimum value is 5 minutes. If you specify a value less than 5 minutes, the Batch service
      rejects the request with an error; if you are calling the REST API directly, the HTTP status
      code is 400 (Bad Request)."""
-    resource_tags: Optional[str] = rest_field(
-        name="resourceTags", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The user-specified tags associated with the pool.The user-defined tags to be associated with
-     the Azure Batch Pool. When specified, these tags are propagated to the backing Azure resources
-     associated with the pool. This property can only be specified when the Batch account was
-     created with the poolAllocationMode property set to 'UserSubscription'."""
     target_dedicated_nodes: Optional[int] = rest_field(
         name="targetDedicatedNodes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6448,18 +6029,6 @@ class BatchPoolSpecification(_Model):
     )
     """A Task to run on each Compute Node as it joins the Pool. The Task runs when the Compute Node is
      added to the Pool or when the Compute Node is restarted."""
-    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
-        name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location. For Linux Compute Nodes, the Certificates are stored in a directory inside
-     the Task working directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to
-     the Task to query for this location. For Certificates with visibility of 'remoteUser', a
-     'certs' directory is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024.
-     Please use the `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6483,11 +6052,6 @@ class BatchPoolSpecification(_Model):
     )
     """A list of file systems to mount on each node in the pool. This supports Azure Files, NFS,
      CIFS/SMB, and Blobfuse."""
-    target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The desired node communication mode for the pool. If omitted, the default value is Default.
-     Known values are: \"default\", \"classic\", and \"simplified\"."""
     upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(
         name="upgradePolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6503,7 +6067,6 @@ class BatchPoolSpecification(_Model):
         task_slots_per_node: Optional[int] = None,
         task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = None,
         resize_timeout: Optional[datetime.timedelta] = None,
-        resource_tags: Optional[str] = None,
         target_dedicated_nodes: Optional[int] = None,
         target_low_priority_nodes: Optional[int] = None,
         enable_auto_scale: Optional[bool] = None,
@@ -6512,12 +6075,10 @@ class BatchPoolSpecification(_Model):
         enable_inter_node_communication: Optional[bool] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
         start_task: Optional["_models.BatchStartTask"] = None,
-        certificate_references: Optional[list["_models.BatchCertificateReference"]] = None,
         application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
         user_accounts: Optional[list["_models.UserAccount"]] = None,
         metadata: Optional[list["_models.BatchMetadataItem"]] = None,
         mount_configuration: Optional[list["_models.MountConfiguration"]] = None,
-        target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = None,
         upgrade_policy: Optional["_models.UpgradePolicy"] = None,
     ) -> None: ...
 
@@ -6615,20 +6176,6 @@ class BatchPoolUpdateOptions(_Model):
      present, it overwrites any existing StartTask. If omitted, any existing StartTask is left
      unchanged.
     :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: If this element is present, it replaces any existing Certificate
-     references configured on the Pool.
-     If omitted, any existing Certificate references are left unchanged.
-     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
     :ivar application_package_references: A list of Packages to be installed on each Compute Node
      in the Pool. Changes to Package references affect all new Nodes joining the Pool, but do not
      affect Compute Nodes that are already in the Pool until they are rebooted or reimaged. If this
@@ -6645,11 +6192,6 @@ class BatchPoolUpdateOptions(_Model):
     :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
      property must be specified.<br /><br />This field can be updated only when the pool is empty.
     :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. If this
-     element is present, it replaces the existing targetNodeCommunicationMode configured on the
-     Pool. If omitted, any existing metadata is left unchanged. Known values are: "default",
-     "classic", and "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
     :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
      a single compute node in the pool. The default value is 1. The maximum value is the smaller of
      4 times the number of cores of the vmSize of the pool or 256.<br /><br />This field can be
@@ -6662,12 +6204,6 @@ class BatchPoolUpdateOptions(_Model):
     :ivar network_configuration: The network configuration for the Pool. This field can be updated
      only when the pool is empty.
     :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
-    :ivar resource_tags: The user-specified tags associated with the pool. The user-defined tags to
-     be associated with the Azure Batch Pool. When specified, these tags are propagated to the
-     backing Azure resources associated with the pool. This property can only be specified when the
-     Batch account was created with the poolAllocationMode property set to 'UserSubscription'.<br
-     /><br />This field can be updated only when the pool is empty.
-    :vartype resource_tags: dict[str, str]
     :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
      This field can be updated only when the pool is empty.
     :vartype user_accounts: list[~azure.batch.models.UserAccount]
@@ -6705,22 +6241,6 @@ class BatchPoolUpdateOptions(_Model):
     """A Task to run on each Compute Node as it joins the Pool. The Task runs when the Compute Node is
      added to the Pool or when the Compute Node is restarted. If this element is present, it
      overwrites any existing StartTask. If omitted, any existing StartTask is left unchanged."""
-    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
-        name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If this element is present, it replaces any existing Certificate references configured on the
-     Pool.
-     If omitted, any existing Certificate references are left unchanged.
-     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6741,12 +6261,6 @@ class BatchPoolUpdateOptions(_Model):
     )
     """The virtual machine configuration for the Pool. This property must be specified.<br /><br
      />This field can be updated only when the pool is empty."""
-    target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The desired node communication mode for the pool. If this element is present, it replaces the
-     existing targetNodeCommunicationMode configured on the Pool. If omitted, any existing metadata
-     is left unchanged. Known values are: \"default\", \"classic\", and \"simplified\"."""
     task_slots_per_node: Optional[int] = rest_field(
         name="taskSlotsPerNode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6763,14 +6277,6 @@ class BatchPoolUpdateOptions(_Model):
         name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The network configuration for the Pool. This field can be updated only when the pool is empty."""
-    resource_tags: Optional[dict[str, str]] = rest_field(
-        name="resourceTags", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The user-specified tags associated with the pool. The user-defined tags to be associated with
-     the Azure Batch Pool. When specified, these tags are propagated to the backing Azure resources
-     associated with the pool. This property can only be specified when the Batch account was
-     created with the poolAllocationMode property set to 'UserSubscription'.<br /><br />This field
-     can be updated only when the pool is empty."""
     user_accounts: Optional[list["_models.UserAccount"]] = rest_field(
         name="userAccounts", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6796,15 +6302,12 @@ class BatchPoolUpdateOptions(_Model):
         vm_size: Optional[str] = None,
         enable_inter_node_communication: Optional[bool] = None,
         start_task: Optional["_models.BatchStartTask"] = None,
-        certificate_references: Optional[list["_models.BatchCertificateReference"]] = None,
         application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
         metadata: Optional[list["_models.BatchMetadataItem"]] = None,
         virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
-        target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = None,
         task_slots_per_node: Optional[int] = None,
         task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
-        resource_tags: Optional[dict[str, str]] = None,
         user_accounts: Optional[list["_models.UserAccount"]] = None,
         mount_configuration: Optional[list["_models.MountConfiguration"]] = None,
         upgrade_policy: Optional["_models.UpgradePolicy"] = None,
@@ -6938,6 +6441,10 @@ class BatchPublicIpAddressConfiguration(_Model):
      The default value is BatchManaged. Known values are: "batchmanaged", "usermanaged", and
      "nopublicipaddresses".
     :vartype ip_address_provisioning_type: str or ~azure.batch.models.IpAddressProvisioningType
+    :ivar ip_families: The IP families used to specify IP versions available to the pool. IP
+     families are used to determine single-stack or dual-stack pools. For single-stack, the expected
+     value is IPv4. For dual-stack, the expected values are IPv4 and IPv6.
+    :vartype ip_families: list[str or ~azure.batch.models.IPFamily]
     :ivar ip_address_ids: The list of public IPs which the Batch service will use when provisioning
      Compute Nodes. The number of IPs specified here limits the maximum size of the Pool - 100
      dedicated nodes or 100 Spot/Low-priority nodes can be allocated for each public IP. For
@@ -6945,6 +6452,9 @@ class BatchPublicIpAddressConfiguration(_Model):
      element of this collection is of the form:
      /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
     :vartype ip_address_ids: list[str]
+    :ivar ip_tags: A list of IP tags associated with the public IP addresses of the Pool. IP tags
+     are used to categorize and filter public IP addresses for billing and management purposes.
+    :vartype ip_tags: list[~azure.batch.models.IPTag]
     """
 
     ip_address_provisioning_type: Optional[Union[str, "_models.IpAddressProvisioningType"]] = rest_field(
@@ -6952,6 +6462,12 @@ class BatchPublicIpAddressConfiguration(_Model):
     )
     """The provisioning type for Public IP Addresses for the Pool. The default value is BatchManaged.
      Known values are: \"batchmanaged\", \"usermanaged\", and \"nopublicipaddresses\"."""
+    ip_families: Optional[list[Union[str, "_models.IPFamily"]]] = rest_field(
+        name="ipFamilies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The IP families used to specify IP versions available to the pool. IP families are used to
+     determine single-stack or dual-stack pools. For single-stack, the expected value is IPv4. For
+     dual-stack, the expected values are IPv4 and IPv6."""
     ip_address_ids: Optional[list[str]] = rest_field(
         name="ipAddressIds", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6961,13 +6477,20 @@ class BatchPublicIpAddressConfiguration(_Model):
      dedicated VMs would need at least 3 public IPs specified. Each element of this collection is of
      the form:
      /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}."""
+    ip_tags: Optional[list["_models.IPTag"]] = rest_field(
+        name="ipTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of IP tags associated with the public IP addresses of the Pool. IP tags are used to
+     categorize and filter public IP addresses for billing and management purposes."""
 
     @overload
     def __init__(
         self,
         *,
         ip_address_provisioning_type: Optional[Union[str, "_models.IpAddressProvisioningType"]] = None,
+        ip_families: Optional[list[Union[str, "_models.IPFamily"]]] = None,
         ip_address_ids: Optional[list[str]] = None,
+        ip_tags: Optional[list["_models.IPTag"]] = None,
     ) -> None: ...
 
     @overload
@@ -7478,28 +7001,28 @@ class BatchTask(_Model):
 
     :ivar id: A string that uniquely identifies the Task within the Job. The ID can contain any
      combination of alphanumeric characters including hyphens and underscores, and cannot contain
-     more than 64 characters.
+     more than 64 characters. Required.
     :vartype id: str
     :ivar display_name: A display name for the Task. The display name need not be unique and can
      contain any Unicode characters up to a maximum length of 1024.
     :vartype display_name: str
-    :ivar url: The URL of the Task.
+    :ivar url: The URL of the Task. Required.
     :vartype url: str
     :ivar e_tag: The ETag of the Task. This is an opaque string. You can use it to detect whether
      the Task has changed between requests. In particular, you can be pass the ETag when updating a
      Task to specify that your changes should take effect only if nobody else has modified the Task
-     in the meantime.
+     in the meantime. Required.
     :vartype e_tag: str
-    :ivar last_modified: The last modified time of the Task.
+    :ivar last_modified: The last modified time of the Task. Required.
     :vartype last_modified: ~datetime.datetime
-    :ivar creation_time: The creation time of the Task.
+    :ivar creation_time: The creation time of the Task. Required.
     :vartype creation_time: ~datetime.datetime
     :ivar exit_conditions: How the Batch service should respond when the Task completes.
     :vartype exit_conditions: ~azure.batch.models.ExitConditions
-    :ivar state: The current state of the Task. Known values are: "active", "preparing", "running",
-     and "completed".
+    :ivar state: The current state of the Task. Required. Known values are: "active", "preparing",
+     "running", and "completed".
     :vartype state: str or ~azure.batch.models.BatchTaskState
-    :ivar state_transition_time: The time at which the Task entered its current state.
+    :ivar state_transition_time: The time at which the Task entered its current state. Required.
     :vartype state_transition_time: ~datetime.datetime
     :ivar previous_state: The previous state of the Task. This property is not set if the Task is
      in its initial Active state. Known values are: "active", "preparing", "running", and
@@ -7518,6 +7041,7 @@ class BatchTask(_Model):
      or use the Batch provided environment variable
      (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
      <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
+     Required.
     :vartype command_line: str
     :ivar container_settings: The settings for the container under which the Task runs. If the Pool
      that will run this Task has containerConfiguration set, this must be set as well. If the Pool
@@ -7587,33 +7111,33 @@ class BatchTask(_Model):
     :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
     """
 
-    id: Optional[str] = rest_field(visibility=["read"])
+    id: str = rest_field(visibility=["read"])
     """A string that uniquely identifies the Task within the Job. The ID can contain any combination
      of alphanumeric characters including hyphens and underscores, and cannot contain more than 64
-     characters."""
+     characters. Required."""
     display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
     """A display name for the Task. The display name need not be unique and can contain any Unicode
      characters up to a maximum length of 1024."""
-    url: Optional[str] = rest_field(visibility=["read"])
-    """The URL of the Task."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    url: str = rest_field(visibility=["read"])
+    """The URL of the Task. Required."""
+    e_tag: str = rest_field(name="eTag", visibility=["read"])
     """The ETag of the Task. This is an opaque string. You can use it to detect whether the Task has
      changed between requests. In particular, you can be pass the ETag when updating a Task to
      specify that your changes should take effect only if nobody else has modified the Task in the
-     meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
-    """The last modified time of the Task."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
-    """The creation time of the Task."""
+     meantime. Required."""
+    last_modified: datetime.datetime = rest_field(name="lastModified", visibility=["read"], format="rfc3339")
+    """The last modified time of the Task. Required."""
+    creation_time: datetime.datetime = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
+    """The creation time of the Task. Required."""
     exit_conditions: Optional["_models.ExitConditions"] = rest_field(name="exitConditions", visibility=["read"])
     """How the Batch service should respond when the Task completes."""
-    state: Optional[Union[str, "_models.BatchTaskState"]] = rest_field(visibility=["read"])
-    """The current state of the Task. Known values are: \"active\", \"preparing\", \"running\", and
-     \"completed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(
+    state: Union[str, "_models.BatchTaskState"] = rest_field(visibility=["read"])
+    """The current state of the Task. Required. Known values are: \"active\", \"preparing\",
+     \"running\", and \"completed\"."""
+    state_transition_time: datetime.datetime = rest_field(
         name="stateTransitionTime", visibility=["read"], format="rfc3339"
     )
-    """The time at which the Task entered its current state."""
+    """The time at which the Task entered its current state. Required."""
     previous_state: Optional[Union[str, "_models.BatchTaskState"]] = rest_field(
         name="previousState", visibility=["read"]
     )
@@ -7624,7 +7148,7 @@ class BatchTask(_Model):
     )
     """The time at which the Task entered its previous state. This property is not set if the Task is
      in its initial Active state."""
-    command_line: Optional[str] = rest_field(name="commandLine", visibility=["read"])
+    command_line: str = rest_field(name="commandLine", visibility=["read"])
     """The command line of the Task. For multi-instance Tasks, the command line is executed as the
      primary Task, after the primary Task and all subtasks have finished executing the coordination
      command line. The command line does not run under a shell, and therefore cannot take advantage
@@ -7634,7 +7158,8 @@ class BatchTask(_Model):
      paths, it should use a relative path (relative to the Task working directory), or use the Batch
      provided environment variable
      (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
-     <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_)."""
+     <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
+     Required."""
     container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(
         name="containerSettings", visibility=["read"]
     )
@@ -8679,11 +8204,19 @@ class BatchTaskInfo(_Model):
 class BatchTaskSchedulingPolicy(_Model):
     """Specifies how Tasks should be distributed across Compute Nodes.
 
+    :ivar job_default_order: The order for scheduling tasks from different jobs with the same
+     priority. If not specified, the default is none. Known values are: "none" and "creationtime".
+    :vartype job_default_order: str or ~azure.batch.models.BatchJobDefaultOrder
     :ivar node_fill_type: How Tasks are distributed across Compute Nodes in a Pool. If not
      specified, the default is spread. Required. Known values are: "spread" and "pack".
     :vartype node_fill_type: str or ~azure.batch.models.BatchNodeFillType
     """
 
+    job_default_order: Optional[Union[str, "_models.BatchJobDefaultOrder"]] = rest_field(
+        name="jobDefaultOrder", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The order for scheduling tasks from different jobs with the same priority. If not specified,
+     the default is none. Known values are: \"none\" and \"creationtime\"."""
     node_fill_type: Union[str, "_models.BatchNodeFillType"] = rest_field(
         name="nodeFillType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8695,6 +8228,7 @@ class BatchTaskSchedulingPolicy(_Model):
         self,
         *,
         node_fill_type: Union[str, "_models.BatchNodeFillType"],
+        job_default_order: Optional[Union[str, "_models.BatchJobDefaultOrder"]] = None,
     ) -> None: ...
 
     @overload
@@ -8950,7 +8484,7 @@ class BatchVmDiskSecurityProfile(_Model):
      VMGuestStateOnly for encryption of just the VMGuestState blob, and NonPersistedTPM for not
      persisting firmware state in the VMGuestState blob. **Note**: It can be set for only
      Confidential VMs and is required when using Confidential VMs. Known values are:
-     "NonPersistedTPM" and "VMGuestStateOnly".
+     "DiskWithVMGuestState", "NonPersistedTPM", and "VMGuestStateOnly".
     :vartype security_encryption_type: str or ~azure.batch.models.SecurityEncryptionTypes
     """
 
@@ -8960,7 +8494,8 @@ class BatchVmDiskSecurityProfile(_Model):
     """Specifies the EncryptionType of the managed disk. It is set to VMGuestStateOnly for encryption
      of just the VMGuestState blob, and NonPersistedTPM for not persisting firmware state in the
      VMGuestState blob. **Note**: It can be set for only Confidential VMs and is required when using
-     Confidential VMs. Known values are: \"NonPersistedTPM\" and \"VMGuestStateOnly\"."""
+     Confidential VMs. Known values are: \"DiskWithVMGuestState\", \"NonPersistedTPM\", and
+     \"VMGuestStateOnly\"."""
 
     @overload
     def __init__(
@@ -9259,6 +8794,8 @@ class DataDisk(_Model):
     :vartype caching: str or ~azure.batch.models.CachingType
     :ivar disk_size_gb: The initial disk size in gigabytes. Required.
     :vartype disk_size_gb: int
+    :ivar managed_disk: The managed disk parameters.
+    :vartype managed_disk: ~azure.batch.models.ManagedDisk
     :ivar storage_account_type: The storage Account type to be used for the data disk. If omitted,
      the default is "standard_lrs". Known values are: "standard_lrs", "premium_lrs", and
      "standardssd_lrs".
@@ -9279,6 +8816,10 @@ class DataDisk(_Model):
      Known values are: \"none\", \"readonly\", and \"readwrite\"."""
     disk_size_gb: int = rest_field(name="diskSizeGB", visibility=["read", "create", "update", "delete", "query"])
     """The initial disk size in gigabytes. Required."""
+    managed_disk: Optional["_models.ManagedDisk"] = rest_field(
+        name="managedDisk", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed disk parameters."""
     storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = rest_field(
         name="storageAccountType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9292,7 +8833,56 @@ class DataDisk(_Model):
         logical_unit_number: int,
         disk_size_gb: int,
         caching: Optional[Union[str, "_models.CachingType"]] = None,
+        managed_disk: Optional["_models.ManagedDisk"] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiskCustomerManagedKey(_Model):
+    """The Customer Managed Key reference to encrypt the Disk.
+
+    :ivar identity_reference: The reference of one of the pool identities to encrypt Disk. This
+     identity will be used to access the KeyVault.
+    :vartype identity_reference: ~azure.batch.models.BatchPoolIdentityReference
+    :ivar key_url: Fully versioned Key Url pointing to a key in KeyVault. Version segment of the
+     Url is required regardless of rotationToLatestKeyVersionEnabled value.
+    :vartype key_url: str
+    :ivar rotation_to_latest_key_version_enabled: Set this flag to true to enable auto-updating of
+     the Disk Encryption to the latest key version. Default is false.
+    :vartype rotation_to_latest_key_version_enabled: bool
+    """
+
+    identity_reference: Optional["_models.BatchPoolIdentityReference"] = rest_field(
+        name="identityReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reference of one of the pool identities to encrypt Disk. This identity will be used to
+     access the KeyVault."""
+    key_url: Optional[str] = rest_field(name="keyUrl", visibility=["read", "create", "update", "delete", "query"])
+    """Fully versioned Key Url pointing to a key in KeyVault. Version segment of the Url is required
+     regardless of rotationToLatestKeyVersionEnabled value."""
+    rotation_to_latest_key_version_enabled: Optional[bool] = rest_field(
+        name="rotationToLatestKeyVersionEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set this flag to true to enable auto-updating of the Disk Encryption to the latest key version.
+     Default is false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity_reference: Optional["_models.BatchPoolIdentityReference"] = None,
+        key_url: Optional[str] = None,
+        rotation_to_latest_key_version_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -9311,11 +8901,23 @@ class DiskEncryptionConfiguration(_Model):
     Disk encryption configuration is not supported on Linux pool created with
     Azure Compute Gallery Image.
 
+    :ivar customer_managed_key: The Customer Managed Key reference to encrypt the OS Disk. Customer
+     Managed Key will encrypt OS Disk by EncryptionAtRest, and by default we will encrypt the data
+     disk as well. It can be used only when the pool is configured with an identity and OsDisk is
+     set as one of the targets of DiskEncryption.
+    :vartype customer_managed_key: ~azure.batch.models.DiskCustomerManagedKey
     :ivar targets: The list of disk targets Batch Service will encrypt on the compute node. The
      list of disk targets Batch Service will encrypt on the compute node.
     :vartype targets: list[str or ~azure.batch.models.DiskEncryptionTarget]
     """
 
+    customer_managed_key: Optional["_models.DiskCustomerManagedKey"] = rest_field(
+        name="customerManagedKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Customer Managed Key reference to encrypt the OS Disk. Customer Managed Key will encrypt OS
+     Disk by EncryptionAtRest, and by default we will encrypt the data disk as well. It can be used
+     only when the pool is configured with an identity and OsDisk is set as one of the targets of
+     DiskEncryption."""
     targets: Optional[list[Union[str, "_models.DiskEncryptionTarget"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9326,7 +8928,38 @@ class DiskEncryptionConfiguration(_Model):
     def __init__(
         self,
         *,
+        customer_managed_key: Optional["_models.DiskCustomerManagedKey"] = None,
         targets: Optional[list[Union[str, "_models.DiskEncryptionTarget"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiskEncryptionSetParameters(_Model):
+    """The ARM resource id of the disk encryption set.
+
+    :ivar id: The ARM resource id of the disk encryption set. The resource must be in the same
+     subscription as the Batch account.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ARM resource id of the disk encryption set. The resource must be in the same subscription
+     as the Batch account."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
     @overload
@@ -9639,6 +9272,48 @@ class FileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class HostEndpointSettings(_Model):
+    """Specifies particular host endpoint settings.
+
+    :ivar in_vm_access_control_profile_reference_id: Specifies the reference to the
+     InVMAccessControlProfileVersion resource id in the form of
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.
+    :vartype in_vm_access_control_profile_reference_id: str
+    :ivar mode: Specifies the access control policy execution mode. Known values are: "Audit" and
+     "Enforce".
+    :vartype mode: str or ~azure.batch.models.HostEndpointSettingsModeTypes
+    """
+
+    in_vm_access_control_profile_reference_id: Optional[str] = rest_field(
+        name="inVMAccessControlProfileReferenceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the reference to the InVMAccessControlProfileVersion resource id in the form of
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}."""
+    mode: Optional[Union[str, "_models.HostEndpointSettingsModeTypes"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the access control policy execution mode. Known values are: \"Audit\" and
+     \"Enforce\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        in_vm_access_control_profile_reference_id: Optional[str] = None,
+        mode: Optional[Union[str, "_models.HostEndpointSettingsModeTypes"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class InboundEndpoint(_Model):
     """An inbound endpoint on a Compute Node.
 
@@ -9750,6 +9425,41 @@ class InstanceViewStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
+class IPTag(_Model):
+    """Contains the IP tag associated with the public IP address.
+
+    :ivar ip_tag_type: The IP Tag type. Example: FirstPartyUsage.
+    :vartype ip_tag_type: str
+    :ivar tag: The value of the IP tag associated with the public IP. Example: SQL.
+    :vartype tag: str
+    """
+
+    ip_tag_type: Optional[str] = rest_field(
+        name="ipTagType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The IP Tag type. Example: FirstPartyUsage."""
+    tag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The value of the IP tag associated with the public IP. Example: SQL."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ip_tag_type: Optional[str] = None,
+        tag: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class LinuxUserConfiguration(_Model):
     """Properties used to create a user Account on a Linux Compute Node.
 
@@ -9808,6 +9518,9 @@ class LinuxUserConfiguration(_Model):
 class ManagedDisk(_Model):
     """The managed disk parameters.
 
+    :ivar disk_encryption_set: Specifies the customer managed disk encryption set resource id for
+     the managed disk. It can be set only in UserSubscription mode.
+    :vartype disk_encryption_set: ~azure.batch.models.DiskEncryptionSetParameters
     :ivar storage_account_type: The storage account type for managed disk. Known values are:
      "standard_lrs", "premium_lrs", and "standardssd_lrs".
     :vartype storage_account_type: str or ~azure.batch.models.StorageAccountType
@@ -9815,6 +9528,11 @@ class ManagedDisk(_Model):
     :vartype security_profile: ~azure.batch.models.BatchVmDiskSecurityProfile
     """
 
+    disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = rest_field(
+        name="diskEncryptionSet", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the customer managed disk encryption set resource id for the managed disk. It can be
+     set only in UserSubscription mode."""
     storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = rest_field(
         name="storageAccountType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9829,6 +9547,7 @@ class ManagedDisk(_Model):
     def __init__(
         self,
         *,
+        disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         security_profile: Optional["_models.BatchVmDiskSecurityProfile"] = None,
     ) -> None: ...
@@ -10238,14 +9957,14 @@ class OutputFile(_Model):
     :ivar file_pattern: A pattern indicating which file(s) to upload. Both relative and absolute
      paths are supported. Relative paths are relative to the Task working directory. The following
      wildcards are supported: * matches 0 or more characters (for example pattern abc* would match
-     abc or abcdef), \\*\\* matches any directory, ? matches any single character, [abc] matches one
+     abc or abcdef), ** matches any directory, ? matches any single character, [abc] matches one
      character in the brackets, and [a-c] matches one character in the range. Brackets can include a
      negation to match any character not specified (for example [!abc] matches any character but a,
      b, or c). If a file name starts with "." it is ignored by default but may be matched by
      specifying it explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple
-     example: \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
+     example: **\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
      working directory or any subdirectory. If the filename contains a wildcard character it can be
-     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\\\
+     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\
      and / are treated as directory separators on Windows, but only / is on Linux. Environment
      variables (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied.
      Required.
@@ -10261,14 +9980,14 @@ class OutputFile(_Model):
     """A pattern indicating which file(s) to upload. Both relative and absolute paths are supported.
      Relative paths are relative to the Task working directory. The following wildcards are
      supported: * matches 0 or more characters (for example pattern abc* would match abc or abcdef),
-     \\*\\* matches any directory, ? matches any single character, [abc] matches one character in the
+     ** matches any directory, ? matches any single character, [abc] matches one character in the
      brackets, and [a-c] matches one character in the range. Brackets can include a negation to
      match any character not specified (for example [!abc] matches any character but a, b, or c). If
      a file name starts with \".\" it is ignored by default but may be matched by specifying it
      explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple example:
-     \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
+     **\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
      directory or any subdirectory. If the filename contains a wildcard character it can be escaped
-     using brackets (for example abc[*] would match a file named abc*). Note that both \\\\ and / are
+     using brackets (for example abc[*] would match a file named abc*). Note that both \ and / are
      treated as directory separators on Windows, but only / is on Linux. Environment variables
      (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied. Required."""
     destination: "_models.OutputFileDestination" = rest_field(
@@ -10459,6 +10178,50 @@ class OutputFileUploadHeader(_Model):
         *,
         name: str,
         value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProxyAgentSettings(_Model):
+    """Specifies ProxyAgent settings while creating the virtual machine.
+
+    :ivar enabled: Specifies whether Metadata Security Protocol feature should be enabled on the
+     virtual machine or virtual machine scale set. Default is False.
+    :vartype enabled: bool
+    :ivar imds: Settings for the IMDS endpoint.
+    :vartype imds: ~azure.batch.models.HostEndpointSettings
+    :ivar wire_server: Settings for the WireServer endpoint.
+    :vartype wire_server: ~azure.batch.models.HostEndpointSettings
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies whether Metadata Security Protocol feature should be enabled on the virtual machine
+     or virtual machine scale set. Default is False."""
+    imds: Optional["_models.HostEndpointSettings"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for the IMDS endpoint."""
+    wire_server: Optional["_models.HostEndpointSettings"] = rest_field(
+        name="wireServer", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for the WireServer endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        imds: Optional["_models.HostEndpointSettings"] = None,
+        wire_server: Optional["_models.HostEndpointSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -10790,6 +10553,8 @@ class SecurityProfile(_Model):
      `https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes
      <https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes>`_.
     :vartype encryption_at_host: bool
+    :ivar proxy_agent_settings: Specifies ProxyAgent settings while creating the virtual machine.
+    :vartype proxy_agent_settings: ~azure.batch.models.ProxyAgentSettings
     :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
      specified value to enable UefiSettings. Known values are: "trustedLaunch" and "confidentialVM".
     :vartype security_type: str or ~azure.batch.models.SecurityTypes
@@ -10808,6 +10573,10 @@ class SecurityProfile(_Model):
      requirements, please refer to
      `https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes
      <https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes>`_."""
+    proxy_agent_settings: Optional["_models.ProxyAgentSettings"] = rest_field(
+        name="proxyAgentSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies ProxyAgent settings while creating the virtual machine."""
     security_type: Optional[Union[str, "_models.SecurityTypes"]] = rest_field(
         name="securityType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10825,6 +10594,7 @@ class SecurityProfile(_Model):
         self,
         *,
         encryption_at_host: Optional[bool] = None,
+        proxy_agent_settings: Optional["_models.ProxyAgentSettings"] = None,
         security_type: Optional[Union[str, "_models.SecurityTypes"]] = None,
         uefi_settings: Optional["_models.BatchUefiSettings"] = None,
     ) -> None: ...
@@ -11188,9 +10958,10 @@ class VirtualMachineConfiguration(_Model):
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
      applied. Values are:
-     
-     Windows_Server - The on-premises license is for Windows Server.
-     Windows_Client - The on-premises license is for Windows Client.
+
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client.
     :vartype license_type: str
     :ivar container_configuration: The container configuration for the Pool. If specified, setup is
      performed on each Compute Node in the Pool to allow Tasks to run in containers. All regular
@@ -11260,8 +11031,9 @@ class VirtualMachineConfiguration(_Model):
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
      applied. Values are:
      
-     Windows_Server - The on-premises license is for Windows Server.
-     Windows_Client - The on-premises license is for Windows Client."""
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )

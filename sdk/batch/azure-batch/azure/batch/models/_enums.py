@@ -50,55 +50,6 @@ class BatchAllTasksCompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
 
 
-class BatchCertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchCertificateFormat enums."""
-
-    PFX = "pfx"
-    """The Certificate is a PFX (PKCS#12) formatted Certificate or Certificate chain."""
-    CER = "cer"
-    """The Certificate is a base64-encoded X.509 Certificate."""
-
-
-class BatchCertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchCertificateState enums."""
-
-    ACTIVE = "active"
-    """The Certificate is available for use in Pools."""
-    DELETING = "deleting"
-    """The user has requested that the Certificate be deleted, but the delete operation has not yet
-    completed. You may not reference the Certificate when creating or updating Pools."""
-    DELETE_FAILED = "deletefailed"
-    """The user requested that the Certificate be deleted, but there are Pools that still have
-    references to the Certificate, or it is still installed on one or more Nodes. (The latter can
-    occur if the Certificate has been removed from the Pool, but the Compute Node has not yet
-    restarted. Compute Nodes refresh their Certificates only when they restart.) You may use the
-    cancel Certificate delete operation to cancel the delete, or the delete Certificate operation
-    to retry the delete."""
-
-
-class BatchCertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchCertificateStoreLocation enums."""
-
-    CURRENT_USER = "currentuser"
-    """Certificates should be installed to the CurrentUser Certificate store."""
-    LOCAL_MACHINE = "localmachine"
-    """Certificates should be installed to the LocalMachine Certificate store."""
-
-
-class BatchCertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchCertificateVisibility enums."""
-
-    START_TASK = "starttask"
-    """The Certificate should be visible to the user account under which the StartTask is run. Note
-    that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
-    visible to the Task as well."""
-    TASK = "task"
-    """The Certificate should be visible to the user accounts under which Job Tasks are run."""
-    REMOTE_USER = "remoteuser"
-    """The Certificate should be visible to the user accounts under which users remotely access the
-    Compute Node."""
-
-
 class BatchErrorSourceCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchErrorSourceCategory enums."""
 
@@ -118,6 +69,16 @@ class BatchJobActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     of requeue."""
     TERMINATE = "terminate"
     """Terminate the Job. The terminationReason in the Job's executionInfo is set to "TaskFailed"."""
+
+
+class BatchJobDefaultOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchJobDefaultOrder enums."""
+
+    NONE = "none"
+    """Tasks should be scheduled uniformly from all equal-priority jobs for the pool."""
+    CREATION_TIME = "creationtime"
+    """If jobs have equal priority, tasks from jobs that were created earlier should be scheduled
+    first."""
 
 
 class BatchJobPreparationTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -186,20 +147,6 @@ class BatchJobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "deleting"
     """A user has requested that the Job be deleted, but the delete operation is still in progress
     (for example, because the system is still terminating running Tasks)."""
-
-
-class BatchNodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeCommunicationMode enums."""
-
-    DEFAULT = "default"
-    """The node communication mode is automatically set by the Batch service."""
-    CLASSIC = "classic"
-    """Nodes using the classic communication mode require inbound TCP communication on ports 29876 and
-    29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on
-    port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags."""
-    SIMPLIFIED = "simplified"
-    """Nodes using the simplified communication mode require outbound TCP communication on port 443 to
-    the "BatchNodeManagement.{region}" service tag. No open inbound ports are required."""
 
 
 class BatchNodeDeallocateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -589,6 +536,18 @@ class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The user is a user with elevated access and operates with full Administrator permissions."""
 
 
+class HostEndpointSettingsModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """HostEndpointSettingsModeTypes enums."""
+
+    AUDIT = "Audit"
+    """In Audit mode, the system acts as if it is enforcing the access control policy, including
+    emitting access denial entries in the logs but it does not actually deny any requests to host
+    endpoints."""
+    ENFORCE = "Enforce"
+    """Enforce mode is the recommended mode of operation and system will enforce the access control
+    policy. This property cannot be used together with 'inVMAccessControlProfileReferenceId'."""
+
+
 class ImageVerificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ImageVerificationType enums."""
 
@@ -619,6 +578,15 @@ class IpAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Public IPs are provided by the user and will be used to provision the Compute Nodes."""
     NO_PUBLIC_IP_ADDRESSES = "nopublicipaddresses"
     """No public IP Address will be created."""
+
+
+class IPFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The IP families used to specify IP versions available to the pool."""
+
+    I_PV4 = "IPv4"
+    """IPv4 is available to the pool."""
+    I_PV6 = "IPv6"
+    """IPv6 is available to the pool."""
 
 
 class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -677,10 +645,15 @@ class SchedulingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SecurityEncryptionTypes enums."""
 
+    DISK_WITH_VM_GUEST_STATE = "DiskWithVMGuestState"
+    """EncryptionType of the managed disk is set to DiskWithVMGuestState for encryption of the managed
+    disk along with VMGuestState blob. It is not supported in data disks."""
     NON_PERSISTED_TPM = "NonPersistedTPM"
-    """NonPersistedTPM"""
+    """EncryptionType of the managed disk is set to NonPersistedTPM for not persisting firmware state
+    in the VMGuestState blob."""
     VM_GUEST_STATE_ONLY = "VMGuestStateOnly"
-    """VMGuestStateOnly"""
+    """EncryptionType of the managed disk is set to VMGuestStateOnly for encryption of just the
+    VMGuestState blob."""
 
 
 class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -723,7 +696,7 @@ class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UpgradeMode enums."""
 
     AUTOMATIC = "automatic"
-    """TAll virtual machines in the scale set are automatically updated at the same time."""
+    """All virtual machines in the scale set are automatically updated at the same time."""
     MANUAL = "manual"
     """You control the application of updates to virtual machines in the scale set. You do this by
     using the manualUpgrade action."""

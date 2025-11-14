@@ -1224,8 +1224,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(
             client.begin_terminate_job(
                 job_id=job_param.id,
-                options=models.BatchJobTerminateOptions(termination_reason='UserTerminate'),
-                polling_interval=5
+                options=models.BatchJobTerminateOptions(termination_reason="UserTerminate"),
+                polling_interval=5,
             )
         )
         assert poller is not None
