@@ -49,9 +49,7 @@ def sample_delete_deployment_from_resources():
     client = ConversationAuthoringClient(endpoint, credential=credential)
     project_client = client.get_project_client(project_name)
 
-    delete_body = ProjectResourceIds(
-        azure_resource_ids=[resource_id]
-    )
+    delete_body = ProjectResourceIds(azure_resource_ids=[resource_id])
 
     # start delete-from-resources (long-running operation)
     poller = project_client.deployment.begin_delete_deployment_from_resources(

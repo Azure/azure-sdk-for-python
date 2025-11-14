@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -50,9 +51,7 @@ async def sample_delete_deployment_from_resources_async():
     async with ConversationAuthoringClient(endpoint, credential=credential) as client:
         project_client = client.get_project_client(project_name)
 
-        delete_body = ProjectResourceIds(
-            azure_resource_ids=[resource_id]
-        )
+        delete_body = ProjectResourceIds(azure_resource_ids=[resource_id])
 
         # start delete-from-resources (async long-running operation)
         poller = await project_client.deployment.begin_delete_deployment_from_resources(

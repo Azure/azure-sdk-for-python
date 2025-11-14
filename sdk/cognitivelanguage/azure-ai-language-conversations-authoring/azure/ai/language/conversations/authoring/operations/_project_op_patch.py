@@ -7,8 +7,8 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint:disable=import-error
-from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast
+from collections.abc import MutableMapping  # pylint:disable=import-error
+from typing import Any, Callable, Dict, Optional, TypeVar, Union, cast
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
@@ -17,34 +17,24 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .._utils.model_base import _deserialize
 from ..models._patch import _JobsPollingMethod
-from ..models import (
-    TrainingJobResult
-)
+from ..models import TrainingJobResult
 from ._operations import ProjectOperations as ProjectOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class ProjectOperations(ProjectOperationsGenerated):
-    """Patched ProjectOperationsOperations that auto-injects project_name."""
 
-    def __init__(self, *args, **kwargs: Any):
-        super().__init__(*args, **kwargs)
-    
     @distributed_trace
     def begin_cancel_training_job(  # pylint: disable=function-redefined
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> LROPoller[TrainingJobResult]:
         """
         Cancel a training job without requiring project_name explicitly.
-        
+
         :param job_id: The identifier of the training job to cancel. Required.
         :type job_id: str
         :return: An instance of LROPoller that returns TrainingJobResult.
@@ -111,7 +101,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         # 6) Return the poller
         return LROPoller[TrainingJobResult](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,  # type: ignore
         )

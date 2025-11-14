@@ -104,18 +104,26 @@ class AssignedProjectResource(_Model):
     :vartype resource_id: str
     :ivar region: The Azure resource region. Required.
     :vartype region: str
+    :ivar assigned_aoai_resource: Represents the AOAI resource assigned for data generation.
+    :vartype assigned_aoai_resource:
+     ~azure.ai.language.conversations.authoring.models.DataGenerationConnectionInfo
     """
 
     resource_id: str = rest_field(name="azureResourceId", visibility=["read"])
     """The Azure resource ID of the language or AI resource. Required."""
     region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Azure resource region. Required."""
+    assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = rest_field(
+        name="assignedAoaiResource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the AOAI resource assigned for data generation."""
 
     @overload
     def __init__(
         self,
         *,
         region: str,
+        assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = None,
     ) -> None: ...
 
     @overload

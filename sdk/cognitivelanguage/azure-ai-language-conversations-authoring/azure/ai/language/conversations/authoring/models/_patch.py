@@ -7,7 +7,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping, Awaitable # pylint:disable=import-error
+from collections.abc import MutableMapping, Awaitable  # pylint:disable=import-error
 from typing import Any, Callable, Optional, Tuple, TypeVar, cast
 
 import base64
@@ -53,7 +53,6 @@ from ._models import (
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-
 
 
 class _JobsStrategy(LongRunningOperation):
@@ -108,7 +107,7 @@ class _JobsPollingMethod(PollingMethod):
         self._deserialization_callback: Optional[Callable] = None
         self._resource: Optional[PipelineResponse] = None
         self._status: str = "NotStarted"
-        self._operation: Any = None                 # or a concrete type if available
+        self._operation: Any = None  # or a concrete type if available
         self._command: Optional[Callable[[], PipelineResponse]] = None
 
     # ---- LRO lifecycle ----
@@ -192,7 +191,8 @@ class _JobsPollingMethod(PollingMethod):
         # Legacy pipeline fallback
         request = self._client.get(url)
         return cast(
-            PipelineResponse, self._client._pipeline.run(request, stream=False, **self._kwargs) # pylint: disable=protected-access
+            PipelineResponse,
+            self._client._pipeline.run(request, stream=False, **self._kwargs),  # pylint: disable=protected-access
         )
 
     # ---- Continuation token support (doc pattern) ----
@@ -237,8 +237,8 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
-        self._resource = None          # no type annotation here
-        self._status = "InProgress"    # no type annotation here
+        self._resource = None  # no type annotation here
+        self._status = "InProgress"  # no type annotation here
 
         # Operation-Location (case-insensitive)
         headers = initial_response.http_response.headers
@@ -279,6 +279,7 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
             return
         # Fallback for non-Azure transports (allowed per rule text)
         import asyncio  # pylint: disable=import-outside-toplevel, do-not-import-asyncio
+
         await asyncio.sleep(seconds)
 
     def finished(self) -> bool:
@@ -339,6 +340,7 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         deserialization_callback = kwargs["deserialization_callback"]
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return client, initial_response, deserialization_callback
+
 
 def patch_sdk():
     """Do not remove from this file.
