@@ -31,23 +31,25 @@ from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
 
-openai_client = project_client.get_openai_client()
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    # [START tool_declaration]
+    tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
+    # [END tool_declaration]
+
     # Create Agent with web search tool
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that can search the web",
-            tools=[
-                WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
-            ],
+            tools=[tool],
         ),
         description="Agent for web search.",
     )

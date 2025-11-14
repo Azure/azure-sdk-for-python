@@ -40,33 +40,34 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# Get the OpenAI client for responses
-openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
-bing_custom_search_tool = BingCustomSearchAgentTool(
-    bing_custom_search_preview=BingCustomSearchToolParameters(
-        search_configurations=[
-            BingCustomSearchConfiguration(
-                project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
-                instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
-            )
-        ]
+    # [START tool_declaration]
+    tool = BingCustomSearchAgentTool(
+        bing_custom_search_preview=BingCustomSearchToolParameters(
+            search_configurations=[
+                BingCustomSearchConfiguration(
+                    project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
+                    instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
+                )
+            ]
+        )
     )
-)
+    # [END tool_declaration]
 
-with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="""You are a helpful agent that can use Bing Custom Search tools to assist users. 
             Use the available Bing Custom Search tools to answer questions and perform tasks.""",
-            tools=[bing_custom_search_tool],
+            tools=[tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")

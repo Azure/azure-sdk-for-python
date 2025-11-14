@@ -1060,7 +1060,7 @@ def _build_internal_log_attributes(
     event_data: Dict[str, Any],
     metric_name: str,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]],
-    internal_log_attributes: Dict[str, str],
+    log_attributes: Dict[str, str],
 ) -> Dict[str, str]:
     """
     Build internal log attributes for OpenTelemetry logging.
@@ -1074,6 +1074,8 @@ def _build_internal_log_attributes(
     :return: Dictionary of internal log attributes
     :rtype: Dict[str, str]
     """
+    # Create a copy of the base log attributes
+    internal_log_attributes: Dict[str, str] = log_attributes.copy()
     # Add threshold if present
     if event_data.get("threshold"):
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
@@ -1104,6 +1106,12 @@ def _build_internal_log_attributes(
                         internal_log_attributes["gen_ai.evaluation.min_value"] = str(metric_config_detail["min_value"])
                     if metric_config_detail.get("max_value") is not None:
                         internal_log_attributes["gen_ai.evaluation.max_value"] = str(metric_config_detail["max_value"])
+                    if metric_config_detail.get("desirable_direction") is not None:
+                        internal_log_attributes["gen_ai.evaluation.desirable_direction"] = str(
+                            metric_config_detail["desirable_direction"]
+                        )
+                    if metric_config_detail.get("type") is not None:
+                        internal_log_attributes["gen_ai.evaluation.type"] = str(metric_config_detail["type"])
 
     return internal_log_attributes
 
@@ -2101,6 +2109,8 @@ def _convert_results_to_aoai_evaluation_results(
                     metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"]
+                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["eci"]
+                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["ungrounded_attributes"]
                 ):
                     copy_label = label
                     if copy_label is not None and isinstance(copy_label, bool) and copy_label == True:

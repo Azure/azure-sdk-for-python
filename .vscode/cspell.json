@@ -356,6 +356,7 @@
     "nbsp",
     "noarch",
     "NOPERM",
+    "norecursedirs",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -912,7 +913,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO" ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram" ],
       "caseSensitive": false
     },
     {

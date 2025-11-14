@@ -45,6 +45,8 @@ from pydantic import BaseModel, Field
 
 load_dotenv()
 
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
 
 class CalendarEvent(BaseModel):
     model_config = {"extra": "forbid"}
@@ -54,60 +56,51 @@ class CalendarEvent(BaseModel):
 
 
 async def main() -> None:
-
-    credential = DefaultAzureCredential()
-
-    async with credential:
-
-        project_client = AIProjectClient(
-            endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-            credential=credential,
-        )
-
-        async with project_client:
-
-            openai_client = await project_client.get_openai_client()
-
-            agent = await project_client.agents.create_version(
-                agent_name="MyAgent",
-                definition=PromptAgentDefinition(
-                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                    text=PromptAgentDefinitionText(
-                        format=ResponseTextFormatConfigurationJsonSchema(
-                            name="CalendarEvent", schema=CalendarEvent.model_json_schema()
-                        )
-                    ),
-                    instructions="""
-                        You are a helpful assistant that extracts calendar event information from the input user messages,
-                        and returns it in the desired structured output format.
-                    """,
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
+        agent = await project_client.agents.create_version(
+            agent_name="MyAgent",
+            definition=PromptAgentDefinition(
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                text=PromptAgentDefinitionText(
+                    format=ResponseTextFormatConfigurationJsonSchema(
+                        name="CalendarEvent", schema=CalendarEvent.model_json_schema()
+                    )
                 ),
-            )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+                instructions="""
+                    You are a helpful assistant that extracts calendar event information from the input user messages,
+                    and returns it in the desired structured output format.
+                """,
+            ),
+        )
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-            conversation = await openai_client.conversations.create(
-                items=[
-                    {
-                        "type": "message",
-                        "role": "user",
-                        "content": "Alice and Bob are going to a science fair this Friday, November 7, 2025.",
-                    }
-                ],
-            )
-            print(f"Created conversation with initial user message (id: {conversation.id})")
+        conversation = await openai_client.conversations.create(
+            items=[
+                {
+                    "type": "message",
+                    "role": "user",
+                    "content": "Alice and Bob are going to a science fair this Friday, November 7, 2025.",
+                }
+            ],
+        )
+        print(f"Created conversation with initial user message (id: {conversation.id})")
 
-            response = await openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                input="",
-            )
-            print(f"Response output: {response.output_text}")
+        response = await openai_client.responses.create(
+            conversation=conversation.id,
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            input="",
+        )
+        print(f"Response output: {response.output_text}")
 
-            await openai_client.conversations.delete(conversation_id=conversation.id)
-            print("Conversation deleted")
+        await openai_client.conversations.delete(conversation_id=conversation.id)
+        print("Conversation deleted")
 
-            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-            print("Agent deleted")
+        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        print("Agent deleted")
 
 
 if __name__ == "__main__":

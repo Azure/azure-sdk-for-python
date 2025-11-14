@@ -39,30 +39,30 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# Get the OpenAI client for responses
-openai_client = project_client.get_openai_client()
-
-sharepoint_tool = SharepointAgentTool(
-    sharepoint_grounding_preview=SharepointGroundingToolParameters(
-        project_connections=[
-            ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
-        ]
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    # [START tool_declaration]
+    tool = SharepointAgentTool(
+        sharepoint_grounding_preview=SharepointGroundingToolParameters(
+            project_connections=[
+                ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
+            ]
+        )
     )
-)
+    # [END tool_declaration]
 
-with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="""You are a helpful agent that can use SharePoint tools to assist users. 
             Use the available SharePoint tools to answer questions and perform tasks.""",
-            tools=[sharepoint_tool],
+            tools=[tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
