@@ -155,17 +155,17 @@ def main() -> None:
                 ),
             ]
 
-            print("\nCreating Eval Group")
+            print("\nCreating evaluation")
             eval_object = client.evals.create(
                 name="agent_trace_eval_group",
                 data_source_config=data_source_config,  # type: ignore
                 testing_criteria=testing_criteria,  # type: ignore
             )
-            print("Eval Group created")
+            print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-            print("\nGet Eval Group by Id")
+            print("\nGet Evaluation by Id")
             eval_object_response = client.evals.retrieve(eval_object.id)
-            print("Eval Group Response:")
+            print("Evaluation Response:")
             pprint(eval_object_response)
 
             print("\nCreating Eval Run with trace IDs")

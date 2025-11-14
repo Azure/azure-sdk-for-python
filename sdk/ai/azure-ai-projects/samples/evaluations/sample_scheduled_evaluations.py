@@ -305,6 +305,7 @@ def schedule_dataset_evaluation() -> None:
             print(f"Schedule created for dataset evaluation: {schedule_response.id}")
             pprint(schedule_response)
 
+            time.sleep(5)  # Wait for schedule to be fully created
             schedule_runs = project_client.schedules.list_runs(schedule_response.id)
             print(f"Listing schedule runs for schedule id: {schedule_response.id}")
             for run in schedule_runs:
@@ -324,7 +325,7 @@ def schedule_redteam_evaluation() -> None:
     load_dotenv()
     #
     endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
-    agent_name = os.environ.get("AGENT_NAME", "")
+    agent_name = os.environ.get("AZURE_AI_AGENT_NAME", "")
 
     # Construct the paths to the data folder and data file used in this sample
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -413,6 +414,7 @@ def schedule_redteam_evaluation() -> None:
             print(f"Schedule created for red teaming: {schedule_response.id}")
             pprint(schedule_response)
 
+            time.sleep(5)  # Wait for schedule to be fully created
             schedule_runs = project_client.schedules.list_runs(schedule_response.id)
             print(f"Listing schedule runs for schedule id: {schedule_response.id}")
             for run in schedule_runs:
@@ -423,9 +425,6 @@ def schedule_redteam_evaluation() -> None:
 
             client.evals.delete(eval_id=eval_object.id)
             print("Evaluation deleted")
-
-            project_client.evaluation_taxonomies.delete(name=taxonomy.name, version=taxonomy.version)
-            print("Taxonomy deleted")
 
 
 def _get_tool_descriptions(agent: AgentVersionObject):
