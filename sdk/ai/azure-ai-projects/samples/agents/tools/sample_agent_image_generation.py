@@ -44,18 +44,18 @@ from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
-# [START tool_declaration]
-tool = ImageGenTool(quality="low", size="1024x1024")
-# [END tool_declaration]
+    # [START tool_declaration]
+    tool = ImageGenTool(quality="low", size="1024x1024")
+    # [END tool_declaration]
 
-with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(

@@ -120,8 +120,6 @@ See the "responses" folder in the [package samples][samples] for additional samp
 <!-- SNIPPET:sample_responses_basic.responses -->
 
 ```python
-openai_client = project_client.get_openai_client()
-
 response = openai_client.responses.create(
     model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
     input="What is the size of France in square miles?",
@@ -149,8 +147,6 @@ See the "agents" folder in the [package samples][samples] for an extensive set o
 <!-- SNIPPET:sample_agent_basic.prompt_agent_basic -->
 
 ```python
-openai_client = project_client.get_openai_client()
-
 agent = project_client.agents.create_version(
     agent_name="MyAgent",
     definition=PromptAgentDefinition(
@@ -676,9 +672,7 @@ folder in the [package samples][samples].
 <!-- SNIPPET:sample_indexes.indexes_sample-->
 
 ```python
-print(
-    f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
-)
+print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
 index = project_client.indexes.create_or_update(
     name=index_name,
     version=index_version,
