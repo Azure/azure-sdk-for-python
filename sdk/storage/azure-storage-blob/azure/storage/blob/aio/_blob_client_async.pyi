@@ -269,6 +269,8 @@ class BlobClient(  # type: ignore[misc]
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
+        access_tier_if_modified_since: Optional[datetime] = None,
+        access_tier_if_unmodified_since: Optional[datetime] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...

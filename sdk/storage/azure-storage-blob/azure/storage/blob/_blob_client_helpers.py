@@ -393,7 +393,8 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
         'snapshot': kwargs.pop('snapshot', None),  # this is added for delete_blobs
         'delete_snapshots': delete_snapshots or None,
         'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions}
+        'modified_access_conditions': mod_conditions
+    }
     options.update(kwargs)
     return options
 

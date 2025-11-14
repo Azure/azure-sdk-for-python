@@ -23,7 +23,8 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceModifiedError,
-    ResourceNotFoundError)
+    ResourceNotFoundError
+)
 from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.blob import (
     AccessPolicy,
@@ -40,7 +41,6 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     LinearRetry,
     ResourceTypes,
-    RetentionPolicy,
     Services,
     StandardBlobTier,
     StorageErrorCode,
@@ -48,7 +48,8 @@ from azure.storage.blob import (
     generate_account_sas,
     generate_blob_sas,
     generate_container_sas,
-    upload_blob_to_url)
+    upload_blob_to_url
+)
 from azure.storage.blob._generated.models import RehydratePriority
 
 from devtools_testutils import FakeTokenCredential, recorded_by_proxy
@@ -3655,6 +3656,44 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         )
         content = blob_client.download_blob().readall()
         assert content == data
+
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_access_tier_conditionals(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        self._setup(storage_account_name, storage_account_key)
+
+        early = self.get_datetime_variable(variables, 'early', datetime.utcnow())
+
+        blob1_name = self._create_block_blob()
+        blob1 = self.bsc.get_blob_client(self.container_name, blob1_name)
+        blob2_name = self._get_blob_reference() + "2"
+        blob2 = self.bsc.get_blob_client(self.container_name, blob2_name)
+        blob2.upload_blob(
+            self.byte_data,
+            length=len(self.byte_data),
+            standard_blob_tier=StandardBlobTier.COOL,
+            overwrite=True
+        )
+        blob1.set_standard_blob_tier('Cool')
+        blob2.set_standard_blob_tier('Hot')
+
+        late = self.get_datetime_variable(variables, 'late', datetime.utcnow())
+
+        with pytest.raises(HttpResponseError):
+            blob1.delete_blob(access_tier_if_modified_since=late)
+        resp = blob1.delete_blob(access_tier_if_modified_since=early)
+        assert resp is None
+
+        with pytest.raises(HttpResponseError):
+            blob2.delete_blob(access_tier_if_unmodified_since=early)
+        resp = blob2.delete_blob(access_tier_if_unmodified_since=late)
+        assert resp is None
 
         return variables
 
