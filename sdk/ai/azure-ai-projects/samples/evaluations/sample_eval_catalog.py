@@ -52,7 +52,6 @@ endpoint = os.environ[
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
 ):
 
     print("Creating Prompt based custom evaluator version (object style)")
