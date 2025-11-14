@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from azure.ai.agentserver.core.models import projects as project_models
+from azure.ai.agentserver.core.models.projects._enums import ItemContentType
+from typing import cast
 
 
 class ItemContentHelper:
@@ -10,18 +12,21 @@ class ItemContentHelper:
         self.has_aggregated_content = False
 
     def create_item_content(self) -> project_models.ItemContent:
-        return project_models.ItemContent(
-            type=self.content_type,
-        )
+        return cast(project_models.ItemContent, {
+            "type": self.content_type,
+        })
 
 
 class InputTextItemContentHelper(ItemContentHelper):
     def __init__(self):
-        super().__init__(project_models.ItemContentType.INPUT_TEXT)
+        super().__init__(ItemContentType.INPUT_TEXT)
         self.text = ""
 
-    def create_item_content(self):
-        return project_models.ItemContentInputText(text=self.text)
+    def create_item_content(self) -> project_models.ItemContent:
+        return cast(project_models.ItemContent, {
+            "type": ItemContentType.INPUT_TEXT,
+            "text": self.text,
+        })
 
     def aggregate_content(self, item):
         self.has_aggregated_content = True
@@ -37,17 +42,18 @@ class InputTextItemContentHelper(ItemContentHelper):
 
 class OutputTextItemContentHelper(ItemContentHelper):
     def __init__(self):
-        super().__init__(project_models.ItemContentType.OUTPUT_TEXT)
+        super().__init__(ItemContentType.OUTPUT_TEXT)
         self.text = ""
         self.annotations = []
         self.logprobs = []
 
-    def create_item_content(self):
-        return project_models.ItemContentOutputText(
-            text=self.text,
-            annotations=self.annotations,
-            logprobs=self.logprobs,
-        )
+    def create_item_content(self) -> project_models.ItemContentOutputText:
+        return cast(project_models.ItemContentOutputText, {
+            "type": ItemContentType.OUTPUT_TEXT,
+            "text": self.text,
+            "annotations": self.annotations,
+            "logprobs": self.logprobs,
+        })
 
     def aggregate_content(self, item):
         self.has_aggregated_content = True

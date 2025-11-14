@@ -74,10 +74,10 @@ class FunctionToolCallOutputItemResource(ItemResource):
     """The output returned from the function call."""
 
 class ItemContent(TypedDict):
-    type: ReadOnly[Literal[
+    type: ReadOnly[Union[str,Literal[
         "input_text", "input_audio", "input_image", "input_file", 
         "output_text", "output_audio", "refusal"
-    ]]
+    ]]]
 
 class Annotation(TypedDict):
     type: Union[str, Literal["file_citation", "url_citation", "file_path", "container_file_citation"]]

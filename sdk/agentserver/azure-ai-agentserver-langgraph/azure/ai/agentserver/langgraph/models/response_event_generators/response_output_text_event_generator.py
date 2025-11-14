@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=unused-argument
 # mypy: disable-error-code="return-value,assignment"
-from typing import List
+from typing import List, cast
 
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
@@ -64,12 +64,16 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
                     self.logger.warning(f"Skipping non-string content item: {item}")
                     continue
                 # create an event for each content item
-                chunk_event = project_models.ResponseTextDeltaEvent(
-                    item_id=self.item_id,
-                    output_index=self.output_index,
-                    content_index=self.content_index,
-                    delta=item,
-                    sequence_number=stream_state.sequence_number,
+                chunk_event: project_models.ResponseTextDeltaEvent = cast(
+                    project_models.ResponseTextDeltaEvent,
+                    {
+                        "type": "response.output_text.delta",
+                        "item_id": self.item_id,
+                        "output_index": self.output_index,
+                        "content_index": self.content_index,
+                        "delta": item,
+                        "sequence_number": stream_state.sequence_number,
+                    }
                 )
                 self.aggregated_content += item
                 stream_state.sequence_number += 1
@@ -99,12 +103,16 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
             return False, []
 
         # finalize the item resource
-        done_event = project_models.ResponseTextDoneEvent(
-            item_id=self.item_id,
-            output_index=self.output_index,
-            content_index=self.content_index,
-            text=self.aggregated_content,
-            sequence_number=stream_state.sequence_number,
+        done_event: project_models.ResponseTextDoneEvent = cast(
+            project_models.ResponseTextDoneEvent,
+            {
+                "type": "response.output_text.done",
+                "item_id": self.item_id,
+                "output_index": self.output_index,
+                "content_index": self.content_index,
+                "text": self.aggregated_content,
+                "sequence_number": stream_state.sequence_number,
+            }
         )
         stream_state.sequence_number += 1
         self.parent.aggregate_content(self.aggregated_content)
