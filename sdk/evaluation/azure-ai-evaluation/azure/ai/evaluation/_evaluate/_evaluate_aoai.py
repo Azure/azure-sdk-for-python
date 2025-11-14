@@ -217,7 +217,12 @@ def _begin_single_aoai_evaluation(
 
 
 def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, Any]) -> None:
-    if "item_schema" not in kwargs or "properties" not in kwargs["item_schema"]:
+    if (
+        not kwargs
+        or not kwargs.get("item_schema")
+        or not isinstance(kwargs["item_schema"], dict)
+        or "properties" not in kwargs["item_schema"]
+    ):
         return
 
     if "item_schema" in data_source_config:
@@ -857,12 +862,8 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         for _, rel_parts, df_col in path_specs:
             # Safely fetch value
             val = row.get(df_col, None)
-
-            if isinstance(val, list):
-                str_val = val
-            else:
-                # Convert value to string to match schema's "type": "string" leaves.
-                str_val = _convert_value_to_string(val)
+            # Convert value to string to match schema's "type": "string" leaves.
+            str_val = _convert_value_to_string(val)
 
             # Insert into nested dict
             cursor = item_root
@@ -882,10 +883,7 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         for col_name in input_data_df.columns:
             if col_name not in processed_cols:
                 val = row.get(col_name, None)
-                if isinstance(val, list):
-                    str_val = val
-                else:
-                    str_val = _convert_value_to_string(val)
+                str_val = _convert_value_to_string(val)
                 item_root[col_name] = str_val
 
         content.append({WRAPPER_KEY: item_root})

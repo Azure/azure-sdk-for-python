@@ -86,6 +86,7 @@ def sample_extract_key_phrases():
         else:
             print("No key phrases found for this document.")
 
+
 # [END extract_key_phrases]
 
 

@@ -155,6 +155,7 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "qnas",
     "msedge",
     "spinup",
     "cibuildwheel",
@@ -356,6 +357,7 @@
     "nbsp",
     "noarch",
     "NOPERM",
+    "norecursedirs",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -529,7 +531,7 @@
     "logprobs",
     "pyaudio",
     "PyAudio",
-	"libasound",
+    "libasound",
     "ingraph"
   ],
   "overrides": [
@@ -912,7 +914,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO" ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram" ],
       "caseSensitive": false
     },
     {
