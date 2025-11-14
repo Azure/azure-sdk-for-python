@@ -88,12 +88,11 @@ AIProjectInstrumentor().instrument()
 scenario = os.path.basename(__file__)
 with tracer.start_as_current_span(scenario):
     # [END create_span_for_scenario]
-    project_client = AIProjectClient(
-        endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-        credential=DefaultAzureCredential(),
-    )
-
-    with project_client:
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
         agent_definition = PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that answers general questions",
@@ -101,8 +100,6 @@ with tracer.start_as_current_span(scenario):
 
         agent = project_client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
         print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
-        openai_client = project_client.get_openai_client()
 
         conversation = openai_client.conversations.create()
 
