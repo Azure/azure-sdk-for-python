@@ -50,7 +50,8 @@ def main() -> None:
 
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as client,
     ):
 
         data_source_config = DataSourceConfigCustom(
