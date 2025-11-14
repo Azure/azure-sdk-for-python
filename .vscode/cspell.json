@@ -907,7 +907,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
-      "words": [ "unassigning" ],
+      "words": [ "unassigning", "unassignment" ],
       "caseSensitive": false
     },
     {
