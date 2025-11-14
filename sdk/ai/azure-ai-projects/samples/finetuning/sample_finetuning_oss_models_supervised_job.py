@@ -67,6 +67,7 @@ with (
             "type": "supervised",
             "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
         },
+        extra_body={"trainingType": "GlobalStandard"},
     )
     print(fine_tuning_job)
     # [END finetuning_oss_model_supervised_job_sample]

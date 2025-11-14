@@ -36,6 +36,25 @@ class TestFineTuningAsync(TestBase):
             },
         )
 
+    async def _create_sft_oss_finetuning_job_async(self, openai_client, train_file_id, validation_file_id):
+        """Helper method to create a supervised fine-tuning job asynchronously."""
+        return await openai_client.fine_tuning.jobs.create(
+            training_file=train_file_id,
+            validation_file=validation_file_id,
+            model=self.test_finetuning_params["sft"]["oss"]["model_name"],
+            method={
+                "type": "supervised",
+                "supervised": {
+                    "hyperparameters": {
+                        "n_epochs": self.test_finetuning_params["n_epochs"],
+                        "batch_size": self.test_finetuning_params["batch_size"],
+                        "learning_rate_multiplier": self.test_finetuning_params["learning_rate_multiplier"],
+                    }
+                },
+            },
+            extra_body={"trainingType": "GlobalStandard"},
+        )
+
     async def _create_dpo_finetuning_job_async(self, openai_client, train_file_id, validation_file_id):
         """Helper method to create a DPO fine-tuning job asynchronously."""
         return await openai_client.fine_tuning.jobs.create(
@@ -353,8 +372,8 @@ class TestFineTuningAsync(TestBase):
 
             train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
 
-            fine_tuning_job = await self._create_sft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, "oss"
+            fine_tuning_job = await self._create_sft_oss_finetuning_job_async(
+                openai_client, train_file.id, validation_file.id
             )
             print(f"[test_finetuning_sft_oss_async] Created fine-tuning job: {fine_tuning_job.id}")
             TestBase.validate_fine_tuning_job(
