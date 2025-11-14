@@ -35,9 +35,10 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :type body: list[str]
         :keyword to_language: List of target languages of the translation outputs. The target language(s)
          must be one of the supported languages included in the translation scope. Required.
-        :type to_language: list[str]
-        :param from_language: Language of the input text. If not specified, automatic language detection
+        :paramtype to_language: list[str]
+        :keyword from_language: Language of the input text. If not specified, automatic language detection
          is applied to determine the source language. Default value is None.
+        :paramtype from_language: str
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
