@@ -64,7 +64,7 @@ class ToolClient:
         :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
         """
         self._tool_client = tool_client
-        self._langchain_tools_cache: List[StructuredTool] = None
+        self._langchain_tools_cache: Optional[List[StructuredTool]] = None
 
     async def list_tools(self) -> List[StructuredTool]:
         """List all available tools as LangChain BaseTool instances.
@@ -115,7 +115,7 @@ class ToolClient:
         # Create a Pydantic model for the tool's input schema
         args_schema = self._create_pydantic_model(
             tool_name=azure_tool.name,
-            schema=input_schema
+            schema=dict(input_schema)
         )
 
         # Create an async function that invokes the tool
@@ -176,13 +176,13 @@ class ToolClient:
                 )
             else:
                 field_definitions[prop_name] = (
-                    Optional[prop_type],
-                    Field(None, description=prop_description)
+                    prop_type,
+                    Field(default=None, description=prop_description)
                 )
 
         # Create the model dynamically
-        model_name = f"{tool_name.replace('-', '_').replace(' ', '_').title()}Input"
-        return create_model(model_name, **field_definitions)
+        model_name = f"{tool_name.replace('-', '_').replace(' ', '_').title()}-Input"
+        return create_model(model_name, **field_definitions)  # type: ignore[call-overload]
 
     def _json_type_to_python_type(self, json_type: str) -> type:
         """Convert JSON schema type to Python type.

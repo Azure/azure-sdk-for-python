@@ -70,7 +70,7 @@ class LangGraphAdapter(FoundryCBAgent):
         :param state_converter: custom state converter. Required if graph state is not MessagesState.
         :type state_converter: Optional[LanggraphStateConverter]
         """
-        super().__init__(credentials=credentials, **kwargs)
+        super().__init__(credentials=credentials, **kwargs) # pylint: disable=unexpected-keyword-arg
         self._graph_or_factory: Union[CompiledStateGraph, GraphFactory] = graph
         self._resolved_graph: "Optional[CompiledStateGraph]" = None
         self.azure_ai_tracer = None
@@ -140,7 +140,7 @@ class LangGraphAdapter(FoundryCBAgent):
 
 
             # Create ToolClient with credentials
-            tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info())
+            tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info()) # pylint: disable=no-member
             tool_client_wrapper = ToolClient(tool_client)
             tools = await tool_client_wrapper.list_tools()
             # Call the factory function with ToolClient
@@ -153,7 +153,7 @@ class LangGraphAdapter(FoundryCBAgent):
                 self._resolved_graph = result
 
             # Validate and set up state converter if not already set from initialization
-            if not self.state_converter:
+            if not self.state_converter and self._resolved_graph is not None:
                 if is_state_schema_valid(self._resolved_graph.builder.state_schema):
                     self.state_converter = LanggraphMessageStateConverter()
                 else:
@@ -178,13 +178,13 @@ class LangGraphAdapter(FoundryCBAgent):
         logger.debug("Resolving fresh graph from factory function for request")
 
         # Create ToolClient with credentials
-        tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info())
+        tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info()) # pylint: disable=no-member
         tool_client_wrapper = ToolClient(tool_client)
         tools = await tool_client_wrapper.list_tools()
         # Call the factory function with ToolClient
         # Support both sync and async factories
         import inspect
-        result = self._graph_or_factory(tools)
+        result = self._graph_or_factory(tools)  # type: ignore[operator]
         if inspect.iscoroutine(result):
             graph = await result
         else:

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Optional, Any
 
 from ._version import VERSION
 from .tool_client import ToolClient
+from .langgraph import LangGraphAdapter
 
 if TYPE_CHECKING:  # pragma: no cover
     from . import models
@@ -19,7 +20,6 @@ def from_langgraph(
     state_converter: Optional["models.LanggraphStateConverter"] = None,
     **kwargs: Any
 ) -> "LangGraphAdapter":
-    from .langgraph import LangGraphAdapter
 
     return LangGraphAdapter(agent, credentials=credentials, state_converter=state_converter, **kwargs)
 

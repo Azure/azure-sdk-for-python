@@ -13,58 +13,6 @@ from ._configuration import AzureAIToolClientConfiguration
 from .operations._operations import MCPToolsOperations, RemoteToolsOperations
 from ._utils._model_base import InvocationPayloadBuilder
 from ._model_base import FoundryTool, ToolSource
-	
-class AzureAITool:
-	"""Azure AI tool wrapper for invocation.
-	
-	Represents a single tool that can be invoked either via MCP protocol or
-	Azure AI Tools API. This class provides a convenient interface for tool
-	invocation and exposes tool metadata.
-
-	:ivar str name: The name of the tool.
-	:ivar str description: Human-readable description of what the tool does.
-	:ivar dict metadata: Additional metadata about the tool from the API.
-	:ivar ~Tool_Client.models.ToolSource source:
-		The source of the tool (MCP_TOOLS or REMOTE_TOOLS).
-
-	.. admonition:: Example:
-
-		.. literalinclude:: ../samples/simple_example.py
-			:start-after: [START use_tool]
-			:end-before: [END use_tool]
-			:language: python
-			:dedent: 4
-			:caption: Using an AzureAITool instance.
-	"""
-
-	def __init__(self, client: "AzureAIToolClient", descriptor: FoundryTool) -> None:
-		"""Initialize an Azure AI Tool.
-		
-		:param client: Parent client instance for making API calls.
-		:type client: AzureAIToolClient
-		:param descriptor: Tool descriptor containing metadata and configuration.
-		:type descriptor: ~Tool_Client.models.FoundryTool
-		"""
-		self._client = client
-		self._descriptor = descriptor
-		self.name = descriptor.name
-		self.description = descriptor.description
-		self.metadata = dict(descriptor.metadata)
-		self.source = descriptor.source
-
-	def invoke(self, *args: Any, **kwargs: Any) -> Any:
-		"""Invoke the tool synchronously.
-		
-		:param args: Positional arguments to pass to the tool.
-		:param kwargs: Keyword arguments to pass to the tool.
-		:return: The result from the tool invocation.
-		:rtype: Any
-		"""
-		payload = InvocationPayloadBuilder.build_payload(args, kwargs, {})
-		return self._client._invoke_tool(self._descriptor, payload)
-
-	def __call__(self, *args: Any, **kwargs: Any) -> Any:
-		return self.invoke(*args, **kwargs)
 
 class AzureAIToolClient:
 	"""Synchronous client for aggregating tools from Azure AI MCP and Tools APIs.
@@ -189,11 +137,9 @@ class AzureAIToolClient:
 		return self._invoke_tool(descriptor, payload, **kwargs)
 	
 	def _resolve_tool_descriptor(
-		self, tool: Union[AzureAITool, str, FoundryTool]
+		self, tool: Union[str, FoundryTool]
 	) -> FoundryTool:
 		"""Resolve a tool reference to a descriptor."""
-		if isinstance(tool, AzureAITool):
-			return tool._descriptor
 		if isinstance(tool, FoundryTool):
 			return tool
 		if isinstance(tool, str):

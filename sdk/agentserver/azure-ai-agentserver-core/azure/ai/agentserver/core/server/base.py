@@ -88,22 +88,23 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
         ctx.update(res)
         request_context.set(ctx)
 
-    def set_user_info_to_context_var(self, request):
-        user_info: UserInfo = {}
+    def set_user_info_to_context_var(self, request) -> UserInfo:
+        user_info: UserInfo = None
         try:
             object_id_header = request.headers.get("x-aml-oid", None)
-            tenant_id_header = request.headers.get("x-aml-tenant-id", None)
-
-            if object_id_header:
-                user_info["object_id"] = object_id_header
-            if tenant_id_header:
-                user_info["tenant_id"] = tenant_id_header
+            tenant_id_header = request.headers.get("x-aml-tid", None)
+            if not object_id_header and not tenant_id_header:
+                return None
+            user_info = UserInfo(
+                objectId=object_id_header,
+                tenantId=tenant_id_header
+            )
 
         except Exception as e:
             logger.error(f"Failed to parse X-User-Info header: {e}", exc_info=True)
         if user_info:
             ctx = request_context.get() or {}
-            for key, value in user_info.items():
+            for key, value in user_info.to_dict().items():
                 ctx[f"azure.ai.agentserver.user.{key}"] = str(value)
             request_context.set(ctx)
         return user_info
@@ -340,12 +341,26 @@ class FoundryCBAgent:
         logger.debug("Creating AzureAIToolClient with tools: %s", tools)
         if not self.credentials:
             raise ValueError("Credentials are required to create Tool Client.")
-        return AzureAIToolClient(
+        
+        workspace_endpoint = os.getenv(Constants.AZURE_AI_WORKSPACE_ENDPOINT)
+        if workspace_endpoint:
+            agent_name = os.getenv(Constants.AGENT_NAME)
+            if not agent_name:
+                raise ValueError("AGENT_NAME environment variable is required when using workspace endpoint.")
+            return AzureAIToolClient(
+            endpoint=workspace_endpoint,
+            credential=self.credentials,
+            tools=tools,
+            user=user_info,
+            agent_name=agent_name,
+            )
+        else:
+            return AzureAIToolClient(
             endpoint=os.getenv(Constants.AZURE_AI_PROJECT_ENDPOINT),
             credential=self.credentials,
-            tools = tools,
-            user = user_info,
-        )
+            tools=tools,
+            user=user_info,
+            )
 
 
 def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:

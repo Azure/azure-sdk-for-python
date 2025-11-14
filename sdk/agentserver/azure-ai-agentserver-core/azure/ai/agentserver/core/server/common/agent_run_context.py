@@ -7,7 +7,7 @@ from ...models import CreateResponse
 from ...models.projects import AgentId, AgentReference, ResponseConversation1
 from .id_generator.foundry_id_generator import FoundryIdGenerator
 from .id_generator.id_generator import IdGenerator
-
+from ...client.tools._model_base import UserInfo
 logger = get_logger()
 
 
@@ -19,7 +19,7 @@ class AgentRunContext:
         self._response_id = self._id_generator.response_id
         self._conversation_id = self._id_generator.conversation_id
         self._stream = self.request.get("stream", False)
-        self._user_info = kwargs.get("user_info", {})
+        self._user_info = kwargs.get("user_info", None)
         self._agent_tools = kwargs.get("agent_tools", [])
 
     @property
@@ -70,7 +70,7 @@ class AgentRunContext:
             return self._agent_tools
         return request_tools
 
-    def get_user_info(self) -> dict:
+    def get_user_info(self) -> UserInfo:
         return self._user_info
 
 
