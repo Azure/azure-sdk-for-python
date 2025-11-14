@@ -8,8 +8,26 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from typing import Optional
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+class CountryRegionResult(object):
+    """Represents coordinate latitude and longitude
+
+    :keyword ip_address:
+        The IP Address of the request.
+    :paramtype ip_address: Optional[str]
+    :keyword iso_code: iso_code:
+        The IP Address's 2-character code of the country or region.
+        Please note, IP address in ranges reserved for special purpose will return Null for country/region.
+    :paramtype iso_code: Optional[str]
+    """
+
+    def __init__(self, ip_address: Optional[str] = None, iso_code: Optional[str] = None):
+        self.ip_address = ip_address
+        self.iso_code = iso_code
+
+
+__all__: list[str] = ["CountryRegionResult"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
