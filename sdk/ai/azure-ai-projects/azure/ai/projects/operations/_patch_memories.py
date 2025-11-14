@@ -122,7 +122,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         items: Optional[List[_models.ItemParam]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> UpdateMemoriesLROPoller:
         """Update memory store with conversation memories.
 
