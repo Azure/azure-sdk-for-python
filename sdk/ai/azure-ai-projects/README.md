@@ -74,17 +74,18 @@ pip install openai azure-identity
 
 Entra ID is the only authentication method supported at the moment by the client.
 
-To construct a synchronous client:
+To construct a synchronous client as a context manager:
 
 ```python
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-project_client = AIProjectClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-)
+async with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 ```
 
 To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
@@ -101,10 +102,11 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
-project_client = AIProjectClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-)
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 ```
 
 ## Examples
