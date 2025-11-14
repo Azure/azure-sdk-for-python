@@ -9,14 +9,12 @@
 * `get_openai_client()` method on the asynchronous AIProjectClient is no longer an "async" method.
 * tracing: tool call output event content format updated to be in line with other events.
 
-### Sample updates
-* In all samples, credential, project client, and openai client are combined into one context manager.
-* Remove `await` while calling `get_openai_client()` for samples using asynchronous clients. 
-
 ### Bugs Fixed
 
 ### Sample updates
 * Added `finetuning` samples for operations create, retrieve, list, list_events, list_checkpoints, cancel, pause and resume. Also, these samples includes various finetuning techniques like Supervised (SFT), Reinforcement (RFT) and Direct performance optimization (DPO).
+* In all most samples, credential, project client, and openai client are combined into one context manager.
+* Remove `await` while calling `get_openai_client()` for samples using asynchronous clients. 
 
 ## 2.0.0b1 (2025-11-11)
 
