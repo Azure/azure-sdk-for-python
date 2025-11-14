@@ -11,10 +11,10 @@ from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
 from devtools_testutils import is_live_and_not_recording
 
 
-@pytest.mark.skipif(
-    condition=(not is_live_and_not_recording()),
-    reason="Skipped because we cannot record network calls with OpenAI client",
-)
+# @pytest.mark.skipif(
+#     condition=(not is_live_and_not_recording()),
+#     reason="Skipped because we cannot record network calls with OpenAI client",
+# )
 class TestResponses(TestBase):
 
     # To run this test:
