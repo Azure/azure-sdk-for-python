@@ -61,6 +61,10 @@ async def main():
             validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
         print(f"Uploaded validation file with ID: {validation_file.id}")
 
+        print("Waits for the training and validation files to be processed...")
+        await openai_client.files.wait_for_processing(train_file.id)
+        await openai_client.files.wait_for_processing(validation_file.id)
+
         print("Creating supervised fine-tuning job")
         fine_tuning_job = await openai_client.fine_tuning.jobs.create(
             training_file=train_file.id,
@@ -70,6 +74,11 @@ async def main():
                 "type": "supervised",
                 "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
             },
+            extra_body={
+                "trainingType": "GlobalStandard"
+            },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
+            # Preferred trainingtype is GlobalStandard.  Note:  Global training offers cost savings , but copies data and weights outside the current resource region.
+            # Learn more - https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/en-us/explore/global-infrastructure/data-residency/
         )
         print(fine_tuning_job)
 
