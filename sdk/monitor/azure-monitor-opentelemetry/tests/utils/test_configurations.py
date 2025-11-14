@@ -31,6 +31,7 @@ from azure.monitor.opentelemetry._constants import LOGGER_NAME_ENV_ARG, LOGGING_
 from azure.monitor.opentelemetry._constants import (
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
+    ENABLE_TRACE_BASED_SAMPLING_ARG,
 )
 from opentelemetry.environment_variables import (
     OTEL_LOGS_EXPORTER,
@@ -74,6 +75,7 @@ class TestConfigurations(TestCase):
             views=["test_view"],
             logger_name="test_logger",
             span_processors=["test_processor"],
+            enable_trace_based_sampling_for_logs=True,
         )
 
         self.assertEqual(configurations["connection_string"], "test_cs")
@@ -107,6 +109,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["views"], ["test_view"])
         self.assertEqual(configurations["logger_name"], "test_logger")
         self.assertEqual(configurations["span_processors"], ["test_processor"])
+        self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], True)
 
     @patch.dict("os.environ", {}, clear=True)
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
@@ -141,6 +144,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["logger_name"], "")
         self.assertEqual(configurations["span_processors"], [])
         self.assertEqual(configurations["views"], [])
+        self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], False)
 
     @patch.dict(
         "os.environ",

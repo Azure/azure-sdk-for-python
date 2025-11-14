@@ -34,6 +34,7 @@ from azure.ai.projects import AIProjectClient
 import time
 from pprint import pprint
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
+from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.ai.projects.models import (
     DatasetVersion,
 )
@@ -53,23 +54,22 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
 
-with DefaultAzureCredential() as credential:
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as client,
+):
 
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+    print("Upload a single file and create a new Dataset to reference the file.")
+    dataset: DatasetVersion = project_client.datasets.upload_file(
+        name=dataset_name or f"eval-data-{datetime.utcnow().strftime('%Y-%m-%d_%H%M%S_UTC')}",
+        version=dataset_version,
+        file_path=data_file,
+    )
+    pprint(dataset)
 
-        print("Upload a single file and create a new Dataset to reference the file.")
-        dataset: DatasetVersion = project_client.datasets.upload_file(
-            name=dataset_name or f"eval-data-{datetime.utcnow().strftime('%Y-%m-%d_%H%M%S_UTC')}",
-            version=dataset_version,
-            file_path=data_file,
-        )
-        pprint(dataset)
-
-        print("Creating an OpenAI client from the AI Project client")
-
-        client = project_client.get_openai_client()
-
-        data_source_config = {
+    data_source_config = DataSourceConfigCustom(
+        {
             "type": "custom",
             "item_schema": {
                 "type": "object",
@@ -83,65 +83,66 @@ with DefaultAzureCredential() as credential:
             },
             "include_sample_schema": True,
         }
+    )
 
-        testing_criteria = [
-            {
-                "type": "azure_ai_evaluator",
-                "name": "violence",
-                "evaluator_name": "builtin.violence",
-                "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-            },
-            {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
-            {
-                "type": "azure_ai_evaluator",
-                "name": "coherence",
-                "evaluator_name": "builtin.coherence",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-            },
-        ]
+    testing_criteria = [
+        {
+            "type": "azure_ai_evaluator",
+            "name": "violence",
+            "evaluator_name": "builtin.violence",
+            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
+            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+        },
+        {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
+        {
+            "type": "azure_ai_evaluator",
+            "name": "coherence",
+            "evaluator_name": "builtin.coherence",
+            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+        },
+    ]
 
-        print("Creating evaluation")
-        eval_object = client.evals.create(
-            name="label model test with dataset ID",
-            data_source_config=data_source_config,  # type: ignore
-            testing_criteria=testing_criteria,  # type: ignore
-        )
-        print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
+    print("Creating evaluation")
+    eval_object = client.evals.create(
+        name="label model test with dataset ID",
+        data_source_config=data_source_config, 
+        testing_criteria=testing_criteria,   # type: ignore
+    )
+    print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-        print("Get evaluation by Id")
-        eval_object_response = client.evals.retrieve(eval_object.id)
-        print("Evaluation Response:")
-        pprint(eval_object_response)
+    print("Get evaluation by Id")
+    eval_object_response = client.evals.retrieve(eval_object.id)
+    print("Evaluation Response:")
+    pprint(eval_object_response)
 
-        print("Creating evaluation run with Dataset ID")
-        eval_run_object = client.evals.runs.create(
-            eval_id=eval_object.id,
-            name="dataset_id_run",
-            metadata={"team": "eval-exp", "scenario": "dataset-id-v1"},
-            data_source=CreateEvalJSONLRunDataSourceParam(
-                type="jsonl", source=SourceFileID(type="file_id", id=dataset.id if dataset.id else "")
-            ),
-        )
+    print("Creating evaluation run with Dataset ID")
+    eval_run_object = client.evals.runs.create(
+        eval_id=eval_object.id,
+        name="dataset_id_run",
+        metadata={"team": "eval-exp", "scenario": "dataset-id-v1"},
+        data_source=CreateEvalJSONLRunDataSourceParam(
+            type="jsonl", source=SourceFileID(type="file_id", id=dataset.id if dataset.id else "")
+        ),
+    )
 
-        print(f"Evaluation run created (id: {eval_run_object.id})")
-        pprint(eval_run_object)
+    print(f"Evaluation run created (id: {eval_run_object.id})")
+    pprint(eval_run_object)
 
-        print("Get evaluation run by Id")
-        eval_run_response = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-        print("Evaluation run Response:")
-        pprint(eval_run_response)
+    print("Get evaluation run by Id")
+    eval_run_response = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
+    print("Evaluation run Response:")
+    pprint(eval_run_response)
 
-        while True:
-            run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status == "completed" or run.status == "failed":
-                output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
-                pprint(output_items)
-                print(f"Eval Run Report URL: {run.report_url}")
+    while True:
+        run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
+        if run.status == "completed" or run.status == "failed":
+            output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
+            pprint(output_items)
+            print(f"Eval Run Report URL: {run.report_url}")
 
-                break
-            time.sleep(5)
-            print("Waiting for evaluation run to complete...")
+            break
+        time.sleep(5)
+        print("Waiting for evaluation run to complete...")
 
         client.evals.delete(eval_id=eval_object.id)
         print("Evaluation deleted")

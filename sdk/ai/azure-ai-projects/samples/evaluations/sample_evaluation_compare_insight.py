@@ -39,17 +39,17 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
 )
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     # Create a sample evaluation with two eval runs to compare
     data_source_config = DataSourceConfigCustom(
@@ -74,8 +74,8 @@ with project_client:
     ]
     eval_object = openai_client.evals.create(
         name="Sentiment Evaluation",
-        data_source_config=data_source_config,  # type: ignore
-        testing_criteria=testing_criteria,  # type: ignore
+        data_source_config=data_source_config, 
+        testing_criteria=testing_criteria, 
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
@@ -110,7 +110,7 @@ with project_client:
 
     # Wait for both evaluation runs to complete
     runs_to_wait = [eval_run_1, eval_run_2]
-    completed_runs = {}
+    completed_runs: dict[str, RunRetrieveResponse] = {}
 
     while len(completed_runs) < len(runs_to_wait):
         for eval_run in runs_to_wait:

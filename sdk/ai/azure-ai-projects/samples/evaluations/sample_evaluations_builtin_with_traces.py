@@ -144,29 +144,29 @@ def main() -> None:
                 "scenario": "traces",
             }
 
-            testing_criteria = [
-                _build_evaluator_config(
-                    name="intent_resolution",
-                    evaluator_name="builtin.intent_resolution",
-                ),
-                _build_evaluator_config(
-                    name="task_adherence",
-                    evaluator_name="builtin.task_adherence",
-                ),
-            ]
+        testing_criteria = [
+            _build_evaluator_config(
+                name="intent_resolution",
+                evaluator_name="builtin.intent_resolution",
+            ),
+            _build_evaluator_config(
+                name="task_adherence",
+                evaluator_name="builtin.task_adherence",
+            ),
+        ]
 
-            print("\nCreating evaluation")
-            eval_object = client.evals.create(
-                name="agent_trace_eval_group",
-                data_source_config=data_source_config,  # type: ignore
-                testing_criteria=testing_criteria,  # type: ignore
-            )
-            print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
+        print("\nCreating evaluation")
+        eval_object = client.evals.create(
+            name="agent_trace_eval_group",
+            data_source_config=data_source_config,   # type: ignore
+            testing_criteria=testing_criteria,   # type: ignore
+        )
+        print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-            print("\nGet Evaluation by Id")
-            eval_object_response = client.evals.retrieve(eval_object.id)
-            print("Evaluation Response:")
-            pprint(eval_object_response)
+        print("\nGet Evaluation by Id")
+        eval_object_response = client.evals.retrieve(eval_object.id)
+        print("Evaluation Response:")
+        pprint(eval_object_response)
 
             print("\nCreating Eval Run with trace IDs")
             run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -188,19 +188,19 @@ def main() -> None:
             print("Eval Run created")
             pprint(eval_run_object)
 
-            print("\nMonitoring Eval Run status...")
-            while True:
-                run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-                print(f"Status: {run.status}")
+        print("\nMonitoring Eval Run status...")
+        while True:
+            run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
+            print(f"Status: {run.status}")
 
-                if run.status in {"completed", "failed", "canceled"}:
-                    print("\nEval Run finished!")
-                    print("Final Eval Run Response:")
-                    pprint(run)
-                    break
+            if run.status in {"completed", "failed", "canceled"}:
+                print("\nEval Run finished!")
+                print("Final Eval Run Response:")
+                pprint(run)
+                break
 
-                time.sleep(5)
-                print("Waiting for eval run to complete...")
+            time.sleep(5)
+            print("Waiting for eval run to complete...")
 
             client.evals.delete(eval_id=eval_object.id)
             print("Evaluation deleted")

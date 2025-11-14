@@ -30,6 +30,7 @@ import os
 import time
 import json
 import tempfile
+from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
 from azure.ai.projects.models._enums import OperationState
@@ -38,17 +39,18 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
+from openai.types.evals.run_create_response import RunCreateResponse
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     # Create an evaluation
     data_source_config = DataSourceConfigCustom(
@@ -73,8 +75,8 @@ with project_client:
     ]
     eval_object = openai_client.evals.create(
         name="Sentiment Evaluation",
-        data_source_config=data_source_config,  # type: ignore
-        testing_criteria=testing_criteria,  # type: ignore
+        data_source_config=data_source_config, 
+        testing_criteria=testing_criteria, 
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
@@ -104,7 +106,7 @@ with project_client:
         raise ValueError("Dataset ID is None")
 
     # Create an eval run using the uploaded dataset
-    eval_run = openai_client.evals.runs.create(
+    eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id,
         name="Eval Run",
         data_source=CreateEvalJSONLRunDataSourceParam(source=SourceFileID(id=dataset.id, type="file_id"), type="jsonl"),

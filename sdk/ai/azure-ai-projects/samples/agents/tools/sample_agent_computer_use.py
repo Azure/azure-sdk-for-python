@@ -45,26 +45,28 @@ from computer_use_util import (
 
 load_dotenv()
 
-"""Main function to demonstrate Computer Use Agent functionality."""
-# Initialize state machine
-current_state = SearchState.INITIAL
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# Load screenshot assets
-try:
-    screenshots = load_screenshot_assets()
-    print("Successfully loaded screenshot assets")
-except FileNotFoundError:
-    print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
-    exit(1)
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    # Initialize state machine
+    current_state = SearchState.INITIAL
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+    # Load screenshot assets
+    try:
+        screenshots = load_screenshot_assets()
+        print("Successfully loaded screenshot assets")
+    except FileNotFoundError:
+        print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
+        exit(1)
 
-computer_use_tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
+    # [START tool_declaration]
+    tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
+    # [END tool_declaration]
 
-with project_client:
     agent = project_client.agents.create_version(
         agent_name="ComputerUseAgent",
         definition=PromptAgentDefinition(
@@ -74,13 +76,11 @@ with project_client:
             
             Be direct and efficient. When you reach the search results page, read and describe the actual search result titles and descriptions you can see.
             """,
-            tools=[computer_use_tool],
+            tools=[tool],
         ),
         description="Computer automation agent with screen interaction capabilities.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
-    openai_client = project_client.get_openai_client()
 
     # Initial request with screenshot - start with Bing search page
     print("Starting computer automation session (initial screenshot: cua_browser_search.png)...")

@@ -40,42 +40,41 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
-with project_client:
+    # [START tool_declaration]
+    tool = AzureAISearchAgentTool(
+        azure_ai_search=AzureAISearchToolResource(
+            indexes=[
+                AISearchIndexResource(
+                    project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
+                    index_name=os.environ["AI_SEARCH_INDEX_NAME"],
+                    query_type=AzureAISearchQueryType.SIMPLE,
+                ),
+            ]
+        )
+    )
+    # [END tool_declaration]
+
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="""You are a helpful assistant. You must always provide citations for
-            answers using the tool and render them as: `[message_idx:search_idx†source]`.""",
-            tools=[
-                AzureAISearchAgentTool(
-                    azure_ai_search=AzureAISearchToolResource(
-                        indexes=[
-                            AISearchIndexResource(
-                                project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
-                                index_name=os.environ["AI_SEARCH_INDEX_NAME"],
-                                query_type=AzureAISearchQueryType.SIMPLE,
-                            ),
-                        ]
-                    )
-                )
-            ],
+            answers using the tool and render them as: `\u3010message_idx:search_idx\u2020source\u3011`.""",
+            tools=[tool],
         ),
         description="You are a helpful agent.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input(
-        "Enter your question for the AI Search agent available in the index "
-        "(e.g., 'Tell me about the mental health services available from Premera'): \n"
-    )
+    user_input = input("Enter your question (e.g., 'Tell me about mental health services'): \n")
 
     stream_response = openai_client.responses.create(
         stream=True,

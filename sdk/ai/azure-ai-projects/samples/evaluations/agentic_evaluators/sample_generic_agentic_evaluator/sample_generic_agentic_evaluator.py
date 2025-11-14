@@ -25,7 +25,7 @@ USAGE:
 
 from dotenv import load_dotenv
 import os
-from samples.evaluation.sample_agentic_evaluators.sample_generic_agentic_evaluator.agent_utils import run_evaluator
+from agent_utils import run_evaluator
 from schema_mappings import evaluator_to_data_source_config, evaluator_to_data_mapping
 from openai.types.evals.create_eval_jsonl_run_data_source_param import SourceFileContentContent
 
