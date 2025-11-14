@@ -61,8 +61,8 @@ async def main():
             validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
         print(f"Uploaded validation file with ID: {validation_file.id}")
 
-        # For OpenAI model DPO fine-tuning jobs, "Standard" is the default training type.
-        # To use global standard training, uncomment the extra_body parameter below.
+        # For OpenAI model supervised fine-tuning jobs, "Standard" is the default training type.
+        # To use global standard training, use GlobalStandard as the training type.
         print("Creating DPO fine-tuning job")
         fine_tuning_job = await openai_client.fine_tuning.jobs.create(
             training_file=train_file.id,
@@ -78,7 +78,7 @@ async def main():
                     }
                 },
             },
-            # extra_body={"trainingType":"GlobalStandard"}
+            extra_body={"trainingType":"Standard"} # Removing this field would lead to the default trainingType behaviour, which may change in the future.
         )
         print(fine_tuning_job)
 
