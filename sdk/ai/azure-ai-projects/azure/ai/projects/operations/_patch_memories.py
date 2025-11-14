@@ -119,11 +119,10 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        conversation_id: Optional[str] = None,
         items: Optional[List[_models.ItemParam]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> UpdateMemoriesLROPoller:
         """Update memory store with conversation memories.
 
@@ -134,15 +133,10 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword conversation_id: The conversation ID from which to extract memories. Only one of
-         conversation_id or items should be provided. Default value is None.
-        :paramtype conversation_id: str
-        :keyword items: Conversation items from which to extract memories. Only one of conversation_id
-         or items should be provided. Default value is None.
+        :keyword items: Conversation items from which to extract memories. Default value is None.
         :paramtype items: list[~azure.ai.projects.models.ItemParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
-         memory updates from where the last operation left off. Cannot be used together with
-         conversation_id. Default value is None.
+         memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
         :keyword update_delay: Timeout period before processing the memory update in seconds.
          If a new update request is received during this period, it will cancel the current request and
@@ -169,7 +163,6 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
                 name=name,
                 body=body,
                 scope=scope,
-                conversation_id=conversation_id,
                 items=items,
                 previous_update_id=previous_update_id,
                 update_delay=update_delay,
