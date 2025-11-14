@@ -561,7 +561,7 @@ class AgentFrameworkOutputStreamingConverter:
     def build_response(self, status: str) -> OpenAIResponse:
         self._ensure_response_started()
         agent_id = AgentIdGenerator.generate(self._context)
-        response_data: OpenAIResponse = {
+        response_data = {
             "status": status,
             "temperature": Constants.DEFAULT_TEMPERATURE,
             "top_p": Constants.DEFAULT_TOP_P,
@@ -578,7 +578,7 @@ class AgentFrameworkOutputStreamingConverter:
             response_data["agent"] = agent_id
         if status == "completed" and self._completed_output_items:
             response_data["output"] = self._completed_output_items
-        return response_data
+        return cast(OpenAIResponse, response_data)
 
     # High-level helpers to emit lifecycle events for streaming
     def initial_events(self) -> List[ResponseStreamEvent]:
