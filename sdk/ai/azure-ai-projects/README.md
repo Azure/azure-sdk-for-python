@@ -6,7 +6,7 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Create and run Agents** using methods on methods on the `.agents` client property.
 * **Get an OpenAI client** using `.get_openai_client()` method to run "Responses", "Conversations", "Evals" operations with your Agent.
 * **Manage memory stores** for Agent conversations, using the `.memory_store` operations.
-* **Explore evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
+* **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
 `.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
 * **Run Red Team scans** to identify risks associated with your generative AI application, using the ".red_teams" operations.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.

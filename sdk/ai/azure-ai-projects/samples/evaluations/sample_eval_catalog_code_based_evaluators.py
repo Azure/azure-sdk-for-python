@@ -137,7 +137,7 @@ with DefaultAzureCredential() as credential:
         print("Evaluation Response:")
         pprint(eval_object_response)
 
-        print("Creating evaluationrun with inline data")
+        print("Creating evaluation run with inline data")
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
             name="Eval Run for Sample Code Based Custom Evaluator",
