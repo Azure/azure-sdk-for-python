@@ -37,7 +37,7 @@ class CreatedBy(TypedDict):
     """The response on which the item is created."""
 
 class ItemResource(TypedDict):
-    type: ReadOnly[Literal[
+    type: ReadOnly[Union[str, Literal[
         "message", "file_search_call", "function_call", "function_call_output", 
         "computer_call", "computer_call_output", "web_search_call", "reasoning", 
         "item_reference", "image_generation_call", "code_interpreter_call",
@@ -45,7 +45,7 @@ class ItemResource(TypedDict):
         "mcp_approval_request", "mcp_approval_response", "mcp_call", 
         "structured_outputs", "workflow_action", "memory_search_call", 
         "oauth_consent_request"
-    ]]
+    ]]]
     id: str
     created_by: NotRequired[CreatedBy]
 
