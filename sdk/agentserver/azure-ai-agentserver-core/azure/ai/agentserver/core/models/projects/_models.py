@@ -8,10 +8,9 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from .utils.model_base  import Model as _Model
 from typing import Literal, Union, Dict, Optional, List, Any
 from typing_extensions import NotRequired, TypedDict, TypeAlias, ReadOnly
-from ._enums import ItemType, ServiceTier, ToolChoiceOptions, ResponseTextFormatConfigurationType, ToolType, ResponseErrorCode, ResponseStreamEventType
+from ._enums import  ServiceTier, ToolChoiceOptions, ResponseTextFormatConfigurationType, ToolType, ResponseErrorCode, ResponseStreamEventType
 import datetime
 
 
