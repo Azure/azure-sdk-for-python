@@ -1965,6 +1965,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         self.response_id = chunk.response.id
                     if not self.response_model:
                         self.response_model = getattr(chunk.response, "model", None)
+                    # Extract usage from the completed response
+                    if hasattr(chunk.response, "usage"):
+                        response_usage = chunk.response.usage
+                        if hasattr(response_usage, "input_tokens") and response_usage.input_tokens:
+                            self.input_tokens = response_usage.input_tokens
+                        if hasattr(response_usage, "output_tokens") and response_usage.output_tokens:
+                            self.output_tokens = response_usage.output_tokens
+                        # Also handle standard token field names for compatibility
+                        if hasattr(response_usage, "prompt_tokens") and response_usage.prompt_tokens:
+                            self.input_tokens = response_usage.prompt_tokens
+                        if hasattr(response_usage, "completion_tokens") and response_usage.completion_tokens:
+                            self.output_tokens = response_usage.completion_tokens
 
                 # Only append TEXT content from delta events (not function call arguments or other deltas)
                 # Text deltas can come as:
@@ -2041,6 +2053,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             self.instrumentor._set_span_attribute_safe(
                                 self.span, "gen_ai.response.model", self.response_model
                             )
+
                         if self.service_tier:
                             self.instrumentor._set_span_attribute_safe(
                                 self.span, "gen_ai.openai.response.service_tier", self.service_tier
@@ -2049,11 +2062,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         # Set token usage span attributes
                         if self.input_tokens > 0:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.usage.prompt_tokens", self.input_tokens
+                                self.span, "gen_ai.usage.input_tokens", self.input_tokens
                             )
                         if self.output_tokens > 0:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.usage.completion_tokens", self.output_tokens
+                                self.span, "gen_ai.usage.output_tokens", self.output_tokens
                             )
 
                     # Record metrics using accumulated data
@@ -2373,6 +2386,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         self.response_id = chunk.response.id
                     if not self.response_model:
                         self.response_model = getattr(chunk.response, "model", None)
+                    # Extract usage from the completed response
+                    if hasattr(chunk.response, "usage"):
+                        response_usage = chunk.response.usage
+                        if hasattr(response_usage, "input_tokens") and response_usage.input_tokens:
+                            self.input_tokens = response_usage.input_tokens
+                        if hasattr(response_usage, "output_tokens") and response_usage.output_tokens:
+                            self.output_tokens = response_usage.output_tokens
+                        # Also handle standard token field names for compatibility
+                        if hasattr(response_usage, "prompt_tokens") and response_usage.prompt_tokens:
+                            self.input_tokens = response_usage.prompt_tokens
+                        if hasattr(response_usage, "completion_tokens") and response_usage.completion_tokens:
+                            self.output_tokens = response_usage.completion_tokens
 
                 # Only append TEXT content from delta events (not function call arguments or other deltas)
                 # Text deltas can come as:
@@ -2449,6 +2474,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             self.instrumentor._set_span_attribute_safe(
                                 self.span, "gen_ai.response.model", self.response_model
                             )
+
                         if self.service_tier:
                             self.instrumentor._set_span_attribute_safe(
                                 self.span, "gen_ai.openai.response.service_tier", self.service_tier
@@ -2457,11 +2483,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         # Set token usage span attributes
                         if self.input_tokens > 0:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.usage.prompt_tokens", self.input_tokens
+                                self.span, "gen_ai.usage.input_tokens", self.input_tokens
                             )
                         if self.output_tokens > 0:
                             self.instrumentor._set_span_attribute_safe(
-                                self.span, "gen_ai.usage.completion_tokens", self.output_tokens
+                                self.span, "gen_ai.usage.output_tokens", self.output_tokens
                             )
 
                     # Record metrics using accumulated data
