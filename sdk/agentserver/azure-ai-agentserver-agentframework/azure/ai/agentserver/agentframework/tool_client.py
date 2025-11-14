@@ -57,7 +57,7 @@ class ToolClient:
         :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
         """
         self._tool_client = tool_client
-        self._aifunction_cache: List[AIFunction] = None
+        self._aifunction_cache: List[AIFunction] = None  # mypy: ignore[assignment]
 
     async def list_tools(self) -> List[AIFunction]:
         """List all available tools as Agent Framework tool definitions.

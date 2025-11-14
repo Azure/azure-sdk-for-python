@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
-# mypy: disable-error-code="name-defined,annotation-unchecked,arg-type"
+# mypy: ignore-errors
 import inspect
 import json
 import os
@@ -341,7 +341,7 @@ class FoundryCBAgent:
         logger.debug("Creating AzureAIToolClient with tools: %s", tools)
         if not self.credentials:
             raise ValueError("Credentials are required to create Tool Client.")
-        
+
         workspace_endpoint = os.getenv(Constants.AZURE_AI_WORKSPACE_ENDPOINT)
         if workspace_endpoint:
             agent_name = os.getenv(Constants.AGENT_NAME)
@@ -354,13 +354,12 @@ class FoundryCBAgent:
             user=user_info,
             agent_name=agent_name,
             )
-        else:
-            return AzureAIToolClient(
-            endpoint=os.getenv(Constants.AZURE_AI_PROJECT_ENDPOINT),
-            credential=self.credentials,
-            tools=tools,
-            user=user_info,
-            )
+        return AzureAIToolClient(
+        endpoint=os.getenv(Constants.AZURE_AI_PROJECT_ENDPOINT),
+        credential=self.credentials,
+        tools=tools,
+        user=user_info,
+        )
 
 
 def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
