@@ -199,7 +199,9 @@ class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
         :rtype: Optional[str]
         """
         return (
-            self._polling_method._current_body.superseded_by if self._polling_method._current_body else None  # pylint: disable=protected-access
+            self._polling_method._current_body.superseded_by  # pylint: disable=protected-access
+            if self._polling_method._current_body  # pylint: disable=protected-access
+            else None
         )
 
     @classmethod
@@ -247,7 +249,9 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         :rtype: Optional[str]
         """
         return (
-            self._polling_method._current_body.superseded_by if self._polling_method._current_body else None  # pylint: disable=protected-access
+            self._polling_method._current_body.superseded_by  # pylint: disable=protected-access
+            if self._polling_method._current_body  # pylint: disable=protected-access
+            else None
         )
 
     @classmethod
