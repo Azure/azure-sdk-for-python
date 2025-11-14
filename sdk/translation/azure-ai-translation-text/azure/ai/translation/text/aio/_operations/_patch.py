@@ -27,12 +27,17 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
-        """Translate text.
+        """Translate Text.
 
-        Translates a list of input items with specified 
+        Translates texts to the specified target languages.
 
-        :param body: List of TranslateInputItem objects containing text and configurations for translation. Required.
-        :type body: list[~azure.ai.translation.text.models.TranslateInputItem]
+        :param body: List of text strings to translate. Required.
+        :type body: list[str]
+        :keyword to_language: List of target languages of the translation outputs. The target language(s)
+         must be one of the supported languages included in the translation scope. Required.
+        :type to_language: list[str]
+        :param from_language: Language of the input text. If not specified, automatic language detection
+         is applied to determine the source language. Default value is None.
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
