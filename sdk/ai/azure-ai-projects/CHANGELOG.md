@@ -1,8 +1,40 @@
 # Release History
 
-## 1.1.0b5 (Unreleased)
+## 2.0.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking changes
+
+* `get_openai_client()` method on the asynchronous AIProjectClient is no longer an "async" method.
+* Tracing: tool call output event content format updated to be in line with other events
+
+### Bugs Fixed
+* Tracing: operation name attribute added to create agent span, token usage added to streaming response generation span
+
+### Sample updates
+* Added `finetuning` samples for operations create, retrieve, list, list_events, list_checkpoints, cancel, pause and resume. Also, these samples includes various finetuning techniques like Supervised (SFT), Reinforcement (RFT) and Direct performance optimization (DPO).
+
+## 2.0.0b1 (2025-11-11)
 
 ### Features added
+
+* The client library now uses version `2025-11-15-preview` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-2025-11-15-preview).
+* New Agent operations (now built on top of OpenAI's `Responses` protocol) were added to the `AIProjectClient`.
+This package no longer depends on `azure-ai-agents` package. See `samples\agents` folder.
+* New Evaluation operations. See methods on properties `.evaluation_rules`, `.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules`.
+* New Memory Store operations. See methods on the property `.memory_store`.
+
+### Breaking changes
+
+* The implementation of `.get_openai_client()` method was updated to return an authenticated
+OpenAI client from the openai package, configure to run Responses operations on your Foundry Project endpoint.
+
+### Sample updates
+
+* Added new Agent samples. See `samples\agents` folder.
+* Added new Evaluation samples. See `samples\evaluations` folder.
+* Added `files` samples for operations create, delete, list, retrieve and content. See `samples\files` folder.
 
 ## 1.1.0b4 (2025-09-12)
 
@@ -116,7 +148,7 @@ AI models deployed to the Project's AI Services. This is in addition to the exis
 * Evaluator Ids are available using the Enum `EvaluatorIds` and no longer require `azure-ai-evaluation` package to be installed.
 * Property `scope` on `AIProjectClient` is removed, use AI Foundry Project endpoint instead.
 * Property `id` on Evaluation is replaced with `name`.
-* Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use the new `azure-ai-projects` with `azure-ai-agents` package.
+* Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/release/azure-ai-projects/1.0.0/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use the new `azure-ai-projects` with `azure-ai-agents` package.
 
 ### Sample updates
 

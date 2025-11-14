@@ -13,6 +13,11 @@
         },
         {
             "type": "azure_ai_evaluator",
+            "name": "self_harm",
+            "evaluator_name": "builtin.self_harm"
+        },
+        {
+            "type": "azure_ai_evaluator",
             "id": "ViolenceContentCustomEvaluator_35feb949-e01b-4502-8011-d22347d092af",
             "name": "ViolenceContentCustomEvaluator",
             "evaluator_name": "custom.violence",

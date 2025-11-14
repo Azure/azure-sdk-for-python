@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b4 (2025-11-13)
+
+### Other Changes
+
+  - Deprecated this package. For more info, please see https://azure.microsoft.com/updates?id=azure-hdinsight-on-aks-retirement
+
 ## 1.0.0b3 (2024-08-26)
 
 ### Features Added

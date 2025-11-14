@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
@@ -46,7 +46,7 @@ class ResolutionBase(_Model):
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     resolution_kind: str = rest_discriminator(
         name="resolutionKind", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -111,7 +111,8 @@ class AgeResolution(ResolutionBase, discriminator="AgeResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.AGE_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.AGE_RESOLUTION  # type: ignore
 
 
 class AnalysisConfig(_Model):
@@ -119,7 +120,7 @@ class AnalysisConfig(_Model):
     services.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationConfig, QuestionAnsweringConfig
+    ConversationConfig, LuisConfig, QuestionAnsweringConfig
 
     :ivar target_project_kind: The type of a target service. Required. Known values are: "Luis",
      "Conversation", "QuestionAnswering", and "NonLinked".
@@ -128,7 +129,7 @@ class AnalysisConfig(_Model):
     :vartype api_version: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     target_project_kind: str = rest_discriminator(
         name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -169,7 +170,7 @@ class AnalyzeConversationActionResult(_Model):
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationResultKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """The base class of a conversation input task result. Required. Known values are:
      \"ConversationResult\" and \"ConversationalAIResult\"."""
@@ -203,7 +204,7 @@ class AnalyzeConversationInput(_Model):
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationInputKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "query"])
     """The base class of a conversation input task. Required. Known values are: \"Conversation\" and
      \"ConversationalAI\"."""
@@ -241,7 +242,7 @@ class AnalyzeConversationOperationAction(_Model):
      ~azure.ai.language.conversations.models.AnalyzeConversationOperationActionKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
     """task name."""
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
@@ -292,7 +293,7 @@ class AnalyzeConversationOperationInput(_Model):
         name="analysisInput", visibility=["read", "create", "query"]
     )
     """Analysis Input. Required."""
-    actions: List["_models._models.AnalyzeConversationOperationAction"] = rest_field(
+    actions: list["_models._models.AnalyzeConversationOperationAction"] = rest_field(
         name="tasks", visibility=["read", "create", "update", "delete", "query"]
     )
     """Set of tasks to execute on the input conversation. Required."""
@@ -306,7 +307,7 @@ class AnalyzeConversationOperationInput(_Model):
         self,
         *,
         conversation_input: "_models._models.MultiLanguageConversationInput",
-        actions: List["_models._models.AnalyzeConversationOperationAction"],
+        actions: list["_models._models.AnalyzeConversationOperationAction"],
         display_name: Optional[str] = None,
         cancel_after: Optional[float] = None,
     ) -> None: ...
@@ -344,7 +345,7 @@ class AnalyzeConversationOperationResult(_Model):
      ~azure.ai.language.conversations.models.AnalyzeConversationOperationResultsKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     last_update_date_time: datetime.datetime = rest_field(
         name="lastUpdateDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
@@ -433,7 +434,7 @@ class AnalyzeConversationOperationState(_Model):
     )
     """status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"partiallyCompleted\", \"failed\", \"cancelled\", and \"cancelling\"."""
-    errors: Optional[List["_models.ConversationError"]] = rest_field(
+    errors: Optional[list["_models.ConversationError"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """errors."""
@@ -459,7 +460,7 @@ class AnalyzeConversationOperationState(_Model):
         actions: "_models.ConversationActions",
         display_name: Optional[str] = None,
         expiration_date_time: Optional[datetime.datetime] = None,
-        errors: Optional[List["_models.ConversationError"]] = None,
+        errors: Optional[list["_models.ConversationError"]] = None,
         next_link: Optional[str] = None,
         statistics: Optional["_models.ConversationRequestStatistics"] = None,
     ) -> None: ...
@@ -568,7 +569,7 @@ class AnswersResult(_Model):
     :vartype answers: list[~azure.ai.language.conversations.models.KnowledgeBaseAnswer]
     """
 
-    answers: Optional[List["_models.KnowledgeBaseAnswer"]] = rest_field(
+    answers: Optional[list["_models.KnowledgeBaseAnswer"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents Answer Result list."""
@@ -577,7 +578,7 @@ class AnswersResult(_Model):
     def __init__(
         self,
         *,
-        answers: Optional[List["_models.KnowledgeBaseAnswer"]] = None,
+        answers: Optional[list["_models.KnowledgeBaseAnswer"]] = None,
     ) -> None: ...
 
     @overload
@@ -632,7 +633,8 @@ class AreaResolution(ResolutionBase, discriminator="AreaResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.AREA_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.AREA_RESOLUTION  # type: ignore
 
 
 class AudioTiming(_Model):
@@ -679,7 +681,7 @@ class BaseRedactionPolicy(_Model):
     :vartype policy_kind: str or ~azure.ai.language.conversations.models.RedactionPolicyKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     policy_kind: str = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])
     """The entity RedactionPolicy object kind. Required. Known values are: \"noMask\",
      \"characterMask\", and \"entityMask\"."""
@@ -732,7 +734,8 @@ class BooleanResolution(ResolutionBase, discriminator="BooleanResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.BOOLEAN_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.BOOLEAN_RESOLUTION  # type: ignore
 
 
 class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"):
@@ -774,7 +777,8 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=RedactionPolicyKind.CHARACTER_MASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.CHARACTER_MASK  # type: ignore
 
 
 class ConversationActionContent(_Model):
@@ -822,7 +826,7 @@ class ConversationActionContent(_Model):
         name="directTarget", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of a target project to forward the request to."""
-    target_project_parameters: Optional[Dict[str, "_models.AnalysisConfig"]] = rest_field(
+    target_project_parameters: Optional[dict[str, "_models.AnalysisConfig"]] = rest_field(
         name="targetProjectParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """A dictionary representing the parameters for each target project."""
@@ -837,7 +841,7 @@ class ConversationActionContent(_Model):
         is_logging_enabled: Optional[bool] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
         direct_target: Optional[str] = None,
-        target_project_parameters: Optional[Dict[str, "_models.AnalysisConfig"]] = None,
+        target_project_parameters: Optional[dict[str, "_models.AnalysisConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -880,7 +884,8 @@ class ConversationActionResult(AnalyzeConversationActionResult, discriminator="C
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationResultKind.CONVERSATION_RESULT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationResultKind.CONVERSATION_RESULT  # type: ignore
 
 
 class ConversationActions(_Model):
@@ -908,7 +913,7 @@ class ConversationActions(_Model):
     """Count of tasks that are currently in progress. Required."""
     total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Total count of tasks submitted as part of the job. Required."""
-    task_results: Optional[List["_models.AnalyzeConversationOperationResult"]] = rest_field(
+    task_results: Optional[list["_models.AnalyzeConversationOperationResult"]] = rest_field(
         name="items", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of results from tasks (if available)."""
@@ -921,7 +926,7 @@ class ConversationActions(_Model):
         failed: int,
         in_progress: int,
         total: int,
-        task_results: Optional[List["_models.AnalyzeConversationOperationResult"]] = None,
+        task_results: Optional[list["_models.AnalyzeConversationOperationResult"]] = None,
     ) -> None: ...
 
     @overload
@@ -994,11 +999,11 @@ class ConversationalAIAnalysis(_Model):
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the conversation. Required."""
-    intents: List["_models.ConversationalAIIntent"] = rest_field(
+    intents: list["_models.ConversationalAIIntent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The intent classification results for this conversation. Required."""
-    entities: Optional[List["_models.ConversationalAIEntity"]] = rest_field(
+    entities: Optional[list["_models.ConversationalAIEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Global entities that are matched but not associated with any specific intent."""
@@ -1008,8 +1013,8 @@ class ConversationalAIAnalysis(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        intents: List["_models.ConversationalAIIntent"],
-        entities: Optional[List["_models.ConversationalAIEntity"]] = None,
+        intents: list["_models.ConversationalAIIntent"],
+        entities: Optional[list["_models.ConversationalAIEntity"]] = None,
     ) -> None: ...
 
     @overload
@@ -1030,7 +1035,7 @@ class ConversationalAIAnalysisInput(_Model):
     :vartype conversations: list[~azure.ai.language.conversations.models.TextConversation]
     """
 
-    conversations: List["_models.TextConversation"] = rest_field(
+    conversations: list["_models.TextConversation"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of multiple conversations. Required."""
@@ -1039,7 +1044,7 @@ class ConversationalAIAnalysisInput(_Model):
     def __init__(
         self,
         *,
-        conversations: List["_models.TextConversation"],
+        conversations: list["_models.TextConversation"],
     ) -> None: ...
 
     @overload
@@ -1097,11 +1102,11 @@ class ConversationalAIEntity(_Model):
         name="conversationItemIndex", visibility=["read", "create", "update", "delete", "query"]
     )
     """The index of the conversation item where the entity appears."""
-    resolutions: Optional[List["_models.ResolutionBase"]] = rest_field(
+    resolutions: Optional[list["_models.ResolutionBase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Entity resolution details, if available."""
-    extra_information: Optional[List["_models.ConversationEntityExtraInformation"]] = rest_field(
+    extra_information: Optional[list["_models.ConversationEntityExtraInformation"]] = rest_field(
         name="extraInformation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional entity metadata."""
@@ -1117,8 +1122,8 @@ class ConversationalAIEntity(_Model):
         length: int,
         conversation_item_id: str,
         conversation_item_index: Optional[int] = None,
-        resolutions: Optional[List["_models.ResolutionBase"]] = None,
-        extra_information: Optional[List["_models.ConversationEntityExtraInformation"]] = None,
+        resolutions: Optional[list["_models.ResolutionBase"]] = None,
+        extra_information: Optional[list["_models.ConversationEntityExtraInformation"]] = None,
     ) -> None: ...
 
     @overload
@@ -1151,11 +1156,11 @@ class ConversationalAIIntent(_Model):
     """The name of the detected intent. Required."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of intent, either \"action\" or \"question\". Required."""
-    conversation_item_ranges: List["_models.ConversationItemRange"] = rest_field(
+    conversation_item_ranges: list["_models.ConversationItemRange"] = rest_field(
         name="conversationItemRanges", visibility=["read", "create", "update", "delete", "query"]
     )
     """The ranges of conversation items where this intent was identified. Required."""
-    entities: List["_models.ConversationalAIEntity"] = rest_field(
+    entities: list["_models.ConversationalAIEntity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The entities associated with this intent. Required."""
@@ -1166,8 +1171,8 @@ class ConversationalAIIntent(_Model):
         *,
         name: str,
         type: str,
-        conversation_item_ranges: List["_models.ConversationItemRange"],
-        entities: List["_models.ConversationalAIEntity"],
+        conversation_item_ranges: list["_models.ConversationItemRange"],
+        entities: list["_models.ConversationalAIEntity"],
     ) -> None: ...
 
     @overload
@@ -1190,19 +1195,19 @@ class ConversationalAIResult(_Model):
     :vartype warnings: list[str]
     """
 
-    conversations: List["_models.ConversationalAIAnalysis"] = rest_field(
+    conversations: list["_models.ConversationalAIAnalysis"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Multiple multi-turn conversations analyzed. Required."""
-    warnings: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Any warnings encountered during processing."""
 
     @overload
     def __init__(
         self,
         *,
-        conversations: List["_models.ConversationalAIAnalysis"],
-        warnings: Optional[List[str]] = None,
+        conversations: list["_models.ConversationalAIAnalysis"],
+        warnings: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1255,7 +1260,8 @@ class ConversationalAITask(AnalyzeConversationInput, discriminator="Conversation
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationInputKind.CONVERSATIONAL_AI, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationInputKind.CONVERSATIONAL_AI  # type: ignore
 
 
 class ConversationalAITaskResult(AnalyzeConversationActionResult, discriminator="ConversationalAIResult"):
@@ -1287,7 +1293,8 @@ class ConversationalAITaskResult(AnalyzeConversationActionResult, discriminator=
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationResultKind.CONVERSATIONAL_AI_RESULT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationResultKind.CONVERSATIONAL_AI_RESULT  # type: ignore
 
 
 class ConversationalPiiResult(_Model):
@@ -1307,14 +1314,14 @@ class ConversationalPiiResult(_Model):
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique, non-empty conversation identifier. Required."""
-    warnings: List["_models.InputWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: list["_models.InputWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Warnings encountered in processing the document. Required."""
     statistics: Optional["_models.ConversationStatistics"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """If showStats=true was specified in the request this field will contain information about the
      conversation payload."""
-    conversation_items: List["_models.ConversationPiiItemResult"] = rest_field(
+    conversation_items: list["_models.ConversationPiiItemResult"] = rest_field(
         name="conversationItems", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of conversationItems. Required."""
@@ -1324,8 +1331,8 @@ class ConversationalPiiResult(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.InputWarning"],
-        conversation_items: List["_models.ConversationPiiItemResult"],
+        warnings: list["_models.InputWarning"],
+        conversation_items: list["_models.ConversationPiiItemResult"],
         statistics: Optional["_models.ConversationStatistics"] = None,
     ) -> None: ...
 
@@ -1449,7 +1456,8 @@ class ConversationConfig(AnalysisConfig, discriminator="Conversation"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=TargetProjectKind.CONVERSATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = TargetProjectKind.CONVERSATION  # type: ignore
 
 
 class ConversationEntity(_Model):
@@ -1482,11 +1490,11 @@ class ConversationEntity(_Model):
     """The length of the text. Required."""
     confidence: float = rest_field(name="confidenceScore", visibility=["read", "create", "update", "delete", "query"])
     """The entity confidence score. Required."""
-    resolutions: Optional[List["_models.ResolutionBase"]] = rest_field(
+    resolutions: Optional[list["_models.ResolutionBase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of entity resolution objects."""
-    extra_information: Optional[List["_models.ConversationEntityExtraInformation"]] = rest_field(
+    extra_information: Optional[list["_models.ConversationEntityExtraInformation"]] = rest_field(
         name="extraInformation", visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of entity extra information objects."""
@@ -1500,8 +1508,8 @@ class ConversationEntity(_Model):
         offset: int,
         length: int,
         confidence: float,
-        resolutions: Optional[List["_models.ResolutionBase"]] = None,
-        extra_information: Optional[List["_models.ConversationEntityExtraInformation"]] = None,
+        resolutions: Optional[list["_models.ResolutionBase"]] = None,
+        extra_information: Optional[list["_models.ConversationEntityExtraInformation"]] = None,
     ) -> None: ...
 
     @overload
@@ -1527,7 +1535,7 @@ class ConversationEntityExtraInformation(_Model):
      ~azure.ai.language.conversations.models.ExtraInformationKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     extra_information_kind: str = rest_discriminator(
         name="extraInformationKind", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1586,7 +1594,7 @@ class ConversationError(_Model):
     """A human-readable representation of the error. Required."""
     target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The target of the error."""
-    details: Optional[List["_models.ConversationError"]] = rest_field(
+    details: Optional[list["_models.ConversationError"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """An array of details about specific errors that led to this reported error."""
@@ -1602,7 +1610,7 @@ class ConversationError(_Model):
         code: Union[str, "_models.ConversationErrorCode"],
         message: str,
         target: Optional[str] = None,
-        details: Optional[List["_models.ConversationError"]] = None,
+        details: Optional[list["_models.ConversationError"]] = None,
         innererror: Optional["_models.InnerErrorModel"] = None,
     ) -> None: ...
 
@@ -1634,7 +1642,7 @@ class ConversationInput(_Model):
     :vartype domain: str or ~azure.ai.language.conversations.models.ConversationDomain
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the conversation. Required."""
     language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1805,7 +1813,8 @@ class ConversationLanguageUnderstandingInput(AnalyzeConversationInput, discrimin
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationInputKind.CONVERSATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationInputKind.CONVERSATION  # type: ignore
 
 
 class ConversationPiiActionContent(_Model):
@@ -1848,7 +1857,7 @@ class ConversationPiiActionContent(_Model):
         name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """model version."""
-    pii_categories: Optional[List[Union[str, "_models._enums.ConversationPiiCategories"]]] = rest_field(
+    pii_categories: Optional[list[Union[str, "_models._enums.ConversationPiiCategories"]]] = rest_field(
         name="piiCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of ConversationPIICategories."""
@@ -1871,7 +1880,7 @@ class ConversationPiiActionContent(_Model):
      character will be * as before. We allow specific ascii characters for redaction. Known values
      are: \"!\", \"#\", \"$\", \"%\", \"&\", \"*\", \"+\", \"-\", \"=\", \"?\", \"@\", \"^\", \"_\",
      and \"~\"."""
-    exclude_pii_categories: Optional[List[Union[str, "_models._enums.ConversationPiiCategoryExclusions"]]] = rest_field(
+    exclude_pii_categories: Optional[list[Union[str, "_models._enums.ConversationPiiCategoryExclusions"]]] = rest_field(
         name="excludePiiCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of categories that need to be excluded instead of included."""
@@ -1886,11 +1895,11 @@ class ConversationPiiActionContent(_Model):
         *,
         logging_opt_out: Optional[bool] = None,
         model_version: Optional[str] = None,
-        pii_categories: Optional[List[Union[str, "_models._enums.ConversationPiiCategories"]]] = None,
+        pii_categories: Optional[list[Union[str, "_models._enums.ConversationPiiCategories"]]] = None,
         redact_audio_timing: Optional[bool] = None,
         redaction_source: Optional[Union[str, "_models._enums.TranscriptContentType"]] = None,
         redaction_character: Optional[Union[str, "_models._enums.RedactionCharacter"]] = None,
-        exclude_pii_categories: Optional[List[Union[str, "_models._enums.ConversationPiiCategoryExclusions"]]] = None,
+        exclude_pii_categories: Optional[list[Union[str, "_models._enums.ConversationPiiCategoryExclusions"]]] = None,
         redaction_policy: Optional["_models._models.BaseRedactionPolicy"] = None,
     ) -> None: ...
 
@@ -1924,7 +1933,7 @@ class ConversationPiiItemResult(_Model):
     )
     """Transcript content response that the service generates, with all necessary personally
      identifiable information redacted. Required."""
-    entities: List["_models.NamedEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    entities: list["_models.NamedEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of Entities. Required."""
 
     @overload
@@ -1933,7 +1942,7 @@ class ConversationPiiItemResult(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         redacted_content: "_models.RedactedTranscriptContent",
-        entities: List["_models.NamedEntity"],
+        entities: list["_models.NamedEntity"],
     ) -> None: ...
 
     @overload
@@ -1988,7 +1997,8 @@ class ConversationPiiOperationResult(AnalyzeConversationOperationResult, discrim
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationOperationResultsKind.PII_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationOperationResultsKind.PII_OPERATION_RESULTS  # type: ignore
 
 
 class ConversationPiiResults(_Model):
@@ -2004,7 +2014,7 @@ class ConversationPiiResults(_Model):
     :vartype conversations: list[~azure.ai.language.conversations.models.ConversationalPiiResult]
     """
 
-    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: list["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Errors by document id. Required."""
     statistics: Optional["_models.RequestStatistics"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2012,7 +2022,7 @@ class ConversationPiiResults(_Model):
     """statistics."""
     model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """This field indicates which model is used for scoring. Required."""
-    conversations: List["_models.ConversationalPiiResult"] = rest_field(
+    conversations: list["_models.ConversationalPiiResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """array of conversations. Required."""
@@ -2021,9 +2031,9 @@ class ConversationPiiResults(_Model):
     def __init__(
         self,
         *,
-        errors: List["_models.DocumentError"],
+        errors: list["_models.DocumentError"],
         model_version: str,
-        conversations: List["_models.ConversationalPiiResult"],
+        conversations: list["_models.ConversationalPiiResult"],
         statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
 
@@ -2051,7 +2061,7 @@ class PredictionBase(_Model):
     :vartype top_intent: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     project_kind: str = rest_discriminator(
         name="projectKind", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2095,9 +2105,9 @@ class ConversationPrediction(PredictionBase, discriminator="Conversation"):
 
     project_kind: Literal[ProjectKind.CONVERSATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the prediction section of a Conversation project. Required. Conversation type"""
-    intents: List["_models.ConversationIntent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    intents: list["_models.ConversationIntent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The intent classification results. Required."""
-    entities: List["_models.ConversationEntity"] = rest_field(
+    entities: list["_models.ConversationEntity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The entity extraction results. Required."""
@@ -2106,8 +2116,8 @@ class ConversationPrediction(PredictionBase, discriminator="Conversation"):
     def __init__(
         self,
         *,
-        intents: List["_models.ConversationIntent"],
-        entities: List["_models.ConversationEntity"],
+        intents: list["_models.ConversationIntent"],
+        entities: list["_models.ConversationEntity"],
         top_intent: Optional[str] = None,
     ) -> None: ...
 
@@ -2119,7 +2129,8 @@ class ConversationPrediction(PredictionBase, discriminator="Conversation"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CONVERSATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.project_kind = ProjectKind.CONVERSATION  # type: ignore
 
 
 class ConversationRequestStatistics(_Model):
@@ -2260,14 +2271,14 @@ class ConversationsSummaryResult(_Model):
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique, non-empty conversation identifier. Required."""
-    warnings: List["_models.InputWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: list["_models.InputWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Warnings encountered in processing the document. Required."""
     statistics: Optional["_models.ConversationStatistics"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """If showStats=true was specified in the request this field will contain information about the
      conversation payload."""
-    summaries: List["_models.SummaryResultItem"] = rest_field(
+    summaries: list["_models.SummaryResultItem"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """array of summaries. Required."""
@@ -2277,8 +2288,8 @@ class ConversationsSummaryResult(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.InputWarning"],
-        summaries: List["_models.SummaryResultItem"],
+        warnings: list["_models.InputWarning"],
+        summaries: list["_models.SummaryResultItem"],
         statistics: Optional["_models.ConversationStatistics"] = None,
     ) -> None: ...
 
@@ -2368,7 +2379,7 @@ class ConversationSummarizationActionContent(_Model):
     )
     """(NOTE: Recommended to use summaryLength over sentenceCount) Controls the approximate length of
      the output summaries. Known values are: \"short\", \"medium\", and \"long\"."""
-    summary_aspects: List[Union[str, "_models.SummaryAspect"]] = rest_field(
+    summary_aspects: list[Union[str, "_models.SummaryAspect"]] = rest_field(
         name="summaryAspects", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of Summary Aspects. Required."""
@@ -2380,7 +2391,7 @@ class ConversationSummarizationActionContent(_Model):
     def __init__(
         self,
         *,
-        summary_aspects: List[Union[str, "_models.SummaryAspect"]],
+        summary_aspects: list[Union[str, "_models.SummaryAspect"]],
         logging_opt_out: Optional[bool] = None,
         model_version: Optional[str] = None,
         sentence_count: Optional[int] = None,
@@ -2404,7 +2415,7 @@ class TargetIntentResult(_Model):
     """This is the base class of an intent prediction.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationTargetIntentResult, NonLinkedTargetIntentResult,
+    ConversationTargetIntentResult, LuisTargetIntentResult, NonLinkedTargetIntentResult,
     QuestionAnsweringTargetIntentResult
 
     :ivar target_project_kind: This is the base class of an intent prediction. Required. Known
@@ -2416,7 +2427,7 @@ class TargetIntentResult(_Model):
     :vartype confidence: float
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     target_project_kind: str = rest_discriminator(
         name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2487,7 +2498,8 @@ class ConversationTargetIntentResult(TargetIntentResult, discriminator="Conversa
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=TargetProjectKind.CONVERSATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = TargetProjectKind.CONVERSATION  # type: ignore
 
 
 class CurrencyResolution(ResolutionBase, discriminator="CurrencyResolution"):
@@ -2536,7 +2548,8 @@ class CurrencyResolution(ResolutionBase, discriminator="CurrencyResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.CURRENCY_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.CURRENCY_RESOLUTION  # type: ignore
 
 
 class CustomConversationSummarizationActionContent(_Model):  # pylint: disable=name-too-long
@@ -2582,7 +2595,7 @@ class CustomConversationSummarizationActionContent(_Model):  # pylint: disable=n
     )
     """Controls the approximate length of the output summaries. Recommended to use summaryLength over
      sentenceCount. Known values are: \"short\", \"medium\", and \"long\"."""
-    summary_aspects: List[Union[str, "_models.SummaryAspect"]] = rest_field(
+    summary_aspects: list[Union[str, "_models.SummaryAspect"]] = rest_field(
         name="summaryAspects", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of Summary Aspects. Required."""
@@ -2593,7 +2606,7 @@ class CustomConversationSummarizationActionContent(_Model):  # pylint: disable=n
         *,
         project_name: str,
         deployment_name: str,
-        summary_aspects: List[Union[str, "_models.SummaryAspect"]],
+        summary_aspects: list[Union[str, "_models.SummaryAspect"]],
         logging_opt_out: Optional[bool] = None,
         sentence_count: Optional[int] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
@@ -2649,9 +2662,8 @@ class CustomSummarizationOperationAction(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeConversationOperationActionKind.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationOperationActionKind.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK  # type: ignore
 
 
 class CustomSummarizationOperationResult(
@@ -2697,9 +2709,8 @@ class CustomSummarizationOperationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeConversationOperationResultsKind.CUSTOM_SUMMARIZATION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationOperationResultsKind.CUSTOM_SUMMARIZATION_OPERATION_RESULTS  # type: ignore
 
 
 class CustomSummaryResult(_Model):
@@ -2719,11 +2730,11 @@ class CustomSummaryResult(_Model):
     :vartype deployment_name: str
     """
 
-    conversations: List["_models.ConversationsSummaryResult"] = rest_field(
+    conversations: list["_models.ConversationsSummaryResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """array of conversations. Required."""
-    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: list["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Errors by document id. Required."""
     statistics: Optional["_models.RequestStatistics"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2739,8 +2750,8 @@ class CustomSummaryResult(_Model):
     def __init__(
         self,
         *,
-        conversations: List["_models.ConversationsSummaryResult"],
-        errors: List["_models.DocumentError"],
+        conversations: list["_models.ConversationsSummaryResult"],
+        errors: list["_models.DocumentError"],
         project_name: str,
         deployment_name: str,
         statistics: Optional["_models.RequestStatistics"] = None,
@@ -2820,7 +2831,8 @@ class DateTimeResolution(ResolutionBase, discriminator="DateTimeResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.DATE_TIME_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.DATE_TIME_RESOLUTION  # type: ignore
 
 
 class DocumentError(_Model):
@@ -2880,7 +2892,8 @@ class EntityMaskTypePolicyType(BaseRedactionPolicy, discriminator="entityMask"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=RedactionPolicyKind.ENTITY_MASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.ENTITY_MASK  # type: ignore
 
 
 class EntitySubtype(ConversationEntityExtraInformation, discriminator="EntitySubtype"):
@@ -2900,7 +2913,7 @@ class EntitySubtype(ConversationEntityExtraInformation, discriminator="EntitySub
     """The extra information object kind. Required. Entity subtype extra information kind"""
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Subtype of an extracted entity type."""
-    tags: Optional[List["_models.EntityTag"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[list["_models.EntityTag"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of entity tags. Tags express similarities between entity categories for the extracted
      entity type."""
 
@@ -2909,7 +2922,7 @@ class EntitySubtype(ConversationEntityExtraInformation, discriminator="EntitySub
         self,
         *,
         value: Optional[str] = None,
-        tags: Optional[List["_models.EntityTag"]] = None,
+        tags: Optional[list["_models.EntityTag"]] = None,
     ) -> None: ...
 
     @overload
@@ -2920,7 +2933,8 @@ class EntitySubtype(ConversationEntityExtraInformation, discriminator="EntitySub
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, extra_information_kind=ExtraInformationKind.ENTITY_SUBTYPE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.extra_information_kind = ExtraInformationKind.ENTITY_SUBTYPE  # type: ignore
 
 
 class EntityTag(_Model):
@@ -3027,7 +3041,8 @@ class InformationResolution(ResolutionBase, discriminator="InformationResolution
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.INFORMATION_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.INFORMATION_RESOLUTION  # type: ignore
 
 
 class InnerErrorModel(_Model):
@@ -3062,7 +3077,7 @@ class InnerErrorModel(_Model):
      \"InvalidDocumentBatch\", \"UnsupportedLanguageCode\", and \"InvalidCountryHint\"."""
     message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error message. Required."""
-    details: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    details: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error details."""
     target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error target."""
@@ -3077,7 +3092,7 @@ class InnerErrorModel(_Model):
         *,
         code: Union[str, "_models.InnerErrorCode"],
         message: str,
-        details: Optional[Dict[str, str]] = None,
+        details: Optional[dict[str, str]] = None,
         target: Optional[str] = None,
         innererror: Optional["_models.InnerErrorModel"] = None,
     ) -> None: ...
@@ -3197,7 +3212,7 @@ class KnowledgeBaseAnswer(_Model):
     :vartype short_answer: ~azure.ai.language.conversations.models.AnswerSpan
     """
 
-    questions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    questions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of questions associated with the answer."""
     answer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Answer text."""
@@ -3209,7 +3224,7 @@ class KnowledgeBaseAnswer(_Model):
     """ID of the QnA result."""
     source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Source of QnA result."""
-    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metadata associated with the answer, useful to categorize or filter question answers."""
     dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3224,12 +3239,12 @@ class KnowledgeBaseAnswer(_Model):
     def __init__(
         self,
         *,
-        questions: Optional[List[str]] = None,
+        questions: Optional[list[str]] = None,
         answer: Optional[str] = None,
         confidence: Optional[float] = None,
         qna_id: Optional[int] = None,
         source: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = None,
         short_answer: Optional["_models.AnswerSpan"] = None,
     ) -> None: ...
@@ -3297,7 +3312,7 @@ class KnowledgeBaseAnswerDialog(_Model):
     """To mark if a prompt is relevant only with a previous question or not. If true, do not include
      this QnA as search result for queries without context; otherwise, if false, ignores context and
      includes this QnA in search result."""
-    prompts: Optional[List["_models.KnowledgeBaseAnswerPrompt"]] = rest_field(
+    prompts: Optional[list["_models.KnowledgeBaseAnswerPrompt"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of prompts associated with the answer."""
@@ -3307,7 +3322,7 @@ class KnowledgeBaseAnswerDialog(_Model):
         self,
         *,
         is_context_only: Optional[bool] = None,
-        prompts: Optional[List["_models.KnowledgeBaseAnswerPrompt"]] = None,
+        prompts: Optional[list["_models.KnowledgeBaseAnswerPrompt"]] = None,
     ) -> None: ...
 
     @overload
@@ -3403,7 +3418,8 @@ class LengthResolution(ResolutionBase, discriminator="LengthResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.LENGTH_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.LENGTH_RESOLUTION  # type: ignore
 
 
 class ListKey(ConversationEntityExtraInformation, discriminator="ListKey"):
@@ -3436,7 +3452,156 @@ class ListKey(ConversationEntityExtraInformation, discriminator="ListKey"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, extra_information_kind=ExtraInformationKind.LIST_KEY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.extra_information_kind = ExtraInformationKind.LIST_KEY  # type: ignore
+
+
+class LuisCallingConfig(_Model):
+    """This customizes how the service calls LUIS Generally Available projects.
+
+    :ivar verbose: Enable verbose response.
+    :vartype verbose: bool
+    :ivar log: Save log to add in training utterances later.
+    :vartype log: bool
+    :ivar show_all_intents: Set true to show all intents.
+    :vartype show_all_intents: bool
+    :ivar timezone_offset: The timezone offset for the location of the request.
+    :vartype timezone_offset: int
+    :ivar spell_check: Enable spell checking.
+    :vartype spell_check: bool
+    :ivar bing_spell_check_subscription_key: The subscription key to use when enabling Bing spell
+     check.
+    :vartype bing_spell_check_subscription_key: str
+    """
+
+    verbose: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Enable verbose response."""
+    log: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Save log to add in training utterances later."""
+    show_all_intents: Optional[bool] = rest_field(
+        name="show-all-intents", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set true to show all intents."""
+    timezone_offset: Optional[int] = rest_field(
+        name="timezoneOffset", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The timezone offset for the location of the request."""
+    spell_check: Optional[bool] = rest_field(
+        name="spellCheck", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enable spell checking."""
+    bing_spell_check_subscription_key: Optional[str] = rest_field(
+        name="bing-spell-check-subscription-key", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription key to use when enabling Bing spell check."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        verbose: Optional[bool] = None,
+        log: Optional[bool] = None,
+        show_all_intents: Optional[bool] = None,
+        timezone_offset: Optional[int] = None,
+        spell_check: Optional[bool] = None,
+        bing_spell_check_subscription_key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LuisConfig(AnalysisConfig, discriminator="Luis"):
+    """This is a set of request parameters for LUIS Generally Available projects.
+
+    :ivar api_version: The API version to use when call a specific target service.
+    :vartype api_version: str
+    :ivar target_project_kind: The type of a target service. Required. Luis target service type
+    :vartype target_project_kind: str or ~azure.ai.language.conversations.models.LUIS
+    :ivar query: The utterance to predict.
+    :vartype query: str
+    :ivar calling_options: This customizes how the service calls LUIS Generally Available projects.
+    :vartype calling_options: ~azure.ai.language.conversations.models.LuisCallingConfig
+    """
+
+    target_project_kind: Literal[TargetProjectKind.LUIS] = rest_discriminator(name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of a target service. Required. Luis target service type"""
+    query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The utterance to predict."""
+    calling_options: Optional["_models.LuisCallingConfig"] = rest_field(
+        name="callingOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This customizes how the service calls LUIS Generally Available projects."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        api_version: Optional[str] = None,
+        query: Optional[str] = None,
+        calling_options: Optional["_models.LuisCallingConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = TargetProjectKind.LUIS  # type: ignore
+
+
+class LuisResult(_Model):
+    """It is the response from a LUIS Generally Available application."""
+
+
+class LuisTargetIntentResult(TargetIntentResult, discriminator="Luis"):
+    """It is a wrap up of LUIS Generally Available response.
+
+    :ivar api_version: The API version used to call a target service.
+    :vartype api_version: str
+    :ivar confidence: The prediction score and it ranges from 0.0 to 1.0. Required.
+    :vartype confidence: float
+    :ivar target_project_kind: Kind of the project. Required. Luis target service type
+    :vartype target_project_kind: str or ~azure.ai.language.conversations.models.LUIS
+    :ivar result: The actual response from a LUIS Generally Available application.
+    :vartype result: ~azure.ai.language.conversations.models.LuisResult
+    """
+
+    target_project_kind: Literal[TargetProjectKind.LUIS] = rest_discriminator(name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the project. Required. Luis target service type"""
+    result: Optional["_models.LuisResult"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The actual response from a LUIS Generally Available application."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        confidence: float,
+        api_version: Optional[str] = None,
+        result: Optional["_models.LuisResult"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = TargetProjectKind.LUIS  # type: ignore
 
 
 class MetadataFilter(_Model):
@@ -3449,7 +3614,7 @@ class MetadataFilter(_Model):
     :vartype logical_operation: str or ~azure.ai.language.conversations.models.LogicalOperationKind
     """
 
-    metadata: Optional[List["_models.MetadataRecord"]] = rest_field(
+    metadata: Optional[list["_models.MetadataRecord"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of metadata."""
@@ -3462,7 +3627,7 @@ class MetadataFilter(_Model):
     def __init__(
         self,
         *,
-        metadata: Optional[List["_models.MetadataRecord"]] = None,
+        metadata: Optional[list["_models.MetadataRecord"]] = None,
         logical_operation: Optional[Union[str, "_models.LogicalOperationKind"]] = None,
     ) -> None: ...
 
@@ -3517,7 +3682,7 @@ class MultiLanguageConversationInput(_Model):
     :vartype conversations: list[~azure.ai.language.conversations.models.ConversationInput]
     """
 
-    conversations: List["_models.ConversationInput"] = rest_field(
+    conversations: list["_models.ConversationInput"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of conversation items. Required."""
@@ -3526,7 +3691,7 @@ class MultiLanguageConversationInput(_Model):
     def __init__(
         self,
         *,
-        conversations: List["_models.ConversationInput"],
+        conversations: list["_models.ConversationInput"],
     ) -> None: ...
 
     @overload
@@ -3643,7 +3808,8 @@ class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=RedactionPolicyKind.NO_MASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.NO_MASK  # type: ignore
 
 
 class NonLinkedTargetIntentResult(TargetIntentResult, discriminator="NonLinked"):
@@ -3684,7 +3850,8 @@ class NonLinkedTargetIntentResult(TargetIntentResult, discriminator="NonLinked")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=TargetProjectKind.NON_LINKED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = TargetProjectKind.NON_LINKED  # type: ignore
 
 
 class NumberResolution(ResolutionBase, discriminator="NumberResolution"):
@@ -3726,7 +3893,8 @@ class NumberResolution(ResolutionBase, discriminator="NumberResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.NUMBER_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.NUMBER_RESOLUTION  # type: ignore
 
 
 class NumericRangeResolution(ResolutionBase, discriminator="NumericRangeResolution"):
@@ -3776,7 +3944,8 @@ class NumericRangeResolution(ResolutionBase, discriminator="NumericRangeResoluti
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.NUMERIC_RANGE_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.NUMERIC_RANGE_RESOLUTION  # type: ignore
 
 
 class OrchestrationPrediction(PredictionBase, discriminator="Orchestration"):
@@ -3795,7 +3964,7 @@ class OrchestrationPrediction(PredictionBase, discriminator="Orchestration"):
 
     project_kind: Literal[ProjectKind.ORCHESTRATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """This represents the prediction result of an Orchestration project. Required. Orchestration type"""
-    intents: Dict[str, "_models.TargetIntentResult"] = rest_field(
+    intents: dict[str, "_models.TargetIntentResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A dictionary that contains all intents. A key is an intent name and a value is its confidence
@@ -3806,7 +3975,7 @@ class OrchestrationPrediction(PredictionBase, discriminator="Orchestration"):
     def __init__(
         self,
         *,
-        intents: Dict[str, "_models.TargetIntentResult"],
+        intents: dict[str, "_models.TargetIntentResult"],
         top_intent: Optional[str] = None,
     ) -> None: ...
 
@@ -3818,7 +3987,8 @@ class OrchestrationPrediction(PredictionBase, discriminator="Orchestration"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.ORCHESTRATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.project_kind = ProjectKind.ORCHESTRATION  # type: ignore
 
 
 class OrdinalResolution(ResolutionBase, discriminator="OrdinalResolution"):
@@ -3867,7 +4037,8 @@ class OrdinalResolution(ResolutionBase, discriminator="OrdinalResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.ORDINAL_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.ORDINAL_RESOLUTION  # type: ignore
 
 
 class PiiOperationAction(AnalyzeConversationOperationAction, discriminator="ConversationalPIITask"):
@@ -3905,7 +4076,8 @@ class PiiOperationAction(AnalyzeConversationOperationAction, discriminator="Conv
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationOperationActionKind.CONVERSATIONAL_PII_TASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationOperationActionKind.CONVERSATIONAL_PII_TASK  # type: ignore
 
 
 class QueryFilters(_Model):
@@ -3924,7 +4096,7 @@ class QueryFilters(_Model):
         name="metadataFilter", visibility=["read", "create", "update", "delete", "query"]
     )
     """filters over knowledge base."""
-    source_filter: Optional[List[str]] = rest_field(
+    source_filter: Optional[list[str]] = rest_field(
         name="sourceFilter", visibility=["read", "create", "update", "delete", "query"]
     )
     """filters over knowledge base."""
@@ -3939,7 +4111,7 @@ class QueryFilters(_Model):
         self,
         *,
         metadata_filter: Optional["_models.MetadataFilter"] = None,
-        source_filter: Optional[List[str]] = None,
+        source_filter: Optional[list[str]] = None,
         logical_operation: Optional[Union[str, "_models.LogicalOperationKind"]] = None,
     ) -> None: ...
 
@@ -3990,7 +4162,8 @@ class QuestionAnsweringConfig(AnalysisConfig, discriminator="QuestionAnswering")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=TargetProjectKind.QUESTION_ANSWERING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = TargetProjectKind.QUESTION_ANSWERING  # type: ignore
 
 
 class QuestionAnsweringTargetIntentResult(TargetIntentResult, discriminator="QuestionAnswering"):
@@ -4030,7 +4203,8 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult, discriminator="Que
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=TargetProjectKind.QUESTION_ANSWERING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = TargetProjectKind.QUESTION_ANSWERING  # type: ignore
 
 
 class QuestionAnswersConfig(_Model):
@@ -4146,7 +4320,7 @@ class RedactedTranscriptContent(_Model):
     """Redacted output for input in text (Microsoft's speech-to-text 'display') format."""
     lexical: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Redacted output for input in lexical format."""
-    audio_timings: Optional[List["_models.AudioTiming"]] = rest_field(
+    audio_timings: Optional[list["_models.AudioTiming"]] = rest_field(
         name="audioTimings", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of redacted audio segments."""
@@ -4159,7 +4333,7 @@ class RedactedTranscriptContent(_Model):
         masked_inverse_text_normalized: Optional[str] = None,
         text: Optional[str] = None,
         lexical: Optional[str] = None,
-        audio_timings: Optional[List["_models.AudioTiming"]] = None,
+        audio_timings: Optional[list["_models.AudioTiming"]] = None,
     ) -> None: ...
 
     @overload
@@ -4216,7 +4390,8 @@ class RegexKey(ConversationEntityExtraInformation, discriminator="RegexKey"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, extra_information_kind=ExtraInformationKind.REGEX_KEY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.extra_information_kind = ExtraInformationKind.REGEX_KEY  # type: ignore
 
 
 class RequestStatistics(_Model):
@@ -4358,7 +4533,8 @@ class SpeedResolution(ResolutionBase, discriminator="SpeedResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.SPEED_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.SPEED_RESOLUTION  # type: ignore
 
 
 class SummarizationOperationAction(AnalyzeConversationOperationAction, discriminator="ConversationalSummarizationTask"):
@@ -4396,7 +4572,8 @@ class SummarizationOperationAction(AnalyzeConversationOperationAction, discrimin
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationOperationActionKind.CONVERSATIONAL_SUMMARIZATION_TASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationOperationActionKind.CONVERSATIONAL_SUMMARIZATION_TASK  # type: ignore
 
 
 class SummarizationOperationResult(
@@ -4441,7 +4618,8 @@ class SummarizationOperationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationOperationResultsKind.SUMMARIZATION_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeConversationOperationResultsKind.SUMMARIZATION_OPERATION_RESULTS  # type: ignore
 
 
 class SummaryResult(_Model):
@@ -4458,11 +4636,11 @@ class SummaryResult(_Model):
     :vartype model_version: str
     """
 
-    conversations: List["_models.ConversationsSummaryResult"] = rest_field(
+    conversations: list["_models.ConversationsSummaryResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """array of conversations. Required."""
-    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: list["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Errors by document id. Required."""
     statistics: Optional["_models.RequestStatistics"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -4475,8 +4653,8 @@ class SummaryResult(_Model):
     def __init__(
         self,
         *,
-        conversations: List["_models.ConversationsSummaryResult"],
-        errors: List["_models.DocumentError"],
+        conversations: list["_models.ConversationsSummaryResult"],
+        errors: list["_models.DocumentError"],
         model_version: str,
         statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
@@ -4507,7 +4685,7 @@ class SummaryResultItem(_Model):
     """aspect. Required."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """text. Required."""
-    contexts: Optional[List["_models.ItemizedSummaryContext"]] = rest_field(
+    contexts: Optional[list["_models.ItemizedSummaryContext"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Context list of the summary."""
@@ -4518,7 +4696,7 @@ class SummaryResultItem(_Model):
         *,
         aspect: str,
         text: str,
-        contexts: Optional[List["_models.ItemizedSummaryContext"]] = None,
+        contexts: Optional[list["_models.ItemizedSummaryContext"]] = None,
     ) -> None: ...
 
     @overload
@@ -4570,7 +4748,8 @@ class TemperatureResolution(ResolutionBase, discriminator="TemperatureResolution
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.TEMPERATURE_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.TEMPERATURE_RESOLUTION  # type: ignore
 
 
 class TemporalSpanResolution(ResolutionBase, discriminator="TemporalSpanResolution"):
@@ -4651,7 +4830,8 @@ class TemporalSpanResolution(ResolutionBase, discriminator="TemporalSpanResoluti
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.TEMPORAL_SPAN_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.TEMPORAL_SPAN_RESOLUTION  # type: ignore
 
 
 class TextConversation(ConversationInput, discriminator="text"):
@@ -4672,7 +4852,7 @@ class TextConversation(ConversationInput, discriminator="text"):
 
     modality: Literal[InputModality.TEXT] = rest_discriminator(name="modality", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """modality discriminator. Required. Text input modality"""
-    conversation_items: List["_models.TextConversationItem"] = rest_field(
+    conversation_items: list["_models.TextConversationItem"] = rest_field(
         name="conversationItems", visibility=["read", "create", "update", "delete", "query"]
     )
     """Ordered list of text conversation items in the conversation. Required."""
@@ -4683,7 +4863,7 @@ class TextConversation(ConversationInput, discriminator="text"):
         *,
         id: str,  # pylint: disable=redefined-builtin
         language: str,
-        conversation_items: List["_models.TextConversationItem"],
+        conversation_items: list["_models.TextConversationItem"],
         domain: Optional[Union[str, "_models.ConversationDomain"]] = None,
     ) -> None: ...
 
@@ -4695,7 +4875,8 @@ class TextConversation(ConversationInput, discriminator="text"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, modality=InputModality.TEXT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.modality = InputModality.TEXT  # type: ignore
 
 
 class TextConversationItem(_Model):
@@ -4776,7 +4957,7 @@ class TranscriptConversation(ConversationInput, discriminator="transcript"):
 
     modality: Literal[InputModality.TRANSCRIPT] = rest_discriminator(name="modality", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """modality discriminator. Required. Transcript input modality"""
-    conversation_items: List["_models._models.TranscriptConversationItem"] = rest_field(
+    conversation_items: list["_models._models.TranscriptConversationItem"] = rest_field(
         name="conversationItems", visibility=["read", "create", "update", "delete", "query"]
     )
     """Ordered list of transcript conversation items in the conversation. Required."""
@@ -4787,7 +4968,7 @@ class TranscriptConversation(ConversationInput, discriminator="transcript"):
         *,
         id: str,  # pylint: disable=redefined-builtin
         language: str,
-        conversation_items: List["_models._models.TranscriptConversationItem"],
+        conversation_items: list["_models._models.TranscriptConversationItem"],
         domain: Optional[Union[str, "_models.ConversationDomain"]] = None,
     ) -> None: ...
 
@@ -4799,7 +4980,8 @@ class TranscriptConversation(ConversationInput, discriminator="transcript"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, modality=InputModality.TRANSCRIPT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.modality = InputModality.TRANSCRIPT  # type: ignore
 
 
 class TranscriptConversationItem(_Model):
@@ -4867,7 +5049,7 @@ class TranscriptConversationItem(_Model):
     lexical: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Lexical form of the recognized text from the speech-to-text API, with the actual words
      recognized. Required."""
-    word_level_timings: Optional[List["_models._models.WordLevelTiming"]] = rest_field(
+    word_level_timings: Optional[list["_models._models.WordLevelTiming"]] = rest_field(
         name="wordLevelTimings", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of word-level audio timing information."""
@@ -4890,7 +5072,7 @@ class TranscriptConversationItem(_Model):
         language: Optional[str] = None,
         modality: Optional[Union[str, "_models.InputModality"]] = None,
         role: Optional[Union[str, "_models.ParticipantRole"]] = None,
-        word_level_timings: Optional[List["_models._models.WordLevelTiming"]] = None,
+        word_level_timings: Optional[list["_models._models.WordLevelTiming"]] = None,
         conversation_item_level_timing: Optional["_models._models.ConversationItemLevelTiming"] = None,
     ) -> None: ...
 
@@ -4949,7 +5131,8 @@ class VolumeResolution(ResolutionBase, discriminator="VolumeResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.VOLUME_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.VOLUME_RESOLUTION  # type: ignore
 
 
 class WeightResolution(ResolutionBase, discriminator="WeightResolution"):
@@ -4992,7 +5175,8 @@ class WeightResolution(ResolutionBase, discriminator="WeightResolution"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, resolution_kind=ResolutionKind.WEIGHT_RESOLUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.resolution_kind = ResolutionKind.WEIGHT_RESOLUTION  # type: ignore
 
 
 class WordLevelTiming(_Model):

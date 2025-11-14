@@ -1,16 +1,37 @@
 # Release History
 
-## 1.13.2 (Unreleased)
-
-### Features Added
-
-- Added App Insights redaction for agent safety result queries to prevent adversarial prompts from being stored in telemetry
-
-### Breaking Changes
+## 1.13.6 (2025-11-12)
 
 ### Bugs Fixed
 
+- Added detection and retry handling for network errors wrapped in generic exceptions with "Error sending prompt with conversation ID" message
+- Fix results for ungrounded_attributes
+- score_mode grader improvements
+- fix for Red Team to ensure hate/unfairness evaluation rows populate when OneDP sync evaluators report results under the hate_unfairness metric name.
+
+## 1.13.5 (2025-11-10)
+
+### Bugs Fixed
+
+- **TaskAdherenceEvaluator:** treat tool definitions as optional so evaluations with only query/response inputs no longer raise “Either 'conversation' or individual inputs must be provided.”
+
+## 1.13.4 (2025-11-10)
+
+### Bugs Fixed
+
+- Handle input data for evaluation result when evaluators.
+
+## 1.13.3 (2025-11-08)
+
 ### Other Changes
+
+- Added `scenario` property to red team evaluation request to align scores with red team concepts of attack success.
+
+## 1.13.2 (2025-11-07)
+
+### Bugs Fixed
+
+- Added App Insights redaction for agent safety run telemetry so adversarial prompts are not stored in collected logs.
 
 ## 1.13.1 (2025-11-05)
 
