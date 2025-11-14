@@ -244,7 +244,7 @@ class Response(TypedDict):
     prompt: NotRequired[Prompt]  # TODO: Replace with proper Prompt type when available
     truncation: NotRequired[Literal["auto", "disabled"]]
     """The truncation strategy to use for the model response."""
-    status: NotRequired[Literal["completed", "failed", "in_progress", "cancelled", "queued", "incomplete"]]
+    status: NotRequired[Union[str, Literal["completed", "failed", "in_progress", "cancelled", "queued", "incomplete"]]]
     """The status of the response generation."""
     error: NotRequired[ResponseError]  # TODO: Replace with proper ResponseError type when available
     incomplete_details: NotRequired[ResponseIncompleteDetails1]  # TODO: Replace with proper ResponseIncompleteDetails1 type when available

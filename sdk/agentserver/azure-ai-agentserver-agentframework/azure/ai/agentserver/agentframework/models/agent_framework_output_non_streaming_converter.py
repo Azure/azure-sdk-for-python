@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import datetime
 import json
-from typing import Any, List
+from typing import Any, List, cast
 
 from agent_framework import AgentRunResponse, FunctionResultContent
 from agent_framework._types import FunctionCallContent, TextContent
@@ -76,8 +76,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                 logger.debug("  content index=%d in message=%d type=%s", j, i, type(content).__name__)
                 self._append_content_item(content, completed_items)
 
-        response_data = self._construct_response_data(completed_items)
-        openai_response = OpenAIResponse(**response_data)
+        openai_response = self._construct_response_data(completed_items)
         logger.info(
             "OpenAIResponse built (id=%s, items=%d)",
             self._response_id,
@@ -210,11 +209,10 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
 
         return ""
 
-    def _construct_response_data(self, output_items: List[dict]) -> dict:
+    def _construct_response_data(self, output_items: List[dict]) -> OpenAIResponse:
         agent_id = AgentIdGenerator.generate(self._context)
 
         response_data = {
-            "object": "response",
             "metadata": {},
             "agent": agent_id,
             "conversation": self._context.get_conversation_object(),
@@ -229,4 +227,4 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             "parallel_tool_calls": True,
             "status": "completed",
         }
-        return response_data
+        return cast(OpenAIResponse, response_data)

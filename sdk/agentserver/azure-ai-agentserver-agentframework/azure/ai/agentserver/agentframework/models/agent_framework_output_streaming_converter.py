@@ -8,7 +8,7 @@ from __future__ import annotations
 import datetime
 import json
 import uuid
-from typing import Any, List, Optional, cast
+from typing import Any, List, Optional, cast, Union
 
 from agent_framework import AgentRunResponseUpdate, FunctionApprovalRequestContent, FunctionResultContent
 from agent_framework._types import (
@@ -40,9 +40,12 @@ from azure.ai.agentserver.core.models.projects import (
     ResponsesAssistantMessageItemResource,
     ResponseTextDeltaEvent,
     ResponseTextDoneEvent,
+    ItemResource,
 )
 
 from .agent_id_generator import AgentIdGenerator
+from .constants import Constants
+
 
 logger = get_logger()
 
@@ -461,14 +464,14 @@ class AgentFrameworkOutputStreamingConverter:
         self._context = context
         # sequence numbers must start at 0 for first emitted event
         self._sequence = 0
-        self._response_id = None
-        self._response_created_at = None
+        self._response_id: Optional[str] = None
+        self._response_created_at: Optional[datetime.datetime] = None
         self._next_output_index = 0
         self._last_completed_text = ""
         self._active_state: Optional[_BaseStreamingState] = None
         self._active_kind = None  # "text" | "function_call" | "error"
         # accumulate completed output items for final response
-        self._completed_output_items: List[dict] = []
+        self._completed_output_items: List[Union[ItemResource, dict]] = []
 
     def _ensure_response_started(self) -> None:
         if not self._response_id:
@@ -558,16 +561,24 @@ class AgentFrameworkOutputStreamingConverter:
     def build_response(self, status: str) -> OpenAIResponse:
         self._ensure_response_started()
         agent_id = AgentIdGenerator.generate(self._context)
-        response_data = {
-            "object": "response",
-            "agent_id": agent_id,
-            "id": self._response_id,
+        response_data: OpenAIResponse = {
             "status": status,
-            "created_at": self._response_created_at,
+            "temperature": Constants.DEFAULT_TEMPERATURE,
+            "top_p": Constants.DEFAULT_TOP_P,
+            "conversation": self._context.get_conversation_object(),
+            "user": "",
+            "parallel_tool_calls": True,
+            "metadata": {},
+            "object": "response",
+            "instructions": "",
         }
+        response_data["id"] = cast(str, self._response_id)
+        response_data["created_at"] = cast(datetime.datetime, self._response_created_at)
+        if agent_id:
+            response_data["agent"] = agent_id
         if status == "completed" and self._completed_output_items:
             response_data["output"] = self._completed_output_items
-        return OpenAIResponse(**response_data)
+        return response_data
 
     # High-level helpers to emit lifecycle events for streaming
     def initial_events(self) -> List[ResponseStreamEvent]:
