@@ -373,17 +373,17 @@ These tools work immediately without requiring external connections.
 
   <!-- SNIPPET:sample_agent_memory_search.memory_search_tool_declaration -->
   ```python
-    # Set scope to associate the memories with
-    # You can also use "{{$userId}}"" to take the oid of the request authentication header
-    scope = "user_123"
-    
-    tool = MemorySearchTool(
-        memory_store_name=memory_store.name,
-        scope=scope,
-        update_delay=1,  # Wait 1 second of inactivity before updating memories
-        # In a real application, set this to a higher value like 300 (5 minutes, default)
-    )
-      ```
+  # Set scope to associate the memories with
+  # You can also use "{{$userId}}"" to take the oid of the request authentication header
+  scope = "user_123"
+
+  tool = MemorySearchTool(
+      memory_store_name=memory_store.name,
+      scope=scope,
+      update_delay=1,  # Wait 1 second of inactivity before updating memories
+      # In a real application, set this to a higher value like 300 (5 minutes, default)
+  )
+  ```
   <!-- END SNIPPET -->
 
   See the full [sample_agent_memory_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_memory_search.py) showing how to create an Agent with a memory store, and use it in multiple conversations.
