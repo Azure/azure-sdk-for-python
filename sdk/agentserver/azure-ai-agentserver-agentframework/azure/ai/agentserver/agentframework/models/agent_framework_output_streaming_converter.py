@@ -609,6 +609,7 @@ class AgentFrameworkOutputStreamingConverter:
         completed_response = self.build_response(status="completed")
         events.append(
             ResponseCompletedEvent(
+                type="response.completed",
                 sequence_number=self.next_sequence(),
                 response=completed_response,
             )

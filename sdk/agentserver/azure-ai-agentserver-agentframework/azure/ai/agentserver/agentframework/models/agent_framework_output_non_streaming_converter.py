@@ -16,8 +16,6 @@ from azure.ai.agentserver.core.models import Response as OpenAIResponse
 from azure.ai.agentserver.core.models.projects import (
     ItemContentOutputText,
     ResponsesAssistantMessageItemResource,
-    create_item_content_output_text,
-    create_response,
 )
 
 from .agent_id_generator import AgentIdGenerator
@@ -41,12 +39,12 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             self._response_created_at = int(datetime.datetime.now(datetime.timezone.utc).timestamp())  # type: ignore
 
     def _build_item_content_output_text(self, text: str) -> ItemContentOutputText:
-        return create_item_content_output_text(type="output_text", text=text, annotations=[])
+        return ItemContentOutputText(type="output_text", text=text, annotations=[])
 
     def _new_assistant_message_item(self, message_text: str) -> ResponsesAssistantMessageItemResource:
         item_content = self._build_item_content_output_text(message_text)
         return ResponsesAssistantMessageItemResource(
-            id=self._context.id_generator.generate_message_id(), status="completed", content=[item_content]
+            role="assistant", type="message", id=self._context.id_generator.generate_message_id(), status="completed", content=[item_content]
         )
 
     def transform_output_for_response(self, response: AgentRunResponse) -> OpenAIResponse:
@@ -79,7 +77,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                 self._append_content_item(content, completed_items)
 
         response_data = self._construct_response_data(completed_items)
-        openai_response = create_response(response_data)
+        openai_response = OpenAIResponse(**response_data)
         logger.info(
             "OpenAIResponse built (id=%s, items=%d)",
             self._response_id,
