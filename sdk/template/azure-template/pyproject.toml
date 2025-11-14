@@ -48,3 +48,4 @@ verifytypes = true
 pyright = true
 pylint = true
 black = true
+generate = false
