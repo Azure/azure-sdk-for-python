@@ -23,7 +23,7 @@ class TestConfidentialLedgerOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2024-09-19-preview",
+            api_version="2025-06-10-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
