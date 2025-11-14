@@ -75,17 +75,17 @@ pip install openai azure-identity
 
 Entra ID is the only authentication method supported at the moment by the client.
 
-To construct a synchronous client:
+To construct a synchronous client as a context manager:
 
 ```python
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-project_client = AIProjectClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-)
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+):
 ```
 
 To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
@@ -102,10 +102,10 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
-project_client = AIProjectClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-)
+async with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+):
 ```
 
 ## Examples
@@ -121,20 +121,19 @@ See the "responses" folder in the [package samples][samples] for additional samp
 <!-- SNIPPET:sample_responses_basic.responses -->
 
 ```python
-openai_client = project_client.get_openai_client()
+with project_client.get_openai_client() as openai_client:
+    response = openai_client.responses.create(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        input="What is the size of France in square miles?",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-    input="What is the size of France in square miles?",
-)
-print(f"Response output: {response.output_text}")
-
-response = openai_client.responses.create(
-    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-    input="And what is the capital city?",
-    previous_response_id=response.id,
-)
-print(f"Response output: {response.output_text}")
+    response = openai_client.responses.create(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        input="And what is the capital city?",
+        previous_response_id=response.id,
+    )
+    print(f"Response output: {response.output_text}")
 ```
 
 <!-- END SNIPPET -->
@@ -150,44 +149,43 @@ See the "agents" folder in the [package samples][samples] for an extensive set o
 <!-- SNIPPET:sample_agent_basic.prompt_agent_basic -->
 
 ```python
-openai_client = project_client.get_openai_client()
+with project_client.get_openai_client() as openai_client:
+    agent = project_client.agents.create_version(
+        agent_name="MyAgent",
+        definition=PromptAgentDefinition(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+        ),
+    )
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-agent = project_client.agents.create_version(
-    agent_name="MyAgent",
-    definition=PromptAgentDefinition(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-        instructions="You are a helpful assistant that answers general questions",
-    ),
-)
-print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+    conversation = openai_client.conversations.create(
+        items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
+    )
+    print(f"Created conversation with initial user message (id: {conversation.id})")
 
-conversation = openai_client.conversations.create(
-    items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
-)
-print(f"Created conversation with initial user message (id: {conversation.id})")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    conversation=conversation.id,
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",
-)
-print(f"Response output: {response.output_text}")
+    openai_client.conversations.items.create(
+        conversation_id=conversation.id,
+        items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
+    )
+    print(f"Added a second user message to the conversation")
 
-openai_client.conversations.items.create(
-    conversation_id=conversation.id,
-    items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
-)
-print(f"Added a second user message to the conversation")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    conversation=conversation.id,
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",
-)
-print(f"Response output: {response.output_text}")
-
-openai_client.conversations.delete(conversation_id=conversation.id)
-print("Conversation deleted")
+    openai_client.conversations.delete(conversation_id=conversation.id)
+    print("Conversation deleted")
 
 project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 print("Agent deleted")
@@ -700,9 +698,7 @@ folder in the [package samples][samples].
 <!-- SNIPPET:sample_indexes.indexes_sample-->
 
 ```python
-print(
-    f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
-)
+print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
 index = project_client.indexes.create_or_update(
     name=index_name,
     version=index_version,
