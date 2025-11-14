@@ -374,7 +374,7 @@ These tools work immediately without requiring external connections.
   <!-- SNIPPET:sample_agent_memory_search.memory_search_tool_declaration -->
   ```python
   # Set scope to associate the memories with
-  # You can also use "{{$userId}}"" to take the oid of the request authentication header
+  # You can also use "{{$userId}}" to take the oid of the request authentication header
   scope = "user_123"
 
   tool = MemorySearchTool(

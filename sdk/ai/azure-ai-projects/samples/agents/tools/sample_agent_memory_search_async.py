@@ -26,7 +26,7 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_AGENT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for the agent,
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the Agent's AI model,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
     3) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
@@ -84,7 +84,7 @@ async def main() -> None:
         print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
         # Set scope to associate the memories with
-        # You can also use "{{$userId}}"" to take the oid of the request authentication header
+        # You can also use "{{$userId}}" to take the oid of the request authentication header
         scope = "user_123"
 
         # Create a prompt agent with memory search tool

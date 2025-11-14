@@ -85,7 +85,7 @@ async def main() -> None:
         print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
         # Set scope to associate the memories with.
-        # You can also use "{{$userId}}"" to take the oid of the request authentication header.
+        # You can also use "{{$userId}}" to take the oid of the request authentication header.
         scope = "user_123"
 
         # Extract memories from messages and add them to the memory store

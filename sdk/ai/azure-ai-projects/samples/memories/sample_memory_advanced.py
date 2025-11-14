@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to interact with the memory store to add and retrieve memory
-    using the asynchronous AIProjectClient. It uses some additional operations compared
+    using the synchronous AIProjectClient. It uses some additional operations compared
     to the basic memory sample.
 
     See also /samples/agents/tools/sample_agent_memory_search.py that shows
@@ -81,7 +81,7 @@ with (
     print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
     # Set scope to associate the memories with.
-    # You can also use "{{$userId}}"" to take the oid of the request authentication header.
+    # You can also use "{{$userId}}" to take the oid of the request authentication header.
     scope = "user_123"
 
     # Extract memories from messages and add them to the memory store

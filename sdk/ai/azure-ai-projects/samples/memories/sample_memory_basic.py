@@ -78,7 +78,7 @@ with (
         print(f"  - Embedding model: {memory_store.definition.embedding_model}")
 
     # Set scope to associate the memories with
-    # You can also use "{{$userId}}"" to take the oid of the request authentication header
+    # You can also use "{{$userId}}" to take the oid of the request authentication header
     scope = "user_123"
 
     # Add memories to the memory store
