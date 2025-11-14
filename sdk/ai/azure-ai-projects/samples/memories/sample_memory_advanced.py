@@ -6,7 +6,9 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to interact with the memory store to add and retrieve memory.
+    This sample demonstrates how to interact with the memory store to add and retrieve memory
+    using the asynchronous AIProjectClient. It uses some additional operations compared
+    to the basic memory sample.
 
     See also /samples/agents/tools/sample_agent_memory_search.py that shows
     how to use the Memory Search Tool in a prompt agent.
