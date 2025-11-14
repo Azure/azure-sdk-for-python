@@ -8,8 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
-import urllib.parse
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -456,7 +455,8 @@ from .._configuration import WebSiteManagementClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class WebAppsOperations:  # pylint: disable=too-many-public-methods
@@ -491,7 +491,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -514,18 +514,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -548,7 +537,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -576,7 +568,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -601,18 +593,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -635,7 +616,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -667,7 +651,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.Site] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -689,7 +673,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Site", pipeline_response.http_response)
@@ -713,7 +700,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -752,7 +739,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -849,7 +839,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Site] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -930,7 +920,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
@@ -954,7 +944,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1059,7 +1052,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Site] = kwargs.pop("cls", None)
 
@@ -1093,7 +1086,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Site", pipeline_response.http_response)
@@ -1132,7 +1128,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CustomHostnameAnalysisResult] = kwargs.pop("cls", None)
 
         _request = build_analyze_custom_hostname_request(
@@ -1155,7 +1151,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CustomHostnameAnalysisResult", pipeline_response.http_response)
@@ -1255,7 +1254,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -1289,7 +1288,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1383,7 +1385,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackupItem] = kwargs.pop("cls", None)
 
@@ -1417,7 +1419,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
@@ -1444,7 +1449,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.BackupItemCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1469,18 +1474,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1503,7 +1497,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1539,7 +1536,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.BackupItem] = kwargs.pop("cls", None)
 
         _request = build_get_backup_status_request(
@@ -1562,7 +1559,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
@@ -1599,7 +1599,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_backup_request(
@@ -1622,7 +1622,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1739,7 +1742,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackupItem] = kwargs.pop("cls", None)
 
@@ -1774,7 +1777,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
@@ -1803,7 +1809,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -1843,7 +1849,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -1944,7 +1953,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -2007,7 +2016,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PublishingCredentialsPoliciesCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2032,18 +2041,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -2066,7 +2064,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2100,7 +2101,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmPublishingCredentialsPoliciesEntity] = kwargs.pop("cls", None)
 
         _request = build_get_ftp_allowed_request(
@@ -2122,7 +2123,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
@@ -2224,7 +2228,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CsmPublishingCredentialsPoliciesEntity] = kwargs.pop("cls", None)
 
@@ -2260,7 +2264,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
@@ -2297,7 +2304,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmPublishingCredentialsPoliciesEntity] = kwargs.pop("cls", None)
 
         _request = build_get_scm_allowed_request(
@@ -2319,7 +2326,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
@@ -2421,7 +2431,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CsmPublishingCredentialsPoliciesEntity] = kwargs.pop("cls", None)
 
@@ -2457,7 +2467,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
@@ -2486,7 +2499,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteConfigResourceCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2511,18 +2524,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -2545,7 +2547,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2642,7 +2647,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
@@ -2676,7 +2681,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -2713,7 +2721,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
         _request = build_list_application_settings_request(
@@ -2735,7 +2743,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -2835,7 +2846,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteAuthSettings] = kwargs.pop("cls", None)
 
@@ -2869,7 +2880,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettings", pipeline_response.http_response)
@@ -2904,7 +2918,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteAuthSettings] = kwargs.pop("cls", None)
 
         _request = build_get_auth_settings_request(
@@ -2926,7 +2940,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettings", pipeline_response.http_response)
@@ -2963,7 +2980,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteAuthSettingsV2] = kwargs.pop("cls", None)
 
         _request = build_get_auth_settings_v2_without_secrets_request(
@@ -2985,7 +3002,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
@@ -3088,7 +3108,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteAuthSettingsV2] = kwargs.pop("cls", None)
 
@@ -3122,7 +3142,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
@@ -3159,7 +3182,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteAuthSettingsV2] = kwargs.pop("cls", None)
 
         _request = build_get_auth_settings_v2_request(
@@ -3181,7 +3204,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
@@ -3282,7 +3308,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureStoragePropertyDictionaryResource] = kwargs.pop("cls", None)
 
@@ -3316,7 +3342,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response.http_response)
@@ -3353,7 +3382,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.AzureStoragePropertyDictionaryResource] = kwargs.pop("cls", None)
 
         _request = build_list_azure_storage_accounts_request(
@@ -3375,7 +3404,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response.http_response)
@@ -3471,7 +3503,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackupRequest] = kwargs.pop("cls", None)
 
@@ -3505,7 +3537,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupRequest", pipeline_response.http_response)
@@ -3540,7 +3575,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_backup_configuration_request(
@@ -3562,7 +3597,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3595,7 +3633,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.BackupRequest] = kwargs.pop("cls", None)
 
         _request = build_get_backup_configuration_request(
@@ -3617,7 +3655,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupRequest", pipeline_response.http_response)
@@ -3646,7 +3687,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ApiKVReferenceCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3671,18 +3712,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3705,7 +3735,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3741,7 +3774,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ApiKVReference] = kwargs.pop("cls", None)
 
         _request = build_get_app_setting_key_vault_reference_request(
@@ -3764,7 +3797,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ApiKVReference", pipeline_response.http_response)
@@ -3793,7 +3829,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ApiKVReferenceCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3818,18 +3854,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3852,7 +3877,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3888,7 +3916,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ApiKVReference] = kwargs.pop("cls", None)
 
         _request = build_get_site_connection_string_key_vault_reference_request(
@@ -3911,7 +3939,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ApiKVReference", pipeline_response.http_response)
@@ -4013,7 +4044,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionStringDictionary] = kwargs.pop("cls", None)
 
@@ -4047,7 +4078,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response.http_response)
@@ -4084,7 +4118,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ConnectionStringDictionary] = kwargs.pop("cls", None)
 
         _request = build_list_connection_strings_request(
@@ -4106,7 +4140,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response.http_response)
@@ -4143,7 +4180,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteLogsConfig] = kwargs.pop("cls", None)
 
         _request = build_get_diagnostic_logs_configuration_request(
@@ -4165,7 +4202,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteLogsConfig", pipeline_response.http_response)
@@ -4268,7 +4308,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteLogsConfig] = kwargs.pop("cls", None)
 
@@ -4302,7 +4342,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteLogsConfig", pipeline_response.http_response)
@@ -4398,7 +4441,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
@@ -4432,7 +4475,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -4467,7 +4513,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
         _request = build_list_metadata_request(
@@ -4489,7 +4535,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -4513,7 +4562,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_list_publishing_credentials_request(
@@ -4540,7 +4589,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -4569,7 +4621,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.User] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -4696,7 +4748,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PushSettings] = kwargs.pop("cls", None)
 
@@ -4730,7 +4782,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PushSettings", pipeline_response.http_response)
@@ -4765,7 +4820,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PushSettings] = kwargs.pop("cls", None)
 
         _request = build_list_site_push_settings_request(
@@ -4787,7 +4842,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PushSettings", pipeline_response.http_response)
@@ -4825,7 +4883,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SlotConfigNamesResource] = kwargs.pop("cls", None)
 
         _request = build_list_slot_configuration_names_request(
@@ -4847,7 +4905,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SlotConfigNamesResource", pipeline_response.http_response)
@@ -4955,7 +5016,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SlotConfigNamesResource] = kwargs.pop("cls", None)
 
@@ -4989,7 +5050,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SlotConfigNamesResource", pipeline_response.http_response)
@@ -5026,7 +5090,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteConfigResource] = kwargs.pop("cls", None)
 
         _request = build_get_configuration_request(
@@ -5048,7 +5112,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
@@ -5148,7 +5215,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteConfigResource] = kwargs.pop("cls", None)
 
@@ -5182,7 +5249,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
@@ -5282,7 +5352,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteConfigResource] = kwargs.pop("cls", None)
 
@@ -5316,7 +5386,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
@@ -5349,7 +5422,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteConfigurationSnapshotInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -5374,18 +5447,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5408,7 +5470,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5444,7 +5509,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteConfigResource] = kwargs.pop("cls", None)
 
         _request = build_get_configuration_snapshot_request(
@@ -5467,7 +5532,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
@@ -5506,7 +5574,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_recover_site_configuration_snapshot_request(
@@ -5529,7 +5597,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5562,7 +5633,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_get_web_site_container_logs_request(
@@ -5627,7 +5698,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_get_container_logs_zip_request(
@@ -5684,7 +5755,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ContinuousWebJobCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -5709,18 +5780,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5743,7 +5803,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5779,7 +5842,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ContinuousWebJob] = kwargs.pop("cls", None)
 
         _request = build_get_continuous_web_job_request(
@@ -5802,7 +5865,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ContinuousWebJob", pipeline_response.http_response)
@@ -5841,7 +5907,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_continuous_web_job_request(
@@ -5864,7 +5930,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5899,7 +5968,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_start_continuous_web_job_request(
@@ -5922,7 +5991,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5957,7 +6029,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_continuous_web_job_request(
@@ -5980,7 +6052,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -6005,7 +6080,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmDeploymentStatusCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -6030,18 +6105,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6064,7 +6128,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6085,7 +6152,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_get_production_site_deployment_status_request(
@@ -6113,7 +6180,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -6145,7 +6215,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmDeploymentStatus] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -6206,7 +6276,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.DeploymentCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -6231,18 +6301,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6265,7 +6324,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6299,7 +6361,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
 
         _request = build_get_deployment_request(
@@ -6322,7 +6384,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Deployment", pipeline_response.http_response)
@@ -6431,7 +6496,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
 
@@ -6466,7 +6531,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Deployment", pipeline_response.http_response)
@@ -6503,7 +6571,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_deployment_request(
@@ -6526,7 +6594,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -6562,7 +6633,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
 
         _request = build_list_deployment_log_request(
@@ -6585,7 +6656,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Deployment", pipeline_response.http_response)
@@ -6689,7 +6763,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RestoreRequest] = kwargs.pop("cls", None)
 
@@ -6723,7 +6797,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RestoreRequest", pipeline_response.http_response)
@@ -6752,7 +6829,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.IdentifierCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -6777,18 +6854,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6811,7 +6877,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6847,7 +6916,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.Identifier] = kwargs.pop("cls", None)
 
         _request = build_get_domain_ownership_identifier_request(
@@ -6870,7 +6939,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Identifier", pipeline_response.http_response)
@@ -6984,7 +7056,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Identifier] = kwargs.pop("cls", None)
 
@@ -7019,7 +7091,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Identifier", pipeline_response.http_response)
@@ -7058,7 +7133,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_domain_ownership_identifier_request(
@@ -7081,7 +7156,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -7191,7 +7269,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Identifier] = kwargs.pop("cls", None)
 
@@ -7226,7 +7304,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Identifier", pipeline_response.http_response)
@@ -7261,7 +7342,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
 
         _request = build_get_ms_deploy_status_request(
@@ -7283,7 +7364,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
@@ -7307,7 +7391,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -7346,7 +7430,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -7437,7 +7524,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -7506,7 +7593,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MSDeployLog] = kwargs.pop("cls", None)
 
         _request = build_get_ms_deploy_log_request(
@@ -7528,7 +7615,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MSDeployLog", pipeline_response.http_response)
@@ -7564,7 +7654,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_get_one_deploy_status_request(
@@ -7586,7 +7676,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("object", pipeline_response.http_response)
@@ -7621,7 +7714,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_create_one_deploy_operation_request(
@@ -7643,7 +7736,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("object", pipeline_response.http_response)
@@ -7672,7 +7768,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.FunctionEnvelopeCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -7697,18 +7793,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -7731,7 +7816,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -7763,7 +7851,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
 
         _request = build_get_functions_admin_token_request(
@@ -7785,7 +7873,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("str", pipeline_response.http_response)
@@ -7824,7 +7915,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.FunctionEnvelope] = kwargs.pop("cls", None)
 
         _request = build_get_function_request(
@@ -7847,7 +7938,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("FunctionEnvelope", pipeline_response.http_response)
@@ -7876,7 +7970,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -7916,7 +8010,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -8020,7 +8117,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FunctionEnvelope] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -8092,7 +8189,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_function_request(
@@ -8115,7 +8212,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -8229,7 +8329,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.KeyInfo] = kwargs.pop("cls", None)
 
@@ -8265,7 +8365,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("KeyInfo", pipeline_response.http_response)
@@ -8306,7 +8409,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_function_secret_request(
@@ -8330,7 +8433,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -8365,7 +8471,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
         _request = build_list_function_keys_request(
@@ -8388,7 +8494,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -8427,7 +8536,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.FunctionSecrets] = kwargs.pop("cls", None)
 
         _request = build_list_function_secrets_request(
@@ -8450,7 +8559,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("FunctionSecrets", pipeline_response.http_response)
@@ -8485,7 +8597,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HostKeys] = kwargs.pop("cls", None)
 
         _request = build_list_host_keys_request(
@@ -8507,7 +8619,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HostKeys", pipeline_response.http_response)
@@ -8542,7 +8657,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_list_sync_status_request(
@@ -8564,7 +8679,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -8595,7 +8713,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_sync_functions_request(
@@ -8617,7 +8735,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -8731,7 +8852,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.KeyInfo] = kwargs.pop("cls", None)
 
@@ -8767,7 +8888,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("KeyInfo", pipeline_response.http_response)
@@ -8808,7 +8932,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_host_secret_request(
@@ -8832,7 +8956,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -8857,7 +8984,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HostNameBindingCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -8882,18 +9009,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -8916,7 +9032,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -8952,7 +9071,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HostNameBinding] = kwargs.pop("cls", None)
 
         _request = build_get_host_name_binding_request(
@@ -8975,7 +9094,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HostNameBinding", pipeline_response.http_response)
@@ -9086,7 +9208,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HostNameBinding] = kwargs.pop("cls", None)
 
@@ -9121,7 +9243,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HostNameBinding", pipeline_response.http_response)
@@ -9160,7 +9285,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_host_name_binding_request(
@@ -9183,7 +9308,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -9220,7 +9348,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HybridConnection] = kwargs.pop("cls", None)
 
         _request = build_get_hybrid_connection_request(
@@ -9244,7 +9372,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
@@ -9362,7 +9493,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HybridConnection] = kwargs.pop("cls", None)
 
@@ -9398,7 +9529,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
@@ -9439,7 +9573,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_hybrid_connection_request(
@@ -9463,7 +9597,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -9577,7 +9714,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HybridConnection] = kwargs.pop("cls", None)
 
@@ -9613,7 +9750,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
@@ -9650,7 +9790,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HybridConnection] = kwargs.pop("cls", None)
 
         _request = build_list_hybrid_connections_request(
@@ -9672,7 +9812,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
@@ -9710,7 +9853,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.RelayServiceConnectionEntity] = kwargs.pop("cls", None)
 
         _request = build_list_relay_service_connections_request(
@@ -9732,7 +9875,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
@@ -9771,7 +9917,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.RelayServiceConnectionEntity] = kwargs.pop("cls", None)
 
         _request = build_get_relay_service_connection_request(
@@ -9794,7 +9940,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
@@ -9906,7 +10055,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RelayServiceConnectionEntity] = kwargs.pop("cls", None)
 
@@ -9941,7 +10090,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
@@ -9980,7 +10132,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_relay_service_connection_request(
@@ -10003,7 +10155,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10111,7 +10266,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RelayServiceConnectionEntity] = kwargs.pop("cls", None)
 
@@ -10146,7 +10301,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
@@ -10176,7 +10334,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebAppInstanceStatusCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -10201,18 +10359,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -10235,7 +10382,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -10271,7 +10421,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebSiteInstanceStatus] = kwargs.pop("cls", None)
 
         _request = build_get_instance_info_request(
@@ -10294,7 +10444,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("WebSiteInstanceStatus", pipeline_response.http_response)
@@ -10333,7 +10486,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
 
         _request = build_get_instance_ms_deploy_status_request(
@@ -10356,7 +10509,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
@@ -10385,7 +10541,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -10425,7 +10581,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -10529,7 +10688,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -10603,7 +10762,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MSDeployLog] = kwargs.pop("cls", None)
 
         _request = build_get_instance_ms_deploy_log_request(
@@ -10626,7 +10785,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MSDeployLog", pipeline_response.http_response)
@@ -10660,7 +10822,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -10686,18 +10848,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -10720,7 +10871,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -10760,7 +10914,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessInfo] = kwargs.pop("cls", None)
 
         _request = build_get_instance_process_request(
@@ -10784,7 +10938,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ProcessInfo", pipeline_response.http_response)
@@ -10828,7 +10985,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_instance_process_request(
@@ -10852,7 +11009,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10891,7 +11051,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_get_instance_process_dump_request(
@@ -10920,7 +11080,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -10956,7 +11119,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessModuleInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -10983,18 +11146,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -11017,7 +11169,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -11059,7 +11214,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessModuleInfo] = kwargs.pop("cls", None)
 
         _request = build_get_instance_process_module_request(
@@ -11084,7 +11239,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ProcessModuleInfo", pipeline_response.http_response)
@@ -11119,7 +11277,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessThreadInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -11146,18 +11304,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -11180,7 +11327,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -11212,7 +11362,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteCloneability] = kwargs.pop("cls", None)
 
         _request = build_is_cloneable_request(
@@ -11234,7 +11384,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteCloneability", pipeline_response.http_response)
@@ -11263,7 +11416,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.BackupItemCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -11288,18 +11441,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -11322,7 +11464,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -11356,7 +11501,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.FunctionSecrets] = kwargs.pop("cls", None)
 
         _request = build_list_sync_function_triggers_request(
@@ -11378,7 +11523,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("FunctionSecrets", pipeline_response.http_response)
@@ -11413,7 +11561,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_update_machine_key_request(
@@ -11435,7 +11583,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("object", pipeline_response.http_response)
@@ -11464,7 +11615,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -11504,7 +11655,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -11608,7 +11762,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StorageMigrationResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -11671,7 +11825,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -11710,7 +11864,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -11805,7 +11962,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Operation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -11878,7 +12035,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MigrateMySqlStatus] = kwargs.pop("cls", None)
 
         _request = build_get_migrate_my_sql_status_request(
@@ -11900,7 +12057,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MigrateMySqlStatus", pipeline_response.http_response)
@@ -11937,7 +12097,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SwiftVirtualNetwork] = kwargs.pop("cls", None)
 
         _request = build_get_swift_virtual_network_connection_request(
@@ -11959,7 +12119,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
@@ -12079,7 +12242,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SwiftVirtualNetwork] = kwargs.pop("cls", None)
 
@@ -12113,7 +12276,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
@@ -12148,7 +12314,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_swift_virtual_network_request(
@@ -12170,7 +12336,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12286,7 +12455,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SwiftVirtualNetwork] = kwargs.pop("cls", None)
 
@@ -12320,7 +12489,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
@@ -12359,7 +12531,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.NetworkFeatures] = kwargs.pop("cls", None)
 
         _request = build_list_network_features_request(
@@ -12382,7 +12554,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("NetworkFeatures", pipeline_response.http_response)
@@ -12422,7 +12597,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
 
         _request = build_get_network_trace_operation_request(
@@ -12445,7 +12620,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
@@ -12494,7 +12672,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
 
         _request = build_start_web_site_network_trace_request(
@@ -12519,7 +12697,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("str", pipeline_response.http_response)
@@ -12549,7 +12730,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_start_web_site_network_trace_operation_request(
@@ -12579,7 +12760,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -12621,7 +12805,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -12690,7 +12874,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_web_site_network_trace_request(
@@ -12712,7 +12896,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12748,7 +12935,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
 
         _request = build_get_network_traces_request(
@@ -12771,7 +12958,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
@@ -12811,7 +13001,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
 
         _request = build_get_network_trace_operation_v2_request(
@@ -12834,7 +13024,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
@@ -12874,7 +13067,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
 
         _request = build_get_network_traces_v2_request(
@@ -12897,7 +13090,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
@@ -12933,7 +13129,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_generate_new_site_publishing_password_request(
@@ -12955,7 +13151,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12984,7 +13183,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PerfMonCounterCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -13010,18 +13209,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -13044,7 +13232,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -13078,7 +13269,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SitePhpErrorLogFlag] = kwargs.pop("cls", None)
 
         _request = build_get_site_php_error_log_flag_request(
@@ -13100,7 +13291,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SitePhpErrorLogFlag", pipeline_response.http_response)
@@ -13135,7 +13329,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PremierAddOn] = kwargs.pop("cls", None)
 
         _request = build_list_premier_add_ons_request(
@@ -13157,7 +13351,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
@@ -13196,7 +13393,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PremierAddOn] = kwargs.pop("cls", None)
 
         _request = build_get_premier_add_on_request(
@@ -13219,7 +13416,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
@@ -13328,7 +13528,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PremierAddOn] = kwargs.pop("cls", None)
 
@@ -13363,7 +13563,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
@@ -13402,7 +13605,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_premier_add_on_request(
@@ -13425,7 +13628,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -13530,7 +13736,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PremierAddOn] = kwargs.pop("cls", None)
 
@@ -13565,7 +13771,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
@@ -13602,7 +13811,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PrivateAccess] = kwargs.pop("cls", None)
 
         _request = build_get_private_access_request(
@@ -13624,7 +13833,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateAccess", pipeline_response.http_response)
@@ -13726,7 +13938,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateAccess] = kwargs.pop("cls", None)
 
@@ -13760,7 +13972,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateAccess", pipeline_response.http_response)
@@ -13791,7 +14006,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PrivateEndpointConnectionCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -13816,18 +14031,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -13850,7 +14054,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -13886,7 +14093,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.RemotePrivateEndpointConnectionARMResource] = kwargs.pop("cls", None)
 
         _request = build_get_private_endpoint_connection_request(
@@ -13909,7 +14116,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response.http_response)
@@ -13938,7 +14148,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -13978,7 +14188,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -14087,7 +14300,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RemotePrivateEndpointConnectionARMResource] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -14148,7 +14361,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_private_endpoint_connection_request(
@@ -14176,7 +14389,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -14207,7 +14423,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -14274,7 +14490,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PrivateLinkResourcesWrapper] = kwargs.pop("cls", None)
 
         _request = build_get_private_link_resources_request(
@@ -14296,7 +14512,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateLinkResourcesWrapper", pipeline_response.http_response)
@@ -14327,7 +14546,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -14352,18 +14571,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -14386,7 +14594,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -14423,7 +14634,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessInfo] = kwargs.pop("cls", None)
 
         _request = build_get_process_request(
@@ -14446,7 +14657,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ProcessInfo", pipeline_response.http_response)
@@ -14485,7 +14699,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_process_request(
@@ -14508,7 +14722,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -14544,7 +14761,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_get_process_dump_request(
@@ -14572,7 +14789,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -14605,7 +14825,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessModuleInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -14631,18 +14851,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -14665,7 +14874,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -14704,7 +14916,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessModuleInfo] = kwargs.pop("cls", None)
 
         _request = build_get_process_module_request(
@@ -14728,7 +14940,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ProcessModuleInfo", pipeline_response.http_response)
@@ -14760,7 +14975,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessThreadInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -14786,18 +15001,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -14820,7 +15024,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -14846,7 +15053,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PublicCertificateCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -14871,18 +15078,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -14905,7 +15101,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -14941,7 +15140,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PublicCertificate] = kwargs.pop("cls", None)
 
         _request = build_get_public_certificate_request(
@@ -14964,7 +15163,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PublicCertificate", pipeline_response.http_response)
@@ -15075,7 +15277,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicCertificate] = kwargs.pop("cls", None)
 
@@ -15110,7 +15312,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PublicCertificate", pipeline_response.http_response)
@@ -15149,7 +15354,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_public_certificate_request(
@@ -15172,7 +15377,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15272,7 +15480,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -15311,7 +15519,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -15348,7 +15559,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_reset_production_slot_config_request(
@@ -15370,7 +15581,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15415,7 +15629,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_restart_request(
@@ -15439,7 +15653,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15459,7 +15676,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -15498,7 +15715,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -15586,7 +15806,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -15644,7 +15864,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -15683,7 +15903,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -15775,7 +15998,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -15833,7 +16056,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -15872,7 +16095,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -15967,7 +16193,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -16026,7 +16252,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteContainerCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -16051,18 +16277,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -16085,7 +16300,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -16121,7 +16339,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteContainer] = kwargs.pop("cls", None)
 
         _request = build_get_site_container_request(
@@ -16144,7 +16362,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteContainer", pipeline_response.http_response)
@@ -16252,7 +16473,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteContainer] = kwargs.pop("cls", None)
 
@@ -16287,7 +16508,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteContainer", pipeline_response.http_response)
@@ -16326,7 +16550,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_site_container_request(
@@ -16349,7 +16573,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -16374,7 +16601,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteExtensionInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -16399,18 +16626,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -16433,7 +16649,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -16469,7 +16688,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteExtensionInfo] = kwargs.pop("cls", None)
 
         _request = build_get_site_extension_request(
@@ -16492,7 +16711,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteExtensionInfo", pipeline_response.http_response)
@@ -16516,7 +16738,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_install_site_extension_request(
@@ -16544,7 +16766,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -16576,7 +16801,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteExtensionInfo] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16647,7 +16872,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_site_extension_request(
@@ -16670,7 +16895,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -16693,7 +16921,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -16718,18 +16946,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -16752,7 +16969,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -16787,7 +17007,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.Site] = kwargs.pop("cls", None)
 
         _request = build_get_slot_request(
@@ -16810,7 +17030,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Site", pipeline_response.http_response)
@@ -16839,7 +17062,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -16879,7 +17102,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -16992,7 +17218,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Site] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -17078,7 +17304,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_slot_request(
@@ -17103,7 +17329,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17220,7 +17449,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Site] = kwargs.pop("cls", None)
 
@@ -17255,7 +17484,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Site", pipeline_response.http_response)
@@ -17297,7 +17529,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CustomHostnameAnalysisResult] = kwargs.pop("cls", None)
 
         _request = build_analyze_custom_hostname_slot_request(
@@ -17321,7 +17553,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CustomHostnameAnalysisResult", pipeline_response.http_response)
@@ -17433,7 +17668,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -17468,7 +17703,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17578,7 +17816,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackupItem] = kwargs.pop("cls", None)
 
@@ -17613,7 +17851,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
@@ -17645,7 +17886,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.BackupItemCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -17671,18 +17912,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -17705,7 +17935,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -17744,7 +17977,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.BackupItem] = kwargs.pop("cls", None)
 
         _request = build_get_backup_status_slot_request(
@@ -17768,7 +18001,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
@@ -17810,7 +18046,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_backup_slot_request(
@@ -17834,7 +18070,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17963,7 +18202,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackupItem] = kwargs.pop("cls", None)
 
@@ -17999,7 +18238,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
@@ -18029,7 +18271,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -18070,7 +18312,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -18183,7 +18428,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -18249,7 +18494,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PublishingCredentialsPoliciesCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -18275,18 +18520,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -18309,7 +18543,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -18345,7 +18582,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmPublishingCredentialsPoliciesEntity] = kwargs.pop("cls", None)
 
         _request = build_get_ftp_allowed_slot_request(
@@ -18368,7 +18605,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
@@ -18479,7 +18719,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CsmPublishingCredentialsPoliciesEntity] = kwargs.pop("cls", None)
 
@@ -18516,7 +18756,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
@@ -18555,7 +18798,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmPublishingCredentialsPoliciesEntity] = kwargs.pop("cls", None)
 
         _request = build_get_scm_allowed_slot_request(
@@ -18578,7 +18821,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
@@ -18689,7 +18935,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CsmPublishingCredentialsPoliciesEntity] = kwargs.pop("cls", None)
 
@@ -18726,7 +18972,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
@@ -18758,7 +19007,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteConfigResourceCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -18784,18 +19033,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -18818,7 +19056,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -18927,7 +19168,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
@@ -18962,7 +19203,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -19002,7 +19246,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
         _request = build_list_application_settings_slot_request(
@@ -19025,7 +19269,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -19137,7 +19384,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteAuthSettings] = kwargs.pop("cls", None)
 
@@ -19172,7 +19419,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettings", pipeline_response.http_response)
@@ -19212,7 +19462,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteAuthSettings] = kwargs.pop("cls", None)
 
         _request = build_get_auth_settings_slot_request(
@@ -19235,7 +19485,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettings", pipeline_response.http_response)
@@ -19275,7 +19528,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteAuthSettingsV2] = kwargs.pop("cls", None)
 
         _request = build_get_auth_settings_v2_without_secrets_slot_request(
@@ -19298,7 +19551,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
@@ -19413,7 +19669,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteAuthSettingsV2] = kwargs.pop("cls", None)
 
@@ -19448,7 +19704,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
@@ -19488,7 +19747,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteAuthSettingsV2] = kwargs.pop("cls", None)
 
         _request = build_get_auth_settings_v2_slot_request(
@@ -19511,7 +19770,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
@@ -19624,7 +19886,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureStoragePropertyDictionaryResource] = kwargs.pop("cls", None)
 
@@ -19659,7 +19921,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response.http_response)
@@ -19699,7 +19964,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.AzureStoragePropertyDictionaryResource] = kwargs.pop("cls", None)
 
         _request = build_list_azure_storage_accounts_slot_request(
@@ -19722,7 +19987,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response.http_response)
@@ -19834,7 +20102,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackupRequest] = kwargs.pop("cls", None)
 
@@ -19869,7 +20137,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupRequest", pipeline_response.http_response)
@@ -19909,7 +20180,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_backup_configuration_slot_request(
@@ -19932,7 +20203,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -19968,7 +20242,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.BackupRequest] = kwargs.pop("cls", None)
 
         _request = build_get_backup_configuration_slot_request(
@@ -19991,7 +20265,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BackupRequest", pipeline_response.http_response)
@@ -20022,7 +20299,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ApiKVReferenceCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -20048,18 +20325,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -20082,7 +20348,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -20120,7 +20389,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ApiKVReference] = kwargs.pop("cls", None)
 
         _request = build_get_app_setting_key_vault_reference_slot_request(
@@ -20144,7 +20413,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ApiKVReference", pipeline_response.http_response)
@@ -20175,7 +20447,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ApiKVReferenceCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -20201,18 +20473,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -20235,7 +20496,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -20273,7 +20537,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ApiKVReference] = kwargs.pop("cls", None)
 
         _request = build_get_site_connection_string_key_vault_reference_slot_request(
@@ -20297,7 +20561,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ApiKVReference", pipeline_response.http_response)
@@ -20411,7 +20678,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionStringDictionary] = kwargs.pop("cls", None)
 
@@ -20446,7 +20713,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response.http_response)
@@ -20486,7 +20756,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ConnectionStringDictionary] = kwargs.pop("cls", None)
 
         _request = build_list_connection_strings_slot_request(
@@ -20509,7 +20779,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response.http_response)
@@ -20549,7 +20822,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteLogsConfig] = kwargs.pop("cls", None)
 
         _request = build_get_diagnostic_logs_configuration_slot_request(
@@ -20572,7 +20845,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteLogsConfig", pipeline_response.http_response)
@@ -20687,7 +20963,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteLogsConfig] = kwargs.pop("cls", None)
 
@@ -20722,7 +20998,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteLogsConfig", pipeline_response.http_response)
@@ -20834,7 +21113,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
@@ -20869,7 +21148,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -20909,7 +21191,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
         _request = build_list_metadata_slot_request(
@@ -20932,7 +21214,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -20956,7 +21241,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_list_publishing_credentials_slot_request(
@@ -20984,7 +21269,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -21016,7 +21304,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.User] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -21160,7 +21448,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PushSettings] = kwargs.pop("cls", None)
 
@@ -21195,7 +21483,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PushSettings", pipeline_response.http_response)
@@ -21235,7 +21526,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PushSettings] = kwargs.pop("cls", None)
 
         _request = build_list_site_push_settings_slot_request(
@@ -21258,7 +21549,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PushSettings", pipeline_response.http_response)
@@ -21300,7 +21594,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteConfigResource] = kwargs.pop("cls", None)
 
         _request = build_get_configuration_slot_request(
@@ -21323,7 +21617,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
@@ -21435,7 +21732,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteConfigResource] = kwargs.pop("cls", None)
 
@@ -21470,7 +21767,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
@@ -21582,7 +21882,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteConfigResource] = kwargs.pop("cls", None)
 
@@ -21617,7 +21917,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
@@ -21653,7 +21956,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteConfigurationSnapshotInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -21679,18 +21982,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -21713,7 +22005,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -21752,7 +22047,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteConfigResource] = kwargs.pop("cls", None)
 
         _request = build_get_configuration_snapshot_slot_request(
@@ -21776,7 +22071,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
@@ -21818,7 +22116,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_recover_site_configuration_snapshot_slot_request(
@@ -21842,7 +22140,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -21878,7 +22179,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_get_web_site_container_logs_slot_request(
@@ -21947,7 +22248,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_get_container_logs_zip_slot_request(
@@ -22008,7 +22309,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ContinuousWebJobCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -22034,18 +22335,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -22068,7 +22358,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -22107,7 +22400,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ContinuousWebJob] = kwargs.pop("cls", None)
 
         _request = build_get_continuous_web_job_slot_request(
@@ -22131,7 +22424,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ContinuousWebJob", pipeline_response.http_response)
@@ -22173,7 +22469,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_continuous_web_job_slot_request(
@@ -22197,7 +22493,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22235,7 +22534,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_start_continuous_web_job_slot_request(
@@ -22259,7 +22558,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22297,7 +22599,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_continuous_web_job_slot_request(
@@ -22321,7 +22623,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22349,7 +22654,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmDeploymentStatusCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -22375,18 +22680,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -22409,7 +22703,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -22430,7 +22727,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_get_slot_site_deployment_status_slot_request(
@@ -22459,7 +22756,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -22494,7 +22794,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmDeploymentStatus] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -22559,7 +22859,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.DeploymentCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -22585,18 +22885,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -22619,7 +22908,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -22658,7 +22950,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
 
         _request = build_get_deployment_slot_request(
@@ -22682,7 +22974,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Deployment", pipeline_response.http_response)
@@ -22803,7 +23098,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
 
@@ -22839,7 +23134,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Deployment", pipeline_response.http_response)
@@ -22881,7 +23179,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_deployment_slot_request(
@@ -22905,7 +23203,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22944,7 +23245,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
 
         _request = build_list_deployment_log_slot_request(
@@ -22968,7 +23269,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Deployment", pipeline_response.http_response)
@@ -23088,7 +23392,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RestoreRequest] = kwargs.pop("cls", None)
 
@@ -23123,7 +23427,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RestoreRequest", pipeline_response.http_response)
@@ -23155,7 +23462,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.IdentifierCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -23181,18 +23488,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -23215,7 +23511,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -23254,7 +23553,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.Identifier] = kwargs.pop("cls", None)
 
         _request = build_get_domain_ownership_identifier_slot_request(
@@ -23278,7 +23577,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Identifier", pipeline_response.http_response)
@@ -23404,7 +23706,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Identifier] = kwargs.pop("cls", None)
 
@@ -23440,7 +23742,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Identifier", pipeline_response.http_response)
@@ -23482,7 +23787,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_domain_ownership_identifier_slot_request(
@@ -23506,7 +23811,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23628,7 +23936,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Identifier] = kwargs.pop("cls", None)
 
@@ -23664,7 +23972,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Identifier", pipeline_response.http_response)
@@ -23704,7 +24015,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
 
         _request = build_get_ms_deploy_status_slot_request(
@@ -23727,7 +24038,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
@@ -23756,7 +24070,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -23796,7 +24110,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -23903,7 +24220,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -23978,7 +24295,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MSDeployLog] = kwargs.pop("cls", None)
 
         _request = build_get_ms_deploy_log_slot_request(
@@ -24001,7 +24318,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MSDeployLog", pipeline_response.http_response)
@@ -24032,7 +24352,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.FunctionEnvelopeCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -24058,18 +24378,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -24092,7 +24401,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -24129,7 +24441,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
 
         _request = build_get_functions_admin_token_slot_request(
@@ -24152,7 +24464,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("str", pipeline_response.http_response)
@@ -24193,7 +24508,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.FunctionEnvelope] = kwargs.pop("cls", None)
 
         _request = build_get_instance_function_slot_request(
@@ -24217,7 +24532,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("FunctionEnvelope", pipeline_response.http_response)
@@ -24247,7 +24565,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -24288,7 +24606,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -24401,7 +24722,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FunctionEnvelope] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -24478,7 +24799,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_instance_function_slot_request(
@@ -24502,7 +24823,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24625,7 +24949,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.KeyInfo] = kwargs.pop("cls", None)
 
@@ -24662,7 +24986,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("KeyInfo", pipeline_response.http_response)
@@ -24705,7 +25032,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_function_secret_slot_request(
@@ -24730,7 +25057,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24767,7 +25097,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.StringDictionary] = kwargs.pop("cls", None)
 
         _request = build_list_function_keys_slot_request(
@@ -24791,7 +25121,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
@@ -24832,7 +25165,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.FunctionSecrets] = kwargs.pop("cls", None)
 
         _request = build_list_function_secrets_slot_request(
@@ -24856,7 +25189,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("FunctionSecrets", pipeline_response.http_response)
@@ -24895,7 +25231,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HostKeys] = kwargs.pop("cls", None)
 
         _request = build_list_host_keys_slot_request(
@@ -24918,7 +25254,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HostKeys", pipeline_response.http_response)
@@ -24955,7 +25294,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_list_sync_status_slot_request(
@@ -24978,7 +25317,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -25011,7 +25353,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_sync_functions_slot_request(
@@ -25034,7 +25376,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -25157,7 +25502,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.KeyInfo] = kwargs.pop("cls", None)
 
@@ -25194,7 +25539,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("KeyInfo", pipeline_response.http_response)
@@ -25237,7 +25585,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_host_secret_slot_request(
@@ -25262,7 +25610,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -25290,7 +25641,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HostNameBindingCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -25316,18 +25667,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -25350,7 +25690,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -25389,7 +25732,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HostNameBinding] = kwargs.pop("cls", None)
 
         _request = build_get_host_name_binding_slot_request(
@@ -25413,7 +25756,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HostNameBinding", pipeline_response.http_response)
@@ -25536,7 +25882,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HostNameBinding] = kwargs.pop("cls", None)
 
@@ -25572,7 +25918,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HostNameBinding", pipeline_response.http_response)
@@ -25614,7 +25963,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_host_name_binding_slot_request(
@@ -25638,7 +25987,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -25677,7 +26029,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HybridConnection] = kwargs.pop("cls", None)
 
         _request = build_get_hybrid_connection_slot_request(
@@ -25702,7 +26054,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
@@ -25829,7 +26184,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HybridConnection] = kwargs.pop("cls", None)
 
@@ -25866,7 +26221,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
@@ -25909,7 +26267,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_hybrid_connection_slot_request(
@@ -25934,7 +26292,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -26057,7 +26418,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HybridConnection] = kwargs.pop("cls", None)
 
@@ -26094,7 +26455,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
@@ -26133,7 +26497,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.HybridConnection] = kwargs.pop("cls", None)
 
         _request = build_list_hybrid_connections_slot_request(
@@ -26156,7 +26520,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
@@ -26197,7 +26564,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.RelayServiceConnectionEntity] = kwargs.pop("cls", None)
 
         _request = build_list_relay_service_connections_slot_request(
@@ -26220,7 +26587,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
@@ -26262,7 +26632,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.RelayServiceConnectionEntity] = kwargs.pop("cls", None)
 
         _request = build_get_relay_service_connection_slot_request(
@@ -26286,7 +26656,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
@@ -26410,7 +26783,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RelayServiceConnectionEntity] = kwargs.pop("cls", None)
 
@@ -26446,7 +26819,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
@@ -26488,7 +26864,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_relay_service_connection_slot_request(
@@ -26512,7 +26888,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -26632,7 +27011,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RelayServiceConnectionEntity] = kwargs.pop("cls", None)
 
@@ -26668,7 +27047,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
@@ -26701,7 +27083,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebAppInstanceStatusCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -26727,18 +27109,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -26761,7 +27132,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -26800,7 +27174,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebSiteInstanceStatus] = kwargs.pop("cls", None)
 
         _request = build_get_instance_info_slot_request(
@@ -26824,7 +27198,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("WebSiteInstanceStatus", pipeline_response.http_response)
@@ -26866,7 +27243,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
 
         _request = build_get_instance_ms_deploy_status_slot_request(
@@ -26890,7 +27267,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
@@ -26920,7 +27300,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -26961,7 +27341,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -27077,7 +27460,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -27155,7 +27538,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MSDeployLog] = kwargs.pop("cls", None)
 
         _request = build_get_instance_ms_deploy_log_slot_request(
@@ -27179,7 +27562,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MSDeployLog", pipeline_response.http_response)
@@ -27216,7 +27602,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -27243,18 +27629,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -27277,7 +27652,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -27320,7 +27698,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessInfo] = kwargs.pop("cls", None)
 
         _request = build_get_instance_process_slot_request(
@@ -27345,7 +27723,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ProcessInfo", pipeline_response.http_response)
@@ -27392,7 +27773,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_instance_process_slot_request(
@@ -27417,7 +27798,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27459,7 +27843,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_get_instance_process_dump_slot_request(
@@ -27489,7 +27873,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -27528,7 +27915,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessModuleInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -27556,18 +27943,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -27590,7 +27966,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -27642,7 +28021,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessModuleInfo] = kwargs.pop("cls", None)
 
         _request = build_get_instance_process_module_slot_request(
@@ -27668,7 +28047,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ProcessModuleInfo", pipeline_response.http_response)
@@ -27706,7 +28088,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessThreadInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -27734,18 +28116,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -27768,7 +28139,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -27805,7 +28179,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteCloneability] = kwargs.pop("cls", None)
 
         _request = build_is_cloneable_slot_request(
@@ -27828,7 +28202,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteCloneability", pipeline_response.http_response)
@@ -27860,7 +28237,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.BackupItemCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -27886,18 +28263,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -27920,7 +28286,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -27956,7 +28325,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.FunctionSecrets] = kwargs.pop("cls", None)
 
         _request = build_list_sync_function_triggers_slot_request(
@@ -27979,7 +28348,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("FunctionSecrets", pipeline_response.http_response)
@@ -28020,7 +28392,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.MigrateMySqlStatus] = kwargs.pop("cls", None)
 
         _request = build_get_migrate_my_sql_status_slot_request(
@@ -28043,7 +28415,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MigrateMySqlStatus", pipeline_response.http_response)
@@ -28083,7 +28458,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SwiftVirtualNetwork] = kwargs.pop("cls", None)
 
         _request = build_get_swift_virtual_network_connection_slot_request(
@@ -28106,7 +28481,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
@@ -28238,7 +28616,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SwiftVirtualNetwork] = kwargs.pop("cls", None)
 
@@ -28273,7 +28651,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
@@ -28313,7 +28694,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_swift_virtual_network_slot_request(
@@ -28336,7 +28717,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -28464,7 +28848,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SwiftVirtualNetwork] = kwargs.pop("cls", None)
 
@@ -28499,7 +28883,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
@@ -28541,7 +28928,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.NetworkFeatures] = kwargs.pop("cls", None)
 
         _request = build_list_network_features_slot_request(
@@ -28565,7 +28952,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("NetworkFeatures", pipeline_response.http_response)
@@ -28608,7 +28998,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
 
         _request = build_get_network_trace_operation_slot_request(
@@ -28632,7 +29022,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
@@ -28684,7 +29077,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
 
         _request = build_start_web_site_network_trace_slot_request(
@@ -28710,7 +29103,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("str", pipeline_response.http_response)
@@ -28741,7 +29137,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_start_web_site_network_trace_operation_slot_request(
@@ -28772,7 +29168,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -28817,7 +29216,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -28891,7 +29290,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_web_site_network_trace_slot_request(
@@ -28914,7 +29313,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -28953,7 +29355,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
 
         _request = build_get_network_traces_slot_request(
@@ -28977,7 +29379,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
@@ -29020,7 +29425,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
 
         _request = build_get_network_trace_operation_slot_v2_request(
@@ -29044,7 +29449,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
@@ -29087,7 +29495,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
 
         _request = build_get_network_traces_slot_v2_request(
@@ -29111,7 +29519,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
@@ -29152,7 +29563,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_generate_new_site_publishing_password_slot_request(
@@ -29175,7 +29586,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -29207,7 +29621,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PerfMonCounterCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -29234,18 +29648,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -29268,7 +29671,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -29305,7 +29711,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SitePhpErrorLogFlag] = kwargs.pop("cls", None)
 
         _request = build_get_site_php_error_log_flag_slot_request(
@@ -29328,7 +29734,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SitePhpErrorLogFlag", pipeline_response.http_response)
@@ -29368,7 +29777,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PremierAddOn] = kwargs.pop("cls", None)
 
         _request = build_list_premier_add_ons_slot_request(
@@ -29391,7 +29800,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
@@ -29433,7 +29845,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PremierAddOn] = kwargs.pop("cls", None)
 
         _request = build_get_premier_add_on_slot_request(
@@ -29457,7 +29869,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
@@ -29578,7 +29993,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PremierAddOn] = kwargs.pop("cls", None)
 
@@ -29614,7 +30029,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
@@ -29656,7 +30074,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_premier_add_on_slot_request(
@@ -29680,7 +30098,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -29797,7 +30218,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PremierAddOn] = kwargs.pop("cls", None)
 
@@ -29833,7 +30254,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
@@ -29874,7 +30298,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PrivateAccess] = kwargs.pop("cls", None)
 
         _request = build_get_private_access_slot_request(
@@ -29897,7 +30321,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateAccess", pipeline_response.http_response)
@@ -30012,7 +30439,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateAccess] = kwargs.pop("cls", None)
 
@@ -30047,7 +30474,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateAccess", pipeline_response.http_response)
@@ -30080,7 +30510,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PrivateEndpointConnectionCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -30106,18 +30536,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -30140,7 +30559,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -30178,7 +30600,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.RemotePrivateEndpointConnectionARMResource] = kwargs.pop("cls", None)
 
         _request = build_get_private_endpoint_connection_slot_request(
@@ -30202,7 +30624,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response.http_response)
@@ -30232,7 +30657,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -30273,7 +30698,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -30391,7 +30819,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RemotePrivateEndpointConnectionARMResource] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -30453,7 +30881,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_private_endpoint_connection_slot_request(
@@ -30482,7 +30910,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -30515,7 +30946,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -30585,7 +31016,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PrivateLinkResourcesWrapper] = kwargs.pop("cls", None)
 
         _request = build_get_private_link_resources_slot_request(
@@ -30608,7 +31039,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateLinkResourcesWrapper", pipeline_response.http_response)
@@ -30642,7 +31076,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -30668,18 +31102,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -30702,7 +31125,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -30742,7 +31168,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessInfo] = kwargs.pop("cls", None)
 
         _request = build_get_process_slot_request(
@@ -30766,7 +31192,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ProcessInfo", pipeline_response.http_response)
@@ -30810,7 +31239,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_process_slot_request(
@@ -30834,7 +31263,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -30873,7 +31305,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_get_process_dump_slot_request(
@@ -30902,7 +31334,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -30938,7 +31373,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessModuleInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -30965,18 +31400,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -30999,7 +31423,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -31041,7 +31468,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessModuleInfo] = kwargs.pop("cls", None)
 
         _request = build_get_process_module_slot_request(
@@ -31066,7 +31493,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ProcessModuleInfo", pipeline_response.http_response)
@@ -31101,7 +31531,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.ProcessThreadInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -31128,18 +31558,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -31162,7 +31581,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -31191,7 +31613,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PublicCertificateCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -31217,18 +31639,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -31251,7 +31662,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -31290,7 +31704,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PublicCertificate] = kwargs.pop("cls", None)
 
         _request = build_get_public_certificate_slot_request(
@@ -31314,7 +31728,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PublicCertificate", pipeline_response.http_response)
@@ -31437,7 +31854,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicCertificate] = kwargs.pop("cls", None)
 
@@ -31473,7 +31890,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PublicCertificate", pipeline_response.http_response)
@@ -31515,7 +31935,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_public_certificate_slot_request(
@@ -31539,7 +31959,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -31651,7 +32074,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -31691,7 +32114,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -31733,7 +32159,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_reset_slot_configuration_slot_request(
@@ -31756,7 +32182,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -31805,7 +32234,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_restart_slot_request(
@@ -31830,7 +32259,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -31855,7 +32287,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -31895,7 +32327,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -31999,7 +32434,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -32059,7 +32494,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -32099,7 +32534,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -32203,7 +32641,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -32263,7 +32701,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -32303,7 +32741,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -32410,7 +32851,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -32473,7 +32914,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteContainerCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -32499,18 +32940,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -32533,7 +32963,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -32572,7 +33005,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteContainer] = kwargs.pop("cls", None)
 
         _request = build_get_site_container_slot_request(
@@ -32596,7 +33029,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteContainer", pipeline_response.http_response)
@@ -32716,7 +33152,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteContainer] = kwargs.pop("cls", None)
 
@@ -32752,7 +33188,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteContainer", pipeline_response.http_response)
@@ -32794,7 +33233,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_site_container_slot_request(
@@ -32818,7 +33257,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -32846,7 +33288,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteExtensionInfoCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -32872,18 +33314,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -32906,7 +33337,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -32945,7 +33379,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteExtensionInfo] = kwargs.pop("cls", None)
 
         _request = build_get_site_extension_slot_request(
@@ -32969,7 +33403,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteExtensionInfo", pipeline_response.http_response)
@@ -32993,7 +33430,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_install_site_extension_slot_request(
@@ -33022,7 +33459,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -33057,7 +33497,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteExtensionInfo] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -33132,7 +33572,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_site_extension_slot_request(
@@ -33156,7 +33596,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -33256,7 +33699,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SlotDifferenceCollection] = kwargs.pop("cls", None)
 
@@ -33293,18 +33736,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -33327,7 +33759,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -33353,7 +33788,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -33393,7 +33828,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -33497,7 +33935,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -33559,7 +33997,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SnapshotCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -33585,18 +34023,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -33619,7 +34046,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -33647,7 +34077,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SnapshotCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -33673,18 +34103,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -33707,7 +34126,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -33744,7 +34166,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteSourceControl] = kwargs.pop("cls", None)
 
         _request = build_get_source_control_slot_request(
@@ -33767,7 +34189,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
@@ -33796,7 +34221,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -33836,7 +34261,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -33945,7 +34373,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteSourceControl] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -34022,7 +34450,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_source_control_slot_request(
@@ -34046,7 +34474,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -34156,7 +34587,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteSourceControl] = kwargs.pop("cls", None)
 
@@ -34191,7 +34622,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
@@ -34229,7 +34663,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_start_slot_request(
@@ -34252,7 +34686,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -34279,7 +34716,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_start_network_trace_slot_request(
@@ -34310,7 +34747,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -34355,7 +34795,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -34428,7 +34868,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_slot_request(
@@ -34451,7 +34891,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -34484,7 +34927,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_network_trace_slot_request(
@@ -34507,7 +34950,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -34541,7 +34987,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_sync_repository_slot_request(
@@ -34564,7 +35010,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -34597,7 +35046,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_sync_function_triggers_slot_request(
@@ -34620,7 +35069,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -34648,7 +35100,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.TriggeredWebJobCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -34674,18 +35126,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -34708,7 +35149,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -34747,7 +35191,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.TriggeredWebJob] = kwargs.pop("cls", None)
 
         _request = build_get_triggered_web_job_slot_request(
@@ -34771,7 +35215,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("TriggeredWebJob", pipeline_response.http_response)
@@ -34813,7 +35260,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_triggered_web_job_slot_request(
@@ -34837,7 +35284,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -34867,7 +35317,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.TriggeredJobHistoryCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -34894,18 +35344,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -34928,7 +35367,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -34970,7 +35412,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.TriggeredJobHistory] = kwargs.pop("cls", None)
 
         _request = build_get_triggered_web_job_history_slot_request(
@@ -34995,7 +35437,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("TriggeredJobHistory", pipeline_response.http_response)
@@ -35037,7 +35482,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_run_triggered_web_job_slot_request(
@@ -35061,7 +35506,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -35094,7 +35542,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmUsageQuotaCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -35121,18 +35569,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -35155,7 +35592,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -35192,7 +35632,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.VnetInfoResource]] = kwargs.pop("cls", None)
 
         _request = build_list_vnet_connections_slot_request(
@@ -35215,7 +35655,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[VnetInfoResource]", pipeline_response.http_response)
@@ -35257,7 +35700,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.VnetInfoResource] = kwargs.pop("cls", None)
 
         _request = build_get_vnet_connection_slot_request(
@@ -35281,7 +35724,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
@@ -35410,7 +35856,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VnetInfoResource] = kwargs.pop("cls", None)
 
@@ -35446,7 +35892,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
@@ -35489,7 +35938,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_vnet_connection_slot_request(
@@ -35513,7 +35962,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -35638,7 +36090,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VnetInfoResource] = kwargs.pop("cls", None)
 
@@ -35674,7 +36126,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
@@ -35719,7 +36174,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.VnetGateway] = kwargs.pop("cls", None)
 
         _request = build_get_vnet_connection_gateway_slot_request(
@@ -35744,7 +36199,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
@@ -35877,7 +36335,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VnetGateway] = kwargs.pop("cls", None)
 
@@ -35914,7 +36372,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
@@ -36047,7 +36508,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VnetGateway] = kwargs.pop("cls", None)
 
@@ -36084,7 +36545,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
@@ -36116,7 +36580,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebJobCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -36142,18 +36606,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -36176,7 +36629,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -36215,7 +36671,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebJob] = kwargs.pop("cls", None)
 
         _request = build_get_web_job_slot_request(
@@ -36239,7 +36695,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("WebJob", pipeline_response.http_response)
@@ -36331,7 +36790,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SlotDifferenceCollection] = kwargs.pop("cls", None)
 
@@ -36367,18 +36826,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -36401,7 +36849,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -36426,7 +36877,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -36465,7 +36916,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -36557,7 +37011,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -36614,7 +37068,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SnapshotCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -36639,18 +37093,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -36673,7 +37116,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -36699,7 +37145,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SnapshotCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -36724,18 +37170,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -36758,7 +37193,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -36790,7 +37228,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.SiteSourceControl] = kwargs.pop("cls", None)
 
         _request = build_get_source_control_request(
@@ -36812,7 +37250,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
@@ -36840,7 +37281,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -36879,7 +37320,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -36976,7 +37420,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteSourceControl] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -37049,7 +37493,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_source_control_request(
@@ -37072,7 +37516,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -37170,7 +37617,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SiteSourceControl] = kwargs.pop("cls", None)
 
@@ -37204,7 +37651,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
@@ -37239,7 +37689,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_start_request(
@@ -37261,7 +37711,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -37287,7 +37740,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_start_network_trace_request(
@@ -37317,7 +37770,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -37359,7 +37815,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -37428,7 +37884,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_request(
@@ -37450,7 +37906,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -37481,7 +37940,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_network_trace_request(
@@ -37503,7 +37962,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -37534,7 +37996,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_sync_repository_request(
@@ -37556,7 +38018,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -37587,7 +38052,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_sync_function_triggers_request(
@@ -37609,7 +38074,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -37634,7 +38102,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.TriggeredWebJobCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -37659,18 +38127,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -37693,7 +38150,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -37729,7 +38189,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.TriggeredWebJob] = kwargs.pop("cls", None)
 
         _request = build_get_triggered_web_job_request(
@@ -37752,7 +38212,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("TriggeredWebJob", pipeline_response.http_response)
@@ -37791,7 +38254,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_triggered_web_job_request(
@@ -37814,7 +38277,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -37841,7 +38307,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.TriggeredJobHistoryCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -37867,18 +38333,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -37901,7 +38356,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -37940,7 +38398,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.TriggeredJobHistory] = kwargs.pop("cls", None)
 
         _request = build_get_triggered_web_job_history_request(
@@ -37964,7 +38422,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("TriggeredJobHistory", pipeline_response.http_response)
@@ -38003,7 +38464,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_run_triggered_web_job_request(
@@ -38026,7 +38487,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -38056,7 +38520,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.CsmUsageQuotaCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -38082,18 +38546,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -38116,7 +38569,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -38150,7 +38606,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[List[_models.VnetInfoResource]] = kwargs.pop("cls", None)
 
         _request = build_list_vnet_connections_request(
@@ -38172,7 +38628,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[VnetInfoResource]", pipeline_response.http_response)
@@ -38211,7 +38670,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.VnetInfoResource] = kwargs.pop("cls", None)
 
         _request = build_get_vnet_connection_request(
@@ -38234,7 +38693,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
@@ -38351,7 +38813,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VnetInfoResource] = kwargs.pop("cls", None)
 
@@ -38386,7 +38848,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
@@ -38424,7 +38889,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_vnet_connection_request(
@@ -38447,7 +38912,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -38560,7 +39028,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VnetInfoResource] = kwargs.pop("cls", None)
 
@@ -38595,7 +39063,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
@@ -38637,7 +39108,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.VnetGateway] = kwargs.pop("cls", None)
 
         _request = build_get_vnet_connection_gateway_request(
@@ -38661,7 +39132,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
@@ -38782,7 +39256,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VnetGateway] = kwargs.pop("cls", None)
 
@@ -38818,7 +39292,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
@@ -38939,7 +39416,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VnetGateway] = kwargs.pop("cls", None)
 
@@ -38975,7 +39452,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
@@ -39002,7 +39482,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebJobCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -39027,18 +39507,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -39061,7 +39530,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -39097,7 +39569,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WebJob] = kwargs.pop("cls", None)
 
         _request = build_get_web_job_request(
@@ -39120,7 +39592,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("WebJob", pipeline_response.http_response)
@@ -39222,11 +39697,12 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if workflow_artifacts else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if workflow_artifacts else None
         _json = None
         _content = None
         if isinstance(workflow_artifacts, (IOBase, bytes)):
@@ -39259,7 +39735,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -39366,11 +39845,12 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if workflow_artifacts else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if workflow_artifacts else None
         _json = None
         _content = None
         if isinstance(workflow_artifacts, (IOBase, bytes)):
@@ -39404,7 +39884,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -39431,7 +39914,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WorkflowEnvelopeCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -39457,18 +39940,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -39491,7 +39963,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -39529,7 +40004,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WorkflowEnvelope] = kwargs.pop("cls", None)
 
         _request = build_get_instance_workflow_slot_request(
@@ -39553,7 +40028,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("WorkflowEnvelope", pipeline_response.http_response)
@@ -39592,7 +40070,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WorkflowEnvelope] = kwargs.pop("cls", None)
 
         _request = build_list_workflows_connections_slot_request(
@@ -39615,7 +40093,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("WorkflowEnvelope", pipeline_response.http_response)
@@ -39644,7 +40125,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WorkflowEnvelopeCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -39669,18 +40150,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -39703,7 +40173,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -39739,7 +40212,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WorkflowEnvelope] = kwargs.pop("cls", None)
 
         _request = build_get_workflow_request(
@@ -39762,7 +40235,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("WorkflowEnvelope", pipeline_response.http_response)
@@ -39799,7 +40275,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.WorkflowEnvelope] = kwargs.pop("cls", None)
 
         _request = build_list_workflows_connections_request(
@@ -39821,7 +40297,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("WorkflowEnvelope", pipeline_response.http_response)

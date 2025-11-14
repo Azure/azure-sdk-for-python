@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (2025-11-17)
+
+change log generation was timeout!!! You need to write it manually!!!
+
 ## 10.0.0 (2025-08-21)
 
 ### Breaking Changes
