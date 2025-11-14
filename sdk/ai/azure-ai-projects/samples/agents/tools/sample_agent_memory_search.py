@@ -80,9 +80,18 @@ with (
     )
     print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
+    # [START memory_search_tool_declaration]
     # Set scope to associate the memories with
     # You can also use "{{$userId}}"" to take the oid of the request authentication header
     scope = "user_123"
+
+    tool = MemorySearchTool(
+        memory_store_name=memory_store.name,
+        scope=scope,
+        update_delay=1,  # Wait 1 second of inactivity before updating memories
+        # In a real application, set this to a higher value like 300 (5 minutes, default)
+    )
+    # [END memory_search_tool_declaration]
 
     # Create a prompt agent with memory search tool
     agent = project_client.agents.create_version(
@@ -90,14 +99,7 @@ with (
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that answers general questions",
-            tools=[
-                MemorySearchTool(
-                    memory_store_name=memory_store.name,
-                    scope=scope,
-                    update_delay=1,  # Wait 1 second of inactivity before updating memories
-                    # In a real application, set this to a higher value like 300 (5 minutes, default)
-                )
-            ],
+            tools=[tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
