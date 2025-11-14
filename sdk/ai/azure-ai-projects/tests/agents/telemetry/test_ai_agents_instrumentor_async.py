@@ -216,7 +216,6 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings to be added")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async
@@ -287,7 +286,6 @@ trigger:
         assert "workflow" in event_content["content"][0]
         assert "kind: workflow" in event_content["content"][0]["workflow"]
 
-    @pytest.mark.skip(reason="recordings to be added")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async

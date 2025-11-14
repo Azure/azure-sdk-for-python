@@ -737,9 +737,9 @@ print(f"Successfully deleted file: {deleted_file.id}")
 
 ### Fine-tuning operations
 
-The code below shows Fine-tuning operations using the OpenAI client, which allow you to create, retrieve, list, cancel, pause, resume, and manage fine-tuning jobs. These operations support various fine-tuning techniques like Supervised Fine-Tuning (SFT), Reinforcement Fine-Tuning (RFT), and Direct Performance Optimization (DPO). Full samples can be found under the "finetuning" folder in the [package samples][samples].
+The code below shows how to create fine-tuning jobs using the OpenAI client. These operations support various fine-tuning techniques like Supervised Fine-Tuning (SFT), Reinforcement Fine-Tuning (RFT), and Direct Performance Optimization (DPO). Full samples can be found under the "finetuning" folder in the [package samples][samples].
 
-<!-- SNIPPET:sample_finetuning_supervised_job.finetuning_supervised_job_sample-->
+<!-- SNIPPET:sample_finetuning_oss_models_supervised_job.finetuning_oss_model_supervised_job_sample-->
 
 ```python
 print("Uploading training file...")
@@ -752,8 +752,10 @@ with open(validation_file_path, "rb") as f:
     validation_file = openai_client.files.create(file=f, purpose="fine-tune")
 print(f"Uploaded validation file with ID: {validation_file.id}")
 
-# For OpenAI model supervised fine-tuning jobs, "Standard" is the default training type.
-# To use global standard training, uncomment the extra_body parameter below.
+print("Waits for the training and validation files to be processed...")
+openai_client.files.wait_for_processing(train_file.id)
+openai_client.files.wait_for_processing(validation_file.id)
+
 print("Creating supervised fine-tuning job")
 fine_tuning_job = openai_client.fine_tuning.jobs.create(
     training_file=train_file.id,
@@ -763,76 +765,13 @@ fine_tuning_job = openai_client.fine_tuning.jobs.create(
         "type": "supervised",
         "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
     },
-    # extra_body={"trainingType":"GlobalStandard"}
+    extra_body={
+        "trainingType": "GlobalStandard"
+    },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
+    # Preferred trainingtype is GlobalStandard.  Note:  Global training offers cost savings , but copies data and weights outside the current resource region.
+    # Learn more - https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/en-us/explore/global-infrastructure/data-residency/
 )
 print(fine_tuning_job)
-
-print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
-retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
-print(retrieved_job)
-
-print("Listing all fine-tuning jobs:")
-for job in openai_client.fine_tuning.jobs.list():
-    print(job)
-
-print("Listing only 10 fine-tuning jobs:")
-for job in openai_client.fine_tuning.jobs.list(limit=10):
-    print(job)
-
-print(f"Pausing fine-tuning job with ID: {fine_tuning_job.id}")
-paused_job = openai_client.fine_tuning.jobs.pause(fine_tuning_job.id)
-print(paused_job)
-
-print(f"Resuming fine-tuning job with ID: {fine_tuning_job.id}")
-resumed_job = openai_client.fine_tuning.jobs.resume(fine_tuning_job.id)
-print(resumed_job)
-
-print(f"Listing events of fine-tuning job: {fine_tuning_job.id}")
-for event in openai_client.fine_tuning.jobs.list_events(fine_tuning_job.id):
-    print(event)
-
-# Note that to retrieve the checkpoints, job needs to be in terminal state.
-print(f"Listing checkpoints of fine-tuning job: {fine_tuning_job.id}")
-for checkpoint in openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id):
-    print(checkpoint)
-
-print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
-cancelled_job = openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
-
-# Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
-# Note: Deployment can only be started after the fine-tuning job completes successfully.
-print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
-fine_tuned_model_name = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id).fine_tuned_model
-deployment_name = "gpt-4-1-fine-tuned"
-
-with CognitiveServicesManagementClient(credential=credential, subscription_id=subscription_id) as cogsvc_client:
-
-    deployment_model = DeploymentModel(format="OpenAI", name=fine_tuned_model_name, version="1")
-
-    deployment_properties = DeploymentProperties(model=deployment_model)
-
-    deployment_sku = Sku(name="GlobalStandard", capacity=100)
-
-    deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
-
-    deployment = cogsvc_client.deployments.begin_create_or_update(
-        resource_group_name=resource_group,
-        account_name=account_name,
-        deployment_name=deployment_name,
-        deployment=deployment_config,
-    )
-
-    while deployment.status() not in ["Succeeded", "Failed"]:
-        time.sleep(30)
-        print(f"Status: {deployment.status()}")
-
-print(f"Testing fine-tuned model via deployment: {deployment_name}")
-
-response = openai_client.responses.create(
-    model=deployment_name, input=[{"role": "user", "content": "Who invented the telephone?"}]
-)
-print(f"Model response: {response.output_text}")
 ```
 
 <!-- END SNIPPET -->
