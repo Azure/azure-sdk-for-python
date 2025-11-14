@@ -44,8 +44,6 @@ model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>
 model_api_key = os.environ["MODEL_API_KEY"]
 model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
