@@ -9,6 +9,9 @@ DESCRIPTION:
     This sample demonstrates how to perform CRUD operations on a memory store
     using the synchronous AIProjectClient.
 
+    See also /samples/agents/tools/sample_agent_memory_search.py that shows
+    how to use the Memory Search Tool in a prompt agent.
+
 USAGE:
     python sample_memory_crud.py
 

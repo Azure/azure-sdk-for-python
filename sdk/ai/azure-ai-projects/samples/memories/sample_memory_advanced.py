@@ -8,6 +8,9 @@
 DESCRIPTION:
     This sample demonstrates how to interact with the memory store to add and retrieve memory.
 
+    See also /samples/agents/tools/sample_agent_memory_search.py that shows
+    how to use the Memory Search Tool in a prompt agent.
+
 USAGE:
     python sample_memory_advanced.py
 
@@ -29,6 +32,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -37,8 +41,6 @@ from azure.ai.projects.models import (
     MemorySearchOptions,
     ResponsesUserMessageItemParam,
     ResponsesAssistantMessageItemParam,
-    MemorySearchTool,
-    PromptAgentDefinition,
 )
 
 load_dotenv()
@@ -53,9 +55,9 @@ with (
     # Delete memory store, if it already exists
     memory_store_name = "my_memory_store"
     try:
-        delete_response = project_client.memory_stores.delete(memory_store_name)
-        print(f"Deleted memory store: {delete_response.deleted}")
-    except Exception:
+        project_client.memory_stores.delete(memory_store_name)
+        print(f"Memory store `{memory_store_name}` deleted")
+    except ResourceNotFoundError:
         pass
 
     # Create memory store with advanced options
@@ -147,9 +149,9 @@ with (
         print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
     # Delete memories for the current scope
-    delete_scope_response = project_client.memory_stores.delete_scope(name=memory_store.name, scope=scope)
-    print(f"Deleted memories for scope '{scope}': {delete_scope_response.deleted}")
+    project_client.memory_stores.delete_scope(name=memory_store.name, scope=scope)
+    print(f"Deleted memories for scope '{scope}'")
 
     # Delete memory store
-    delete_response = project_client.memory_stores.delete(memory_store.name)
-    print(f"Deleted: {delete_response.deleted}")
+    project_client.memory_stores.delete(memory_store.name)
+    print(f"Deleted memory store `{memory_store.name}`")
