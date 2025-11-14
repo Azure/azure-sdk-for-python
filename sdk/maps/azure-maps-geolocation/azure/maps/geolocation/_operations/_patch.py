@@ -8,6 +8,33 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from typing import Any
+from ._operations import _MapsGeolocationClientOperationsMixin as _MapsGeolocationClientOperationsMixinGenerated, distributed_trace, distributed_trace
+from ..models._patch import CountryRegionResult
+
+class _MapsGeolocationClientOperationsMixin(_MapsGeolocationClientOperationsMixinGenerated):
+    @distributed_trace
+    def get_country_code(
+        self, ip_address: str, **kwargs: Any
+    ) -> CountryRegionResult:
+        """Use to get the ISO country/region code for a given IP address.
+
+        The ``Get IP To Location`` API is an HTTP ``GET`` request that returns the ISO
+        country/region code for a given IP address. Developers can use this information
+        to block or modify content based on the geographical location from which the
+        application is accessed.
+
+        :param ip_address: The IP address. Both IPv4 and IPv6 are allowed. Required.
+        :paramtype ip_address: str
+        :return: CountryRegionResult.
+        :rtype: ~azure.maps.geolocation.models.CountryRegionResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        geolocation_result = super().get_country_code(format="json", ip_address=ip_address, **kwargs)
+
+        return CountryRegionResult(
+            ip_address=geolocation_result.ip_address, iso_code=geolocation_result.country_region.iso_code
+        )
 
 __all__: list[str] = []  # Add all objects you want publicly available to users at this package level
 
