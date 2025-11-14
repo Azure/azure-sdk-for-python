@@ -17,7 +17,7 @@ from devtools_testutils import is_live_and_not_recording
 class TestFineTuningAsync(TestBase):
 
     async def _create_sft_finetuning_job_async(
-        self, openai_client, train_file_id, validation_file_id, model_type="openai"
+        self, openai_client, train_file_id, validation_file_id, model_type="openai", training_type="Standard"
     ):
         """Helper method to create a supervised fine-tuning job asynchronously."""
         return await openai_client.fine_tuning.jobs.create(
@@ -34,6 +34,7 @@ class TestFineTuningAsync(TestBase):
                     }
                 },
             },
+            extra_body={"trainingType": training_type},
         )
 
     async def _create_dpo_finetuning_job_async(self, openai_client, train_file_id, validation_file_id):
@@ -52,6 +53,7 @@ class TestFineTuningAsync(TestBase):
                     }
                 },
             },
+            extra_body={"trainingType": "Standard"},
         )
 
     async def _create_rft_finetuning_job_async(self, openai_client, train_file_id, validation_file_id):
@@ -87,6 +89,7 @@ class TestFineTuningAsync(TestBase):
                     },
                 },
             },
+            extra_body={"trainingType": "Standard"},
         )
 
     async def _upload_test_files_async(self, openai_client, job_type="sft"):
@@ -354,7 +357,7 @@ class TestFineTuningAsync(TestBase):
             train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
 
             fine_tuning_job = await self._create_sft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, "oss"
+                openai_client, train_file.id, validation_file.id, "oss", "GlobalStandard"
             )
             print(f"[test_finetuning_sft_oss_async] Created fine-tuning job: {fine_tuning_job.id}")
             TestBase.validate_fine_tuning_job(
