@@ -3604,9 +3604,10 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         await self._setup(storage_account_name, storage_account_key)
 
+        early = self.get_datetime_variable(variables, 'early', datetime.utcnow())
+
         blob1_name = await self._create_block_blob()
         blob1 = self.bsc.get_blob_client(self.container_name, blob1_name)
-
         blob2_name = self._get_blob_reference() + "2"
         blob2 = self.bsc.get_blob_client(self.container_name, blob2_name)
         await blob2.upload_blob(
@@ -3615,12 +3616,10 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             standard_blob_tier=StandardBlobTier.COOL,
             overwrite=True
         )
-
-        early = self.get_datetime_variable(variables, 'early', datetime.utcnow() - timedelta(hours=1))
-        late = self.get_datetime_variable(variables, 'late', datetime.utcnow() + timedelta(hours=1))
-
         await blob1.set_standard_blob_tier('Cool')
         await blob2.set_standard_blob_tier('Hot')
+
+        late = self.get_datetime_variable(variables, 'late', datetime.utcnow())
 
         with pytest.raises(HttpResponseError):
             await blob1.delete_blob(access_tier_if_modified_since=late)

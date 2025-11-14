@@ -3668,9 +3668,10 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
 
+        early = self.get_datetime_variable(variables, 'early', datetime.utcnow())
+
         blob1_name = self._create_block_blob()
         blob1 = self.bsc.get_blob_client(self.container_name, blob1_name)
-
         blob2_name = self._get_blob_reference() + "2"
         blob2 = self.bsc.get_blob_client(self.container_name, blob2_name)
         blob2.upload_blob(
@@ -3679,12 +3680,10 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             standard_blob_tier=StandardBlobTier.COOL,
             overwrite=True
         )
-
-        early = self.get_datetime_variable(variables, 'early', datetime.utcnow() - timedelta(hours=1))
-        late = self.get_datetime_variable(variables, 'late', datetime.utcnow() + timedelta(hours=1))
-
         blob1.set_standard_blob_tier('Cool')
         blob2.set_standard_blob_tier('Hot')
+
+        late = self.get_datetime_variable(variables, 'late', datetime.utcnow())
 
         with pytest.raises(HttpResponseError):
             blob1.delete_blob(access_tier_if_modified_since=late)
