@@ -30,10 +30,10 @@ load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
-
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-
-        print("Get the Application Insights connection string:")
-        connection_string = project_client.telemetry.get_application_insights_connection_string()
-        print(connection_string)
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
+    print("Get the Application Insights connection string:")
+    connection_string = project_client.telemetry.get_application_insights_connection_string()
+    print(connection_string)

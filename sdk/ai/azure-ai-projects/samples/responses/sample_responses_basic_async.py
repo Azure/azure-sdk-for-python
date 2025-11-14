@@ -32,33 +32,28 @@ from azure.ai.projects.aio import AIProjectClient
 
 load_dotenv()
 
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
 
 async def main() -> None:
 
-    credential = DefaultAzureCredential()
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
+        response = await openai_client.responses.create(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            input="What is the size of France in square miles?",
+        )
+        print(f"Response output: {response.output_text}")
 
-    async with credential:
-
-        project_client = AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential)
-
-        async with project_client:
-
-            openai_client = project_client.get_openai_client()
-
-            async with openai_client:
-
-                response = await openai_client.responses.create(
-                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                    input="What is the size of France in square miles?",
-                )
-                print(f"Response output: {response.output_text}")
-
-                response = await openai_client.responses.create(
-                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                    input="And what is the capital city?",
-                    previous_response_id=response.id,
-                )
-                print(f"Response output: {response.output_text}")
+        response = await openai_client.responses.create(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            input="And what is the capital city?",
+            previous_response_id=response.id,
+        )
+        print(f"Response output: {response.output_text}")
 
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@
 - Added detection and retry handling for network errors wrapped in generic exceptions with "Error sending prompt with conversation ID" message
 - Fix results for ungrounded_attributes
 - score_mode grader improvements
+- fix for Red Team to ensure hate/unfairness evaluation rows populate when OneDP sync evaluators report results under the hate_unfairness metric name.
 
 ## 1.13.5 (2025-11-10)
 
