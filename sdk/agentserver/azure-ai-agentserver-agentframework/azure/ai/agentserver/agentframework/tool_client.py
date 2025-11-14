@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# mypy: disable-error-code="assignment"
 """Tool client for integrating AzureAIToolClient with Agent Framework."""
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
@@ -57,7 +58,7 @@ class ToolClient:
         :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
         """
         self._tool_client = tool_client
-        self._aifunction_cache: List[AIFunction] = None  # mypy: ignore[assignment]
+        self._aifunction_cache: List[AIFunction] = None
 
     async def list_tools(self) -> List[AIFunction]:
         """List all available tools as Agent Framework tool definitions.
