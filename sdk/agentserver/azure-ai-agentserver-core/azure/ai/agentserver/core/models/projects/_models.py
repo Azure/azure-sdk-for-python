@@ -11,7 +11,7 @@
 from .utils.model_base  import Model as _Model
 from typing import Literal, Union, Dict, Optional, List, Any
 from typing_extensions import NotRequired, TypedDict, TypeAlias, ReadOnly
-from ._enums import ItemType, ServiceTier, ToolChoiceOptions, ResponseTextFormatConfigurationType, ToolType, ResponseErrorCode
+from ._enums import ItemType, ServiceTier, ToolChoiceOptions, ResponseTextFormatConfigurationType, ToolType, ResponseErrorCode, ResponseStreamEventType
 import datetime
 
 
@@ -258,4 +258,205 @@ class Response(TypedDict):
     """The agent used for this response."""
     structured_inputs: NotRequired[Dict[str, Any]]
     """The structured inputs to the response that can participate in prompt template substitution."""
+
+
+class ResponseStreamEvent(TypedDict):
+    """Base type for all response stream events."""
+    type: ReadOnly[Union[ str,
+        Literal[
+            "response.audio.delta",
+            "response.audio.done",
+            "response.audio_transcript.delta",
+            "response.audio_transcript.done",
+            "response.code_interpreter_call_code.delta",
+            "response.code_interpreter_call_code.done",
+            "response.code_interpreter_call.completed",
+            "response.code_interpreter_call.in_progress",
+            "response.code_interpreter_call.interpreting",
+            "response.completed",
+            "response.content_part.added",
+            "response.content_part.done",
+            "response.created",
+            "error",
+            "response.file_search_call.completed",
+            "response.file_search_call.in_progress",
+            "response.file_search_call.searching",
+            "response.function_call_arguments.delta",
+            "response.function_call_arguments.done",
+            "response.in_progress",
+            "response.failed",
+            "response.incomplete",
+            "response.output_item.added",
+            "response.output_item.done",
+            "response.refusal.delta",
+            "response.refusal.done",
+            "response.output_text.annotation.added",
+            "response.output_text.delta",
+            "response.output_text.done",
+            "response.reasoning_summary_part.added",
+            "response.reasoning_summary_part.done",
+            "response.reasoning_summary_text.delta",
+            "response.reasoning_summary_text.done",
+            "response.web_search_call.completed",
+            "response.web_search_call.in_progress",
+            "response.web_search_call.searching",
+            "response.image_generation_call.completed",
+            "response.image_generation_call.generating",
+            "response.image_generation_call.in_progress",
+            "response.image_generation_call.partial_image",
+            "response.mcp_call.arguments_delta",
+            "response.mcp_call.arguments_done",
+            "response.mcp_call.completed",
+            "response.mcp_call.failed",
+            "response.mcp_call.in_progress",
+            "response.mcp_list_tools.completed",
+            "response.mcp_list_tools.failed",
+            "response.mcp_list_tools.in_progress",
+            "response.queued",
+            "response.reasoning.delta",
+            "response.reasoning.done",
+            "response.reasoning_summary.delta",
+            "response.reasoning_summary.done"
+    ]]]
+    """The type of the response stream event. Required."""
+    sequence_number: int
+    """The sequence number of the event. Required."""
+
+
+class ResponseCompletedEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response_completed"]]
+    """Required. Discriminator value is \"response_completed\"."""
+    response: Response
+    """The completed response object. Required."""
+
+class ResponseContentPartAddedEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.content_part.added"]]
+    """Required. Discriminator value is \"response.content_part.added\"."""
+    item_id: str
+    """The ID of the output item that the content part was added to. Required."""
+    output_index: int
+    """The index of the output item that the content part was added to. Required."""
+    content_index: int
+    """The index of the content part that was added. Required."""
+    part: ItemContent
+    """The content part that was added. Required."""
+
+class ResponseContentPartDoneEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.content_part.done"]]
+    """Required. Discriminator value is \"response.content_part.done\"."""
+    item_id: str
+    """The ID of the output item that the content part was added to. Required."""
+    output_index: int
+    """The index of the output item that the content part was added to. Required."""
+    content_index: int
+    """The index of the content part that was added. Required."""
+    part: ItemContent
+    """The content part that was added. Required."""
+
+class ResponseCreatedEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.created"]]
+    """Required. Discriminator value is \"response.created\"."""
+    response: Response
+    """The created response object. Required."""
+
+class ResponseErrorEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["error"]]
+    """Required. Discriminator value is \"error\"."""
+    code: str
+    """The error code. Required."""
+    message: str
+    """The error message. Required."""
+    param: str
+    """The error parameter. Required."""
+
+class ResponseFunctionCallArgumentsDeltaEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.function_call_arguments.delta"]]
+    """Required. Discriminator value is \"response.function_call_arguments.delta\"."""
+    item_id: str
+    """ The ID of thee output item that the function call arguments delta belongs to. Required."""
+    output_index: int
+    """The index of the output item that the function call arguments delta belongs to. Required."""
+    delta: str
+    """The function call arguments delta. Required."""
+
+
+class ResponseFunctionCallArgumentsDoneEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.function_call_arguments.done"]]
+    """Required. Discriminator value is \"response.function_call_arguments.done\"."""
+    item_id: str
+    """The ID of the output item that the function call arguments belongs to. Required."""
+    output_index: int
+    """The index of the output item that the function call arguments belongs to. Required."""
+    arguments: str
+    """The complete function call arguments. Required."""
+
+
+class ResponseInProgressEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.in_progress"]]
+    """Required. Discriminator value is \"response.in_progress\"."""
+    response: Response
+    """The in-progress response object. Required."""
+
+
+class ResponseOutputItemAddedEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.output_item.added"]]
+    """Required. Discriminator value is \"response.output_item.added\"."""
+    output_index: int
+    """The index of the output item that was added. Required."""
+    item: ItemResource
+    """The output item that was added. Required."""
+
+
+class ResponseOutputItemDoneEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.output_item.done"]]
+    """Required. Discriminator value is \"response.output_item.done\"."""
+    output_index: int
+    """The index of the output item that was completed. Required."""
+    item: ItemResource
+    """The completed output item. Required."""
+
+
+class ResponseTextDeltaEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.output_text.delta"]]
+    """Required. Discriminator value is \"response.output_text.delta\"."""
+    item_id: str
+    """The ID of the output item that the text delta belongs to. Required."""
+    output_index: int
+    """The index of the output item that the text delta belongs to. Required."""
+    content_index: int
+    """The index of the content part that the text delta belongs to. Required."""
+    delta: str
+    """The text delta. Required."""
+
+
+class ResponseTextDoneEvent(ResponseStreamEvent):
+    type: ReadOnly[Literal["response.output_text.done"]]
+    """Required. Discriminator value is \"response.output_text.done\"."""
+    item_id: str
+    """The ID of the output item that the text belongs to. Required."""
+    output_index: int
+    """The index of the output item that the text belongs to. Required."""
+    content_index: int
+    """The index of the content part that the text belongs to. Required."""
+    text: str
+    """The complete text. Required."""
+
+
+class ResponsesMessageItemResource(ItemResource):
+    """Base message item resource."""
+    type: ReadOnly[Literal["message"]]
+    """Required. Discriminator value is \"message\"."""
+    role: ReadOnly[Union[str, Literal["assistant", "user", "system", "developer"]]]
+    """The role of the message. Required."""
+    status: Union[str, Literal["in_progress", "completed", "incomplete"]]
+    """The status of the message. Required."""
+
+
+class ResponsesAssistantMessageItemResource(ResponsesMessageItemResource):
+    """Assistant message item resource with role='assistant'."""
+    role: ReadOnly[Literal["assistant"]]
+    """The role of the message. Always ``assistant``. Required."""
+    content: List[ItemContent]
+    """The content of the message. Required."""
+
 
