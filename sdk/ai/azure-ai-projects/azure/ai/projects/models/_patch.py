@@ -31,7 +31,7 @@ class CustomCredential(CustomCredentialGenerated):
     """The secret custom credential keys. Required."""
 
 
-_FINISHED = frozenset(["completed", "superseded"])
+_FINISHED = frozenset(["completed", "superseded", "failed"])
 _FAILED = frozenset(["failed"])
 
 
