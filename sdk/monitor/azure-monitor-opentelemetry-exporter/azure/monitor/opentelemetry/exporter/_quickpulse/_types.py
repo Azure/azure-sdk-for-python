@@ -141,6 +141,8 @@ class _DependencyData(_TelemetryData):
                     )
                 elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:
                     dependency_type = attributes[gen_ai_attributes.GEN_AI_SYSTEM]
+                elif gen_ai_attributes.GEN_AI_PROVIDER_NAME in span.attributes:
+                    dependency_type = attributes[gen_ai_attributes.GEN_AI_PROVIDER_NAME]
             elif span.kind is SpanKind.PRODUCER:
                 dependency_type = "Queue Message"
                 msg_system = attributes.get(SpanAttributes.MESSAGING_SYSTEM)
