@@ -19,6 +19,7 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Optional. The name of the model deployment to use for evaluation.
        
     For Custom Prompt Based Evaluators:
     
@@ -268,4 +269,6 @@ with DefaultAzureCredential() as credential:
             version=prompt_evaluator.version,
         )
 
-        print("Evaluator version deleted")
+
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")

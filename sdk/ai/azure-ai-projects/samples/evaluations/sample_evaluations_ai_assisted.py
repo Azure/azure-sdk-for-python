@@ -175,5 +175,8 @@ with DefaultAzureCredential() as credential:
             time.sleep(5)
             print("Waiting for evaluation run to complete...")
 
+        project_client.datasets.delete(name=dataset.name, version=dataset.version)
+        print("Dataset deleted")
+
         client.evals.delete(eval_id=eval_object.id)
         print("Evaluation deleted")

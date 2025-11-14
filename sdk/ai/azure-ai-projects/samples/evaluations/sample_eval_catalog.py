@@ -37,8 +37,6 @@ from azure.ai.projects.models import (
 )
 
 from pprint import pprint
-import time
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -144,14 +142,14 @@ with DefaultAzureCredential() as credential:
         print("Get code based evaluator version")
         code_evaluator_latest = project_client.evaluators.get_version(
             name=code_evaluator.name,
-            version="latest",
+            version=code_evaluator.version,
         )
         pprint(code_evaluator_latest)
 
         print("Get prompt based evaluator version")
         prompt_evaluator_latest = project_client.evaluators.get_version(
             name=prompt_evaluator.name,
-            version="latest",
+            version=prompt_evaluator.version,
         )
         pprint(prompt_evaluator_latest)
 

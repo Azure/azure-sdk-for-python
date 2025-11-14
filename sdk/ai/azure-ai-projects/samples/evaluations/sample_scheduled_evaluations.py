@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity azure-ai-projects>=2.0.0b1 python-dotenv azure-mgmt-authorization azure-mgmt-resource
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv azure-mgmt-authorization azure-mgmt-resource
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -24,7 +24,7 @@ USAGE:
     4) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     5) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
     6) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
-    7) AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
+    7) AZURE_AI_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
 """
 
 from datetime import datetime
@@ -32,6 +32,7 @@ import os
 
 from dotenv import load_dotenv
 from pprint import pprint
+from azure.ai.projects.models._models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.mgmt.authorization import AuthorizationManagementClient
@@ -340,10 +341,15 @@ def schedule_redteam_evaluation() -> None:
             print("Creating an OpenAI client from the AI Project client")
             client = project_client.get_openai_client()
 
-            agent_versions = project_client.agents.retrieve(agent_name=agent_name) # type: ignore
-            agent = agent_versions.versions.latest
-            agent_version = agent.version
-            print(f"Retrieved agent: {agent_name}, version: {agent_version}")
+            agent_version = project_client.agents.create_version(
+                agent_name=agent_name,
+                definition=PromptAgentDefinition(
+                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                    instructions="You are a helpful assistant that answers general questions",
+                ),
+            )
+            print(f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})")
+
             eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
             eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
             data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
@@ -367,7 +373,7 @@ def schedule_redteam_evaluation() -> None:
 
             risk_categories_for_taxonomy = [RiskCategory.PROHIBITED_ACTIONS]
             target = AzureAIAgentTarget(
-                name=agent_name, version=agent_version, tool_descriptions=_get_tool_descriptions(agent)
+                name=agent_name, version=agent_version.version, tool_descriptions=_get_tool_descriptions(agent_version)
             )
             agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target) # type: ignore
             print("Creating Eval Taxonomies")
