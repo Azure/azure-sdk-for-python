@@ -1,0 +1,13 @@
+{
+    "CrossLanguagePackageId": "MapsGeolocation",
+    "CrossLanguageDefinitionId": {
+        "azure.maps.geolocation.models.CountryRegion": "MapsGeolocation.CountryRegion",
+        "azure.maps.geolocation.models.ErrorAdditionalInfo": "MapsGeolocation.ErrorAdditionalInfo",
+        "azure.maps.geolocation.models.ErrorDetail": "MapsGeolocation.ErrorDetail",
+        "azure.maps.geolocation.models.ErrorResponse": "MapsGeolocation.ErrorResponse",
+        "azure.maps.geolocation.models.IpAddressToLocationResult": "MapsGeolocation.IpAddressToLocationResult",
+        "azure.maps.geolocation.models.JsonFormat": "MapsGeolocation.JsonFormat",
+        "azure.maps.geolocation.MapsGeolocationClient.get_country_code": "MapsGeolocation.getIpToLocation",
+        "azure.maps.geolocation.aio.MapsGeolocationClient.get_country_code": "MapsGeolocation.getIpToLocation"
+    }
+}

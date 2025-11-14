@@ -6,4 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0b1"
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
+
+
+class JsonFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Desired format of the response. Only ``json`` format is supported."""
+
+    JSON = "json"
+    """`The JavaScript Object Notation Data Interchange
+    Format <https://tools.ietf.org/html/rfc8259>`_"""
