@@ -369,7 +369,7 @@ These tools work immediately without requiring external connections.
 
 * **Memory Search Tool**
 
-  The Memory Store Tool adds Memory to an Agents, allowing the AI model to search for past information related to the current user prompt.
+  The Memory Store Tool adds Memory to an Agent, allowing the Agent's AI model to search for past information related to the current user prompt.
 
   <!-- SNIPPET:sample_agent_memory_search.memory_search_tool_declaration -->
   ```python
