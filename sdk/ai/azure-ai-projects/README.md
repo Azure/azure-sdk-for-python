@@ -5,6 +5,7 @@ resources in your Microsoft Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on methods on the `.agents` client property.
 * **Enhance Agents with specialized tools**:
+  * Agent Memory Search
   * Agent-to-Agent (A2A)
   * Azure AI Search
   * Bing Custom Search
@@ -363,6 +364,29 @@ These tools work immediately without requiring external connections.
   *After calling `responses.create()`, process `function_call` items from response output, execute your function logic with the provided arguments, and send back `FunctionCallOutput` with the results.*
 
   See the full sample code in [sample_agent_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_function_tool.py).
+
+* **Memory Search Tool**
+
+  The Memory Store Tool adds Memory to an Agent, allowing the Agent's AI model to search for past information related to the current user prompt.
+
+  <!-- SNIPPET:sample_agent_memory_search.memory_search_tool_declaration -->
+  ```python
+  # Set scope to associate the memories with
+  # You can also use "{{$userId}}" to take the oid of the request authentication header
+  scope = "user_123"
+
+  tool = MemorySearchTool(
+      memory_store_name=memory_store.name,
+      scope=scope,
+      update_delay=1,  # Wait 1 second of inactivity before updating memories
+      # In a real application, set this to a higher value like 300 (5 minutes, default)
+  )
+  ```
+  <!-- END SNIPPET -->
+
+  See the full [sample_agent_memory_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_memory_search.py) showing how to create an Agent with a memory store, and use it in multiple conversations.
+
+  See also samples in the folder [samples\memories](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/memories) showing how to manage memory stores.
 
 #### Connection-Based Tools
 
