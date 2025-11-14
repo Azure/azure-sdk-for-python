@@ -48,7 +48,7 @@ class _MapsGeolocationClientOperationsMixin(_MapsGeolocationClientOperationsMixi
         )
 
 
-__all__: list[str] = []  # Add all objects you want publicly available to users
+__all__: list[str] = ["_MapsGeolocationClientOperationsMixin"]  # Add all objects you want publicly available to users
 
 
 def patch_sdk():
