@@ -38,6 +38,12 @@ These sample programs show common scenarios for the Conversation Authoring clien
 | [sample_swap_deployments.py][sample_swap_deployments] and [sample_swap_deployments_async.py][sample_swap_deployments_async] | Swap two deployments within a project. |
 | [sample_train.py][sample_train] and [sample_train_async.py][sample_train_async] | Train a model within a project. |
 | [sample_unassign_project_resources.py][sample_unassign_project_resources] and [sample_unassign_project_resources_async.py][sample_unassign_project_resources_async] | Unassign deployment resources from a project. |
+| [sample_list_project_resources.py][sample_list_project_resources] and [sample_list_project_resources_async.py][sample_list_project_resources_async] | List all deployment-level resources currently assigned to a project. |
+| [sample_get_assign_project_resources_status.py][sample_get_assign_project_resources_status] and [sample_get_assign_project_resources_status_async.py][sample_get_assign_project_resources_status_async] | Get the operation status of a resource-assignment request. |
+| [sample_get_unassign_project_resources_status.py][sample_get_unassign_project_resources_status] and [sample_get_unassign_project_resources_status_async.py][sample_get_unassign_project_resources_status_async] | Get the operation status of a resource-unassignment request. |
+| [sample_list_assigned_resource_deployments.py][sample_list_assigned_resource_deployments] and [sample_list_assigned_resource_deployments_async.py][sample_list_assigned_resource_deployments_async] | List all deployments associated with a specific assigned resource. |
+| [sample_delete_deployment_from_resources.py][sample_delete_deployment_from_resources] and [sample_delete_deployment_from_resources_async.py][sample_delete_deployment_from_resources_async] | Delete a deployment from the project’s assigned resources. |
+| [sample_get_deployment_delete_from_resources_status.py][sample_get_deployment_delete_from_resources_status] and [sample_get_deployment_delete_from_resources_status_async.py][sample_get_deployment_delete_from_resources_status_async] | Get the status of a deployment-deletion operation from project resources. |
 
 ---
 
@@ -129,5 +135,23 @@ Check out the [API reference documentation][api_reference_authoring] to explore 
 
 [sample_unassign_project_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_unassign_project_resources.py
 [sample_unassign_project_resources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/async/sample_unassign_project_resources_async.py
+
+[sample_list_project_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_list_project_resources.py
+[sample_list_project_resources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/async/sample_list_project_resources_async.py
+
+[sample_get_assign_project_resources_status]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_get_assign_project_resources_status.py
+[sample_get_assign_project_resources_status_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/async/sample_get_assign_project_resources_status_async.py
+
+[sample_get_unassign_project_resources_status]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_get_unassign_project_resources_status.py
+[sample_get_unassign_project_resources_status_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/async/sample_get_unassign_project_resources_status_async.py
+
+[sample_list_assigned_resource_deployments]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_list_assigned_resource_deployments.py
+[sample_list_assigned_resource_deployments_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/async/sample_list_assigned_resource_deployments_async.py
+
+[sample_delete_deployment_from_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_delete_deployment_from_resources.py
+[sample_delete_deployment_from_resources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/async/sample_delete_deployment_from_resources_async.py
+
+[sample_get_deployment_delete_from_resources_status]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_get_deployment_delete_from_resources_status.py
+[sample_get_deployment_delete_from_resources_status_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/async/sample_get_deployment_delete_from_resources_status_async.py
 
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring#install-the-package
