@@ -81,6 +81,8 @@ class _TextContentStreamingState(_BaseStreamingState):
         ctx._next_output_index += 1
 
         message_item = ResponsesAssistantMessageItemResource(
+            role="assistant",
+            type="message",
             id=self.item_id,
             status="in_progress",
             content=[],
@@ -88,6 +90,7 @@ class _TextContentStreamingState(_BaseStreamingState):
 
         events.append(
             ResponseOutputItemAddedEvent(
+                type="response.output_item.added",
                 sequence_number=ctx.next_sequence(),
                 output_index=self.output_index,
                 item=message_item,
@@ -98,6 +101,7 @@ class _TextContentStreamingState(_BaseStreamingState):
             empty_part = ItemContentOutputText(type="output_text", text="", annotations=[], logprobs=[])
             events.append(
                 ResponseContentPartAddedEvent(
+                    type="response.content_part.added",
                     sequence_number=ctx.next_sequence(),
                     item_id=self.item_id,
                     output_index=self.output_index,
@@ -123,6 +127,7 @@ class _TextContentStreamingState(_BaseStreamingState):
         assert self.output_index is not None, "Text state not initialized: missing output_index"
         events.append(
             ResponseTextDeltaEvent(
+                type="response.text.delta",
                 sequence_number=ctx.next_sequence(),
                 item_id=self.item_id,
                 output_index=self.output_index,
@@ -141,6 +146,7 @@ class _TextContentStreamingState(_BaseStreamingState):
         assert self.item_id is not None and self.output_index is not None
         events.append(
             ResponseTextDoneEvent(
+                type="response.text.done",
                 sequence_number=ctx.next_sequence(),
                 item_id=self.item_id,
                 output_index=self.output_index,
@@ -151,6 +157,7 @@ class _TextContentStreamingState(_BaseStreamingState):
         final_part = ItemContentOutputText(type="output_text", text=full_text, annotations=[], logprobs=[])
         events.append(
             ResponseContentPartDoneEvent(
+                type="response.content_part.done",
                 sequence_number=ctx.next_sequence(),
                 item_id=self.item_id,
                 output_index=self.output_index,
@@ -159,10 +166,11 @@ class _TextContentStreamingState(_BaseStreamingState):
             )
         )
         completed_item = ResponsesAssistantMessageItemResource(
-            id=self.item_id, status="completed", content=[final_part]
+            role="assistant", type="message", id=self.item_id, status="completed", content=[final_part]
         )
         events.append(
             ResponseOutputItemDoneEvent(
+                type="response.output_item.done",
                 sequence_number=ctx.next_sequence(),
                 output_index=self.output_index,
                 item=completed_item,
@@ -227,6 +235,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         )
         events.append(
             ResponseOutputItemAddedEvent(
+                type="response.output_item.added",
                 sequence_number=ctx.next_sequence(),
                 output_index=self.output_index,
                 item=function_item,
@@ -247,6 +256,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         for ch in args_delta:
             events.append(
                 ResponseFunctionCallArgumentsDeltaEvent(
+                    type="response.function_call_arguments.delta",
                     sequence_number=ctx.next_sequence(),
                     item_id=self.item_id,
                     output_index=self.output_index,
@@ -273,6 +283,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         if is_done:
             events.append(
                 ResponseFunctionCallArgumentsDoneEvent(
+                    type="response.function_call_arguments.done",
                     sequence_number=ctx.next_sequence(),
                     item_id=self.item_id,
                     output_index=self.output_index,
@@ -298,6 +309,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         assert self.output_index is not None
         events.append(
             ResponseOutputItemDoneEvent(
+                type="response.output_item.done",
                 sequence_number=ctx.next_sequence(),
                 output_index=self.output_index,
                 item=done_item,
@@ -361,6 +373,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         )
         events.append(
             ResponseOutputItemAddedEvent(
+                type="response.output_item.added",
                 sequence_number=ctx.next_sequence(),
                 output_index=self.output_index,
                 item=item,
@@ -421,6 +434,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         assert self.output_index is not None
         events.append(
             ResponseOutputItemDoneEvent(
+                type="response.output_item.done",
                 sequence_number=ctx.next_sequence(),
                 output_index=self.output_index,
                 item=done_item,
@@ -524,6 +538,7 @@ class AgentFrameworkOutputStreamingConverter:
                     events.extend(self._switch_state("error"))
                     events.append(
                         ResponseErrorEvent(
+                            type="error",
                             sequence_number=self.next_sequence(),
                             code=getattr(content, "error_code", None) or "server_error",
                             message=getattr(content, "message", None) or "An error occurred",
@@ -567,12 +582,14 @@ class AgentFrameworkOutputStreamingConverter:
         created_response = self.build_response(status="in_progress")
         events.append(
             ResponseCreatedEvent(
+                type="response.created",
                 sequence_number=self.next_sequence(),
                 response=created_response,
             )
         )
         events.append(
             ResponseInProgressEvent(
+                type="response.in_progress",
                 sequence_number=self.next_sequence(),
                 response=self.build_response(status="in_progress"),
             )
