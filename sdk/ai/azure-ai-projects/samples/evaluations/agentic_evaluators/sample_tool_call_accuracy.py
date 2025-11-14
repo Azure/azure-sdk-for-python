@@ -48,275 +48,272 @@ def main() -> None:
     ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
     model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
-    with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-            print("Creating an OpenAI client from the AI Project client")
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as client,
+    ):
+        print("Creating an OpenAI client from the AI Project client")
 
-            client = project_client.get_openai_client()
-
-            data_source_config = DataSourceConfigCustom(
-                {
-                    "type": "custom",
-                    "item_schema": {
-                        "type": "object",
-                        "properties": {
-                            "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                            "tool_definitions": {
-                                "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
-                            },
-                            "tool_calls": {
-                                "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
-                            },
-                            "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+        data_source_config = DataSourceConfigCustom(
+            {
+                "type": "custom",
+                "item_schema": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "tool_definitions": {
+                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
                         },
-                        "required": ["query", "tool_definitions"],
+                        "tool_calls": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
+                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                     },
-                    "include_sample_schema": True,
-                }
-            )
+                    "required": ["query", "tool_definitions"],
+                },
+                "include_sample_schema": True,
+            }
+        )
 
-            testing_criteria = [
-                {
-                    "type": "azure_ai_evaluator",
-                    "name": "tool_call_accuracy",
-                    "evaluator_name": "builtin.tool_call_accuracy",
-                    "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-                    "data_mapping": {
-                        "query": "{{item.query}}",
-                        "tool_definitions": "{{item.tool_definitions}}",
-                        "tool_calls": "{{item.tool_calls}}",
-                        "response": "{{item.response}}",
-                    },
-                }
-            ]
+        testing_criteria = [
+            {
+                "type": "azure_ai_evaluator",
+                "name": "tool_call_accuracy",
+                "evaluator_name": "builtin.tool_call_accuracy",
+                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                "data_mapping": {
+                    "query": "{{item.query}}",
+                    "tool_definitions": "{{item.tool_definitions}}",
+                    "tool_calls": "{{item.tool_calls}}",
+                    "response": "{{item.response}}",
+                },
+            }
+        ]
 
-            print("Creating Eval Group")
-            eval_object = client.evals.create(
-                name="Test Tool Call Accuracy Evaluator with inline data",
-                data_source_config=data_source_config,
-                testing_criteria=testing_criteria,  # type: ignore
-            )
-            print(f"Eval Group created")
+        print("Creating Eval Group")
+        eval_object = client.evals.create(
+            name="Test Tool Call Accuracy Evaluator with inline data",
+            data_source_config=data_source_config,
+            testing_criteria=testing_criteria,  # type: ignore
+        )
+        print(f"Eval Group created")
 
-            print("Get Eval Group by Id")
-            eval_object_response = client.evals.retrieve(eval_object.id)
-            print("Eval Run Response:")
-            pprint(eval_object_response)
+        print("Get Eval Group by Id")
+        eval_object_response = client.evals.retrieve(eval_object.id)
+        print("Eval Run Response:")
+        pprint(eval_object_response)
 
-            # Example 1: Simple tool call evaluation
-            query1 = "What's the weather like in New York?"
-            tool_definitions1 = [
-                {
-                    "type": "function",
-                    "name": "get_weather",
-                    "description": "Get weather information for a location",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {"location": {"type": "string", "description": "The city name"}},
-                    },
-                }
-            ]
+        # Example 1: Simple tool call evaluation
+        query1 = "What's the weather like in New York?"
+        tool_definitions1 = [
+            {
+                "type": "function",
+                "name": "get_weather",
+                "description": "Get weather information for a location",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string", "description": "The city name"}},
+                },
+            }
+        ]
 
-            tool_calls1 = [
-                {
-                    "type": "tool_call",
-                    "tool_call_id": "call_1",
-                    "name": "get_weather",
-                    "arguments": {"location": "New York"},
-                }
-            ]
+        tool_calls1 = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_1",
+                "name": "get_weather",
+                "arguments": {"location": "New York"},
+            }
+        ]
 
-            # Example 2: Multiple tool calls
-            query2 = "Search for customer orders and send an email update"
-            tool_definitions2 = [
-                {
-                    "type": "function",
-                    "id": "search_database_tool",
-                    "name": "search_database",
-                    "description": "Search database for information",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {"query": {"type": "string"}, "table": {"type": "string"}},
-                    },
+        # Example 2: Multiple tool calls
+        query2 = "Search for customer orders and send an email update"
+        tool_definitions2 = [
+            {
+                "type": "function",
+                "id": "search_database_tool",
+                "name": "search_database",
+                "description": "Search database for information",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"query": {"type": "string"}, "table": {"type": "string"}},
                 },
-                {
-                    "type": "function",
-                    "id": "send_email_tool",
-                    "name": "send_email",
-                    "description": "Send an email",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {"to": {"type": "string"}, "subject": {"type": "string"}},
-                    },
+            },
+            {
+                "type": "function",
+                "id": "send_email_tool",
+                "name": "send_email",
+                "description": "Send an email",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"to": {"type": "string"}, "subject": {"type": "string"}},
                 },
-            ]
-            tool_calls2 = [
-                {
-                    "type": "tool_call",
-                    "tool_call_id": "call_1",
-                    "name": "search_database",
-                    "arguments": {"query": "customer orders", "table": "orders"},
-                },
-                {
-                    "type": "tool_call",
-                    "tool_call_id": "call_2",
-                    "name": "send_email",
-                    "arguments": {"to": "customer@example.com", "subject": "Order Update"},
-                },
-            ]
+            },
+        ]
+        tool_calls2 = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_1",
+                "name": "search_database",
+                "arguments": {"query": "customer orders", "table": "orders"},
+            },
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_2",
+                "name": "send_email",
+                "arguments": {"to": "customer@example.com", "subject": "Order Update"},
+            },
+        ]
 
-            # Example 3: Conversation format
-            query3 = "Can you send me an email with weather information for Seattle?"
-            response3 = [
-                {
-                    "createdAt": "2025-03-26T17:27:35Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "role": "assistant",
-                    "content": [
-                        {
-                            "type": "tool_call",
-                            "tool_call_id": "call_CUdbkBfvVBla2YP3p24uhElJ",
-                            "name": "fetch_weather",
-                            "arguments": {"location": "Seattle"},
-                        }
-                    ],
-                },
-                {
-                    "createdAt": "2025-03-26T17:27:37Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "tool_call_id": "call_CUdbkBfvVBla2YP3p24uhElJ",
-                    "role": "tool",
-                    "content": [{"type": "tool_result", "tool_result": {"weather": "Rainy, 14\u00b0C"}}],
-                },
-                {
-                    "createdAt": "2025-03-26T17:27:38Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "role": "assistant",
-                    "content": [
-                        {
-                            "type": "tool_call",
-                            "tool_call_id": "call_iq9RuPxqzykebvACgX8pqRW2",
-                            "name": "send_email",
-                            "arguments": {
-                                "recipient": "your_email@example.com",
-                                "subject": "Weather Information for Seattle",
-                                "body": "The current weather in Seattle is rainy with a temperature of 14\u00b0C.",
-                            },
-                        }
-                    ],
-                },
-                {
-                    "createdAt": "2025-03-26T17:27:41Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "tool_call_id": "call_iq9RuPxqzykebvACgX8pqRW2",
-                    "role": "tool",
-                    "content": [
-                        {
-                            "type": "tool_result",
-                            "tool_result": {"message": "Email successfully sent to your_email@example.com."},
-                        }
-                    ],
-                },
-                {
-                    "createdAt": "2025-03-26T17:27:42Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "role": "assistant",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C.",
-                        }
-                    ],
-                },
-            ]
-
-            tool_definitions3 = [
-                {
-                    "name": "fetch_weather",
-                    "description": "Fetches the weather information for the specified location.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "location": {"type": "string", "description": "The location to fetch weather for."}
+        # Example 3: Conversation format
+        query3 = "Can you send me an email with weather information for Seattle?"
+        response3 = [
+            {
+                "createdAt": "2025-03-26T17:27:35Z",
+                "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_CUdbkBfvVBla2YP3p24uhElJ",
+                        "name": "fetch_weather",
+                        "arguments": {"location": "Seattle"},
+                    }
+                ],
+            },
+            {
+                "createdAt": "2025-03-26T17:27:37Z",
+                "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
+                "tool_call_id": "call_CUdbkBfvVBla2YP3p24uhElJ",
+                "role": "tool",
+                "content": [{"type": "tool_result", "tool_result": {"weather": "Rainy, 14\u00b0C"}}],
+            },
+            {
+                "createdAt": "2025-03-26T17:27:38Z",
+                "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_iq9RuPxqzykebvACgX8pqRW2",
+                        "name": "send_email",
+                        "arguments": {
+                            "recipient": "your_email@example.com",
+                            "subject": "Weather Information for Seattle",
+                            "body": "The current weather in Seattle is rainy with a temperature of 14\u00b0C.",
                         },
-                    },
-                },
-                {
-                    "name": "send_email",
-                    "description": "Sends an email with the specified subject and body to the recipient.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "recipient": {"type": "string", "description": "Email address of the recipient."},
-                            "subject": {"type": "string", "description": "Subject of the email."},
-                            "body": {"type": "string", "description": "Body content of the email."},
-                        },
-                    },
-                },
-            ]
+                    }
+                ],
+            },
+            {
+                "createdAt": "2025-03-26T17:27:41Z",
+                "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
+                "tool_call_id": "call_iq9RuPxqzykebvACgX8pqRW2",
+                "role": "tool",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_result": {"message": "Email successfully sent to your_email@example.com."},
+                    }
+                ],
+            },
+            {
+                "createdAt": "2025-03-26T17:27:42Z",
+                "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C.",
+                    }
+                ],
+            },
+        ]
 
-            print("Creating Eval Run with Inline Data")
-            eval_run_object = client.evals.runs.create(
-                eval_id=eval_object.id,
-                name="inline_data_run",
-                metadata={"team": "eval-exp", "scenario": "inline-data-v1"},
-                data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl",
-                    source=SourceFileContent(
-                        type="file_content",
-                        content=[
-                            # Example 1: Simple tool call evaluation
-                            SourceFileContentContent(
-                                item={
-                                    "query": query1,
-                                    "tool_definitions": tool_definitions1,
-                                    "tool_calls": tool_calls1,
-                                    "response": None,
-                                }
-                            ),
-                            # Example 2: Multiple tool calls
-                            SourceFileContentContent(
-                                item={
-                                    "query": query2,
-                                    "tool_definitions": tool_definitions2,
-                                    "tool_calls": tool_calls2,
-                                    "response": None,
-                                }
-                            ),
-                            # Example 3: Conversation format with object types
-                            SourceFileContentContent(
-                                item={
-                                    "query": query3,
-                                    "tool_definitions": tool_definitions3,
-                                    "response": response3,
-                                    "tool_calls": None,
-                                }
-                            ),
-                        ],
-                    ),
+        tool_definitions3 = [
+            {
+                "name": "fetch_weather",
+                "description": "Fetches the weather information for the specified location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
+                },
+            },
+            {
+                "name": "send_email",
+                "description": "Sends an email with the specified subject and body to the recipient.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "recipient": {"type": "string", "description": "Email address of the recipient."},
+                        "subject": {"type": "string", "description": "Subject of the email."},
+                        "body": {"type": "string", "description": "Body content of the email."},
+                    },
+                },
+            },
+        ]
+
+        print("Creating Eval Run with Inline Data")
+        eval_run_object = client.evals.runs.create(
+            eval_id=eval_object.id,
+            name="inline_data_run",
+            metadata={"team": "eval-exp", "scenario": "inline-data-v1"},
+            data_source=CreateEvalJSONLRunDataSourceParam(
+                type="jsonl",
+                source=SourceFileContent(
+                    type="file_content",
+                    content=[
+                        # Example 1: Simple tool call evaluation
+                        SourceFileContentContent(
+                            item={
+                                "query": query1,
+                                "tool_definitions": tool_definitions1,
+                                "tool_calls": tool_calls1,
+                                "response": None,
+                            }
+                        ),
+                        # Example 2: Multiple tool calls
+                        SourceFileContentContent(
+                            item={
+                                "query": query2,
+                                "tool_definitions": tool_definitions2,
+                                "tool_calls": tool_calls2,
+                                "response": None,
+                            }
+                        ),
+                        # Example 3: Conversation format with object types
+                        SourceFileContentContent(
+                            item={
+                                "query": query3,
+                                "tool_definitions": tool_definitions3,
+                                "response": response3,
+                                "tool_calls": None,
+                            }
+                        ),
+                    ],
                 ),
-            )
+            ),
+        )
 
-            print(f"Eval Run created")
-            pprint(eval_run_object)
+        print(f"Eval Run created")
+        pprint(eval_run_object)
 
-            print("Get Eval Run by Id")
-            eval_run_response = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-            print("Eval Run Response:")
-            pprint(eval_run_response)
+        print("Get Eval Run by Id")
+        eval_run_response = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
+        print("Eval Run Response:")
+        pprint(eval_run_response)
 
-            print("\n\n----Eval Run Output Items----\n\n")
+        print("\n\n----Eval Run Output Items----\n\n")
 
-            while True:
-                run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-                if run.status == "completed" or run.status == "failed":
-                    output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
-                    pprint(output_items)
-                    print(f"Eval Run Status: {run.status}")
-                    print(f"Eval Run Report URL: {run.report_url}")
-                    break
-                time.sleep(5)
-                print("Waiting for eval run to complete...")
+        while True:
+            run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
+            if run.status == "completed" or run.status == "failed":
+                output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
+                pprint(output_items)
+                print(f"Eval Run Status: {run.status}")
+                print(f"Eval Run Report URL: {run.report_url}")
+                break
+            time.sleep(5)
+            print("Waiting for eval run to complete...")
 
 
 if __name__ == "__main__":

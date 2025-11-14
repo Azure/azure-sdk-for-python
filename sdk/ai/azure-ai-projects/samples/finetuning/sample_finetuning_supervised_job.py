@@ -7,9 +7,9 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `.fine_tuning.jobs` methods to create, get, list, cancel, pause, resume, list events 
+    `.fine_tuning.jobs` methods to create, get, list, cancel, pause, resume, list events
     and list checkpoints supervised fine-tuning jobs.
-    It also shows how to deploy the fine-tuned model using Azure Cognitive Services Management 
+    It also shows how to deploy the fine-tuned model using Azure Cognitive Services Management
     Client and perform inference on the deployed model.
     Supported OpenAI models: GPT 4o, 4o-mini, 4.1, 4.1-mini
 
@@ -57,7 +57,7 @@ resource_group = os.environ["AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP"]
 account_name = os.environ["AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT"]
 
 with (
-    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):

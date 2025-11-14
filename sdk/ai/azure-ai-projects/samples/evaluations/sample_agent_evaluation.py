@@ -38,16 +38,13 @@ from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-with project_client:
-
-    openai_client = project_client.get_openai_client()
-
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
     agent = project_client.agents.create_version(
         agent_name=os.environ["AZURE_AI_AGENT_NAME"],
         definition=PromptAgentDefinition(
