@@ -13,12 +13,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations  # type: ignore
-from ._certificate_orders_diagnostics_operations import CertificateOrdersDiagnosticsOperations  # type: ignore
-from ._certificate_registration_provider_operations import CertificateRegistrationProviderOperations  # type: ignore
-from ._domain_registration_provider_operations import DomainRegistrationProviderOperations  # type: ignore
-from ._domains_operations import DomainsOperations  # type: ignore
-from ._top_level_domains_operations import TopLevelDomainsOperations  # type: ignore
 from ._app_service_environments_operations import AppServiceEnvironmentsOperations  # type: ignore
 from ._app_service_plans_operations import AppServicePlansOperations  # type: ignore
 from ._certificates_operations import CertificatesOperations  # type: ignore
@@ -49,12 +43,6 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AppServiceCertificateOrdersOperations",
-    "CertificateOrdersDiagnosticsOperations",
-    "CertificateRegistrationProviderOperations",
-    "DomainRegistrationProviderOperations",
-    "DomainsOperations",
-    "TopLevelDomainsOperations",
     "AppServiceEnvironmentsOperations",
     "AppServicePlansOperations",
     "CertificatesOperations",

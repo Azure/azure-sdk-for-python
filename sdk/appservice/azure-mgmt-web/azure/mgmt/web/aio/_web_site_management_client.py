@@ -21,16 +21,11 @@ from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import WebSiteManagementClientConfiguration
 from .operations import (
-    AppServiceCertificateOrdersOperations,
     AppServiceEnvironmentsOperations,
     AppServicePlansOperations,
-    CertificateOrdersDiagnosticsOperations,
-    CertificateRegistrationProviderOperations,
     CertificatesOperations,
     DeletedWebAppsOperations,
     DiagnosticsOperations,
-    DomainRegistrationProviderOperations,
-    DomainsOperations,
     GetUsagesInLocationOperations,
     GlobalOperations,
     KubeEnvironmentsOperations,
@@ -39,7 +34,6 @@ from .operations import (
     ResourceHealthMetadataOperations,
     SiteCertificatesOperations,
     StaticSitesOperations,
-    TopLevelDomainsOperations,
     WebAppsOperations,
     WorkflowRunActionRepetitionsOperations,
     WorkflowRunActionRepetitionsRequestHistoriesOperations,
@@ -54,28 +48,13 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
-    """WebSite Management Client.
+    """AppService Management Client.
 
-    :ivar app_service_certificate_orders: AppServiceCertificateOrdersOperations operations
-    :vartype app_service_certificate_orders:
-     azure.mgmt.web.aio.operations.AppServiceCertificateOrdersOperations
-    :ivar certificate_orders_diagnostics: CertificateOrdersDiagnosticsOperations operations
-    :vartype certificate_orders_diagnostics:
-     azure.mgmt.web.aio.operations.CertificateOrdersDiagnosticsOperations
-    :ivar certificate_registration_provider: CertificateRegistrationProviderOperations operations
-    :vartype certificate_registration_provider:
-     azure.mgmt.web.aio.operations.CertificateRegistrationProviderOperations
-    :ivar domain_registration_provider: DomainRegistrationProviderOperations operations
-    :vartype domain_registration_provider:
-     azure.mgmt.web.aio.operations.DomainRegistrationProviderOperations
-    :ivar domains: DomainsOperations operations
-    :vartype domains: azure.mgmt.web.aio.operations.DomainsOperations
-    :ivar top_level_domains: TopLevelDomainsOperations operations
-    :vartype top_level_domains: azure.mgmt.web.aio.operations.TopLevelDomainsOperations
     :ivar app_service_environments: AppServiceEnvironmentsOperations operations
     :vartype app_service_environments:
      azure.mgmt.web.aio.operations.AppServiceEnvironmentsOperations
@@ -137,7 +116,10 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-11-01". Note that overriding this
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-03-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -145,15 +127,25 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = WebSiteManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -182,22 +174,6 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.app_service_certificate_orders = AppServiceCertificateOrdersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.certificate_orders_diagnostics = CertificateOrdersDiagnosticsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.certificate_registration_provider = CertificateRegistrationProviderOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.domain_registration_provider = DomainRegistrationProviderOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.top_level_domains = TopLevelDomainsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.app_service_environments = AppServiceEnvironmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

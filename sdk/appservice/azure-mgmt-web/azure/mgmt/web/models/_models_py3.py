@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
+from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -43,8 +43,8 @@ class AbnormalTimePeriod(_serialization.Model):
         *,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        events: Optional[List["_models.DetectorAbnormalTimePeriod"]] = None,
-        solutions: Optional[List["_models.Solution"]] = None,
+        events: Optional[list["_models.DetectorAbnormalTimePeriod"]] = None,
+        solutions: Optional[list["_models.Solution"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -62,76 +62,6 @@ class AbnormalTimePeriod(_serialization.Model):
         self.end_time = end_time
         self.events = events
         self.solutions = solutions
-
-
-class Address(_serialization.Model):
-    """Address information for domain registration.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar address1: First line of an Address. Required.
-    :vartype address1: str
-    :ivar address2: The second line of the Address. Optional.
-    :vartype address2: str
-    :ivar city: The city for the address. Required.
-    :vartype city: str
-    :ivar country: The country for the address. Required.
-    :vartype country: str
-    :ivar postal_code: The postal code for the address. Required.
-    :vartype postal_code: str
-    :ivar state: The state or province for the address. Required.
-    :vartype state: str
-    """
-
-    _validation = {
-        "address1": {"required": True},
-        "city": {"required": True},
-        "country": {"required": True},
-        "postal_code": {"required": True},
-        "state": {"required": True},
-    }
-
-    _attribute_map = {
-        "address1": {"key": "address1", "type": "str"},
-        "address2": {"key": "address2", "type": "str"},
-        "city": {"key": "city", "type": "str"},
-        "country": {"key": "country", "type": "str"},
-        "postal_code": {"key": "postalCode", "type": "str"},
-        "state": {"key": "state", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        address1: str,
-        city: str,
-        country: str,
-        postal_code: str,
-        state: str,
-        address2: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword address1: First line of an Address. Required.
-        :paramtype address1: str
-        :keyword address2: The second line of the Address. Optional.
-        :paramtype address2: str
-        :keyword city: The city for the address. Required.
-        :paramtype city: str
-        :keyword country: The country for the address. Required.
-        :paramtype country: str
-        :keyword postal_code: The postal code for the address. Required.
-        :paramtype postal_code: str
-        :keyword state: The state or province for the address. Required.
-        :paramtype state: str
-        """
-        super().__init__(**kwargs)
-        self.address1 = address1
-        self.address2 = address2
-        self.city = city
-        self.country = country
-        self.postal_code = postal_code
-        self.state = state
 
 
 class ProxyOnlyResource(_serialization.Model):
@@ -221,8 +151,8 @@ class AddressResponse(ProxyOnlyResource):
         kind: Optional[str] = None,
         service_ip_address: Optional[str] = None,
         internal_ip_address: Optional[str] = None,
-        outbound_ip_addresses: Optional[List[str]] = None,
-        vip_mappings: Optional[List["_models.VirtualIPMapping"]] = None,
+        outbound_ip_addresses: Optional[list[str]] = None,
+        vip_mappings: Optional[list["_models.VirtualIPMapping"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -257,7 +187,7 @@ class AllowedAudiencesValidation(_serialization.Model):
         "allowed_audiences": {"key": "allowedAudiences", "type": "[str]"},
     }
 
-    def __init__(self, *, allowed_audiences: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, allowed_audiences: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword allowed_audiences: The configuration settings of the allowed list of audiences from
          which to validate the JWT token.
@@ -282,7 +212,7 @@ class AllowedPrincipals(_serialization.Model):
     }
 
     def __init__(
-        self, *, groups: Optional[List[str]] = None, identities: Optional[List[str]] = None, **kwargs: Any
+        self, *, groups: Optional[list[str]] = None, identities: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword groups: The list of the allowed groups.
@@ -323,8 +253,8 @@ class AnalysisData(_serialization.Model):
         *,
         source: Optional[str] = None,
         detector_definition: Optional["_models.DetectorDefinition"] = None,
-        metrics: Optional[List["_models.DiagnosticMetricSet"]] = None,
-        data: Optional[List[List["_models.NameValuePair"]]] = None,
+        metrics: Optional[list["_models.DiagnosticMetricSet"]] = None,
+        data: Optional[list[list["_models.NameValuePair"]]] = None,
         detector_meta_data: Optional["_models.ResponseMetaData"] = None,
         **kwargs: Any
     ) -> None:
@@ -540,7 +470,7 @@ class ApiKVReferenceCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ApiKVReference"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ApiKVReference"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.ApiKVReference]
@@ -741,9 +671,9 @@ class ApplicationStack(_serialization.Model):
         name: Optional[str] = None,
         display: Optional[str] = None,
         dependency: Optional[str] = None,
-        major_versions: Optional[List["_models.StackMajorVersion"]] = None,
-        frameworks: Optional[List["_models.ApplicationStack"]] = None,
-        is_deprecated: Optional[List["_models.ApplicationStack"]] = None,
+        major_versions: Optional[list["_models.StackMajorVersion"]] = None,
+        frameworks: Optional[list["_models.ApplicationStack"]] = None,
+        is_deprecated: Optional[list["_models.ApplicationStack"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -793,7 +723,7 @@ class ApplicationStackCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ApplicationStackResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ApplicationStackResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.ApplicationStackResource]
@@ -857,9 +787,9 @@ class ApplicationStackResource(ProxyOnlyResource):
         name_properties_name: Optional[str] = None,
         display: Optional[str] = None,
         dependency: Optional[str] = None,
-        major_versions: Optional[List["_models.StackMajorVersion"]] = None,
-        frameworks: Optional[List["_models.ApplicationStack"]] = None,
-        is_deprecated: Optional[List["_models.ApplicationStack"]] = None,
+        major_versions: Optional[list["_models.StackMajorVersion"]] = None,
+        frameworks: Optional[list["_models.ApplicationStack"]] = None,
+        is_deprecated: Optional[list["_models.ApplicationStack"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -947,681 +877,6 @@ class AppRegistration(_serialization.Model):
         super().__init__(**kwargs)
         self.app_id = app_id
         self.app_secret_setting_name = app_secret_setting_name
-
-
-class AppServiceCertificate(_serialization.Model):
-    """Key Vault container for a certificate that is purchased through Azure.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar key_vault_id: Key Vault resource Id.
-    :vartype key_vault_id: str
-    :ivar key_vault_secret_name: Key Vault secret name.
-    :vartype key_vault_secret_name: str
-    :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
-     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
-     "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
-     "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey", and
-     "Unknown".
-    :vartype provisioning_state: str or ~azure.mgmt.web.models.KeyVaultSecretStatus
-    """
-
-    _validation = {
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "key_vault_id": {"key": "keyVaultId", "type": "str"},
-        "key_vault_secret_name": {"key": "keyVaultSecretName", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self, *, key_vault_id: Optional[str] = None, key_vault_secret_name: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword key_vault_id: Key Vault resource Id.
-        :paramtype key_vault_id: str
-        :keyword key_vault_secret_name: Key Vault secret name.
-        :paramtype key_vault_secret_name: str
-        """
-        super().__init__(**kwargs)
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
-        self.provisioning_state: Optional[Union[str, "_models.KeyVaultSecretStatus"]] = None
-
-
-class AppServiceCertificateCollection(_serialization.Model):
-    """Collection of certificate order certificates.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.models.AppServiceCertificateResource]
-    :ivar next_link: Link to next page of resources.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[AppServiceCertificateResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.AppServiceCertificateResource"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.models.AppServiceCertificateResource]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
-
-
-class Resource(_serialization.Model):
-    """Azure resource. This resource is tracked in Azure Resource Manager.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource. If the resource is an app, you can refer to
-     https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
-     for details supported values for kind.
-    :vartype kind: str
-    :ivar location: Resource Location. Required.
-    :vartype location: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "location": {"required": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(
-        self, *, location: str, kind: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource. If the resource is an app, you can refer to
-         https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
-         for details supported values for kind.
-        :paramtype kind: str
-        :keyword location: Resource Location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.kind = kind
-        self.location = location
-        self.type: Optional[str] = None
-        self.tags = tags
-
-
-class AppServiceCertificateOrder(Resource):
-    """SSL certificate purchase order.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource. If the resource is an app, you can refer to
-     https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
-     for details supported values for kind.
-    :vartype kind: str
-    :ivar location: Resource Location. Required.
-    :vartype location: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar certificates: State of the Key Vault secret.
-    :vartype certificates: dict[str, ~azure.mgmt.web.models.AppServiceCertificate]
-    :ivar distinguished_name: Certificate distinguished name.
-    :vartype distinguished_name: str
-    :ivar domain_verification_token: Domain verification token.
-    :vartype domain_verification_token: str
-    :ivar validity_in_years: Duration in years (must be 1).
-    :vartype validity_in_years: int
-    :ivar key_size: Certificate key size.
-    :vartype key_size: int
-    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl"
-     and "StandardDomainValidatedWildCardSsl".
-    :vartype product_type: str or ~azure.mgmt.web.models.CertificateProductType
-    :ivar auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
-     when it expires; otherwise, :code:`<code>false</code>`.
-    :vartype auto_renew: bool
-    :ivar provisioning_state: Status of certificate order. Known values are: "Succeeded", "Failed",
-     "Canceled", "InProgress", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.web.models.ProvisioningState
-    :ivar status: Current order status. Known values are: "Pendingissuance", "Issued", "Revoked",
-     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", and
-     "NotSubmitted".
-    :vartype status: str or ~azure.mgmt.web.models.CertificateOrderStatus
-    :ivar signed_certificate: Signed certificate.
-    :vartype signed_certificate: ~azure.mgmt.web.models.CertificateDetails
-    :ivar csr: Last CSR that was created for this order.
-    :vartype csr: str
-    :ivar intermediate: Intermediate certificate.
-    :vartype intermediate: ~azure.mgmt.web.models.CertificateDetails
-    :ivar root: Root certificate.
-    :vartype root: ~azure.mgmt.web.models.CertificateDetails
-    :ivar serial_number: Current serial number of the certificate.
-    :vartype serial_number: str
-    :ivar last_certificate_issuance_time: Certificate last issuance time.
-    :vartype last_certificate_issuance_time: ~datetime.datetime
-    :ivar expiration_time: Certificate expiration time.
-    :vartype expiration_time: ~datetime.datetime
-    :ivar is_private_key_external: :code:`<code>true</code>` if private key is external; otherwise,
-     :code:`<code>false</code>`.
-    :vartype is_private_key_external: bool
-    :ivar app_service_certificate_not_renewable_reasons: Reasons why App Service Certificate is not
-     renewable at the current moment.
-    :vartype app_service_certificate_not_renewable_reasons: list[str or
-     ~azure.mgmt.web.models.ResourceNotRenewableReason]
-    :ivar next_auto_renewal_time_stamp: Time stamp when the certificate would be auto renewed next.
-    :vartype next_auto_renewal_time_stamp: ~datetime.datetime
-    :ivar contact: Contact info.
-    :vartype contact: ~azure.mgmt.web.models.CertificateOrderContact
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "location": {"required": True},
-        "type": {"readonly": True},
-        "domain_verification_token": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "status": {"readonly": True},
-        "signed_certificate": {"readonly": True},
-        "intermediate": {"readonly": True},
-        "root": {"readonly": True},
-        "serial_number": {"readonly": True},
-        "last_certificate_issuance_time": {"readonly": True},
-        "expiration_time": {"readonly": True},
-        "is_private_key_external": {"readonly": True},
-        "app_service_certificate_not_renewable_reasons": {"readonly": True},
-        "next_auto_renewal_time_stamp": {"readonly": True},
-        "contact": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "certificates": {"key": "properties.certificates", "type": "{AppServiceCertificate}"},
-        "distinguished_name": {"key": "properties.distinguishedName", "type": "str"},
-        "domain_verification_token": {"key": "properties.domainVerificationToken", "type": "str"},
-        "validity_in_years": {"key": "properties.validityInYears", "type": "int"},
-        "key_size": {"key": "properties.keySize", "type": "int"},
-        "product_type": {"key": "properties.productType", "type": "str"},
-        "auto_renew": {"key": "properties.autoRenew", "type": "bool"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "status": {"key": "properties.status", "type": "str"},
-        "signed_certificate": {"key": "properties.signedCertificate", "type": "CertificateDetails"},
-        "csr": {"key": "properties.csr", "type": "str"},
-        "intermediate": {"key": "properties.intermediate", "type": "CertificateDetails"},
-        "root": {"key": "properties.root", "type": "CertificateDetails"},
-        "serial_number": {"key": "properties.serialNumber", "type": "str"},
-        "last_certificate_issuance_time": {"key": "properties.lastCertificateIssuanceTime", "type": "iso-8601"},
-        "expiration_time": {"key": "properties.expirationTime", "type": "iso-8601"},
-        "is_private_key_external": {"key": "properties.isPrivateKeyExternal", "type": "bool"},
-        "app_service_certificate_not_renewable_reasons": {
-            "key": "properties.appServiceCertificateNotRenewableReasons",
-            "type": "[str]",
-        },
-        "next_auto_renewal_time_stamp": {"key": "properties.nextAutoRenewalTimeStamp", "type": "iso-8601"},
-        "contact": {"key": "properties.contact", "type": "CertificateOrderContact"},
-    }
-
-    def __init__(  # pylint: disable=too-many-locals
-        self,
-        *,
-        location: str,
-        kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        certificates: Optional[Dict[str, "_models.AppServiceCertificate"]] = None,
-        distinguished_name: Optional[str] = None,
-        validity_in_years: int = 1,
-        key_size: int = 2048,
-        product_type: Optional[Union[str, "_models.CertificateProductType"]] = None,
-        auto_renew: bool = True,
-        csr: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource. If the resource is an app, you can refer to
-         https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
-         for details supported values for kind.
-        :paramtype kind: str
-        :keyword location: Resource Location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword certificates: State of the Key Vault secret.
-        :paramtype certificates: dict[str, ~azure.mgmt.web.models.AppServiceCertificate]
-        :keyword distinguished_name: Certificate distinguished name.
-        :paramtype distinguished_name: str
-        :keyword validity_in_years: Duration in years (must be 1).
-        :paramtype validity_in_years: int
-        :keyword key_size: Certificate key size.
-        :paramtype key_size: int
-        :keyword product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl"
-         and "StandardDomainValidatedWildCardSsl".
-        :paramtype product_type: str or ~azure.mgmt.web.models.CertificateProductType
-        :keyword auto_renew: :code:`<code>true</code>` if the certificate should be automatically
-         renewed when it expires; otherwise, :code:`<code>false</code>`.
-        :paramtype auto_renew: bool
-        :keyword csr: Last CSR that was created for this order.
-        :paramtype csr: str
-        """
-        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
-        self.certificates = certificates
-        self.distinguished_name = distinguished_name
-        self.domain_verification_token: Optional[str] = None
-        self.validity_in_years = validity_in_years
-        self.key_size = key_size
-        self.product_type = product_type
-        self.auto_renew = auto_renew
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.status: Optional[Union[str, "_models.CertificateOrderStatus"]] = None
-        self.signed_certificate: Optional["_models.CertificateDetails"] = None
-        self.csr = csr
-        self.intermediate: Optional["_models.CertificateDetails"] = None
-        self.root: Optional["_models.CertificateDetails"] = None
-        self.serial_number: Optional[str] = None
-        self.last_certificate_issuance_time: Optional[datetime.datetime] = None
-        self.expiration_time: Optional[datetime.datetime] = None
-        self.is_private_key_external: Optional[bool] = None
-        self.app_service_certificate_not_renewable_reasons: Optional[
-            List[Union[str, "_models.ResourceNotRenewableReason"]]
-        ] = None
-        self.next_auto_renewal_time_stamp: Optional[datetime.datetime] = None
-        self.contact: Optional["_models.CertificateOrderContact"] = None
-
-
-class AppServiceCertificateOrderCollection(_serialization.Model):
-    """Collection of certificate orders.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.models.AppServiceCertificateOrder]
-    :ivar next_link: Link to next page of resources.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[AppServiceCertificateOrder]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.AppServiceCertificateOrder"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.models.AppServiceCertificateOrder]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
-
-
-class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
-    """ARM resource for a certificate order that is purchased through Azure.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource.
-    :vartype kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar certificates: State of the Key Vault secret.
-    :vartype certificates: dict[str, ~azure.mgmt.web.models.AppServiceCertificate]
-    :ivar distinguished_name: Certificate distinguished name.
-    :vartype distinguished_name: str
-    :ivar domain_verification_token: Domain verification token.
-    :vartype domain_verification_token: str
-    :ivar validity_in_years: Duration in years (must be 1).
-    :vartype validity_in_years: int
-    :ivar key_size: Certificate key size.
-    :vartype key_size: int
-    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl"
-     and "StandardDomainValidatedWildCardSsl".
-    :vartype product_type: str or ~azure.mgmt.web.models.CertificateProductType
-    :ivar auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
-     when it expires; otherwise, :code:`<code>false</code>`.
-    :vartype auto_renew: bool
-    :ivar provisioning_state: Status of certificate order. Known values are: "Succeeded", "Failed",
-     "Canceled", "InProgress", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.web.models.ProvisioningState
-    :ivar status: Current order status. Known values are: "Pendingissuance", "Issued", "Revoked",
-     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", and
-     "NotSubmitted".
-    :vartype status: str or ~azure.mgmt.web.models.CertificateOrderStatus
-    :ivar signed_certificate: Signed certificate.
-    :vartype signed_certificate: ~azure.mgmt.web.models.CertificateDetails
-    :ivar csr: Last CSR that was created for this order.
-    :vartype csr: str
-    :ivar intermediate: Intermediate certificate.
-    :vartype intermediate: ~azure.mgmt.web.models.CertificateDetails
-    :ivar root: Root certificate.
-    :vartype root: ~azure.mgmt.web.models.CertificateDetails
-    :ivar serial_number: Current serial number of the certificate.
-    :vartype serial_number: str
-    :ivar last_certificate_issuance_time: Certificate last issuance time.
-    :vartype last_certificate_issuance_time: ~datetime.datetime
-    :ivar expiration_time: Certificate expiration time.
-    :vartype expiration_time: ~datetime.datetime
-    :ivar is_private_key_external: :code:`<code>true</code>` if private key is external; otherwise,
-     :code:`<code>false</code>`.
-    :vartype is_private_key_external: bool
-    :ivar app_service_certificate_not_renewable_reasons: Reasons why App Service Certificate is not
-     renewable at the current moment.
-    :vartype app_service_certificate_not_renewable_reasons: list[str or
-     ~azure.mgmt.web.models.ResourceNotRenewableReason]
-    :ivar next_auto_renewal_time_stamp: Time stamp when the certificate would be auto renewed next.
-    :vartype next_auto_renewal_time_stamp: ~datetime.datetime
-    :ivar contact: Contact info.
-    :vartype contact: ~azure.mgmt.web.models.CertificateOrderContact
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "domain_verification_token": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "status": {"readonly": True},
-        "signed_certificate": {"readonly": True},
-        "intermediate": {"readonly": True},
-        "root": {"readonly": True},
-        "serial_number": {"readonly": True},
-        "last_certificate_issuance_time": {"readonly": True},
-        "expiration_time": {"readonly": True},
-        "is_private_key_external": {"readonly": True},
-        "app_service_certificate_not_renewable_reasons": {"readonly": True},
-        "next_auto_renewal_time_stamp": {"readonly": True},
-        "contact": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "certificates": {"key": "properties.certificates", "type": "{AppServiceCertificate}"},
-        "distinguished_name": {"key": "properties.distinguishedName", "type": "str"},
-        "domain_verification_token": {"key": "properties.domainVerificationToken", "type": "str"},
-        "validity_in_years": {"key": "properties.validityInYears", "type": "int"},
-        "key_size": {"key": "properties.keySize", "type": "int"},
-        "product_type": {"key": "properties.productType", "type": "str"},
-        "auto_renew": {"key": "properties.autoRenew", "type": "bool"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "status": {"key": "properties.status", "type": "str"},
-        "signed_certificate": {"key": "properties.signedCertificate", "type": "CertificateDetails"},
-        "csr": {"key": "properties.csr", "type": "str"},
-        "intermediate": {"key": "properties.intermediate", "type": "CertificateDetails"},
-        "root": {"key": "properties.root", "type": "CertificateDetails"},
-        "serial_number": {"key": "properties.serialNumber", "type": "str"},
-        "last_certificate_issuance_time": {"key": "properties.lastCertificateIssuanceTime", "type": "iso-8601"},
-        "expiration_time": {"key": "properties.expirationTime", "type": "iso-8601"},
-        "is_private_key_external": {"key": "properties.isPrivateKeyExternal", "type": "bool"},
-        "app_service_certificate_not_renewable_reasons": {
-            "key": "properties.appServiceCertificateNotRenewableReasons",
-            "type": "[str]",
-        },
-        "next_auto_renewal_time_stamp": {"key": "properties.nextAutoRenewalTimeStamp", "type": "iso-8601"},
-        "contact": {"key": "properties.contact", "type": "CertificateOrderContact"},
-    }
-
-    def __init__(  # pylint: disable=too-many-locals
-        self,
-        *,
-        kind: Optional[str] = None,
-        certificates: Optional[Dict[str, "_models.AppServiceCertificate"]] = None,
-        distinguished_name: Optional[str] = None,
-        validity_in_years: int = 1,
-        key_size: int = 2048,
-        product_type: Optional[Union[str, "_models.CertificateProductType"]] = None,
-        auto_renew: bool = True,
-        csr: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource.
-        :paramtype kind: str
-        :keyword certificates: State of the Key Vault secret.
-        :paramtype certificates: dict[str, ~azure.mgmt.web.models.AppServiceCertificate]
-        :keyword distinguished_name: Certificate distinguished name.
-        :paramtype distinguished_name: str
-        :keyword validity_in_years: Duration in years (must be 1).
-        :paramtype validity_in_years: int
-        :keyword key_size: Certificate key size.
-        :paramtype key_size: int
-        :keyword product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl"
-         and "StandardDomainValidatedWildCardSsl".
-        :paramtype product_type: str or ~azure.mgmt.web.models.CertificateProductType
-        :keyword auto_renew: :code:`<code>true</code>` if the certificate should be automatically
-         renewed when it expires; otherwise, :code:`<code>false</code>`.
-        :paramtype auto_renew: bool
-        :keyword csr: Last CSR that was created for this order.
-        :paramtype csr: str
-        """
-        super().__init__(kind=kind, **kwargs)
-        self.certificates = certificates
-        self.distinguished_name = distinguished_name
-        self.domain_verification_token: Optional[str] = None
-        self.validity_in_years = validity_in_years
-        self.key_size = key_size
-        self.product_type = product_type
-        self.auto_renew = auto_renew
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.status: Optional[Union[str, "_models.CertificateOrderStatus"]] = None
-        self.signed_certificate: Optional["_models.CertificateDetails"] = None
-        self.csr = csr
-        self.intermediate: Optional["_models.CertificateDetails"] = None
-        self.root: Optional["_models.CertificateDetails"] = None
-        self.serial_number: Optional[str] = None
-        self.last_certificate_issuance_time: Optional[datetime.datetime] = None
-        self.expiration_time: Optional[datetime.datetime] = None
-        self.is_private_key_external: Optional[bool] = None
-        self.app_service_certificate_not_renewable_reasons: Optional[
-            List[Union[str, "_models.ResourceNotRenewableReason"]]
-        ] = None
-        self.next_auto_renewal_time_stamp: Optional[datetime.datetime] = None
-        self.contact: Optional["_models.CertificateOrderContact"] = None
-
-
-class AppServiceCertificatePatchResource(ProxyOnlyResource):
-    """Key Vault container ARM resource for a certificate that is purchased through Azure.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource.
-    :vartype kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar key_vault_id: Key Vault resource Id.
-    :vartype key_vault_id: str
-    :ivar key_vault_secret_name: Key Vault secret name.
-    :vartype key_vault_secret_name: str
-    :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
-     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
-     "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
-     "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey", and
-     "Unknown".
-    :vartype provisioning_state: str or ~azure.mgmt.web.models.KeyVaultSecretStatus
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "key_vault_id": {"key": "properties.keyVaultId", "type": "str"},
-        "key_vault_secret_name": {"key": "properties.keyVaultSecretName", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        key_vault_id: Optional[str] = None,
-        key_vault_secret_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource.
-        :paramtype kind: str
-        :keyword key_vault_id: Key Vault resource Id.
-        :paramtype key_vault_id: str
-        :keyword key_vault_secret_name: Key Vault secret name.
-        :paramtype key_vault_secret_name: str
-        """
-        super().__init__(kind=kind, **kwargs)
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
-        self.provisioning_state: Optional[Union[str, "_models.KeyVaultSecretStatus"]] = None
-
-
-class AppServiceCertificateResource(Resource):
-    """Key Vault container ARM resource for a certificate that is purchased through Azure.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource. If the resource is an app, you can refer to
-     https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
-     for details supported values for kind.
-    :vartype kind: str
-    :ivar location: Resource Location. Required.
-    :vartype location: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar key_vault_id: Key Vault resource Id.
-    :vartype key_vault_id: str
-    :ivar key_vault_secret_name: Key Vault secret name.
-    :vartype key_vault_secret_name: str
-    :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
-     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
-     "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
-     "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey", and
-     "Unknown".
-    :vartype provisioning_state: str or ~azure.mgmt.web.models.KeyVaultSecretStatus
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "location": {"required": True},
-        "type": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "key_vault_id": {"key": "properties.keyVaultId", "type": "str"},
-        "key_vault_secret_name": {"key": "properties.keyVaultSecretName", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        key_vault_id: Optional[str] = None,
-        key_vault_secret_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource. If the resource is an app, you can refer to
-         https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
-         for details supported values for kind.
-        :paramtype kind: str
-        :keyword location: Resource Location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword key_vault_id: Key Vault resource Id.
-        :paramtype key_vault_id: str
-        :keyword key_vault_secret_name: Key Vault secret name.
-        :paramtype key_vault_secret_name: str
-        """
-        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
-        self.provisioning_state: Optional[Union[str, "_models.KeyVaultSecretStatus"]] = None
 
 
 class AppServiceEnvironment(_serialization.Model):
@@ -1730,8 +985,8 @@ class AppServiceEnvironment(_serialization.Model):
         ipssl_address_count: Optional[int] = None,
         dns_suffix: Optional[str] = None,
         front_end_scale_factor: Optional[int] = None,
-        cluster_settings: Optional[List["_models.NameValuePair"]] = None,
-        user_whitelisted_ip_ranges: Optional[List[str]] = None,
+        cluster_settings: Optional[list["_models.NameValuePair"]] = None,
+        user_whitelisted_ip_ranges: Optional[list[str]] = None,
         upgrade_preference: Union[str, "_models.UpgradePreference"] = "None",
         dedicated_host_count: Optional[int] = None,
         zone_redundant: Optional[bool] = None,
@@ -1819,7 +1074,7 @@ class AppServiceEnvironmentCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AppServiceEnvironmentResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.AppServiceEnvironmentResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.AppServiceEnvironmentResource]
@@ -1951,8 +1206,8 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
         ipssl_address_count: Optional[int] = None,
         dns_suffix: Optional[str] = None,
         front_end_scale_factor: Optional[int] = None,
-        cluster_settings: Optional[List["_models.NameValuePair"]] = None,
-        user_whitelisted_ip_ranges: Optional[List[str]] = None,
+        cluster_settings: Optional[list["_models.NameValuePair"]] = None,
+        user_whitelisted_ip_ranges: Optional[list[str]] = None,
         upgrade_preference: Union[str, "_models.UpgradePreference"] = "None",
         dedicated_host_count: Optional[int] = None,
         zone_redundant: Optional[bool] = None,
@@ -2017,6 +1272,67 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
         self.custom_dns_suffix_configuration = custom_dns_suffix_configuration
         self.networking_configuration = networking_configuration
         self.upgrade_availability: Optional[Union[str, "_models.UpgradeAvailability"]] = None
+
+
+class Resource(_serialization.Model):
+    """Azure resource. This resource is tracked in Azure Resource Manager.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :ivar kind: Kind of resource. If the resource is an app, you can refer to
+     https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
+     for details supported values for kind.
+    :vartype kind: str
+    :ivar location: Resource Location. Required.
+    :vartype location: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(
+        self, *, location: str, kind: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: Kind of resource. If the resource is an app, you can refer to
+         https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
+         for details supported values for kind.
+        :paramtype kind: str
+        :keyword location: Resource Location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.kind = kind
+        self.location = location
+        self.type: Optional[str] = None
+        self.tags = tags
 
 
 class AppServiceEnvironmentResource(Resource):
@@ -2147,15 +1463,15 @@ class AppServiceEnvironmentResource(Resource):
         *,
         location: str,
         kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         virtual_network: Optional["_models.VirtualNetworkProfile"] = None,
         internal_load_balancing_mode: Optional[Union[str, "_models.LoadBalancingMode"]] = None,
         multi_size: Optional[str] = None,
         ipssl_address_count: Optional[int] = None,
         dns_suffix: Optional[str] = None,
         front_end_scale_factor: Optional[int] = None,
-        cluster_settings: Optional[List["_models.NameValuePair"]] = None,
-        user_whitelisted_ip_ranges: Optional[List[str]] = None,
+        cluster_settings: Optional[list["_models.NameValuePair"]] = None,
+        user_whitelisted_ip_ranges: Optional[list[str]] = None,
         upgrade_preference: Union[str, "_models.UpgradePreference"] = "None",
         dedicated_host_count: Optional[int] = None,
         zone_redundant: Optional[bool] = None,
@@ -2337,6 +1653,8 @@ class AppServicePlan(Resource):
     :vartype tags: dict[str, str]
     :ivar sku: Description of a SKU for a scalable resource.
     :vartype sku: ~azure.mgmt.web.models.SkuDescription
+    :ivar identity: Managed service identity.
+    :vartype identity: ~azure.mgmt.web.models.ManagedServiceIdentity
     :ivar extended_location: Extended Location.
     :vartype extended_location: ~azure.mgmt.web.models.ExtendedLocation
     :ivar worker_tier_name: Target worker tier assigned to the App Service plan.
@@ -2405,6 +1723,23 @@ class AppServicePlan(Resource):
      to scale asynchronously if there are insufficient workers to scale synchronously.
      If :code:`<code>false</code>`, this App Service Plan will only attempt sync scaling.
     :vartype async_scaling_enabled: bool
+    :ivar plan_default_identity: Identity to use by platform for various features and integrations
+     using managed identity.
+    :vartype plan_default_identity: ~azure.mgmt.web.models.DefaultIdentity
+    :ivar is_custom_mode: Whether this server farm is in custom mode.
+    :vartype is_custom_mode: bool
+    :ivar registry_adapters: Registry adapters associated with this App Service plan.
+    :vartype registry_adapters: list[~azure.mgmt.web.models.RegistryAdapter]
+    :ivar install_scripts: Install scripts associated with this App Service plan.
+    :vartype install_scripts: list[~azure.mgmt.web.models.InstallScript]
+    :ivar network: All network settings for the server farm.
+    :vartype network: ~azure.mgmt.web.models.ServerFarmNetworkSettings
+    :ivar storage_mounts: Storage mounts associated with this App Service plan.
+    :vartype storage_mounts: list[~azure.mgmt.web.models.StorageMount]
+    :ivar rdp_enabled: If :code:`<code>true</code>`, RDP access is enabled for this App Service
+     plan. Only applicable for IsCustomMode ASPs.
+     If :code:`<code>false</code>`, RDP access is disabled.
+    :vartype rdp_enabled: bool
     """
 
     _validation = {
@@ -2430,6 +1765,7 @@ class AppServicePlan(Resource):
         "type": {"key": "type", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "sku": {"key": "sku", "type": "SkuDescription"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "worker_tier_name": {"key": "properties.workerTierName", "type": "str"},
         "status": {"key": "properties.status", "type": "str"},
@@ -2458,6 +1794,13 @@ class AppServicePlan(Resource):
         "kube_environment_profile": {"key": "properties.kubeEnvironmentProfile", "type": "KubeEnvironmentProfile"},
         "zone_redundant": {"key": "properties.zoneRedundant", "type": "bool"},
         "async_scaling_enabled": {"key": "properties.asyncScalingEnabled", "type": "bool"},
+        "plan_default_identity": {"key": "properties.planDefaultIdentity", "type": "DefaultIdentity"},
+        "is_custom_mode": {"key": "properties.isCustomMode", "type": "bool"},
+        "registry_adapters": {"key": "properties.registryAdapters", "type": "[RegistryAdapter]"},
+        "install_scripts": {"key": "properties.installScripts", "type": "[InstallScript]"},
+        "network": {"key": "properties.network", "type": "ServerFarmNetworkSettings"},
+        "storage_mounts": {"key": "properties.storageMounts", "type": "[StorageMount]"},
+        "rdp_enabled": {"key": "properties.rdpEnabled", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2465,8 +1808,9 @@ class AppServicePlan(Resource):
         *,
         location: str,
         kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.SkuDescription"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
         worker_tier_name: Optional[str] = None,
         hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
@@ -2484,6 +1828,13 @@ class AppServicePlan(Resource):
         kube_environment_profile: Optional["_models.KubeEnvironmentProfile"] = None,
         zone_redundant: bool = False,
         async_scaling_enabled: Optional[bool] = None,
+        plan_default_identity: Optional["_models.DefaultIdentity"] = None,
+        is_custom_mode: Optional[bool] = None,
+        registry_adapters: Optional[list["_models.RegistryAdapter"]] = None,
+        install_scripts: Optional[list["_models.InstallScript"]] = None,
+        network: Optional["_models.ServerFarmNetworkSettings"] = None,
+        storage_mounts: Optional[list["_models.StorageMount"]] = None,
+        rdp_enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2497,6 +1848,8 @@ class AppServicePlan(Resource):
         :paramtype tags: dict[str, str]
         :keyword sku: Description of a SKU for a scalable resource.
         :paramtype sku: ~azure.mgmt.web.models.SkuDescription
+        :keyword identity: Managed service identity.
+        :paramtype identity: ~azure.mgmt.web.models.ManagedServiceIdentity
         :keyword extended_location: Extended Location.
         :paramtype extended_location: ~azure.mgmt.web.models.ExtendedLocation
         :keyword worker_tier_name: Target worker tier assigned to the App Service plan.
@@ -2547,9 +1900,27 @@ class AppServicePlan(Resource):
          attempt to scale asynchronously if there are insufficient workers to scale synchronously.
          If :code:`<code>false</code>`, this App Service Plan will only attempt sync scaling.
         :paramtype async_scaling_enabled: bool
+        :keyword plan_default_identity: Identity to use by platform for various features and
+         integrations using managed identity.
+        :paramtype plan_default_identity: ~azure.mgmt.web.models.DefaultIdentity
+        :keyword is_custom_mode: Whether this server farm is in custom mode.
+        :paramtype is_custom_mode: bool
+        :keyword registry_adapters: Registry adapters associated with this App Service plan.
+        :paramtype registry_adapters: list[~azure.mgmt.web.models.RegistryAdapter]
+        :keyword install_scripts: Install scripts associated with this App Service plan.
+        :paramtype install_scripts: list[~azure.mgmt.web.models.InstallScript]
+        :keyword network: All network settings for the server farm.
+        :paramtype network: ~azure.mgmt.web.models.ServerFarmNetworkSettings
+        :keyword storage_mounts: Storage mounts associated with this App Service plan.
+        :paramtype storage_mounts: list[~azure.mgmt.web.models.StorageMount]
+        :keyword rdp_enabled: If :code:`<code>true</code>`, RDP access is enabled for this App Service
+         plan. Only applicable for IsCustomMode ASPs.
+         If :code:`<code>false</code>`, RDP access is disabled.
+        :paramtype rdp_enabled: bool
         """
         super().__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.sku = sku
+        self.identity = identity
         self.extended_location = extended_location
         self.worker_tier_name = worker_tier_name
         self.status: Optional[Union[str, "_models.StatusOptions"]] = None
@@ -2575,6 +1946,13 @@ class AppServicePlan(Resource):
         self.kube_environment_profile = kube_environment_profile
         self.zone_redundant = zone_redundant
         self.async_scaling_enabled = async_scaling_enabled
+        self.plan_default_identity = plan_default_identity
+        self.is_custom_mode = is_custom_mode
+        self.registry_adapters = registry_adapters
+        self.install_scripts = install_scripts
+        self.network = network
+        self.storage_mounts = storage_mounts
+        self.rdp_enabled = rdp_enabled
 
 
 class AppServicePlanCollection(_serialization.Model):
@@ -2600,7 +1978,7 @@ class AppServicePlanCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AppServicePlan"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.AppServicePlan"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.AppServicePlan]
@@ -2623,6 +2001,8 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar identity: Managed service identity.
+    :vartype identity: ~azure.mgmt.web.models.ManagedServiceIdentity
     :ivar worker_tier_name: Target worker tier assigned to the App Service plan.
     :vartype worker_tier_name: str
     :ivar status: App Service plan status. Known values are: "Ready", "Pending", and "Creating".
@@ -2706,6 +2086,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         "name": {"key": "name", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "worker_tier_name": {"key": "properties.workerTierName", "type": "str"},
         "status": {"key": "properties.status", "type": "str"},
         "subscription": {"key": "properties.subscription", "type": "str"},
@@ -2738,6 +2119,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         worker_tier_name: Optional[str] = None,
         hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
         per_site_scaling: bool = False,
@@ -2758,6 +2140,8 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
+        :keyword identity: Managed service identity.
+        :paramtype identity: ~azure.mgmt.web.models.ManagedServiceIdentity
         :keyword worker_tier_name: Target worker tier assigned to the App Service plan.
         :paramtype worker_tier_name: str
         :keyword hosting_environment_profile: Specification for the App Service Environment to use for
@@ -2804,6 +2188,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         :paramtype zone_redundant: bool
         """
         super().__init__(kind=kind, **kwargs)
+        self.identity = identity
         self.worker_tier_name = worker_tier_name
         self.status: Optional[Union[str, "_models.StatusOptions"]] = None
         self.subscription: Optional[str] = None
@@ -3026,8 +2411,8 @@ class AseRegion(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        available_sku: Optional[List[str]] = None,
-        available_os: Optional[List[str]] = None,
+        available_sku: Optional[list[str]] = None,
+        available_os: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3070,7 +2455,7 @@ class AseRegionCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AseRegion"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.AseRegion"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.AseRegion]
@@ -3166,10 +2551,10 @@ class AseV3NetworkingConfiguration(ProxyOnlyResource):
         :paramtype inbound_ip_address_override: str
         """
         super().__init__(kind=kind, **kwargs)
-        self.windows_outbound_ip_addresses: Optional[List[str]] = None
-        self.linux_outbound_ip_addresses: Optional[List[str]] = None
-        self.external_inbound_ip_addresses: Optional[List[str]] = None
-        self.internal_inbound_ip_addresses: Optional[List[str]] = None
+        self.windows_outbound_ip_addresses: Optional[list[str]] = None
+        self.linux_outbound_ip_addresses: Optional[list[str]] = None
+        self.external_inbound_ip_addresses: Optional[list[str]] = None
+        self.internal_inbound_ip_addresses: Optional[list[str]] = None
         self.allow_new_private_endpoint_connections = allow_new_private_endpoint_connections
         self.ftp_enabled = ftp_enabled
         self.remote_debug_enabled = remote_debug_enabled
@@ -3360,10 +2745,10 @@ class AutoHealTriggers(_serialization.Model):
         *,
         requests: Optional["_models.RequestsBasedTrigger"] = None,
         private_bytes_in_kb: Optional[int] = None,
-        status_codes: Optional[List["_models.StatusCodesBasedTrigger"]] = None,
+        status_codes: Optional[list["_models.StatusCodesBasedTrigger"]] = None,
         slow_requests: Optional["_models.SlowRequestsBasedTrigger"] = None,
-        slow_requests_with_path: Optional[List["_models.SlowRequestsBasedTrigger"]] = None,
-        status_codes_range: Optional[List["_models.StatusCodesRangeBasedTrigger"]] = None,
+        slow_requests_with_path: Optional[list["_models.SlowRequestsBasedTrigger"]] = None,
+        status_codes_range: Optional[list["_models.StatusCodesRangeBasedTrigger"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3475,7 +2860,7 @@ class AzureActiveDirectoryLogin(_serialization.Model):
     def __init__(
         self,
         *,
-        login_parameters: Optional[List[str]] = None,
+        login_parameters: Optional[list[str]] = None,
         disable_www_authenticate: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -3616,7 +3001,7 @@ class AzureActiveDirectoryValidation(_serialization.Model):
         self,
         *,
         jwt_claim_checks: Optional["_models.JwtClaimChecks"] = None,
-        allowed_audiences: Optional[List[str]] = None,
+        allowed_audiences: Optional[list[str]] = None,
         default_authorization_policy: Optional["_models.DefaultAuthorizationPolicy"] = None,
         **kwargs: Any
     ) -> None:
@@ -3782,7 +3167,7 @@ class AzureResourceErrorInfo(ErrorInfo):
         *,
         code: str,
         message: str,
-        details: Optional[List["_models.AzureResourceErrorInfo"]] = None,
+        details: Optional[list["_models.AzureResourceErrorInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3960,7 +3345,7 @@ class AzureStoragePropertyDictionaryResource(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        properties: Optional[Dict[str, "_models.AzureStorageInfoValue"]] = None,
+        properties: Optional[dict[str, "_models.AzureStorageInfoValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4108,7 +3493,7 @@ class BackupItem(ProxyOnlyResource):
         self.size_in_bytes: Optional[int] = None
         self.created: Optional[datetime.datetime] = None
         self.log: Optional[str] = None
-        self.databases: Optional[List["_models.DatabaseBackupSetting"]] = None
+        self.databases: Optional[list["_models.DatabaseBackupSetting"]] = None
         self.scheduled: Optional[bool] = None
         self.last_restore_time_stamp: Optional[datetime.datetime] = None
         self.finished_time_stamp: Optional[datetime.datetime] = None
@@ -4139,7 +3524,7 @@ class BackupItemCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.BackupItem"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.BackupItem"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.BackupItem]
@@ -4201,7 +3586,7 @@ class BackupRequest(ProxyOnlyResource):
         enabled: Optional[bool] = None,
         storage_account_url: Optional[str] = None,
         backup_schedule: Optional["_models.BackupSchedule"] = None,
-        databases: Optional[List["_models.DatabaseBackupSetting"]] = None,
+        databases: Optional[list["_models.DatabaseBackupSetting"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4419,7 +3804,7 @@ class BillingMeterCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.BillingMeter"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.BillingMeter"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.BillingMeter]
@@ -4613,9 +3998,9 @@ class Certificate(Resource):
         *,
         location: str,
         kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         password: Optional[str] = None,
-        host_names: Optional[List[str]] = None,
+        host_names: Optional[list[str]] = None,
         pfx_blob: Optional[bytes] = None,
         key_vault_id: Optional[str] = None,
         key_vault_secret_name: Optional[str] = None,
@@ -4697,7 +4082,7 @@ class CertificateCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Certificate"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Certificate"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.Certificate]
@@ -4705,175 +4090,6 @@ class CertificateCollection(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link: Optional[str] = None
-
-
-class CertificateDetails(_serialization.Model):
-    """SSL certificate details.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar version: Certificate Version.
-    :vartype version: int
-    :ivar serial_number: Certificate Serial Number.
-    :vartype serial_number: str
-    :ivar thumbprint: Certificate Thumbprint.
-    :vartype thumbprint: str
-    :ivar subject: Certificate Subject.
-    :vartype subject: str
-    :ivar not_before: Date Certificate is valid from.
-    :vartype not_before: ~datetime.datetime
-    :ivar not_after: Date Certificate is valid to.
-    :vartype not_after: ~datetime.datetime
-    :ivar signature_algorithm: Certificate Signature algorithm.
-    :vartype signature_algorithm: str
-    :ivar issuer: Certificate Issuer.
-    :vartype issuer: str
-    :ivar raw_data: Raw certificate data.
-    :vartype raw_data: str
-    """
-
-    _validation = {
-        "version": {"readonly": True},
-        "serial_number": {"readonly": True},
-        "thumbprint": {"readonly": True},
-        "subject": {"readonly": True},
-        "not_before": {"readonly": True},
-        "not_after": {"readonly": True},
-        "signature_algorithm": {"readonly": True},
-        "issuer": {"readonly": True},
-        "raw_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "version": {"key": "version", "type": "int"},
-        "serial_number": {"key": "serialNumber", "type": "str"},
-        "thumbprint": {"key": "thumbprint", "type": "str"},
-        "subject": {"key": "subject", "type": "str"},
-        "not_before": {"key": "notBefore", "type": "iso-8601"},
-        "not_after": {"key": "notAfter", "type": "iso-8601"},
-        "signature_algorithm": {"key": "signatureAlgorithm", "type": "str"},
-        "issuer": {"key": "issuer", "type": "str"},
-        "raw_data": {"key": "rawData", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.version: Optional[int] = None
-        self.serial_number: Optional[str] = None
-        self.thumbprint: Optional[str] = None
-        self.subject: Optional[str] = None
-        self.not_before: Optional[datetime.datetime] = None
-        self.not_after: Optional[datetime.datetime] = None
-        self.signature_algorithm: Optional[str] = None
-        self.issuer: Optional[str] = None
-        self.raw_data: Optional[str] = None
-
-
-class CertificateEmail(_serialization.Model):
-    """SSL certificate email.
-
-    :ivar email_id: Email id.
-    :vartype email_id: str
-    :ivar time_stamp: Time stamp.
-    :vartype time_stamp: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        "email_id": {"key": "emailId", "type": "str"},
-        "time_stamp": {"key": "timeStamp", "type": "iso-8601"},
-    }
-
-    def __init__(
-        self, *, email_id: Optional[str] = None, time_stamp: Optional[datetime.datetime] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword email_id: Email id.
-        :paramtype email_id: str
-        :keyword time_stamp: Time stamp.
-        :paramtype time_stamp: ~datetime.datetime
-        """
-        super().__init__(**kwargs)
-        self.email_id = email_id
-        self.time_stamp = time_stamp
-
-
-class CertificateOrderAction(_serialization.Model):
-    """Certificate order action.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar action_type: Action type. Known values are: "CertificateIssued",
-     "CertificateOrderCanceled", "CertificateOrderCreated", "CertificateRevoked",
-     "DomainValidationComplete", "FraudDetected", "OrgNameChange", "OrgValidationComplete",
-     "SanDrop", "FraudCleared", "CertificateExpired", "CertificateExpirationWarning",
-     "FraudDocumentationRequired", and "Unknown".
-    :vartype action_type: str or ~azure.mgmt.web.models.CertificateOrderActionType
-    :ivar created_at: Time at which the certificate action was performed.
-    :vartype created_at: ~datetime.datetime
-    """
-
-    _validation = {
-        "action_type": {"readonly": True},
-        "created_at": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "action_type": {"key": "actionType", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.action_type: Optional[Union[str, "_models.CertificateOrderActionType"]] = None
-        self.created_at: Optional[datetime.datetime] = None
-
-
-class CertificateOrderContact(_serialization.Model):
-    """CertificateOrderContact.
-
-    :ivar email:
-    :vartype email: str
-    :ivar name_first:
-    :vartype name_first: str
-    :ivar name_last:
-    :vartype name_last: str
-    :ivar phone:
-    :vartype phone: str
-    """
-
-    _attribute_map = {
-        "email": {"key": "email", "type": "str"},
-        "name_first": {"key": "nameFirst", "type": "str"},
-        "name_last": {"key": "nameLast", "type": "str"},
-        "phone": {"key": "phone", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        email: Optional[str] = None,
-        name_first: Optional[str] = None,
-        name_last: Optional[str] = None,
-        phone: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword email:
-        :paramtype email: str
-        :keyword name_first:
-        :paramtype name_first: str
-        :keyword name_last:
-        :paramtype name_last: str
-        :keyword phone:
-        :paramtype phone: str
-        """
-        super().__init__(**kwargs)
-        self.email = email
-        self.name_first = name_first
-        self.name_last = name_last
-        self.phone = phone
 
 
 class CertificatePatchResource(ProxyOnlyResource):
@@ -4994,7 +4210,7 @@ class CertificatePatchResource(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         password: Optional[str] = None,
-        host_names: Optional[List[str]] = None,
+        host_names: Optional[list[str]] = None,
         pfx_blob: Optional[bytes] = None,
         key_vault_id: Optional[str] = None,
         key_vault_secret_name: Optional[str] = None,
@@ -5059,7 +4275,7 @@ class CipherSuites(_serialization.Model):
         "suites": {"key": "suites", "type": "[str]"},
     }
 
-    def __init__(self, *, suites: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, suites: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword suites: List of TLS Cipher Suites that are supported by App Service.
         :paramtype suites: list[str]
@@ -5169,7 +4385,7 @@ class CloningInfo(_serialization.Model):
         clone_source_control: Optional[bool] = None,
         source_web_app_location: Optional[str] = None,
         hosting_environment: Optional[str] = None,
-        app_settings_overrides: Optional[Dict[str, str]] = None,
+        app_settings_overrides: Optional[dict[str, str]] = None,
         configure_load_balancing: Optional[bool] = None,
         traffic_manager_profile_id: Optional[str] = None,
         traffic_manager_profile_name: Optional[str] = None,
@@ -5263,7 +4479,7 @@ class ConnectionStringDictionary(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        properties: Optional[Dict[str, "_models.ConnStringValueTypePair"]] = None,
+        properties: Optional[dict[str, "_models.ConnStringValueTypePair"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5354,98 +4570,6 @@ class ConnStringValueTypePair(_serialization.Model):
         self.type = type
 
 
-class Contact(_serialization.Model):
-    """Contact information for domain registration. If 'Domain Privacy' option is not selected then
-    the contact information is made publicly available through the Whois
-    directories as per ICANN requirements.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar address_mailing: Mailing address.
-    :vartype address_mailing: ~azure.mgmt.web.models.Address
-    :ivar email: Email address. Required.
-    :vartype email: str
-    :ivar fax: Fax number.
-    :vartype fax: str
-    :ivar job_title: Job title.
-    :vartype job_title: str
-    :ivar name_first: First name. Required.
-    :vartype name_first: str
-    :ivar name_last: Last name. Required.
-    :vartype name_last: str
-    :ivar name_middle: Middle name.
-    :vartype name_middle: str
-    :ivar organization: Organization contact belongs to.
-    :vartype organization: str
-    :ivar phone: Phone number. Required.
-    :vartype phone: str
-    """
-
-    _validation = {
-        "email": {"required": True},
-        "name_first": {"required": True},
-        "name_last": {"required": True},
-        "phone": {"required": True},
-    }
-
-    _attribute_map = {
-        "address_mailing": {"key": "addressMailing", "type": "Address"},
-        "email": {"key": "email", "type": "str"},
-        "fax": {"key": "fax", "type": "str"},
-        "job_title": {"key": "jobTitle", "type": "str"},
-        "name_first": {"key": "nameFirst", "type": "str"},
-        "name_last": {"key": "nameLast", "type": "str"},
-        "name_middle": {"key": "nameMiddle", "type": "str"},
-        "organization": {"key": "organization", "type": "str"},
-        "phone": {"key": "phone", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        email: str,
-        name_first: str,
-        name_last: str,
-        phone: str,
-        address_mailing: Optional["_models.Address"] = None,
-        fax: Optional[str] = None,
-        job_title: Optional[str] = None,
-        name_middle: Optional[str] = None,
-        organization: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword address_mailing: Mailing address.
-        :paramtype address_mailing: ~azure.mgmt.web.models.Address
-        :keyword email: Email address. Required.
-        :paramtype email: str
-        :keyword fax: Fax number.
-        :paramtype fax: str
-        :keyword job_title: Job title.
-        :paramtype job_title: str
-        :keyword name_first: First name. Required.
-        :paramtype name_first: str
-        :keyword name_last: Last name. Required.
-        :paramtype name_last: str
-        :keyword name_middle: Middle name.
-        :paramtype name_middle: str
-        :keyword organization: Organization contact belongs to.
-        :paramtype organization: str
-        :keyword phone: Phone number. Required.
-        :paramtype phone: str
-        """
-        super().__init__(**kwargs)
-        self.address_mailing = address_mailing
-        self.email = email
-        self.fax = fax
-        self.job_title = job_title
-        self.name_first = name_first
-        self.name_last = name_last
-        self.name_middle = name_middle
-        self.organization = organization
-        self.phone = phone
-
-
 class Container(_serialization.Model):
     """Container App container definition.
 
@@ -5477,9 +4601,9 @@ class Container(_serialization.Model):
         *,
         image: Optional[str] = None,
         name: Optional[str] = None,
-        command: Optional[List[str]] = None,
-        args: Optional[List[str]] = None,
-        env: Optional[List["_models.EnvironmentVar"]] = None,
+        command: Optional[list[str]] = None,
+        args: Optional[list[str]] = None,
+        env: Optional[list["_models.EnvironmentVar"]] = None,
         resources: Optional["_models.ContainerResources"] = None,
         **kwargs: Any
     ) -> None:
@@ -5656,7 +4780,7 @@ class ContainerCpuUsage(_serialization.Model):
         self,
         *,
         total_usage: Optional[int] = None,
-        per_cpu_usage: Optional[List[int]] = None,
+        per_cpu_usage: Optional[list[int]] = None,
         kernel_mode_usage: Optional[int] = None,
         user_mode_usage: Optional[int] = None,
         **kwargs: Any
@@ -6073,7 +5197,7 @@ class ContinuousWebJob(ProxyOnlyResource):
         web_job_type: Optional[Union[str, "_models.WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
-        settings: Optional[Dict[str, JSON]] = None,
+        settings: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6137,7 +5261,7 @@ class ContinuousWebJobCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ContinuousWebJob"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ContinuousWebJob"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.ContinuousWebJob]
@@ -6222,7 +5346,7 @@ class CorsSettings(_serialization.Model):
     }
 
     def __init__(
-        self, *, allowed_origins: Optional[List[str]] = None, support_credentials: Optional[bool] = None, **kwargs: Any
+        self, *, allowed_origins: Optional[list[str]] = None, support_credentials: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """
         :keyword allowed_origins: Gets or sets the list of origins that should be allowed to make
@@ -6302,8 +5426,8 @@ class CsmDeploymentStatus(ProxyOnlyResource):
         number_of_instances_in_progress: Optional[int] = None,
         number_of_instances_successful: Optional[int] = None,
         number_of_instances_failed: Optional[int] = None,
-        failed_instances_logs: Optional[List[str]] = None,
-        errors: Optional[List["_models.ErrorEntity"]] = None,
+        failed_instances_logs: Optional[list[str]] = None,
+        errors: Optional[list["_models.ErrorEntity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6361,7 +5485,7 @@ class CsmDeploymentStatusCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.CsmDeploymentStatus"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.CsmDeploymentStatus"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.CsmDeploymentStatus]
@@ -6391,7 +5515,7 @@ class CsmMoveResourceEnvelope(_serialization.Model):
     }
 
     def __init__(
-        self, *, target_resource_group: Optional[str] = None, resources: Optional[List[str]] = None, **kwargs: Any
+        self, *, target_resource_group: Optional[str] = None, resources: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword target_resource_group:
@@ -6427,7 +5551,7 @@ class CsmOperationCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.CsmOperationDescription"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.CsmOperationDescription"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.CsmOperationDescription]
@@ -6753,7 +5877,7 @@ class CsmUsageQuotaCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.CsmUsageQuota"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.CsmUsageQuota"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.CsmUsageQuota]
@@ -6923,11 +6047,11 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        c_name_records: Optional[List[str]] = None,
-        txt_records: Optional[List[str]] = None,
-        a_records: Optional[List[str]] = None,
-        alternate_c_name_records: Optional[List[str]] = None,
-        alternate_txt_records: Optional[List[str]] = None,
+        c_name_records: Optional[list[str]] = None,
+        txt_records: Optional[list[str]] = None,
+        a_records: Optional[list[str]] = None,
+        alternate_c_name_records: Optional[list[str]] = None,
+        alternate_txt_records: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7002,7 +6126,7 @@ class CustomHostnameSites(ProxyOnlyResource):
         kind: Optional[str] = None,
         custom_hostname: Optional[str] = None,
         region: Optional[str] = None,
-        site_resource_ids: Optional[List["_models.Identifier"]] = None,
+        site_resource_ids: Optional[list["_models.Identifier"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7044,7 +6168,7 @@ class CustomHostnameSitesCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.CustomHostnameSites"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.CustomHostnameSites"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.CustomHostnameSites]
@@ -7121,8 +6245,8 @@ class CustomScaleRule(_serialization.Model):
         self,
         *,
         type: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        auth: Optional[List["_models.ScaleRuleAuth"]] = None,
+        metadata: Optional[dict[str, str]] = None,
+        auth: Optional[list["_models.ScaleRuleAuth"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7166,7 +6290,7 @@ class Dapr(_serialization.Model):
         enabled: Optional[bool] = None,
         app_id: Optional[str] = None,
         app_port: Optional[int] = None,
-        components: Optional[List["_models.DaprComponent"]] = None,
+        components: Optional[list["_models.DaprComponent"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7212,7 +6336,7 @@ class DaprComponent(_serialization.Model):
         name: Optional[str] = None,
         type: Optional[str] = None,
         version: Optional[str] = None,
-        metadata: Optional[List["_models.DaprMetadata"]] = None,
+        metadata: Optional[list["_models.DaprMetadata"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7490,7 +6614,7 @@ class DatabaseConnection(ProxyOnlyResource):
         self.connection_identity = connection_identity
         self.connection_string = connection_string
         self.region = region
-        self.configuration_files: Optional[List["_models.StaticSiteDatabaseConnectionConfigurationFileOverview"]] = None
+        self.configuration_files: Optional[list["_models.StaticSiteDatabaseConnectionConfigurationFileOverview"]] = None
 
 
 class DatabaseConnectionCollection(_serialization.Model):
@@ -7516,7 +6640,7 @@ class DatabaseConnectionCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DatabaseConnection"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.DatabaseConnection"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.DatabaseConnection]
@@ -7573,7 +6697,7 @@ class DatabaseConnectionOverview(_serialization.Model):
         self.resource_id: Optional[str] = None
         self.connection_identity: Optional[str] = None
         self.region: Optional[str] = None
-        self.configuration_files: Optional[List["_models.StaticSiteDatabaseConnectionConfigurationFileOverview"]] = None
+        self.configuration_files: Optional[list["_models.StaticSiteDatabaseConnectionConfigurationFileOverview"]] = None
         self.name: Optional[str] = None
 
 
@@ -7656,7 +6780,7 @@ class DataProviderMetadata(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.provider_name = provider_name
-        self.property_bag: Optional[List["_models.KeyValuePairStringObject"]] = None
+        self.property_bag: Optional[list["_models.KeyValuePairStringObject"]] = None
 
 
 class DataSource(_serialization.Model):
@@ -7676,8 +6800,8 @@ class DataSource(_serialization.Model):
     def __init__(
         self,
         *,
-        instructions: Optional[List[str]] = None,
-        data_source_uri: Optional[List["_models.NameValuePair"]] = None,
+        instructions: Optional[list[str]] = None,
+        data_source_uri: Optional[list["_models.NameValuePair"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7751,8 +6875,8 @@ class DataTableResponseObject(_serialization.Model):
         self,
         *,
         table_name: Optional[str] = None,
-        columns: Optional[List["_models.DataTableResponseColumn"]] = None,
-        rows: Optional[List[List[str]]] = None,
+        columns: Optional[list["_models.DataTableResponseColumn"]] = None,
+        rows: Optional[list[list[str]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7789,7 +6913,7 @@ class DefaultAuthorizationPolicy(_serialization.Model):
         self,
         *,
         allowed_principals: Optional["_models.AllowedPrincipals"] = None,
-        allowed_applications: Optional[List[str]] = None,
+        allowed_applications: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7861,7 +6985,7 @@ class DefaultErrorResponseError(_serialization.Model):
     }
 
     def __init__(
-        self, *, details: Optional[List["_models.DefaultErrorResponseErrorDetailsItem"]] = None, **kwargs: Any
+        self, *, details: Optional[list["_models.DefaultErrorResponseErrorDetailsItem"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword details:
@@ -7906,6 +7030,40 @@ class DefaultErrorResponseErrorDetailsItem(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
+
+
+class DefaultIdentity(_serialization.Model):
+    """DefaultIdentity.
+
+    :ivar identity_type: Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned, UserAssigned".
+    :vartype identity_type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
+    :ivar user_assigned_identity_resource_id:
+    :vartype user_assigned_identity_resource_id: str
+    """
+
+    _attribute_map = {
+        "identity_type": {"key": "identityType", "type": "str"},
+        "user_assigned_identity_resource_id": {"key": "userAssignedIdentityResourceId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        identity_type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
+        user_assigned_identity_resource_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identity_type: Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned, UserAssigned".
+        :paramtype identity_type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
+        :keyword user_assigned_identity_resource_id:
+        :paramtype user_assigned_identity_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.identity_type = identity_type
+        self.user_assigned_identity_resource_id = user_assigned_identity_resource_id
 
 
 class DeletedAppRestoreRequest(ProxyOnlyResource):
@@ -8084,7 +7242,7 @@ class DeletedWebAppCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DeletedSite"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.DeletedSite"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.DeletedSite]
@@ -8223,7 +7381,7 @@ class DeploymentCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Deployment"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Deployment"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.Deployment]
@@ -8260,9 +7418,9 @@ class DeploymentLocations(_serialization.Model):
     def __init__(
         self,
         *,
-        locations: Optional[List["_models.GeoRegion"]] = None,
-        hosting_environments: Optional[List["_models.AppServiceEnvironment"]] = None,
-        hosting_environment_deployment_infos: Optional[List["_models.HostingEnvironmentDeploymentInfo"]] = None,
+        locations: Optional[list["_models.GeoRegion"]] = None,
+        hosting_environments: Optional[list["_models.AppServiceEnvironment"]] = None,
+        hosting_environment_deployment_infos: Optional[list["_models.HostingEnvironmentDeploymentInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8324,9 +7482,9 @@ class DetectorAbnormalTimePeriod(_serialization.Model):
         message: Optional[str] = None,
         source: Optional[str] = None,
         priority: Optional[float] = None,
-        meta_data: Optional[List[List["_models.NameValuePair"]]] = None,
+        meta_data: Optional[list[list["_models.NameValuePair"]]] = None,
         type: Optional[Union[str, "_models.IssueType"]] = None,
-        solutions: Optional[List["_models.Solution"]] = None,
+        solutions: Optional[list["_models.Solution"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8512,8 +7670,8 @@ class DetectorInfo(_serialization.Model):
         self.description: Optional[str] = None
         self.author: Optional[str] = None
         self.category: Optional[str] = None
-        self.support_topic_list: Optional[List["_models.SupportTopic"]] = None
-        self.analysis_type: Optional[List[str]] = None
+        self.support_topic_list: Optional[list["_models.SupportTopic"]] = None
+        self.analysis_type: Optional[list[str]] = None
         self.type: Optional[Union[str, "_models.DetectorType"]] = None
         self.score: Optional[float] = None
 
@@ -8567,9 +7725,9 @@ class DetectorResponse(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         metadata: Optional["_models.DetectorInfo"] = None,
-        dataset: Optional[List["_models.DiagnosticData"]] = None,
+        dataset: Optional[list["_models.DiagnosticData"]] = None,
         status: Optional["_models.Status"] = None,
-        data_providers_metadata: Optional[List["_models.DataProviderMetadata"]] = None,
+        data_providers_metadata: Optional[list["_models.DataProviderMetadata"]] = None,
         suggested_utterances: Optional["_models.QueryUtterancesResults"] = None,
         **kwargs: Any
     ) -> None:
@@ -8619,7 +7777,7 @@ class DetectorResponseCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DetectorResponse"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.DetectorResponse"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.DetectorResponse]
@@ -8678,9 +7836,9 @@ class DiagnosticAnalysis(ProxyOnlyResource):
         kind: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        abnormal_time_periods: Optional[List["_models.AbnormalTimePeriod"]] = None,
-        payload: Optional[List["_models.AnalysisData"]] = None,
-        non_correlated_detectors: Optional[List["_models.DetectorDefinition"]] = None,
+        abnormal_time_periods: Optional[list["_models.AbnormalTimePeriod"]] = None,
+        payload: Optional[list["_models.AnalysisData"]] = None,
+        non_correlated_detectors: Optional[list["_models.DetectorDefinition"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8728,7 +7886,7 @@ class DiagnosticAnalysisCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AnalysisDefinition"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.AnalysisDefinition"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.AnalysisDefinition]
@@ -8802,7 +7960,7 @@ class DiagnosticCategoryCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DiagnosticCategory"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.DiagnosticCategory"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.DiagnosticCategory]
@@ -8867,7 +8025,7 @@ class DiagnosticDetectorCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DetectorDefinitionResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.DetectorDefinitionResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.DetectorDefinitionResource]
@@ -8937,9 +8095,9 @@ class DiagnosticDetectorResponse(ProxyOnlyResource):
         end_time: Optional[datetime.datetime] = None,
         issue_detected: Optional[bool] = None,
         detector_definition: Optional["_models.DetectorDefinition"] = None,
-        metrics: Optional[List["_models.DiagnosticMetricSet"]] = None,
-        abnormal_time_periods: Optional[List["_models.DetectorAbnormalTimePeriod"]] = None,
-        data: Optional[List[List["_models.NameValuePair"]]] = None,
+        metrics: Optional[list["_models.DiagnosticMetricSet"]] = None,
+        abnormal_time_periods: Optional[list["_models.DetectorAbnormalTimePeriod"]] = None,
+        data: Optional[list[list["_models.NameValuePair"]]] = None,
         response_meta_data: Optional["_models.ResponseMetaData"] = None,
         **kwargs: Any
     ) -> None:
@@ -9077,7 +8235,7 @@ class DiagnosticMetricSet(_serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        values: Optional[List["_models.DiagnosticMetricSample"]] = None,
+        values: Optional[list["_models.DiagnosticMetricSample"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9271,639 +8429,6 @@ class DnlResourceNameAvailabilityRequest(_serialization.Model):
         self.type = type
 
 
-class Domain(Resource):
-    """Information about a domain.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource. If the resource is an app, you can refer to
-     https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
-     for details supported values for kind.
-    :vartype kind: str
-    :ivar location: Resource Location. Required.
-    :vartype location: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar contact_admin: Administrative contact.
-    :vartype contact_admin: ~azure.mgmt.web.models.Contact
-    :ivar contact_billing: Billing contact.
-    :vartype contact_billing: ~azure.mgmt.web.models.Contact
-    :ivar contact_registrant: Registrant contact.
-    :vartype contact_registrant: ~azure.mgmt.web.models.Contact
-    :ivar contact_tech: Technical contact.
-    :vartype contact_tech: ~azure.mgmt.web.models.Contact
-    :ivar registration_status: Domain registration status. Known values are: "Active", "Awaiting",
-     "Cancelled", "Confiscated", "Disabled", "Excluded", "Expired", "Failed", "Held", "Locked",
-     "Parked", "Pending", "Reserved", "Reverted", "Suspended", "Transferred", "Unknown", "Unlocked",
-     "Unparked", "Updated", and "JsonConverterFailed".
-    :vartype registration_status: str or ~azure.mgmt.web.models.DomainStatus
-    :ivar provisioning_state: Domain provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "InProgress", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.web.models.ProvisioningState
-    :ivar name_servers: Name servers.
-    :vartype name_servers: list[str]
-    :ivar privacy: :code:`<code>true</code>` if domain privacy is enabled for this domain;
-     otherwise, :code:`<code>false</code>`.
-    :vartype privacy: bool
-    :ivar created_time: Domain creation timestamp.
-    :vartype created_time: ~datetime.datetime
-    :ivar expiration_time: Domain expiration timestamp.
-    :vartype expiration_time: ~datetime.datetime
-    :ivar last_renewed_time: Timestamp when the domain was renewed last time.
-    :vartype last_renewed_time: ~datetime.datetime
-    :ivar auto_renew: :code:`<code>true</code>` if the domain should be automatically renewed;
-     otherwise, :code:`<code>false</code>`.
-    :vartype auto_renew: bool
-    :ivar ready_for_dns_record_management: :code:`<code>true</code>` if Azure can assign this
-     domain to App Service apps; otherwise, :code:`<code>false</code>`. This value will be
-     :code:`<code>true</code>` if domain registration status is active and
-      it is hosted on name servers Azure has programmatic access to.
-    :vartype ready_for_dns_record_management: bool
-    :ivar managed_host_names: All hostnames derived from the domain and assigned to Azure
-     resources.
-    :vartype managed_host_names: list[~azure.mgmt.web.models.HostName]
-    :ivar consent: Legal agreement consent.
-    :vartype consent: ~azure.mgmt.web.models.DomainPurchaseConsent
-    :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
-    :vartype domain_not_renewable_reasons: list[str or
-     ~azure.mgmt.web.models.ResourceNotRenewableReason]
-    :ivar dns_type: Current DNS type. Known values are: "AzureDns" and "DefaultDomainRegistrarDns".
-    :vartype dns_type: str or ~azure.mgmt.web.models.DnsType
-    :ivar dns_zone_id: Azure DNS Zone to use.
-    :vartype dns_zone_id: str
-    :ivar target_dns_type: Target DNS type (would be used for migration). Known values are:
-     "AzureDns" and "DefaultDomainRegistrarDns".
-    :vartype target_dns_type: str or ~azure.mgmt.web.models.DnsType
-    :ivar auth_code:
-    :vartype auth_code: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "location": {"required": True},
-        "type": {"readonly": True},
-        "registration_status": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "name_servers": {"readonly": True},
-        "created_time": {"readonly": True},
-        "expiration_time": {"readonly": True},
-        "last_renewed_time": {"readonly": True},
-        "ready_for_dns_record_management": {"readonly": True},
-        "managed_host_names": {"readonly": True},
-        "domain_not_renewable_reasons": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "contact_admin": {"key": "properties.contactAdmin", "type": "Contact"},
-        "contact_billing": {"key": "properties.contactBilling", "type": "Contact"},
-        "contact_registrant": {"key": "properties.contactRegistrant", "type": "Contact"},
-        "contact_tech": {"key": "properties.contactTech", "type": "Contact"},
-        "registration_status": {"key": "properties.registrationStatus", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "name_servers": {"key": "properties.nameServers", "type": "[str]"},
-        "privacy": {"key": "properties.privacy", "type": "bool"},
-        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
-        "expiration_time": {"key": "properties.expirationTime", "type": "iso-8601"},
-        "last_renewed_time": {"key": "properties.lastRenewedTime", "type": "iso-8601"},
-        "auto_renew": {"key": "properties.autoRenew", "type": "bool"},
-        "ready_for_dns_record_management": {"key": "properties.readyForDnsRecordManagement", "type": "bool"},
-        "managed_host_names": {"key": "properties.managedHostNames", "type": "[HostName]"},
-        "consent": {"key": "properties.consent", "type": "DomainPurchaseConsent"},
-        "domain_not_renewable_reasons": {"key": "properties.domainNotRenewableReasons", "type": "[str]"},
-        "dns_type": {"key": "properties.dnsType", "type": "str"},
-        "dns_zone_id": {"key": "properties.dnsZoneId", "type": "str"},
-        "target_dns_type": {"key": "properties.targetDnsType", "type": "str"},
-        "auth_code": {"key": "properties.authCode", "type": "str"},
-    }
-
-    def __init__(  # pylint: disable=too-many-locals
-        self,
-        *,
-        location: str,
-        kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        contact_admin: Optional["_models.Contact"] = None,
-        contact_billing: Optional["_models.Contact"] = None,
-        contact_registrant: Optional["_models.Contact"] = None,
-        contact_tech: Optional["_models.Contact"] = None,
-        privacy: Optional[bool] = None,
-        auto_renew: bool = True,
-        consent: Optional["_models.DomainPurchaseConsent"] = None,
-        dns_type: Optional[Union[str, "_models.DnsType"]] = None,
-        dns_zone_id: Optional[str] = None,
-        target_dns_type: Optional[Union[str, "_models.DnsType"]] = None,
-        auth_code: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource. If the resource is an app, you can refer to
-         https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
-         for details supported values for kind.
-        :paramtype kind: str
-        :keyword location: Resource Location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword contact_admin: Administrative contact.
-        :paramtype contact_admin: ~azure.mgmt.web.models.Contact
-        :keyword contact_billing: Billing contact.
-        :paramtype contact_billing: ~azure.mgmt.web.models.Contact
-        :keyword contact_registrant: Registrant contact.
-        :paramtype contact_registrant: ~azure.mgmt.web.models.Contact
-        :keyword contact_tech: Technical contact.
-        :paramtype contact_tech: ~azure.mgmt.web.models.Contact
-        :keyword privacy: :code:`<code>true</code>` if domain privacy is enabled for this domain;
-         otherwise, :code:`<code>false</code>`.
-        :paramtype privacy: bool
-        :keyword auto_renew: :code:`<code>true</code>` if the domain should be automatically renewed;
-         otherwise, :code:`<code>false</code>`.
-        :paramtype auto_renew: bool
-        :keyword consent: Legal agreement consent.
-        :paramtype consent: ~azure.mgmt.web.models.DomainPurchaseConsent
-        :keyword dns_type: Current DNS type. Known values are: "AzureDns" and
-         "DefaultDomainRegistrarDns".
-        :paramtype dns_type: str or ~azure.mgmt.web.models.DnsType
-        :keyword dns_zone_id: Azure DNS Zone to use.
-        :paramtype dns_zone_id: str
-        :keyword target_dns_type: Target DNS type (would be used for migration). Known values are:
-         "AzureDns" and "DefaultDomainRegistrarDns".
-        :paramtype target_dns_type: str or ~azure.mgmt.web.models.DnsType
-        :keyword auth_code:
-        :paramtype auth_code: str
-        """
-        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
-        self.contact_admin = contact_admin
-        self.contact_billing = contact_billing
-        self.contact_registrant = contact_registrant
-        self.contact_tech = contact_tech
-        self.registration_status: Optional[Union[str, "_models.DomainStatus"]] = None
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.name_servers: Optional[List[str]] = None
-        self.privacy = privacy
-        self.created_time: Optional[datetime.datetime] = None
-        self.expiration_time: Optional[datetime.datetime] = None
-        self.last_renewed_time: Optional[datetime.datetime] = None
-        self.auto_renew = auto_renew
-        self.ready_for_dns_record_management: Optional[bool] = None
-        self.managed_host_names: Optional[List["_models.HostName"]] = None
-        self.consent = consent
-        self.domain_not_renewable_reasons: Optional[List[Union[str, "_models.ResourceNotRenewableReason"]]] = None
-        self.dns_type = dns_type
-        self.dns_zone_id = dns_zone_id
-        self.target_dns_type = target_dns_type
-        self.auth_code = auth_code
-
-
-class DomainAvailabilityCheckResult(_serialization.Model):
-    """Domain availability check result.
-
-    :ivar name: Name of the domain.
-    :vartype name: str
-    :ivar available: :code:`<code>true</code>` if domain can be purchased using CreateDomain API;
-     otherwise, :code:`<code>false</code>`.
-    :vartype available: bool
-    :ivar domain_type: Valid values are Regular domain: Azure will charge the full price of domain
-     registration, SoftDeleted: Purchasing this domain will simply restore it and this operation
-     will not cost anything. Known values are: "Regular" and "SoftDeleted".
-    :vartype domain_type: str or ~azure.mgmt.web.models.DomainType
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "available": {"key": "available", "type": "bool"},
-        "domain_type": {"key": "domainType", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        available: Optional[bool] = None,
-        domain_type: Optional[Union[str, "_models.DomainType"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Name of the domain.
-        :paramtype name: str
-        :keyword available: :code:`<code>true</code>` if domain can be purchased using CreateDomain
-         API; otherwise, :code:`<code>false</code>`.
-        :paramtype available: bool
-        :keyword domain_type: Valid values are Regular domain: Azure will charge the full price of
-         domain registration, SoftDeleted: Purchasing this domain will simply restore it and this
-         operation will not cost anything. Known values are: "Regular" and "SoftDeleted".
-        :paramtype domain_type: str or ~azure.mgmt.web.models.DomainType
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.available = available
-        self.domain_type = domain_type
-
-
-class DomainCollection(_serialization.Model):
-    """Collection of domains.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.models.Domain]
-    :ivar next_link: Link to next page of resources.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Domain]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.Domain"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.models.Domain]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
-
-
-class DomainControlCenterSsoRequest(_serialization.Model):
-    """Single sign-on request information for domain management.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar url: URL where the single sign-on request is to be made.
-    :vartype url: str
-    :ivar post_parameter_key: Post parameter key.
-    :vartype post_parameter_key: str
-    :ivar post_parameter_value: Post parameter value. Client should use
-     'application/x-www-form-urlencoded' encoding for this value.
-    :vartype post_parameter_value: str
-    """
-
-    _validation = {
-        "url": {"readonly": True},
-        "post_parameter_key": {"readonly": True},
-        "post_parameter_value": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "url": {"key": "url", "type": "str"},
-        "post_parameter_key": {"key": "postParameterKey", "type": "str"},
-        "post_parameter_value": {"key": "postParameterValue", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.url: Optional[str] = None
-        self.post_parameter_key: Optional[str] = None
-        self.post_parameter_value: Optional[str] = None
-
-
-class DomainOwnershipIdentifier(ProxyOnlyResource):
-    """Domain ownership Identifier.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource.
-    :vartype kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar ownership_id: Ownership Id.
-    :vartype ownership_id: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "ownership_id": {"key": "properties.ownershipId", "type": "str"},
-    }
-
-    def __init__(self, *, kind: Optional[str] = None, ownership_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword kind: Kind of resource.
-        :paramtype kind: str
-        :keyword ownership_id: Ownership Id.
-        :paramtype ownership_id: str
-        """
-        super().__init__(kind=kind, **kwargs)
-        self.ownership_id = ownership_id
-
-
-class DomainOwnershipIdentifierCollection(_serialization.Model):
-    """Collection of domain ownership identifiers.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.models.DomainOwnershipIdentifier]
-    :ivar next_link: Link to next page of resources.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[DomainOwnershipIdentifier]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.DomainOwnershipIdentifier"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.models.DomainOwnershipIdentifier]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
-
-
-class DomainPatchResource(ProxyOnlyResource):
-    """ARM resource for a domain.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource.
-    :vartype kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar contact_admin: Administrative contact.
-    :vartype contact_admin: ~azure.mgmt.web.models.Contact
-    :ivar contact_billing: Billing contact.
-    :vartype contact_billing: ~azure.mgmt.web.models.Contact
-    :ivar contact_registrant: Registrant contact.
-    :vartype contact_registrant: ~azure.mgmt.web.models.Contact
-    :ivar contact_tech: Technical contact.
-    :vartype contact_tech: ~azure.mgmt.web.models.Contact
-    :ivar registration_status: Domain registration status. Known values are: "Active", "Awaiting",
-     "Cancelled", "Confiscated", "Disabled", "Excluded", "Expired", "Failed", "Held", "Locked",
-     "Parked", "Pending", "Reserved", "Reverted", "Suspended", "Transferred", "Unknown", "Unlocked",
-     "Unparked", "Updated", and "JsonConverterFailed".
-    :vartype registration_status: str or ~azure.mgmt.web.models.DomainStatus
-    :ivar provisioning_state: Domain provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "InProgress", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.web.models.ProvisioningState
-    :ivar name_servers: Name servers.
-    :vartype name_servers: list[str]
-    :ivar privacy: :code:`<code>true</code>` if domain privacy is enabled for this domain;
-     otherwise, :code:`<code>false</code>`.
-    :vartype privacy: bool
-    :ivar created_time: Domain creation timestamp.
-    :vartype created_time: ~datetime.datetime
-    :ivar expiration_time: Domain expiration timestamp.
-    :vartype expiration_time: ~datetime.datetime
-    :ivar last_renewed_time: Timestamp when the domain was renewed last time.
-    :vartype last_renewed_time: ~datetime.datetime
-    :ivar auto_renew: :code:`<code>true</code>` if the domain should be automatically renewed;
-     otherwise, :code:`<code>false</code>`.
-    :vartype auto_renew: bool
-    :ivar ready_for_dns_record_management: :code:`<code>true</code>` if Azure can assign this
-     domain to App Service apps; otherwise, :code:`<code>false</code>`. This value will be
-     :code:`<code>true</code>` if domain registration status is active and
-      it is hosted on name servers Azure has programmatic access to.
-    :vartype ready_for_dns_record_management: bool
-    :ivar managed_host_names: All hostnames derived from the domain and assigned to Azure
-     resources.
-    :vartype managed_host_names: list[~azure.mgmt.web.models.HostName]
-    :ivar consent: Legal agreement consent.
-    :vartype consent: ~azure.mgmt.web.models.DomainPurchaseConsent
-    :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
-    :vartype domain_not_renewable_reasons: list[str or
-     ~azure.mgmt.web.models.ResourceNotRenewableReason]
-    :ivar dns_type: Current DNS type. Known values are: "AzureDns" and "DefaultDomainRegistrarDns".
-    :vartype dns_type: str or ~azure.mgmt.web.models.DnsType
-    :ivar dns_zone_id: Azure DNS Zone to use.
-    :vartype dns_zone_id: str
-    :ivar target_dns_type: Target DNS type (would be used for migration). Known values are:
-     "AzureDns" and "DefaultDomainRegistrarDns".
-    :vartype target_dns_type: str or ~azure.mgmt.web.models.DnsType
-    :ivar auth_code:
-    :vartype auth_code: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "registration_status": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "name_servers": {"readonly": True},
-        "created_time": {"readonly": True},
-        "expiration_time": {"readonly": True},
-        "last_renewed_time": {"readonly": True},
-        "ready_for_dns_record_management": {"readonly": True},
-        "managed_host_names": {"readonly": True},
-        "domain_not_renewable_reasons": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "contact_admin": {"key": "properties.contactAdmin", "type": "Contact"},
-        "contact_billing": {"key": "properties.contactBilling", "type": "Contact"},
-        "contact_registrant": {"key": "properties.contactRegistrant", "type": "Contact"},
-        "contact_tech": {"key": "properties.contactTech", "type": "Contact"},
-        "registration_status": {"key": "properties.registrationStatus", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "name_servers": {"key": "properties.nameServers", "type": "[str]"},
-        "privacy": {"key": "properties.privacy", "type": "bool"},
-        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
-        "expiration_time": {"key": "properties.expirationTime", "type": "iso-8601"},
-        "last_renewed_time": {"key": "properties.lastRenewedTime", "type": "iso-8601"},
-        "auto_renew": {"key": "properties.autoRenew", "type": "bool"},
-        "ready_for_dns_record_management": {"key": "properties.readyForDnsRecordManagement", "type": "bool"},
-        "managed_host_names": {"key": "properties.managedHostNames", "type": "[HostName]"},
-        "consent": {"key": "properties.consent", "type": "DomainPurchaseConsent"},
-        "domain_not_renewable_reasons": {"key": "properties.domainNotRenewableReasons", "type": "[str]"},
-        "dns_type": {"key": "properties.dnsType", "type": "str"},
-        "dns_zone_id": {"key": "properties.dnsZoneId", "type": "str"},
-        "target_dns_type": {"key": "properties.targetDnsType", "type": "str"},
-        "auth_code": {"key": "properties.authCode", "type": "str"},
-    }
-
-    def __init__(  # pylint: disable=too-many-locals
-        self,
-        *,
-        kind: Optional[str] = None,
-        contact_admin: Optional["_models.Contact"] = None,
-        contact_billing: Optional["_models.Contact"] = None,
-        contact_registrant: Optional["_models.Contact"] = None,
-        contact_tech: Optional["_models.Contact"] = None,
-        privacy: Optional[bool] = None,
-        auto_renew: bool = True,
-        consent: Optional["_models.DomainPurchaseConsent"] = None,
-        dns_type: Optional[Union[str, "_models.DnsType"]] = None,
-        dns_zone_id: Optional[str] = None,
-        target_dns_type: Optional[Union[str, "_models.DnsType"]] = None,
-        auth_code: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource.
-        :paramtype kind: str
-        :keyword contact_admin: Administrative contact.
-        :paramtype contact_admin: ~azure.mgmt.web.models.Contact
-        :keyword contact_billing: Billing contact.
-        :paramtype contact_billing: ~azure.mgmt.web.models.Contact
-        :keyword contact_registrant: Registrant contact.
-        :paramtype contact_registrant: ~azure.mgmt.web.models.Contact
-        :keyword contact_tech: Technical contact.
-        :paramtype contact_tech: ~azure.mgmt.web.models.Contact
-        :keyword privacy: :code:`<code>true</code>` if domain privacy is enabled for this domain;
-         otherwise, :code:`<code>false</code>`.
-        :paramtype privacy: bool
-        :keyword auto_renew: :code:`<code>true</code>` if the domain should be automatically renewed;
-         otherwise, :code:`<code>false</code>`.
-        :paramtype auto_renew: bool
-        :keyword consent: Legal agreement consent.
-        :paramtype consent: ~azure.mgmt.web.models.DomainPurchaseConsent
-        :keyword dns_type: Current DNS type. Known values are: "AzureDns" and
-         "DefaultDomainRegistrarDns".
-        :paramtype dns_type: str or ~azure.mgmt.web.models.DnsType
-        :keyword dns_zone_id: Azure DNS Zone to use.
-        :paramtype dns_zone_id: str
-        :keyword target_dns_type: Target DNS type (would be used for migration). Known values are:
-         "AzureDns" and "DefaultDomainRegistrarDns".
-        :paramtype target_dns_type: str or ~azure.mgmt.web.models.DnsType
-        :keyword auth_code:
-        :paramtype auth_code: str
-        """
-        super().__init__(kind=kind, **kwargs)
-        self.contact_admin = contact_admin
-        self.contact_billing = contact_billing
-        self.contact_registrant = contact_registrant
-        self.contact_tech = contact_tech
-        self.registration_status: Optional[Union[str, "_models.DomainStatus"]] = None
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.name_servers: Optional[List[str]] = None
-        self.privacy = privacy
-        self.created_time: Optional[datetime.datetime] = None
-        self.expiration_time: Optional[datetime.datetime] = None
-        self.last_renewed_time: Optional[datetime.datetime] = None
-        self.auto_renew = auto_renew
-        self.ready_for_dns_record_management: Optional[bool] = None
-        self.managed_host_names: Optional[List["_models.HostName"]] = None
-        self.consent = consent
-        self.domain_not_renewable_reasons: Optional[List[Union[str, "_models.ResourceNotRenewableReason"]]] = None
-        self.dns_type = dns_type
-        self.dns_zone_id = dns_zone_id
-        self.target_dns_type = target_dns_type
-        self.auth_code = auth_code
-
-
-class DomainPurchaseConsent(_serialization.Model):
-    """Domain purchase consent object, representing acceptance of applicable legal agreements.
-
-    :ivar agreement_keys: List of applicable legal agreement keys. This list can be retrieved using
-     ListLegalAgreements API under :code:`<code>TopLevelDomain</code>` resource.
-    :vartype agreement_keys: list[str]
-    :ivar agreed_by: Client IP address.
-    :vartype agreed_by: str
-    :ivar agreed_at: Timestamp when the agreements were accepted.
-    :vartype agreed_at: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        "agreement_keys": {"key": "agreementKeys", "type": "[str]"},
-        "agreed_by": {"key": "agreedBy", "type": "str"},
-        "agreed_at": {"key": "agreedAt", "type": "iso-8601"},
-    }
-
-    def __init__(
-        self,
-        *,
-        agreement_keys: Optional[List[str]] = None,
-        agreed_by: Optional[str] = None,
-        agreed_at: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword agreement_keys: List of applicable legal agreement keys. This list can be retrieved
-         using ListLegalAgreements API under :code:`<code>TopLevelDomain</code>` resource.
-        :paramtype agreement_keys: list[str]
-        :keyword agreed_by: Client IP address.
-        :paramtype agreed_by: str
-        :keyword agreed_at: Timestamp when the agreements were accepted.
-        :paramtype agreed_at: ~datetime.datetime
-        """
-        super().__init__(**kwargs)
-        self.agreement_keys = agreement_keys
-        self.agreed_by = agreed_by
-        self.agreed_at = agreed_at
-
-
-class DomainRecommendationSearchParameters(_serialization.Model):
-    """Domain recommendation search parameters.
-
-    :ivar keywords: Keywords to be used for generating domain recommendations.
-    :vartype keywords: str
-    :ivar max_domain_recommendations: Maximum number of recommendations.
-    :vartype max_domain_recommendations: int
-    """
-
-    _attribute_map = {
-        "keywords": {"key": "keywords", "type": "str"},
-        "max_domain_recommendations": {"key": "maxDomainRecommendations", "type": "int"},
-    }
-
-    def __init__(
-        self, *, keywords: Optional[str] = None, max_domain_recommendations: Optional[int] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword keywords: Keywords to be used for generating domain recommendations.
-        :paramtype keywords: str
-        :keyword max_domain_recommendations: Maximum number of recommendations.
-        :paramtype max_domain_recommendations: int
-        """
-        super().__init__(**kwargs)
-        self.keywords = keywords
-        self.max_domain_recommendations = max_domain_recommendations
-
-
 class EnabledConfig(_serialization.Model):
     """Enabled configuration.
 
@@ -9944,7 +8469,7 @@ class EndpointDependency(_serialization.Model):
         self,
         *,
         domain_name: Optional[str] = None,
-        endpoint_details: Optional[List["_models.EndpointDetail"]] = None,
+        endpoint_details: Optional[list["_models.EndpointDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10125,9 +8650,9 @@ class ErrorEntity(_serialization.Model):
         *,
         extended_code: Optional[str] = None,
         message_template: Optional[str] = None,
-        parameters: Optional[List[str]] = None,
-        inner_errors: Optional[List["_models.ErrorEntity"]] = None,
-        details: Optional[List["_models.ErrorEntity"]] = None,
+        parameters: Optional[list[str]] = None,
+        inner_errors: Optional[list["_models.ErrorEntity"]] = None,
+        details: Optional[list["_models.ErrorEntity"]] = None,
         target: Optional[str] = None,
         code: Optional[str] = None,
         message: Optional[str] = None,
@@ -10273,7 +8798,7 @@ class Experiments(_serialization.Model):
         "ramp_up_rules": {"key": "rampUpRules", "type": "[RampUpRule]"},
     }
 
-    def __init__(self, *, ramp_up_rules: Optional[List["_models.RampUpRule"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, ramp_up_rules: Optional[list["_models.RampUpRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword ramp_up_rules: List of ramp-up rules.
         :paramtype ramp_up_rules: list[~azure.mgmt.web.models.RampUpRule]
@@ -10307,7 +8832,7 @@ class Expression(_serialization.Model):
         *,
         text: Optional[str] = None,
         value: Optional[Any] = None,
-        subexpressions: Optional[List["_models.Expression"]] = None,
+        subexpressions: Optional[list["_models.Expression"]] = None,
         error: Optional["_models.AzureResourceErrorInfo"] = None,
         **kwargs: Any
     ) -> None:
@@ -10356,7 +8881,7 @@ class ExpressionRoot(Expression):
         *,
         text: Optional[str] = None,
         value: Optional[Any] = None,
-        subexpressions: Optional[List["_models.Expression"]] = None,
+        subexpressions: Optional[list["_models.Expression"]] = None,
         error: Optional["_models.AzureResourceErrorInfo"] = None,
         path: Optional[str] = None,
         **kwargs: Any
@@ -10398,7 +8923,7 @@ class ExpressionTraces(_serialization.Model):
         self,
         *,
         value: Optional[Any] = None,
-        inputs: Optional[List["_models.ExpressionRoot"]] = None,
+        inputs: Optional[list["_models.ExpressionRoot"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -10657,7 +9182,7 @@ class FlowAccessControlConfigurationPolicy(_serialization.Model):
     def __init__(
         self,
         *,
-        allowed_caller_ip_addresses: Optional[List["_models.IpAddressRange"]] = None,
+        allowed_caller_ip_addresses: Optional[list["_models.IpAddressRange"]] = None,
         open_authentication_policies: Optional["_models.OpenAuthenticationAccessPolicies"] = None,
         **kwargs: Any
     ) -> None:
@@ -10690,8 +9215,8 @@ class FlowEndpoints(_serialization.Model):
     def __init__(
         self,
         *,
-        outgoing_ip_addresses: Optional[List["_models.IpAddress"]] = None,
-        access_endpoint_ip_addresses: Optional[List["_models.IpAddress"]] = None,
+        outgoing_ip_addresses: Optional[list["_models.IpAddress"]] = None,
+        access_endpoint_ip_addresses: Optional[list["_models.IpAddress"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10867,7 +9392,7 @@ class FunctionAppMajorVersion(_serialization.Model):
         super().__init__(**kwargs)
         self.display_text: Optional[str] = None
         self.value: Optional[str] = None
-        self.minor_versions: Optional[List["_models.FunctionAppMinorVersion"]] = None
+        self.minor_versions: Optional[list["_models.FunctionAppMinorVersion"]] = None
 
 
 class FunctionAppMinorVersion(_serialization.Model):
@@ -11019,9 +9544,9 @@ class FunctionAppRuntimeSettings(_serialization.Model):
         self.remote_debugging_supported: Optional[bool] = None
         self.app_insights_settings: Optional["_models.AppInsightsWebAppStackSettings"] = None
         self.git_hub_action_settings: Optional["_models.GitHubActionWebAppStackSettings"] = None
-        self.app_settings_dictionary: Optional[Dict[str, str]] = None
+        self.app_settings_dictionary: Optional[dict[str, str]] = None
         self.site_config_properties_dictionary: Optional["_models.SiteConfigPropertiesDictionary"] = None
-        self.supported_functions_extension_versions: Optional[List[str]] = None
+        self.supported_functions_extension_versions: Optional[list[str]] = None
         self.is_preview: Optional[bool] = None
         self.is_deprecated: Optional[bool] = None
         self.is_hidden: Optional[bool] = None
@@ -11088,7 +9613,7 @@ class FunctionAppStack(ProxyOnlyResource):
         self.location: Optional[str] = None
         self.display_text: Optional[str] = None
         self.value: Optional[str] = None
-        self.major_versions: Optional[List["_models.FunctionAppMajorVersion"]] = None
+        self.major_versions: Optional[list["_models.FunctionAppMajorVersion"]] = None
         self.preferred_os: Optional[Union[str, "_models.StackPreferredOs"]] = None
 
 
@@ -11115,7 +9640,7 @@ class FunctionAppStackCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.FunctionAppStack"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.FunctionAppStack"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.FunctionAppStack]
@@ -11204,7 +9729,7 @@ class FunctionEnvelope(ProxyOnlyResource):
         secrets_file_href: Optional[str] = None,
         href: Optional[str] = None,
         config: Optional[JSON] = None,
-        files: Optional[Dict[str, str]] = None,
+        files: Optional[dict[str, str]] = None,
         test_data: Optional[str] = None,
         invoke_url_template: Optional[str] = None,
         language: Optional[str] = None,
@@ -11280,7 +9805,7 @@ class FunctionEnvelopeCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.FunctionEnvelope"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.FunctionEnvelope"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.FunctionEnvelope]
@@ -11521,7 +10046,7 @@ class FunctionsScaleAndConcurrency(_serialization.Model):
     def __init__(
         self,
         *,
-        always_ready: Optional[List["_models.FunctionsAlwaysReadyConfig"]] = None,
+        always_ready: Optional[list["_models.FunctionsAlwaysReadyConfig"]] = None,
         maximum_instance_count: Optional[int] = None,
         instance_memory_mb: Optional[int] = None,
         triggers: Optional["_models.FunctionsScaleAndConcurrencyTriggers"] = None,
@@ -11663,7 +10188,7 @@ class GeoRegionCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GeoRegion"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.GeoRegion"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.GeoRegion]
@@ -11907,8 +10432,8 @@ class GlobalCsmSkuDescription(_serialization.Model):
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional["_models.SkuCapacity"] = None,
-        locations: Optional[List[str]] = None,
-        capabilities: Optional[List["_models.Capability"]] = None,
+        locations: Optional[list[str]] = None,
+        capabilities: Optional[list["_models.Capability"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11972,7 +10497,7 @@ class GlobalValidation(_serialization.Model):
         require_authentication: Optional[bool] = None,
         unauthenticated_client_action: Optional[Union[str, "_models.UnauthenticatedClientActionV2"]] = None,
         redirect_to_provider: Optional[str] = None,
-        excluded_paths: Optional[List[str]] = None,
+        excluded_paths: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12203,8 +10728,8 @@ class HostKeys(_serialization.Model):
         self,
         *,
         master_key: Optional[str] = None,
-        function_keys: Optional[Dict[str, str]] = None,
-        system_keys: Optional[Dict[str, str]] = None,
+        function_keys: Optional[dict[str, str]] = None,
+        system_keys: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12219,78 +10744,6 @@ class HostKeys(_serialization.Model):
         self.master_key = master_key
         self.function_keys = function_keys
         self.system_keys = system_keys
-
-
-class HostName(_serialization.Model):
-    """Details of a hostname derived from a domain.
-
-    :ivar name: Name of the hostname.
-    :vartype name: str
-    :ivar site_names: List of apps the hostname is assigned to. This list will have more than one
-     app only if the hostname is pointing to a Traffic Manager.
-    :vartype site_names: list[str]
-    :ivar azure_resource_name: Name of the Azure resource the hostname is assigned to. If it is
-     assigned to a Traffic Manager then it will be the Traffic Manager name otherwise it will be the
-     app name.
-    :vartype azure_resource_name: str
-    :ivar azure_resource_type: Type of the Azure resource the hostname is assigned to. Known values
-     are: "Website" and "TrafficManager".
-    :vartype azure_resource_type: str or ~azure.mgmt.web.models.AzureResourceType
-    :ivar custom_host_name_dns_record_type: Type of the DNS record. Known values are: "CName" and
-     "A".
-    :vartype custom_host_name_dns_record_type: str or
-     ~azure.mgmt.web.models.CustomHostNameDnsRecordType
-    :ivar host_name_type: Type of the hostname. Known values are: "Verified" and "Managed".
-    :vartype host_name_type: str or ~azure.mgmt.web.models.HostNameType
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "site_names": {"key": "siteNames", "type": "[str]"},
-        "azure_resource_name": {"key": "azureResourceName", "type": "str"},
-        "azure_resource_type": {"key": "azureResourceType", "type": "str"},
-        "custom_host_name_dns_record_type": {"key": "customHostNameDnsRecordType", "type": "str"},
-        "host_name_type": {"key": "hostNameType", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        site_names: Optional[List[str]] = None,
-        azure_resource_name: Optional[str] = None,
-        azure_resource_type: Optional[Union[str, "_models.AzureResourceType"]] = None,
-        custom_host_name_dns_record_type: Optional[Union[str, "_models.CustomHostNameDnsRecordType"]] = None,
-        host_name_type: Optional[Union[str, "_models.HostNameType"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Name of the hostname.
-        :paramtype name: str
-        :keyword site_names: List of apps the hostname is assigned to. This list will have more than
-         one app only if the hostname is pointing to a Traffic Manager.
-        :paramtype site_names: list[str]
-        :keyword azure_resource_name: Name of the Azure resource the hostname is assigned to. If it is
-         assigned to a Traffic Manager then it will be the Traffic Manager name otherwise it will be the
-         app name.
-        :paramtype azure_resource_name: str
-        :keyword azure_resource_type: Type of the Azure resource the hostname is assigned to. Known
-         values are: "Website" and "TrafficManager".
-        :paramtype azure_resource_type: str or ~azure.mgmt.web.models.AzureResourceType
-        :keyword custom_host_name_dns_record_type: Type of the DNS record. Known values are: "CName"
-         and "A".
-        :paramtype custom_host_name_dns_record_type: str or
-         ~azure.mgmt.web.models.CustomHostNameDnsRecordType
-        :keyword host_name_type: Type of the hostname. Known values are: "Verified" and "Managed".
-        :paramtype host_name_type: str or ~azure.mgmt.web.models.HostNameType
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.site_names = site_names
-        self.azure_resource_name = azure_resource_name
-        self.azure_resource_type = azure_resource_type
-        self.custom_host_name_dns_record_type = custom_host_name_dns_record_type
-        self.host_name_type = host_name_type
 
 
 class HostNameBinding(ProxyOnlyResource):
@@ -12424,7 +10877,7 @@ class HostNameBindingCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.HostNameBinding"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.HostNameBinding"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.HostNameBinding]
@@ -12545,8 +10998,8 @@ class HttpScaleRule(_serialization.Model):
     def __init__(
         self,
         *,
-        metadata: Optional[Dict[str, str]] = None,
-        auth: Optional[List["_models.ScaleRuleAuth"]] = None,
+        metadata: Optional[dict[str, str]] = None,
+        auth: Optional[list["_models.ScaleRuleAuth"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12751,7 +11204,7 @@ class HybridConnectionCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.HybridConnection"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.HybridConnection"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.HybridConnection]
@@ -12919,7 +11372,7 @@ class IdentifierCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Identifier"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Identifier"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.Identifier]
@@ -12984,7 +11437,7 @@ class IdentityProviders(_serialization.Model):
         twitter: Optional["_models.Twitter"] = None,
         apple: Optional["_models.Apple"] = None,
         azure_static_web_apps: Optional["_models.AzureStaticWebApps"] = None,
-        custom_open_id_connect_providers: Optional[Dict[str, "_models.CustomOpenIdConnectProvider"]] = None,
+        custom_open_id_connect_providers: Optional[dict[str, "_models.CustomOpenIdConnectProvider"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13047,8 +11500,8 @@ class InboundEnvironmentEndpoint(_serialization.Model):
         self,
         *,
         description: Optional[str] = None,
-        endpoints: Optional[List[str]] = None,
-        ports: Optional[List[str]] = None,
+        endpoints: Optional[list[str]] = None,
+        ports: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13088,7 +11541,7 @@ class InboundEnvironmentEndpointCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.InboundEnvironmentEndpoint"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.InboundEnvironmentEndpoint"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.InboundEnvironmentEndpoint]
@@ -13096,6 +11549,69 @@ class InboundEnvironmentEndpointCollection(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link: Optional[str] = None
+
+
+class InstallScript(_serialization.Model):
+    """Server farm install script configuration.
+
+    :ivar name: Name of the install script.
+    :vartype name: str
+    :ivar source: Source of the install script.
+    :vartype source: ~azure.mgmt.web.models.InstallScriptSource
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "source": {"key": "source", "type": "InstallScriptSource"},
+    }
+
+    def __init__(
+        self, *, name: Optional[str] = None, source: Optional["_models.InstallScriptSource"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the install script.
+        :paramtype name: str
+        :keyword source: Source of the install script.
+        :paramtype source: ~azure.mgmt.web.models.InstallScriptSource
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.source = source
+
+
+class InstallScriptSource(_serialization.Model):
+    """Object to hold install script reference.
+
+    :ivar source_uri: Install script source URI where the install script file will be fetched from.
+    :vartype source_uri: str
+    :ivar type: Type of the install script. Known values are: "RemoteAzureBlob" and
+     "PlatformStorage".
+    :vartype type: str or ~azure.mgmt.web.models.InstallScriptType
+    """
+
+    _attribute_map = {
+        "source_uri": {"key": "sourceUri", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_uri: Optional[str] = None,
+        type: Optional[Union[str, "_models.InstallScriptType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_uri: Install script source URI where the install script file will be fetched
+         from.
+        :paramtype source_uri: str
+        :keyword type: Type of the install script. Known values are: "RemoteAzureBlob" and
+         "PlatformStorage".
+        :paramtype type: str or ~azure.mgmt.web.models.InstallScriptType
+        """
+        super().__init__(**kwargs)
+        self.source_uri = source_uri
+        self.type = type
 
 
 class IpAddress(_serialization.Model):
@@ -13141,56 +11657,56 @@ class IpAddressRange(_serialization.Model):
 class IpSecurityRestriction(_serialization.Model):
     """IP security restriction on an app.
 
-    :ivar ip_address: IP address the security restriction is valid for.
-     It can be in form of pure ipv4 address (required SubnetMask property) or
-     CIDR notation such as ipv4/mask (leading bit match). For CIDR,
-     SubnetMask property must not be specified.
-    :vartype ip_address: str
-    :ivar subnet_mask: Subnet mask for the range of IP addresses the restriction is valid for.
-    :vartype subnet_mask: str
-    :ivar vnet_subnet_resource_id: Virtual network resource id.
-    :vartype vnet_subnet_resource_id: str
-    :ivar vnet_traffic_tag: (internal) Vnet traffic tag.
-    :vartype vnet_traffic_tag: int
-    :ivar subnet_traffic_tag: (internal) Subnet traffic tag.
-    :vartype subnet_traffic_tag: int
-    :ivar action: Allow or Deny access for this IP range.
-    :vartype action: str
-    :ivar tag: Defines what this IP filter will be used for. This is to support IP filtering on
-     proxies. Known values are: "Default", "XffProxy", and "ServiceTag".
-    :vartype tag: str or ~azure.mgmt.web.models.IpFilterTag
-    :ivar priority: Priority of IP restriction rule.
-    :vartype priority: int
-    :ivar name: IP restriction rule name.
-    :vartype name: str
-    :ivar description: IP restriction rule description.
-    :vartype description: str
-    :ivar headers: IP restriction rule headers.
-     X-Forwarded-Host
-     (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host#Examples).
-     The matching logic is ..
+        :ivar ip_address: IP address the security restriction is valid for.
+         It can be in form of pure ipv4 address (required SubnetMask property) or
+         CIDR notation such as ipv4/mask (leading bit match). For CIDR,
+         SubnetMask property must not be specified.
+        :vartype ip_address: str
+        :ivar subnet_mask: Subnet mask for the range of IP addresses the restriction is valid for.
+        :vartype subnet_mask: str
+        :ivar vnet_subnet_resource_id: Virtual network resource id.
+        :vartype vnet_subnet_resource_id: str
+        :ivar vnet_traffic_tag: (internal) Vnet traffic tag.
+        :vartype vnet_traffic_tag: int
+        :ivar subnet_traffic_tag: (internal) Subnet traffic tag.
+        :vartype subnet_traffic_tag: int
+        :ivar action: Allow or Deny access for this IP range.
+        :vartype action: str
+        :ivar tag: Defines what this IP filter will be used for. This is to support IP filtering on
+         proxies. Known values are: "Default", "XffProxy", and "ServiceTag".
+        :vartype tag: str or ~azure.mgmt.web.models.IpFilterTag
+        :ivar priority: Priority of IP restriction rule.
+        :vartype priority: int
+        :ivar name: IP restriction rule name.
+        :vartype name: str
+        :ivar description: IP restriction rule description.
+        :vartype description: str
+        :ivar headers: IP restriction rule headers.
+    X-Forwarded-Host
+        (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host#Examples).
+    The matching logic is ..
 
 
-     * If the property is null or empty (default), all hosts(or lack of) are allowed.
-     * A value is compared using ordinal-ignore-case (excluding port number).
-     * Subdomain wildcards are permitted but don't match the root domain. For example, *.contoso.com
-     matches the subdomain foo.contoso.com
-       but not the root domain contoso.com or multi-level foo.bar.contoso.com
-     * Unicode host names are allowed but are converted to Punycode for matching.
+         * If the property is null or empty (default), all hosts(or lack of) are allowed.
+         * A value is compared using ordinal-ignore-case (excluding port number).
+         * Subdomain wildcards are permitted but don't match the root domain. For example,
+           *.contoso.com matches the subdomain foo.contoso.com
+    but not the root domain contoso.com or multi-level foo.bar.contoso.com
+         * Unicode host names are allowed but are converted to Punycode for matching.
 
-     X-Forwarded-For
-     (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For#Examples).
-     The matching logic is ..
+    X-Forwarded-For
+        (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For#Examples).
+    The matching logic is ..
 
 
-     * If the property is null or empty (default), any forwarded-for chains (or lack of) are
-     allowed.
-     * If any address (excluding port number) in the chain (comma separated) matches the CIDR
-     defined by the property.
+         * If the property is null or empty (default), any forwarded-for chains (or lack of) are
+           allowed.
+         * If any address (excluding port number) in the chain (comma separated) matches the CIDR
+           defined by the property.
 
-     X-Azure-FDID and X-FD-HealthProbe.
-     The matching logic is exact match.
-    :vartype headers: dict[str, list[str]]
+    X-Azure-FDID and X-FD-HealthProbe.
+    The matching logic is exact match.
+        :vartype headers: dict[str, list[str]]
     """
 
     _attribute_map = {
@@ -13220,60 +11736,60 @@ class IpSecurityRestriction(_serialization.Model):
         priority: Optional[int] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        headers: Optional[Dict[str, List[str]]] = None,
+        headers: Optional[dict[str, list[str]]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword ip_address: IP address the security restriction is valid for.
-         It can be in form of pure ipv4 address (required SubnetMask property) or
-         CIDR notation such as ipv4/mask (leading bit match). For CIDR,
-         SubnetMask property must not be specified.
-        :paramtype ip_address: str
-        :keyword subnet_mask: Subnet mask for the range of IP addresses the restriction is valid for.
-        :paramtype subnet_mask: str
-        :keyword vnet_subnet_resource_id: Virtual network resource id.
-        :paramtype vnet_subnet_resource_id: str
-        :keyword vnet_traffic_tag: (internal) Vnet traffic tag.
-        :paramtype vnet_traffic_tag: int
-        :keyword subnet_traffic_tag: (internal) Subnet traffic tag.
-        :paramtype subnet_traffic_tag: int
-        :keyword action: Allow or Deny access for this IP range.
-        :paramtype action: str
-        :keyword tag: Defines what this IP filter will be used for. This is to support IP filtering on
-         proxies. Known values are: "Default", "XffProxy", and "ServiceTag".
-        :paramtype tag: str or ~azure.mgmt.web.models.IpFilterTag
-        :keyword priority: Priority of IP restriction rule.
-        :paramtype priority: int
-        :keyword name: IP restriction rule name.
-        :paramtype name: str
-        :keyword description: IP restriction rule description.
-        :paramtype description: str
-        :keyword headers: IP restriction rule headers.
-         X-Forwarded-Host
-         (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host#Examples).
-         The matching logic is ..
+               :keyword ip_address: IP address the security restriction is valid for.
+                It can be in form of pure ipv4 address (required SubnetMask property) or
+                CIDR notation such as ipv4/mask (leading bit match). For CIDR,
+                SubnetMask property must not be specified.
+               :paramtype ip_address: str
+               :keyword subnet_mask: Subnet mask for the range of IP addresses the restriction is valid for.
+               :paramtype subnet_mask: str
+               :keyword vnet_subnet_resource_id: Virtual network resource id.
+               :paramtype vnet_subnet_resource_id: str
+               :keyword vnet_traffic_tag: (internal) Vnet traffic tag.
+               :paramtype vnet_traffic_tag: int
+               :keyword subnet_traffic_tag: (internal) Subnet traffic tag.
+               :paramtype subnet_traffic_tag: int
+               :keyword action: Allow or Deny access for this IP range.
+               :paramtype action: str
+               :keyword tag: Defines what this IP filter will be used for. This is to support IP filtering on
+                proxies. Known values are: "Default", "XffProxy", and "ServiceTag".
+               :paramtype tag: str or ~azure.mgmt.web.models.IpFilterTag
+               :keyword priority: Priority of IP restriction rule.
+               :paramtype priority: int
+               :keyword name: IP restriction rule name.
+               :paramtype name: str
+               :keyword description: IP restriction rule description.
+               :paramtype description: str
+               :keyword headers: IP restriction rule headers.
+        X-Forwarded-Host
+                (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host#Examples).
+        The matching logic is ..
 
 
-         * If the property is null or empty (default), all hosts(or lack of) are allowed.
-         * A value is compared using ordinal-ignore-case (excluding port number).
-         * Subdomain wildcards are permitted but don't match the root domain. For example, *.contoso.com
-         matches the subdomain foo.contoso.com
-           but not the root domain contoso.com or multi-level foo.bar.contoso.com
-         * Unicode host names are allowed but are converted to Punycode for matching.
+                 * If the property is null or empty (default), all hosts(or lack of) are allowed.
+                 * A value is compared using ordinal-ignore-case (excluding port number).
+                 * Subdomain wildcards are permitted but don't match the root domain. For example,
+                   *.contoso.com matches the subdomain foo.contoso.com
+        but not the root domain contoso.com or multi-level foo.bar.contoso.com
+                 * Unicode host names are allowed but are converted to Punycode for matching.
 
-         X-Forwarded-For
-         (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For#Examples).
-         The matching logic is ..
+        X-Forwarded-For
+                (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For#Examples).
+        The matching logic is ..
 
 
-         * If the property is null or empty (default), any forwarded-for chains (or lack of) are
-         allowed.
-         * If any address (excluding port number) in the chain (comma separated) matches the CIDR
-         defined by the property.
+                 * If the property is null or empty (default), any forwarded-for chains (or lack of)
+                   are allowed.
+                 * If any address (excluding port number) in the chain (comma separated) matches the
+                   CIDR defined by the property.
 
-         X-Azure-FDID and X-FD-HealthProbe.
-         The matching logic is exact match.
-        :paramtype headers: dict[str, list[str]]
+        X-Azure-FDID and X-FD-HealthProbe.
+        The matching logic is exact match.
+               :paramtype headers: dict[str, list[str]]
         """
         super().__init__(**kwargs)
         self.ip_address = ip_address
@@ -13332,8 +11848,8 @@ class JwtClaimChecks(_serialization.Model):
     def __init__(
         self,
         *,
-        allowed_groups: Optional[List[str]] = None,
-        allowed_client_applications: Optional[List[str]] = None,
+        allowed_groups: Optional[list[str]] = None,
+        allowed_client_applications: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13399,6 +11915,34 @@ class KeyValuePairStringObject(_serialization.Model):
         super().__init__(**kwargs)
         self.key: Optional[str] = None
         self.value: Optional[JSON] = None
+
+
+class KeyVaultReferenceWithStatus(_serialization.Model):
+    """Object to hold key vault reference and the resolution status.
+
+    :ivar secret_uri: Key vault secret URI.
+    :vartype secret_uri: str
+    :ivar reference_status: Reference status of the key vault secret.
+    :vartype reference_status: str
+    """
+
+    _attribute_map = {
+        "secret_uri": {"key": "secretUri", "type": "str"},
+        "reference_status": {"key": "referenceStatus", "type": "str"},
+    }
+
+    def __init__(
+        self, *, secret_uri: Optional[str] = None, reference_status: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword secret_uri: Key vault secret URI.
+        :paramtype secret_uri: str
+        :keyword reference_status: Reference status of the key vault secret.
+        :paramtype reference_status: str
+        """
+        super().__init__(**kwargs)
+        self.secret_uri = secret_uri
+        self.reference_status = reference_status
 
 
 class KubeEnvironment(Resource):
@@ -13493,7 +12037,7 @@ class KubeEnvironment(Resource):
         *,
         location: str,
         kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
         internal_load_balancer_enabled: Optional[bool] = None,
         static_ip: Optional[str] = None,
@@ -13573,7 +12117,7 @@ class KubeEnvironmentCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.KubeEnvironment"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.KubeEnvironment"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.KubeEnvironment]
@@ -13936,7 +12480,7 @@ class Login(_serialization.Model):
         routes: Optional["_models.LoginRoutes"] = None,
         token_store: Optional["_models.TokenStore"] = None,
         preserve_url_fragments_for_logins: Optional[bool] = None,
-        allowed_external_redirect_urls: Optional[List[str]] = None,
+        allowed_external_redirect_urls: Optional[list[str]] = None,
         cookie_expiration: Optional["_models.CookieExpiration"] = None,
         nonce: Optional["_models.Nonce"] = None,
         **kwargs: Any
@@ -13999,7 +12543,7 @@ class LoginScopes(_serialization.Model):
         "scopes": {"key": "scopes", "type": "[str]"},
     }
 
-    def __init__(self, *, scopes: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, scopes: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword scopes: A list of the scopes that should be requested while authenticating.
         :paramtype scopes: list[str]
@@ -14059,8 +12603,8 @@ class ManagedServiceIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: Type of managed service identity. Known values are: "SystemAssigned",
-     "UserAssigned", "SystemAssigned, UserAssigned", and "None".
+    :ivar type: Type of managed service identity. Known values are: "None", "SystemAssigned",
+     "UserAssigned", and "SystemAssigned, UserAssigned".
     :vartype type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
@@ -14088,12 +12632,12 @@ class ManagedServiceIdentity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: Type of managed service identity. Known values are: "SystemAssigned",
-         "UserAssigned", "SystemAssigned, UserAssigned", and "None".
+        :keyword type: Type of managed service identity. Known values are: "None", "SystemAssigned",
+         "UserAssigned", and "SystemAssigned, UserAssigned".
         :paramtype type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The list of user assigned identities associated with the
          resource. The user identity dictionary key references will be ARM resource ids in the form:
@@ -14207,11 +12751,11 @@ class MetricSpecification(_serialization.Model):
         metric_filter_pattern: Optional[str] = None,
         fill_gap_with_zero: Optional[bool] = None,
         is_internal: Optional[bool] = None,
-        dimensions: Optional[List["_models.Dimension"]] = None,
+        dimensions: Optional[list["_models.Dimension"]] = None,
         category: Optional[str] = None,
-        availabilities: Optional[List["_models.MetricAvailability"]] = None,
-        supported_time_grain_types: Optional[List[str]] = None,
-        supported_aggregation_types: Optional[List[str]] = None,
+        availabilities: Optional[list["_models.MetricAvailability"]] = None,
+        supported_time_grain_types: Optional[list[str]] = None,
+        supported_aggregation_types: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14441,7 +12985,7 @@ class MSDeploy(ProxyOnlyResource):
         connection_string: Optional[str] = None,
         db_type: Optional[str] = None,
         set_parameters_xml_file_uri: Optional[str] = None,
-        set_parameters: Optional[Dict[str, str]] = None,
+        set_parameters: Optional[dict[str, str]] = None,
         skip_app_data: Optional[bool] = None,
         app_offline: Optional[bool] = None,
         **kwargs: Any
@@ -14518,7 +13062,7 @@ class MSDeployLog(ProxyOnlyResource):
         :paramtype kind: str
         """
         super().__init__(kind=kind, **kwargs)
-        self.entries: Optional[List["_models.MSDeployLogEntry"]] = None
+        self.entries: Optional[list["_models.MSDeployLogEntry"]] = None
 
 
 class MSDeployLogEntry(_serialization.Model):
@@ -14636,39 +13180,6 @@ class NameIdentifier(_serialization.Model):
         self.name = name
 
 
-class NameIdentifierCollection(_serialization.Model):
-    """Collection of domain name identifiers.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.models.NameIdentifier]
-    :ivar next_link: Link to next page of resources.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NameIdentifier]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.NameIdentifier"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.models.NameIdentifier]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
-
-
 class NameValuePair(_serialization.Model):
     """Name value pair.
 
@@ -14747,8 +13258,8 @@ class NetworkFeatures(ProxyOnlyResource):
         super().__init__(kind=kind, **kwargs)
         self.virtual_network_name: Optional[str] = None
         self.virtual_network_connection: Optional["_models.VnetInfo"] = None
-        self.hybrid_connections: Optional[List["_models.RelayServiceConnectionEntity"]] = None
-        self.hybrid_connections_v2: Optional[List["_models.HybridConnection"]] = None
+        self.hybrid_connections: Optional[list["_models.RelayServiceConnectionEntity"]] = None
+        self.hybrid_connections_v2: Optional[list["_models.HybridConnection"]] = None
 
 
 class NetworkTrace(_serialization.Model):
@@ -14833,7 +13344,7 @@ class OpenAuthenticationAccessPolicies(_serialization.Model):
     }
 
     def __init__(
-        self, *, policies: Optional[Dict[str, "_models.OpenAuthenticationAccessPolicy"]] = None, **kwargs: Any
+        self, *, policies: Optional[dict[str, "_models.OpenAuthenticationAccessPolicy"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword policies: Open authentication policies.
@@ -14861,7 +13372,7 @@ class OpenAuthenticationAccessPolicy(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.OpenAuthenticationProviderType"]] = None,
-        claims: Optional[List["_models.OpenAuthenticationPolicyClaim"]] = None,
+        claims: Optional[list["_models.OpenAuthenticationPolicyClaim"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15008,7 +13519,7 @@ class OpenIdConnectLogin(_serialization.Model):
     }
 
     def __init__(
-        self, *, name_claim_type: Optional[str] = None, scopes: Optional[List[str]] = None, **kwargs: Any
+        self, *, name_claim_type: Optional[str] = None, scopes: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword name_claim_type: The name of the claim that contains the users name.
@@ -15102,7 +13613,7 @@ class Operation(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         status: Optional[Union[str, "_models.OperationStatus"]] = None,
-        errors: Optional[List["_models.ErrorEntity"]] = None,
+        errors: Optional[list["_models.ErrorEntity"]] = None,
         created_time: Optional[datetime.datetime] = None,
         modified_time: Optional[datetime.datetime] = None,
         expiration_time: Optional[datetime.datetime] = None,
@@ -15275,7 +13786,7 @@ class OperationResult(OperationResultProperties):
         status: Optional[Union[str, "_models.WorkflowStatus"]] = None,
         code: Optional[str] = None,
         error: Optional[Any] = None,
-        retry_history: Optional[List["_models.RetryHistory"]] = None,
+        retry_history: Optional[list["_models.RetryHistory"]] = None,
         iteration_count: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -15338,7 +13849,7 @@ class OutboundEnvironmentEndpoint(_serialization.Model):
         self,
         *,
         category: Optional[str] = None,
-        endpoints: Optional[List["_models.EndpointDependency"]] = None,
+        endpoints: Optional[list["_models.EndpointDependency"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15376,7 +13887,7 @@ class OutboundEnvironmentEndpointCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.OutboundEnvironmentEndpoint"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.OutboundEnvironmentEndpoint"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.OutboundEnvironmentEndpoint]
@@ -15472,7 +13983,7 @@ class PerfMonCounterCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.PerfMonResponse"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.PerfMonResponse"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.PerfMonResponse]
@@ -15590,7 +14101,7 @@ class PerfMonSet(_serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        values: Optional[List["_models.PerfMonSample"]] = None,
+        values: Optional[list["_models.PerfMonSample"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15672,7 +14183,7 @@ class PremierAddOn(Resource):
         *,
         location: str,
         kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional[str] = None,
         product: Optional[str] = None,
         vendor: Optional[str] = None,
@@ -15848,7 +14359,7 @@ class PremierAddOnOfferCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.PremierAddOnOffer"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.PremierAddOnOffer"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.PremierAddOnOffer]
@@ -15974,7 +14485,7 @@ class PrivateAccess(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         enabled: Optional[bool] = None,
-        virtual_networks: Optional[List["_models.PrivateAccessVirtualNetwork"]] = None,
+        virtual_networks: Optional[list["_models.PrivateAccessVirtualNetwork"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -16045,7 +14556,7 @@ class PrivateAccessVirtualNetwork(_serialization.Model):
         name: Optional[str] = None,
         key: Optional[int] = None,
         resource_id: Optional[str] = None,
-        subnets: Optional[List["_models.PrivateAccessSubnet"]] = None,
+        subnets: Optional[list["_models.PrivateAccessSubnet"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -16090,7 +14601,7 @@ class PrivateEndpointConnectionCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RemotePrivateEndpointConnectionARMResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.RemotePrivateEndpointConnectionARMResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.RemotePrivateEndpointConnectionARMResource]
@@ -16276,8 +14787,8 @@ class PrivateLinkResourceProperties(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.group_id: Optional[str] = None
-        self.required_members: Optional[List[str]] = None
-        self.required_zone_names: Optional[List[str]] = None
+        self.required_members: Optional[list[str]] = None
+        self.required_zone_names: Optional[list[str]] = None
 
 
 class PrivateLinkResourcesWrapper(_serialization.Model):
@@ -16297,7 +14808,7 @@ class PrivateLinkResourcesWrapper(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: List["_models.PrivateLinkResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.PrivateLinkResource"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.web.models.PrivateLinkResource]
@@ -16454,10 +14965,10 @@ class ProcessInfo(ProxyOnlyResource):
         is_iis_profile_running: Optional[bool] = None,
         iis_profile_timeout_in_seconds: Optional[float] = None,
         parent: Optional[str] = None,
-        children: Optional[List[str]] = None,
-        threads: Optional[List["_models.ProcessThreadInfo"]] = None,
-        open_file_handles: Optional[List[str]] = None,
-        modules: Optional[List["_models.ProcessModuleInfo"]] = None,
+        children: Optional[list[str]] = None,
+        threads: Optional[list["_models.ProcessThreadInfo"]] = None,
+        open_file_handles: Optional[list[str]] = None,
+        modules: Optional[list["_models.ProcessModuleInfo"]] = None,
         file_name: Optional[str] = None,
         command_line: Optional[str] = None,
         user_name: Optional[str] = None,
@@ -16478,7 +14989,7 @@ class ProcessInfo(ProxyOnlyResource):
         paged_memory: Optional[int] = None,
         peak_paged_memory: Optional[int] = None,
         time_stamp: Optional[datetime.datetime] = None,
-        environment_variables: Optional[Dict[str, str]] = None,
+        environment_variables: Optional[dict[str, str]] = None,
         is_scm_site: Optional[bool] = None,
         is_webjob: Optional[bool] = None,
         description: Optional[str] = None,
@@ -16620,7 +15131,7 @@ class ProcessInfoCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ProcessInfo"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ProcessInfo"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.ProcessInfo]
@@ -16771,7 +15282,7 @@ class ProcessModuleInfoCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ProcessModuleInfo"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ProcessModuleInfo"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.ProcessModuleInfo]
@@ -16927,7 +15438,7 @@ class ProcessThreadInfoCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ProcessThreadInfo"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ProcessThreadInfo"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.ProcessThreadInfo]
@@ -17022,7 +15533,7 @@ class PublicCertificateCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.PublicCertificate"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.PublicCertificate"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.PublicCertificate]
@@ -17055,7 +15566,7 @@ class PublishingCredentialsPoliciesCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.CsmPublishingCredentialsPoliciesEntity"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.CsmPublishingCredentialsPoliciesEntity"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity]
@@ -17196,7 +15707,7 @@ class QueryUtterancesResults(_serialization.Model):
         self,
         *,
         query: Optional[str] = None,
-        results: Optional[List["_models.QueryUtterancesResult"]] = None,
+        results: Optional[list["_models.QueryUtterancesResult"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -17232,7 +15743,7 @@ class QueueScaleRule(_serialization.Model):
         *,
         queue_name: Optional[str] = None,
         queue_length: Optional[int] = None,
-        auth: Optional[List["_models.ScaleRuleAuth"]] = None,
+        auth: Optional[list["_models.ScaleRuleAuth"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -17469,7 +15980,7 @@ class Recommendation(ProxyOnlyResource):
         channels: Optional[Union[str, "_models.Channels"]] = None,
         action_name: Optional[str] = None,
         enabled: Optional[int] = None,
-        states: Optional[List[str]] = None,
+        states: Optional[list[str]] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         next_notification_time: Optional[datetime.datetime] = None,
@@ -17548,7 +16059,7 @@ class Recommendation(ProxyOnlyResource):
         self.message = message
         self.level = level
         self.channels = channels
-        self.category_tags: Optional[List[str]] = None
+        self.category_tags: Optional[list[str]] = None
         self.action_name = action_name
         self.enabled = enabled
         self.states = states
@@ -17587,7 +16098,7 @@ class RecommendationCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Recommendation"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Recommendation"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.Recommendation]
@@ -17731,7 +16242,7 @@ class RecommendationRule(ProxyOnlyResource):
         self.action_name = action_name
         self.level = level
         self.channels = channels
-        self.category_tags: Optional[List[str]] = None
+        self.category_tags: Optional[list[str]] = None
         self.is_dynamic = is_dynamic
         self.extension_name = extension_name
         self.blade_name = blade_name
@@ -17764,11 +16275,11 @@ class RecurrenceSchedule(_serialization.Model):
     def __init__(
         self,
         *,
-        minutes: Optional[List[int]] = None,
-        hours: Optional[List[int]] = None,
-        week_days: Optional[List[Union[str, "_models.DaysOfWeek"]]] = None,
-        month_days: Optional[List[int]] = None,
-        monthly_occurrences: Optional[List["_models.RecurrenceScheduleOccurrence"]] = None,
+        minutes: Optional[list[int]] = None,
+        hours: Optional[list[int]] = None,
+        week_days: Optional[list[Union[str, "_models.DaysOfWeek"]]] = None,
+        month_days: Optional[list[int]] = None,
+        monthly_occurrences: Optional[list["_models.RecurrenceScheduleOccurrence"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -17841,77 +16352,47 @@ class RegenerateActionParameter(_serialization.Model):
         self.key_type = key_type
 
 
-class ReissueCertificateOrderRequest(ProxyOnlyResource):
-    """Class representing certificate reissue request.
+class RegistryAdapter(_serialization.Model):
+    """Server farm registry adapter configuration.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource.
-    :vartype kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar key_size: Certificate Key Size.
-    :vartype key_size: int
-    :ivar delay_existing_revoke_in_hours: Delay in hours to revoke existing certificate after the
-     new certificate is issued.
-    :vartype delay_existing_revoke_in_hours: int
-    :ivar csr: Csr to be used for re-key operation.
-    :vartype csr: str
-    :ivar is_private_key_external: Should we change the ASC type (from managed private key to
-     external private key and vice versa).
-    :vartype is_private_key_external: bool
+    :ivar registry_key: Registry key for the adapter.
+    :vartype registry_key: str
+    :ivar type: Type of the registry adapter. Known values are: "Binary", "String",
+     "Expand_String", "Multi_String", "DWord", and "QWord".
+    :vartype type: str or ~azure.mgmt.web.models.RegistryAdapterType
+    :ivar key_vault_secret_reference: Key vault reference to the value that will be placed in the
+     registry location.
+    :vartype key_vault_secret_reference: ~azure.mgmt.web.models.KeyVaultReferenceWithStatus
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
+        "registry_key": {"key": "registryKey", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "key_size": {"key": "properties.keySize", "type": "int"},
-        "delay_existing_revoke_in_hours": {"key": "properties.delayExistingRevokeInHours", "type": "int"},
-        "csr": {"key": "properties.csr", "type": "str"},
-        "is_private_key_external": {"key": "properties.isPrivateKeyExternal", "type": "bool"},
+        "key_vault_secret_reference": {"key": "keyVaultSecretReference", "type": "KeyVaultReferenceWithStatus"},
     }
 
     def __init__(
         self,
         *,
-        kind: Optional[str] = None,
-        key_size: Optional[int] = None,
-        delay_existing_revoke_in_hours: Optional[int] = None,
-        csr: Optional[str] = None,
-        is_private_key_external: Optional[bool] = None,
+        registry_key: Optional[str] = None,
+        type: Optional[Union[str, "_models.RegistryAdapterType"]] = None,
+        key_vault_secret_reference: Optional["_models.KeyVaultReferenceWithStatus"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword kind: Kind of resource.
-        :paramtype kind: str
-        :keyword key_size: Certificate Key Size.
-        :paramtype key_size: int
-        :keyword delay_existing_revoke_in_hours: Delay in hours to revoke existing certificate after
-         the new certificate is issued.
-        :paramtype delay_existing_revoke_in_hours: int
-        :keyword csr: Csr to be used for re-key operation.
-        :paramtype csr: str
-        :keyword is_private_key_external: Should we change the ASC type (from managed private key to
-         external private key and vice versa).
-        :paramtype is_private_key_external: bool
+        :keyword registry_key: Registry key for the adapter.
+        :paramtype registry_key: str
+        :keyword type: Type of the registry adapter. Known values are: "Binary", "String",
+         "Expand_String", "Multi_String", "DWord", and "QWord".
+        :paramtype type: str or ~azure.mgmt.web.models.RegistryAdapterType
+        :keyword key_vault_secret_reference: Key vault reference to the value that will be placed in
+         the registry location.
+        :paramtype key_vault_secret_reference: ~azure.mgmt.web.models.KeyVaultReferenceWithStatus
         """
-        super().__init__(kind=kind, **kwargs)
-        self.key_size = key_size
-        self.delay_existing_revoke_in_hours = delay_existing_revoke_in_hours
-        self.csr = csr
-        self.is_private_key_external = is_private_key_external
+        super().__init__(**kwargs)
+        self.registry_key = registry_key
+        self.type = type
+        self.key_vault_secret_reference = key_vault_secret_reference
 
 
 class RelayServiceConnectionEntity(ProxyOnlyResource):
@@ -18055,7 +16536,7 @@ class RemotePrivateEndpointConnection(ProxyOnlyResource):
         kind: Optional[str] = None,
         private_endpoint: Optional["_models.ArmIdWrapper"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkConnectionState"] = None,
-        ip_addresses: Optional[List[str]] = None,
+        ip_addresses: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18127,7 +16608,7 @@ class RemotePrivateEndpointConnectionARMResource(ProxyOnlyResource):  # pylint: 
         kind: Optional[str] = None,
         private_endpoint: Optional["_models.ArmIdWrapper"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkConnectionState"] = None,
-        ip_addresses: Optional[List[str]] = None,
+        ip_addresses: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18193,70 +16674,6 @@ class Rendering(_serialization.Model):
         self.type = type
         self.title = title
         self.description = description
-
-
-class RenewCertificateOrderRequest(ProxyOnlyResource):
-    """Class representing certificate renew request.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource.
-    :vartype kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar key_size: Certificate Key Size.
-    :vartype key_size: int
-    :ivar csr: Csr to be used for re-key operation.
-    :vartype csr: str
-    :ivar is_private_key_external: Should we change the ASC type (from managed private key to
-     external private key and vice versa).
-    :vartype is_private_key_external: bool
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "key_size": {"key": "properties.keySize", "type": "int"},
-        "csr": {"key": "properties.csr", "type": "str"},
-        "is_private_key_external": {"key": "properties.isPrivateKeyExternal", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        key_size: Optional[int] = None,
-        csr: Optional[str] = None,
-        is_private_key_external: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Kind of resource.
-        :paramtype kind: str
-        :keyword key_size: Certificate Key Size.
-        :paramtype key_size: int
-        :keyword csr: Csr to be used for re-key operation.
-        :paramtype csr: str
-        :keyword is_private_key_external: Should we change the ASC type (from managed private key to
-         external private key and vice versa).
-        :paramtype is_private_key_external: bool
-        """
-        super().__init__(kind=kind, **kwargs)
-        self.key_size = key_size
-        self.csr = csr
-        self.is_private_key_external = is_private_key_external
 
 
 class RepetitionIndex(_serialization.Model):
@@ -18356,7 +16773,7 @@ class WorkflowResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The resource location.
         :paramtype location: str
@@ -18409,7 +16826,7 @@ class RequestHistory(WorkflowResource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.RequestHistoryProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -18440,7 +16857,7 @@ class RequestHistoryListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RequestHistory"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.RequestHistory"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: A list of workflow request histories.
@@ -18548,7 +16965,7 @@ class ResourceCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, value: list[str], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[str]
@@ -18662,7 +17079,7 @@ class ResourceHealthMetadataCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ResourceHealthMetadata"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ResourceHealthMetadata"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.ResourceHealthMetadata]
@@ -18757,9 +17174,9 @@ class ResourceMetricDefinition(ProxyOnlyResource):
         super().__init__(kind=kind, **kwargs)
         self.unit: Optional[str] = None
         self.primary_aggregation_type: Optional[str] = None
-        self.metric_availabilities: Optional[List["_models.ResourceMetricAvailability"]] = None
+        self.metric_availabilities: Optional[list["_models.ResourceMetricAvailability"]] = None
         self.resource_uri: Optional[str] = None
-        self.properties: Optional[Dict[str, str]] = None
+        self.properties: Optional[dict[str, str]] = None
 
 
 class ResourceMetricDefinitionCollection(_serialization.Model):
@@ -18785,7 +17202,7 @@ class ResourceMetricDefinitionCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ResourceMetricDefinition"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ResourceMetricDefinition"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.ResourceMetricDefinition]
@@ -19037,14 +17454,14 @@ class ResponseMessageEnvelopeRemotePrivateEndpointConnection(_serialization.Mode
         name: Optional[str] = None,
         type: Optional[str] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         plan: Optional["_models.ArmPlan"] = None,
         properties: Optional["_models.RemotePrivateEndpointConnection"] = None,
         sku: Optional["_models.SkuDescription"] = None,
         status: Optional[str] = None,
         error: Optional["_models.ErrorEntity"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        zones: Optional[List[str]] = None,
+        zones: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -19191,7 +17608,7 @@ class RestoreRequest(ProxyOnlyResource):
         blob_name: Optional[str] = None,
         overwrite: Optional[bool] = None,
         site_name: Optional[str] = None,
-        databases: Optional[List["_models.DatabaseBackupSetting"]] = None,
+        databases: Optional[list["_models.DatabaseBackupSetting"]] = None,
         ignore_conflicting_host_names: bool = False,
         ignore_databases: bool = False,
         app_service_plan: Optional[str] = None,
@@ -19325,7 +17742,7 @@ class RunCorrelation(_serialization.Model):
     }
 
     def __init__(
-        self, *, client_tracking_id: Optional[str] = None, client_keywords: Optional[List[str]] = None, **kwargs: Any
+        self, *, client_tracking_id: Optional[str] = None, client_keywords: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword client_tracking_id: The client tracking identifier.
@@ -19359,7 +17776,7 @@ class RunActionCorrelation(RunCorrelation):
         self,
         *,
         client_tracking_id: Optional[str] = None,
-        client_keywords: Optional[List[str]] = None,
+        client_keywords: Optional[list[str]] = None,
         action_tracking_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -19393,7 +17810,7 @@ class SampleUtterance(_serialization.Model):
     }
 
     def __init__(
-        self, *, text: Optional[str] = None, links: Optional[List[str]] = None, qid: Optional[str] = None, **kwargs: Any
+        self, *, text: Optional[str] = None, links: Optional[list[str]] = None, qid: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword text: Text attribute of sample utterance.
@@ -19431,7 +17848,7 @@ class Scale(_serialization.Model):
         *,
         min_replicas: Optional[int] = None,
         max_replicas: Optional[int] = None,
-        rules: Optional[List["_models.ScaleRule"]] = None,
+        rules: Optional[list["_models.ScaleRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -19523,6 +17940,144 @@ class ScaleRuleAuth(_serialization.Model):
         self.trigger_parameter = trigger_parameter
 
 
+class ServerFarmInstance(_serialization.Model):
+    """Represents details of a single instance in a server farm.
+
+    :ivar instance_name: The instance name.
+    :vartype instance_name: str
+    :ivar ip_address: The instance IP address.
+    :vartype ip_address: str
+    :ivar status: The instance status.
+    :vartype status: str
+    """
+
+    _validation = {
+        "instance_name": {"max_length": 64, "min_length": 1, "pattern": r"^[a-zA-Z0-9]+$"},
+    }
+
+    _attribute_map = {
+        "instance_name": {"key": "instanceName", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        instance_name: Optional[str] = None,
+        ip_address: Optional[str] = None,
+        status: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword instance_name: The instance name.
+        :paramtype instance_name: str
+        :keyword ip_address: The instance IP address.
+        :paramtype ip_address: str
+        :keyword status: The instance status.
+        :paramtype status: str
+        """
+        super().__init__(**kwargs)
+        self.instance_name = instance_name
+        self.ip_address = ip_address
+        self.status = status
+
+
+class ServerFarmInstanceDetails(_serialization.Model):
+    """Represents instance details for an app service plan.
+
+    :ivar server_farm_name: The server farm name.
+    :vartype server_farm_name: str
+    :ivar instances: The list of server farm instances.
+    :vartype instances: list[~azure.mgmt.web.models.ServerFarmInstance]
+    :ivar instance_count: The total number of instances.
+    :vartype instance_count: int
+    """
+
+    _attribute_map = {
+        "server_farm_name": {"key": "serverFarmName", "type": "str"},
+        "instances": {"key": "instances", "type": "[ServerFarmInstance]"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        server_farm_name: Optional[str] = None,
+        instances: Optional[list["_models.ServerFarmInstance"]] = None,
+        instance_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword server_farm_name: The server farm name.
+        :paramtype server_farm_name: str
+        :keyword instances: The list of server farm instances.
+        :paramtype instances: list[~azure.mgmt.web.models.ServerFarmInstance]
+        :keyword instance_count: The total number of instances.
+        :paramtype instance_count: int
+        """
+        super().__init__(**kwargs)
+        self.server_farm_name = server_farm_name
+        self.instances = instances
+        self.instance_count = instance_count
+
+
+class ServerFarmNetworkSettings(_serialization.Model):
+    """Network settings for an app service plan.
+
+    :ivar virtual_network_subnet_id: Azure Resource Manager ID of the Virtual network and subnet to
+     be joined by Regional VNET Integration. This must be of the form
+     /subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+    :vartype virtual_network_subnet_id: str
+    """
+
+    _attribute_map = {
+        "virtual_network_subnet_id": {"key": "virtualNetworkSubnetId", "type": "str"},
+    }
+
+    def __init__(self, *, virtual_network_subnet_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword virtual_network_subnet_id: Azure Resource Manager ID of the Virtual network and subnet
+         to be joined by Regional VNET Integration. This must be of the form
+         /subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+        :paramtype virtual_network_subnet_id: str
+        """
+        super().__init__(**kwargs)
+        self.virtual_network_subnet_id = virtual_network_subnet_id
+
+
+class ServerFarmRdpDetails(_serialization.Model):
+    """Server Farm RDP connection details.
+
+    :ivar rdp_password: The RDP password for the server farm.
+    :vartype rdp_password: str
+    :ivar rdp_password_expiry: The RDP password expiry date.
+    :vartype rdp_password_expiry: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "rdp_password": {"key": "rdpPassword", "type": "str"},
+        "rdp_password_expiry": {"key": "rdpPasswordExpiry", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        rdp_password: Optional[str] = None,
+        rdp_password_expiry: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword rdp_password: The RDP password for the server farm.
+        :paramtype rdp_password: str
+        :keyword rdp_password_expiry: The RDP password expiry date.
+        :paramtype rdp_password_expiry: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.rdp_password = rdp_password
+        self.rdp_password_expiry = rdp_password_expiry
+
+
 class ServiceSpecification(_serialization.Model):
     """Resource metrics service provided by Microsoft.Insights resource provider.
 
@@ -19540,8 +18095,8 @@ class ServiceSpecification(_serialization.Model):
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
-        log_specifications: Optional[List["_models.LogSpecification"]] = None,
+        metric_specifications: Optional[list["_models.MetricSpecification"]] = None,
+        log_specifications: Optional[list["_models.LogSpecification"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -19663,7 +18218,7 @@ class Site(Resource):
      * ClientCertEnabled: false means ClientCert is ignored.
      * ClientCertEnabled: true and ClientCertMode: Required means ClientCert is required.
      * ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is optional or
-     accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
+       accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
     :vartype client_cert_mode: str or ~azure.mgmt.web.models.ClientCertMode
     :ivar client_cert_exclusion_paths: client certificate authentication comma-separated exclusion
      paths.
@@ -19852,11 +18407,11 @@ class Site(Resource):
         *,
         location: str,
         kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
         enabled: Optional[bool] = None,
-        host_name_ssl_states: Optional[List["_models.HostNameSslState"]] = None,
+        host_name_ssl_states: Optional[list["_models.HostNameSslState"]] = None,
         server_farm_id: Optional[str] = None,
         reserved: bool = False,
         is_xenon: bool = False,
@@ -19967,10 +18522,10 @@ class Site(Resource):
         :keyword client_cert_mode: This composes with ClientCertEnabled setting.
 
 
-         * ClientCertEnabled: false means ClientCert is ignored.
-         * ClientCertEnabled: true and ClientCertMode: Required means ClientCert is required.
-         * ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is optional or
-         accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
+          * ClientCertEnabled: false means ClientCert is ignored.
+          * ClientCertEnabled: true and ClientCertMode: Required means ClientCert is required.
+          * ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is optional or
+            accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
         :paramtype client_cert_mode: str or ~azure.mgmt.web.models.ClientCertMode
         :keyword client_cert_exclusion_paths: client certificate authentication comma-separated
          exclusion paths.
@@ -20030,11 +18585,11 @@ class Site(Resource):
         self.identity = identity
         self.extended_location = extended_location
         self.state: Optional[str] = None
-        self.host_names: Optional[List[str]] = None
+        self.host_names: Optional[list[str]] = None
         self.repository_site_name: Optional[str] = None
         self.usage_state: Optional[Union[str, "_models.UsageState"]] = None
         self.enabled = enabled
-        self.enabled_host_names: Optional[List[str]] = None
+        self.enabled_host_names: Optional[list[str]] = None
         self.availability_state: Optional[Union[str, "_models.SiteAvailabilityState"]] = None
         self.host_name_ssl_states = host_name_ssl_states
         self.server_farm_id = server_farm_id
@@ -20049,7 +18604,7 @@ class Site(Resource):
         self.dapr_config = dapr_config
         self.workload_profile_name = workload_profile_name
         self.resource_config = resource_config
-        self.traffic_manager_host_names: Optional[List[str]] = None
+        self.traffic_manager_host_names: Optional[list[str]] = None
         self.scm_site_also_stopped = scm_site_also_stopped
         self.target_swap_slot: Optional[str] = None
         self.hosting_environment_profile = hosting_environment_profile
@@ -20331,7 +18886,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         runtime_version: Optional[str] = None,
         unauthenticated_client_action: Optional[Union[str, "_models.UnauthenticatedClientAction"]] = None,
         token_store_enabled: Optional[bool] = None,
-        allowed_external_redirect_urls: Optional[List[str]] = None,
+        allowed_external_redirect_urls: Optional[list[str]] = None,
         default_provider: Optional[Union[str, "_models.BuiltInAuthenticationProvider"]] = None,
         token_refresh_extension_hours: Optional[float] = None,
         client_id: Optional[str] = None,
@@ -20340,28 +18895,28 @@ class SiteAuthSettings(ProxyOnlyResource):
         client_secret_certificate_thumbprint: Optional[str] = None,
         issuer: Optional[str] = None,
         validate_issuer: Optional[bool] = None,
-        allowed_audiences: Optional[List[str]] = None,
-        additional_login_params: Optional[List[str]] = None,
+        allowed_audiences: Optional[list[str]] = None,
+        additional_login_params: Optional[list[str]] = None,
         aad_claims_authorization: Optional[str] = None,
         google_client_id: Optional[str] = None,
         google_client_secret: Optional[str] = None,
         google_client_secret_setting_name: Optional[str] = None,
-        google_o_auth_scopes: Optional[List[str]] = None,
+        google_o_auth_scopes: Optional[list[str]] = None,
         facebook_app_id: Optional[str] = None,
         facebook_app_secret: Optional[str] = None,
         facebook_app_secret_setting_name: Optional[str] = None,
-        facebook_o_auth_scopes: Optional[List[str]] = None,
+        facebook_o_auth_scopes: Optional[list[str]] = None,
         git_hub_client_id: Optional[str] = None,
         git_hub_client_secret: Optional[str] = None,
         git_hub_client_secret_setting_name: Optional[str] = None,
-        git_hub_o_auth_scopes: Optional[List[str]] = None,
+        git_hub_o_auth_scopes: Optional[list[str]] = None,
         twitter_consumer_key: Optional[str] = None,
         twitter_consumer_secret: Optional[str] = None,
         twitter_consumer_secret_setting_name: Optional[str] = None,
         microsoft_account_client_id: Optional[str] = None,
         microsoft_account_client_secret: Optional[str] = None,
         microsoft_account_client_secret_setting_name: Optional[str] = None,
-        microsoft_account_o_auth_scopes: Optional[List[str]] = None,
+        microsoft_account_o_auth_scopes: Optional[list[str]] = None,
         is_auth_from_file: Optional[str] = None,
         auth_file_path: Optional[str] = None,
         config_version: Optional[str] = None,
@@ -20692,9 +19247,9 @@ class SiteCloneability(_serialization.Model):
         self,
         *,
         result: Optional[Union[str, "_models.CloneAbilityResult"]] = None,
-        blocking_features: Optional[List["_models.SiteCloneabilityCriterion"]] = None,
-        unsupported_features: Optional[List["_models.SiteCloneabilityCriterion"]] = None,
-        blocking_characteristics: Optional[List["_models.SiteCloneabilityCriterion"]] = None,
+        blocking_features: Optional[list["_models.SiteCloneabilityCriterion"]] = None,
+        unsupported_features: Optional[list["_models.SiteCloneabilityCriterion"]] = None,
+        blocking_characteristics: Optional[list["_models.SiteCloneabilityCriterion"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -21035,7 +19590,7 @@ class SiteConfig(_serialization.Model):
         self,
         *,
         number_of_workers: Optional[int] = None,
-        default_documents: Optional[List[str]] = None,
+        default_documents: Optional[list[str]] = None,
         net_framework_version: str = "v4.6",
         php_version: Optional[str] = None,
         python_version: Optional[str] = None,
@@ -21053,10 +19608,10 @@ class SiteConfig(_serialization.Model):
         logs_directory_size_limit: Optional[int] = None,
         detailed_error_logging_enabled: Optional[bool] = None,
         publishing_username: Optional[str] = None,
-        app_settings: Optional[List["_models.NameValuePair"]] = None,
-        metadata: Optional[List["_models.NameValuePair"]] = None,
-        connection_strings: Optional[List["_models.ConnStringInfo"]] = None,
-        handler_mappings: Optional[List["_models.HandlerMapping"]] = None,
+        app_settings: Optional[list["_models.NameValuePair"]] = None,
+        metadata: Optional[list["_models.NameValuePair"]] = None,
+        connection_strings: Optional[list["_models.ConnStringInfo"]] = None,
+        handler_mappings: Optional[list["_models.HandlerMapping"]] = None,
         document_root: Optional[str] = None,
         scm_type: Optional[Union[str, "_models.ScmType"]] = None,
         use32_bit_worker_process: Optional[bool] = None,
@@ -21067,7 +19622,7 @@ class SiteConfig(_serialization.Model):
         java_container_version: Optional[str] = None,
         app_command_line: Optional[str] = None,
         managed_pipeline_mode: Optional[Union[str, "_models.ManagedPipelineMode"]] = None,
-        virtual_applications: Optional[List["_models.VirtualApplication"]] = None,
+        virtual_applications: Optional[list["_models.VirtualApplication"]] = None,
         load_balancing: Optional[Union[str, "_models.SiteLoadBalancing"]] = None,
         experiments: Optional["_models.Experiments"] = None,
         limits: Optional["_models.SiteLimits"] = None,
@@ -21086,9 +19641,9 @@ class SiteConfig(_serialization.Model):
         managed_service_identity_id: Optional[int] = None,
         x_managed_service_identity_id: Optional[int] = None,
         key_vault_reference_identity: Optional[str] = None,
-        ip_security_restrictions: Optional[List["_models.IpSecurityRestriction"]] = None,
+        ip_security_restrictions: Optional[list["_models.IpSecurityRestriction"]] = None,
         ip_security_restrictions_default_action: Optional[Union[str, "_models.DefaultAction"]] = None,
-        scm_ip_security_restrictions: Optional[List["_models.IpSecurityRestriction"]] = None,
+        scm_ip_security_restrictions: Optional[list["_models.IpSecurityRestriction"]] = None,
         scm_ip_security_restrictions_default_action: Optional[Union[str, "_models.DefaultAction"]] = None,
         scm_ip_security_restrictions_use_main: Optional[bool] = None,
         http20_enabled: bool = True,
@@ -21104,7 +19659,7 @@ class SiteConfig(_serialization.Model):
         functions_runtime_scale_monitoring_enabled: Optional[bool] = None,
         website_time_zone: Optional[str] = None,
         minimum_elastic_instance_count: Optional[int] = None,
-        azure_storage_accounts: Optional[Dict[str, "_models.AzureStorageInfoValue"]] = None,
+        azure_storage_accounts: Optional[dict[str, "_models.AzureStorageInfoValue"]] = None,
         public_network_access: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -21741,7 +20296,7 @@ class SiteConfigResource(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         number_of_workers: Optional[int] = None,
-        default_documents: Optional[List[str]] = None,
+        default_documents: Optional[list[str]] = None,
         net_framework_version: str = "v4.6",
         php_version: Optional[str] = None,
         python_version: Optional[str] = None,
@@ -21759,10 +20314,10 @@ class SiteConfigResource(ProxyOnlyResource):
         logs_directory_size_limit: Optional[int] = None,
         detailed_error_logging_enabled: Optional[bool] = None,
         publishing_username: Optional[str] = None,
-        app_settings: Optional[List["_models.NameValuePair"]] = None,
-        metadata: Optional[List["_models.NameValuePair"]] = None,
-        connection_strings: Optional[List["_models.ConnStringInfo"]] = None,
-        handler_mappings: Optional[List["_models.HandlerMapping"]] = None,
+        app_settings: Optional[list["_models.NameValuePair"]] = None,
+        metadata: Optional[list["_models.NameValuePair"]] = None,
+        connection_strings: Optional[list["_models.ConnStringInfo"]] = None,
+        handler_mappings: Optional[list["_models.HandlerMapping"]] = None,
         document_root: Optional[str] = None,
         scm_type: Optional[Union[str, "_models.ScmType"]] = None,
         use32_bit_worker_process: Optional[bool] = None,
@@ -21773,7 +20328,7 @@ class SiteConfigResource(ProxyOnlyResource):
         java_container_version: Optional[str] = None,
         app_command_line: Optional[str] = None,
         managed_pipeline_mode: Optional[Union[str, "_models.ManagedPipelineMode"]] = None,
-        virtual_applications: Optional[List["_models.VirtualApplication"]] = None,
+        virtual_applications: Optional[list["_models.VirtualApplication"]] = None,
         load_balancing: Optional[Union[str, "_models.SiteLoadBalancing"]] = None,
         experiments: Optional["_models.Experiments"] = None,
         limits: Optional["_models.SiteLimits"] = None,
@@ -21792,9 +20347,9 @@ class SiteConfigResource(ProxyOnlyResource):
         managed_service_identity_id: Optional[int] = None,
         x_managed_service_identity_id: Optional[int] = None,
         key_vault_reference_identity: Optional[str] = None,
-        ip_security_restrictions: Optional[List["_models.IpSecurityRestriction"]] = None,
+        ip_security_restrictions: Optional[list["_models.IpSecurityRestriction"]] = None,
         ip_security_restrictions_default_action: Optional[Union[str, "_models.DefaultAction"]] = None,
-        scm_ip_security_restrictions: Optional[List["_models.IpSecurityRestriction"]] = None,
+        scm_ip_security_restrictions: Optional[list["_models.IpSecurityRestriction"]] = None,
         scm_ip_security_restrictions_default_action: Optional[Union[str, "_models.DefaultAction"]] = None,
         scm_ip_security_restrictions_use_main: Optional[bool] = None,
         http20_enabled: bool = True,
@@ -21810,7 +20365,7 @@ class SiteConfigResource(ProxyOnlyResource):
         functions_runtime_scale_monitoring_enabled: Optional[bool] = None,
         website_time_zone: Optional[str] = None,
         minimum_elastic_instance_count: Optional[int] = None,
-        azure_storage_accounts: Optional[Dict[str, "_models.AzureStorageInfoValue"]] = None,
+        azure_storage_accounts: Optional[dict[str, "_models.AzureStorageInfoValue"]] = None,
         public_network_access: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -22113,7 +20668,7 @@ class SiteConfigResourceCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SiteConfigResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.SiteConfigResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.SiteConfigResource]
@@ -22192,7 +20747,7 @@ class SiteConfigurationSnapshotInfoCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SiteConfigurationSnapshotInfo"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.SiteConfigurationSnapshotInfo"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.SiteConfigurationSnapshotInfo]
@@ -22290,9 +20845,9 @@ class SiteContainer(ProxyOnlyResource):
         user_name: Optional[str] = None,
         password_secret: Optional[str] = None,
         user_managed_identity_client_id: Optional[str] = None,
-        volume_mounts: Optional[List["_models.VolumeMount"]] = None,
+        volume_mounts: Optional[list["_models.VolumeMount"]] = None,
         inherit_app_settings_and_connection_strings: Optional[bool] = None,
-        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
+        environment_variables: Optional[list["_models.EnvironmentVariable"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -22364,7 +20919,7 @@ class SiteContainerCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SiteContainer"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.SiteContainer"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.SiteContainer]
@@ -22415,7 +20970,7 @@ class SiteDnsConfig(_serialization.Model):
     def __init__(
         self,
         *,
-        dns_servers: Optional[List[str]] = None,
+        dns_servers: Optional[list[str]] = None,
         dns_alt_server: Optional[str] = None,
         dns_retry_attempt_timeout: Optional[int] = None,
         dns_retry_attempt_count: Optional[int] = None,
@@ -22552,7 +21107,7 @@ class SiteExtensionInfo(ProxyOnlyResource):
         icon_url: Optional[str] = None,
         license_url: Optional[str] = None,
         feed_url: Optional[str] = None,
-        authors: Optional[List[str]] = None,
+        authors: Optional[list[str]] = None,
         installer_command_line_params: Optional[str] = None,
         published_date_time: Optional[datetime.datetime] = None,
         download_count: Optional[int] = None,
@@ -22654,7 +21209,7 @@ class SiteExtensionInfoCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SiteExtensionInfo"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.SiteExtensionInfo"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.SiteExtensionInfo]
@@ -22899,7 +21454,7 @@ class SitePatchResource(ProxyOnlyResource):
      * ClientCertEnabled: false means ClientCert is ignored.
      * ClientCertEnabled: true and ClientCertMode: Required means ClientCert is required.
      * ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is optional or
-     accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
+       accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
     :vartype client_cert_mode: str or ~azure.mgmt.web.models.ClientCertMode
     :ivar client_cert_exclusion_paths: client certificate authentication comma-separated exclusion
      paths.
@@ -22949,6 +21504,9 @@ class SitePatchResource(ProxyOnlyResource):
     :vartype redundancy_mode: str or ~azure.mgmt.web.models.RedundancyMode
     :ivar in_progress_operation_id: Specifies an operation id if this site has a pending operation.
     :vartype in_progress_operation_id: str
+    :ivar public_network_access: Property to allow or block all public traffic. Allowed Values:
+     'Enabled', 'Disabled' or an empty string.
+    :vartype public_network_access: str
     :ivar storage_account_required: Checks if Customer provided storage account is required.
     :vartype storage_account_required: bool
     :ivar key_vault_reference_identity: Identity to use for Key Vault Reference authentication.
@@ -23033,6 +21591,7 @@ class SitePatchResource(ProxyOnlyResource):
         "https_only": {"key": "properties.httpsOnly", "type": "bool"},
         "redundancy_mode": {"key": "properties.redundancyMode", "type": "str"},
         "in_progress_operation_id": {"key": "properties.inProgressOperationId", "type": "str"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "storage_account_required": {"key": "properties.storageAccountRequired", "type": "bool"},
         "key_vault_reference_identity": {"key": "properties.keyVaultReferenceIdentity", "type": "str"},
         "virtual_network_subnet_id": {"key": "properties.virtualNetworkSubnetId", "type": "str"},
@@ -23044,7 +21603,7 @@ class SitePatchResource(ProxyOnlyResource):
         kind: Optional[str] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         enabled: Optional[bool] = None,
-        host_name_ssl_states: Optional[List["_models.HostNameSslState"]] = None,
+        host_name_ssl_states: Optional[list["_models.HostNameSslState"]] = None,
         server_farm_id: Optional[str] = None,
         reserved: bool = False,
         is_xenon: bool = False,
@@ -23065,6 +21624,7 @@ class SitePatchResource(ProxyOnlyResource):
         cloning_info: Optional["_models.CloningInfo"] = None,
         https_only: Optional[bool] = None,
         redundancy_mode: Optional[Union[str, "_models.RedundancyMode"]] = None,
+        public_network_access: Optional[str] = None,
         storage_account_required: Optional[bool] = None,
         key_vault_reference_identity: Optional[str] = None,
         virtual_network_subnet_id: Optional[str] = None,
@@ -23116,10 +21676,10 @@ class SitePatchResource(ProxyOnlyResource):
         :keyword client_cert_mode: This composes with ClientCertEnabled setting.
 
 
-         * ClientCertEnabled: false means ClientCert is ignored.
-         * ClientCertEnabled: true and ClientCertMode: Required means ClientCert is required.
-         * ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is optional or
-         accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
+          * ClientCertEnabled: false means ClientCert is ignored.
+          * ClientCertEnabled: true and ClientCertMode: Required means ClientCert is required.
+          * ClientCertEnabled: true and ClientCertMode: Optional means ClientCert is optional or
+            accepted. Known values are: "Required", "Optional", and "OptionalInteractiveUser".
         :paramtype client_cert_mode: str or ~azure.mgmt.web.models.ClientCertMode
         :keyword client_cert_exclusion_paths: client certificate authentication comma-separated
          exclusion paths.
@@ -23145,6 +21705,9 @@ class SitePatchResource(ProxyOnlyResource):
         :keyword redundancy_mode: Site redundancy mode. Known values are: "None", "Manual", "Failover",
          "ActiveActive", and "GeoRedundant".
         :paramtype redundancy_mode: str or ~azure.mgmt.web.models.RedundancyMode
+        :keyword public_network_access: Property to allow or block all public traffic. Allowed Values:
+         'Enabled', 'Disabled' or an empty string.
+        :paramtype public_network_access: str
         :keyword storage_account_required: Checks if Customer provided storage account is required.
         :paramtype storage_account_required: bool
         :keyword key_vault_reference_identity: Identity to use for Key Vault Reference authentication.
@@ -23158,11 +21721,11 @@ class SitePatchResource(ProxyOnlyResource):
         super().__init__(kind=kind, **kwargs)
         self.identity = identity
         self.state: Optional[str] = None
-        self.host_names: Optional[List[str]] = None
+        self.host_names: Optional[list[str]] = None
         self.repository_site_name: Optional[str] = None
         self.usage_state: Optional[Union[str, "_models.UsageState"]] = None
         self.enabled = enabled
-        self.enabled_host_names: Optional[List[str]] = None
+        self.enabled_host_names: Optional[list[str]] = None
         self.availability_state: Optional[Union[str, "_models.SiteAvailabilityState"]] = None
         self.host_name_ssl_states = host_name_ssl_states
         self.server_farm_id = server_farm_id
@@ -23172,7 +21735,7 @@ class SitePatchResource(ProxyOnlyResource):
         self.last_modified_time_utc: Optional[datetime.datetime] = None
         self.dns_configuration = dns_configuration
         self.site_config = site_config
-        self.traffic_manager_host_names: Optional[List[str]] = None
+        self.traffic_manager_host_names: Optional[list[str]] = None
         self.scm_site_also_stopped = scm_site_also_stopped
         self.target_swap_slot: Optional[str] = None
         self.hosting_environment_profile = hosting_environment_profile
@@ -23197,6 +21760,7 @@ class SitePatchResource(ProxyOnlyResource):
         self.https_only = https_only
         self.redundancy_mode = redundancy_mode
         self.in_progress_operation_id: Optional[str] = None
+        self.public_network_access = public_network_access
         self.storage_account_required = storage_account_required
         self.key_vault_reference_identity = key_vault_reference_identity
         self.virtual_network_subnet_id = virtual_network_subnet_id
@@ -23269,60 +21833,6 @@ class SitePhpErrorLogFlag(ProxyOnlyResource):
         self.master_log_errors = master_log_errors
         self.local_log_errors_max_length = local_log_errors_max_length
         self.master_log_errors_max_length = master_log_errors_max_length
-
-
-class SiteSeal(_serialization.Model):
-    """Site seal.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar html: HTML snippet. Required.
-    :vartype html: str
-    """
-
-    _validation = {
-        "html": {"required": True},
-    }
-
-    _attribute_map = {
-        "html": {"key": "html", "type": "str"},
-    }
-
-    def __init__(self, *, html: str, **kwargs: Any) -> None:
-        """
-        :keyword html: HTML snippet. Required.
-        :paramtype html: str
-        """
-        super().__init__(**kwargs)
-        self.html = html
-
-
-class SiteSealRequest(_serialization.Model):
-    """Site seal request.
-
-    :ivar light_theme: If :code:`<code>true</code>` use the light color theme for site seal;
-     otherwise, use the default color theme.
-    :vartype light_theme: bool
-    :ivar locale: Locale of site seal.
-    :vartype locale: str
-    """
-
-    _attribute_map = {
-        "light_theme": {"key": "lightTheme", "type": "bool"},
-        "locale": {"key": "locale", "type": "str"},
-    }
-
-    def __init__(self, *, light_theme: Optional[bool] = None, locale: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword light_theme: If :code:`<code>true</code>` use the light color theme for site seal;
-         otherwise, use the default color theme.
-        :paramtype light_theme: bool
-        :keyword locale: Locale of site seal.
-        :paramtype locale: str
-        """
-        super().__init__(**kwargs)
-        self.light_theme = light_theme
-        self.locale = locale
 
 
 class SiteSourceControl(ProxyOnlyResource):
@@ -23522,8 +22032,8 @@ class SkuDescription(_serialization.Model):
         family: Optional[str] = None,
         capacity: Optional[int] = None,
         sku_capacity: Optional["_models.SkuCapacity"] = None,
-        locations: Optional[List[str]] = None,
-        capabilities: Optional[List["_models.Capability"]] = None,
+        locations: Optional[list[str]] = None,
+        capabilities: Optional[list["_models.Capability"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -23617,7 +22127,7 @@ class SkuInfoCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SkuInfo"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.SkuInfo"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.SkuInfo]
@@ -23645,7 +22155,7 @@ class SkuInfos(_serialization.Model):
         self,
         *,
         resource_type: Optional[str] = None,
-        skus: Optional[List["_models.GlobalCsmSkuDescription"]] = None,
+        skus: Optional[list["_models.GlobalCsmSkuDescription"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -23700,9 +22210,9 @@ class SlotConfigNamesResource(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        connection_string_names: Optional[List[str]] = None,
-        app_setting_names: Optional[List[str]] = None,
-        azure_storage_config_names: Optional[List[str]] = None,
+        connection_string_names: Optional[list[str]] = None,
+        app_setting_names: Optional[list[str]] = None,
+        azure_storage_config_names: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -23815,7 +22325,7 @@ class SlotDifferenceCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SlotDifference"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.SlotDifference"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.SlotDifference]
@@ -23968,7 +22478,7 @@ class SnapshotCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Snapshot"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Snapshot"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.Snapshot]
@@ -24155,8 +22665,8 @@ class Solution(_serialization.Model):
         order: Optional[float] = None,
         description: Optional[str] = None,
         type: Optional[Union[str, "_models.SolutionType"]] = None,
-        data: Optional[List[List["_models.NameValuePair"]]] = None,
-        metadata: Optional[List[List["_models.NameValuePair"]]] = None,
+        data: Optional[list[list["_models.NameValuePair"]]] = None,
+        metadata: Optional[list[list["_models.NameValuePair"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24278,7 +22788,7 @@ class SourceControlCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SourceControl"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.SourceControl"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.SourceControl]
@@ -24344,13 +22854,13 @@ class StackMajorVersion(_serialization.Model):
         display_version: Optional[str] = None,
         runtime_version: Optional[str] = None,
         is_default: Optional[bool] = None,
-        minor_versions: Optional[List["_models.StackMinorVersion"]] = None,
+        minor_versions: Optional[list["_models.StackMinorVersion"]] = None,
         application_insights: Optional[bool] = None,
         is_preview: Optional[bool] = None,
         is_deprecated: Optional[bool] = None,
         is_hidden: Optional[bool] = None,
-        app_settings_dictionary: Optional[Dict[str, JSON]] = None,
-        site_config_properties_dictionary: Optional[Dict[str, JSON]] = None,
+        app_settings_dictionary: Optional[dict[str, JSON]] = None,
+        site_config_properties_dictionary: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24583,7 +23093,7 @@ class StampCapacityCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StampCapacity"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.StampCapacity"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.StampCapacity]
@@ -24720,7 +23230,7 @@ class StaticSiteARMResource(Resource):
         *,
         location: str,
         kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.SkuDescription"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         repository_url: Optional[str] = None,
@@ -24782,23 +23292,23 @@ class StaticSiteARMResource(Resource):
         self.default_hostname: Optional[str] = None
         self.repository_url = repository_url
         self.branch = branch
-        self.custom_domains: Optional[List[str]] = None
+        self.custom_domains: Optional[list[str]] = None
         self.repository_token = repository_token
         self.build_properties = build_properties
         self.private_endpoint_connections: Optional[
-            List["_models.ResponseMessageEnvelopeRemotePrivateEndpointConnection"]
+            list["_models.ResponseMessageEnvelopeRemotePrivateEndpointConnection"]
         ] = None
         self.staging_environment_policy = staging_environment_policy
         self.allow_config_file_updates = allow_config_file_updates
         self.template_properties = template_properties
         self.content_distribution_endpoint: Optional[str] = None
         self.key_vault_reference_identity: Optional[str] = None
-        self.user_provided_function_apps: Optional[List["_models.StaticSiteUserProvidedFunctionApp"]] = None
-        self.linked_backends: Optional[List["_models.StaticSiteLinkedBackend"]] = None
+        self.user_provided_function_apps: Optional[list["_models.StaticSiteUserProvidedFunctionApp"]] = None
+        self.linked_backends: Optional[list["_models.StaticSiteLinkedBackend"]] = None
         self.provider = provider
         self.enterprise_grade_cdn_status = enterprise_grade_cdn_status
         self.public_network_access = public_network_access
-        self.database_connections: Optional[List["_models.DatabaseConnectionOverview"]] = None
+        self.database_connections: Optional[list["_models.DatabaseConnectionOverview"]] = None
 
 
 class StaticSiteBasicAuthPropertiesARMResource(ProxyOnlyResource):
@@ -24854,7 +23364,7 @@ class StaticSiteBasicAuthPropertiesARMResource(ProxyOnlyResource):
         password: Optional[str] = None,
         secret_url: Optional[str] = None,
         applicable_environments_mode: Optional[str] = None,
-        environments: Optional[List[str]] = None,
+        environments: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24902,7 +23412,7 @@ class StaticSiteBasicAuthPropertiesCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StaticSiteBasicAuthPropertiesARMResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.StaticSiteBasicAuthPropertiesARMResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.StaticSiteBasicAuthPropertiesARMResource]
@@ -24999,9 +23509,9 @@ class StaticSiteBuildARMResource(ProxyOnlyResource):
         self.created_time_utc: Optional[datetime.datetime] = None
         self.last_updated_on: Optional[datetime.datetime] = None
         self.status: Optional[Union[str, "_models.BuildStatus"]] = None
-        self.user_provided_function_apps: Optional[List["_models.StaticSiteUserProvidedFunctionApp"]] = None
-        self.linked_backends: Optional[List["_models.StaticSiteLinkedBackend"]] = None
-        self.database_connections: Optional[List["_models.DatabaseConnectionOverview"]] = None
+        self.user_provided_function_apps: Optional[list["_models.StaticSiteUserProvidedFunctionApp"]] = None
+        self.linked_backends: Optional[list["_models.StaticSiteLinkedBackend"]] = None
+        self.database_connections: Optional[list["_models.DatabaseConnectionOverview"]] = None
 
 
 class StaticSiteBuildCollection(_serialization.Model):
@@ -25027,7 +23537,7 @@ class StaticSiteBuildCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StaticSiteBuildARMResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.StaticSiteBuildARMResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.StaticSiteBuildARMResource]
@@ -25140,7 +23650,7 @@ class StaticSiteCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StaticSiteARMResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.StaticSiteARMResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.StaticSiteARMResource]
@@ -25235,7 +23745,7 @@ class StaticSiteCustomDomainOverviewCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StaticSiteCustomDomainOverviewARMResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.StaticSiteCustomDomainOverviewARMResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.StaticSiteCustomDomainOverviewARMResource]
@@ -25392,7 +23902,7 @@ class StaticSiteFunctionOverviewCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StaticSiteFunctionOverviewARMResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.StaticSiteFunctionOverviewARMResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.StaticSiteFunctionOverviewARMResource]
@@ -25533,7 +24043,7 @@ class StaticSiteLinkedBackendsCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StaticSiteLinkedBackendARMResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.StaticSiteLinkedBackendARMResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.StaticSiteLinkedBackendARMResource]
@@ -25699,23 +24209,23 @@ class StaticSitePatchResource(ProxyOnlyResource):
         self.default_hostname: Optional[str] = None
         self.repository_url = repository_url
         self.branch = branch
-        self.custom_domains: Optional[List[str]] = None
+        self.custom_domains: Optional[list[str]] = None
         self.repository_token = repository_token
         self.build_properties = build_properties
         self.private_endpoint_connections: Optional[
-            List["_models.ResponseMessageEnvelopeRemotePrivateEndpointConnection"]
+            list["_models.ResponseMessageEnvelopeRemotePrivateEndpointConnection"]
         ] = None
         self.staging_environment_policy = staging_environment_policy
         self.allow_config_file_updates = allow_config_file_updates
         self.template_properties = template_properties
         self.content_distribution_endpoint: Optional[str] = None
         self.key_vault_reference_identity: Optional[str] = None
-        self.user_provided_function_apps: Optional[List["_models.StaticSiteUserProvidedFunctionApp"]] = None
-        self.linked_backends: Optional[List["_models.StaticSiteLinkedBackend"]] = None
+        self.user_provided_function_apps: Optional[list["_models.StaticSiteUserProvidedFunctionApp"]] = None
+        self.linked_backends: Optional[list["_models.StaticSiteLinkedBackend"]] = None
         self.provider = provider
         self.enterprise_grade_cdn_status = enterprise_grade_cdn_status
         self.public_network_access = public_network_access
-        self.database_connections: Optional[List["_models.DatabaseConnectionOverview"]] = None
+        self.database_connections: Optional[list["_models.DatabaseConnectionOverview"]] = None
 
 
 class StaticSiteResetPropertiesARMResource(ProxyOnlyResource):
@@ -26020,7 +24530,7 @@ class StaticSiteUserCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StaticSiteUserARMResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.StaticSiteUserARMResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.StaticSiteUserARMResource]
@@ -26301,7 +24811,7 @@ class StaticSiteUserProvidedFunctionAppsCollection(_serialization.Model):  # pyl
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.StaticSiteUserProvidedFunctionAppARMResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.StaticSiteUserProvidedFunctionAppARMResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.StaticSiteUserProvidedFunctionAppARMResource]
@@ -26642,6 +25152,65 @@ class StorageMigrationResponse(ProxyOnlyResource):
         self.operation_id: Optional[str] = None
 
 
+class StorageMount(_serialization.Model):
+    """Server farm storage mount configuration.
+
+    :ivar name: Name of the storage mount.
+    :vartype name: str
+    :ivar type: Type of the storage mount. Known values are: "AzureFiles", "LocalStorage", and
+     "FileShare".
+    :vartype type: str or ~azure.mgmt.web.models.StorageMountType
+    :ivar source: Source of the fileshare/storage.
+    :vartype source: str
+    :ivar destination_path: Path on worker where storage will be mounted.
+    :vartype destination_path: str
+    :ivar credentials_key_vault_reference: KV reference to the credentials to connect to the share.
+    :vartype credentials_key_vault_reference: ~azure.mgmt.web.models.KeyVaultReferenceWithStatus
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "source": {"key": "source", "type": "str"},
+        "destination_path": {"key": "destinationPath", "type": "str"},
+        "credentials_key_vault_reference": {
+            "key": "credentialsKeyVaultReference",
+            "type": "KeyVaultReferenceWithStatus",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        type: Optional[Union[str, "_models.StorageMountType"]] = None,
+        source: Optional[str] = None,
+        destination_path: Optional[str] = None,
+        credentials_key_vault_reference: Optional["_models.KeyVaultReferenceWithStatus"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the storage mount.
+        :paramtype name: str
+        :keyword type: Type of the storage mount. Known values are: "AzureFiles", "LocalStorage", and
+         "FileShare".
+        :paramtype type: str or ~azure.mgmt.web.models.StorageMountType
+        :keyword source: Source of the fileshare/storage.
+        :paramtype source: str
+        :keyword destination_path: Path on worker where storage will be mounted.
+        :paramtype destination_path: str
+        :keyword credentials_key_vault_reference: KV reference to the credentials to connect to the
+         share.
+        :paramtype credentials_key_vault_reference: ~azure.mgmt.web.models.KeyVaultReferenceWithStatus
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+        self.source = source
+        self.destination_path = destination_path
+        self.credentials_key_vault_reference = credentials_key_vault_reference
+
+
 class StringDictionary(ProxyOnlyResource):
     """String dictionary resource.
 
@@ -26674,7 +25243,7 @@ class StringDictionary(ProxyOnlyResource):
     }
 
     def __init__(
-        self, *, kind: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, *, kind: Optional[str] = None, properties: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword kind: Kind of resource.
@@ -26717,7 +25286,7 @@ class StringList(ProxyOnlyResource):
         "properties": {"key": "properties", "type": "[str]"},
     }
 
-    def __init__(self, *, kind: Optional[str] = None, properties: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, kind: Optional[str] = None, properties: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -26867,7 +25436,7 @@ class Template(_serialization.Model):
         self,
         *,
         revision_suffix: Optional[str] = None,
-        containers: Optional[List["_models.Container"]] = None,
+        containers: Optional[list["_models.Container"]] = None,
         scale: Optional["_models.Scale"] = None,
         dapr: Optional["_models.Dapr"] = None,
         **kwargs: Any
@@ -26887,87 +25456,6 @@ class Template(_serialization.Model):
         self.containers = containers
         self.scale = scale
         self.dapr = dapr
-
-
-class TldLegalAgreement(_serialization.Model):
-    """Legal agreement for a top level domain.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar agreement_key: Unique identifier for the agreement. Required.
-    :vartype agreement_key: str
-    :ivar title: Agreement title. Required.
-    :vartype title: str
-    :ivar content: Agreement details. Required.
-    :vartype content: str
-    :ivar url: URL where a copy of the agreement details is hosted.
-    :vartype url: str
-    """
-
-    _validation = {
-        "agreement_key": {"required": True},
-        "title": {"required": True},
-        "content": {"required": True},
-    }
-
-    _attribute_map = {
-        "agreement_key": {"key": "agreementKey", "type": "str"},
-        "title": {"key": "title", "type": "str"},
-        "content": {"key": "content", "type": "str"},
-        "url": {"key": "url", "type": "str"},
-    }
-
-    def __init__(
-        self, *, agreement_key: str, title: str, content: str, url: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword agreement_key: Unique identifier for the agreement. Required.
-        :paramtype agreement_key: str
-        :keyword title: Agreement title. Required.
-        :paramtype title: str
-        :keyword content: Agreement details. Required.
-        :paramtype content: str
-        :keyword url: URL where a copy of the agreement details is hosted.
-        :paramtype url: str
-        """
-        super().__init__(**kwargs)
-        self.agreement_key = agreement_key
-        self.title = title
-        self.content = content
-        self.url = url
-
-
-class TldLegalAgreementCollection(_serialization.Model):
-    """Collection of top-level domain legal agreements.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.models.TldLegalAgreement]
-    :ivar next_link: Link to next page of resources.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[TldLegalAgreement]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.TldLegalAgreement"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.models.TldLegalAgreement]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
 
 
 class TokenStore(_serialization.Model):
@@ -27028,115 +25516,6 @@ class TokenStore(_serialization.Model):
         self.azure_blob_storage = azure_blob_storage
 
 
-class TopLevelDomain(ProxyOnlyResource):
-    """A top level domain object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :ivar kind: Kind of resource.
-    :vartype kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar privacy: If :code:`<code>true</code>`, then the top level domain supports domain privacy;
-     otherwise, :code:`<code>false</code>`.
-    :vartype privacy: bool
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "privacy": {"key": "properties.privacy", "type": "bool"},
-    }
-
-    def __init__(self, *, kind: Optional[str] = None, privacy: Optional[bool] = None, **kwargs: Any) -> None:
-        """
-        :keyword kind: Kind of resource.
-        :paramtype kind: str
-        :keyword privacy: If :code:`<code>true</code>`, then the top level domain supports domain
-         privacy; otherwise, :code:`<code>false</code>`.
-        :paramtype privacy: bool
-        """
-        super().__init__(kind=kind, **kwargs)
-        self.privacy = privacy
-
-
-class TopLevelDomainAgreementOption(_serialization.Model):
-    """Options for retrieving the list of top level domain legal agreements.
-
-    :ivar include_privacy: If :code:`<code>true</code>`, then the list of agreements will include
-     agreements for domain privacy as well; otherwise, :code:`<code>false</code>`.
-    :vartype include_privacy: bool
-    :ivar for_transfer: If :code:`<code>true</code>`, then the list of agreements will include
-     agreements for domain transfer as well; otherwise, :code:`<code>false</code>`.
-    :vartype for_transfer: bool
-    """
-
-    _attribute_map = {
-        "include_privacy": {"key": "includePrivacy", "type": "bool"},
-        "for_transfer": {"key": "forTransfer", "type": "bool"},
-    }
-
-    def __init__(
-        self, *, include_privacy: Optional[bool] = None, for_transfer: Optional[bool] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword include_privacy: If :code:`<code>true</code>`, then the list of agreements will
-         include agreements for domain privacy as well; otherwise, :code:`<code>false</code>`.
-        :paramtype include_privacy: bool
-        :keyword for_transfer: If :code:`<code>true</code>`, then the list of agreements will include
-         agreements for domain transfer as well; otherwise, :code:`<code>false</code>`.
-        :paramtype for_transfer: bool
-        """
-        super().__init__(**kwargs)
-        self.include_privacy = include_privacy
-        self.for_transfer = for_transfer
-
-
-class TopLevelDomainCollection(_serialization.Model):
-    """Collection of Top-level domains.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: Collection of resources. Required.
-    :vartype value: list[~azure.mgmt.web.models.TopLevelDomain]
-    :ivar next_link: Link to next page of resources.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[TopLevelDomain]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.TopLevelDomain"], **kwargs: Any) -> None:
-        """
-        :keyword value: Collection of resources. Required.
-        :paramtype value: list[~azure.mgmt.web.models.TopLevelDomain]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
-
-
 class TriggeredJobHistory(ProxyOnlyResource):
     """Triggered Web Job History. List of Triggered Web Job Run Information elements.
 
@@ -27169,7 +25548,7 @@ class TriggeredJobHistory(ProxyOnlyResource):
     }
 
     def __init__(
-        self, *, kind: Optional[str] = None, runs: Optional[List["_models.TriggeredJobRun"]] = None, **kwargs: Any
+        self, *, kind: Optional[str] = None, runs: Optional[list["_models.TriggeredJobRun"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword kind: Kind of resource.
@@ -27204,7 +25583,7 @@ class TriggeredJobHistoryCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.TriggeredJobHistory"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.TriggeredJobHistory"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.TriggeredJobHistory]
@@ -27389,7 +25768,7 @@ class TriggeredWebJob(ProxyOnlyResource):
         using_sdk: Optional[bool] = None,
         public_network_access: Optional[str] = None,
         storage_account_required: Optional[bool] = None,
-        settings: Optional[Dict[str, JSON]] = None,
+        settings: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -27459,7 +25838,7 @@ class TriggeredWebJobCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.TriggeredWebJob"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.TriggeredWebJob"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.TriggeredWebJob]
@@ -27641,7 +26020,7 @@ class UsageCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Usage"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Usage"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.Usage]
@@ -27992,7 +26371,7 @@ class VirtualApplication(_serialization.Model):
         virtual_path: Optional[str] = None,
         physical_path: Optional[str] = None,
         preload_enabled: Optional[bool] = None,
-        virtual_directories: Optional[List["_models.VirtualDirectory"]] = None,
+        virtual_directories: Optional[list["_models.VirtualDirectory"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -28263,7 +26642,7 @@ class VnetInfo(_serialization.Model):
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint: Optional[str] = None
         self.cert_blob = cert_blob
-        self.routes: Optional[List["_models.VnetRoute"]] = None
+        self.routes: Optional[list["_models.VnetRoute"]] = None
         self.resync_required: Optional[bool] = None
         self.dns_servers = dns_servers
         self.is_swift = is_swift
@@ -28354,7 +26733,7 @@ class VnetInfoResource(ProxyOnlyResource):
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint: Optional[str] = None
         self.cert_blob = cert_blob
-        self.routes: Optional[List["_models.VnetRoute"]] = None
+        self.routes: Optional[list["_models.VnetRoute"]] = None
         self.resync_required: Optional[bool] = None
         self.dns_servers = dns_servers
         self.is_swift = is_swift
@@ -28553,8 +26932,8 @@ class VnetValidationFailureDetails(ProxyOnlyResource):
         kind: Optional[str] = None,
         message: Optional[str] = None,
         failed: Optional[bool] = None,
-        failed_tests: Optional[List["_models.VnetValidationTestFailure"]] = None,
-        warnings: Optional[List["_models.VnetValidationTestFailure"]] = None,
+        failed_tests: Optional[list["_models.VnetValidationTestFailure"]] = None,
+        warnings: Optional[list["_models.VnetValidationTestFailure"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -28708,7 +27087,7 @@ class WebAppCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Site"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Site"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.Site]
@@ -28741,7 +27120,7 @@ class WebAppInstanceStatusCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.WebSiteInstanceStatus"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.WebSiteInstanceStatus"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.WebSiteInstanceStatus]
@@ -28781,7 +27160,7 @@ class WebAppMajorVersion(_serialization.Model):
         super().__init__(**kwargs)
         self.display_text: Optional[str] = None
         self.value: Optional[str] = None
-        self.minor_versions: Optional[List["_models.WebAppMinorVersion"]] = None
+        self.minor_versions: Optional[list["_models.WebAppMinorVersion"]] = None
 
 
 class WebAppMinorVersion(_serialization.Model):
@@ -28988,7 +27367,7 @@ class WebAppStack(ProxyOnlyResource):
         self.location: Optional[str] = None
         self.display_text: Optional[str] = None
         self.value: Optional[str] = None
-        self.major_versions: Optional[List["_models.WebAppMajorVersion"]] = None
+        self.major_versions: Optional[list["_models.WebAppMajorVersion"]] = None
         self.preferred_os: Optional[Union[str, "_models.StackPreferredOs"]] = None
 
 
@@ -29015,7 +27394,7 @@ class WebAppStackCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.WebAppStack"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.WebAppStack"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.WebAppStack]
@@ -29084,7 +27463,7 @@ class WebJob(ProxyOnlyResource):
         web_job_type: Optional[Union[str, "_models.WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
-        settings: Optional[Dict[str, JSON]] = None,
+        settings: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -29138,7 +27517,7 @@ class WebJobCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.WebJob"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.WebJob"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.WebJob]
@@ -29206,7 +27585,7 @@ class WebSiteInstanceStatus(ProxyOnlyResource):
         detector_url: Optional[str] = None,
         console_url: Optional[str] = None,
         health_check_url: Optional[str] = None,
-        containers: Optional[Dict[str, "_models.ContainerInfo"]] = None,
+        containers: Optional[dict[str, "_models.ContainerInfo"]] = None,
         physical_zone: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -29324,7 +27703,7 @@ class WorkerPoolCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.WorkerPoolResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.WorkerPoolResource"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.WorkerPoolResource]
@@ -29414,7 +27793,7 @@ class WorkerPoolResource(ProxyOnlyResource):
         self.compute_mode = compute_mode
         self.worker_size = worker_size
         self.worker_count = worker_count
-        self.instance_names: Optional[List[str]] = None
+        self.instance_names: Optional[list[str]] = None
 
 
 class Workflow(WorkflowResource):
@@ -29510,7 +27889,7 @@ class Workflow(WorkflowResource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         state: Optional[Union[str, "_models.WorkflowState"]] = None,
         endpoints_configuration: Optional["_models.FlowEndpointsConfiguration"] = None,
@@ -29518,7 +27897,7 @@ class Workflow(WorkflowResource):
         integration_account: Optional["_models.ResourceReference"] = None,
         integration_service_environment: Optional["_models.ResourceReference"] = None,
         definition: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.WorkflowParameter"]] = None,
+        parameters: Optional[dict[str, "_models.WorkflowParameter"]] = None,
         kind: Optional[Union[str, "_models.Kind"]] = None,
         **kwargs: Any
     ) -> None:
@@ -29586,8 +27965,8 @@ class WorkflowArtifacts(_serialization.Model):
         self,
         *,
         app_settings: Optional[JSON] = None,
-        files: Optional[Dict[str, JSON]] = None,
-        files_to_delete: Optional[List[str]] = None,
+        files: Optional[dict[str, JSON]] = None,
+        files_to_delete: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -29686,7 +28065,7 @@ class WorkflowEnvelopeCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.WorkflowEnvelope"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.WorkflowEnvelope"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.models.WorkflowEnvelope]
@@ -29717,7 +28096,7 @@ class WorkflowEnvelopeProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        files: Optional[Dict[str, JSON]] = None,
+        files: Optional[dict[str, JSON]] = None,
         flow_state: Optional[Union[str, "_models.WorkflowState"]] = None,
         health: Optional["_models.WorkflowHealth"] = None,
         **kwargs: Any
@@ -29814,7 +28193,7 @@ class WorkflowListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Workflow"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Workflow"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of workflows.
@@ -30021,7 +28400,7 @@ class WorkflowRun(SubResource):
         self.correlation = correlation
         self.workflow: Optional["_models.ResourceReference"] = None
         self.trigger: Optional["_models.WorkflowRunTrigger"] = None
-        self.outputs: Optional[Dict[str, "_models.WorkflowOutputParameter"]] = None
+        self.outputs: Optional[dict[str, "_models.WorkflowOutputParameter"]] = None
         self.response: Optional["_models.WorkflowRunTrigger"] = None
 
 
@@ -30098,7 +28477,7 @@ class WorkflowRunAction(SubResource):
         self,
         *,
         correlation: Optional["_models.RunActionCorrelation"] = None,
-        retry_history: Optional[List["_models.RetryHistory"]] = None,
+        retry_history: Optional[list["_models.RetryHistory"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30164,7 +28543,7 @@ class WorkflowRunActionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.WorkflowRunAction"]] = None,
+        value: Optional[list["_models.WorkflowRunAction"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -30267,16 +28646,16 @@ class WorkflowRunActionRepetitionDefinition(WorkflowResource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         correlation: Optional["_models.RunActionCorrelation"] = None,
         status: Optional[Union[str, "_models.WorkflowStatus"]] = None,
         code: Optional[str] = None,
         error: Optional[Any] = None,
-        retry_history: Optional[List["_models.RetryHistory"]] = None,
+        retry_history: Optional[list["_models.RetryHistory"]] = None,
         iteration_count: Optional[int] = None,
-        repetition_indexes: Optional[List["_models.RepetitionIndex"]] = None,
+        repetition_indexes: Optional[list["_models.RepetitionIndex"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30341,7 +28720,7 @@ class WorkflowRunActionRepetitionDefinitionCollection(_serialization.Model):  # 
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.WorkflowRunActionRepetitionDefinition"]] = None,
+        value: Optional[list["_models.WorkflowRunActionRepetitionDefinition"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30430,9 +28809,9 @@ class WorkflowRunActionRepetitionProperties(OperationResult):
         status: Optional[Union[str, "_models.WorkflowStatus"]] = None,
         code: Optional[str] = None,
         error: Optional[Any] = None,
-        retry_history: Optional[List["_models.RetryHistory"]] = None,
+        retry_history: Optional[list["_models.RetryHistory"]] = None,
         iteration_count: Optional[int] = None,
-        repetition_indexes: Optional[List["_models.RepetitionIndex"]] = None,
+        repetition_indexes: Optional[list["_models.RepetitionIndex"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30510,7 +28889,7 @@ class WorkflowRunListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.WorkflowRun"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.WorkflowRun"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: A list of workflow runs.
@@ -30777,7 +29156,7 @@ class WorkflowTriggerCallbackUrl(_serialization.Model):
     def __init__(
         self,
         *,
-        relative_path_parameters: Optional[List[str]] = None,
+        relative_path_parameters: Optional[list[str]] = None,
         queries: Optional["_models.WorkflowTriggerListCallbackUrlQueries"] = None,
         **kwargs: Any
     ) -> None:
@@ -30956,7 +29335,7 @@ class WorkflowTriggerHistoryListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.WorkflowTriggerHistory"]] = None,
+        value: Optional[list["_models.WorkflowTriggerHistory"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -31039,7 +29418,7 @@ class WorkflowTriggerListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.WorkflowTrigger"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.WorkflowTrigger"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: A list of workflow triggers.
@@ -31195,13 +29574,13 @@ class WorkflowVersion(WorkflowResource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         state: Optional[Union[str, "_models.WorkflowState"]] = None,
         endpoints_configuration: Optional["_models.FlowEndpointsConfiguration"] = None,
         access_control: Optional["_models.FlowAccessControlConfiguration"] = None,
         integration_account: Optional["_models.ResourceReference"] = None,
         definition: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.WorkflowParameter"]] = None,
+        parameters: Optional[dict[str, "_models.WorkflowParameter"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -31253,7 +29632,7 @@ class WorkflowVersionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.WorkflowVersion"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.WorkflowVersion"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: A list of workflow versions.
