@@ -19,15 +19,10 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) CONNECTION_NAME - Required. The name of the connection of type Azure Storage Account, to use for the dataset upload.
-    3) MODEL_ENDPOINT - Required. The Azure OpenAI endpoint associated with your Foundry project.
-       It can be found in the Foundry overview page. It has the form https://<account_name>.openai.azure.com.
-    4) MODEL_API_KEY - Required. The API key for the model endpoint. Can be found under "key" in the model details page
-       (click "Models + endpoints" and select your model to get to the model details page).
-    5) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
-    6) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
-    7) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
-    8) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    3) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
+    4) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
+    5) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
 """
 
 import os
@@ -37,7 +32,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     DatasetVersion,
 )
-import json
+
 import time
 from pprint import pprint
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
@@ -49,12 +44,9 @@ load_dotenv()
 
 endpoint = os.environ[
     "AZURE_AI_PROJECT_ENDPOINT"
-]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+]
 
-connection_name = os.environ.get("CONNECTION_NAME", "")
-model_endpoint = os.environ.get("MODEL_ENDPOINT", "")  # Sample: https://<account_name>.openai.azure.com.
-model_api_key = os.environ.get("MODEL_API_KEY", "")
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
 dataset_name = os.environ.get("DATASET_NAME", "")
 dataset_version = os.environ.get("DATASET_VERSION", "1")
 
@@ -142,20 +134,20 @@ with DefaultAzureCredential() as credential:
             },
         ]
 
-        print("Creating Eval Group")
+        print("Creating evaluation")
         eval_object = client.evals.create(
             name="ai assisted evaluators test",
             data_source_config=data_source_config, # type: ignore
             testing_criteria=testing_criteria, # type: ignore
         )
-        print(f"Eval Group created")
+        print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-        print("Get Eval Group by Id")
+        print("Get Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
-        print("Eval Run Response:")
+        print("Evaluation Response:")
         pprint(eval_object_response)
 
-        print("Creating Eval Run")
+        print("Creating evaluation run")
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
             name="dataset",
@@ -167,9 +159,9 @@ with DefaultAzureCredential() as credential:
         print(f"Eval Run created")
         pprint(eval_run_object)
 
-        print("Get Eval Run by Id")
+        print("Get Evaluation Run by Id")
         eval_run_response = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-        print("Eval Run Response:")
+        print("Evaluation Run Response:")
         pprint(eval_run_response)
 
         while True:
@@ -181,4 +173,7 @@ with DefaultAzureCredential() as credential:
 
                 break
             time.sleep(5)
-            print("Waiting for eval run to complete...")
+            print("Waiting for evaluation run to complete...")
+
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")

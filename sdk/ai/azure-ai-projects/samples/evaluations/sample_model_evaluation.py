@@ -31,7 +31,6 @@ from pprint import pprint
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition
 from openai.types.eval_create_params import DataSourceConfigCustom
 
 load_dotenv()
@@ -92,7 +91,7 @@ with project_client:
     }
 
     agent_eval_run = openai_client.evals.runs.create(
-        eval_id=eval_object.id, name=f"Evaluation Run for Model {model}", data_source=data_source
+        eval_id=eval_object.id, name=f"Evaluation Run for Model {model}", data_source=data_source # type: ignore
     )
     print(f"Evaluation run created (id: {agent_eval_run.id})")
 

@@ -86,7 +86,7 @@ with project_client:
     }
 
     response_eval_run = openai_client.evals.runs.create(
-        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source
+        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source # type: ignore
     )
     print(f"Evaluation run created (id: {response_eval_run.id})")
 
@@ -111,8 +111,8 @@ with project_client:
     else:
         print("\n✗ Evaluation run failed.")
 
-    # openai_client.evals.delete(eval_id=eval_object.id)
-    # print("Evaluation deleted")
+    openai_client.evals.delete(eval_id=eval_object.id)
+    print("Evaluation deleted")
 
     project_client.agents.delete(agent_name=agent.name)
     print("Agent deleted")

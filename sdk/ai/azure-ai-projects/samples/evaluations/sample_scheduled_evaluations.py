@@ -213,7 +213,7 @@ def assign_rbac():
 def schedule_dataset_evaluation() -> None:
     endpoint = os.environ[
         "AZURE_AI_PROJECT_ENDPOINT"
-    ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    ]
     dataset_name = os.environ.get("DATASET_NAME", "")
     dataset_version = os.environ.get("DATASET_VERSION", "1")
     # Construct the paths to the data folder and data file used in this sample
@@ -267,15 +267,15 @@ def schedule_dataset_evaluation() -> None:
                 },
             ]
 
-            print("Creating Eval Group")
+            print("Creating evaluation")
             eval_object = client.evals.create(
                 name="label model test with dataset ID",
-                data_source_config=data_source_config, # type: ignore # type: ignore
+                data_source_config=data_source_config, # type: ignore
                 testing_criteria=testing_criteria, # type: ignore
             )
-            print(f"Eval Group created")
+            print(f"Evaluation created")
 
-            print("Get Eval Group by Id")
+            print("Get Evaluation by Id")
             eval_object_response = client.evals.retrieve(eval_object.id)
             print("Eval Run Response:")
             pprint(eval_object_response)
@@ -306,10 +306,19 @@ def schedule_dataset_evaluation() -> None:
             print(f"Schedule created for dataset evaluation: {schedule_response.id}")
             pprint(schedule_response)
 
-            schedule_runs = project_client.schedules.list_runs(schedule_id=schedule_response.id)
+            schedule_runs = project_client.schedules.list_runs(schedule_response.id)
             print(f"Listing schedule runs for schedule id: {schedule_response.id}")
             for run in schedule_runs:
                 pprint(run)
+
+            project_client.schedules.delete(schedule_response.id)
+            print("Schedule deleted")
+
+            client.evals.delete(eval_id=eval_object.id)
+            print("Evaluation deleted")
+
+            project_client.datasets.delete(name=dataset.name, version=dataset.version)
+            print("Dataset deleted")
 
 
 def schedule_redteam_evaluation() -> None:
@@ -317,7 +326,7 @@ def schedule_redteam_evaluation() -> None:
     #
     endpoint = os.environ.get(
         "AZURE_AI_PROJECT_ENDPOINT", ""
-    )  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    )
     agent_name = os.environ.get("AGENT_NAME", "")
 
     # Construct the paths to the data folder and data file used in this sample
@@ -326,7 +335,7 @@ def schedule_redteam_evaluation() -> None:
 
     with DefaultAzureCredential() as credential:
         with AIProjectClient(
-            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+            endpoint=endpoint, credential=credential
         ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
             client = project_client.get_openai_client()
@@ -402,12 +411,19 @@ def schedule_redteam_evaluation() -> None:
             print(f"Schedule created for red teaming: {schedule_response.id}")
             pprint(schedule_response)
 
-            schedule_runs = project_client.schedules.list_runs(schedule_id=schedule_response.id)
+            schedule_runs = project_client.schedules.list_runs(schedule_response.id)
             print(f"Listing schedule runs for schedule id: {schedule_response.id}")
             for run in schedule_runs:
                 pprint(run)
 
-            # [END evaluations_sample]
+            project_client.schedules.delete(schedule_response.id)
+            print("Schedule deleted")
+
+            client.evals.delete(eval_id=eval_object.id)
+            print("Evaluation deleted")
+
+            project_client.evaluation_taxonomies.delete(name=taxonomy.name, version=taxonomy.version)
+            print("Taxonomy deleted")
 
 
 def _get_tool_descriptions(agent: AgentVersionObject):

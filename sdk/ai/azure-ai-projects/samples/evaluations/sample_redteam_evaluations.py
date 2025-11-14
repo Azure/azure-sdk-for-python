@@ -46,7 +46,7 @@ def main() -> None:
     #
     endpoint = os.environ.get(
         "AZURE_AI_PROJECT_ENDPOINT", ""
-    )  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    )
     agent_name = os.environ.get("AGENT_NAME", "")
 
     # Construct the paths to the data folder and data file used in this sample
@@ -55,7 +55,7 @@ def main() -> None:
 
     with DefaultAzureCredential() as credential:
         with AIProjectClient(
-            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+            endpoint=endpoint, credential=credential
         ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
             client = project_client.get_openai_client()
@@ -72,24 +72,24 @@ def main() -> None:
             print(f"Defining testing criteria for red teaming for agent target")
             pprint(testing_criteria)
 
-            print("Creating Eval Group")
+            print("Creating red teaming evaluation")
             eval_object = client.evals.create(
                 name=eval_group_name,
                 data_source_config=data_source_config, # type: ignore
                 testing_criteria=testing_criteria, # type: ignore # type: ignore
             )
-            print(f"Eval Group created for red teaming: {eval_group_name}")
+            print(f"Evaluation created for red teaming: {eval_group_name}")
 
-            print(f"Get Eval Group by Id: {eval_object.id}")
+            print(f"Get evaluation by Id: {eval_object.id}")
             eval_object_response = client.evals.retrieve(eval_object.id)
-            print("Eval Group Response:")
+            print("Evaluation Response:")
             pprint(eval_object_response)
 
             risk_categories_for_taxonomy = [RiskCategory.PROHIBITED_ACTIONS]
             target = AzureAIAgentTarget(
                 name=agent_name, version=agent_version, tool_descriptions=_get_tool_descriptions(agent)
             )
-            agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target)
+            agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target) # type: ignore
             print("Creating Eval Taxonomies")
             eval_taxonomy_input = EvaluationTaxonomy(
                 description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
@@ -101,13 +101,13 @@ def main() -> None:
             os.makedirs(data_folder, exist_ok=True)
             with open(taxonomy_path, "w") as f:
                 f.write(json.dumps(_to_json_primitive(taxonomy), indent=2))
-            print(f"RedTeaming Taxonomy created for agent: {agent_name}. Taxonomy written to {taxonomy_path}")
+            print(f"Red teaming Taxonomy created for agent: {agent_name}. Taxonomy written to {taxonomy_path}")
 
-            print("Creating RedTeaming Eval Run")
+            print("Creating red teaming Eval Run")
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
                 name=eval_run_name,
-                data_source={
+                data_source={ # type: ignore
                     "type": "azure_ai_red_team",
                     "item_generation_params": {
                         "type": "red_team_taxonomy",
@@ -143,7 +143,8 @@ def main() -> None:
                 time.sleep(5)
                 print("Waiting for eval run to complete...")
 
-            # [END evaluations_sample]
+            client.evals.delete(eval_id=eval_object.id)
+            print("Evaluation deleted")
 
 
 def _get_tool_descriptions(agent: AgentVersionObject):

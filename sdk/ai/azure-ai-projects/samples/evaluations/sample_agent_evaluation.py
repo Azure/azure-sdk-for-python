@@ -43,6 +43,7 @@ project_client = AIProjectClient(
 
 with project_client:
 
+     # [START agent_evaluation_basic]
     openai_client = project_client.get_openai_client()
 
     agent = project_client.agents.create_version(
@@ -97,9 +98,10 @@ with project_client:
     }
 
     agent_eval_run = openai_client.evals.runs.create(
-        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source
+        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source # type: ignore
     )
     print(f"Evaluation run created (id: {agent_eval_run.id})")
+    # [END agent_evaluation_basic]
 
     while agent_eval_run.status not in ["completed", "failed"]:
         agent_eval_run = openai_client.evals.runs.retrieve(run_id=agent_eval_run.id, eval_id=eval_object.id)
@@ -125,3 +127,4 @@ with project_client:
 
     project_client.agents.delete(agent_name=agent.name)
     print("Agent deleted")
+    

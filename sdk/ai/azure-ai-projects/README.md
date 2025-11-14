@@ -4,11 +4,11 @@ The AI Projects client library (in preview) is part of the Microsoft Foundry SDK
 resources in your Microsoft Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on methods on the `.agents` client property.
-* **Get an OpenAI client** using `.get_openai_client()` method to run "Responses" and "Conversations" operations with your Agent.
+* **Get an OpenAI client** using `.get_openai_client()` method to run "Responses", "Conversations", "Evals" operations with your Agent.
 * **Manage memory stores** for Agent conversations, using the `.memory_store` operations.
-* **Run Evaluations** to assess the performance of your generative AI application, using the `.evaluation_rules`,
+* **Explore evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
 `.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
-* **Run Red Team operations** to identify risks associated with your generative AI application, using the ".red_teams" operations.
+* **Run Red Team scans** to identify risks associated with your generative AI application, using the ".red_teams" operations.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
@@ -183,6 +183,70 @@ print("Agent deleted")
 Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
 
 The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
+
+<!-- SNIPPET:sample_agent_evaluation.agent_evaluation_basic -->
+
+```python
+openai_client = project_client.get_openai_client()
+
+agent = project_client.agents.create_version(
+    agent_name=os.environ["AZURE_AI_AGENT_NAME"],
+    definition=PromptAgentDefinition(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        instructions="You are a helpful assistant that answers general questions",
+    ),
+)
+print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+data_source_config = DataSourceConfigCustom(
+    type="custom",
+    item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
+    include_sample_schema=True,
+)
+testing_criteria = [
+    {
+        "type": "azure_ai_evaluator",
+        "name": "violence_detection",
+        "evaluator_name": "builtin.violence",
+        "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
+    }
+]
+eval_object = openai_client.evals.create(
+    name="Agent Evaluation",
+    data_source_config=data_source_config, # type: ignore
+    testing_criteria=testing_criteria, # type: ignore
+)
+print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
+
+data_source = {
+    "type": "azure_ai_target_completions",
+    "source": {
+        "type": "file_content",
+        "content": [
+            {"item": {"query": "What is the capital of France?"}},
+            {"item": {"query": "How do I reverse a string in Python?"}},
+        ],
+    },
+    "input_messages": {
+        "type": "template",
+        "template": [
+            {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
+        ],
+    },
+    "target": {
+        "type": "azure_ai_agent",
+        "name": agent.name,
+        "version": agent.version,  # Version is optional. Defaults to latest version if not specified
+    },
+}
+
+agent_eval_run = openai_client.evals.runs.create(
+    eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source
+)
+print(f"Evaluation run created (id: {agent_eval_run.id})")
+```
+
+<!-- END SNIPPET -->
 
 ### Deployments operations
 

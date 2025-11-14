@@ -28,7 +28,6 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorVersion,
     EvaluatorCategory,
-    EvaluatorDefinitionType,
     PromptBasedEvaluatorDefinition,
     CodeBasedEvaluatorDefinition,
     EvaluatorType,
@@ -37,7 +36,6 @@ from azure.ai.projects.models import (
     EvaluatorMetricType,
 )
 
-from azure.core.paging import ItemPaged
 from pprint import pprint
 import time
 
@@ -47,7 +45,7 @@ load_dotenv()
 
 endpoint = os.environ[
     "AZURE_AI_PROJECT_ENDPOINT"
-]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+]
 
 with DefaultAzureCredential() as credential:
 

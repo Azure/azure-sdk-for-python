@@ -25,7 +25,7 @@ USAGE:
 import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvaluatorVersion, EvaluatorCategory, EvaluatorDefinitionType
+from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType
 
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
@@ -33,7 +33,6 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContentContent,
 )
 
-from azure.core.paging import ItemPaged
 import time
 from pprint import pprint
 
@@ -43,8 +42,8 @@ load_dotenv()
 
 endpoint = os.environ[
     "AZURE_AI_PROJECT_ENDPOINT"
-]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
+]
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
 with DefaultAzureCredential() as credential:
 
@@ -126,20 +125,20 @@ with DefaultAzureCredential() as credential:
             }
         ]
 
-        print("Creating Eval Group")
+        print("Creating evaluation")
         eval_object = client.evals.create(
             name="label model test with inline data",
             data_source_config=data_source_config, # type: ignore
             testing_criteria=testing_criteria, # type: ignore
         )
-        print(f"Eval Group created")
+        print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-        print("Get Eval Group by Id")
+        print("Get evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
-        print("Eval Run Response:")
+        print("Evaluation Response:")
         pprint(eval_object_response)
 
-        print("Creating Eval Run with Inline Data")
+        print("Creating evaluationrun with inline data")
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
             name="Eval Run for Sample Code Based Custom Evaluator",
@@ -178,12 +177,12 @@ with DefaultAzureCredential() as credential:
             ),
         )
 
-        print(f"Eval Run created")
+        print(f"Evaluation run created (id: {eval_run_object.id})")
         pprint(eval_run_object)
 
-        print("Get Eval Run by Id")
+        print("Get evaluation run by Id")
         eval_run_response = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-        print("Eval Run Response:")
+        print("Evaluation run Response:")
         pprint(eval_run_response)
 
         while True:
@@ -191,16 +190,15 @@ with DefaultAzureCredential() as credential:
             if run.status == "completed" or run.status == "failed":
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
-                print(f"Eval Run Report URL: {run.report_url}")
+                print(f"Evaluation run Report URL: {run.report_url}")
 
                 break
             time.sleep(5)
-            print("Waiting for eval run to complete...")
+            print("Waiting for evaluation run to complete...")
 
         print("Deleting the created evaluator version")
         project_client.evaluators.delete_version(
             name=code_evaluator.name,
             version=code_evaluator.version,
         )
-
-        print("Sample completed successfully")
+        print("Evaluator version deleted")
