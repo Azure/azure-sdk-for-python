@@ -38,15 +38,13 @@ from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
-
-    openai_client = project_client.get_openai_client()
-
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
     data_source_config = DataSourceConfigCustom(
         type="custom",
         item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
