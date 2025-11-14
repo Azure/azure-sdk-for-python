@@ -6,11 +6,12 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with OpenAPI tool capabilities
-    using the OpenApiAgentTool and synchronous Azure AI Projects client. The agent can
-    call external APIs defined by OpenAPI specifications.
+    using the OpenApiAgentTool with project connection authentication. The agent can
+    call external APIs defined by OpenAPI specifications, using credentials stored in
+    an Azure AI Project connection.
 
 USAGE:
-    python sample_agent_openapi.py
+    python sample_agent_openapi_with_project_connection.py
 
     Before running the sample:
 
@@ -21,6 +22,8 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) OPENAPI_PROJECT_CONNECTION_ID - The OpenAPI project connection ID,
+       as found in the "Connections" tab in your Microsoft Foundry project.
 """
 
 import os
@@ -34,6 +37,9 @@ from azure.ai.projects.models import (
     OpenApiAgentTool,
     OpenApiFunctionDefinition,
     OpenApiAnonymousAuthDetails,
+    OpenApiManagedAuthDetails,
+    OpenApiProjectConnectionAuthDetails,
+    OpenApiProjectConnectionSecurityScheme
 )
 
 load_dotenv()
@@ -46,31 +52,18 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    weather_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/weather_openapi.json"))
+    tripadvisor_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/tripadvisor_openapi.json"))
 
-    countries_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/countries.json"))
-    with open(weather_asset_file_path, "r") as f:
-        openapi_weather = jsonref.loads(f.read())
-
-    with open(countries_asset_file_path, "r") as f:
-        openapi_countries = jsonref.loads(f.read())
+    with open(tripadvisor_asset_file_path, "r") as f:
+        openapi_tripadvisor = jsonref.loads(f.read())
 
     # Initialize agent OpenApi tool using the read in OpenAPI spec
-    weather_tool = OpenApiAgentTool(
+    tool = OpenApiAgentTool(
         OpenApiFunctionDefinition(
-            name="get_weather",
-            spec=openapi_weather,
-            description="Retrieve weather information for a location",
-            auth=OpenApiAnonymousAuthDetails(),
-        )
-    )
-
-    country_tool = OpenApiAgentTool(
-        OpenApiFunctionDefinition(
-            name="get_countries",
-            spec=openapi_countries,
-            description="Retrieve a list of countries",
-            auth=OpenApiAnonymousAuthDetails(),
+            name="tripadvisor",
+            spec=openapi_tripadvisor,
+            description="Trip Advisor API to get travel information",
+            auth=OpenApiProjectConnectionAuthDetails(security_scheme=OpenApiProjectConnectionSecurityScheme(project_connection_id=os.environ["OPENAPI_PROJECT_CONNECTION_ID"])),
         )
     )
 
@@ -79,14 +72,13 @@ with (
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant.",
-            tools=[weather_tool, country_tool],
+            tools=[tool],
         ),
-        description="You are a helpful assistant.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     response = openai_client.responses.create(
-        input="What's the weather in Seattle and What is the name and population of the country that uses currency with abbreviation THB?",
+        input="Recommend me 5 top hotels in paris, France",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response created: {response.output_text}")
