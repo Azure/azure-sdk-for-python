@@ -10,7 +10,7 @@
 
 - Changed function name from `list_deployment_Resources` to `list_project_resources`, change its return type from `AssignedDeploymentResource` to `AssignedProjectResource`.
 
-- Changed function name from `begin_assign_deployment_resources` to `begin_assign_project_resources`, and its paramter type from `AssignDeploymentResourcesDetails` to `AssignProjectResourcesDetails`.
+- Changed function name from `begin_assign_deployment_resources` to `begin_assign_project_resources`, and its parameter type from `AssignDeploymentResourcesDetails` to `AssignProjectResourcesDetails`.
 
 - Changed function name from `begin_unassign_deployment_resources` to `begin_unassign_project_resources`, changed its parameter type from `UnassignDeploymentResourcesDetails` to `ProjectResourceIds`.
 
