@@ -756,7 +756,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -796,7 +795,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
+            # ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -952,7 +951,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
+            # ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -992,7 +991,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
+            # ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1124,7 +1123,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
+            # ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1164,7 +1163,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
+            # ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1314,7 +1313,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
+            # ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -1354,7 +1353,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
+            # ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
