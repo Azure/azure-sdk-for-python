@@ -2456,7 +2456,7 @@ def _calculate_aoai_evaluation_summary(
         for sample_data in sample_data_list:
             if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:
                 usage_data = sample_data["usage"]
-                if usage_data is None:
+                if usage_data is None or not isinstance(usage_data, dict):
                     continue
                 model_name = sample_data.get("model", "unknown") if usage_data.get("model", "unknown") else "unknown"
                 if _is_none_or_nan(model_name):
