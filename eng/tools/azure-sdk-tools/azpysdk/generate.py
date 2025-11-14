@@ -70,7 +70,7 @@ class generate(Check):
                 check=True,
             )
         except FileNotFoundError:
-            raise ValueError("autorest is not installed. Please install autorest before running this command.")
+            raise ValueError("autorest is not installed. Please install autorest (reference https://github.com/Azure/autorest/blob/main/docs/install/readme.md#-installing-autorest) before running this command.")
         except CalledProcessError as e:
             stderr_output = e.stderr.decode() if e.stderr else "No stderr output"
             raise ValueError(f"autorest encountered an unexpected error: stderr={stderr_output}")
