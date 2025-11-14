@@ -355,6 +355,11 @@ test:
     - azure.mgmt.dnsresolver.aio.operations
     - azure.mgmt.dnsresolver.models
     - azure.mgmt.dnsresolver.operations
+    - azure.mgmt.durabletask
+    - azure.mgmt.durabletask.aio
+    - azure.mgmt.durabletask.aio.operations
+    - azure.mgmt.durabletask.models
+    - azure.mgmt.durabletask.operations
     - azure.mgmt.dynatrace
     - azure.mgmt.dynatrace.aio
     - azure.mgmt.dynatrace.aio.operations
@@ -692,6 +697,11 @@ test:
     - azure.mgmt.peering.aio.operations
     - azure.mgmt.peering.models
     - azure.mgmt.peering.operations
+    - azure.mgmt.playwright
+    - azure.mgmt.playwright.aio
+    - azure.mgmt.playwright.aio.operations
+    - azure.mgmt.playwright.models
+    - azure.mgmt.playwright.operations
     - azure.mgmt.playwrighttesting
     - azure.mgmt.playwrighttesting.aio
     - azure.mgmt.playwrighttesting.aio.operations
@@ -939,6 +949,11 @@ test:
     - azure.mgmt.signalr.aio.operations
     - azure.mgmt.signalr.models
     - azure.mgmt.signalr.operations
+    - azure.mgmt.sitemanager
+    - azure.mgmt.sitemanager.aio
+    - azure.mgmt.sitemanager.aio.operations
+    - azure.mgmt.sitemanager.models
+    - azure.mgmt.sitemanager.operations
     - azure.mgmt.sphere
     - azure.mgmt.sphere.aio
     - azure.mgmt.sphere.aio.operations
@@ -969,6 +984,11 @@ test:
     - azure.mgmt.storagecache.aio.operations
     - azure.mgmt.storagecache.models
     - azure.mgmt.storagecache.operations
+    - azure.mgmt.storagediscovery
+    - azure.mgmt.storagediscovery.aio
+    - azure.mgmt.storagediscovery.aio.operations
+    - azure.mgmt.storagediscovery.models
+    - azure.mgmt.storagediscovery.operations
     - azure.mgmt.storagemover
     - azure.mgmt.storagemover.aio
     - azure.mgmt.storagemover.aio.operations
