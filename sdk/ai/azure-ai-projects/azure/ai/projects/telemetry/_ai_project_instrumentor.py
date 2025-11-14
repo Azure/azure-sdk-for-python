@@ -29,6 +29,7 @@ from ._utils import (
     GEN_AI_EVENT_CONTENT,
     GEN_AI_MESSAGE_ID,
     GEN_AI_MESSAGE_STATUS,
+    GEN_AI_OPERATION_NAME,
     GEN_AI_SYSTEM,
     GEN_AI_SYSTEM_MESSAGE,
     GEN_AI_THREAD_ID,
@@ -504,6 +505,7 @@ class _AIAgentsInstrumentorPreview:
             gen_ai_system=AZ_AI_AGENT_SYSTEM,
         )
         if span and span.span_instance.is_recording:
+            span.add_attribute(GEN_AI_OPERATION_NAME, OperationName.CREATE_AGENT.value)
             if name:
                 span.add_attribute(GEN_AI_AGENT_NAME, name)
             if description:

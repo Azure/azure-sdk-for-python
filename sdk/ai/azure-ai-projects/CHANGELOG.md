@@ -7,9 +7,10 @@
 ### Breaking changes
 
 * `get_openai_client()` method on the asynchronous AIProjectClient is no longer an "async" method.
-* tracing: tool call output event content format updated to be in line with other events
+* Tracing: tool call output event content format updated to be in line with other events
 
 ### Bugs Fixed
+* Tracing: operation name attribute added to create agent span, token usage added to streaming response generation span
 
 ### Sample updates
 * Added `finetuning` samples for operations create, retrieve, list, list_events, list_checkpoints, cancel, pause and resume. Also, these samples includes various finetuning techniques like Supervised (SFT), Reinforcement (RFT) and Direct performance optimization (DPO).
