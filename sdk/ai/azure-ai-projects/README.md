@@ -81,10 +81,9 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-async with (
+with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
 ):
 ```
 
@@ -102,10 +101,9 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
-with (
+async with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
 ):
 ```
 
@@ -122,18 +120,19 @@ See the "responses" folder in the [package samples][samples] for additional samp
 <!-- SNIPPET:sample_responses_basic.responses -->
 
 ```python
-response = openai_client.responses.create(
-    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-    input="What is the size of France in square miles?",
-)
-print(f"Response output: {response.output_text}")
+with project_client.get_openai_client() as openai_client:
+    response = openai_client.responses.create(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        input="What is the size of France in square miles?",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-    input="And what is the capital city?",
-    previous_response_id=response.id,
-)
-print(f"Response output: {response.output_text}")
+    response = openai_client.responses.create(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        input="And what is the capital city?",
+        previous_response_id=response.id,
+    )
+    print(f"Response output: {response.output_text}")
 ```
 
 <!-- END SNIPPET -->
@@ -149,42 +148,43 @@ See the "agents" folder in the [package samples][samples] for an extensive set o
 <!-- SNIPPET:sample_agent_basic.prompt_agent_basic -->
 
 ```python
-agent = project_client.agents.create_version(
-    agent_name="MyAgent",
-    definition=PromptAgentDefinition(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-        instructions="You are a helpful assistant that answers general questions",
-    ),
-)
-print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+with project_client.get_openai_client() as openai_client:
+    agent = project_client.agents.create_version(
+        agent_name="MyAgent",
+        definition=PromptAgentDefinition(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+        ),
+    )
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-conversation = openai_client.conversations.create(
-    items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
-)
-print(f"Created conversation with initial user message (id: {conversation.id})")
+    conversation = openai_client.conversations.create(
+        items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
+    )
+    print(f"Created conversation with initial user message (id: {conversation.id})")
 
-response = openai_client.responses.create(
-    conversation=conversation.id,
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",
-)
-print(f"Response output: {response.output_text}")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
+    )
+    print(f"Response output: {response.output_text}")
 
-openai_client.conversations.items.create(
-    conversation_id=conversation.id,
-    items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
-)
-print(f"Added a second user message to the conversation")
+    openai_client.conversations.items.create(
+        conversation_id=conversation.id,
+        items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
+    )
+    print(f"Added a second user message to the conversation")
 
-response = openai_client.responses.create(
-    conversation=conversation.id,
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",
-)
-print(f"Response output: {response.output_text}")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
+    )
+    print(f"Response output: {response.output_text}")
 
-openai_client.conversations.delete(conversation_id=conversation.id)
-print("Conversation deleted")
+    openai_client.conversations.delete(conversation_id=conversation.id)
+    print("Conversation deleted")
 
 project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 print("Agent deleted")
