@@ -159,12 +159,12 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperations(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_managed_clusters_update(self, resource_group):
-        response = self.client.managed_clusters.update(
+    def test_managed_clusters_begin_update(self, resource_group):
+        response = self.client.managed_clusters.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
             parameters={"tags": {"str": "str"}},
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
