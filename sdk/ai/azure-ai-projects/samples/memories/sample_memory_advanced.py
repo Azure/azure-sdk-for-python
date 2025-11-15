@@ -92,7 +92,7 @@ with (
         name=memory_store.name,
         scope=scope,
         items=[user_message],  # Pass conversation items that you want to add to memory
-        # update_delay=300 # Keep default inactivity delay before starting update
+        update_delay=300  # Keep default inactivity delay before starting update
     )
     print(f"Scheduled memory update operation (Update ID: {update_poller.update_id}, Status: {update_poller.status()})")
 
