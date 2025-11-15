@@ -112,7 +112,7 @@ def main() -> None:
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
             name=eval_run_name,
-            data_source={  # type: ignore  # type: ignore
+            data_source={  # type: ignore
                 "type": "azure_ai_red_team",
                 "item_generation_params": {
                     "type": "red_team_taxonomy",
