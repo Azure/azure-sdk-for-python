@@ -29,11 +29,11 @@ from .collection_routing_map import CollectionRoutingMap
 from . import routing_range
 from .routing_range import PartitionKeyRange
 from ..exceptions import CosmosHttpResponseError
-
+import logging
 
 # pylint: disable=protected-access
 
-
+logger = logging.getLogger(__name__)
 class PartitionKeyRangeCache(object):
     """
     PartitionKeyRangeCache provides list of effective partition key ranges for a
@@ -190,6 +190,10 @@ class PartitionKeyRangeCache(object):
                         range_tuples.append((r, range_info))
                     else:
                         # This would be an inconsistent state from the server.Force a full refresh by clearing the cache for the collection and retrying.
+                        logger.warning(
+                            f"Incremental update failed: Parent range '{parent_id}' not found in routing map "
+                            f"for collection '{collection_link}'. Falling back to full refresh."
+                        )
                         self._collection_routing_map_by_item.pop(collection_id, None)
                         return self._get_routing_map_with_change_feed(collection_link, collection_id, None,
                                                                       feed_options, **kwargs)
@@ -201,6 +205,10 @@ class PartitionKeyRangeCache(object):
                         range_tuples.append((r, range_info))
                     else:
                         # This would be an inconsistent state.Force a full refresh by clearing the cache for the collection and retrying.
+                        logger.warning(
+                            f"Incremental update failed: Existing range '{range_id}' not found in routing map "
+                            f"for collection '{collection_link}'. Falling back to full refresh."
+                        )
                         self._collection_routing_map_by_item.pop(collection_id, None)
                         return self._get_routing_map_with_change_feed(collection_link, collection_id, None,
                                                                       feed_options, **kwargs)
@@ -209,6 +217,10 @@ class PartitionKeyRangeCache(object):
         if not routing_map:
             # This can happen if the combination results in an incomplete map.
             # Force a full refresh by clearing the cache for the collection and retrying.
+            logger.warning(
+                f"Incremental merge resulted in incomplete routing map for collection '{collection_link}'. "
+                f"Falling back to full refresh."
+            )
             self._collection_routing_map_by_item.pop(collection_id, None)
             return self._get_routing_map_with_change_feed(collection_link, collection_id, None, feed_options, **kwargs)
 

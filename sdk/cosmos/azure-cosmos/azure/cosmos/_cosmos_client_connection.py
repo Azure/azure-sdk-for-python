@@ -3471,9 +3471,29 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             return _return_undefined_or_empty_partition_key(is_system_key)
         return partitionKey
 
-    def refresh_routing_map_provider(self) -> None:
-        # re-initializes the routing map provider, effectively refreshing the current partition key range cache
-        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+    def refresh_routing_map_provider(
+            self,
+            collection_link: Optional[str] = None,
+            previous_routing_map: Optional[Any] = None) -> None:
+        """Refreshes routing map provider.
+
+        If collection_rid and previous_routing_map are provided, refreshes only that collection incrementally.
+        Otherwise, it creates a new provider instance for a full refresh.
+
+        :param str collection_rid: The resource ID of the collection to refresh.
+        :param object previous_routing_map: The routing map that is considered stale.
+        """
+        if collection_link and previous_routing_map:
+            # Force a refresh for a specific collection.
+            self._routing_map_provider.get_or_refresh_routing_map_for_collection(
+                collection_link,
+                feed_options = {},
+                force_refresh=True,
+                previous_routing_map=previous_routing_map
+            )
+        else:
+            # Full refresh - create a new provider instance. This clears all cached routing maps.
+            self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
     def _refresh_container_properties_cache(self, container_link: str):
         # If container properties cache is stale, refresh it by reading the container.

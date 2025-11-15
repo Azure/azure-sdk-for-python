@@ -62,9 +62,6 @@ class PartitionKeyRangeGoneRetryPolicy(object):
 
 
         if self.refresh_partition_key_range_cache:
-            # refresh routing_map_provider to refresh partition key range cache
-            # make refresh_partition_key_range_cache False to skip this check on subsequent Gone exceptions
-            self.client.refresh_routing_map_provider()
 
             previous_routing_map = None
             if collection_link and hasattr(self.client, '_routing_map_provider'):
