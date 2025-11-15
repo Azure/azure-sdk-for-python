@@ -2,13 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # mypy: disable-error-code="assignment"
-from azure.ai.agentserver.core.models import projects as project_models
-
+# from azure.ai.agentserver.core.models import projects as project_models
+from azure.ai.agentserver.core.models.projects import (
+    ItemResource,
+    ItemContent,
+    FunctionToolCallItemResource,
+    FunctionToolCallOutputItemResource,
+    ResponsesMessageItemResource,
+)
+from azure.ai.agentserver.core.models.projects._enums import ResponsesMessageRole
 from ..utils import extract_function_call
-
+from typing import Optional, Union, Any, cast
 
 class ItemResourceHelper:
-    def __init__(self, item_type: str, item_id: str = None):
+    def __init__(self, item_type: str, item_id: Optional[str] = None):
         self.item_type = item_type
         self.item_id = item_id
 
@@ -23,24 +30,24 @@ class ItemResourceHelper:
 
 
 class FunctionCallItemResourceHelper(ItemResourceHelper):
-    def __init__(self, item_id: str = None, tool_call: dict = None):
-        super().__init__(project_models.ItemType.FUNCTION_CALL, item_id)
+    def __init__(self, item_id: Optional[str] = None, tool_call: Optional[dict] = None):
+        super().__init__("function_call", item_id)
         self.call_id = None
         self.name = None
         self.arguments = ""
         if tool_call:
             self.name, self.call_id, _ = extract_function_call(tool_call)
 
-    def create_item_resource(self, is_done: bool):
-        content = {
-            "id": self.item_id,
-            "type": self.item_type,
-            "call_id": self.call_id,
-            "name": self.name,
+    def create_item_resource(self, is_done: bool) -> FunctionToolCallItemResource:
+        content: FunctionToolCallItemResource = {  # type: ignore[typeddict-item]
+            "id": self.item_id,  # type: ignore[typeddict-item]
+            "type": "function_call",
+            "call_id": self.call_id,  # type: ignore[typeddict-item]
+            "name": self.name,  # type: ignore[typeddict-item]
             "arguments": self.arguments if self.arguments else "",
             "status": "in_progress" if not is_done else "completed",
         }
-        return project_models.ItemResource(content)
+        return content
 
     def add_aggregate_content(self, item):
         if isinstance(item, str):
@@ -48,7 +55,7 @@ class FunctionCallItemResourceHelper(ItemResourceHelper):
             return
         if not isinstance(item, dict):
             return
-        if item.get("type") != project_models.ItemType.FUNCTION_CALL:
+        if item.get("type") != "function_call":
             return
         _, _, argument = extract_function_call(item)
         if argument:
@@ -59,20 +66,20 @@ class FunctionCallItemResourceHelper(ItemResourceHelper):
 
 
 class FunctionCallOutputItemResourceHelper(ItemResourceHelper):
-    def __init__(self, item_id: str = None, call_id: str = None):
-        super().__init__(project_models.ItemType.FUNCTION_CALL_OUTPUT, item_id)
+    def __init__(self, item_id: Optional[str] = None, call_id: Optional[str] = None):
+        super().__init__("function_call_output", item_id)
         self.call_id = call_id
         self.content = ""
 
-    def create_item_resource(self, is_done: bool):
-        content = {
-            "id": self.item_id,
-            "type": self.item_type,
+    def create_item_resource(self, is_done: bool) -> FunctionToolCallOutputItemResource:
+        content: FunctionToolCallOutputItemResource = {  # type: ignore[typeddict-item]
+            "id": self.item_id,  # type: ignore[typeddict-item]
+            "type": "function_call_output",
             "status": "in_progress" if not is_done else "completed",
-            "call_id": self.call_id,
+            "call_id": self.call_id,  # type: ignore[typeddict-item]
             "output": self.content,
         }
-        return project_models.ItemResource(content)
+        return content
 
     def add_aggregate_content(self, item):
         if isinstance(item, str):
@@ -89,26 +96,30 @@ class FunctionCallOutputItemResourceHelper(ItemResourceHelper):
 
 
 class MessageItemResourceHelper(ItemResourceHelper):
-    def __init__(self, item_id: str, role: project_models.ResponsesMessageRole):
-        super().__init__(project_models.ItemType.MESSAGE, item_id)
+    def __init__(self, item_id: str, role: ResponsesMessageRole):
+        super().__init__("message", item_id)
         self.role = role
-        self.content: list[project_models.ItemContent] = []
+        self.content: list[ItemContent] = []
 
-    def create_item_resource(self, is_done: bool):
-        content = {
+    def create_item_resource(self, is_done: bool) -> ResponsesMessageItemResource:
+        # Ensure item_id is not None
+        if self.item_id is None:
+            raise ValueError("item_id cannot be None for MessageItemResourceHelper")
+            
+        content: ResponsesMessageItemResource = {  # type: ignore[typeddict-item]
             "id": self.item_id,
-            "type": self.item_type,
+            "type": "message",
             "status": "in_progress" if not is_done else "completed",
-            "content": self.content,
-            "role": self.role,
+            "role": cast(Any, self.role),  # Cast to satisfy TypedDict role typing
         }
-        return project_models.ItemResource(content)
+        return content
 
-    def add_aggregate_content(self, item):
-        if isinstance(item, dict):
-            item = project_models.ItemContent(item)
-        if isinstance(item, project_models.ItemContent):
-            self.content.append(item)
+    def add_aggregate_content(self, content_item: Union[dict, ItemContent]) -> None:
+        if isinstance(content_item, dict):
+            typed_item: ItemContent = cast(ItemContent, content_item)
+            self.content.append(typed_item)
+        else:
+            self.content.append(content_item)
 
     def get_aggregated_content(self):
         return self.create_item_resource(is_done=True)

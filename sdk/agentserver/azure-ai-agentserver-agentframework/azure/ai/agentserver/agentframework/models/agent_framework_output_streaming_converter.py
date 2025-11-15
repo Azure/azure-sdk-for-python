@@ -8,7 +8,7 @@ from __future__ import annotations
 import datetime
 import json
 import uuid
-from typing import Any, List, Optional, cast
+from typing import Any, List, Optional, cast, Union
 
 from agent_framework import AgentRunResponseUpdate, FunctionApprovalRequestContent, FunctionResultContent
 from agent_framework._types import (
@@ -40,9 +40,12 @@ from azure.ai.agentserver.core.models.projects import (
     ResponsesAssistantMessageItemResource,
     ResponseTextDeltaEvent,
     ResponseTextDoneEvent,
+    ItemResource,
 )
 
 from .agent_id_generator import AgentIdGenerator
+from .constants import Constants
+
 
 logger = get_logger()
 
@@ -65,8 +68,8 @@ class _TextContentStreamingState(_BaseStreamingState):
 
     def __init__(self, context: AgentRunContext) -> None:
         self.context = context
-        self.item_id = None
-        self.output_index = None
+        self.item_id: Optional[str] = None
+        self.output_index: Optional[int] = None
         self.text_buffer = ""
         self.text_part_started = False
 
@@ -81,6 +84,8 @@ class _TextContentStreamingState(_BaseStreamingState):
         ctx._next_output_index += 1
 
         message_item = ResponsesAssistantMessageItemResource(
+            role="assistant",
+            type="message",
             id=self.item_id,
             status="in_progress",
             content=[],
@@ -88,19 +93,21 @@ class _TextContentStreamingState(_BaseStreamingState):
 
         events.append(
             ResponseOutputItemAddedEvent(
+                type="response.output_item.added",
                 sequence_number=ctx.next_sequence(),
-                output_index=self.output_index,
+                output_index=cast(int,self.output_index),
                 item=message_item,
             )
         )
 
         if not self.text_part_started:
-            empty_part = ItemContentOutputText(text="", annotations=[], logprobs=[])
+            empty_part = ItemContentOutputText(type="output_text", text="", annotations=[], logprobs=[])
             events.append(
                 ResponseContentPartAddedEvent(
+                    type="response.content_part.added",
                     sequence_number=ctx.next_sequence(),
                     item_id=self.item_id,
-                    output_index=self.output_index,
+                    output_index=cast(int,self.output_index),
                     content_index=0,
                     part=empty_part,
                 )
@@ -123,6 +130,7 @@ class _TextContentStreamingState(_BaseStreamingState):
         assert self.output_index is not None, "Text state not initialized: missing output_index"
         events.append(
             ResponseTextDeltaEvent(
+                type="response.output_text.delta",
                 sequence_number=ctx.next_sequence(),
                 item_id=self.item_id,
                 output_index=self.output_index,
@@ -141,6 +149,7 @@ class _TextContentStreamingState(_BaseStreamingState):
         assert self.item_id is not None and self.output_index is not None
         events.append(
             ResponseTextDoneEvent(
+                type="response.output_text.done",
                 sequence_number=ctx.next_sequence(),
                 item_id=self.item_id,
                 output_index=self.output_index,
@@ -148,9 +157,10 @@ class _TextContentStreamingState(_BaseStreamingState):
                 text=full_text,
             )
         )
-        final_part = ItemContentOutputText(text=full_text, annotations=[], logprobs=[])
+        final_part = ItemContentOutputText(type="output_text", text=full_text, annotations=[], logprobs=[])
         events.append(
             ResponseContentPartDoneEvent(
+                type="response.content_part.done",
                 sequence_number=ctx.next_sequence(),
                 item_id=self.item_id,
                 output_index=self.output_index,
@@ -159,10 +169,11 @@ class _TextContentStreamingState(_BaseStreamingState):
             )
         )
         completed_item = ResponsesAssistantMessageItemResource(
-            id=self.item_id, status="completed", content=[final_part]
+            role="assistant", type="message", id=self.item_id, status="completed", content=[final_part]
         )
         events.append(
             ResponseOutputItemDoneEvent(
+                type="response.output_item.done",
                 sequence_number=ctx.next_sequence(),
                 output_index=self.output_index,
                 item=completed_item,
@@ -199,10 +210,10 @@ class _FunctionCallStreamingState(_BaseStreamingState):
 
     def __init__(self, context: AgentRunContext) -> None:
         self.context = context
-        self.item_id = None
-        self.output_index = None
-        self.call_id = None
-        self.name = None
+        self.item_id: Optional[str] = None
+        self.output_index: Optional[int] = None
+        self.call_id: Optional[str] = None
+        self.name: Optional[str] = None
         self.args_buffer = ""
         self.requires_approval = False
         self.approval_request_id: str | None = None
@@ -216,8 +227,9 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         self.output_index = ctx._next_output_index
         ctx._next_output_index += 1
 
-        self.call_id = self.call_id or str(uuid.uuid4())
+        self.call_id = self.call_id if self.call_id is not None else str(uuid.uuid4())
         function_item = FunctionToolCallItemResource(
+            type="function_call",
             id=self.item_id,
             status="in_progress",
             call_id=self.call_id,
@@ -226,8 +238,9 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         )
         events.append(
             ResponseOutputItemAddedEvent(
+                type="response.output_item.added",
                 sequence_number=ctx.next_sequence(),
-                output_index=self.output_index,
+                output_index=cast(int,self.output_index),
                 item=function_item,
             )
         )
@@ -246,6 +259,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         for ch in args_delta:
             events.append(
                 ResponseFunctionCallArgumentsDeltaEvent(
+                    type="response.function_call_arguments.delta",
                     sequence_number=ctx.next_sequence(),
                     item_id=self.item_id,
                     output_index=self.output_index,
@@ -272,6 +286,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         if is_done:
             events.append(
                 ResponseFunctionCallArgumentsDoneEvent(
+                    type="response.function_call_arguments.done",
                     sequence_number=ctx.next_sequence(),
                     item_id=self.item_id,
                     output_index=self.output_index,
@@ -287,6 +302,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             return events
         assert self.call_id is not None
         done_item = FunctionToolCallItemResource(
+            type="function_call",
             id=self.item_id,
             status="completed",
             call_id=self.call_id,
@@ -296,6 +312,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         assert self.output_index is not None
         events.append(
             ResponseOutputItemDoneEvent(
+                type="response.output_item.done",
                 sequence_number=ctx.next_sequence(),
                 output_index=self.output_index,
                 item=done_item,
@@ -336,8 +353,8 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
     ) -> None:
         # Avoid mutable default argument (Ruff B006)
         self.context = context
-        self.item_id = None
-        self.output_index = None
+        self.item_id: Optional[str] = None
+        self.output_index: Optional[int] = None
         self.call_id = call_id
         self.output = output if output is not None else []
 
@@ -351,6 +368,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
 
         self.call_id = self.call_id or str(uuid.uuid4())
         item = FunctionToolCallOutputItemResource(
+            type="function_call_output",
             id=self.item_id,
             status="in_progress",
             call_id=self.call_id,
@@ -358,8 +376,9 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         )
         events.append(
             ResponseOutputItemAddedEvent(
+                type="response.output_item.added",
                 sequence_number=ctx.next_sequence(),
-                output_index=self.output_index,
+                output_index=cast(int,self.output_index),
                 item=item,
             )
         )
@@ -409,6 +428,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         str_call_id = self.call_id or ""
         single_output: str = cast(str, self.output[0]) if self.output else ""
         done_item = FunctionToolCallOutputItemResource(
+            type="function_call_output",
             id=self.item_id,
             status="completed",
             call_id=str_call_id,
@@ -417,6 +437,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         assert self.output_index is not None
         events.append(
             ResponseOutputItemDoneEvent(
+                type="response.output_item.done",
                 sequence_number=ctx.next_sequence(),
                 output_index=self.output_index,
                 item=done_item,
@@ -443,14 +464,14 @@ class AgentFrameworkOutputStreamingConverter:
         self._context = context
         # sequence numbers must start at 0 for first emitted event
         self._sequence = 0
-        self._response_id = None
-        self._response_created_at = None
+        self._response_id: Optional[str] = None
+        self._response_created_at: Optional[datetime.datetime] = None
         self._next_output_index = 0
         self._last_completed_text = ""
         self._active_state: Optional[_BaseStreamingState] = None
         self._active_kind = None  # "text" | "function_call" | "error"
         # accumulate completed output items for final response
-        self._completed_output_items: List[dict] = []
+        self._completed_output_items: List[Union[ItemResource, dict]] = []
 
     def _ensure_response_started(self) -> None:
         if not self._response_id:
@@ -520,6 +541,7 @@ class AgentFrameworkOutputStreamingConverter:
                     events.extend(self._switch_state("error"))
                     events.append(
                         ResponseErrorEvent(
+                            type="error",
                             sequence_number=self.next_sequence(),
                             code=getattr(content, "error_code", None) or "server_error",
                             message=getattr(content, "message", None) or "An error occurred",
@@ -540,15 +562,23 @@ class AgentFrameworkOutputStreamingConverter:
         self._ensure_response_started()
         agent_id = AgentIdGenerator.generate(self._context)
         response_data = {
-            "object": "response",
-            "agent_id": agent_id,
-            "id": self._response_id,
             "status": status,
-            "created_at": self._response_created_at,
+            "temperature": Constants.DEFAULT_TEMPERATURE,
+            "top_p": Constants.DEFAULT_TOP_P,
+            "conversation": self._context.get_conversation_object(),
+            "user": "",
+            "parallel_tool_calls": True,
+            "metadata": {},
+            "object": "response",
+            "instructions": "",
         }
+        response_data["id"] = cast(str, self._response_id)
+        response_data["created_at"] = cast(datetime.datetime, self._response_created_at)
+        if agent_id:
+            response_data["agent"] = agent_id
         if status == "completed" and self._completed_output_items:
             response_data["output"] = self._completed_output_items
-        return OpenAIResponse(response_data)
+        return cast(OpenAIResponse, response_data)
 
     # High-level helpers to emit lifecycle events for streaming
     def initial_events(self) -> List[ResponseStreamEvent]:
@@ -563,12 +593,14 @@ class AgentFrameworkOutputStreamingConverter:
         created_response = self.build_response(status="in_progress")
         events.append(
             ResponseCreatedEvent(
+                type="response.created",
                 sequence_number=self.next_sequence(),
                 response=created_response,
             )
         )
         events.append(
             ResponseInProgressEvent(
+                type="response.in_progress",
                 sequence_number=self.next_sequence(),
                 response=self.build_response(status="in_progress"),
             )
@@ -588,6 +620,7 @@ class AgentFrameworkOutputStreamingConverter:
         completed_response = self.build_response(status="completed")
         events.append(
             ResponseCompletedEvent(
+                type="response_completed",
                 sequence_number=self.next_sequence(),
                 response=completed_response,
             )
