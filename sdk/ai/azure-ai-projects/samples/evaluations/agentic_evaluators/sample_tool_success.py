@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list eval group and and eval runs
+    `openai.evals.*` methods to create, get and list evaluation and and eval runs
     for Tool Success evaluator using inline dataset content.
 
 USAGE:
@@ -78,15 +78,15 @@ def main() -> None:
                 }
             ]
 
-            print("Creating Eval Group")
+            print("Creating Evaluation")
             eval_object = client.evals.create(
                 name="Test Tool Success Evaluator with inline data",
                 data_source_config=data_source_config,  # type: ignore
                 testing_criteria=testing_criteria,  # type: ignore
             )
-            print(f"Eval Group created")
+            print(f"Evaluation created")
 
-            print("Get Eval Group by Id")
+            print("Get Evaluation by Id")
             eval_object_response = client.evals.retrieve(eval_object.id)
             print("Eval Run Response:")
             pprint(eval_object_response)

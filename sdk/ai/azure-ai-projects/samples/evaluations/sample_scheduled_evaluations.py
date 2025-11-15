@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list eval group and and eval runs.
+    `openai.evals.*` methods to create, get and list evaluation and and eval runs.
 
 USAGE:
     python sample_scheduled_evaluations.py
@@ -351,7 +351,7 @@ def schedule_redteam_evaluation() -> None:
             f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
         )
 
-        eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
+        eval_group_name = "Red Team Agent Safety Evaluation -" + str(int(time.time()))
         eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
         data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
 
@@ -359,17 +359,17 @@ def schedule_redteam_evaluation() -> None:
         print(f"Defining testing criteria for red teaming for agent target")
         pprint(testing_criteria)
 
-        print("Creating Eval Group")
+        print("Creating Evaluation")
         eval_object = client.evals.create(
             name=eval_group_name,
             data_source_config=data_source_config,   # type: ignore
             testing_criteria=testing_criteria,   # type: ignore
         )
-        print(f"Eval Group created for red teaming: {eval_group_name}")
+        print(f"Evaluation created for red teaming: {eval_group_name}")
 
-        print(f"Get Eval Group by Id: {eval_object.id}")
+        print(f"Get Evaluation by Id: {eval_object.id}")
         eval_object_response = client.evals.retrieve(eval_object.id)
-        print("Eval Group Response:")
+        print("Evaluation Response:")
         pprint(eval_object_response)
 
         risk_categories_for_taxonomy: list[Union[str, RiskCategory]] = [RiskCategory.PROHIBITED_ACTIONS]

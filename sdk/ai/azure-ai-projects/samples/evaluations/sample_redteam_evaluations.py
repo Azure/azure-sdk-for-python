@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list eval group and and eval runs.
+    `openai.evals.*` methods to create, get and list evaluation and and eval runs.
 
 USAGE:
     python sample_redteam_evaluations.py
@@ -69,7 +69,7 @@ def main() -> None:
             f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
         )
         
-        eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
+        eval_group_name = "Red Team Agent Safety Evaluation -" + str(int(time.time()))
         eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
         data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
 
