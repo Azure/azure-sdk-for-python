@@ -59,7 +59,7 @@ account_name = os.environ["AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT"]
 
 async def pause_job(openai_client, job_id):
     """Pause a fine-tuning job.
-    
+
     Job needs to be in running state in order to pause.
     """
     print(f"Pausing fine-tuning job with ID: {job_id}")
@@ -69,7 +69,7 @@ async def pause_job(openai_client, job_id):
 
 async def resume_job(openai_client, job_id):
     """Resume a fine-tuning job.
-    
+
     Job needs to be in paused state in order to resume.
     """
     print(f"Resuming fine-tuning job with ID: {job_id}")
@@ -79,7 +79,7 @@ async def resume_job(openai_client, job_id):
 
 async def deploy_and_inference(openai_client, credential, job_id):
     """Deploy the fine-tuned model and perform inference.
-    
+
     Deploy model using Azure Management SDK (azure-mgmt-cognitiveservices).
     Note: Deployment can only be started after the fine-tuning job completes successfully.
     """
@@ -135,7 +135,7 @@ async def list_events(openai_client, job_id):
 
 async def list_checkpoints(openai_client, job_id):
     """List checkpoints of a fine-tuning job.
-    
+
     Note that to retrieve the checkpoints, job needs to be in terminal state.
     """
     print(f"Listing checkpoints for fine-tuning job: {job_id}")
