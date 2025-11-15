@@ -15,14 +15,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import BatchClientConfiguration
-from ._operations import _BatchClientOperationsMixin
+from ._operations import BatchClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class BatchClient(_BatchClientOperationsMixin):
+class BatchClient(BatchClientOperationsMixin):
     """BatchClient.
 
     :param endpoint: Batch account endpoint (for example:
