@@ -170,5 +170,5 @@ with (
         time.sleep(5)
         print("Waiting for eval run to complete...")
 
-        client.evals.delete(eval_id=eval_object.id)
-        print("Evaluation deleted")
+    client.evals.delete(eval_id=eval_object.id)
+    print("Evaluation deleted")

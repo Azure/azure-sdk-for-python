@@ -270,5 +270,5 @@ with (
         version=prompt_evaluator.version,
     )
 
-        client.evals.delete(eval_id=eval_object.id)
+    client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

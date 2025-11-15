@@ -203,7 +203,6 @@ with (
         name=code_evaluator.name,
         version=code_evaluator.version,
     )
-        print("Evaluator version deleted")
 
-        client.evals.delete(eval_id=eval_object.id)
+    client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

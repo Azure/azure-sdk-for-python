@@ -269,13 +269,13 @@ def schedule_dataset_evaluation() -> None:
             },
         ]
 
-            print("Creating evaluation")
-            eval_object = client.evals.create(
-                name="label model test with dataset ID",
-                data_source_config=data_source_config,  # type: ignore
-                testing_criteria=testing_criteria,  # type: ignore
-            )
-            print(f"Evaluation created")
+        print("Creating evaluation")
+        eval_object = client.evals.create(
+            name="label model test with dataset ID",
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
+        )
+        print(f"Evaluation created")
 
         print("Get Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
@@ -308,20 +308,20 @@ def schedule_dataset_evaluation() -> None:
         print(f"Schedule created for dataset evaluation: {schedule_response.id}")
         pprint(schedule_response)
 
-            time.sleep(5)  # Wait for schedule to be fully created
-            schedule_runs = project_client.schedules.list_runs(schedule_response.id)
-            print(f"Listing schedule runs for schedule id: {schedule_response.id}")
-            for run in schedule_runs:
-                pprint(run)
+        time.sleep(5)  # Wait for schedule to be fully created
+        schedule_runs = project_client.schedules.list_runs(schedule_response.id)
+        print(f"Listing schedule runs for schedule id: {schedule_response.id}")
+        for run in schedule_runs:
+            pprint(run)
 
-            project_client.schedules.delete(schedule_response.id)
-            print("Schedule deleted")
+        project_client.schedules.delete(schedule_response.id)
+        print("Schedule deleted")
 
-            client.evals.delete(eval_id=eval_object.id)
-            print("Evaluation deleted")
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")
 
-            project_client.datasets.delete(name=dataset.name, version=dataset.version)
-            print("Dataset deleted")
+        project_client.datasets.delete(name=dataset.name, version=dataset.version)
+        print("Dataset deleted")
 
 
 def schedule_redteam_evaluation() -> None:
@@ -334,26 +334,26 @@ def schedule_redteam_evaluation() -> None:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 
-        with (
-                DefaultAzureCredential() as credential,
-                AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-                project_client.get_openai_client() as client,
-            ):
+    with (
+            DefaultAzureCredential() as credential,
+            AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+            project_client.get_openai_client() as client,
+        ):
 
-            agent_version = project_client.agents.create_version(
-                agent_name=agent_name,
-                definition=PromptAgentDefinition(
-                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                    instructions="You are a helpful assistant that answers general questions",
-                ),
-            )
-            print(
-                f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
-            )
+        agent_version = project_client.agents.create_version(
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                instructions="You are a helpful assistant that answers general questions",
+            ),
+        )
+        print(
+            f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
+        )
 
-            eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
-            eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
-            data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
+        eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
+        eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
+        data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
 
         testing_criteria = _get_agent_safety_evaluation_criteria()
         print(f"Defining testing criteria for red teaming for agent target")
@@ -418,17 +418,17 @@ def schedule_redteam_evaluation() -> None:
         print(f"Schedule created for red teaming: {schedule_response.id}")
         pprint(schedule_response)
 
-            time.sleep(5)  # Wait for schedule to be fully created
-            schedule_runs = project_client.schedules.list_runs(schedule_response.id)
-            print(f"Listing schedule runs for schedule id: {schedule_response.id}")
-            for run in schedule_runs:
-                pprint(run)
+        time.sleep(5)  # Wait for schedule to be fully created
+        schedule_runs = project_client.schedules.list_runs(schedule_response.id)
+        print(f"Listing schedule runs for schedule id: {schedule_response.id}")
+        for run in schedule_runs:
+            pprint(run)
 
-            project_client.schedules.delete(schedule_response.id)
-            print("Schedule deleted")
+        project_client.schedules.delete(schedule_response.id)
+        print("Schedule deleted")
 
-            client.evals.delete(eval_id=eval_object.id)
-            print("Evaluation deleted")
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")
 
 
 def _get_tool_descriptions(agent: AgentVersionObject):

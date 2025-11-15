@@ -168,25 +168,25 @@ def main() -> None:
         print("Evaluation Response:")
         pprint(eval_object_response)
 
-            print("\nCreating Eval Run with trace IDs")
-            run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            data_source = {
-                "type": "azure_ai_traces",
-                "trace_ids": trace_ids,
-                "lookback_hours": trace_query_hours,
-            }
-            eval_run_object = client.evals.runs.create(
-                eval_id=eval_object.id,
-                name=run_name,
-                metadata={
-                    "agent_id": agent_id,
-                    "start_time": start_time.isoformat(),
-                    "end_time": end_time.isoformat(),
-                },
-                data_source=data_source,  # type: ignore
-            )
-            print("Eval Run created")
-            pprint(eval_run_object)
+        print("\nCreating Eval Run with trace IDs")
+        run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        data_source = {
+            "type": "azure_ai_traces",
+            "trace_ids": trace_ids,
+            "lookback_hours": trace_query_hours,
+        }
+        eval_run_object = client.evals.runs.create(
+            eval_id=eval_object.id,
+            name=run_name,
+            metadata={
+                "agent_id": agent_id,
+                "start_time": start_time.isoformat(),
+                "end_time": end_time.isoformat(),
+            },
+            data_source=data_source,  # type: ignore
+        )
+        print("Eval Run created")
+        pprint(eval_run_object)
 
         print("\nMonitoring Eval Run status...")
         while True:
@@ -202,8 +202,8 @@ def main() -> None:
             time.sleep(5)
             print("Waiting for eval run to complete...")
 
-            client.evals.delete(eval_id=eval_object.id)
-            print("Evaluation deleted")
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")
 
 
 if __name__ == "__main__":

@@ -58,10 +58,17 @@ def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         project_client.get_openai_client() as client,
     ):
-        agent_versions = project_client.agents.get(agent_name=agent_name)
-        agent = agent_versions.versions.latest
-        agent_version = agent.version
-        print(f"Retrieved agent: {agent_name}, version: {agent_version}")
+        agent_version = project_client.agents.create_version(
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                instructions="You are a helpful assistant that answers general questions",
+            ),
+        )
+        print(
+            f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
+        )
+        
         eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
         eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
         data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
@@ -141,11 +148,11 @@ def main() -> None:
             time.sleep(5)
             print("Waiting for eval run to complete...")
 
-            client.evals.delete(eval_id=eval_object.id)
-            print("Evaluation deleted")
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")
 
-            project_client.agents.delete(agent_name=agent_name)
-            print("Agent deleted")
+        project_client.agents.delete(agent_name=agent_name)
+        print("Agent deleted")
 
 
 def _get_tool_descriptions(agent: AgentVersionObject):
