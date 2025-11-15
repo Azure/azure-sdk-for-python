@@ -21,7 +21,7 @@ resources in your Microsoft Foundry Project. Use it to:
   * Model Context Protocol (MCP)
   * SharePoint
   * Web Search
-* **Get an OpenAI client** using `.get_openai_client()` method to run "Responses" and "Conversations" operations with your Agent.
+* **Get an OpenAI client** using `.get_openai_client()` method to run "Responses", "Conversations", and "Evals" operations with your Agent.
 * **Manage memory stores** for Agent conversations, using the `.memory_store` operations.
 * **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
 `.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
