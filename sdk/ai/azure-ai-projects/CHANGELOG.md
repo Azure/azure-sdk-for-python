@@ -1,10 +1,10 @@
 # Release History
 
-## 2.0.0b2 (Unreleased)
+## 2.0.0b2 (2025-11-14)
 
 ### Features Added
-* Tracing: support for workflow agent tracing.
 
+* Tracing: support for workflow agent tracing.
 * Agent Memory operations, including code for custom LRO poller. See methods on the ".memory_store"
 property of `AIProjectClient`.
 
@@ -14,6 +14,7 @@ property of `AIProjectClient`.
 * Tracing: tool call output event content format updated to be in line with other events.
 
 ### Bugs Fixed
+
 * Tracing: operation name attribute added to create agent span, token usage added to streaming response generation span.
 
 ### Sample updates
