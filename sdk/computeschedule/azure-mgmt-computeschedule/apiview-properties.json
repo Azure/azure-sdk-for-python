@@ -54,6 +54,7 @@
         "azure.mgmt.computeschedule.models.ScheduledActionProperties": "Microsoft.ComputeSchedule.ScheduledActionProperties",
         "azure.mgmt.computeschedule.models.ScheduledActionResource": "Microsoft.ComputeSchedule.ScheduledActionResource",
         "azure.mgmt.computeschedule.models.ScheduledActionResources": "Microsoft.ComputeSchedule.ScheduledActionResources",
+        "azure.mgmt.computeschedule.models.ScheduledActionsExtensionProperties": "Microsoft.ComputeSchedule.ScheduledActionsExtensionProperties",
         "azure.mgmt.computeschedule.models.ScheduledActionsSchedule": "Microsoft.ComputeSchedule.ScheduledActionsSchedule",
         "azure.mgmt.computeschedule.models.ScheduledActionUpdate": "Azure.ResourceManager.Foundations.ResourceUpdateModel",
         "azure.mgmt.computeschedule.models.ScheduledActionUpdateProperties": "Azure.ResourceManager.Foundations.ResourceUpdateModelProperties",
