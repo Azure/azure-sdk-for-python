@@ -79,10 +79,6 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                             }
                                         ],
                                         "endpointType": "str",
-                                        "externalReplicationSetupInfo": "str",
-                                        "externalReplicationSetupStatus": "str",
-                                        "mirrorState": "str",
-                                        "relationshipStatus": "str",
                                         "remotePath": {
                                             "externalHostName": "str",
                                             "serverName": "str",
@@ -133,9 +129,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "isRestoring": bool,
                                 "kerberosEnabled": bool,
                                 "keyVaultPrivateEndpointResourceId": "str",
-                                "language": "str",
                                 "ldapEnabled": bool,
-                                "ldapServerType": "str",
                                 "maximumNumberOfFiles": 0,
                                 "mountTargets": [
                                     {

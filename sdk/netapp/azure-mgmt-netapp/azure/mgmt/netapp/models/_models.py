@@ -84,8 +84,6 @@ class AccountProperties(_Model):
     :ivar multi_ad_status: MultiAD Status for the account. Known values are: "Disabled" and
      "Enabled".
     :vartype multi_ad_status: str or ~azure.mgmt.netapp.models.MultiAdStatus
-    :ivar ldap_configuration: LDAP Configuration for the account.
-    :vartype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfiguration
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -109,10 +107,6 @@ class AccountProperties(_Model):
         name="multiAdStatus", visibility=["read"]
     )
     """MultiAD Status for the account. Known values are: \"Disabled\" and \"Enabled\"."""
-    ldap_configuration: Optional["_models.LdapConfiguration"] = rest_field(
-        name="ldapConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """LDAP Configuration for the account."""
 
     @overload
     def __init__(
@@ -121,7 +115,6 @@ class AccountProperties(_Model):
         active_directories: Optional[list["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
         nfs_v4_id_domain: Optional[str] = None,
-        ldap_configuration: Optional["_models.LdapConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -2265,66 +2258,6 @@ class KeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LdapConfiguration(_Model):
-    """LDAP configuration.
-
-    :ivar domain: Name of the LDAP configuration domain.
-    :vartype domain: str
-    :ivar ldap_servers: List of LDAP server IP addresses (IPv4 only) for the LDAP domain.
-    :vartype ldap_servers: list[str]
-    :ivar ldap_over_tls: Specifies whether or not the LDAP traffic needs to be secured via TLS.
-    :vartype ldap_over_tls: bool
-    :ivar server_ca_certificate: When LDAP over SSL/TLS is enabled, the LDAP client is required to
-     have base64 encoded ldap servers CA certificate.
-    :vartype server_ca_certificate: str
-    :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
-     TLS requires the CN host name to create DNS host entry.
-    :vartype certificate_cn_host: str
-    """
-
-    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the LDAP configuration domain."""
-    ldap_servers: Optional[list[str]] = rest_field(
-        name="ldapServers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of LDAP server IP addresses (IPv4 only) for the LDAP domain."""
-    ldap_over_tls: Optional[bool] = rest_field(
-        name="ldapOverTLS", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies whether or not the LDAP traffic needs to be secured via TLS."""
-    server_ca_certificate: Optional[str] = rest_field(
-        name="serverCACertificate", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """When LDAP over SSL/TLS is enabled, the LDAP client is required to have base64 encoded ldap
-     servers CA certificate."""
-    certificate_cn_host: Optional[str] = rest_field(
-        name="certificateCNHost", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
-     to create DNS host entry."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        domain: Optional[str] = None,
-        ldap_servers: Optional[list[str]] = None,
-        ldap_over_tls: Optional[bool] = None,
-        server_ca_certificate: Optional[str] = None,
-        certificate_cn_host: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class LdapSearchScopeOpt(_Model):
     """LDAP search scope.
 
@@ -2354,36 +2287,6 @@ class LdapSearchScopeOpt(_Model):
         user_dn: Optional[str] = None,
         group_dn: Optional[str] = None,
         group_membership_filter: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ListQuotaReportResponse(_Model):
-    """Quota Report for volume.
-
-    :ivar value: List of quota reports.
-    :vartype value: list[~azure.mgmt.netapp.models.QuotaReport]
-    """
-
-    value: Optional[list["_models.QuotaReport"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of quota reports."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: Optional[list["_models.QuotaReport"]] = None,
     ) -> None: ...
 
     @overload
@@ -2792,7 +2695,6 @@ class NetAppAccount(TrackedResource):
         "disable_showmount",
         "nfs_v4_id_domain",
         "multi_ad_status",
-        "ldap_configuration",
     ]
 
     @overload
@@ -2879,7 +2781,6 @@ class NetAppAccountPatch(_Model):
         "disable_showmount",
         "nfs_v4_id_domain",
         "multi_ad_status",
-        "ldap_configuration",
     ]
 
     @overload
@@ -3581,79 +3482,6 @@ class QuotaItemProperties(_Model):
     """The usage quota value."""
 
 
-class QuotaReport(_Model):
-    """Quota report record properties.
-
-    :ivar quota_type: Type of quota. Known values are: "DefaultUserQuota", "DefaultGroupQuota",
-     "IndividualUserQuota", and "IndividualGroupQuota".
-    :vartype quota_type: str or ~azure.mgmt.netapp.models.Type
-    :ivar quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID can
-     be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
-     running <wmic useraccount where name='user-name' get sid>.
-    :vartype quota_target: str
-    :ivar quota_limit_used_in_ki_bs: Specifies the current usage in kibibytes for the user/group
-     quota.
-    :vartype quota_limit_used_in_ki_bs: int
-    :ivar quota_limit_total_in_ki_bs: Specifies the total size limit in kibibytes for the
-     user/group quota.
-    :vartype quota_limit_total_in_ki_bs: int
-    :ivar percentage_used: Percentage of used size compared to total size.
-    :vartype percentage_used: float
-    :ivar is_derived_quota: Flag to indicate whether the quota is derived from default quota.
-    :vartype is_derived_quota: bool
-    """
-
-    quota_type: Optional[Union[str, "_models.Type"]] = rest_field(
-        name="quotaType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of quota. Known values are: \"DefaultUserQuota\", \"DefaultGroupQuota\",
-     \"IndividualUserQuota\", and \"IndividualGroupQuota\"."""
-    quota_target: Optional[str] = rest_field(
-        name="quotaTarget", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """UserID/GroupID/SID based on the quota target type. UserID and groupID can be found by running
-     ‘id’ or ‘getent’ command for the user or group and SID can be found by running <wmic
-     useraccount where name='user-name' get sid>."""
-    quota_limit_used_in_ki_bs: Optional[int] = rest_field(
-        name="quotaLimitUsedInKiBs", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the current usage in kibibytes for the user/group quota."""
-    quota_limit_total_in_ki_bs: Optional[int] = rest_field(
-        name="quotaLimitTotalInKiBs", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the total size limit in kibibytes for the user/group quota."""
-    percentage_used: Optional[float] = rest_field(
-        name="percentageUsed", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Percentage of used size compared to total size."""
-    is_derived_quota: Optional[bool] = rest_field(
-        name="isDerivedQuota", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag to indicate whether the quota is derived from default quota."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        quota_type: Optional[Union[str, "_models.Type"]] = None,
-        quota_target: Optional[str] = None,
-        quota_limit_used_in_ki_bs: Optional[int] = None,
-        quota_limit_total_in_ki_bs: Optional[int] = None,
-        percentage_used: Optional[float] = None,
-        is_derived_quota: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ReestablishReplicationRequest(_Model):
     """Re-establish request object supplied in the body of the operation.
 
@@ -3991,24 +3819,6 @@ class ReplicationObject(_Model):
     :vartype remote_volume_region: str
     :ivar destination_replications: A list of destination replications.
     :vartype destination_replications: list[~azure.mgmt.netapp.models.DestinationReplication]
-    :ivar external_replication_setup_status: Property that only applies to external replications.
-     Provides a machine-readable value for the status of the external replication setup. Known
-     values are: "ClusterPeerRequired", "ClusterPeerPending", "VServerPeerRequired",
-     "ReplicationCreateRequired", and "NoActionRequired".
-    :vartype external_replication_setup_status: str or
-     ~azure.mgmt.netapp.models.ExternalReplicationSetupStatus
-    :ivar external_replication_setup_info: Contains human-readable instructions on what the next
-     step is to finish the external replication setup.
-    :vartype external_replication_setup_info: str
-    :ivar mirror_state: The mirror state property describes the current status of data replication
-     for a replication. It provides insight into whether the data is actively being mirrored, if the
-     replication process has been paused, or if it has yet to be initialized. Known values are:
-     "Uninitialized", "Mirrored", and "Broken".
-    :vartype mirror_state: str or ~azure.mgmt.netapp.models.MirrorState
-    :ivar relationship_status: The status of the Volume Replication. Known values are: "Idle" and
-     "Transferring".
-    :vartype relationship_status: str or
-     ~azure.mgmt.netapp.models.VolumeReplicationRelationshipStatus
     """
 
     replication_id: Optional[str] = rest_field(name="replicationId", visibility=["read"])
@@ -4032,27 +3842,6 @@ class ReplicationObject(_Model):
         name="destinationReplications", visibility=["read"]
     )
     """A list of destination replications."""
-    external_replication_setup_status: Optional[Union[str, "_models.ExternalReplicationSetupStatus"]] = rest_field(
-        name="externalReplicationSetupStatus", visibility=["read"]
-    )
-    """Property that only applies to external replications. Provides a machine-readable value for the
-     status of the external replication setup. Known values are: \"ClusterPeerRequired\",
-     \"ClusterPeerPending\", \"VServerPeerRequired\", \"ReplicationCreateRequired\", and
-     \"NoActionRequired\"."""
-    external_replication_setup_info: Optional[str] = rest_field(
-        name="externalReplicationSetupInfo", visibility=["read"]
-    )
-    """Contains human-readable instructions on what the next step is to finish the external
-     replication setup."""
-    mirror_state: Optional[Union[str, "_models.MirrorState"]] = rest_field(name="mirrorState", visibility=["read"])
-    """The mirror state property describes the current status of data replication for a replication.
-     It provides insight into whether the data is actively being mirrored, if the replication
-     process has been paused, or if it has yet to be initialized. Known values are:
-     \"Uninitialized\", \"Mirrored\", and \"Broken\"."""
-    relationship_status: Optional[Union[str, "_models.VolumeReplicationRelationshipStatus"]] = rest_field(
-        name="relationshipStatus", visibility=["read"]
-    )
-    """The status of the Volume Replication. Known values are: \"Idle\" and \"Transferring\"."""
 
     @overload
     def __init__(
@@ -5343,7 +5132,6 @@ class Volume(TrackedResource):
         "encryption_key_source",
         "key_vault_private_endpoint_resource_id",
         "ldap_enabled",
-        "ldap_server_type",
         "cool_access",
         "coolness_period",
         "cool_access_retrieval_policy",
@@ -5369,7 +5157,6 @@ class Volume(TrackedResource):
         "is_large_volume",
         "originating_resource_id",
         "inherited_size_in_bytes",
-        "language",
     ]
 
     @overload
@@ -5833,7 +5620,6 @@ class VolumeGroupVolumeProperties(_Model):
         "encryption_key_source",
         "key_vault_private_endpoint_resource_id",
         "ldap_enabled",
-        "ldap_server_type",
         "cool_access",
         "coolness_period",
         "cool_access_retrieval_policy",
@@ -5859,7 +5645,6 @@ class VolumeGroupVolumeProperties(_Model):
         "is_large_volume",
         "originating_resource_id",
         "inherited_size_in_bytes",
-        "language",
     ]
 
     @overload
@@ -6366,9 +6151,6 @@ class VolumeProperties(_Model):
     :vartype key_vault_private_endpoint_resource_id: str
     :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
     :vartype ldap_enabled: bool
-    :ivar ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known values
-     are: "ActiveDirectory" and "OpenLDAP".
-    :vartype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
     :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
     :vartype cool_access: bool
     :ivar coolness_period: Specifies the number of days after which data that is not accessed by
@@ -6454,16 +6236,6 @@ class VolumeProperties(_Model):
     :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
      bytes.
     :vartype inherited_size_in_bytes: int
-    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-    :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
     """
 
     file_system_id: Optional[str] = rest_field(name="fileSystemId", visibility=["read"])
@@ -6594,11 +6366,6 @@ class VolumeProperties(_Model):
      volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'."""
     ldap_enabled: Optional[bool] = rest_field(name="ldapEnabled", visibility=["read", "create"])
     """Specifies whether LDAP is enabled or not for a given NFS volume."""
-    ldap_server_type: Optional[Union[str, "_models.LdapServerType"]] = rest_field(
-        name="ldapServerType", visibility=["read", "create"]
-    )
-    """Specifies the type of LDAP server for a given NFS volume. Known values are: \"ActiveDirectory\"
-     and \"OpenLDAP\"."""
     cool_access: Optional[bool] = rest_field(
         name="coolAccess", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6706,20 +6473,6 @@ class VolumeProperties(_Model):
     """Id of the snapshot or backup that the volume is restored from."""
     inherited_size_in_bytes: Optional[int] = rest_field(name="inheritedSizeInBytes", visibility=["read"])
     """Space shared by short term clone volume with parent volume in bytes."""
-    language: Optional[Union[str, "_models.VolumeLanguage"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Language supported for volume. Known values are: \"c.utf-8\", \"utf8mb4\", \"ar\",
-     \"ar.utf-8\", \"hr\", \"hr.utf-8\", \"cs\", \"cs.utf-8\", \"da\", \"da.utf-8\", \"nl\",
-     \"nl.utf-8\", \"en\", \"en.utf-8\", \"fi\", \"fi.utf-8\", \"fr\", \"fr.utf-8\", \"de\",
-     \"de.utf-8\", \"he\", \"he.utf-8\", \"hu\", \"hu.utf-8\", \"it\", \"it.utf-8\", \"ja\",
-     \"ja.utf-8\", \"ja-v1\", \"ja-v1.utf-8\", \"ja-jp.pck\", \"ja-jp.pck.utf-8\", \"ja-jp.932\",
-     \"ja-jp.932.utf-8\", \"ja-jp.pck-v2\", \"ja-jp.pck-v2.utf-8\", \"ko\", \"ko.utf-8\", \"no\",
-     \"no.utf-8\", \"pl\", \"pl.utf-8\", \"pt\", \"pt.utf-8\", \"c\", \"ro\", \"ro.utf-8\", \"ru\",
-     \"ru.utf-8\", \"zh\", \"zh.utf-8\", \"zh.gbk\", \"zh.gbk.utf-8\", \"zh-tw.big5\",
-     \"zh-tw.big5.utf-8\", \"zh-tw\", \"zh-tw.utf-8\", \"sk\", \"sk.utf-8\", \"sl\", \"sl.utf-8\",
-     \"es\", \"es.utf-8\", \"sv\", \"sv.utf-8\", \"tr\", \"tr.utf-8\", \"en-us\", and
-     \"en-us.utf-8\"."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6751,7 +6504,6 @@ class VolumeProperties(_Model):
         encryption_key_source: Optional[Union[str, "_models.EncryptionKeySource"]] = None,
         key_vault_private_endpoint_resource_id: Optional[str] = None,
         ldap_enabled: Optional[bool] = None,
-        ldap_server_type: Optional[Union[str, "_models.LdapServerType"]] = None,
         cool_access: Optional[bool] = None,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
@@ -6767,7 +6519,6 @@ class VolumeProperties(_Model):
         placement_rules: Optional[list["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Optional[Union[str, "_models.EnableSubvolumes"]] = None,
         is_large_volume: Optional[bool] = None,
-        language: Optional[Union[str, "_models.VolumeLanguage"]] = None,
     ) -> None: ...
 
     @overload
