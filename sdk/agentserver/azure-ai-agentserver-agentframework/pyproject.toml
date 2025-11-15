@@ -30,6 +30,9 @@ dependencies = [
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.setuptools.packages.find]
 exclude = [
     "tests*",

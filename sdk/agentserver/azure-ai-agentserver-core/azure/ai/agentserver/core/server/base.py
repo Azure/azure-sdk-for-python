@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
+# mypy: ignore-errors
 import inspect
 import json
 import os
 import traceback
 from abc import abstractmethod
-from typing import Any, AsyncGenerator, Generator, Union
+from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
 from opentelemetry import context as otel_context, trace
@@ -21,31 +22,38 @@ from starlette.routing import Route
 from starlette.types import ASGIApp
 
 from ..constants import Constants
-from ..logger import get_logger, request_context
+from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, request_context
 from ..models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
 from .common.agent_run_context import AgentRunContext
 
+from ..client.tools.aio._client import AzureAIToolClient
+from ..client.tools._utils._model_base import ToolDefinition, UserInfo
+
 logger = get_logger()
 DEBUG_ERRORS = os.environ.get(Constants.AGENT_DEBUG_ERRORS, "false").lower() == "true"
 
 
 class AgentRunContextMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app: ASGIApp):
+    def __init__(self, app: ASGIApp, agent: Optional['FoundryCBAgent'] = None):
         super().__init__(app)
+        self.agent = agent
 
     async def dispatch(self, request: Request, call_next):
+        user_info = {}
         if request.url.path in ("/runs", "/responses"):
             try:
+                user_info = self.set_user_info_to_context_var(request)
                 self.set_request_id_to_context_var(request)
                 payload = await request.json()
             except Exception as e:
                 logger.error(f"Invalid JSON payload: {e}")
                 return JSONResponse({"error": f"Invalid JSON payload: {e}"}, status_code=400)
             try:
-                request.state.agent_run_context = AgentRunContext(payload)
+                agent_tools = self.agent.tools if self.agent else []
+                request.state.agent_run_context = AgentRunContext(payload, user_info=user_info, agent_tools=agent_tools)
                 self.set_run_context_to_context_var(request.state.agent_run_context)
             except Exception as e:
                 logger.error(f"Context build failed: {e}.", exc_info=True)
@@ -80,9 +88,33 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
         ctx.update(res)
         request_context.set(ctx)
 
+    def set_user_info_to_context_var(self, request) -> UserInfo:
+        user_info: UserInfo = None
+        try:
+            object_id_header = request.headers.get("x-aml-oid", None)
+            tenant_id_header = request.headers.get("x-aml-tid", None)
+            if not object_id_header and not tenant_id_header:
+                return None
+            user_info = UserInfo(
+                objectId=object_id_header,
+                tenantId=tenant_id_header
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to parse X-User-Info header: {e}", exc_info=True)
+        if user_info:
+            ctx = request_context.get() or {}
+            for key, value in user_info.to_dict().items():
+                ctx[f"azure.ai.agentserver.user.{key}"] = str(value)
+            request_context.set(ctx)
+        return user_info
+
 
 class FoundryCBAgent:
-    def __init__(self):
+    def __init__(self, credentials: Optional["AsyncTokenCredential"] = None, **kwargs: Any) -> None:
+        self.credentials = credentials
+        self.tools = kwargs.get("tools", [])
+
         async def runs_endpoint(request):
             # Set up tracing context and span
             context = request.state.agent_run_context
@@ -93,7 +125,7 @@ class FoundryCBAgent:
                 kind=trace.SpanKind.SERVER,
             ):
                 try:
-                    logger.info("Start processing CreateResponse request:")
+                    logger.info("Start processing CreateResponse request.")
 
                     context_carrier = {}
                     TraceContextTextMapPropagator().inject(context_carrier)
@@ -105,7 +137,7 @@ class FoundryCBAgent:
                         try:
                             first_event = next(resp)
                         except Exception as e:  # noqa: BLE001
-                            err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                            err_msg = _format_error(e)
                             logger.error("Generator initialization failed: %s\n%s", e, traceback.format_exc())
                             return JSONResponse({"error": err_msg}, status_code=500)
 
@@ -119,14 +151,14 @@ class FoundryCBAgent:
                                 for event in resp:
                                     yield _event_to_sse_chunk(event)
                             except Exception as e:  # noqa: BLE001
-                                err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                                err_msg = _format_error(e)
                                 logger.error("Error in non-async generator: %s\n%s", e, traceback.format_exc())
                                 payload = {"error": err_msg}
                                 yield f"event: error\ndata: {json.dumps(payload)}\n\n"
                                 yield "data: [DONE]\n\n"
                                 error_sent = True
                             finally:
-                                logger.info("End of processing CreateResponse request:")
+                                logger.info("End of processing CreateResponse request.")
                                 otel_context.detach(token)
                                 if not error_sent:
                                     yield "data: [DONE]\n\n"
@@ -143,7 +175,7 @@ class FoundryCBAgent:
 
                             return StreamingResponse(empty_gen(), media_type="text/event-stream")
                         except Exception as e:  # noqa: BLE001
-                            err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                            err_msg = _format_error(e)
                             logger.error("Async generator initialization failed: %s\n%s", e, traceback.format_exc())
                             return JSONResponse({"error": err_msg}, status_code=500)
 
@@ -157,7 +189,7 @@ class FoundryCBAgent:
                                 async for event in resp:
                                     yield _event_to_sse_chunk(event)
                             except Exception as e:  # noqa: BLE001
-                                err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                                err_msg = _format_error(e)
                                 logger.error("Error in async generator: %s\n%s", e, traceback.format_exc())
                                 payload = {"error": err_msg}
                                 yield f"event: error\ndata: {json.dumps(payload)}\n\n"
@@ -200,7 +232,7 @@ class FoundryCBAgent:
             allow_methods=["*"],
             allow_headers=["*"],
         )
-        self.app.add_middleware(AgentRunContextMiddleware)
+        self.app.add_middleware(AgentRunContextMiddleware, agent=self)
 
         @self.app.on_event("startup")
         async def attach_appinsights_logger():
@@ -261,7 +293,7 @@ class FoundryCBAgent:
 
     def init_tracing(self):
         exporter = os.environ.get(Constants.OTEL_EXPORTER_ENDPOINT)
-        app_insights_conn_str = os.environ.get(Constants.APPLICATION_INSIGHTS_CONNECTION_STRING)
+        app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
         if exporter or app_insights_conn_str:
             from opentelemetry.sdk.resources import Resource
             from opentelemetry.sdk.trace import TracerProvider
@@ -303,12 +335,47 @@ class FoundryCBAgent:
         provider.add_span_processor(processor)
         logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
 
+    def get_tool_client(
+            self, tools: Optional[list[ToolDefinition]], user_info: Optional[UserInfo]
+        ) -> AzureAIToolClient:
+        logger.debug("Creating AzureAIToolClient with tools: %s", tools)
+        if not self.credentials:
+            raise ValueError("Credentials are required to create Tool Client.")
+
+        workspace_endpoint = os.getenv(Constants.AZURE_AI_WORKSPACE_ENDPOINT)
+        if workspace_endpoint:
+            agent_name = os.getenv(Constants.AGENT_NAME)
+            if not agent_name:
+                raise ValueError("AGENT_NAME environment variable is required when using workspace endpoint.")
+            return AzureAIToolClient(
+            endpoint=workspace_endpoint,
+            credential=self.credentials,
+            tools=tools,
+            user=user_info,
+            agent_name=agent_name,
+            )
+        return AzureAIToolClient(
+        endpoint=os.getenv(Constants.AZURE_AI_PROJECT_ENDPOINT),
+        credential=self.credentials,
+        tools=tools,
+        user=user_info,
+        )
+
 
 def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
     event_data = json.dumps(event.as_dict())
     if event.type:
         return f"event: {event.type}\ndata: {event_data}\n\n"
     return f"data: {event_data}\n\n"
+
+
+def _format_error(exc: Exception) -> str:
+    message = str(exc)
+    if message:
+        return message
+    if DEBUG_ERRORS:
+        return repr(exc)
+    return "Internal error"
 
 
 def _to_response(result: Union[Response, dict]) -> Response:

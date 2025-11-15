@@ -545,6 +545,7 @@ class AgentFrameworkOutputStreamingConverter:
             "id": self._response_id,
             "status": status,
             "created_at": self._response_created_at,
+            "conversation": self._context.get_conversation_object(),
         }
         if status == "completed" and self._completed_output_items:
             response_data["output"] = self._completed_output_items

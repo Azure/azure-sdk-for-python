@@ -1,20 +1,21 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation
+# pylint: disable=logging-fstring-interpolation,no-name-in-module
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import os
-from typing import Any, AsyncGenerator, Union
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
+import inspect
 
-from agent_framework import AgentProtocol
+from agent_framework import AgentProtocol, AIFunction
 from agent_framework.azure import AzureAIAgentClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
-from azure.ai.agentserver.core.logger import get_logger
+from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger
 from azure.ai.agentserver.core.models import (
     CreateResponse,
     Response as OpenAIResponse,
@@ -29,8 +30,30 @@ from .models.agent_framework_output_non_streaming_converter import (
 )
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.constants import Constants
+from .tool_client import ToolClient
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 logger = get_logger()
+
+
+class AgentFactory(Protocol):
+    """Protocol for agent factory functions.
+    
+    An agent factory is a callable that takes a ToolClient and returns
+    an AgentProtocol, either synchronously or asynchronously.
+    """
+
+    def __call__(self, tools: List[AIFunction]) -> Union[AgentProtocol, Awaitable[AgentProtocol]]:
+        """Create an AgentProtocol using the provided ToolClient.
+        
+        :param tools: The list of AIFunction tools available to the agent.
+        :type tools: List[AIFunction]
+        :return: An Agent Framework agent, or an awaitable that resolves to one.
+        :rtype: Union[AgentProtocol, Awaitable[AgentProtocol]]
+        """
+        ...
 
 
 class AgentFrameworkCBAgent(FoundryCBAgent):
@@ -50,10 +73,35 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         - Supports both streaming and non-streaming responses based on the `stream` flag.
     """
 
-    def __init__(self, agent: AgentProtocol):
-        super().__init__()
-        self.agent = agent
-        logger.info(f"Initialized AgentFrameworkCBAgent with agent: {type(agent).__name__}")
+    def __init__(self, agent: Union[AgentProtocol, AgentFactory],
+                 credentials: "Optional[AsyncTokenCredential]" = None,
+                 **kwargs: Any):
+        """Initialize the AgentFrameworkCBAgent with an AgentProtocol or a factory function.
+
+        :param agent: The Agent Framework agent to adapt, or a callable that takes ToolClient
+            and returns AgentProtocol (sync or async).
+        :type agent: Union[AgentProtocol, AgentFactory]
+        :param credentials: Azure credentials for authentication.
+        :type credentials: Optional[AsyncTokenCredential]
+        """
+        super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
+        self._agent_or_factory: Union[AgentProtocol, AgentFactory] = agent
+        self._resolved_agent: "Optional[AgentProtocol]" = None
+        # If agent is already instantiated, use it directly
+        if isinstance(agent, AgentProtocol):
+            self._resolved_agent = agent
+            logger.info(f"Initialized AgentFrameworkCBAgent with agent: {type(agent).__name__}")
+        else:
+            logger.info("Initialized AgentFrameworkCBAgent with agent factory")
+
+    @property
+    def agent(self) -> "Optional[AgentProtocol]":
+        """Get the resolved agent. This property provides backward compatibility.
+        
+        :return: The resolved AgentProtocol if available, None otherwise.
+        :rtype: Optional[AgentProtocol]
+        """
+        return self._resolved_agent
 
     def _resolve_stream_timeout(self, request_body: CreateResponse) -> float:
         """Resolve idle timeout for streaming updates.
@@ -75,17 +123,57 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         env_val = os.getenv(Constants.AGENTS_ADAPTER_STREAM_TIMEOUT_S)
         return float(env_val) if env_val is not None else float(Constants.DEFAULT_STREAM_TIMEOUT_S)
 
+    async def _resolve_agent(self, context: AgentRunContext):
+        """Resolve the agent if it's a factory function (for single-use/first-time resolution).
+        Creates a ToolClient and calls the factory function with it.
+        This is used for the initial resolution.
+
+        :param context: The agent run context containing tools and user information.
+        :type context: AgentRunContext
+        """
+        if callable(self._agent_or_factory):
+            logger.debug("Resolving agent from factory function")
+
+            # Create ToolClient with credentials
+            tool_client = self.get_tool_client(tools=context.get_tools(), user_info=context.get_user_info()) # pylint: disable=no-member
+            tool_client_wrapper = ToolClient(tool_client)
+            tools = await tool_client_wrapper.list_tools()
+
+            result = self._agent_or_factory(tools)
+            if inspect.iscoroutine(result):
+                self._resolved_agent = await result
+            else:
+                self._resolved_agent = result
+
+            logger.debug("Agent resolved successfully")
+        else:
+            # Should not reach here, but just in case
+            self._resolved_agent = self._agent_or_factory
+
+    async def _resolve_agent_for_request(self, context: AgentRunContext):
+
+        logger.debug("Resolving fresh agent from factory function for request")
+
+        # Create ToolClient with credentials
+        tool_client = self.get_tool_client(tools=context.get_tools(), user_info=context.get_user_info()) # pylint: disable=no-member
+        tool_client_wrapper = ToolClient(tool_client)
+        tools = await tool_client_wrapper.list_tools()
+
+        result = self._agent_or_factory(tools)
+        if inspect.iscoroutine(result):
+            agent = await result
+        else:
+            agent = result
+
+        logger.debug("Fresh agent resolved successfully for request")
+        return agent, tool_client_wrapper
+
     def init_tracing(self):
         exporter = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
-        app_insights_conn_str = os.environ.get(AdapterConstants.APPLICATION_INSIGHTS_CONNECTION_STRING)
+        app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
         project_endpoint = os.environ.get(AdapterConstants.AZURE_AI_PROJECT_ENDPOINT)
 
-        if project_endpoint:
-            project_client = AIProjectClient(endpoint=project_endpoint, credential=DefaultAzureCredential())
-            agent_client = AzureAIAgentClient(project_client=project_client)
-            agent_client.setup_azure_ai_observability()
-        elif exporter or app_insights_conn_str:
-            os.environ["WORKFLOW_ENABLE_OTEL"] = "true"
+        if exporter or app_insights_conn_str:
             from agent_framework.observability import setup_observability
 
             setup_observability(
@@ -93,61 +181,94 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 otlp_endpoint=exporter,
                 applicationinsights_connection_string=app_insights_conn_str,
             )
+        elif project_endpoint:
+            project_client = AIProjectClient(endpoint=project_endpoint, credential=DefaultAzureCredential())
+            agent_client = AzureAIAgentClient(project_client=project_client)
+            agent_client.setup_azure_ai_observability()
         self.tracer = trace.get_tracer(__name__)
 
-    async def agent_run(
+    async def agent_run(  # pylint: disable=too-many-statements
         self, context: AgentRunContext
     ) -> Union[
         OpenAIResponse,
         AsyncGenerator[ResponseStreamEvent, Any],
     ]:
-        logger.info(f"Starting agent_run with stream={context.stream}")
-        request_input = context.request.get("input")
+        # Resolve agent - always resolve if it's a factory function to get fresh agent each time
+        # For factories, get a new agent instance per request to avoid concurrency issues
+        tool_client = None
+        try:
+            if callable(self._agent_or_factory):
+                agent, tool_client = await self._resolve_agent_for_request(context)
+            elif self._resolved_agent is None:
+                await self._resolve_agent(context)
+                agent = self._resolved_agent
+            else:
+                agent = self._resolved_agent
 
-        input_converter = AgentFrameworkInputConverter()
-        message = input_converter.transform_input(request_input)
-        logger.debug(f"Transformed input message type: {type(message)}")
+            logger.info(f"Starting agent_run with stream={context.stream}")
+            request_input = context.request.get("input")
 
-        # Use split converters
-        if context.stream:
-            logger.info("Running agent in streaming mode")
-            streaming_converter = AgentFrameworkOutputStreamingConverter(context)
+            input_converter = AgentFrameworkInputConverter()
+            message = input_converter.transform_input(request_input)
+            logger.debug(f"Transformed input message type: {type(message)}")
 
-            async def stream_updates():
-                update_count = 0
-                timeout_s = self._resolve_stream_timeout(context.request)
-                logger.info("Starting streaming with idle-timeout=%.2fs", timeout_s)
-                for ev in streaming_converter.initial_events():
-                    yield ev
+            # Use split converters
+            if context.stream:
+                logger.info("Running agent in streaming mode")
+                streaming_converter = AgentFrameworkOutputStreamingConverter(context)
 
-                # Iterate with per-update timeout; terminate if idle too long
-                aiter = self.agent.run_stream(message).__aiter__()
-                while True:
+                async def stream_updates():
                     try:
-                        update = await asyncio.wait_for(aiter.__anext__(), timeout=timeout_s)
-                    except StopAsyncIteration:
-                        logger.debug("Agent streaming iterator finished (StopAsyncIteration)")
-                        break
-                    except asyncio.TimeoutError:
-                        logger.warning("Streaming idle timeout reached (%.1fs); terminating stream.", timeout_s)
+                        update_count = 0
+                        timeout_s = self._resolve_stream_timeout(context.request)
+                        logger.info("Starting streaming with idle-timeout=%.2fs", timeout_s)
+                        for ev in streaming_converter.initial_events():
+                            yield ev
+
+                        # Iterate with per-update timeout; terminate if idle too long
+                        aiter = agent.run_stream(message).__aiter__()
+                        while True:
+                            try:
+                                update = await asyncio.wait_for(aiter.__anext__(), timeout=timeout_s)
+                            except StopAsyncIteration:
+                                logger.debug("Agent streaming iterator finished (StopAsyncIteration)")
+                                break
+                            except asyncio.TimeoutError:
+                                logger.warning("Streaming idle timeout reached (%.1fs); terminating stream.", timeout_s)
+                                for ev in streaming_converter.completion_events():
+                                    yield ev
+                                return
+                            update_count += 1
+                            transformed = streaming_converter.transform_output_for_streaming(update)
+                            for event in transformed:
+                                yield event
                         for ev in streaming_converter.completion_events():
                             yield ev
-                        return
-                    update_count += 1
-                    transformed = streaming_converter.transform_output_for_streaming(update)
-                    for event in transformed:
-                        yield event
-                for ev in streaming_converter.completion_events():
-                    yield ev
-                logger.info("Streaming completed with %d updates", update_count)
+                        logger.info("Streaming completed with %d updates", update_count)
+                    finally:
+                        # Close tool_client if it was created for this request
+                        if tool_client is not None:
+                            try:
+                                await tool_client.close()
+                                logger.debug("Closed tool_client after streaming completed")
+                            except Exception as e:  # pylint: disable=broad-exception-caught
+                                logger.warning(f"Error closing tool_client in stream: {e}")
 
-            return stream_updates()
+                return stream_updates()
 
-        # Non-streaming path
-        logger.info("Running agent in non-streaming mode")
-        non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context)
-        result = await self.agent.run(message)
-        logger.debug(f"Agent run completed, result type: {type(result)}")
-        transformed_result = non_streaming_converter.transform_output_for_response(result)
-        logger.info("Agent run and transformation completed successfully")
-        return transformed_result
+            # Non-streaming path
+            logger.info("Running agent in non-streaming mode")
+            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context)
+            result = await agent.run(message)
+            logger.debug(f"Agent run completed, result type: {type(result)}")
+            transformed_result = non_streaming_converter.transform_output_for_response(result)
+            logger.info("Agent run and transformation completed successfully")
+            return transformed_result
+        finally:
+            # Close tool_client if it was created for this request (non-streaming only, streaming handles in generator)
+            if not context.stream and tool_client is not None:
+                try:
+                    await tool_client.close()
+                    logger.debug("Closed tool_client after request processing")
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    logger.warning(f"Error closing tool_client: {e}")
