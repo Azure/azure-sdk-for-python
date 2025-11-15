@@ -144,9 +144,9 @@ def main() -> None:
                 print(
                     f"RedTeam Eval Run completed with status: {run.status}. Output items written to {output_items_path}"
                 )
-                break
+                break            
             time.sleep(5)
-            print("Waiting for eval run to complete...")
+            print(f"Waiting for eval run to complete... {run.status}")
 
         client.evals.delete(eval_id=eval_object.id)
         print("Evaluation deleted")
