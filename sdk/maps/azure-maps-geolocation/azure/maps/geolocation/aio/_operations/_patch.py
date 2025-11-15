@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from ._operations import _MapsGeolocationClientOperationsMixin as _MapsGeolocationClientOperationsMixinGenerated
 from azure.core.tracing.decorator_async import distributed_trace_async
 from typing import Any
-from ..models._patch import CountryRegionResult
+from ...models._patch import CountryRegionResult
 
 class _MapsGeolocationClientOperationsMixin(_MapsGeolocationClientOperationsMixinGenerated):
     @distributed_trace_async
