@@ -22,7 +22,7 @@ resources in your Microsoft Foundry Project. Use it to:
   * SharePoint
   * Web Search
 * **Get an OpenAI client** using `.get_openai_client()` method to run "Responses" and "Conversations" operations with your Agent.
-* **Manage memory stores** for Agent conversations, using the `.memory_store` operations.
+* **Manage memory stores** for Agent conversations, using the `.memory_stores` operations.
 * **Run Evaluations** to assess the performance of your generative AI application, using the `.evaluation_rules`,
 `.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
 * **Run Red Team operations** to identify risks associated with your generative AI application, using the ".red_teams" operations.
