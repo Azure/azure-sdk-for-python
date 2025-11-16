@@ -131,7 +131,13 @@ with (
         clusterInsight = project_client.insights.generate(
             Insight(
                 display_name="Cluster analysis",
-                request=EvaluationRunClusterInsightsRequest(eval_id=eval_object.id, run_ids=[eval_run.id], model_configuration=InsightModelConfiguration(model_deployment_name=model_deployment_name)),
+                request=EvaluationRunClusterInsightsRequest(
+                    eval_id=eval_object.id,
+                    run_ids=[eval_run.id],
+                    model_configuration=InsightModelConfiguration(
+                        model_deployment_name=model_deployment_name
+                    ),
+                ),
             )
         )
         print(f"Started insight generation (id: {clusterInsight.id})")
