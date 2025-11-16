@@ -50,15 +50,15 @@ def run_evaluator(
             }
         ]
 
-        print("Creating Eval Group")
+        print("Creating Evaluation")
         eval_object = client.evals.create(
             name=f"Test {evaluator_name} Evaluator with inline data",
             data_source_config=data_source_config,
             testing_criteria=testing_criteria,  # type: ignore
         )
-        print(f"Eval Group created")
+        print(f"Evaluation created")
 
-        print("Get Eval Group by Id")
+        print("Get Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
         print("Eval Run Response:")
         pprint(eval_object_response)
