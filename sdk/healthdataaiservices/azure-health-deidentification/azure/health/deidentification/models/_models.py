@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +8,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
@@ -510,14 +509,14 @@ class PhiTaggerResult(_Model):
     :vartype entities: list[~azure.health.deidentification.models.PhiEntity]
     """
 
-    entities: List["_models.PhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    entities: list["_models.PhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of entities detected in the input. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        entities: List["_models.PhiEntity"],
+        entities: list["_models.PhiEntity"],
     ) -> None: ...
 
     @overload
@@ -598,7 +597,7 @@ class SourceStorageLocation(_Model):
     """URL to storage location. Required."""
     prefix: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Prefix to filter path by. Required."""
-    extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of extensions to filter path by."""
 
     @overload
@@ -607,7 +606,7 @@ class SourceStorageLocation(_Model):
         *,
         location: str,
         prefix: str,
-        extensions: Optional[List[str]] = None,
+        extensions: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -682,7 +681,7 @@ class TaggedPhiEntities(_Model):
     )
     """The encoding type used for all entities in this group. Required. Known values are: \"Utf8\",
      \"Utf16\", and \"CodePoint\"."""
-    entities: List["_models.SimplePhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    entities: list["_models.SimplePhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of PHI entities using the specified encoding. Required."""
 
     @overload
@@ -690,7 +689,7 @@ class TaggedPhiEntities(_Model):
         self,
         *,
         encoding: Union[str, "_models.TextEncodingType"],
-        entities: List["_models.SimplePhiEntity"],
+        entities: list["_models.SimplePhiEntity"],
     ) -> None: ...
 
     @overload
