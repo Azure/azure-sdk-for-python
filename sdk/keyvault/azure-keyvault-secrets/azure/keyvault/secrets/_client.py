@@ -28,7 +28,10 @@ class SecretClient(KeyVaultClientBase):
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.secrets.ApiVersion or str
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
-        Vault domain. Defaults to True.
+        Vault domain. Defaults to True. **SECURITY NOTE:** Leave this set to True. Disabling challenge resource
+        verification may allow acquisition of tokens scoped to an unintended resource if a malicious or misconfigured
+        endpoint issues a forged challenge. Only set to False if you fully trust the endpoint and understand the risk
+        (CWE-346 / OWASP A07).
 
     Example:
         .. literalinclude:: ../tests/test_samples_secrets.py
