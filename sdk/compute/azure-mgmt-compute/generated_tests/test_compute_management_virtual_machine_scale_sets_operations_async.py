@@ -72,7 +72,11 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 vm_scale_set_name="str",
                 parameters={
                     "location": "str",
-                    "additionalCapabilities": {"hibernationEnabled": bool, "ultraSSDEnabled": bool},
+                    "additionalCapabilities": {
+                        "enableFips1403Encryption": bool,
+                        "hibernationEnabled": bool,
+                        "ultraSSDEnabled": bool,
+                    },
                     "automaticRepairsPolicy": {"enabled": bool, "gracePeriod": "str", "repairAction": "str"},
                     "constrainedMaximumCapacity": bool,
                     "doNotRunExtensionsOnOverprovisionedVMs": bool,
@@ -388,7 +392,11 @@ class TestComputeManagementVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 parameters={
-                    "additionalCapabilities": {"hibernationEnabled": bool, "ultraSSDEnabled": bool},
+                    "additionalCapabilities": {
+                        "enableFips1403Encryption": bool,
+                        "hibernationEnabled": bool,
+                        "ultraSSDEnabled": bool,
+                    },
                     "automaticRepairsPolicy": {"enabled": bool, "gracePeriod": "str", "repairAction": "str"},
                     "doNotRunExtensionsOnOverprovisionedVMs": bool,
                     "identity": {

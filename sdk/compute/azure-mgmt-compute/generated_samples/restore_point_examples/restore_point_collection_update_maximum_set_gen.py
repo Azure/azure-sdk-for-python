@@ -36,9 +36,10 @@ def main():
         restore_point_collection_name="aaaaaaaaaaaaaaaaaaaa",
         parameters={
             "properties": {
+                "instantAccess": True,
                 "source": {
                     "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM"
-                }
+                },
             },
             "tags": {"key8536": "aaaaaaaaaaaaaaaaaaa"},
         },
