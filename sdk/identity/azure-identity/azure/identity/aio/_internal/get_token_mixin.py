@@ -10,6 +10,7 @@ from typing import Any, Optional
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from ..._internal import within_credential_chain
+from ..._internal.utils import CacheLogContext
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -128,23 +129,61 @@ class GetTokenMixin(abc.ABC):
         tenant_id = options.get("tenant_id")
         enable_cae = options.get("enable_cae", False)
 
+        is_warm_up = kwargs.pop("_is_warm_up", False)
+
+        # Initialize cache logging context
+        cache_context = CacheLogContext(
+            credential_id=id(self),
+            class_name=self.__class__.__name__,
+            method_name=base_method_name,
+            scopes=list(scopes),
+            options=dict(options),
+        )
+        start = round(time.time() * 1000)
+        cache_context.method_start = start
+
+        if is_warm_up:
+            cache_context.add_detail("is_warm_up_call", True)
+
         try:
             token = await self._acquire_token_silently(
-                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                *scopes,
+                claims=claims,
+                tenant_id=tenant_id,
+                enable_cae=enable_cae,
+                _cache_context=cache_context,
+                **kwargs,
             )
             if not token:
                 self._last_request_time = int(time.time())
+                cache_context.cache_action = "MISS"
                 token = await self._request_token(
-                    *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                    *scopes,
+                    claims=claims,
+                    tenant_id=tenant_id,
+                    enable_cae=enable_cae,
+                    _cache_context=cache_context,
+                    **kwargs,
                 )
+                cache_context.token_source = "new_request"
             elif self._should_refresh(token):
                 try:
+                    cache_context.cache_action = "REFRESH"
                     self._last_request_time = int(time.time())
                     token = await self._request_token(
-                        *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                        *scopes,
+                        claims=claims,
+                        tenant_id=tenant_id,
+                        enable_cae=enable_cae,
+                        _cache_context=cache_context,
+                        **kwargs,
                     )
+                    cache_context.token_source = "new_request_refresh"
                 except Exception:  # pylint:disable=broad-except
                     pass
+            else:
+                cache_context.cache_action = "HIT"
+                cache_context.token_source = "cache"
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,
                 "%s.%s succeeded",
@@ -154,6 +193,9 @@ class GetTokenMixin(abc.ABC):
             return token
 
         except Exception as ex:
+            cache_context.cache_action = "EXCEPTION"
+            cache_context.token_source = "none"
+            cache_context.add_error(str(ex))
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,
                 "%s.%s failed: %s",
@@ -163,3 +205,7 @@ class GetTokenMixin(abc.ABC):
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise
+        finally:
+            end = round(time.time() * 1000)
+            cache_context.method_end = end
+            cache_context.log_final_state()

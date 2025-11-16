@@ -16,7 +16,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
-from .utils import get_default_authority, normalize_authority, resolve_tenant
+from .utils import get_default_authority, normalize_authority, resolve_tenant, sanitize_dict, CacheLogContext
 from .aadclient_certificate import AadClientCertificate
 from .._persistent_cache import _load_persistent_cache
 
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 
 
-class AadClientBase(abc.ABC):
+class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
     _POST = ["POST"]
 
     def __init__(
@@ -45,7 +45,7 @@ class AadClientBase(abc.ABC):
         cae_cache: Optional[TokenCache] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
@@ -62,6 +62,9 @@ class AadClientBase(abc.ABC):
         else:
             self._custom_cache = False
         self._is_adfs = self._tenant_id.lower() == "adfs"
+        self._cache_hit_counts: Dict[str, int] = {}
+        self._cache_miss_counts: Dict[str, int] = {}
+        self._warm_up_status: Dict[str, str] = {}
 
     def _get_cache(self, **kwargs: Any) -> TokenCache:
         cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
@@ -88,17 +91,66 @@ class AadClientBase(abc.ABC):
         )
 
         cache = self._get_cache(**kwargs)
-        for token in cache.search(
-            TokenCache.CredentialType.ACCESS_TOKEN,
-            target=list(scopes),
-            query={"client_id": self._client_id, "realm": tenant},
-        ):
+        scope_list = list(scopes)
+
+        cache_context: Optional[CacheLogContext] = kwargs.get("_cache_context")
+
+        results = list(
+            cache.search(
+                TokenCache.CredentialType.ACCESS_TOKEN,
+                target=scope_list,
+                query={"client_id": self._client_id, "realm": tenant},
+            )
+        )
+
+        if cache_context:
+            cache_context.add_detail("cache_id", id(cache))
+            cache_context.add_detail("cache_queried_on", round(time.time() * 1000))
+
+            total_results = list(cache.search(TokenCache.CredentialType.ACCESS_TOKEN))
+            cache_entries = []
+            for token in total_results:
+                cache_entries.append(sanitize_dict(token, sensitive_fields=["secret"]))
+            cache_context.add_detail("cache_entries", cache_entries)
+            cache_context.add_detail("cache_size", len(total_results))
+            cache_context.add_detail(
+                "cache_query", {"scopes": scope_list, "tenant": tenant, "client_id": self._client_id}
+            )
+
+        scope_key = " ".join(scope_list)
+
+        if cache_context:
+            if self._warm_up_status.get(scope_key):
+                if cache_context.cache_details.get("is_warm_up_call"):
+                    self._warm_up_status[scope_key] = f"Started Again (Previously {self._warm_up_status[scope_key]})"
+                elif self._warm_up_status[scope_key] == "Started Again (Previously Completed)":
+                    self._warm_up_status[scope_key] = "Completed"
+            else:
+                if cache_context.cache_details.get("is_warm_up_call"):
+                    self._warm_up_status[scope_key] = "Started"
+                else:
+                    self._warm_up_status[scope_key] = "Not Started"
+            cache_context.add_detail("cache_warm_up_status", self._warm_up_status[scope_key])
+
+        for token in results:
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
                 refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
+
+                self._cache_hit_counts[scope_key] = self._cache_hit_counts.get(scope_key, 0) + 1
+                if cache_context:
+                    cache_context.add_detail("cache_query_status", "HIT")
+                    cache_context.add_detail("rolling_cache_hit_count", self._cache_hit_counts[scope_key])
+                    cache_context.add_detail("rolling_cache_miss_count", self._cache_miss_counts.get(scope_key, 0))
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
+
+        self._cache_miss_counts[scope_key] = self._cache_miss_counts.get(scope_key, 0) + 1
+        if cache_context:
+            cache_context.add_detail("cache_query_status", "MISS")
+            cache_context.add_detail("rolling_cache_miss_count", self._cache_miss_counts[scope_key])
+            cache_context.add_detail("rolling_cache_hit_count", self._cache_hit_counts.get(scope_key, 0))
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
@@ -140,6 +192,10 @@ class AadClientBase(abc.ABC):
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
         cache = self._get_cache(**kwargs)
+        cache_context: Optional[CacheLogContext] = kwargs.get("_cache_context")
+        if cache_context:
+            cache_context.add_detail("token_request_finished_ms", round(time.time() * 1000))
+
         if response.http_request.body.get("grant_type") == "refresh_token":
             if content.get("error") == "invalid_grant":
                 # the request's refresh token is invalid -> evict it from the cache
@@ -165,7 +221,13 @@ class AadClientBase(abc.ABC):
                     cache.update_rt(cache_entries[0], content["refresh_token"])
                     del content["refresh_token"]  # prevent caching a redundant entry
 
-        _raise_for_error(response, content)
+        try:
+            _raise_for_error(response, content)
+        except Exception as ex:
+            if cache_context:
+                cache_context.add_detail("token_request_status", "FAILURE")
+                cache_context.add_detail("token_request_error", str(ex))
+            raise
 
         if "expires_on" in content:
             expires_on = int(content["expires_on"])
@@ -181,11 +243,27 @@ class AadClientBase(abc.ABC):
             content["refresh_in"] = expires_in // 2
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
+
         token = AccessTokenInfo(
             content["access_token"], expires_on, token_type=content.get("token_type", "Bearer"), refresh_on=refresh_on
         )
 
         # caching is the final step because 'add' mutates 'content'
+        if cache_context:
+            cache_context.add_detail("token_request_status", "SUCCESS")
+            cache_context.add_detail("cache_add_ms", round(time.time() * 1000))
+            cache_context.add_detail(
+                "cache_add_details",
+                {
+                    "cache_id": id(cache),
+                    "client_id": self._client_id,
+                    "scope": response.http_request.body["scope"].split(),
+                    "token_endpoint": response.http_request.url,
+                    "response": sanitize_dict(
+                        content, sensitive_fields={"access_token", "refresh_token", "id_token", "username"}
+                    ),
+                },
+            )
         cache.add(
             event={
                 "client_id": self._client_id,
@@ -195,6 +273,11 @@ class AadClientBase(abc.ABC):
             },
             now=request_time,
         )
+
+        if cache_context:
+            if cache_context.cache_details.get("is_warm_up_call", False):
+                self._warm_up_status[" ".join(response.http_request.body["scope"].split())] = "Completed"
+            cache_context.add_detail("cache_added_ms", round(time.time() * 1000))
 
         return token
 
@@ -293,7 +376,7 @@ class AadClientBase(abc.ABC):
         scopes: Iterable[str],
         client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         user_assertion: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> HttpRequest:
         data = {
             "assertion": user_assertion,
@@ -348,7 +431,7 @@ class AadClientBase(abc.ABC):
         scopes: Iterable[str],
         client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         refresh_token: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",
