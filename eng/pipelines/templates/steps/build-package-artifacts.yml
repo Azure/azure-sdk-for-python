@@ -140,7 +140,7 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --checks="whl"
         --filter-type="None"
-        ${{ parameters.AdditionalTestArgs }}
+        --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env:
       TOX_PIP_IMPL: "uv"
       VIRTUAL_ENV: ""
