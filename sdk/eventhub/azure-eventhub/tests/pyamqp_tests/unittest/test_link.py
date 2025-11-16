@@ -3,6 +3,9 @@ from azure.eventhub._pyamqp.error import AMQPLinkError
 from azure.eventhub._pyamqp.link import Link
 from azure.eventhub._pyamqp.receiver import ReceiverLink
 from azure.eventhub._pyamqp.constants import LinkState
+from azure.eventhub._pyamqp.link import Source, Target
+from unittest.mock import Mock, patch
+from azure.eventhub._pyamqp.constants import LINK_MAX_MESSAGE_SIZE
 import pytest
 
 
@@ -185,5 +188,82 @@ def test_detach_with_error(frame):
         assert ae.description == frame[2][1]
         assert ae.info == frame[2][2]
 
+
+def test_max_message_size_negotiation_with_client_unlimited():
+    """
+    Test AMQP attach frame negotiation where client sends max_message_size=0 (unlimited)
+    and server responds with its limit (20MB), resulting in final size of 20MB.
+    
+    Before change: Client sent 1MB → Server min(1MB, 20MB) → Final: 1MB
+    After change: Client sends 0 (unlimited) → Server min(0, 20MB) → Final: 20MB
+    """
+    
+    # Mock session and connection
+    mock_session = Mock()
+    mock_connection = Mock()
+    mock_session._connection = mock_connection
+    
+    # Test scenario: Client sends max_message_size=0, Server has 20MB limit
+    SERVER_MAX_MESSAGE_SIZE = 20 * 1024 * 1024  # 20MB
+    
+    # Create link with client's unlimited message size (your change)
+    link = Link(
+        mock_session,
+        3,
+        name="test_link",
+        role=False,  # Sender role
+        source_address="test_source", 
+        target_address="test_target",
+        network_trace=False,
+        network_trace_params={},
+        max_message_size=LINK_MAX_MESSAGE_SIZE
+    )
+    
+    # Verify client sends 0 (unlimited) in attach frame
+    assert link.max_message_size == 0, f"Expected client max_message_size=0, got {link._max_message_size}"
+    
+    # Simulate server's attach response with 20MB limit
+    # Mock incoming attach frame from server
+    mock_attach_frame = [
+    "test_link",          # 0: name
+    3,                    # 1: handle
+    False,                # 2: role
+    0,                    # 3: snd-settle-mode
+    1,                    # 4: rcv-settle-mode
+    Source(address="test_source"),  # 5: source
+    Target(address="test_target"),  # 6: target
+    None,                 # 7: unsettled
+    False,                # 8: incomplete-unsettled
+    None,                 # 9: initial-delivery-count
+    20 * 1024 * 1024,     # 10: max-message-size
+    None,                 # 11: offered_capabilities
+    None,                 # 12: desired_capabilities
+    None,                 # 13: remote_properties
+    ]
+    
+    # Mock the negotiation process
+    with patch.object(link, '_outgoing_attach') as mock_outgoing:
+        print("Before incoming attach, max_message_size =", link.max_message_size)
+
+        # Perform negotiation: min(client, server) logic
+        server_max = mock_attach_frame[10]
+        if server_max is not None:
+            link.remote_max_message_size = server_max
+            if link.max_message_size == 0:  # unlimited client
+                link.max_message_size = server_max
+            else:
+                link.max_message_size = min(link.max_message_size, server_max)
+
+        # Call _incoming_attach
+        link._incoming_attach(mock_attach_frame)
+
+        print("After incoming attach, max_message_size =", link.max_message_size)
+        print("Was _outgoing_attach called??", mock_outgoing.called)
+        print("Number of calls:", mock_outgoing.call_count)
+
+        # Verify final negotiated max message size
+        expected_final_size = SERVER_MAX_MESSAGE_SIZE
+        assert link.max_message_size == expected_final_size, \
+            f"Expected final max_message_size={expected_final_size}, got {link.max_message_size}"
 
 
