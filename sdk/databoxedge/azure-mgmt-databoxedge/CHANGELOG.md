@@ -1,5 +1,131 @@
 # Release History
 
+## 3.0.0 (2025-10-22)
+
+### Features Added
+
+  - Model `DataBoxEdgeManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DataBoxEdgeManagementClient` added method `send_request`
+  - Client `DataBoxEdgeManagementClient` added operation group `diagnostic_settings`
+  - Client `DataBoxEdgeManagementClient` added operation group `device_capacity_check`
+  - Client `DataBoxEdgeManagementClient` added operation group `support_packages`
+  - Client `DataBoxEdgeManagementClient` added operation group `device_capacity_info`
+  - Model `DataBoxEdgeDeviceExtendedInfo` added property `system_data`
+  - Model `DataBoxEdgeDevicePatch` added property `properties`
+  - Model `EdgeProfileSubscription` added property `properties`
+  - Model `FileEventTrigger` added property `properties`
+  - Model `Job` added property `system_data`
+  - Model `LoadBalancerConfig` added property `ip_range`
+  - Model `Order` added property `kind`
+  - Model `PeriodicTimerEventTrigger` added property `properties`
+  - Enum `SkuName` added member `EDGE_MR_TCP`
+  - Enum `SkuName` added member `EP2_128_GPU1_MX1_W`
+  - Enum `SkuName` added member `EP2_256_2T4_W`
+  - Enum `SkuName` added member `EP2_256_GPU2_MX1`
+  - Enum `SkuName` added member `EP2_64_1VPU_W`
+  - Enum `SkuName` added member `EP2_64_MX1_W`
+  - Model `UpdateDetails` added property `friendly_version_number`
+  - Model `UpdateDetails` added property `installation_impact`
+  - Added enum `AccessLevel`
+  - Added model `CloudError`
+  - Added model `ClusterCapacityViewData`
+  - Added model `ClusterGpuCapacity`
+  - Added model `ClusterMemoryCapacity`
+  - Added model `ClusterStorageViewData`
+  - Added enum `ClusterWitnessType`
+  - Added model `DCAccessCodeProperties`
+  - Added model `DataBoxEdgeDevicePropertiesPatch`
+  - Added model `DataResidency`
+  - Added enum `DataResidencyType`
+  - Added model `DeviceCapacityInfo`
+  - Added model `DeviceCapacityInfoProperties`
+  - Added model `DeviceCapacityRequestInfo`
+  - Added model `DeviceCapacityRequestInfoProperties`
+  - Added model `DiagnosticProactiveLogCollectionSettings`
+  - Added model `DiagnosticRemoteSupportSettings`
+  - Added model `DiagnosticRemoteSupportSettingsProperties`
+  - Added model `FileTriggerProperties`
+  - Added model `HostCapacity`
+  - Added enum `InstallationImpact`
+  - Added model `MetricDimension_V1`
+  - Added model `MetricSpecification_V1`
+  - Added model `NumaNodeData`
+  - Added model `PeriodicTimerProperties`
+  - Added enum `ProactiveDiagnosticsConsent`
+  - Added model `ProactiveLogCollectionSettingsProperties`
+  - Added model `ProxyResource`
+  - Added model `RawCertificateData`
+  - Added enum `RemoteApplicationType`
+  - Added model `RemoteSupportSettings`
+  - Added model `Resource`
+  - Added model `SubscriptionProperties`
+  - Added model `SupportPackageRequestProperties`
+  - Added model `TrackedResource`
+  - Added model `TriggerSupportPackageRequest`
+  - Added model `VmMemory`
+  - Added model `VmPlacementRequestResult`
+  - Model `DevicesOperations` added method `create_or_update`
+  - Model `UsersOperations` added parameter `filter` in method `list_by_data_box_edge_device`
+  - Added model `DeviceCapacityCheckOperations`
+  - Added model `DeviceCapacityInfoOperations`
+  - Added model `DiagnosticSettingsOperations`
+  - Added model `SupportPackagesOperations`
+
+### Breaking Changes
+
+  - Model `DCAccessCode` deleted or renamed its instance variable `auth_code`
+  - Model `DataBoxEdgeDevicePatch` deleted or renamed its instance variable `edge_profile`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `tenant_id`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `location_placement_id`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `quota_id`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `serialized_details`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `registered_features`
+  - Model `FileEventTrigger` deleted or renamed its instance variable `source_info`
+  - Model `FileEventTrigger` deleted or renamed its instance variable `sink_info`
+  - Model `FileEventTrigger` deleted or renamed its instance variable `custom_context_tag`
+  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `source_info`
+  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `sink_info`
+  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `custom_context_tag`
+  - Deleted or renamed enum value `SkuName.EP2_256_2_T4_W`
+  - Deleted or renamed enum value `SkuName.EP2_64_1_VPU_W`
+  - Deleted or renamed enum value `TimeGrain.PT12_H`
+  - Deleted or renamed enum value `TimeGrain.PT15_M`
+  - Deleted or renamed enum value `TimeGrain.PT1_D`
+  - Deleted or renamed enum value `TimeGrain.PT1_H`
+  - Deleted or renamed enum value `TimeGrain.PT1_M`
+  - Deleted or renamed enum value `TimeGrain.PT30_M`
+  - Deleted or renamed enum value `TimeGrain.PT5_M`
+  - Deleted or renamed enum value `TimeGrain.PT6_H`
+  - Model `UploadCertificateRequest` deleted or renamed its instance variable `authentication_type`
+  - Model `UploadCertificateRequest` deleted or renamed its instance variable `certificate`
+  - Deleted or renamed model `AddonList`
+  - Deleted or renamed model `AlertList`
+  - Deleted or renamed model `BandwidthSchedulesList`
+  - Deleted or renamed model `ContainerList`
+  - Deleted or renamed model `DataBoxEdgeDeviceList`
+  - Deleted or renamed model `DataBoxEdgeMoveRequest`
+  - Deleted or renamed model `DataBoxEdgeSkuList`
+  - Deleted or renamed model `MetricDimensionV1`
+  - Deleted or renamed model `MetricSpecificationV1`
+  - Deleted or renamed model `MonitoringMetricConfigurationList`
+  - Deleted or renamed model `NodeList`
+  - Deleted or renamed model `OperationsList`
+  - Deleted or renamed model `OrderList`
+  - Deleted or renamed model `ResourceTypeSku`
+  - Deleted or renamed model `RoleList`
+  - Deleted or renamed model `ShareList`
+  - Deleted or renamed model `SkuInformation`
+  - Deleted or renamed model `SkuInformationList`
+  - Deleted or renamed model `StorageAccountCredentialList`
+  - Deleted or renamed model `StorageAccountList`
+  - Deleted or renamed model `TriggerList`
+  - Deleted or renamed model `UserList`
+  - Method `DevicesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DevicesOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `DevicesOperations.begin_create_or_update`
+  - Method `UsersOperations.list_by_data_box_edge_device` deleted or renamed its parameter `expand` of kind `positional_or_keyword`
+  - Method `UsersOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'expand', 'kwargs']` to `['self', 'device_name', 'resource_group_name', 'filter', 'kwargs']`
+
 ## 3.0.0b1 (2025-08-06)
 
 ### Breaking Changes
