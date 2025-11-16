@@ -110,7 +110,13 @@ class Check(abc.ABC):
         return executable, staging_directory
 
     def run_venv_command(
-        self, executable: str, command: Sequence[str], cwd: str, check: bool = False, append_executable: bool = True
+        self,
+        executable: str,
+        command: Sequence[str],
+        cwd: str,
+        check: bool = False,
+        append_executable: bool = True,
+        immediately_dump: bool = False
     ) -> subprocess.CompletedProcess[str]:
         """Run a command in the given virtual environment.
         - Prepends the virtual environment's bin directory to the PATH environment variable (if one exists)
@@ -149,8 +155,10 @@ class Check(abc.ABC):
         logger.debug(f"VIRTUAL_ENV: {env['VIRTUAL_ENV']}.")
         logger.debug(f"PATH : {env['PATH']}.")
 
+        s_out = None if immediately_dump else subprocess.PIPE
+        s_err = None if immediately_dump else subprocess.PIPE
         result = subprocess.run(
-            cmd_to_run, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=check, env=env
+            cmd_to_run, cwd=cwd, stdout=s_out, stderr=s_err, text=True, check=check, env=env
         )
 
         return result

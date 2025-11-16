@@ -48,7 +48,7 @@ class whl(Check):
         """Run the whl check command."""
         logger.info("Running whl check...")
 
-        set_envvar_defaults()
+        set_envvar_defaults({"PROXY_URL": "http://localhost:5001"})
 
         targeted = self.get_targeted_directories(args)
         if not targeted:
@@ -91,7 +91,7 @@ class whl(Check):
 
             pytest_args = self._build_pytest_args(package_dir, args)
             pytest_command = ["-m", "pytest", *pytest_args]
-            pytest_result = self.run_venv_command(executable, pytest_command, cwd=package_dir)
+            pytest_result = self.run_venv_command(executable, pytest_command, cwd=package_dir, immediately_dump=True)
 
             if pytest_result.returncode != 0:
                 if pytest_result.returncode == 5 and is_error_code_5_allowed(package_dir, package_name):

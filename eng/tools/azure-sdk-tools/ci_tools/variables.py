@@ -121,10 +121,13 @@ def set_environment_from_dictionary(settings: Dict[str, str]) -> None:
             os.environ.setdefault(key, value)
 
 
-def set_envvar_defaults() -> None:
+def set_envvar_defaults(additional: Dict[str, str] = {}) -> None:
     """
     Sets default environment variables for any given process to our default dictionary.
     Args:
         settings (Dict[str, str]): A dictionary of environment variable names and their default values.
     """
     set_environment_from_dictionary(DEFAULT_ENVIRONMENT_VARIABLES)
+
+    # this will override any defaults set prior in the case of override
+    set_environment_from_dictionary(additional)

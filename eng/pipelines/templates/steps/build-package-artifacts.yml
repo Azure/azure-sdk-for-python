@@ -131,6 +131,22 @@ steps:
     displayName: 'Verify Readme'
     condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))
 
+  - task: PythonScript@0
+    displayName: 'Run Early Whl Check'
+    inputs:
+      scriptPath: 'eng/scripts/dispatch_checks.py'
+      arguments: >-
+        "$(TargetingString)"
+        --service="${{ parameters.ServiceDirectory }}"
+        --checks="whl"
+        --filter-type="None"
+        ${{ parameters.AdditionalTestArgs }}
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
+    condition: and(succeededOrFailed(), ne(variables['Skip.Whl'],'true'))
+
   - ${{ parameters.BeforePublishSteps }}
 
   # we need to publish an empty artifact. when publishing an empty artifact, let's ensure that there isn't anything to
