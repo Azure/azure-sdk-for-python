@@ -134,7 +134,7 @@ def build_content_understanding_copy_analyzer_request(  # pylint: disable=name-t
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/analyzers/{analyzerId}:copyAnalyzer"
+    _url = "/analyzers/{analyzerId}:copy"
     path_format_arguments = {
         "analyzerId": _SERIALIZER.url("analyzer_id", analyzer_id, "str"),
     }
@@ -1005,7 +1005,9 @@ class _ContentUnderstandingClientOperationsMixin(
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        # Accept both 201 (Created) and 202 (Accepted) for copy analyzer operation
+        # Service may return 201 instead of 202 for this LRO
+        if response.status_code not in [201, 202]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
