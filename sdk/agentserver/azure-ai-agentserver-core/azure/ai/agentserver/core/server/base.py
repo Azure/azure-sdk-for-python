@@ -375,7 +375,7 @@ def _format_error(exc: Exception) -> str:
         return message
     if DEBUG_ERRORS:
         return repr(exc)
-    return "Internal error"
+    return f"{type(exc)}: Internal error"
 
 
 def _to_response(result: Union[Response, dict]) -> Response:
