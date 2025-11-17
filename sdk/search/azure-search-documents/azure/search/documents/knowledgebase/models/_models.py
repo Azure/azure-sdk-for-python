@@ -1407,20 +1407,40 @@ class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from remote
      SharePoint.
     :vartype kind: str or ~azure.search.documents.indexes.models.REMOTE_SHARE_POINT
-    :ivar filter_expression_add_on: A filter condition applied to the SharePoint data source. It
-     must be specified in the Keyword Query Language syntax. It will be combined as a conjunction
-     with the filter expression specified in the knowledge source definition.
-    :vartype filter_expression_add_on: str
+    :ivar filter_expression: Keyword Query Language (KQL) expression with queryable SharePoint
+     properties and attributes to scope the retrieval before the query runs. See documentation:
+     `https://learn.microsoft.com/en-us/sharepoint/dev/general-development/keyword-query-language-kql-syntax-reference
+     <https://learn.microsoft.com/en-us/sharepoint/dev/general-development/keyword-query-language-kql-syntax-reference>`_.
+    :vartype filter_expression: str
+    :ivar resource_metadata: A list of metadata fields to be returned for each item in the
+     response. Only retrievable metadata properties can be included in this list. By default, no
+     metadata is returned. Optional.
+    :vartype resource_metadata: list[str]
+    :ivar container_type_id: Container ID for SharePoint Embedded connection. When this is null, it
+     will use SharePoint Online.
+    :vartype container_type_id: str
     """
 
     kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that reads data from remote SharePoint."""
-    filter_expression_add_on: Optional[str] = rest_field(
-        name="filterExpressionAddOn", visibility=["read", "create", "update", "delete", "query"]
+    filter_expression: Optional[str] = rest_field(
+        name="filterExpression", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A filter condition applied to the SharePoint data source. It must be specified in the Keyword
-     Query Language syntax. It will be combined as a conjunction with the filter expression
-     specified in the knowledge source definition."""
+    """Keyword Query Language (KQL) expression with queryable SharePoint properties and attributes to
+     scope the retrieval before the query runs. See documentation:
+     `https://learn.microsoft.com/en-us/sharepoint/dev/general-development/keyword-query-language-kql-syntax-reference
+     <https://learn.microsoft.com/en-us/sharepoint/dev/general-development/keyword-query-language-kql-syntax-reference>`_."""
+    resource_metadata: Optional[list[str]] = rest_field(
+        name="resourceMetadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of metadata fields to be returned for each item in the response. Only retrievable
+     metadata properties can be included in this list. By default, no metadata is returned.
+     Optional."""
+    container_type_id: Optional[str] = rest_field(
+        name="containerTypeId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Container ID for SharePoint Embedded connection. When this is null, it will use SharePoint
+     Online."""
 
     @overload
     def __init__(
@@ -1431,7 +1451,9 @@ class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
-        filter_expression_add_on: Optional[str] = None,
+        filter_expression: Optional[str] = None,
+        resource_metadata: Optional[list[str]] = None,
+        container_type_id: Optional[str] = None,
     ) -> None: ...
 
     @overload

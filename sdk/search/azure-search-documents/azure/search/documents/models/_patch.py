@@ -126,26 +126,26 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
 
     def dequeue_actions(self) -> List[IndexAction]:
         """Get and remove the actions from the batch.
-        
+
         :return: The actions that were dequeued
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
         if not hasattr(self, "actions") or self.actions is None:
             return []
-        
+
         actions = self.actions
         self.actions = []
         return actions
 
     def enqueue_actions(self, actions: Union[IndexAction, List[IndexAction]]) -> None:
         """Add actions back to the batch.
-        
+
         :param actions: The action(s) to enqueue
         :type actions: ~azure.search.documents.models.IndexAction or list[~azure.search.documents.models.IndexAction]
         """
         if not hasattr(self, "actions") or self.actions is None:
             self.actions = []
-        
+
         if isinstance(actions, list):
             self.actions.extend(actions)
         else:

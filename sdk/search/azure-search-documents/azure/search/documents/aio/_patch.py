@@ -80,11 +80,7 @@ class SearchIndexingBufferedSender:
     _DEFAULT_MAX_RETRIES = 3
 
     def __init__(
-        self, 
-        endpoint: str, 
-        index_name: str, 
-        credential: Union[AzureKeyCredential, AsyncTokenCredential], 
-        **kwargs: Any
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._auto_flush = kwargs.pop("auto_flush", True)
@@ -102,16 +98,12 @@ class SearchIndexingBufferedSender:
         self._on_error = kwargs.pop("on_error", None)
         self._on_remove = kwargs.pop("on_remove", None)
         self._retry_counter: Dict[str, int] = {}
-        
+
         self._index_documents_batch = IndexDocumentsBatch()
-        
+
         # Create the search client
         self._client = _SearchClient(
-            endpoint=endpoint,
-            index_name=index_name,
-            credential=credential,
-            api_version=self._api_version,
-            **kwargs
+            endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
         )
         self._auto_flush_task: Optional[asyncio.Task] = None
         if self._auto_flush:
@@ -121,11 +113,11 @@ class SearchIndexingBufferedSender:
         """Schedule the auto flush task."""
         if self._auto_flush_task and not self._auto_flush_task.done():
             self._auto_flush_task.cancel()
-        
+
         async def auto_flush_worker():
             await asyncio.sleep(self._auto_flush_interval)
             await self._process()
-        
+
         try:
             loop = asyncio.get_event_loop()
             self._auto_flush_task = loop.create_task(auto_flush_worker())
@@ -198,7 +190,7 @@ class SearchIndexingBufferedSender:
         raise_error = kwargs.pop("raise_error", True)
         actions = self._index_documents_batch.dequeue_actions()
         has_error = False
-        
+
         if not self._index_key:
             try:
                 credential = cast(Union[AzureKeyCredential, AsyncTokenCredential], self._credential)
@@ -246,14 +238,17 @@ class SearchIndexingBufferedSender:
 
     async def _process_if_needed(self) -> bool:
         """Check if processing is needed and process if necessary.
-        
+
         :return: True if process had errors, False otherwise
         :rtype: bool
         """
         if not self._auto_flush:
             return False
 
-        if len(self._index_documents_batch.actions if self._index_documents_batch.actions else []) < self._batch_action_count:
+        if (
+            len(self._index_documents_batch.actions if self._index_documents_batch.actions else [])
+            < self._batch_action_count
+        ):
             return False
 
         return await self._process(raise_error=False)
@@ -318,7 +313,7 @@ class SearchIndexingBufferedSender:
     async def _index_documents_actions(self, actions: List[IndexAction], **kwargs) -> List[IndexingResult]:
         timeout = kwargs.pop("timeout", 86400)
         begin_time = asyncio.get_event_loop().time()
-        
+
         batch = IndexDocumentsBatch(actions=actions)
         try:
             batch_response = await self._client.index_documents(batch=batch, **kwargs)
@@ -337,7 +332,7 @@ class SearchIndexingBufferedSender:
                 actions=actions[:pos], timeout=remaining, **kwargs
             )
             result_first_half = list(batch_response_first_half) if batch_response_first_half else []
-            
+
             now = asyncio.get_event_loop().time()
             remaining = timeout - (now - begin_time)
             if remaining < 0:
@@ -346,7 +341,7 @@ class SearchIndexingBufferedSender:
                 actions=actions[pos:], timeout=remaining, **kwargs
             )
             result_second_half = list(batch_response_second_half) if batch_response_second_half else []
-            
+
             result_first_half.extend(result_second_half)
             return result_first_half
 

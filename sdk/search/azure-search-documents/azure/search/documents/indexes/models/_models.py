@@ -894,8 +894,9 @@ class SearchIndexerSkill(_Model):
     CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill,
     LanguageDetectionSkill, MergeSkill, PIIDetectionSkill, SentimentSkill, SplitSkill,
     TextTranslationSkill, EntityLinkingSkill, EntityRecognitionSkillV3, SentimentSkillV3,
-    ConditionalSkill, DocumentExtractionSkill, DocumentIntelligenceLayoutSkill, ShaperSkill,
-    ImageAnalysisSkill, OcrSkill, VisionVectorizeSkill
+    ConditionalSkill, ContentUnderstandingSkill, DocumentExtractionSkill,
+    DocumentIntelligenceLayoutSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill,
+    VisionVectorizeSkill
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
     :vartype odata_type: str
@@ -2372,6 +2373,121 @@ class ConditionalSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.odata_type = "#Microsoft.Skills.Util.ConditionalSkill"  # type: ignore
+
+
+class ContentUnderstandingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.ContentUnderstandingSkill"):
+    """A skill that leverages Azure AI Content Understanding to process and extract structured
+    insights from documents, enabling enriched, searchable content for enhanced document indexing
+    and retrieval.
+
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :vartype context: str
+    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
+     an upstream skill. Required.
+    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
+     be consumed as an input by another skill. Required.
+    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :ivar extraction_options: Controls the cardinality of the content extracted from the document
+     by the skill.
+    :vartype extraction_options: list[str or
+     ~azure.search.documents.indexes.models.ContentUnderstandingSkillExtractionOptions]
+    :ivar chunking_properties: Controls the cardinality for chunking the content.
+    :vartype chunking_properties:
+     ~azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingProperties
+    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+     "#Microsoft.Skills.Util.ContentUnderstandingSkill".
+    :vartype odata_type: str
+    """
+
+    extraction_options: Optional[list[Union[str, "_models.ContentUnderstandingSkillExtractionOptions"]]] = rest_field(
+        name="extractionOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls the cardinality of the content extracted from the document by the skill."""
+    chunking_properties: Optional["_models.ContentUnderstandingSkillChunkingProperties"] = rest_field(
+        name="chunkingProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls the cardinality for chunking the content."""
+    odata_type: Literal["#Microsoft.Skills.Util.ContentUnderstandingSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A URI fragment specifying the type of skill. Required. Default value is
+     \"#Microsoft.Skills.Util.ContentUnderstandingSkill\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inputs: list["_models.InputFieldMappingEntry"],
+        outputs: list["_models.OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        extraction_options: Optional[list[Union[str, "_models.ContentUnderstandingSkillExtractionOptions"]]] = None,
+        chunking_properties: Optional["_models.ContentUnderstandingSkillChunkingProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.odata_type = "#Microsoft.Skills.Util.ContentUnderstandingSkill"  # type: ignore
+
+
+class ContentUnderstandingSkillChunkingProperties(_Model):  # pylint: disable=name-too-long
+    """Controls the cardinality for chunking the content.
+
+    :ivar unit: The unit of the chunk. "characters"
+    :vartype unit: str or
+     ~azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingUnit
+    :ivar maximum_length: The maximum chunk length in characters. Default is 500.
+    :vartype maximum_length: int
+    :ivar overlap_length: The length of overlap provided between two text chunks. Default is 0.
+    :vartype overlap_length: int
+    """
+
+    unit: Optional[Union[str, "_models.ContentUnderstandingSkillChunkingUnit"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The unit of the chunk. \"characters\""""
+    maximum_length: Optional[int] = rest_field(
+        name="maximumLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum chunk length in characters. Default is 500."""
+    overlap_length: Optional[int] = rest_field(
+        name="overlapLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The length of overlap provided between two text chunks. Default is 0."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        unit: Optional[Union[str, "_models.ContentUnderstandingSkillChunkingUnit"]] = None,
+        maximum_length: Optional[int] = None,
+        overlap_length: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class CorsOptions(_Model):

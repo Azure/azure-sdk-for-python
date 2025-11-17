@@ -152,6 +152,22 @@ class CjkBigramTokenFilterScripts(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ignore Hangul script when forming bigrams of CJK terms."""
 
 
+class ContentUnderstandingSkillChunkingUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls the cardinality of the chunk unit. Default is 'characters'."""
+
+    CHARACTERS = "characters"
+    """Specifies chunk by characters."""
+
+
+class ContentUnderstandingSkillExtractionOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls the cardinality of the content extracted from the document by the skill."""
+
+    IMAGES = "images"
+    """Specify that image content should be extracted from the document."""
+    LOCATION_METADATA = "locationMetadata"
+    """Specify that location metadata should be extracted from the document."""
+
+
 class CustomEntityLookupSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The language codes supported for input text by CustomEntityLookupSkill."""
 

@@ -28,7 +28,7 @@ from ._version import VERSION as SDK_MONIKER
 
 def is_retryable_status_code(status_code: int) -> bool:
     """Check if a status code is retryable.
-    
+
     :param int status_code: The status code to check
     :return: True if the status code is retryable, False otherwise
     :rtype: bool
@@ -119,28 +119,20 @@ class SearchIndexingBufferedSender:
         self._on_error = kwargs.pop("on_error", None)
         self._on_remove = kwargs.pop("on_remove", None)
         self._retry_counter: Dict[str, int] = {}
-        
+
         self._index_documents_batch = IndexDocumentsBatch()
         audience = kwargs.pop("audience", None)
-        
+
         # Create the search client based on credential type
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                credential=credential,
-                api_version=self._api_version,
-                **kwargs
+                endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
             )
         else:
             self._aad = True
             self._client = _SearchClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                credential=credential,
-                api_version=self._api_version,
-                **kwargs
+                endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
             )
         self._reset_timer()
 
@@ -252,14 +244,17 @@ class SearchIndexingBufferedSender:
 
     def _process_if_needed(self) -> bool:
         """Check if processing is needed and process if necessary.
-        
+
         :return: True if process had errors, False otherwise
         :rtype: bool
         """
         if not self._auto_flush:
             return False
 
-        if len(self._index_documents_batch.actions if self._index_documents_batch.actions else []) < self._batch_action_count:
+        if (
+            len(self._index_documents_batch.actions if self._index_documents_batch.actions else [])
+            < self._batch_action_count
+        ):
             return False
 
         return self._process(raise_error=False)
@@ -336,7 +331,7 @@ class SearchIndexingBufferedSender:
 
         timeout = kwargs.pop("timeout", 86400)
         begin_time = int(time.time())
-        
+
         batch = IndexDocumentsBatch(actions=actions)
         try:
             batch_response = self._client.index_documents(batch=batch, **kwargs)
@@ -355,7 +350,7 @@ class SearchIndexingBufferedSender:
                 actions=actions[:pos], timeout=remaining, **kwargs
             )
             result_first_half = list(batch_response_first_half) if batch_response_first_half else []
-            
+
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
@@ -364,7 +359,7 @@ class SearchIndexingBufferedSender:
                 actions=actions[pos:], timeout=remaining, **kwargs
             )
             result_second_half = list(batch_response_second_half) if batch_response_second_half else []
-            
+
             result_first_half.extend(result_second_half)
             return result_first_half
 
