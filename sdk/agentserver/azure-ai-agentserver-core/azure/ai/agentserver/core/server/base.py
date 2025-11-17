@@ -105,6 +105,8 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
         if user_info:
             ctx = request_context.get() or {}
             for key, value in user_info.to_dict().items():
+                if key == "objectId":
+                    continue  # skip user objectId
                 ctx[f"azure.ai.agentserver.user.{key}"] = str(value)
             request_context.set(ctx)
         return user_info
