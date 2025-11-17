@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b5 (2025-11-16)
+
+### Bugs Fixed
+
+- Fixed streaming generation issues.
+
 
 ## 1.0.0b4 (2025-11-13)
 
