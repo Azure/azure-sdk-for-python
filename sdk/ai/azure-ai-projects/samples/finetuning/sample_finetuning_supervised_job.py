@@ -77,8 +77,8 @@ def resume_job(openai_client, job_id):
     print(resumed_job)
 
 
-def deploy_and_inference(openai_client, credential, job_id):
-    """Deploy the fine-tuned model and perform inference.
+def deploy_model(openai_client, credential, job_id):
+    """Deploy the fine-tuned model.
 
     Deploy model using Azure Management SDK (azure-mgmt-cognitiveservices).
     Note: Deployment can only be started after the fine-tuning job completes successfully.
@@ -109,6 +109,12 @@ def deploy_and_inference(openai_client, credential, job_id):
             time.sleep(30)
             print(f"Deployment status: {deployment.status()}")
 
+    print(f"Model deployment completed: {deployment_name}")
+    return deployment_name
+
+
+def inference_model(openai_client, deployment_name):
+    """Perform inference on the deployed fine-tuned model."""
     print(f"Testing fine-tuned model via deployment: {deployment_name}")
 
     response = openai_client.responses.create(
@@ -205,7 +211,9 @@ def main() -> None:
 
         # cancel_job(openai_client, fine_tuning_job.id)
 
-        # deploy_and_inference(openai_client, credential, fine_tuning_job.id)
+        # deployment_name = deploy_model(openai_client, credential, fine_tuning_job.id)
+
+        # inference_model(openai_client, deployment_name)
 
 
 if __name__ == "__main__":
