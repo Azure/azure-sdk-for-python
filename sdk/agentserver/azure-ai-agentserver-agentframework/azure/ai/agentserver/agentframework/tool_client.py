@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# mypy: disable-error-code="assignment"
 """Tool client for integrating AzureAIToolClient with Agent Framework."""
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional

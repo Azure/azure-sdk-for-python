@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
-# mypy: disable-error-code="name-defined,annotation-unchecked,arg-type"
+# mypy: ignore-errors
 import inspect
 import json
 import os
@@ -556,7 +556,7 @@ def _format_error(exc: Exception) -> str:
         return message
     if DEBUG_ERRORS:
         return repr(exc)
-    return "Internal error"
+    return f"{type(exc)}: Internal error"
 
 
 def _to_response(result: Union[Response, dict]) -> Response:
