@@ -228,7 +228,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
     def _to_output(cls, result: Any) -> str:
         if isinstance(result, str):
             return result
-        elif isinstance(result, list):
+        if isinstance(result, list):
             text = []
             for item in result:
                 if isinstance(item, BaseContent):
@@ -236,8 +236,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
                 else:
                     text.append(str(item))
             return json.dumps(text)
-        else:
-            return ""
+        return ""
 
 
 class AgentFrameworkOutputStreamingConverter:
@@ -281,7 +280,9 @@ class AgentFrameworkOutputStreamingConverter:
             response=created_response,
         )
 
-        is_changed = lambda a, b: a is not None and b is not None and a.message_id != b.message_id
+        is_changed = (
+            lambda a, b: a is not None and b is not None and a.message_id != b.message_id
+        )
         async for group in chunk_on_change(updates, is_changed):
             has_value, first, contents = await peek(self._read_updates(group))
             if not has_value:

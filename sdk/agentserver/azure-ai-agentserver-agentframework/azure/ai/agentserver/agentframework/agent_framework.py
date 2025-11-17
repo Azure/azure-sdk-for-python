@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation,no-name-in-module
+# pylint: disable=logging-fstring-interpolation,no-name-in-module,no-member
 from __future__ import annotations
 
 import os
@@ -239,7 +239,9 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                         #         logger.debug("Agent streaming iterator finished (StopAsyncIteration)")
                         #         break
                         #     except asyncio.TimeoutError:
-                        #         logger.warning("Streaming idle timeout reached (%.1fs); terminating stream.", timeout_s)
+                        #         logger.warning(
+                        #             "Streaming idle timeout reached (%.1fs); terminating stream.", timeout_s
+                        #         )
                         #         for ev in streaming_converter.completion_events():
                         #             yield ev
                         #         return
