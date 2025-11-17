@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0 (2025-11-16)
+## 2.0.0 (2025-11-17)
 
 ### Features Added
 
@@ -80,32 +80,23 @@
   - Added model `UserApiKeyResponse`
   - Added model `UserApiKeyResponseProperties`
   - Added model `UserEmailId`
-  - Model `DeploymentInfoOperations` added parameter `kwargs` in method `__init__`
-  - Model `MonitoredResourcesOperations` added parameter `kwargs` in method `__init__`
-  - Model `MonitorsOperations` added parameter `kwargs` in method `__init__`
-  - Model `MonitorsOperations` added method `begin_update`
-  - Model `Operations` added parameter `kwargs` in method `__init__`
-  - Model `TagRulesOperations` added parameter `kwargs` in method `__init__`
-  - Model `VMCollectionOperations` added parameter `kwargs` in method `__init__`
-  - Model `VMHostOperations` added parameter `kwargs` in method `__init__`
-  - Model `VMIngestionOperations` added parameter `kwargs` in method `__init__`
-  - Added model `AllTrafficFiltersOperations`
-  - Added model `AssociateTrafficFilterOperations`
-  - Added model `BillingInfoOperations`
-  - Added model `ConnectedPartnerResourcesOperations`
-  - Added model `CreateAndAssociateIPFilterOperations`
-  - Added model `CreateAndAssociatePLFilterOperations`
-  - Added model `DetachAndDeleteTrafficFilterOperations`
-  - Added model `DetachTrafficFilterOperations`
-  - Added model `ElasticVersionsOperations`
-  - Added model `ExternalUserOperations`
-  - Added model `ListAssociatedTrafficFiltersOperations`
-  - Added model `MonitorOperations`
-  - Added model `MonitoredSubscriptionsOperations`
-  - Added model `OpenAIOperations`
-  - Added model `OrganizationsOperations`
-  - Added model `TrafficFiltersOperations`
-  - Added model `UpgradableVersionsOperations`
+  - Added operation group `AllTrafficFiltersOperations`
+  - Added operation group `AssociateTrafficFilterOperations`
+  - Added operation group `BillingInfoOperations`
+  - Added operation group `ConnectedPartnerResourcesOperations`
+  - Added operation group `CreateAndAssociateIPFilterOperations`
+  - Added operation group `CreateAndAssociatePLFilterOperations`
+  - Added operation group `DetachAndDeleteTrafficFilterOperations`
+  - Added operation group `DetachTrafficFilterOperations`
+  - Added operation group `ElasticVersionsOperations`
+  - Added operation group `ExternalUserOperations`
+  - Added operation group `ListAssociatedTrafficFiltersOperations`
+  - Added operation group `MonitorOperations`
+  - Added operation group `MonitoredSubscriptionsOperations`
+  - Added operation group `OpenAIOperations`
+  - Added operation group `OrganizationsOperations`
+  - Added operation group `TrafficFiltersOperations`
+  - Added operation group `UpgradableVersionsOperations`
 
 ### Breaking Changes
 
