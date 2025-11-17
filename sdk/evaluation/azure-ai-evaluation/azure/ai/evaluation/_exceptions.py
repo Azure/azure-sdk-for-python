@@ -85,7 +85,7 @@ class ErrorTarget(Enum):
     SIMILARITY_EVALUATOR = "SimilarityEvaluator"
     FLUENCY_EVALUATOR = "FluencyEvaluator"
     RETRIEVAL_EVALUATOR = "RetrievalEvaluator"
-    TOOL_SUCCESS_EVALUATOR = "_ToolSuccessEvaluator"
+    TOOL_CALL_SUCCESS_EVALUATOR = "_ToolCallSuccessEvaluator"
     TASK_ADHERENCE_EVALUATOR = "TaskAdherenceEvaluator"
     TASK_COMPLETION_EVALUATOR = "_TaskCompletionEvaluator"
     INDIRECT_ATTACK_EVALUATOR = "IndirectAttackEvaluator"

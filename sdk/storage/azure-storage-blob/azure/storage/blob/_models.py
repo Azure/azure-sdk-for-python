@@ -600,7 +600,7 @@ class FilteredBlob(DictMixin):
     """Key value pairs of blob tags."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('name', None)
+        self.name = kwargs.get('name', None)  # type: ignore [assignment]
         self.container_name = kwargs.get('container_name', None)
         self.tags = kwargs.get('tags', None)
 

@@ -10,6 +10,28 @@
             "type": "azure_ai_evaluator",
             "name": "violence",
             "evaluator_name": "violence"
+        },
+        {
+            "type": "azure_ai_evaluator",
+            "name": "self_harm",
+            "evaluator_name": "builtin.self_harm"
+        },
+        {
+            "type": "azure_ai_evaluator",
+            "id": "ViolenceContentCustomEvaluator_35feb949-e01b-4502-8011-d22347d092af",
+            "name": "ViolenceContentCustomEvaluator",
+            "evaluator_name": "custom.violence",
+            "evaluator_version": "1",
+            "initialization_parameters": {
+                "threshold": 3
+            },
+            "data_mapping": {
+                "query": "{{item.question}}",
+                "response": "{{item.answer}}",
+                "context": "{{item.context}}",
+                "ground_truth": "{{item.ground_truth}}"
+            },
+            "registry_name": ""
         }
     ]
 }

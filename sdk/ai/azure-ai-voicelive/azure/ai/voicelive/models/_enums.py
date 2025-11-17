@@ -56,6 +56,7 @@ class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_CREATE = "response.create"
     RESPONSE_CANCEL = "response.cancel"
     SESSION_AVATAR_CONNECT = "session.avatar.connect"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
 
 
 class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -106,6 +107,19 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MESSAGE = "message"
     FUNCTION_CALL = "function_call"
     FUNCTION_CALL_OUTPUT = "function_call_output"
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    MCP_CALL = "mcp_call"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+
+
+class MCPApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The available set of MCP approval types."""
+
+    NEVER = "never"
+    """Approval is never required."""
+    ALWAYS = "always"
+    """Approval is always required."""
 
 
 class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -235,6 +249,16 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
+    MCP_LIST_TOOLS_IN_PROGRESS = "mcp_list_tools.in_progress"
+    MCP_LIST_TOOLS_COMPLETED = "mcp_list_tools.completed"
+    MCP_LIST_TOOLS_FAILED = "mcp_list_tools.failed"
+    RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call_arguments.delta"
+    RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call_arguments.done"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
+    RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
+    RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
 
 
 class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -254,6 +278,7 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     FUNCTION = "function"
+    MCP = "mcp"
 
 
 class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
