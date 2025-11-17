@@ -15,10 +15,8 @@
   - Added model `ResubscribeProperties`
   - Added model `SaaSData`
   - Added model `SaaSResourceDetailsResponse`
-  - Operation group `MonitoredSubscriptionsOperations` added method `begin_create_or_update`
   - Operation group `MonitorsOperations` added method `begin_link_saa_s`
   - Operation group `MonitorsOperations` added method `begin_resubscribe`
-  - Operation group `MonitorsOperations` added method `begin_update`
   - Operation group `MonitorsOperations` added method `latest_linked_saa_s`
   - Operation group `MonitorsOperations` added method `refresh_ingestion_key`
   - Added operation group `SaaSOperations`
@@ -26,8 +24,8 @@
 ### Breaking Changes
 
   - Deleted or renamed model `BillingCycle`
-  - Deleted or renamed method `MonitoredSubscriptionsOperations.begin_createor_update`
-  - Deleted or renamed method `MonitorsOperations.update`
+  - Operation group `MonitoredSubscriptionsOperations` renamed method `begin_createor_update` to `begin_create_or_update`
+  - Operation group `MonitorsOperations` renamed method `update` to `begin_update`
 
 ## 1.1.0 (2024-03-18)
 
