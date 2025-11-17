@@ -75,7 +75,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="WARNING",
                 severity_number=SeverityNumber.WARN,
                 body="Test message",
@@ -87,7 +87,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_empty = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="WARNING",
                 severity_number=SeverityNumber.WARN,
                 body="",
@@ -99,7 +99,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_none = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="WARNING",
                 severity_number=SeverityNumber.WARN,
                 body=None,
@@ -111,7 +111,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_complex_body = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="WARNING",
                 severity_number=SeverityNumber.WARN,
                 body={"foo": {"bar": "baz", "qux": 42}},
@@ -123,7 +123,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_complex_body_not_serializeable = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="WARNING",
                 severity_number=SeverityNumber.WARN,
                 body=NotSerializeableClass(),
@@ -135,7 +135,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_empty_with_whitespaces = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="WARNING",
                 severity_number=SeverityNumber.WARN,
                 body="  ",
@@ -147,7 +147,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_event = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="INFO",
                 severity_number=SeverityNumber.INFO,
                 body="Test Event",
@@ -162,7 +162,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_event_complex_body = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="INFO",
                 severity_number=SeverityNumber.INFO,
                 body={"foo": {"bar": "baz", "qux": 42}},
@@ -191,7 +191,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_custom_event = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="INFO",
                 severity_number=SeverityNumber.INFO,
                 body="Test Event",
@@ -207,7 +207,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._exc_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="EXCEPTION",
                 severity_number=SeverityNumber.FATAL,
                 body="Test message",
@@ -224,7 +224,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._exc_data_with_exc_body = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="EXCEPTION",
                 severity_number=SeverityNumber.FATAL,
                 body=Exception("test exception message"),
@@ -241,7 +241,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._exc_data_blank_exception = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="EXCEPTION",
                 severity_number=SeverityNumber.FATAL,
                 body="test exception",
@@ -253,7 +253,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._exc_data_empty = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="EXCEPTION",
                 severity_number=SeverityNumber.FATAL,
                 body="",
@@ -577,7 +577,7 @@ class TestAzureLogExporter(unittest.TestCase):
         log_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="WARNING",
                 severity_number=SeverityNumber.WARN,
                 body="Test message",
@@ -615,7 +615,7 @@ class TestAzureLogExporter(unittest.TestCase):
         log_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                context = ctx,
+                context=ctx,
                 severity_text="WARNING",
                 severity_number=SeverityNumber.WARN,
                 body="Test message",
