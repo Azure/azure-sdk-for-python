@@ -219,7 +219,7 @@ class FoundryCBAgent:
 
     @abstractmethod
     async def agent_run(
-        self, context: AgentRunContext
+        self, context: "azure.ai.agentserver.core.server.common.agent_run_context.AgentRunContext"
     ) -> Union["OpenAIResponse", Generator["ResponseStreamEvent", Any, Any], AsyncGenerator["ResponseStreamEvent", Any]]:
         raise NotImplementedError
 
