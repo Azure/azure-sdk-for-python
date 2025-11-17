@@ -66,9 +66,7 @@ async def main() -> None:
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
         print(f"Analyzing remote document from {file_url} with prebuilt-documentSearch...")
-        poller = await client.begin_analyze(
-            analyzer_id="prebuilt-documentSearch", inputs=[AnalyzeInput(url=file_url)]
-        )
+        poller = await client.begin_analyze(analyzer_id="prebuilt-documentSearch", inputs=[AnalyzeInput(url=file_url)])
         result: AnalyzeResult = await poller.result()
 
         # AnalyzeResult contains the full analysis result and can be used to access various properties
@@ -124,5 +122,3 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-

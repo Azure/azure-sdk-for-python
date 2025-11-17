@@ -185,7 +185,7 @@ def build_content_understanding_create_analyzer_request(  # pylint: disable=name
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_understanding_delet_analyzer_request(  # pylint: disable=name-too-long
+def build_content_understanding_delete_analyzer_request(  # pylint: disable=name-too-long
     analyzer_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1470,7 +1470,9 @@ class _ContentUnderstandingClientOperationsMixin(
         )
 
     @distributed_trace
-    def delet_analyzer(self, analyzer_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def delete_analyzer(  # pylint: disable=inconsistent-return-statements
+        self, analyzer_id: str, **kwargs: Any
+    ) -> None:
         """Delete analyzer.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -1492,7 +1494,7 @@ class _ContentUnderstandingClientOperationsMixin(
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_content_understanding_delet_analyzer_request(
+        _request = build_content_understanding_delete_analyzer_request(
             analyzer_id=analyzer_id,
             api_version=self._config.api_version,
             headers=_headers,

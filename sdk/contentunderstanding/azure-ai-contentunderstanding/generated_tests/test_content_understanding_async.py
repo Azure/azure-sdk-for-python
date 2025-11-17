@@ -148,9 +148,9 @@ class TestContentUnderstandingAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_delet_analyzer(self, contentunderstanding_endpoint):
+    async def test_delete_analyzer(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.delet_analyzer(
+        response = await client.delete_analyzer(
             analyzer_id="str",
         )
 

@@ -38,7 +38,7 @@ from ..._operations._operations import (
     build_content_understanding_analyze_request,
     build_content_understanding_copy_analyzer_request,
     build_content_understanding_create_analyzer_request,
-    build_content_understanding_delet_analyzer_request,
+    build_content_understanding_delete_analyzer_request,
     build_content_understanding_delete_result_request,
     build_content_understanding_get_analyzer_request,
     build_content_understanding_get_defaults_request,
@@ -1091,7 +1091,7 @@ class _ContentUnderstandingClientOperationsMixin(
         )
 
     @distributed_trace_async
-    async def delet_analyzer(self, analyzer_id: str, **kwargs: Any) -> None:
+    async def delete_analyzer(self, analyzer_id: str, **kwargs: Any) -> None:
         """Delete analyzer.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -1113,7 +1113,7 @@ class _ContentUnderstandingClientOperationsMixin(
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_content_understanding_delet_analyzer_request(
+        _request = build_content_understanding_delete_analyzer_request(
             analyzer_id=analyzer_id,
             api_version=self._config.api_version,
             headers=_headers,

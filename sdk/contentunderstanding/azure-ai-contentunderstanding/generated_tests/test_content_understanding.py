@@ -139,9 +139,9 @@ class TestContentUnderstanding(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_delet_analyzer(self, contentunderstanding_endpoint):
+    def test_delete_analyzer(self, contentunderstanding_endpoint):
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.delet_analyzer(
+        response = client.delete_analyzer(
             analyzer_id="str",
         )
 

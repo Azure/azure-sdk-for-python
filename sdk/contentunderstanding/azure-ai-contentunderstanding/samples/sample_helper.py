@@ -67,5 +67,3 @@ def read_binary_file(filepath: str) -> bytes:
     """
     with open(filepath, "rb") as f:
         return f.read()
-
-
