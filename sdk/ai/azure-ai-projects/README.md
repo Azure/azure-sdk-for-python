@@ -5,6 +5,7 @@ resources in your Microsoft Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on methods on the `.agents` client property.
 * **Enhance Agents with specialized tools**:
+  * Agent Memory Search
   * Agent-to-Agent (A2A)
   * Azure AI Search
   * Bing Custom Search
@@ -20,11 +21,12 @@ resources in your Microsoft Foundry Project. Use it to:
   * Model Context Protocol (MCP)
   * SharePoint
   * Web Search
-* **Get an OpenAI client** using `.get_openai_client()` method to run "Responses" and "Conversations" operations with your Agent.
-* **Manage memory stores** for Agent conversations, using the `.memory_store` operations.
-* **Run Evaluations** to assess the performance of your generative AI application, using the `.evaluation_rules`,
+* **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evals and FineTuning operations with your Agent.
+* **Manage memory stores** for Agent conversations, using the `.memory_stores` operations.
+* **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
 `.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
-* **Run Red Team operations** to identify risks associated with your generative AI application, using the ".red_teams" operations.
+* **Run Red Team scans** to identify risks associated with your generative AI application, using the ".red_teams" operations.
+* **Fine tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
@@ -364,6 +366,29 @@ These tools work immediately without requiring external connections.
 
   See the full sample code in [sample_agent_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_function_tool.py).
 
+* **Memory Search Tool**
+
+  The Memory Store Tool adds Memory to an Agent, allowing the Agent's AI model to search for past information related to the current user prompt.
+
+  <!-- SNIPPET:sample_agent_memory_search.memory_search_tool_declaration -->
+  ```python
+  # Set scope to associate the memories with
+  # You can also use "{{$userId}}" to take the oid of the request authentication header
+  scope = "user_123"
+
+  tool = MemorySearchTool(
+      memory_store_name=memory_store.name,
+      scope=scope,
+      update_delay=1,  # Wait 1 second of inactivity before updating memories
+      # In a real application, set this to a higher value like 300 (5 minutes, default)
+  )
+  ```
+  <!-- END SNIPPET -->
+
+  See the full [sample_agent_memory_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_memory_search.py) showing how to create an Agent with a memory store, and use it in multiple conversations.
+
+  See also samples in the folder [samples\memories](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/memories) showing how to manage memory stores.
+
 #### Connection-Based Tools
 
 These tools require configuring connections in your AI Foundry project and use `project_connection_id`.
@@ -536,6 +561,73 @@ For complete working examples of all tools, see the [sample tools directory](htt
 Evaluation in Azure AI Project client library provides quantitative, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
 
 The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
+
+<!-- SNIPPET:sample_agent_evaluation.agent_evaluation_basic -->
+
+```python
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    agent = project_client.agents.create_version(
+        agent_name=os.environ["AZURE_AI_AGENT_NAME"],
+        definition=PromptAgentDefinition(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+        ),
+    )
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+    data_source_config = DataSourceConfigCustom(
+        type="custom",
+        item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
+        include_sample_schema=True,
+    )
+    testing_criteria = [
+        {
+            "type": "azure_ai_evaluator",
+            "name": "violence_detection",
+            "evaluator_name": "builtin.violence",
+            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
+        }
+    ]
+    eval_object = openai_client.evals.create(
+        name="Agent Evaluation",
+        data_source_config=data_source_config, 
+        testing_criteria=testing_criteria,   # type: ignore
+    )
+    print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
+
+    data_source = {
+        "type": "azure_ai_target_completions",
+        "source": {
+            "type": "file_content",
+            "content": [
+                {"item": {"query": "What is the capital of France?"}},
+                {"item": {"query": "How do I reverse a string in Python?"}},
+            ],
+        },
+        "input_messages": {
+            "type": "template",
+            "template": [
+                {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
+            ],
+        },
+        "target": {
+            "type": "azure_ai_agent",
+            "name": agent.name,
+            "version": agent.version,  # Version is optional. Defaults to latest version if not specified
+        },
+    }
+
+    agent_eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
+        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore
+    )
+    print(f"Evaluation run created (id: {agent_eval_run.id})")
+```
+
+<!-- END SNIPPET -->
 
 ### Deployments operations
 

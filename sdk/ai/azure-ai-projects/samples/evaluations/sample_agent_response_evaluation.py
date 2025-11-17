@@ -21,7 +21,8 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) AZURE_AI_AGENT_NAME - The name of the AI agent to use for evaluation.
+    3) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -63,7 +64,7 @@ with (
     response = openai_client.responses.create(
         conversation=conversation.id,
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",  # TODO: Remove 'input' once service is fixed
+        input="",
     )
     print(f"Response output: {response.output_text} (id: {response.id})")
 
@@ -113,8 +114,8 @@ with (
     else:
         print("\n✗ Evaluation run failed.")
 
-    # openai_client.evals.delete(eval_id=eval_object.id)
-    # print("Evaluation deleted")
+    openai_client.evals.delete(eval_id=eval_object.id)
+    print("Evaluation deleted")
 
     project_client.agents.delete(agent_name=agent.name)
     print("Agent deleted")
