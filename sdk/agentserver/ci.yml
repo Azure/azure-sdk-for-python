@@ -32,16 +32,13 @@ extends:
     TestProxy: true
     BuildDocs: true
     TestTimeoutInMinutes: 60
-    PythonVersionForAnalyze: '3.10'
-    # The job "Test ubuntu2404_pypy39" in the "python - agentserver" pipeline hangs and eventually times out.
+    # The job "Test ubuntu2404_pypy311" in the "python - agentserver" pipeline hangs and eventually times out.
     # Disable it until the issue is understood.
     MatrixConfigs:
-      - Name: communication_ci_matrix
+      - Name: agentserver
         Path: sdk/agentserver/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
-    MatrixFilters:
-      - PythonVersion=^(?!pypy3).*
     Artifacts:
     - name: azure-ai-agentserver-core
       safeName: azureaiagentservercore

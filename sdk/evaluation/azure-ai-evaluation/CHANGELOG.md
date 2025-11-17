@@ -1,16 +1,26 @@
 # Release History
 
-## 1.13.5 (Unreleased)
+## 1.13.7 (2025-11-14)
 
-### Features Added
+### Bugs Fixed
 
-### Breaking Changes
+- Fixed NoneType error when generating usage summary in evaluation results.
+- Fixed results for f1_score.
+
+## 1.13.6 (2025-11-12)
+
+### Bugs Fixed
+
+- Added detection and retry handling for network errors wrapped in generic exceptions with "Error sending prompt with conversation ID" message
+- Fix results for ungrounded_attributes
+- score_mode grader improvements
+- fix for Red Team to ensure hate/unfairness evaluation rows populate when OneDP sync evaluators report results under the hate_unfairness metric name.
+
+## 1.13.5 (2025-11-10)
 
 ### Bugs Fixed
 
 - **TaskAdherenceEvaluator:** treat tool definitions as optional so evaluations with only query/response inputs no longer raise “Either 'conversation' or individual inputs must be provided.”
-
-### Other Changes
 
 ## 1.13.4 (2025-11-10)
 

@@ -33,37 +33,38 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 
 load_dotenv()
 
-# [START tool_declaration]
-tool = FunctionTool(
-    name="get_horoscope",
-    parameters={
-        "type": "object",
-        "properties": {
-            "sign": {
-                "type": "string",
-                "description": "An astrological sign like Taurus or Aquarius",
-            },
-        },
-        "required": ["sign"],
-        "additionalProperties": False,
-    },
-    description="Get today's horoscope for an astrological sign.",
-    strict=True,
-)
-# [END tool_declaration]
 
 def get_horoscope(sign: str) -> str:
     """Generate a horoscope for the given astrological sign."""
     return f"{sign}: Next Tuesday you will befriend a baby otter."
 
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
-with project_client:
+    # [START tool_declaration]
+    tool = FunctionTool(
+        name="get_horoscope",
+        parameters={
+            "type": "object",
+            "properties": {
+                "sign": {
+                    "type": "string",
+                    "description": "An astrological sign like Taurus or Aquarius",
+                },
+            },
+            "required": ["sign"],
+            "additionalProperties": False,
+        },
+        description="Get today's horoscope for an astrological sign.",
+        strict=True,
+    )
+    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
@@ -73,8 +74,6 @@ with project_client:
             tools=[tool],
         ),
     )
-
-    openai_client = project_client.get_openai_client()
 
     # Prompt the model with tools defined
     response = openai_client.responses.create(

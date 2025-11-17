@@ -51,54 +51,53 @@ async def main() -> None:
     dataset_version_1 = os.environ.get("DATASET_VERSION_1", "1.0")
     dataset_version_2 = os.environ.get("DATASET_VERSION_2", "2.0")
 
-    async with DefaultAzureCredential() as credential:
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    ):
 
-        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+        print(
+            f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."
+        )
+        dataset: DatasetVersion = await project_client.datasets.upload_file(
+            name=dataset_name,
+            version=dataset_version_1,
+            file_path=data_file,
+            connection_name=connection_name,
+        )
+        print(dataset)
 
-            print(
-                f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."
-            )
-            dataset: DatasetVersion = await project_client.datasets.upload_file(
-                name=dataset_name,
-                version=dataset_version_1,
-                file_path=data_file,
-                connection_name=connection_name,
-            )
+        print(
+            f"Upload files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
+        )
+        dataset = await project_client.datasets.upload_folder(
+            name=dataset_name,
+            version=dataset_version_2,
+            folder=data_folder,
+            connection_name=connection_name,
+            file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
+        )
+        print(dataset)
+
+        print(f"Get an existing Dataset version `{dataset_version_1}`:")
+        dataset = await project_client.datasets.get(name=dataset_name, version=dataset_version_1)
+        print(dataset)
+
+        print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
+        dataset_credential = await project_client.datasets.get_credentials(name=dataset_name, version=dataset_version_1)
+        print(dataset_credential)
+
+        print("List latest versions of all Datasets:")
+        async for dataset in project_client.datasets.list():
             print(dataset)
 
-            print(
-                f"Upload files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
-            )
-            dataset = await project_client.datasets.upload_folder(
-                name=dataset_name,
-                version=dataset_version_2,
-                folder=data_folder,
-                connection_name=connection_name,
-                file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
-            )
+        print(f"Listing all versions of the Dataset named `{dataset_name}`:")
+        async for dataset in project_client.datasets.list_versions(name=dataset_name):
             print(dataset)
 
-            print(f"Get an existing Dataset version `{dataset_version_1}`:")
-            dataset = await project_client.datasets.get(name=dataset_name, version=dataset_version_1)
-            print(dataset)
-
-            print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
-            dataset_credential = await project_client.datasets.get_credentials(
-                name=dataset_name, version=dataset_version_1
-            )
-            print(dataset_credential)
-
-            print("List latest versions of all Datasets:")
-            async for dataset in project_client.datasets.list():
-                print(dataset)
-
-            print(f"Listing all versions of the Dataset named `{dataset_name}`:")
-            async for dataset in project_client.datasets.list_versions(name=dataset_name):
-                print(dataset)
-
-            print("Delete all Dataset versions created above:")
-            await project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
-            await project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
+        print("Delete all Dataset versions created above:")
+        await project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
+        await project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
 
 
 if __name__ == "__main__":
