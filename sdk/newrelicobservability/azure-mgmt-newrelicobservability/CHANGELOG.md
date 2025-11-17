@@ -15,12 +15,12 @@
   - Added model `ResubscribeProperties`
   - Added model `SaaSData`
   - Added model `SaaSResourceDetailsResponse`
-  - Model `MonitoredSubscriptionsOperations` added method `begin_create_or_update`
-  - Model `MonitorsOperations` added method `begin_link_saa_s`
-  - Model `MonitorsOperations` added method `begin_resubscribe`
-  - Model `MonitorsOperations` added method `begin_update`
-  - Model `MonitorsOperations` added method `latest_linked_saa_s`
-  - Model `MonitorsOperations` added method `refresh_ingestion_key`
+  - Operation group `MonitoredSubscriptionsOperations` added method `begin_create_or_update`
+  - Operation group `MonitorsOperations` added method `begin_link_saa_s`
+  - Operation group `MonitorsOperations` added method `begin_resubscribe`
+  - Operation group `MonitorsOperations` added method `begin_update`
+  - Operation group `MonitorsOperations` added method `latest_linked_saa_s`
+  - Operation group `MonitorsOperations` added method `refresh_ingestion_key`
   - Added operation group `SaaSOperations`
 
 ### Breaking Changes
