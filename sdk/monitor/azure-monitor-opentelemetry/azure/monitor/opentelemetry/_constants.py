@@ -16,6 +16,7 @@ DISABLE_AZURE_CORE_TRACING_ARG = "disable_azure_core_tracing"
 DISABLE_LOGGING_ARG = "disable_logging"
 DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
+ENABLE_PERFORMANCE_COUNTERS_ARG = "enable_performance_counters"
 DISTRO_VERSION_ARG = _AZURE_MONITOR_DISTRO_VERSION_ARG
 LOGGER_NAME_ARG = "logger_name"
 LOGGING_FORMATTER_ARG = "logging_formatter"
@@ -27,6 +28,7 @@ VIEWS_ARG = "views"
 RATE_LIMITED_SAMPLER = "microsoft.rate_limited"
 FIXED_PERCENTAGE_SAMPLER = "microsoft.fixed.percentage"
 SAMPLING_TRACES_PER_SECOND_ARG = "traces_per_second"
+ENABLE_TRACE_BASED_SAMPLING_ARG = "enable_trace_based_sampling_for_logs"
 
 # --------------------Autoinstrumentation Configuration------------------------------------------
 

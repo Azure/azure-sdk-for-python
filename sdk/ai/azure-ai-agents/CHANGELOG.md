@@ -2,6 +2,13 @@
 
 # Release History
 
+## 1.2.0b6 (2025-10-24)
+
+### Bugs Fixed
+
+- Fix missing `await` in calls to asynchronous Agent methods, when `AIAgentsInstrumentor().instrument()`
+is called but no tracer is configured
+
 ## 1.2.0b5 (2025-09-29)
 
 ### Features Added
@@ -210,7 +217,7 @@ and `sample_agents_browser_automation_async.py`.
 
 ### Breaking Changes
 - enable_auto_function_calls supports positional arguments instead of keyword arguments.
-- Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use `azure-ai-projects` with `azure-ai-agents` package.
+- Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/release/azure-ai-projects/1.0.0/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use `azure-ai-projects` with `azure-ai-agents` package.
   
 ### Features Added
 - Initial version - splits off Azure AI Agents functionality from the Azure AI Projects SDK.

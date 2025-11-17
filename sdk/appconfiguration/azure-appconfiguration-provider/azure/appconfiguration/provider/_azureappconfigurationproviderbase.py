@@ -6,11 +6,8 @@
 import base64
 import hashlib
 import json
-import os
-import random
 import time
 import datetime
-from importlib.metadata import version, PackageNotFoundError
 from threading import Lock
 import logging
 from typing import (
@@ -34,20 +31,7 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
 )
 from ._models import SettingSelector
 from ._constants import (
-    REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
-    ServiceFabricEnvironmentVariable,
-    AzureFunctionEnvironmentVariable,
-    AzureWebAppEnvironmentVariable,
-    ContainerAppEnvironmentVariable,
-    KubernetesEnvironmentVariable,
     NULL_CHAR,
-    CUSTOM_FILTER_KEY,
-    PERCENTAGE_FILTER_KEY,
-    TIME_WINDOW_FILTER_KEY,
-    TARGETING_FILTER_KEY,
-    PERCENTAGE_FILTER_NAMES,
-    TIME_WINDOW_FILTER_NAMES,
-    TARGETING_FILTER_NAMES,
     TELEMETRY_KEY,
     METADATA_KEY,
     ETAG_KEY,
@@ -55,7 +39,12 @@ from ._constants import (
     ALLOCATION_ID_KEY,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
+    FEATURE_MANAGEMENT_KEY,
+    FEATURE_FLAG_KEY,
 )
+from ._refresh_timer import _RefreshTimer
+from ._request_tracing_context import _RequestTracingContext
+
 
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")
@@ -78,87 +67,79 @@ def delay_failure(start_time: datetime.datetime) -> None:
         time.sleep((min_time - (current_time - start_time)).total_seconds())
 
 
-def update_correlation_context_header(
-    headers,
-    request_type,
-    replica_count,
-    uses_feature_flags,
-    feature_filters_used,
-    uses_key_vault,
-    uses_load_balancing,
-    is_failover_request,
-    uses_ai_configuration,
-    uses_aicc_configuration,
-) -> Dict[str, str]:
-    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
-        return headers
-    correlation_context = "RequestType=" + request_type
+def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
+    """
+    Process and validate all load function parameters in one place.
+    This consolidates the most obviously duplicated logic from both sync and async load functions.
 
-    if len(feature_filters_used) > 0:
-        filters_used = ""
-        if CUSTOM_FILTER_KEY in feature_filters_used:
-            filters_used = CUSTOM_FILTER_KEY
-        if PERCENTAGE_FILTER_KEY in feature_filters_used:
-            filters_used += ("+" if filters_used else "") + PERCENTAGE_FILTER_KEY
-        if TIME_WINDOW_FILTER_KEY in feature_filters_used:
-            filters_used += ("+" if filters_used else "") + TIME_WINDOW_FILTER_KEY
-        if TARGETING_FILTER_KEY in feature_filters_used:
-            filters_used += ("+" if filters_used else "") + TARGETING_FILTER_KEY
-        correlation_context += ",Filters=" + filters_used
+    :param args: Positional arguments, either endpoint and credential, or connection string.
+    :type args: Any
+    :return: Dictionary containing processed parameters
+    :rtype: Dict[str, Any]
+    """
+    endpoint: Optional[str] = kwargs.pop("endpoint", None)
+    credential = kwargs.pop("credential", None)
+    connection_string: Optional[str] = kwargs.pop("connection_string", None)
+    start_time = datetime.datetime.now()
 
-    correlation_context += _uses_feature_flags(uses_feature_flags)
+    # Handle positional arguments
+    if len(args) > 2:
+        raise TypeError(
+            "Unexpected positional parameters. Please pass either endpoint and credential, or a connection string."
+        )
+    if len(args) == 1:
+        if endpoint is not None:
+            raise TypeError("Received multiple values for parameter 'endpoint'.")
+        endpoint = args[0]
+    elif len(args) == 2:
+        if credential is not None:
+            raise TypeError("Received multiple values for parameter 'credential'.")
+        endpoint, credential = args
 
-    if uses_key_vault:
-        correlation_context += ",UsesKeyVault"
-    host_type = ""
-    if AzureFunctionEnvironmentVariable in os.environ:
-        host_type = "AzureFunction"
-    elif AzureWebAppEnvironmentVariable in os.environ:
-        host_type = "AzureWebApp"
-    elif ContainerAppEnvironmentVariable in os.environ:
-        host_type = "ContainerApp"
-    elif KubernetesEnvironmentVariable in os.environ:
-        host_type = "Kubernetes"
-    elif ServiceFabricEnvironmentVariable in os.environ:
-        host_type = "ServiceFabric"
-    if host_type:
-        correlation_context += ",Host=" + host_type
+    # Validate endpoint/credential vs connection_string
+    if (endpoint or credential) and connection_string:
+        raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
-    if replica_count > 0:
-        correlation_context += ",ReplicaCount=" + str(replica_count)
+    # Process Key Vault options in one place
+    key_vault_options = kwargs.pop("key_vault_options", None)
+    if key_vault_options:
+        if "keyvault_credential" in kwargs or "secret_resolver" in kwargs or "keyvault_client_configs" in kwargs:
+            raise ValueError(
+                "Key Vault configurations should only be set by either the key_vault_options or kwargs not both."
+            )
+        kwargs["keyvault_credential"] = key_vault_options.credential
+        kwargs["secret_resolver"] = key_vault_options.secret_resolver
+        kwargs["keyvault_client_configs"] = key_vault_options.client_configs
 
-    if is_failover_request:
-        correlation_context += ",Failover"
+    if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
+        raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
-    features = ""
+    # Validate feature flag selectors don't use snapshots
+    feature_flag_selectors = kwargs.get("feature_flag_selectors")
+    if feature_flag_selectors:
+        for selector in feature_flag_selectors:
+            if hasattr(selector, "snapshot_name") and selector.snapshot_name is not None:
+                raise ValueError(
+                    "snapshot_name cannot be used with feature_flag_selectors. "
+                    "Use snapshot_name with regular selects instead to load feature flags from snapshots."
+                )
 
-    if uses_load_balancing:
-        features += "LB+"
+    # Determine Key Vault usage
+    uses_key_vault = (
+        "keyvault_credential" in kwargs
+        or "keyvault_client_configs" in kwargs
+        or "secret_resolver" in kwargs
+        or kwargs.get("uses_key_vault", False)
+    )
 
-    if uses_ai_configuration:
-        features += "AI+"
-
-    if uses_aicc_configuration:
-        features += "AICC+"
-
-    if features:
-        correlation_context += ",Features=" + features[:-1]
-
-    headers["Correlation-Context"] = correlation_context
-    return headers
-
-
-def _uses_feature_flags(uses_feature_flags):
-    if not uses_feature_flags:
-        return ""
-    package_name = "featuremanagement"
-    try:
-        feature_management_version = version(package_name)
-        if feature_management_version:
-            return ",FMPyVer=" + feature_management_version
-    except PackageNotFoundError:
-        pass
-    return ""
+    return {
+        "endpoint": endpoint,
+        "credential": credential,
+        "connection_string": connection_string,
+        "uses_key_vault": uses_key_vault,
+        "start_time": start_time,
+        "kwargs": kwargs,
+    }
 
 
 def is_json_content_type(content_type: str) -> bool:
@@ -227,53 +208,6 @@ def sdk_allowed_kwargs(kwargs):
     return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
 
 
-class _RefreshTimer:
-    """
-    A timer that tracks the next refresh time and the number of attempts.
-    """
-
-    def __init__(self, **kwargs):
-        self._interval: int = kwargs.pop("refresh_interval", 30)
-        if self._interval < 1:
-            raise ValueError("Refresh interval must be greater than or equal to 1 second.")
-        self._next_refresh_time: float = time.time() + self._interval
-        self._attempts: int = 1
-        self._min_backoff: int = (
-            kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= self._interval else self._interval
-        )
-        self._max_backoff: int = 600 if 600 <= self._interval else self._interval
-
-    def reset(self) -> None:
-        self._next_refresh_time = time.time() + self._interval
-        self._attempts = 1
-
-    def backoff(self) -> None:
-        self._next_refresh_time = time.time() + self._calculate_backoff() / 1000
-        self._attempts += 1
-
-    def needs_refresh(self) -> bool:
-        return time.time() >= self._next_refresh_time
-
-    def _calculate_backoff(self) -> float:
-        max_attempts = 63
-        millisecond = 1000  # 1 Second in milliseconds
-
-        min_backoff_milliseconds = self._min_backoff * millisecond
-        max_backoff_milliseconds = self._max_backoff * millisecond
-
-        if self._max_backoff <= self._min_backoff:
-            return min_backoff_milliseconds
-
-        calculated_milliseconds = max(1, min_backoff_milliseconds) * (1 << min(self._attempts, max_attempts))
-
-        if calculated_milliseconds > max_backoff_milliseconds or calculated_milliseconds <= 0:
-            calculated_milliseconds = max_backoff_milliseconds
-
-        return min_backoff_milliseconds + (
-            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec
-        )
-
-
 class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
@@ -290,29 +224,17 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
 
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
         self._trim_prefixes: List[str] = sorted(trim_prefixes, key=len, reverse=True)
-
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
         self._watched_settings: Dict[Tuple[str, str], Optional[str]] = {
             _build_watched_setting(s): None for s in refresh_on
         }
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
-        self._keyvault_credential = kwargs.pop("keyvault_credential", None)
-        self._secret_resolver = kwargs.pop("secret_resolver", None)
-        self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
-        self._uses_key_vault = (
-            self._keyvault_credential is not None
-            or (self._keyvault_client_configs is not None and len(self._keyvault_client_configs) > 0)
-            or self._secret_resolver is not None
-        )
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
         self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
         self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
-        self._feature_filter_usage: Dict[str, bool] = {}
-        self._uses_load_balancing = kwargs.pop("load_balancing_enabled", False)
-        self._uses_ai_configuration = False
-        self._uses_aicc_configuration = False  # AI Chat Completion
+        self._tracing_context = _RequestTracingContext(kwargs.pop("load_balancing_enabled", False))
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 
@@ -338,39 +260,36 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         :param feature_flag_value: The feature flag value dictionary to update.
         :type feature_flag_value: Dict[str, Any]
         """
-        if TELEMETRY_KEY in feature_flag_value:
-            if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
-                feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+        if TELEMETRY_KEY not in feature_flag_value:
+            # Initialize telemetry dictionary if not present
+            feature_flag_value[TELEMETRY_KEY] = {}
 
+        # Update telemetry metadata for application insights/logging in feature management
+        if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
+            feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
+        feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+
+        if feature_flag_value[TELEMETRY_KEY].get("enabled"):
+            self._tracing_context.uses_telemetry = True
             if not endpoint.endswith("/"):
                 endpoint += "/"
             feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
             if feature_flag.label and not feature_flag.label.isspace():
                 feature_flag_reference += f"?label={feature_flag.label}"
-            if feature_flag_value[TELEMETRY_KEY].get("enabled"):
-                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
-                allocation_id = self._generate_allocation_id(feature_flag_value)
-                if allocation_id:
-                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
 
-    def _update_feature_filter_telemetry(self, feature_flag: FeatureFlagConfigurationSetting):
-        """
-        Track feature filter usage for App Configuration telemetry.
+            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+            allocation_id = self._generate_allocation_id(feature_flag_value)
+            if allocation_id:
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
 
-        :param feature_flag: The feature flag to analyze for filter usage.
-        :type feature_flag: FeatureFlagConfigurationSetting
-        """
-        if feature_flag.filters:
-            for filter in feature_flag.filters:
-                if filter.get("name") in PERCENTAGE_FILTER_NAMES:
-                    self._feature_filter_usage[PERCENTAGE_FILTER_KEY] = True
-                elif filter.get("name") in TIME_WINDOW_FILTER_NAMES:
-                    self._feature_filter_usage[TIME_WINDOW_FILTER_KEY] = True
-                elif filter.get("name") in TARGETING_FILTER_NAMES:
-                    self._feature_filter_usage[TARGETING_FILTER_KEY] = True
-                else:
-                    self._feature_filter_usage[CUSTOM_FILTER_KEY] = True
+        allocation = feature_flag_value.get("allocation")
+        if allocation and allocation.get("seed"):
+            self._tracing_context.uses_seed = True
+
+        variants = feature_flag_value.get("variants")
+        if variants:
+            # Update Usage Data for Telemetry
+            self._tracing_context.update_max_variants(len(variants))
 
     @staticmethod
     def _generate_allocation_id(feature_flag_value: Dict[str, JSON]) -> Optional[str]:
@@ -549,9 +468,9 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             # Feature flags are of type json, but don't treat them as such
             try:
                 if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
-                    self._uses_ai_configuration = True
+                    self._tracing_context.uses_ai_configuration = True
                 if APP_CONFIG_AICC_MIME_PROFILE in config.content_type:
-                    self._uses_aicc_configuration = True
+                    self._tracing_context.uses_aicc_configuration = True
                 return json.loads(config.value)
             except json.JSONDecodeError:
                 try:
@@ -564,10 +483,27 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                     return config.value
         return config.value
 
+    def _process_feature_flags(
+        self,
+        processed_settings: Dict[str, Any],
+        processed_feature_flags: List[Dict[str, Any]],
+        feature_flags: Optional[List[FeatureFlagConfigurationSetting]],
+    ) -> Dict[str, Any]:
+        if feature_flags:
+            # Reset feature flag usage
+            self._tracing_context.reset_feature_filter_usage()
+            processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]
+            self._watched_feature_flags = self._update_watched_feature_flags(feature_flags)
+
+        if self._feature_flag_enabled:
+            processed_settings[FEATURE_MANAGEMENT_KEY] = {}
+            processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
+        return processed_settings
+
     def _process_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
         feature_flag_value = json.loads(feature_flag.value)
         self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
-        self._update_feature_filter_telemetry(feature_flag)
+        self._tracing_context.update_feature_filter_telemetry(feature_flag)
         return feature_flag_value
 
     def _update_watched_settings(
@@ -598,3 +534,51 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         for feature_flag in feature_flags:
             watched_feature_flags[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return watched_feature_flags
+
+    def _update_correlation_context_header(
+        self,
+        headers: Dict[str, str],
+        request_type: str,
+        replica_count: int,
+        uses_key_vault: bool,
+        is_failover_request: bool = False,
+    ) -> Dict[str, str]:
+        """
+        Update the correlation context header with telemetry information.
+
+        :param headers: The headers dictionary to update.
+        :type headers: Dict[str, str]
+        :param request_type: The type of request (e.g., "Startup", "Watch").
+        :type request_type: str
+        :param replica_count: The number of replica endpoints.
+        :type replica_count: int
+        :param uses_key_vault: Whether this request uses Key Vault.
+        :type uses_key_vault: bool
+        :param is_failover_request: Whether this is a failover request.
+        :type is_failover_request: bool
+        :return: The updated headers dictionary.
+        :rtype: Dict[str, str]
+        """
+        return self._tracing_context.update_correlation_context_header(
+            headers=headers,
+            request_type=request_type,
+            replica_count=replica_count,
+            uses_key_vault=uses_key_vault,
+            feature_flag_enabled=self._feature_flag_enabled,
+            is_failover_request=is_failover_request,
+        )
+
+    def _deduplicate_settings(
+        self, configuration_settings: List[ConfigurationSetting]
+    ) -> Dict[str, ConfigurationSetting]:
+        """
+        Deduplicates configuration settings by key.
+
+        :param List[ConfigurationSetting] configuration_settings: The list of configuration settings to deduplicate
+        :return: A dictionary mapping keys to their unique configuration settings
+        :rtype: Dict[str, ConfigurationSetting]
+        """
+        unique_settings: Dict[str, ConfigurationSetting] = {}
+        for settings in configuration_settings:
+            unique_settings[settings.key] = settings
+        return unique_settings

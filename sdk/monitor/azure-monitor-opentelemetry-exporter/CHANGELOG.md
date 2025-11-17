@@ -1,5 +1,35 @@
 # Release History
 
+## 1.0.0b46 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b45 (2025-11-14)
+
+### Features Added
+- Added new log record processor to support Trace Based Sampling
+  ([#43811](https://github.com/Azure/azure-sdk-for-python/pull/43811))
+- Added Operation Name Propagation for Dependencies and Logs
+  ([#43588](https://github.com/Azure/azure-sdk-for-python/pull/43588))
+- Added local storage support for multiple users on the same Linux system
+  ([#43483](https://github.com/Azure/azure-sdk-for-python/pull/43483))
+
+### Bugs Fixed
+- Modified logic for message body on Microsoft.ApplicationInsights.MessageData to include default message for messages with empty body and export logs
+  ([#43091](https://github.com/Azure/azure-sdk-for-python/pull/43091))
+
+### Other Changes
+- Unpinned fixedint dependency
+  ([#43475](https://github.com/Azure/azure-sdk-for-python/pull/43475))
+- Remove fixedint dependency
+  ([#43659](https://github.com/Azure/azure-sdk-for-python/pull/43659))
+
 ## 1.0.0b44 (2025-10-14)
 
 ### Bugs Fixed

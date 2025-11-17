@@ -29,8 +29,8 @@ def create_snapshot(
     else:
         # we need to get the volume id if we didn't just create it
         volume = client.volumes.get(rg, account_name, pool_name, volume_name)
-
-    body = Snapshot(location=location, file_system_id=volume.file_system_id)
+    # snapshot_properties = azure.mgmt.netapp.models.SnapshotProperties(file_system_id=volume.file_system_id)
+    body = Snapshot(location=location)
     client.snapshots.begin_create(rg, account_name, pool_name, volume_name, snapshot_name, body).result()
     snapshot = wait_for_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_name)
     return snapshot

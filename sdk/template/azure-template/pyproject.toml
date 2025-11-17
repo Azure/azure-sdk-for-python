@@ -29,14 +29,14 @@ dynamic = ["version", "readme"]
 
 [project.urls]
 "Bug Reports" = "https://github.com/Azure/azure-sdk-for-python/issues"
-"Source" = "https://github.com/Azure/azure-sdk-for-python"
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.template._version.VERSION"}
 readme = {file = ["README.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "samples*", "azure"]
+exclude = ["tests*", "samples*", "azure", "build*"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]

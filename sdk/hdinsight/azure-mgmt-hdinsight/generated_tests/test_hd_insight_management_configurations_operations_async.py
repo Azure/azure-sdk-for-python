@@ -21,11 +21,11 @@ class TestHDInsightManagementConfigurationsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_configurations_list(self, resource_group):
         response = await self.client.configurations.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,14 +33,14 @@ class TestHDInsightManagementConfigurationsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_configurations_begin_update(self, resource_group):
         response = await (
             await self.client.configurations.begin_update(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 configuration_name="str",
                 parameters={"str": "str"},
-                api_version="2024-08-01-preview",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -49,12 +49,12 @@ class TestHDInsightManagementConfigurationsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_configurations_get(self, resource_group):
         response = await self.client.configurations.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             configuration_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself

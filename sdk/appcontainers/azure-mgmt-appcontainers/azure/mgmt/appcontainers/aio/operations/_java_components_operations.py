@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -43,7 +43,8 @@ from ...operations._java_components_operations import (
 from .._configuration import ContainerAppsAPIClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class JavaComponentsOperations:
@@ -703,7 +704,7 @@ class JavaComponentsOperations:
     async def begin_delete(
         self, resource_group_name: str, environment_name: str, name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete a Java Component.
+        """Delete.
 
         Delete a Java Component.
 

@@ -1,5 +1,26 @@
 # Release History
 
+## 30.0.0 (2025-10-24)
+
+### Features Added
+
+  - Added operation AzureFirewallsOperations.begin_packet_capture_operation
+  - Added operation VirtualNetworkGatewaysOperations.list_radius_secrets
+  - Added operation VpnServerConfigurationsOperations.list_radius_secrets
+  - Added operation group NetworkSecurityPerimeterServiceTagsOperations
+  - Model ApplicationGatewayBackendHttpSettings has a new parameter dedicated_backend_connection
+  - Model ApplicationGatewayBackendHttpSettings has a new parameter sni_name
+  - Model ApplicationGatewayBackendHttpSettings has a new parameter validate_cert_chain_and_expiry
+  - Model ApplicationGatewayBackendHttpSettings has a new parameter validate_sni
+  - Model AzureFirewall has a new parameter extended_location
+  - Model FirewallPacketCaptureParameters has a new parameter operation
+  - Model NetworkVirtualAppliance has a new parameter nva_interface_configurations
+  - Model NetworkVirtualAppliance has a new parameter private_ip_address
+
+### Breaking Changes
+
+  - Removed operation group NetworkManagementClientOperationsMixin
+
 ## 29.0.0 (2025-05-22)
 
 ### Features Added

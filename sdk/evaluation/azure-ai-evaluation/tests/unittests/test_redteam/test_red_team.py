@@ -12,6 +12,7 @@ from datetime import datetime
 from azure.ai.evaluation.red_team._red_team import RedTeam, RiskCategory, AttackStrategy
 from azure.ai.evaluation.red_team._red_team_result import ScanResult, RedTeamResult
 from azure.ai.evaluation.red_team._attack_objective_generator import _AttackObjectiveGenerator
+from azure.ai.evaluation.red_team._utils.objective_utils import extract_risk_subtype
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.core.credentials import TokenCredential
 
@@ -1006,7 +1007,10 @@ class TestRedTeamProcessing:
         # Create mock prompt request pieces with conversation_id attribute
         mock_prompt_piece = MagicMock()
         mock_prompt_piece.conversation_id = "test-conv-id"
+        mock_prompt_piece.original_value = "test prompt"
         mock_prompt_piece.to_chat_message.return_value = MagicMock(role="user", content="test message")
+        # Mock labels.get() to return proper values
+        mock_prompt_piece.labels = {"context": "", "tool_calls": [], "risk_sub_type": None}
         mock_memory.get_prompt_request_pieces.return_value = [mock_prompt_piece]
 
         with patch("uuid.uuid4", return_value="test-uuid"), patch("pathlib.Path.open", mock_open()), patch(
@@ -1584,3 +1588,231 @@ class TestRedTeamAttackSuccessThresholds:
 
         formatted = clean_result_processor._format_thresholds_for_output()
         assert formatted == {}
+
+
+@pytest.mark.unittest
+class TestRedTeamRoundRobinSampling:
+    """Test round-robin sampling logic for custom attack objectives with risk subtypes."""
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_distributes_across_subtypes(self, red_team):
+        """Test that round-robin sampling correctly distributes objectives across subtypes."""
+        # Setup: Create custom attack objectives with multiple subtypes
+        custom_objectives = []
+        for subtype in ["subtype_a", "subtype_b", "subtype_c"]:
+            for i in range(1, 4):  # 3 objectives per subtype
+                custom_objectives.append(
+                    {
+                        "id": f"{subtype[8]}{i}",  # Extract letter from subtype name
+                        "messages": [{"content": f"objective {subtype[8]}{i}"}],
+                        "metadata": {"target_harms": [{"risk-subtype": subtype}]},
+                    }
+                )
+
+        # Mock the attack objective generator with custom prompts
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 9
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should get 9 prompts distributed evenly across 3 subtypes (3 each)
+        assert len(prompts) == 9
+
+        # Verify distribution by checking cached objectives
+        cached_key = (("violence",), "baseline")
+        selected_objectives = red_team.attack_objectives[cached_key]["selected_objectives"]
+
+        subtype_counts = {}
+        for obj in selected_objectives:
+            subtype = extract_risk_subtype(obj)
+            subtype_counts[subtype] = subtype_counts.get(subtype, 0) + 1
+
+        assert subtype_counts["subtype_a"] == 3
+        assert subtype_counts["subtype_b"] == 3
+        assert subtype_counts["subtype_c"] == 3
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_terminates_when_exhausted(self, red_team):
+        """Test that loop terminates properly when unique objectives are exhausted."""
+        # Setup: Create custom attack objectives with limited availability
+        custom_objectives = [
+            {
+                "id": "a1",
+                "messages": [{"content": "objective a1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "a2",
+                "messages": [{"content": "objective a2"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "b1",
+                "messages": [{"content": "objective b1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+            },
+        ]
+
+        # Mock the attack objective generator
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 12  # Request more than available
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should have stopped at 3 objectives (all available)
+        assert len(prompts) == 3
+
+        # Verify all unique objectives were selected
+        cached_key = (("violence",), "baseline")
+        selected_objectives = red_team.attack_objectives[cached_key]["selected_objectives"]
+        selected_ids = {obj.get("id") for obj in selected_objectives}
+        assert len(selected_ids) == 3
+        assert selected_ids == {"a1", "a2", "b1"}
+
+    @pytest.mark.asyncio
+    async def test_max_sampling_iterations_multiplier_limits_iterations(self, red_team):
+        """Test that MAX_SAMPLING_ITERATIONS_MULTIPLIER effectively limits iterations."""
+        # Setup: Create scenario where we can't fulfill the request (1 objective, request 100)
+        custom_objectives = [
+            {
+                "id": "a1",
+                "messages": [{"content": "objective a1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+        ]
+
+        # Mock the attack objective generator
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 100  # Request many more than available
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should have only selected 1 objective (all that's available)
+        assert len(prompts) == 1
+
+        # Verify the constant value is reasonable
+        from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
+
+        assert MAX_SAMPLING_ITERATIONS_MULTIPLIER == 100
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_handles_unequal_subtype_sizes(self, red_team):
+        """Test round-robin sampling with subtypes having different numbers of objectives."""
+        # Setup: Create objectives with varying availability per subtype
+        custom_objectives = [
+            {
+                "id": "a1",
+                "messages": [{"content": "objective a1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "a2",
+                "messages": [{"content": "objective a2"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "a3",
+                "messages": [{"content": "objective a3"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "a4",
+                "messages": [{"content": "objective a4"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "b1",
+                "messages": [{"content": "objective b1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+            },
+            {
+                "id": "b2",
+                "messages": [{"content": "objective b2"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+            },
+            {
+                "id": "c1",
+                "messages": [{"content": "objective c1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_c"}]},
+            },
+        ]
+
+        # Mock the attack objective generator
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 7
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should have selected 7 objectives
+        assert len(prompts) == 7
+
+        # Verify distribution - round-robin should favor larger subtypes
+        cached_key = (("violence",), "baseline")
+        selected_objectives = red_team.attack_objectives[cached_key]["selected_objectives"]
+
+        subtype_counts = {}
+        for obj in selected_objectives:
+            subtype = extract_risk_subtype(obj)
+            subtype_counts[subtype] = subtype_counts.get(subtype, 0) + 1
+
+        # Verify that we got objectives and exhausted smaller subtypes
+        assert subtype_counts["subtype_a"] >= 2  # Has most objectives (4 available)
+        assert subtype_counts["subtype_b"] >= 1  # Has 2 available
+        assert subtype_counts["subtype_c"] == 1  # Only had 1 available
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_uses_objective_id_not_object_identity(self, red_team):
+        """Test that sampling uses objective 'id' field, not Python object identity."""
+        # Setup: Create two different object instances with the same ID
+        obj_a1_instance1 = {
+            "id": "a1",
+            "messages": [{"content": "objective a1"}],
+            "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+        }
+        obj_a1_instance2 = {
+            "id": "a1",  # Same ID as instance1
+            "messages": [{"content": "objective a1"}],
+            "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+        }
+
+        # Verify they are different objects in memory
+        assert obj_a1_instance1 is not obj_a1_instance2
+        assert id(obj_a1_instance1) != id(obj_a1_instance2)
+
+        # Both instances in the list (same logical ID, different Python objects)
+        custom_objectives = [obj_a1_instance1, obj_a1_instance2]
+
+        # Mock the attack objective generator
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 2
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should only select 1 objective because both have same ID
+        assert len(prompts) == 1
+
+        # Verify the selected objective has the expected ID
+        cached_key = (("violence",), "baseline")
+        selected_objectives = red_team.attack_objectives[cached_key]["selected_objectives"]
+        assert len(selected_objectives) == 1
+        assert selected_objectives[0]["id"] == "a1"

@@ -2,6 +2,7 @@ import pytest
 import yaml
 import json
 import copy
+import sys
 from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
@@ -331,6 +332,9 @@ class TestManagedOnlineEndpoint:
         assert online_endpoint_dict["identity"]["type"] == online_endpoint.identity.type
         assert online_endpoint_dict["traffic"] == online_endpoint.traffic
 
+    @pytest.mark.skipif(
+        condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
+    )
     def test_equality(self) -> None:
         online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
         batch_online_endpoint = load_batch_endpoint(TestManagedOnlineEndpoint.BATCH_ENDPOINT_WITH_BLUE)

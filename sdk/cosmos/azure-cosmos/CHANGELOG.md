@@ -1,5 +1,24 @@
 ## Release History
 
+### 4.14.2 (2025-11-14)
+
+#### Features Added
+* Added merge support. See [PR 42924](https://github.com/Azure/azure-sdk-for-python/pull/42924).
+* Added support for priority-based throttling at the client level for sync and async clients. See [PR 43917](https://github.com/Azure/azure-sdk-for-python/pull/43917)
+
+#### Bugs Fixed
+* Fixed bug where customer provided excluded region was not always being honored during certain transient failures. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
+* Fixed TypeError bug when `parameters=None` in `query_items`. See [PR 43681](https://github.com/Azure/azure-sdk-for-python/pull/43681)
+
+#### Other Changes
+* Further optimized health checks for sync and async clients. See [PR 43339](https://github.com/Azure/azure-sdk-for-python/pull/43339)
+* Enhanced logging to ensure when a region is marked unavailable we have the proper context. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
+
+### 4.14.1 (2025-11-04)
+
+#### Bugs Fixed
+* Fixed bug where queries using `feed_range` and `continuation` options would not work as expected. See [PR 43700](https://github.com/Azure/azure-sdk-for-python/pull/43700).
+
 ### 4.14.0 (2025-10-13)
 This version and all future versions will require Python 3.9+.
 

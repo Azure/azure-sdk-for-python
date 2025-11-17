@@ -24,7 +24,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAssociableResourceTypesOperat
     async def test_network_security_perimeter_associable_resource_types_list(self, resource_group):
         response = self.client.network_security_perimeter_associable_resource_types.list(
             location="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

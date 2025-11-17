@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -41,8 +42,7 @@ async def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -52,9 +52,7 @@ async def main():
 
     identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
-        ledger_certificate = await identity_service_client.get_ledger_identity(
-            ledger_id
-        )
+        ledger_certificate = await identity_service_client.get_ledger_identity(ledger_id)
 
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
     # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up
@@ -107,9 +105,7 @@ async def main():
                     )
                     get_receipt_poller = await ledger_client.begin_get_receipt(transaction_id)  # type: ignore[attr-defined]
                     get_receipt_result = await get_receipt_poller.result()
-                    print(
-                        f'Receipt for transaction id {transaction_id}: {get_receipt_result}'
-                    )
+                    print(f"Receipt for transaction id {transaction_id}: {get_receipt_result}")
                 except HttpResponseError as e:
                     print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise

@@ -14,8 +14,7 @@ from .aoai_grader import AzureOpenAIGrader
 
 @experimental
 class AzureOpenAIPythonGrader(AzureOpenAIGrader):
-    """
-    Wrapper class for OpenAI's Python code graders.
+    """Wrapper class for OpenAI's Python code graders.
 
     Enables custom Python-based evaluation logic with flexible scoring and
     pass/fail thresholds. The grader executes user-provided Python code
@@ -27,16 +26,13 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
     evaluation results.
 
     :param model_config: The model configuration to use for the grader.
-    :type model_config: Union[
-        ~azure.ai.evaluation.AzureOpenAIModelConfiguration,
-        ~azure.ai.evaluation.OpenAIModelConfiguration
-    ]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param name: The name of the grader.
     :type name: str
     :param image_tag: The image tag for the Python execution environment.
     :type image_tag: str
-    :param pass_threshold: Score threshold for pass/fail classification.
-        Scores >= threshold are considered passing.
+    :param pass_threshold: Score threshold for pass/fail classification. Scores >= threshold are considered passing.
     :type pass_threshold: float
     :param source: Python source code containing the grade function.
         Must define: def grade(sample: dict, item: dict) -> float
@@ -58,15 +54,16 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
     """
 
     id = "azureai://built-in/evaluators/azure-openai/python_grader"
+    _type = "python"
 
     def __init__(
         self,
         *,
         model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         name: str,
-        image_tag: str,
         pass_threshold: float,
         source: str,
+        image_tag: Optional[str] = None,
         credential: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
@@ -83,7 +80,7 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
             image_tag=image_tag,
             pass_threshold=pass_threshold,
             source=source,
-            type="python",
+            type=AzureOpenAIPythonGrader._type,
         )
 
         super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

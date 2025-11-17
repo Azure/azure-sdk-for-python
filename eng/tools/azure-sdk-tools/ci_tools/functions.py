@@ -55,7 +55,7 @@ PATHS_EXCLUDED_FROM_DISCOVERY = [
     "sdk/textanalytics/azure-ai-textanalytics",
 ]
 
-TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-ai-evaluation": ">=3.9, !=3.13.*"}
+TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-blob": "pypy",
     "azure-storage-queue": "pypy",
@@ -104,7 +104,7 @@ def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str
             return os.path.join(extract_location, extracted_dir)
 
 
-def apply_compatibility_filter(package_set: List[str]) -> List[str]:
+def apply_compatibility_filter(package_set: List[ParsedSetup]) -> List[ParsedSetup]:
     """
     This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
     If a package is unsupported by the executable, it will be omitted from the returned list.
@@ -118,28 +118,25 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
 
     for pkg in package_set:
-        try:
-            spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
-        except RuntimeError as e:
-            logging.error(f"Unable to parse metadata for package {pkg}, omitting from build.")
-            continue
+        spec_set = SpecifierSet(pkg.python_requires)
 
-        pkg_specs_override = TEST_COMPATIBILITY_MAP.get(os.path.basename(pkg), None)
+        pkg_specs_override = TEST_COMPATIBILITY_MAP.get(pkg.name, None)
 
         if pkg_specs_override:
             spec_set = SpecifierSet(pkg_specs_override)
 
         distro_compat = True
-        distro_incompat = TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP.get(os.path.basename(pkg), None)
+        distro_incompat = TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP.get(pkg.name, None)
         if distro_incompat and distro_incompat in platform.python_implementation().lower():
             distro_compat = False
 
         if running_major_version in spec_set and distro_compat:
             collected_packages.append(pkg)
 
-    logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
     logging.debug(
-        "Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages))
+        "Package(s) omitted by compatibility filter: {}".format(
+            generate_difference([origpkg.name for origpkg in package_set], [pkg.name for pkg in collected_packages])
+        )
     )
 
     return collected_packages
@@ -208,12 +205,17 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     return list(set(collected_top_level_directories))
 
 
-def apply_business_filter(collected_packages: List[str], filter_type: str) -> List[str]:
-    pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), collected_packages))
+def apply_business_filter(collected_packages: List[ParsedSetup], filter_type: str) -> List[ParsedSetup]:
+    pkg_set_ci_filtered = []
 
-    logging.debug("Target packages after applying business filter: {}".format(pkg_set_ci_filtered))
+    for pkg in collected_packages:
+        if omit_function_dict.get(filter_type, omit_build)(pkg.folder):
+            pkg_set_ci_filtered.append(pkg)
+
     logging.debug(
-        "Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, pkg_set_ci_filtered))
+        "Package(s) omitted by business filter: {}".format(
+            generate_difference([pkg.name for pkg in collected_packages], [pkg.name for pkg in pkg_set_ci_filtered])
+        )
     )
 
     return pkg_set_ci_filtered
@@ -248,29 +250,39 @@ def discover_targeted_packages(
         f'Results for glob_string "{glob_string}" and root directory "{target_root_dir}" are: {collected_packages}'
     )
 
-    # apply the additional contains filter
+    # apply the additional contains filter (purely string based)
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
     logger.debug(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
 
+    # now the have the initial package set, we need to walk the set and attempt to parse_setup each package
+    # this will have the impact of cleaning out any packages that have been set to not buildable anymore (EG namespace packages)
+    parsed_packages = []
+    for pkg in collected_packages:
+        try:
+            parsed_packages.append(ParsedSetup.from_path(pkg))
+        except RuntimeError as e:
+            logging.error(f"Unable to parse metadata for package {pkg}, omitting from build.")
+            continue
+
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
-        collected_packages = apply_compatibility_filter(collected_packages)
-        logger.debug(f"Results after compatibility filter: {collected_packages}")
+        parsed_packages = apply_compatibility_filter(parsed_packages)
+        logger.debug(f"Results after compatibility filter: {','.join([p.name for p in parsed_packages])}")
 
     if not include_inactive:
-        collected_packages = apply_inactive_filter(collected_packages)
+        parsed_packages = apply_inactive_filter(parsed_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
-    collected_packages = apply_business_filter(collected_packages, filter_type)
-    logger.debug(f"Results after business filter: {collected_packages}")
+    parsed_packages = apply_business_filter(parsed_packages, filter_type)
+    logger.debug(f"Results after business filter: {[pkg.name for pkg in parsed_packages]}")
 
-    return sorted(collected_packages)
+    return sorted([pkg.folder for pkg in parsed_packages])
 
 
-def is_package_active(package_path: str):
-    disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
+def is_package_active(pkg: ParsedSetup) -> bool:
+    disabled = INACTIVE_CLASSIFIER in pkg.classifiers
 
-    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper().replace('-', '_')}", None)
+    override_value = os.getenv(f"ENABLE_{pkg.name.upper().replace('-', '_')}", None)
 
     if override_value:
         return str_to_bool(override_value)
@@ -278,11 +290,14 @@ def is_package_active(package_path: str):
         return not disabled
 
 
-def apply_inactive_filter(collected_packages: List[str]) -> List[str]:
+def apply_inactive_filter(collected_packages: List[ParsedSetup]) -> List[ParsedSetup]:
     packages = [pkg for pkg in collected_packages if is_package_active(pkg)]
 
-    logging.debug("Target packages after applying inactive filter: {}".format(collected_packages))
-    logging.debug("Package(s) omitted by inactive filter: {}".format(generate_difference(collected_packages, packages)))
+    logging.debug(
+        "Package(s) omitted by inactive filter: {}".format(
+            generate_difference([collected.name for collected in collected_packages], [pkg.name for pkg in packages])
+        )
+    )
 
     return packages
 

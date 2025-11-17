@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -32,7 +32,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._redis_enterprise_operations import (
     build_create_request,
     build_delete_request,
@@ -45,7 +45,8 @@ from ...operations._redis_enterprise_operations import (
 from .._configuration import RedisEnterpriseManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class RedisEnterpriseOperations:
@@ -645,7 +646,7 @@ class RedisEnterpriseOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Cluster"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Cluster"]:
         """Lists all Redis Enterprise clusters in a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -724,7 +725,7 @@ class RedisEnterpriseOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Cluster"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Cluster"]:
         """Lists all Redis Enterprise clusters in the specified subscription.
 
         :return: An iterator like instance of either Cluster or the result of cls(response)

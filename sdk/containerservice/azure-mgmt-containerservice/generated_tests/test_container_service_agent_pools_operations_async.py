@@ -27,7 +27,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 agent_pool_name="str",
-                api_version="2025-08-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.agent_pools.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-08-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-08-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -133,6 +133,34 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "transparentHugePageDefrag": "str",
                         "transparentHugePageEnabled": "str",
                     },
+                    "localDNSProfile": {
+                        "kubeDNSOverrides": {
+                            "str": {
+                                "cacheDurationInSeconds": 3600,
+                                "forwardDestination": "ClusterCoreDNS",
+                                "forwardPolicy": "Sequential",
+                                "maxConcurrent": 1000,
+                                "protocol": "PreferUDP",
+                                "queryLogging": "Error",
+                                "serveStale": "Immediate",
+                                "serveStaleDurationInSeconds": 3600,
+                            }
+                        },
+                        "mode": "Preferred",
+                        "state": "str",
+                        "vnetDNSOverrides": {
+                            "str": {
+                                "cacheDurationInSeconds": 3600,
+                                "forwardDestination": "ClusterCoreDNS",
+                                "forwardPolicy": "Sequential",
+                                "maxConcurrent": 1000,
+                                "protocol": "PreferUDP",
+                                "queryLogging": "Error",
+                                "serveStale": "Immediate",
+                                "serveStaleDurationInSeconds": 3600,
+                            }
+                        },
+                    },
                     "maxCount": 0,
                     "maxPods": 0,
                     "messageOfTheDay": "str",
@@ -188,7 +216,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "windowsProfile": {"disableOutboundNat": bool},
                     "workloadRuntime": "str",
                 },
-                api_version="2025-08-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -203,7 +231,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 agent_pool_name="str",
-                api_version="2025-08-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -217,7 +245,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-08-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -232,7 +260,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_name="str",
                 agent_pool_name="str",
                 machines={"machineNames": ["str"]},
-                api_version="2025-08-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -245,7 +273,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.agent_pools.get_available_agent_pool_versions(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-08-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -259,7 +287,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 agent_pool_name="str",
-                api_version="2025-08-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

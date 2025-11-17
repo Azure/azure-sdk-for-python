@@ -53,6 +53,7 @@ def main():
                     }
                 },
                 "minimumTlsVersion": "1.2",
+                "publicNetworkAccess": "Disabled",
             },
             "sku": {"capacity": 3, "name": "EnterpriseFlash_F300"},
             "tags": {"tag1": "value1"},
@@ -62,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2025-05-01-preview/examples/RedisEnterpriseCreate.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/stable/2025-07-01/examples/RedisEnterpriseCreate.json
 if __name__ == "__main__":
     main()

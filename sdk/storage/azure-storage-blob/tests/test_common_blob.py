@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import jwt
 import os
 import tempfile
 import uuid
@@ -3594,5 +3595,116 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         result = blob.download_blob().readall()
         assert result == data[:length]
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_blob_user_delegation_oid(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+        token_credential = self.get_credential(BlobServiceClient)
+        data = b"abc123"
+
+        service = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        token = token_credential.get_token("https://storage.azure.com/.default")
+        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
+
+        container_name = self.get_resource_name('oauthcontainer')
+        container = service.create_container(container_name)
+        blob = container.get_blob_client(self.get_resource_name('oauthblob'))
+        blob.upload_blob(data, length=len(data))
+
+        container_token = self.generate_sas(
+            generate_container_sas,
+            container.account_name,
+            container.container_name,
+            permission=ContainerSasPermissions(read=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+        assert "sduoid=" + user_delegation_oid in container_token
+
+        container_client = ContainerClient.from_container_url(
+            f"{container.url}?{container_token}",
+            credential=token_credential
+        )
+        blobs_list = list(container_client.list_blobs())
+        assert blobs_list is not None
+
+        blob_token = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+        assert "sduoid=" + user_delegation_oid in blob_token
+
+        blob_client = BlobClient.from_blob_url(
+            f"{blob.url}?{blob_token}",
+            credential=token_credential
+        )
+        content = blob_client.download_blob().readall()
+        assert content == data
+
+        return variables
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_download_blob_decompress(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        decompressed_data = b"hello from gzip"
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+
+        result = blob.download_blob(decompress=True).readall()
+        assert result == decompressed_data
+
+        result = blob.download_blob(decompress=False).readall()
+        assert result == compressed_data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_download_blob_no_decompress_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = BlobClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            container_name=self.container_name,
+            blob_name = blob_name,
+            credential=storage_account_key,
+            max_chunk_get_size=4,
+            max_single_get_size=4,
+        )
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+
+        result = blob.download_blob(decompress=False).readall()
+        assert result == compressed_data
 
     # ------------------------------------------------------------------------------

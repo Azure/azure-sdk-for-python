@@ -51,23 +51,10 @@
     },
     {
       "Config": {
-        "pyrit_Ubuntu2404_310": {
+        "Ubuntu2404_313": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.10",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "InjectedPackages": "pyrit==0.8.1,duckdb==1.3.2",
-          "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio"
-        }
-      }
-    },
-    {
-      "Config": {
-        "Ubuntu2404_314": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.14",
+          "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"
         }

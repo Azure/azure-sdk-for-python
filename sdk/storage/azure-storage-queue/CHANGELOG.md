@@ -3,6 +3,28 @@
 ## 12.15.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2026-02-06.
+- Added new `get_user_delegation_key` API to `QueueServiceClient` to obtain a user delegation key
+for the purposes of signing SAS tokens.
+- Added support for the keyword `user_delegation_oid` to `generate_queue_sas`, which specifies the Entra ID 
+of the user that is authorized to use the generated SAS URL.
+- Added support for the keyword `user_delegation_key` to `generate_queue_sas` used with 
+`user_delegation_oid` to authenticate the request to generate a new SAS URL.
+- Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
+
+## 12.14.1 (2025-10-29)
+
+### Bugs Fixed
+- Fixed MyPy `attr-defined` errors for `QueueClient`.
+
+## 12.14.0 (2025-10-15)
+
+### Features Added
+- Stable release of features from 12.14.0b1
+
+### Other Changes
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+and let the `AttributeError` raise directly.
 
 ## 12.13.0 (2025-07-16)
 

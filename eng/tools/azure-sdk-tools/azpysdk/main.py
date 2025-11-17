@@ -12,7 +12,6 @@ import sys
 import os
 from typing import Sequence, Optional
 
-from .whl import whl
 from .import_all import import_all
 from .mypy import mypy
 from .next_mypy import next_mypy
@@ -25,9 +24,11 @@ from .pyright import pyright
 from .next_pyright import next_pyright
 from .ruff import ruff
 from .verifytypes import verifytypes
-from .verify_whl import verify_whl
 from .verify_sdist import verify_sdist
+from .verify_whl import verify_whl
+from .bandit import bandit
 from .verify_keywords import verify_keywords
+from .breaking import breaking
 
 from ci_tools.logging import configure_logging, logger
 
@@ -71,7 +72,6 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(title="commands", dest="command")
 
     # register our checks with the common params as their parent
-    whl().register(subparsers, [common])
     import_all().register(subparsers, [common])
     mypy().register(subparsers, [common])
     next_mypy().register(subparsers, [common])
@@ -86,7 +86,9 @@ def build_parser() -> argparse.ArgumentParser:
     verifytypes().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])
     verify_whl().register(subparsers, [common])
+    bandit().register(subparsers, [common])
     verify_keywords().register(subparsers, [common])
+    breaking().register(subparsers, [common])
 
     return parser
 
