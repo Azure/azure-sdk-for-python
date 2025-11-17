@@ -2,12 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
+from __future__ import annotations
+
 import inspect
 import json
 import os
 import traceback
 from abc import abstractmethod
-from typing import Any, AsyncGenerator, Generator, Union
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Generator, Union
 
 import uvicorn
 from opentelemetry import context as otel_context, trace
@@ -22,11 +24,10 @@ from starlette.types import ASGIApp
 
 from ..constants import Constants
 from ..logger import get_logger, request_context
-from ..models import (
-    Response as OpenAIResponse,
-    ResponseStreamEvent,
-)
 from .common.agent_run_context import AgentRunContext
+
+if TYPE_CHECKING:
+    from ..models import Response as OpenAIResponse, ResponseStreamEvent
 
 logger = get_logger()
 DEBUG_ERRORS = os.environ.get(Constants.AGENT_DEBUG_ERRORS, "false").lower() == "true"
@@ -219,7 +220,7 @@ class FoundryCBAgent:
     @abstractmethod
     async def agent_run(
         self, context: AgentRunContext
-    ) -> Union[OpenAIResponse, Generator[ResponseStreamEvent, Any, Any], AsyncGenerator[ResponseStreamEvent, Any]]:
+    ) -> Union["OpenAIResponse", Generator["ResponseStreamEvent", Any, Any], AsyncGenerator["ResponseStreamEvent", Any]]:
         raise NotImplementedError
 
     async def agent_liveness(self, request) -> Union[Response, dict]:
@@ -304,7 +305,7 @@ class FoundryCBAgent:
         logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
 
 
-def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
+def _event_to_sse_chunk(event: "ResponseStreamEvent") -> str:
     event_data = json.dumps(event.as_dict())
     if event.type:
         return f"event: {event.type}\ndata: {event_data}\n\n"
