@@ -18,6 +18,15 @@ class GenAiTraceVerifier:
         attribute_dict = dict(attributes)
         attribute_dict["az.namespace"] = "Microsoft.CognitiveServices"
 
+        # First, check that all expected attributes are present in the span
+        for expected_attribute_name in attribute_dict.keys():
+            if expected_attribute_name not in span.attributes:
+                raise AssertionError(
+                    f"Expected attribute '{expected_attribute_name}' not found in span. "
+                    f"Span has: {list(span.attributes.keys())}"
+                )
+
+        # Then, check that all attributes in the span are expected and have correct values
         for attribute_name in span.attributes.keys():
             # Check if the attribute name exists in the input attributes
             if attribute_name not in attribute_dict:

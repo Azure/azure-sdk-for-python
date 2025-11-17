@@ -7,9 +7,9 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `.fine_tuning.jobs` methods to create, get, list, cancel, pause, resume, list events 
+    `.fine_tuning.jobs` methods to create, get, list, cancel, pause, resume, list events
     and list checkpoints supervised fine-tuning jobs.
-    It also shows how to deploy the fine-tuned model using Azure Cognitive Services Management 
+    It also shows how to deploy the fine-tuned model using Azure Cognitive Services Management
     Client and perform inference on the deployed model.
     Supported OpenAI models: GPT 4o, 4o-mini, 4.1, 4.1-mini
 
@@ -57,7 +57,7 @@ resource_group = os.environ["AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP"]
 account_name = os.environ["AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT"]
 
 with (
-    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
@@ -72,8 +72,10 @@ with (
         validation_file = openai_client.files.create(file=f, purpose="fine-tune")
     print(f"Uploaded validation file with ID: {validation_file.id}")
 
-    # For OpenAI model supervised fine-tuning jobs, "Standard" is the default training type.
-    # To use global standard training, uncomment the extra_body parameter below.
+    print("Waits for the training and validation files to be processed...")
+    openai_client.files.wait_for_processing(train_file.id)
+    openai_client.files.wait_for_processing(validation_file.id)
+
     print("Creating supervised fine-tuning job")
     fine_tuning_job = openai_client.fine_tuning.jobs.create(
         training_file=train_file.id,
@@ -83,7 +85,9 @@ with (
             "type": "supervised",
             "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
         },
-        # extra_body={"trainingType":"GlobalStandard"}
+        extra_body={
+            "trainingType": "Standard"
+        },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
     )
     print(fine_tuning_job)
 

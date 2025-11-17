@@ -5,10 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 """Customize generated code here.
-
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping, Awaitable # pylint:disable=import-error
+from collections.abc import MutableMapping, Awaitable  # pylint:disable=import-error
 from typing import Any, Callable, Optional, Tuple, TypeVar, cast
 
 import base64
@@ -27,7 +26,6 @@ from azure.core.rest import HttpRequest
 
 from ._enums import ExportedProjectFormat
 from ._models import (
-    AssignDeploymentResourcesDetails,
     CopyProjectDetails,
     CopyProjectState,
     ConversationExportedEntity,
@@ -35,9 +33,7 @@ from ._models import (
     ConversationExportedProjectAsset,
     ConversationExportedUtterance,
     CreateDeploymentDetails,
-    DeleteDeploymentDetails,
     DeploymentDeleteFromResourcesState,
-    DeploymentResourcesState,
     DeploymentState,
     EvaluationJobResult,
     EvaluationState,
@@ -53,12 +49,10 @@ from ._models import (
     SwapDeploymentsDetails,
     SwapDeploymentsState,
     TrainingJobDetails,
-    UnassignDeploymentResourcesDetails,
 )
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-
 
 
 class _JobsStrategy(LongRunningOperation):
@@ -113,7 +107,7 @@ class _JobsPollingMethod(PollingMethod):
         self._deserialization_callback: Optional[Callable] = None
         self._resource: Optional[PipelineResponse] = None
         self._status: str = "NotStarted"
-        self._operation: Any = None                 # or a concrete type if available
+        self._operation: Any = None  # or a concrete type if available
         self._command: Optional[Callable[[], PipelineResponse]] = None
 
     # ---- LRO lifecycle ----
@@ -197,7 +191,8 @@ class _JobsPollingMethod(PollingMethod):
         # Legacy pipeline fallback
         request = self._client.get(url)
         return cast(
-            PipelineResponse, self._client._pipeline.run(request, stream=False, **self._kwargs) # pylint: disable=protected-access
+            PipelineResponse,
+            self._client._pipeline.run(request, stream=False, **self._kwargs),  # pylint: disable=protected-access
         )
 
     # ---- Continuation token support (doc pattern) ----
@@ -242,8 +237,8 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
-        self._resource = None          # no type annotation here
-        self._status = "InProgress"    # no type annotation here
+        self._resource = None  # no type annotation here
+        self._status = "InProgress"  # no type annotation here
 
         # Operation-Location (case-insensitive)
         headers = initial_response.http_response.headers
@@ -284,6 +279,7 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
             return
         # Fallback for non-Azure transports (allowed per rule text)
         import asyncio  # pylint: disable=import-outside-toplevel, do-not-import-asyncio
+
         await asyncio.sleep(seconds)
 
     def finished(self) -> bool:
@@ -348,7 +344,6 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
 
 def patch_sdk():
     """Do not remove from this file.
-
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -356,22 +351,16 @@ def patch_sdk():
 
 
 __all__ = [
-    "AssignDeploymentResourcesDetails",
-    "UnassignDeploymentResourcesDetails",
     "SwapDeploymentsDetails",
-    "DeploymentResourcesState",
     "CopyProjectState",
     "ExportProjectState",
     "SwapDeploymentsState",
-    "DeploymentResourcesState",
-    "DeleteDeploymentDetails",
     "CreateDeploymentDetails",
     "DeploymentDeleteFromResourcesState",
     "DeploymentState",
     "ExportedModelDetails",
     "ExportedModelState",
     "LoadSnapshotState",
-    "DeploymentResourcesState",
     "ProjectDeletionState",
     "ExportedProjectFormat",
     "ExportedProject",

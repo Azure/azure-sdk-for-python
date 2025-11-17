@@ -514,10 +514,10 @@ def gen_typespec(
                         content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
                 with open(tspconfig, "w") as file_out:
                     yaml.dump(content, file_out)
-            cmd = f"{tsp_client} init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
+            cmd = f"{tsp_client} init --update-if-exists --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
         else:
             tsp_config_url = f"{rest_repo_url}/blob/{head_sha}/{typespec_relative_path}/tspconfig.yaml"
-            cmd = f"{tsp_client} init -c {tsp_config_url}"
+            cmd = f"{tsp_client} init --update-if-exists -c {tsp_config_url}"
         if run_in_pipeline:
             emitter_name = "@azure-tools/typespec-python"
             if not os.path.exists(f"node_modules/{emitter_name}"):

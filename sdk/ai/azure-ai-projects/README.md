@@ -5,6 +5,7 @@ resources in your Microsoft Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on methods on the `.agents` client property.
 * **Enhance Agents with specialized tools**:
+  * Agent Memory Search
   * Agent-to-Agent (A2A)
   * Azure AI Search
   * Bing Custom Search
@@ -20,11 +21,12 @@ resources in your Microsoft Foundry Project. Use it to:
   * Model Context Protocol (MCP)
   * SharePoint
   * Web Search
-* **Get an OpenAI client** using `.get_openai_client()` method to run "Responses" and "Conversations" operations with your Agent.
-* **Manage memory stores** for Agent conversations, using the `.memory_store` operations.
-* **Run Evaluations** to assess the performance of your generative AI application, using the `.evaluation_rules`,
+* **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evals and FineTuning operations with your Agent.
+* **Manage memory stores** for Agent conversations, using the `.memory_stores` operations.
+* **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
 `.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
-* **Run Red Team operations** to identify risks associated with your generative AI application, using the ".red_teams" operations.
+* **Run Red Team scans** to identify risks associated with your generative AI application, using the ".red_teams" operations.
+* **Fine tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
@@ -74,17 +76,17 @@ pip install openai azure-identity
 
 Entra ID is the only authentication method supported at the moment by the client.
 
-To construct a synchronous client:
+To construct a synchronous client as a context manager:
 
 ```python
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-project_client = AIProjectClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-)
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+):
 ```
 
 To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
@@ -101,10 +103,10 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
-project_client = AIProjectClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-)
+async with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+):
 ```
 
 ## Examples
@@ -120,20 +122,19 @@ See the "responses" folder in the [package samples][samples] for additional samp
 <!-- SNIPPET:sample_responses_basic.responses -->
 
 ```python
-openai_client = project_client.get_openai_client()
+with project_client.get_openai_client() as openai_client:
+    response = openai_client.responses.create(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        input="What is the size of France in square miles?",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-    input="What is the size of France in square miles?",
-)
-print(f"Response output: {response.output_text}")
-
-response = openai_client.responses.create(
-    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-    input="And what is the capital city?",
-    previous_response_id=response.id,
-)
-print(f"Response output: {response.output_text}")
+    response = openai_client.responses.create(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        input="And what is the capital city?",
+        previous_response_id=response.id,
+    )
+    print(f"Response output: {response.output_text}")
 ```
 
 <!-- END SNIPPET -->
@@ -149,44 +150,43 @@ See the "agents" folder in the [package samples][samples] for an extensive set o
 <!-- SNIPPET:sample_agent_basic.prompt_agent_basic -->
 
 ```python
-openai_client = project_client.get_openai_client()
+with project_client.get_openai_client() as openai_client:
+    agent = project_client.agents.create_version(
+        agent_name="MyAgent",
+        definition=PromptAgentDefinition(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+        ),
+    )
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-agent = project_client.agents.create_version(
-    agent_name="MyAgent",
-    definition=PromptAgentDefinition(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-        instructions="You are a helpful assistant that answers general questions",
-    ),
-)
-print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+    conversation = openai_client.conversations.create(
+        items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
+    )
+    print(f"Created conversation with initial user message (id: {conversation.id})")
 
-conversation = openai_client.conversations.create(
-    items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
-)
-print(f"Created conversation with initial user message (id: {conversation.id})")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    conversation=conversation.id,
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",
-)
-print(f"Response output: {response.output_text}")
+    openai_client.conversations.items.create(
+        conversation_id=conversation.id,
+        items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
+    )
+    print(f"Added a second user message to the conversation")
 
-openai_client.conversations.items.create(
-    conversation_id=conversation.id,
-    items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
-)
-print(f"Added a second user message to the conversation")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    conversation=conversation.id,
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",
-)
-print(f"Response output: {response.output_text}")
-
-openai_client.conversations.delete(conversation_id=conversation.id)
-print("Conversation deleted")
+    openai_client.conversations.delete(conversation_id=conversation.id)
+    print("Conversation deleted")
 
 project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 print("Agent deleted")
@@ -366,6 +366,29 @@ These tools work immediately without requiring external connections.
 
   See the full sample code in [sample_agent_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_function_tool.py).
 
+* **Memory Search Tool**
+
+  The Memory Store Tool adds Memory to an Agent, allowing the Agent's AI model to search for past information related to the current user prompt.
+
+  <!-- SNIPPET:sample_agent_memory_search.memory_search_tool_declaration -->
+  ```python
+  # Set scope to associate the memories with
+  # You can also use "{{$userId}}" to take the oid of the request authentication header
+  scope = "user_123"
+
+  tool = MemorySearchTool(
+      memory_store_name=memory_store.name,
+      scope=scope,
+      update_delay=1,  # Wait 1 second of inactivity before updating memories
+      # In a real application, set this to a higher value like 300 (5 minutes, default)
+  )
+  ```
+  <!-- END SNIPPET -->
+
+  See the full [sample_agent_memory_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_memory_search.py) showing how to create an Agent with a memory store, and use it in multiple conversations.
+
+  See also samples in the folder [samples\memories](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/memories) showing how to manage memory stores.
+
 #### Connection-Based Tools
 
 These tools require configuring connections in your AI Foundry project and use `project_connection_id`.
@@ -539,6 +562,73 @@ Evaluation in Azure AI Project client library provides quantitative, AI-assisted
 
 The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
 
+<!-- SNIPPET:sample_agent_evaluation.agent_evaluation_basic -->
+
+```python
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    agent = project_client.agents.create_version(
+        agent_name=os.environ["AZURE_AI_AGENT_NAME"],
+        definition=PromptAgentDefinition(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+        ),
+    )
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+    data_source_config = DataSourceConfigCustom(
+        type="custom",
+        item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
+        include_sample_schema=True,
+    )
+    testing_criteria = [
+        {
+            "type": "azure_ai_evaluator",
+            "name": "violence_detection",
+            "evaluator_name": "builtin.violence",
+            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
+        }
+    ]
+    eval_object = openai_client.evals.create(
+        name="Agent Evaluation",
+        data_source_config=data_source_config, 
+        testing_criteria=testing_criteria,   # type: ignore
+    )
+    print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
+
+    data_source = {
+        "type": "azure_ai_target_completions",
+        "source": {
+            "type": "file_content",
+            "content": [
+                {"item": {"query": "What is the capital of France?"}},
+                {"item": {"query": "How do I reverse a string in Python?"}},
+            ],
+        },
+        "input_messages": {
+            "type": "template",
+            "template": [
+                {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
+            ],
+        },
+        "target": {
+            "type": "azure_ai_agent",
+            "name": agent.name,
+            "version": agent.version,  # Version is optional. Defaults to latest version if not specified
+        },
+    }
+
+    agent_eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
+        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore
+    )
+    print(f"Evaluation run created (id: {agent_eval_run.id})")
+```
+
+<!-- END SNIPPET -->
+
 ### Deployments operations
 
 The code below shows some Deployments operations, which allow you to enumerate the AI models deployed to your AI Foundry Projects. These models can be seen in the "Models + endpoints" tab in your AI Foundry Project. Full samples can be found under the "deployment" folder in the [package samples][samples].
@@ -676,9 +766,7 @@ folder in the [package samples][samples].
 <!-- SNIPPET:sample_indexes.indexes_sample-->
 
 ```python
-print(
-    f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
-)
+print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
 index = project_client.indexes.create_or_update(
     name=index_name,
     version=index_version,
@@ -741,9 +829,9 @@ print(f"Successfully deleted file: {deleted_file.id}")
 
 ### Fine-tuning operations
 
-The code below shows Fine-tuning operations using the OpenAI client, which allow you to create, retrieve, list, cancel, pause, resume, and manage fine-tuning jobs. These operations support various fine-tuning techniques like Supervised Fine-Tuning (SFT), Reinforcement Fine-Tuning (RFT), and Direct Performance Optimization (DPO). Full samples can be found under the "finetuning" folder in the [package samples][samples].
+The code below shows how to create fine-tuning jobs using the OpenAI client. These operations support various fine-tuning techniques like Supervised Fine-Tuning (SFT), Reinforcement Fine-Tuning (RFT), and Direct Performance Optimization (DPO). Full samples can be found under the "finetuning" folder in the [package samples][samples].
 
-<!-- SNIPPET:sample_finetuning_supervised_job.finetuning_supervised_job_sample-->
+<!-- SNIPPET:sample_finetuning_oss_models_supervised_job.finetuning_oss_model_supervised_job_sample-->
 
 ```python
 print("Uploading training file...")
@@ -756,8 +844,10 @@ with open(validation_file_path, "rb") as f:
     validation_file = openai_client.files.create(file=f, purpose="fine-tune")
 print(f"Uploaded validation file with ID: {validation_file.id}")
 
-# For OpenAI model supervised fine-tuning jobs, "Standard" is the default training type.
-# To use global standard training, uncomment the extra_body parameter below.
+print("Waits for the training and validation files to be processed...")
+openai_client.files.wait_for_processing(train_file.id)
+openai_client.files.wait_for_processing(validation_file.id)
+
 print("Creating supervised fine-tuning job")
 fine_tuning_job = openai_client.fine_tuning.jobs.create(
     training_file=train_file.id,
@@ -767,76 +857,13 @@ fine_tuning_job = openai_client.fine_tuning.jobs.create(
         "type": "supervised",
         "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
     },
-    # extra_body={"trainingType":"GlobalStandard"}
+    extra_body={
+        "trainingType": "GlobalStandard"
+    },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
+    # Preferred trainingtype is GlobalStandard.  Note:  Global training offers cost savings , but copies data and weights outside the current resource region.
+    # Learn more - https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/en-us/explore/global-infrastructure/data-residency/
 )
 print(fine_tuning_job)
-
-print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
-retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
-print(retrieved_job)
-
-print("Listing all fine-tuning jobs:")
-for job in openai_client.fine_tuning.jobs.list():
-    print(job)
-
-print("Listing only 10 fine-tuning jobs:")
-for job in openai_client.fine_tuning.jobs.list(limit=10):
-    print(job)
-
-print(f"Pausing fine-tuning job with ID: {fine_tuning_job.id}")
-paused_job = openai_client.fine_tuning.jobs.pause(fine_tuning_job.id)
-print(paused_job)
-
-print(f"Resuming fine-tuning job with ID: {fine_tuning_job.id}")
-resumed_job = openai_client.fine_tuning.jobs.resume(fine_tuning_job.id)
-print(resumed_job)
-
-print(f"Listing events of fine-tuning job: {fine_tuning_job.id}")
-for event in openai_client.fine_tuning.jobs.list_events(fine_tuning_job.id):
-    print(event)
-
-# Note that to retrieve the checkpoints, job needs to be in terminal state.
-print(f"Listing checkpoints of fine-tuning job: {fine_tuning_job.id}")
-for checkpoint in openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id):
-    print(checkpoint)
-
-print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
-cancelled_job = openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
-
-# Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
-# Note: Deployment can only be started after the fine-tuning job completes successfully.
-print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
-fine_tuned_model_name = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id).fine_tuned_model
-deployment_name = "gpt-4-1-fine-tuned"
-
-with CognitiveServicesManagementClient(credential=credential, subscription_id=subscription_id) as cogsvc_client:
-
-    deployment_model = DeploymentModel(format="OpenAI", name=fine_tuned_model_name, version="1")
-
-    deployment_properties = DeploymentProperties(model=deployment_model)
-
-    deployment_sku = Sku(name="GlobalStandard", capacity=100)
-
-    deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
-
-    deployment = cogsvc_client.deployments.begin_create_or_update(
-        resource_group_name=resource_group,
-        account_name=account_name,
-        deployment_name=deployment_name,
-        deployment=deployment_config,
-    )
-
-    while deployment.status() not in ["Succeeded", "Failed"]:
-        time.sleep(30)
-        print(f"Status: {deployment.status()}")
-
-print(f"Testing fine-tuned model via deployment: {deployment_name}")
-
-response = openai_client.responses.create(
-    model=deployment_name, input=[{"role": "user", "content": "Who invented the telephone?"}]
-)
-print(f"Model response: {response.output_text}")
 ```
 
 <!-- END SNIPPET -->
