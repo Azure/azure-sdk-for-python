@@ -402,6 +402,14 @@ class AudioVisualContent(MediaContent, discriminator="audioVisual"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        # Workaround for service bug: keyFrameTimesMs is returned as KeyFrameTimesMs
+        # Fix the incorrect casing before calling parent __init__
+        if args and isinstance(args[0], Mapping):
+            mapping = dict(args[0])
+            if "KeyFrameTimesMs" in mapping and "keyFrameTimesMs" not in mapping:
+                mapping["keyFrameTimesMs"] = mapping.pop("KeyFrameTimesMs")
+            args = (mapping,) + args[1:]
+        
         super().__init__(*args, **kwargs)
         self.kind = MediaContentKind.AUDIO_VISUAL  # type: ignore
 
