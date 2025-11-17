@@ -302,6 +302,8 @@ class AgentFrameworkOutputStreamingConverter:
                     param="",
                 )
                 continue
+            if not state:
+                continue
 
             async for content in state.convert_contents(contents):
                 yield content
