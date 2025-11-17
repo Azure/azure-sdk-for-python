@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import datetime
 import json
-from typing import AsyncIterable, List, Optional
+from typing import Any, AsyncIterable, List, Optional
 
 from agent_framework import AgentRunResponseUpdate, BaseContent, FunctionApprovalRequestContent, FunctionResultContent
 from agent_framework._types import (
@@ -201,7 +201,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
 
             output = (f"{type(content.exception)}({str(content.exception)})"
                       if content.exception
-                      else json.dumps(content.result))
+                      else self._to_output(content.result))
 
             item = FunctionToolCallOutputItemResource(
                 id=item_id,
@@ -223,6 +223,21 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
             )
 
             self._parent.add_completed_output_item(item)  # pylint: disable=protected-access
+
+    @classmethod
+    def _to_output(cls, result: Any) -> str:
+        if isinstance(result, str):
+            return result
+        elif isinstance(result, list):
+            text = []
+            for item in result:
+                if isinstance(item, BaseContent):
+                    text.append(item.to_dict())
+                else:
+                    text.append(str(item))
+            return json.dumps(text)
+        else:
+            return ""
 
 
 class AgentFrameworkOutputStreamingConverter:
