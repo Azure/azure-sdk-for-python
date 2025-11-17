@@ -234,31 +234,36 @@ class Response(TypedDict):
      create multi-turn conversations."""
     model: NotRequired[str]
     """The model deployment to use for the creation of this response."""
-    reasoning: NotRequired[Reasoning]  # TODO: Replace with proper Reasoning type when available
+    reasoning: NotRequired[Reasoning]
+    """The reasoning behind the response generation."""
     background: NotRequired[bool]
     """Whether to run the model response in the background."""
     max_output_tokens: NotRequired[int]
     """An upper bound for the number of tokens that can be generated for a response."""
     max_tool_calls: NotRequired[int]
     """The maximum number of total calls to built-in tools that can be processed in a response."""
-    text: NotRequired[ResponseText]  # TODO: Replace with proper ResponseText type when available
+    text: NotRequired[ResponseText]
     """Configuration options for a text response from the model."""
-    tools: NotRequired[List[Tool]]  # TODO: Replace with proper Tool type when available
+    tools: NotRequired[List[Tool]]
     """An array of tools the model may call while generating a response."""
-    tool_choice: NotRequired[Union[str, ToolChoiceOptions]]  # TODO: Replace with proper types when available
+    tool_choice: NotRequired[Union[str, ToolChoiceOptions]]
     """How the model should select which tool (or tools) to use when generating a response."""
-    prompt: NotRequired[Prompt]  # TODO: Replace with proper Prompt type when available
+    prompt: NotRequired[Prompt]
+    """The prompt used to generate this response."""
     truncation: NotRequired[Literal["auto", "disabled"]]
     """The truncation strategy to use for the model response."""
     status: NotRequired[Union[str, Literal["completed", "failed", "in_progress", "cancelled", "queued", "incomplete"]]]
     """The status of the response generation."""
-    error: NotRequired[ResponseError]  # TODO: Replace with proper ResponseError type when available
-    incomplete_details: NotRequired[ResponseIncompleteDetails1]  # TODO: Replace with proper ResponseIncompleteDetails1 type when available
+    error: NotRequired[ResponseError]
+    """Error information, if the response generation failed."""
+    incomplete_details: NotRequired[ResponseIncompleteDetails1]
     """Details about why the response is incomplete."""
     output_text: NotRequired[str]
     """SDK-only convenience property that contains the aggregated text output."""
-    usage: NotRequired[ResponseUsage]  # TODO: Replace with proper ResponseUsage type when available
-    conversation: NotRequired[ResponseConversation1]  # TODO: Replace with proper ResponseConversation type when available
+    usage: NotRequired[ResponseUsage]
+    """Token usage statistics for this response."""
+    conversation: NotRequired[ResponseConversation1]
+    """The conversation associated with this response."""
     agent: NotRequired[AgentId]
     """The agent used for this response."""
     structured_inputs: NotRequired[Dict[str, Any]]
