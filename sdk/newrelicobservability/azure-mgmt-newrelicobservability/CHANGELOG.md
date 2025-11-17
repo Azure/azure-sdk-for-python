@@ -21,7 +21,7 @@
   - Model `MonitorsOperations` added method `begin_update`
   - Model `MonitorsOperations` added method `latest_linked_saa_s`
   - Model `MonitorsOperations` added method `refresh_ingestion_key`
-  - Added model `SaaSOperations`
+  - Added operation group `SaaSOperations`
 
 ### Breaking Changes
 
