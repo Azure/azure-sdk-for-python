@@ -16,7 +16,7 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
     pip install azure-identity
     pip install azure-mgmt-networkcloud
 # USAGE
-    python bare_metal_machines_run_read_commands.py
+    python bare_metal_machines_run_data_extracts_restricted.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,20 +31,17 @@ def main():
         subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
-    response = client.bare_metal_machines.begin_run_read_commands(
+    response = client.bare_metal_machines.begin_run_data_extracts_restricted(
         resource_group_name="resourceGroupName",
         bare_metal_machine_name="bareMetalMachineName",
-        bare_metal_machine_run_read_commands_parameters={
-            "commands": [
-                {"arguments": ["pods", "-A"], "command": "kubectl get"},
-                {"arguments": ["192.168.0.99", "-c", "3"], "command": "ping"},
-            ],
+        bare_metal_machine_run_data_extracts_restricted_parameters={
+            "commands": [{"arguments": ["--min-severity=8"], "command": "cluster-cve-report"}],
             "limitTimeSeconds": 60,
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BareMetalMachines_RunReadCommands.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2025-07-01-preview/examples/BareMetalMachines_RunDataExtractsRestricted.json
 if __name__ == "__main__":
     main()
