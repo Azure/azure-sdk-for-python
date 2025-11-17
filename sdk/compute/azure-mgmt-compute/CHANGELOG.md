@@ -1,8 +1,14 @@
 # Release History
 
-## 0.0.0 (2025-11-17)
+## 37.1.0 (2025-11-17)
 
-change log generation was timeout!!! You need to write it manually!!!
+### Features Added
+
+  - Model AdditionalCapabilities has a new parameter enable_fips1403_encryption
+  - Model DiskRestorePointInstanceView has a new parameter snapshot_access_state
+  - Model RestorePoint has a new parameter instant_access_duration_minutes
+  - Model RestorePointCollection has a new parameter instant_access
+  - Model RestorePointCollectionUpdate has a new parameter instant_access
 
 ## 37.0.1 (2025-10-09)
 
