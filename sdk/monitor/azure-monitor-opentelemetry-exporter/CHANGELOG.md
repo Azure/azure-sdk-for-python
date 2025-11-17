@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixes issue #43442: SyntaxWarning: 'return' in a 'finally' block in azure-monitor-opentelemetry-exporter with Python 3.14
+  ([#44053](https://github.com/Azure/azure-sdk-for-python/pull/44053))
 
 ### Other Changes
 
