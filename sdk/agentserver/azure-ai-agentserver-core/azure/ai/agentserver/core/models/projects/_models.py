@@ -14,6 +14,12 @@ from ._enums import  ServiceTier, ToolChoiceOptions, ResponseTextFormatConfigura
 import datetime
 
 
+class CustomCredential(TypedDict):
+    """Custom credential definition."""
+    type: Union[str,Literal["custom"]]
+    """The credential type. Required."""
+
+
 class AgentId(TypedDict):
     type: str  # TODO: should this be a Literal?
     """Required. Default value is \"agent_id\"."""
