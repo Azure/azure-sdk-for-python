@@ -288,7 +288,7 @@ class AgentFrameworkOutputStreamingConverter:
                 )
                 continue
 
-            async for content in state.convert_contents(self, contents):
+            async for content in state.convert_contents(contents):
                 yield content
 
         yield ResponseCompletedEvent(
