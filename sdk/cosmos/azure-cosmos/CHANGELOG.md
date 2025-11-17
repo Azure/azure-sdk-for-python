@@ -1,17 +1,23 @@
 ## Release History
 
-### 4.14.1 (Unreleased)
+### 4.14.2 (2025-11-14)
 
 #### Features Added
-
-#### Breaking Changes
+* Added merge support. See [PR 42924](https://github.com/Azure/azure-sdk-for-python/pull/42924).
+* Added support for priority-based throttling at the client level for sync and async clients. See [PR 43917](https://github.com/Azure/azure-sdk-for-python/pull/43917)
 
 #### Bugs Fixed
 * Fixed bug where customer provided excluded region was not always being honored during certain transient failures. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
+* Fixed TypeError bug when `parameters=None` in `query_items`. See [PR 43681](https://github.com/Azure/azure-sdk-for-python/pull/43681)
 
 #### Other Changes
 * Further optimized health checks for sync and async clients. See [PR 43339](https://github.com/Azure/azure-sdk-for-python/pull/43339)
 * Enhanced logging to ensure when a region is marked unavailable we have the proper context. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
+
+### 4.14.1 (2025-11-04)
+
+#### Bugs Fixed
+* Fixed bug where queries using `feed_range` and `continuation` options would not work as expected. See [PR 43700](https://github.com/Azure/azure-sdk-for-python/pull/43700).
 
 ### 4.14.0 (2025-10-13)
 This version and all future versions will require Python 3.9+.
@@ -42,7 +48,6 @@ This version and all future versions will require Python 3.9+.
 * Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 * Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 * Added ability to replace a container's indexing policy if a vector embedding policy was present. See [PR 42810](https://github.com/Azure/azure-sdk-for-python/pull/42810).
-* Added merge support. See [PR 42924](https://github.com/Azure/azure-sdk-for-python/pull/42924).
 
 #### Bugs Fixed
 * Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).

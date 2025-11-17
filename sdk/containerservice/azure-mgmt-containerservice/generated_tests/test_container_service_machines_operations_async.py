@@ -26,7 +26,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_name="str",
             agent_pool_name="str",
             machine_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -169,7 +169,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2025-08-02-preview",
+                api_version="2025-09-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

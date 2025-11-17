@@ -944,7 +944,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory.create_subdirectory("subdir1")
         directory.create_subdirectory("subdir2")
         directory.upload_file("file1", "data1")
-        
+
         snapshot = share_client.create_snapshot()
         directory.create_subdirectory("subdir3")
         directory.upload_file("file2", "data2")
