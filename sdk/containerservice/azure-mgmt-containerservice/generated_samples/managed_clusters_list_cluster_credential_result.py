@@ -16,7 +16,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_list_cluster_monitoring_user_credentials.py
+    python managed_clusters_list_cluster_credential_result.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,13 +31,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.managed_clusters.list_cluster_monitoring_user_credentials(
+    response = client.managed_clusters.list_cluster_admin_credentials(
         resource_group_name="rg1",
         resource_name="clustername1",
     )
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-09-01/examples/ManagedClustersListClusterMonitoringUserCredentials.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/preview/2025-09-02-preview/examples/ManagedClustersListClusterCredentialResult.json
 if __name__ == "__main__":
     main()
