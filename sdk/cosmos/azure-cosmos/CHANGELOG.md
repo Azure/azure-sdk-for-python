@@ -3,12 +3,14 @@
 ### 4.14.3 (Unreleased)
 
 #### Features Added
+* Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 
 #### Breaking Changes
 
 #### Bugs Fixed
 
 #### Other Changes
+* Added cross-regional retries for 503 (Service Unavailable) errors. See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 
 ### 4.14.2 (2025-11-14)
 
@@ -56,7 +58,6 @@ This version and all future versions will require Python 3.9+.
 
 #### Features Added
 * Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
-* Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 * Added ability to replace a container's indexing policy if a vector embedding policy was present. See [PR 42810](https://github.com/Azure/azure-sdk-for-python/pull/42810).
 
 #### Bugs Fixed
@@ -64,7 +65,6 @@ This version and all future versions will require Python 3.9+.
 * Fixed bug where during health checks read regions were marked as unavailable for write operations. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).
 * Fixed bug where containers named with spaces or special characters using session consistency would fall back to eventual consistency. See [PR 42608](https://github.com/Azure/azure-sdk-for-python/pull/42608)
 * Fixed bug where `excluded_locations` was not being honored for some metadata calls. See [PR 42266](https://github.com/Azure/azure-sdk-for-python/pull/42266).
-* Added cross-regional retries for 503 (Service Unavailable) errors. See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 * Fixed bug where Hybrid Search queries using parameters were not working. See [PR 42787](https://github.com/Azure/azure-sdk-for-python/pull/42787)
 * Fixed partition scoping for per partition circuit breaker. See [PR 42751](https://github.com/Azure/azure-sdk-for-python/pull/42751)
 * Fixed bug where `partition_key` set to None was not properly handled for some operations. See [PR 42747](https://github.com/Azure/azure-sdk-for-python/pull/42747)
