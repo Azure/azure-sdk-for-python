@@ -24,7 +24,7 @@ def save_json_to_file(data: dict[str, Any], filename_prefix: str = "result") -> 
     :rtype: str
     """
     # Create output directory if it doesn't exist
-    output_dir = Path(__file__).parent / "output"
+    output_dir = Path(__file__).parent / "sample_output"
     output_dir.mkdir(exist_ok=True)
 
     # Generate filename with timestamp
