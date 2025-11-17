@@ -7,10 +7,52 @@
 # --------------------------------------------------------------------------
 # pylint: disable=wrong-import-position
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Any, List, Dict, Union
 
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
+    
+    # Type stubs for .value property on field classes
+    # These override the imported classes during type checking to add .value property signatures
+    class ContentField(ContentField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Union[Optional[str], Optional[int], Optional[float], Optional[bool], Optional[List[Any]], Optional[Dict[str, Any]], Optional[Any]]: ...
+    
+    class StringField(StringField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+    
+    class IntegerField(IntegerField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[int]: ...
+    
+    class NumberField(NumberField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[float]: ...
+    
+    class BooleanField(BooleanField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[bool]: ...
+    
+    class DateField(DateField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+    
+    class TimeField(TimeField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+    
+    class ArrayField(ArrayField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[List[ContentField]]: ...
+    
+    class ObjectField(ObjectField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[Dict[str, ContentField]]: ...
+    
+    class JsonField(JsonField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[Any]: ...
 
 
 from ._models import (  # type: ignore

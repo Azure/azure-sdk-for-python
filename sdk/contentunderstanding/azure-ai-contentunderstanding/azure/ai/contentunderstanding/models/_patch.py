@@ -25,28 +25,6 @@ from ._models import (
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
-# Type stub to help mypy and pyright understand that ContentField has a .value property
-if TYPE_CHECKING:
-
-    class ContentFieldTypeStub:
-        """Type stub for ContentField to help type checkers understand the .value property."""
-
-        @property
-        def value(
-            self,
-        ) -> Union[
-            Optional[str],
-            Optional[float],
-            Optional[int],
-            Optional[bool],
-            Optional[Any],
-            Optional[List[Any]],
-            Optional[dict[str, Any]],
-        ]:
-            """Get the value of this field regardless of its type."""
-            ...  # pylint: disable=unnecessary-ellipsis
-
-
 __all__ = [
     "RecordMergePatchUpdate",
     "AnalyzeLROPoller",
@@ -147,7 +125,6 @@ def patch_sdk():
     from . import _models
 
     # Add RecordMergePatchUpdate as an alias
-    # (AnalyzeInput is now generated in _models.py, so we don\'t need to add it)
     _models.RecordMergePatchUpdate = RecordMergePatchUpdate  # type: ignore[attr-defined]
 
     # Add .value property to all ContentField subclasses for easier access
@@ -161,3 +138,15 @@ def patch_sdk():
     _add_value_property_to_field(ArrayField, "value_array")
     _add_value_property_to_field(ObjectField, "value_object")
     _add_value_property_to_field(JsonField, "value_json")
+    
+    # Add dynamic .value to ContentField base class
+    # This checks which value_* attribute exists and returns it
+    def _content_field_value_getter(self) -> Any:
+        """Get the value of this field regardless of its specific type."""
+        for attr in ['value_string', 'value_integer', 'value_number', 'value_boolean',
+                     'value_date', 'value_time', 'value_array', 'value_object', 'value_json']:
+            if hasattr(self, attr):
+                return getattr(self, attr)
+        return None
+    
+    setattr(ContentField, "value", property(_content_field_value_getter))
