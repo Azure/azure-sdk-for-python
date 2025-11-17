@@ -28,10 +28,6 @@ class LangGraphResponseConverter:
         for step in self.output:
             for node_name, node_output in step.items():
                 message_arr = node_output.get("messages")
-                oauth_req = node_output.get("oauth_consent_request")
-                if oauth_req:
-                    converted = self.convert_output_oauth_request(oauth_req)
-                    res.append(converted)
                 if not message_arr:
                     logger.warning(f"No messages found in node {node_name} output: {node_output}")
                     continue
@@ -138,18 +134,3 @@ class LangGraphResponseConverter:
             content_dict["annotations"] = []  # annotation is required for output_text
 
         return project_models.ItemContent(content_dict)
-
-    def convert_output_oauth_request(self, oauth_request: dict) -> project_models.OAuthConsentRequestItemResource:
-        """Convert an OAuth consent request dictionary to an OAuthConsentRequestItemResource.
-
-        :param oauth_request: A dictionary containing OAuth consent request information,
-            expected to have a "consent_url" key.
-        :type oauth_request: dict
-        :return: An instance of OAuthConsentRequestItemResource with generated ID, consent link, and server label.
-        :rtype: OAuthConsentRequestItemResource
-        """
-        return project_models.OAuthConsentRequestItemResource(
-            id=self.context.id_generator.generate_oauthreq_id(),
-            consent_link=oauth_request.get("consent_url"),
-            server_label="server_label"
-        )

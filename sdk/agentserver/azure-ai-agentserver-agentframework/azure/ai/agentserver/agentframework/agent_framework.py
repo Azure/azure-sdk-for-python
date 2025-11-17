@@ -13,6 +13,7 @@ from agent_framework import AgentProtocol, AIFunction
 from agent_framework.azure import AzureAIAgentClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
+from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
 from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger
@@ -30,7 +31,6 @@ from .models.agent_framework_output_non_streaming_converter import (
 )
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.constants import Constants
-from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
 from .tool_client import ToolClient
 
 if TYPE_CHECKING:
@@ -41,14 +41,14 @@ logger = get_logger()
 
 class AgentFactory(Protocol):
     """Protocol for agent factory functions.
-    
+
     An agent factory is a callable that takes a ToolClient and returns
     an AgentProtocol, either synchronously or asynchronously.
     """
 
     def __call__(self, tools: List[AIFunction]) -> Union[AgentProtocol, Awaitable[AgentProtocol]]:
         """Create an AgentProtocol using the provided ToolClient.
-        
+
         :param tools: The list of AIFunction tools available to the agent.
         :type tools: List[AIFunction]
         :return: An Agent Framework agent, or an awaitable that resolves to one.
@@ -98,7 +98,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
     @property
     def agent(self) -> "Optional[AgentProtocol]":
         """Get the resolved agent. This property provides backward compatibility.
-        
+
         :return: The resolved AgentProtocol if available, None otherwise.
         :rtype: Optional[AgentProtocol]
         """
@@ -267,7 +267,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             return transformed_result
         except OAuthConsentRequiredError as e:
             logger.info("OAuth consent required during agent run")
-            if(context.stream):
+            if context.stream:
                 # Yield OAuth consent response events
                 # Capture e in the closure by passing it as a default argument
                 async def oauth_consent_stream(error=e):

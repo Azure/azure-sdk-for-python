@@ -166,7 +166,7 @@ class AzureAIToolClient:
             raise KeyError(f"Unknown tool: {tool}")
         raise TypeError("Tool must be an AsyncAzureAITool, FoundryTool, or registered name/key")
 
-    async def _invoke_tool(self, descriptor: FoundryTool, arguments: Mapping[str, Any], **kwargs: Any) -> Any:
+    async def _invoke_tool(self, descriptor: FoundryTool, arguments: Mapping[str, Any], **kwargs: Any) -> Any: #pylint: disable=unused-argument
         """Invoke a tool descriptor.
 
         :param descriptor: The tool descriptor to invoke.

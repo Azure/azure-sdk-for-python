@@ -333,7 +333,8 @@ class FoundryCBAgent:
             "consent_link": error.consent_url,
             "server_label": "server_label",
         })
-        yield project_models.ResponseOutputItemAddedEvent(sequence_number=sequence_number, output_index=output_index, item=item)
+        yield project_models.ResponseOutputItemAddedEvent(sequence_number=sequence_number,
+                                                          output_index=output_index, item=item)
         sequence_number += 1
         yield project_models.ResponseStreamEvent({
             "sequence_number": sequence_number,
@@ -345,7 +346,8 @@ class FoundryCBAgent:
         })
 
         sequence_number += 1
-        yield project_models.ResponseOutputItemDoneEvent(sequence_number=sequence_number, output_index=output_index, item=item)
+        yield project_models.ResponseOutputItemDoneEvent(sequence_number=sequence_number,
+                                                         output_index=output_index, item=item)
         sequence_number += 1
         output = [
             project_models.OAuthConsentRequestItemResource(
