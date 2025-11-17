@@ -197,7 +197,9 @@ To run the tests for this package, you need to set up a `.env` file with your te
 
 ### Running tests
 
-Install the development dependencies:
+**Important:** Make sure you have activated the virtual environment before running tests (see [Virtual Environment Setup](#virtual-environment-setup) above).
+
+Install the development dependencies (if not already installed):
 ```bash
 pip install -r dev_requirements.txt
 pip install -e .
