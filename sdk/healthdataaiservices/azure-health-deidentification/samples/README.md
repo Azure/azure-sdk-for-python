@@ -9,8 +9,11 @@ name: azure-health-deidentification samples for Python
 description: Samples for the azure-health-deidentification client library
 ---
 
-# Samples for Azure Health Data Services de-identification service client library for Python
+# Azure Health Deidentification client library for Python - Samples
 These code samples show common scenario operations with the Azure Health Data Services de-identification service client library.
+
+## Key concepts
+The Azure Health Deidentification client library provides operations to redact, tag, and generate realistic surrogate replacements for Protected Health Information (PHI) in text and documents, along with asynchronous job management for bulk de-identification tasks.
 
 | File Name | Description |
 | --- | --- |
@@ -39,11 +42,20 @@ These code samples show common scenario operations with the Azure Health Data Se
 1. Clone or download this sample repository.
 1. Open the sample folder in Visual Studio Code or your IDE of choice.
 
+## Examples
+The table above lists runnable examples for synchronous and asynchronous usage of the de-identification operations and job management.
+
 ## Running the samples
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
 3. Follow the usage described in the file, e.g. `python deidentify_text.py`
+
+## Troubleshooting
+If you encounter authentication or authorization errors, verify RBAC configuration and that the service deployment has completed. For transient failures, implement retry logic using the Azure Core pipeline.
+
+## Contributing
+Pull requests and issue reports are welcome. See the repository CONTRIBUTING guidelines for details.
 
 ## Next steps
 

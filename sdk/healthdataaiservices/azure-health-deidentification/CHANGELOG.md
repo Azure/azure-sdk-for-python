@@ -1,5 +1,11 @@
 # Release History
 
+## 1.2.0b1 (2025-11-17)
+
+### Features Added
+
+- Preview release placeholder (no new service changes; regenerated spec pending fix to Azure.Core Versions reference).
+
 ## 1.1.0b1 (2025-08-05)
 
 ### Features Added
