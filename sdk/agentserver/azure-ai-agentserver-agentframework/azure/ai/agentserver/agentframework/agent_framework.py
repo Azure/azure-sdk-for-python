@@ -12,6 +12,7 @@ from agent_framework import AgentProtocol, AIFunction
 from agent_framework.azure import AzureAIAgentClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
+from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
 from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger
@@ -255,8 +256,8 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                             try:
                                 await tool_client.close()
                                 logger.debug("Closed tool_client after streaming completed")
-                            except Exception as e:  # pylint: disable=broad-exception-caught
-                                logger.warning(f"Error closing tool_client in stream: {e}")
+                            except Exception as ex:  # pylint: disable=broad-exception-caught
+                                logger.warning(f"Error closing tool_client in stream: {ex}")
 
                 return stream_updates()
 
@@ -268,11 +269,21 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             transformed_result = non_streaming_converter.transform_output_for_response(result)
             logger.info("Agent run and transformation completed successfully")
             return transformed_result
+        except OAuthConsentRequiredError as e:
+            logger.info("OAuth consent required during agent run")
+            if context.stream:
+                # Yield OAuth consent response events
+                # Capture e in the closure by passing it as a default argument
+                async def oauth_consent_stream(error=e):
+                    async for event in self.respond_with_oauth_consent_astream(context, error):
+                        yield event
+                return oauth_consent_stream()
+            return await self.respond_with_oauth_consent(context, e)
         finally:
             # Close tool_client if it was created for this request (non-streaming only, streaming handles in generator)
             if not context.stream and tool_client is not None:
                 try:
                     await tool_client.close()
                     logger.debug("Closed tool_client after request processing")
-                except Exception as e:  # pylint: disable=broad-exception-caught
-                    logger.warning(f"Error closing tool_client: {e}")
+                except Exception as ex:  # pylint: disable=broad-exception-caught
+                    logger.warning(f"Error closing tool_client: {ex}")

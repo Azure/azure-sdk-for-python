@@ -124,7 +124,9 @@ class ToolClient:
 
             :return: The result from the tool invocation as a string.
             :rtype: str
+            :raises OAuthConsentRequiredError: If OAuth consent is required for the tool invocation.
             """
+            # Let OAuthConsentRequiredError propagate up to be handled by the agent
             result = await azure_tool(**kwargs)
             # Convert result to string for LangChain compatibility
             if isinstance(result, dict):
