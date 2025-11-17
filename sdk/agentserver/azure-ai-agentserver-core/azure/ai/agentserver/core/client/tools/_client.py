@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: disable=protected-access
 from typing import Any, List, Mapping, Union
 from azure.core import PipelineClient
 from azure.core.pipeline import policies

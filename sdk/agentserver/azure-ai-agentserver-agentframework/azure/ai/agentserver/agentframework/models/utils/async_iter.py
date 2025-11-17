@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterable, AsyncIterator, Callable
-from typing import TypeVar, Optional, Tuple, Awaitable
+from typing import TypeVar, Optional, Tuple
 
 TSource = TypeVar("TSource")
 TKey = TypeVar("TKey")
@@ -19,9 +19,12 @@ async def chunk_on_change(
     Chunks an async iterable into groups based on when consecutive elements change.
 
     :param source: Async iterable of items.
+    :type source: AsyncIterable[TSource]
     :param is_changed: Function(prev, current) -> bool indicating if value changed.
                        If None, uses != by default.
+    :type is_changed: Optional[Callable[[Optional[TSource], Optional[TSource]], bool]]
     :return: An async iterator of async iterables (chunks).
+    :rtype: AsyncIterator[AsyncIterable[TSource]]
     """
 
     if is_changed is None:
@@ -46,9 +49,13 @@ async def chunk_by_key(
     Chunks the async iterable into groups based on a key selector.
 
     :param source: Async iterable of items.
+    :type source: AsyncIterable[TSource]
     :param key_selector: Function mapping item -> key.
+    :type key_selector: Callable[[TSource], TKey]
     :param key_equal: Optional equality function for keys. Defaults to '=='.
+    :type key_equal: Optional[Callable[[TKey, TKey], bool]]
     :return: An async iterator of async iterables (chunks).
+    :rtype: AsyncIterator[AsyncIterable[TSource]]
     """
 
     if key_equal is None:
@@ -104,7 +111,9 @@ async def peek(
     Peeks at the first element of an async iterable without consuming it.
 
     :param source: Async iterable.
+    :type source: AsyncIterable[T]
     :return: (has_value, first, full_sequence_including_first)
+    :rtype: Tuple[bool, Optional[T], AsyncIterable[T]]
     """
 
     it = source.__aiter__()
@@ -131,6 +140,6 @@ async def peek(
 
 
 async def _empty_async() -> AsyncIterator[T]:
-    if False:
+    if False:  # pylint: disable=using-constant-test
         # This is just to make this an async generator for typing
         yield None  # type: ignore[misc]

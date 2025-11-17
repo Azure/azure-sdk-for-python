@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import datetime
 import json
-from typing import Any, AsyncIterable, List, Optional
+from typing import Any, AsyncIterable, List
 
 from agent_framework import AgentRunResponseUpdate, BaseContent, FunctionApprovalRequestContent, FunctionResultContent
 from agent_framework._types import (
@@ -48,7 +48,7 @@ from .utils.async_iter import chunk_on_change, peek
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
 
-    def convert_contents(self, contents: AsyncIterable[BaseContent]) -> AsyncIterable[ResponseStreamEvent]:  # pylint: disable=unused-argument
+    async def convert_contents(self, contents: AsyncIterable[BaseContent]) -> AsyncIterable[ResponseStreamEvent]:  # pylint: disable=unused-argument
         raise NotImplementedError
 
 
@@ -126,7 +126,9 @@ class _FunctionCallStreamingState(_BaseStreamingState):
     def __init__(self, parent: AgentFrameworkOutputStreamingConverter):
         self._parent = parent
 
-    async def convert_contents(self, contents: AsyncIterable[FunctionCallContent]) -> AsyncIterable[ResponseStreamEvent]:
+    async def convert_contents(
+            self, contents: AsyncIterable[FunctionCallContent]
+        ) -> AsyncIterable[ResponseStreamEvent]:
         content_by_call_id = {}
         ids_by_call_id = {}
 
@@ -149,18 +151,17 @@ class _FunctionCallStreamingState(_BaseStreamingState):
                         arguments="",
                     ),
                 )
-                continue
             else:
                 content_by_call_id[content.call_id] = content_by_call_id[content.call_id] + content
                 item_id, output_index = ids_by_call_id[content.call_id]
 
-            args_delta = content.arguments if isinstance(content.arguments, str) else ""
-            yield ResponseFunctionCallArgumentsDeltaEvent(
-                sequence_number=self._parent.next_sequence(),
-                item_id=item_id,
-                output_index=output_index,
-                delta=args_delta,
-            )
+                args_delta = content.arguments if isinstance(content.arguments, str) else ""
+                yield ResponseFunctionCallArgumentsDeltaEvent(
+                    sequence_number=self._parent.next_sequence(),
+                    item_id=item_id,
+                    output_index=output_index,
+                    delta=args_delta,
+                )
 
         for call_id, content in content_by_call_id.items():
             item_id, output_index = ids_by_call_id[call_id]
@@ -194,7 +195,9 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
     def __init__(self, parent: AgentFrameworkOutputStreamingConverter):
         self._parent = parent
 
-    async def convert_contents(self, contents: AsyncIterable[FunctionResultContent]) -> AsyncIterable[ResponseStreamEvent]:
+    async def convert_contents(
+            self, contents: AsyncIterable[FunctionResultContent]
+        ) -> AsyncIterable[ResponseStreamEvent]:
         async for content in contents:
             item_id = self._parent.context.id_generator.generate_function_output_id()
             output_index = self._parent.next_output_index()
@@ -281,7 +284,7 @@ class AgentFrameworkOutputStreamingConverter:
         )
 
         is_changed = (
-            lambda a, b: a is not None and b is not None and a.message_id != b.message_id
+            lambda a, b: a is not None and b is not None and a.message_id != b.message_id  # pylint: disable=unnecessary-lambda-assignment
         )
         async for group in chunk_on_change(updates, is_changed):
             has_value, first, contents = await peek(self._read_updates(group))

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: disable=protected-access,do-not-import-asyncio
 from typing import Any, List, Mapping, Union, TYPE_CHECKING
 from asyncio import gather
 from azure.core import AsyncPipelineClient

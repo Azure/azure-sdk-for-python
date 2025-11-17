@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation,broad-exception-caught
+# pylint: disable=logging-fstring-interpolation,broad-exception-caught,no-member
 # mypy: disable-error-code="assignment,arg-type"
 import os
 import re
