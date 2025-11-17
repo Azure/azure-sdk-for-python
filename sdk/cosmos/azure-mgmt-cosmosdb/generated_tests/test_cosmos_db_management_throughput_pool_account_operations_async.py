@@ -26,7 +26,7 @@ class TestCosmosDBManagementThroughputPoolAccountOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             throughput_pool_name="str",
             throughput_pool_account_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestCosmosDBManagementThroughputPoolAccountOperationsAsync(AzureMgmtRecord
                     },
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -72,7 +72,7 @@ class TestCosmosDBManagementThroughputPoolAccountOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 throughput_pool_name="str",
                 throughput_pool_account_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

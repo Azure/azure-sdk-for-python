@@ -23,7 +23,7 @@ class TestCosmosDBManagementFleetOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_fleet_list(self, resource_group):
         response = self.client.fleet.list(
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestCosmosDBManagementFleetOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_fleet_list_by_resource_group(self, resource_group):
         response = self.client.fleet.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestCosmosDBManagementFleetOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.fleet.get(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestCosmosDBManagementFleetOperationsAsync(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestCosmosDBManagementFleetOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.fleet.update(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestCosmosDBManagementFleetOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.fleet.begin_delete(
                 resource_group_name=resource_group.name,
                 fleet_name="str",
-                api_version="2025-10-15",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

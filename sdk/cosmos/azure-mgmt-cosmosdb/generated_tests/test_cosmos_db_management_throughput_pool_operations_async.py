@@ -25,7 +25,7 @@ class TestCosmosDBManagementThroughputPoolOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.throughput_pool.get(
             resource_group_name=resource_group.name,
             throughput_pool_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestCosmosDBManagementThroughputPoolOperationsAsync(AzureMgmtRecordedTestC
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -69,7 +69,7 @@ class TestCosmosDBManagementThroughputPoolOperationsAsync(AzureMgmtRecordedTestC
             await self.client.throughput_pool.begin_update(
                 resource_group_name=resource_group.name,
                 throughput_pool_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -83,7 +83,7 @@ class TestCosmosDBManagementThroughputPoolOperationsAsync(AzureMgmtRecordedTestC
             await self.client.throughput_pool.begin_delete(
                 resource_group_name=resource_group.name,
                 throughput_pool_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

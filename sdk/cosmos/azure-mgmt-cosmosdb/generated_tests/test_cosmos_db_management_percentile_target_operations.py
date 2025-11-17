@@ -26,7 +26,7 @@ class TestCosmosDBManagementPercentileTargetOperations(AzureMgmtRecordedTestCase
             account_name="str",
             target_region="str",
             filter="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

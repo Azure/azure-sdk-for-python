@@ -23,7 +23,7 @@ class TestCosmosDBManagementThroughputPoolsOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_throughput_pools_list(self, resource_group):
         response = self.client.throughput_pools.list(
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestCosmosDBManagementThroughputPoolsOperationsAsync(AzureMgmtRecordedTest
     async def test_throughput_pools_list_by_resource_group(self, resource_group):
         response = self.client.throughput_pools.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

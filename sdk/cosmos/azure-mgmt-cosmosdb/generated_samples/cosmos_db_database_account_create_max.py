@@ -55,6 +55,7 @@ def main():
                     "type": "Periodic",
                 },
                 "capacity": {"totalThroughputLimit": 2000},
+                "capacityMode": "Provisioned",
                 "consistencyPolicy": {
                     "defaultConsistencyLevel": "BoundedStaleness",
                     "maxIntervalInSeconds": 10,
@@ -65,9 +66,11 @@ def main():
                 "databaseAccountOfferType": "Standard",
                 "defaultIdentity": "FirstPartyIdentity",
                 "defaultPriorityLevel": "Low",
+                "enableAllVersionsAndDeletesChangeFeed": False,
                 "enableAnalyticalStorage": True,
                 "enableBurstCapacity": True,
                 "enableFreeTier": False,
+                "enableMaterializedViews": False,
                 "enablePerRegionPerPartitionAutoscale": True,
                 "enablePriorityBasedExecution": True,
                 "ipRules": [{"ipAddressOrRange": "23.43.230.120"}, {"ipAddressOrRange": "110.12.240.0/12"}],
@@ -96,6 +99,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/DocumentDB/stable/2025-10-15/examples/CosmosDBDatabaseAccountCreateMax.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/DocumentDB/preview/2025-11-01-preview/examples/CosmosDBDatabaseAccountCreateMax.json
 if __name__ == "__main__":
     main()

@@ -49,6 +49,7 @@ def main():
                 "databaseAccountOfferType": "Standard",
                 "enableAnalyticalStorage": True,
                 "enableFreeTier": False,
+                "enableMaterializedViews": False,
                 "keyVaultKeyUri": "https://myKeyVault.vault.azure.net",
                 "locations": [{"failoverPriority": 0, "isZoneRedundant": False, "locationName": "southcentralus"}],
                 "minimalTlsVersion": "Tls",
@@ -70,6 +71,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/DocumentDB/stable/2025-10-15/examples/CosmosDBRestoreDatabaseAccountCreateUpdate.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/DocumentDB/preview/2025-11-01-preview/examples/CosmosDBRestoreDatabaseAccountCreateUpdate.json
 if __name__ == "__main__":
     main()

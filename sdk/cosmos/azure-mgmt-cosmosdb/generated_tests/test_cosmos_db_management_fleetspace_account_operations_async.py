@@ -26,7 +26,7 @@ class TestCosmosDBManagementFleetspaceAccountOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             fleet_name="str",
             fleetspace_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestCosmosDBManagementFleetspaceAccountOperationsAsync(AzureMgmtRecordedTe
             fleet_name="str",
             fleetspace_name="str",
             fleetspace_account_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestCosmosDBManagementFleetspaceAccountOperationsAsync(AzureMgmtRecordedTe
                     },
                     "type": "str",
                 },
-                api_version="2025-10-15",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,7 +86,7 @@ class TestCosmosDBManagementFleetspaceAccountOperationsAsync(AzureMgmtRecordedTe
                 fleet_name="str",
                 fleetspace_name="str",
                 fleetspace_account_name="str",
-                api_version="2025-10-15",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
