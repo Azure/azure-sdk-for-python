@@ -331,6 +331,17 @@ def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
         return {dk: _as_attribute_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
     return as_attribute_dict(v, exclude_readonly=exclude_readonly) if is_generated_model(v) else v
 
+def _get_backcompat_attr_to_rest_field(obj: Any) -> Dict[str, Any]:
+    """Get the backcompat attribute to rest field mapping for a generated TypeSpec model.
+
+    :param any obj: The object to get the mapping from.
+    :return: The backcompat attribute to rest field mapping.
+    :rtype: Dict[str, Any]
+    """
+    try:
+        return obj._backcompat_attr_to_rest_field  # pylint: disable=protected-access
+    except AttributeError:
+        return obj._attr_to_rest_field  # pylint: disable=protected-access
 
 def _get_flattened_attribute(obj: Any) -> Optional[str]:
     """Get the name of the flattened attribute in a generated TypeSpec model if one exists.
@@ -348,11 +359,18 @@ def _get_flattened_attribute(obj: Any) -> Optional[str]:
     if flattened_items is None:
         return None
 
-    for k, v in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+    flattened_items_set = set(flattened_items)
+    for k, v in _get_backcompat_attr_to_rest_field(obj).items():  # pylint: disable=protected-access
         try:
-            if set(v._class_type._attr_to_rest_field.keys()).intersection(  # pylint: disable=protected-access
-                set(flattened_items)
-            ):
+            # Check if this property contains a nested model
+            if not hasattr(v, '_class_type'):
+                continue
+                
+            # Get backcompat names from the nested model
+            nested_backcompat_names = set(_get_backcompat_attr_to_rest_field(v._class_type).keys())  # pylint: disable=protected-access
+            
+            # If any flattened items match the backcompat names in the nested model, this is our flattened attribute
+            if flattened_items_set.intersection(nested_backcompat_names):
                 return k
         except AttributeError:
             # if the attribute does not have _class_type, it is not a typespec generated model
@@ -375,9 +393,15 @@ def attribute_list(obj: Any) -> List[str]:
         return list(obj._attribute_map.keys())  # pylint: disable=protected-access
     flattened_attribute = _get_flattened_attribute(obj)
     retval: List[str] = []
-    for attr_name, rest_field in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+    for attr_name, rest_field in _get_backcompat_attr_to_rest_field(obj).items():  # pylint: disable=protected-access
         if flattened_attribute == attr_name:
-            retval.extend(attribute_list(rest_field._class_type))  # pylint: disable=protected-access
+            # For flattened attributes, return the flattened item names from __flattened_items
+            try:
+                flattened_items = getattr(obj, next(a for a in dir(obj) if "__flattened_items" in a), None)
+                if flattened_items:
+                    retval.extend(flattened_items)
+            except StopIteration:
+                pass
         else:
             retval.append(attr_name)
     return retval
@@ -410,28 +434,62 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
         # create a reverse mapping from rest field name to attribute name
         rest_to_attr = {}
         flattened_attribute = _get_flattened_attribute(obj)
-        for attr_name, rest_field in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+        flattened_items = None
+        flattened_actual_attr = None  # Store the actual attribute name for the flattened attribute
+        if flattened_attribute:
+            try:
+                flattened_items = getattr(obj, next(a for a in dir(obj) if "__flattened_items" in a), None)
+                # Find the actual attribute name that corresponds to the flattened attribute
+                # flattened_attribute could be either an actual attr name or a backcompat name
+                # We need to find the actual attr name that appears in obj.items()
+                for actual_attr_name, rest_field in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+                    # Get the backcompat name for this attribute
+                    original_tsp_name = getattr(rest_field, "_original_tsp_name", None)
+                    backcompat_name = original_tsp_name if original_tsp_name else actual_attr_name
+                    
+                    if backcompat_name == flattened_attribute:
+                        flattened_actual_attr = actual_attr_name
+                        break
+            except StopIteration:
+                pass
+        
+        for attr_name, rest_field in _get_backcompat_attr_to_rest_field(obj).items():  # pylint: disable=protected-access
 
             if exclude_readonly and _is_readonly(rest_field):
                 # if we're excluding readonly properties, we need to track them
                 readonly_props.add(rest_field._rest_name)  # pylint: disable=protected-access
             if flattened_attribute == attr_name:
-                for fk, fv in rest_field._class_type._attr_to_rest_field.items():  # pylint: disable=protected-access
-                    rest_to_attr[fv._rest_name] = fk  # pylint: disable=protected-access
+                # For flattened attributes, map flattened item names directly to their nested field names
+                nested_backcompat_map = _get_backcompat_attr_to_rest_field(rest_field._class_type)  # pylint: disable=protected-access
+                for flattened_name in flattened_items or []:
+                    if flattened_name in nested_backcompat_map:
+                        nested_field = nested_backcompat_map[flattened_name]
+                        rest_to_attr[nested_field._rest_name] = flattened_name  # pylint: disable=protected-access
             else:
                 rest_to_attr[rest_field._rest_name] = attr_name  # pylint: disable=protected-access
+        
         for k, v in obj.items():
             if exclude_readonly and k in readonly_props:  # pyright: ignore
                 continue
-            if k == flattened_attribute:
-                for fk, fv in v.items():
-                    result[rest_to_attr.get(fk, fk)] = _as_attribute_dict_value(fv, exclude_readonly=exclude_readonly)
+            if k == flattened_actual_attr:
+                # For flattened attributes, extract values from nested model using backcompat names
+                if hasattr(v, 'items'):
+                    for fk, fv in v.items():
+                        mapped_name = rest_to_attr.get(fk, fk)
+                        if mapped_name in (flattened_items or []):
+                            # Check if this flattened item should be excluded due to readonly
+                            nested_backcompat_map = _get_backcompat_attr_to_rest_field(getattr(obj._attr_to_rest_field[flattened_actual_attr], '_class_type'))  # pylint: disable=protected-access
+                            if mapped_name in nested_backcompat_map:
+                                nested_field = nested_backcompat_map[mapped_name]
+                                if exclude_readonly and _is_readonly(nested_field):
+                                    continue
+                            result[mapped_name] = _as_attribute_dict_value(fv, exclude_readonly=exclude_readonly)
             else:
                 is_multipart_file_input = False
                 try:
                     is_multipart_file_input = next(  # pylint: disable=protected-access
                         rf
-                        for rf in obj._attr_to_rest_field.values()  # pylint: disable=protected-access
+                        for rf in _get_backcompat_attr_to_rest_field(obj).values()  # pylint: disable=protected-access
                         if rf._rest_name == k  # pylint: disable=protected-access
                     )._is_multipart_file_input
                 except StopIteration:
