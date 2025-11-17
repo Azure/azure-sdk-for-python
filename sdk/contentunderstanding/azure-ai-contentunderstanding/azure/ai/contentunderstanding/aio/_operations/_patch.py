@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,19 +19,19 @@ __all__: list[str] = []  # Add all objects you want publicly available to users 
 
 def patch_sdk():
     """Patch the generated code to add custom functionality.
-    
+
     1. Wrap begin_analyze and begin_analyze_binary to return custom LROPoller with .details property
     2. Hide string_encoding parameter and always use "codePoint" (correct for Python)
-    
+
     Note: content_type default fix is now directly in generated code (search for EMITTER-FIX)
     """
     from ._operations import _ContentUnderstandingClientOperationsMixin
     from ...aio.operations._patch import AnalyzeAsyncLROPoller
-    
+
     # Store original methods
     original_begin_analyze = _ContentUnderstandingClientOperationsMixin.begin_analyze
     original_begin_analyze_binary = _ContentUnderstandingClientOperationsMixin.begin_analyze_binary
-    
+
     # Wrap begin_analyze to return custom poller and set string_encoding
     async def begin_analyze_wrapped(
         self,
@@ -43,7 +44,7 @@ def patch_sdk():
         **kwargs: Any
     ) -> "AsyncLROPoller[AnalyzeResult]":
         """Extract content and fields from input.
-        
+
         :param analyzer_id: The unique identifier of the analyzer. Required.
         :type analyzer_id: str
         :keyword processing_location: The location where the data may be processed. Defaults to
@@ -63,7 +64,7 @@ def patch_sdk():
          compatible with MutableMapping. The poller includes a .details property with operation metadata.
         :rtype: ~azure.ai.contentunderstanding.aio.operations.AnalyzeAsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-        
+
         .. note::
            The string_encoding parameter is automatically set to "codePoint" for Python as it
            matches Python's native string indexing behavior (len() and str[i] use code points).
@@ -86,7 +87,7 @@ def patch_sdk():
             poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access
             poller._polling_method,  # pylint: disable=protected-access
         )
-    
+
     # Wrap begin_analyze_binary to return custom poller and set string_encoding
     async def begin_analyze_binary_wrapped(
         self,
@@ -99,7 +100,7 @@ def patch_sdk():
         **kwargs: Any
     ) -> "AsyncLROPoller[AnalyzeResult]":
         """Extract content and fields from input.
-        
+
         :param analyzer_id: The unique identifier of the analyzer. Required.
         :type analyzer_id: str
         :param binary_input: The binary content of the document to analyze. Required.
@@ -117,7 +118,7 @@ def patch_sdk():
          compatible with MutableMapping. The poller includes a .details property with operation metadata.
         :rtype: ~azure.ai.contentunderstanding.aio.operations.AnalyzeAsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-        
+
         .. note::
            The string_encoding parameter is automatically set to "codePoint" for Python as it
            matches Python's native string indexing behavior (len() and str[i] use code points).
@@ -140,7 +141,7 @@ def patch_sdk():
             poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access
             poller._polling_method,  # pylint: disable=protected-access
         )
-    
+
     # Replace the methods
     _ContentUnderstandingClientOperationsMixin.begin_analyze = begin_analyze_wrapped
     _ContentUnderstandingClientOperationsMixin.begin_analyze_binary = begin_analyze_binary_wrapped

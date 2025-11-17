@@ -50,9 +50,9 @@ class TestContentUnderstanding(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_begin_copy(self, contentunderstanding_endpoint):
+    def test_begin_copy_analyzer(self, contentunderstanding_endpoint):
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.begin_copy(
+        response = client.begin_copy_analyzer(
             analyzer_id="str",
             body={"sourceAnalyzerId": "str", "sourceAzureResourceId": "str", "sourceRegion": "str"},
             source_analyzer_id="str",
@@ -63,9 +63,9 @@ class TestContentUnderstanding(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_begin_create_or_replace(self, contentunderstanding_endpoint):
+    def test_begin_create_analyzer(self, contentunderstanding_endpoint):
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.begin_create_or_replace(
+        response = client.begin_create_analyzer(
             analyzer_id="str",
             resource={
                 "analyzerId": "str",
@@ -139,9 +139,9 @@ class TestContentUnderstanding(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_delete(self, contentunderstanding_endpoint):
+    def test_delet_analyzer(self, contentunderstanding_endpoint):
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.delete(
+        response = client.delet_analyzer(
             analyzer_id="str",
         )
 
@@ -161,9 +161,9 @@ class TestContentUnderstanding(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_get(self, contentunderstanding_endpoint):
+    def test_get_analyzer(self, contentunderstanding_endpoint):
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.get(
+        response = client.get_analyzer(
             analyzer_id="str",
         )
 
@@ -175,18 +175,6 @@ class TestContentUnderstanding(ContentUnderstandingClientTestBase):
     def test_get_defaults(self, contentunderstanding_endpoint):
         client = self.create_client(endpoint=contentunderstanding_endpoint)
         response = client.get_defaults()
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ContentUnderstandingPreparer()
-    @recorded_by_proxy
-    def test_get_operation_status(self, contentunderstanding_endpoint):
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.get_operation_status(
-            analyzer_id="str",
-            operation_id="str",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -218,18 +206,18 @@ class TestContentUnderstanding(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_list(self, contentunderstanding_endpoint):
+    def test_list_analyzers(self, contentunderstanding_endpoint):
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.list()
+        response = client.list_analyzers()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_update(self, contentunderstanding_endpoint):
+    def test_update_analyzer(self, contentunderstanding_endpoint):
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.update(
+        response = client.update_analyzer(
             analyzer_id="str",
             resource={
                 "analyzerId": "str",

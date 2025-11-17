@@ -55,10 +55,10 @@ class TestContentUnderstandingAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_begin_copy(self, contentunderstanding_endpoint):
+    async def test_begin_copy_analyzer(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await (
-            await client.begin_copy(
+            await client.begin_copy_analyzer(
                 analyzer_id="str",
                 body={"sourceAnalyzerId": "str", "sourceAzureResourceId": "str", "sourceRegion": "str"},
                 source_analyzer_id="str",
@@ -70,10 +70,10 @@ class TestContentUnderstandingAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_begin_create_or_replace(self, contentunderstanding_endpoint):
+    async def test_begin_create_analyzer(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await (
-            await client.begin_create_or_replace(
+            await client.begin_create_analyzer(
                 analyzer_id="str",
                 resource={
                     "analyzerId": "str",
@@ -148,9 +148,9 @@ class TestContentUnderstandingAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_delete(self, contentunderstanding_endpoint):
+    async def test_delet_analyzer(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.delete(
+        response = await client.delet_analyzer(
             analyzer_id="str",
         )
 
@@ -170,9 +170,9 @@ class TestContentUnderstandingAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_get(self, contentunderstanding_endpoint):
+    async def test_get_analyzer(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.get(
+        response = await client.get_analyzer(
             analyzer_id="str",
         )
 
@@ -184,18 +184,6 @@ class TestContentUnderstandingAsync(ContentUnderstandingClientTestBaseAsync):
     async def test_get_defaults(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await client.get_defaults()
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ContentUnderstandingPreparer()
-    @recorded_by_proxy_async
-    async def test_get_operation_status(self, contentunderstanding_endpoint):
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.get_operation_status(
-            analyzer_id="str",
-            operation_id="str",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -227,18 +215,18 @@ class TestContentUnderstandingAsync(ContentUnderstandingClientTestBaseAsync):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_list(self, contentunderstanding_endpoint):
+    async def test_list_analyzers(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = client.list()
+        response = client.list_analyzers()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_update(self, contentunderstanding_endpoint):
+    async def test_update_analyzer(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.update(
+        response = await client.update_analyzer(
             analyzer_id="str",
             resource={
                 "analyzerId": "str",

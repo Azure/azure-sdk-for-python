@@ -93,5 +93,3 @@ def patch_sdk():
     :return: None
     :rtype: None
     """
-
-
