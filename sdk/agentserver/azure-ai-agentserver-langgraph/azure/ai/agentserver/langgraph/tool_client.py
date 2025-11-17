@@ -159,8 +159,8 @@ class ToolClient:
         :rtype: type[BaseModel]
         """
         # Get properties from schema
-        properties = schema.get("properties", {})
-        required_fields = schema.get("required", [])
+        properties = schema.get("properties") or {}
+        required_fields = schema.get("required") or []
 
         # Build field definitions for Pydantic model
         field_definitions = {}

@@ -16,32 +16,32 @@ logger = get_logger()
 # pylint: disable=client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 class ToolClient:
     """Client that integrates AzureAIToolClient with Agent Framework.
-    
+
     This class provides methods to list tools from AzureAIToolClient and invoke them
     in a format compatible with Agent Framework agents.
-    
+
     :param tool_client: The AzureAIToolClient instance to use for tool operations.
     :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
-    
+
     .. admonition:: Example:
-    
+
         .. code-block:: python
-        
+
             from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient
             from azure.ai.agentserver.agentframework import ToolClient
             from azure.identity.aio import DefaultAzureCredential
-            
+
             async with DefaultAzureCredential() as credential:
                 tool_client = AzureAIToolClient(
                     endpoint="https://<your-project-endpoint>",
                     credential=credential
                 )
-                
+
                 client = ToolClient(tool_client)
-                
+
                 # List tools as Agent Framework tool definitions
                 tools = await client.list_tools()
-                
+
                 # Invoke a tool directly
                 result = await client.invoke_tool(
                     tool_name="my_tool",
@@ -53,7 +53,7 @@ class ToolClient:
 
     def __init__(self, tool_client: "AzureAIToolClient") -> None:
         """Initialize the ToolClient.
-        
+
         :param tool_client: The AzureAIToolClient instance to use for tool operations.
         :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
         """
@@ -62,19 +62,19 @@ class ToolClient:
 
     async def list_tools(self) -> List[AIFunction]:
         """List all available tools as Agent Framework tool definitions.
-        
+
         Retrieves tools from AzureAIToolClient and returns them in a format
         compatible with Agent Framework.
-        
+
         :return: List of tool definitions.
         :rtype: List[AIFunction]
         :raises ~azure.core.exceptions.HttpResponseError:
             Raised for HTTP communication failures.
-        
+
         .. admonition:: Example:
-        
+
             .. code-block:: python
-            
+
                 client = ToolClient(tool_client)
                 tools = await client.list_tools()
         """
@@ -94,7 +94,7 @@ class ToolClient:
 
     def _convert_to_agent_framework_tool(self, azure_tool: "FoundryTool") -> AIFunction:
         """Convert an AzureAITool to an Agent Framework AI Function
-        
+
         :param azure_tool: The AzureAITool to convert.
         :type azure_tool: ~azure.ai.agentserver.core.client.tools.aio.FoundryTool
         :return: An AI Function Tool.
@@ -104,8 +104,8 @@ class ToolClient:
         input_schema = azure_tool.input_schema or {}
 
         # Create a Pydantic model from the input schema
-        properties = input_schema.get("properties", {})
-        required_fields = set(input_schema.get("required", []))
+        properties = input_schema.get("properties") or {}
+        required_fields = set(input_schema.get("required") or [])
 
         # Build field definitions for the Pydantic model
         field_definitions: Dict[str, Any] = {}
@@ -146,7 +146,7 @@ class ToolClient:
 
     def _json_schema_type_to_python(self, json_type: str) -> type:
         """Convert JSON schema type to Python type.
-        
+
         :param json_type: The JSON schema type string.
         :type json_type: str
         :return: The corresponding Python type.
