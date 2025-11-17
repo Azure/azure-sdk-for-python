@@ -44,14 +44,12 @@ from pprint import pprint
 load_dotenv()
 
 
-endpoint = os.environ[
-    "AZURE_AI_PROJECT_ENDPOINT"
-]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 appinsights_resource_id = os.environ[
     "APPINSIGHTS_RESOURCE_ID"
 ]  # Sample : /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>
-agent_id = os.environ["AGENT_ID"]  # Sample : gcp-cloud-run-agent
-model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
+agent_id = os.environ["AGENT_ID"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 trace_query_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "1"))
 
 
@@ -138,15 +136,13 @@ def main() -> None:
     for trace_id in trace_ids:
         print(f"  - {trace_id}")
 
-    with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as client,
-    ):
-        data_source_config = {
-            "type": "azure_ai_source",
-            "scenario": "traces",
-        }
+    with DefaultAzureCredential() as credential:
+        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+            client = project_client.get_openai_client()
+            data_source_config = {
+                "type": "azure_ai_source",
+                "scenario": "traces",
+            }
 
         testing_criteria = [
             _build_evaluator_config(
@@ -159,21 +155,26 @@ def main() -> None:
             ),
         ]
 
-        print("\nCreating Eval Group")
+        print("\nCreating evaluation")
         eval_object = client.evals.create(
             name="agent_trace_eval_group",
-            data_source_config=data_source_config,  # type: ignore
-            testing_criteria=testing_criteria,  # type: ignore
+            data_source_config=data_source_config,   # type: ignore
+            testing_criteria=testing_criteria,   # type: ignore
         )
-        print("Eval Group created")
+        print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-        print("\nGet Eval Group by Id")
+        print("\nGet Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
-        print("Eval Group Response:")
+        print("Evaluation Response:")
         pprint(eval_object_response)
 
         print("\nCreating Eval Run with trace IDs")
         run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        data_source = {
+            "type": "azure_ai_traces",
+            "trace_ids": trace_ids,
+            "lookback_hours": trace_query_hours,
+        }
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
             name=run_name,
@@ -182,11 +183,7 @@ def main() -> None:
                 "start_time": start_time.isoformat(),
                 "end_time": end_time.isoformat(),
             },
-            data_source={  # type: ignore
-                "type": "azure_ai_traces",
-                "trace_ids": trace_ids,
-                "lookback_hours": trace_query_hours,
-            },
+            data_source=data_source,  # type: ignore
         )
         print("Eval Run created")
         pprint(eval_run_object)
@@ -204,6 +201,9 @@ def main() -> None:
 
             time.sleep(5)
             print("Waiting for eval run to complete...")
+
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")
 
 
 if __name__ == "__main__":

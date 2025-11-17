@@ -7,14 +7,14 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list eval group and and eval runs.
+    `openai.evals.*` methods to create, get and list evaluation and and eval runs.
 
 USAGE:
     python sample_scheduled_evaluations.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity azure-ai-projects>=2.0.0b1 python-dotenv azure-mgmt-authorization azure-mgmt-resource
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv azure-mgmt-authorization azure-mgmt-resource
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -24,7 +24,7 @@ USAGE:
     4) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     5) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
     6) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
-    7) AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
+    7) AZURE_AI_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
 """
 
 from datetime import datetime
@@ -33,6 +33,7 @@ from typing import Union
 
 from dotenv import load_dotenv
 from pprint import pprint
+from azure.ai.projects.models._models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.mgmt.authorization import AuthorizationManagementClient
@@ -213,9 +214,7 @@ def assign_rbac():
 
 
 def schedule_dataset_evaluation() -> None:
-    endpoint = os.environ[
-        "AZURE_AI_PROJECT_ENDPOINT"
-    ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
     dataset_name = os.environ.get("DATASET_NAME", "")
     dataset_version = os.environ.get("DATASET_VERSION", "1")
     # Construct the paths to the data folder and data file used in this sample
@@ -270,15 +269,15 @@ def schedule_dataset_evaluation() -> None:
             },
         ]
 
-        print("Creating Eval Group")
+        print("Creating evaluation")
         eval_object = client.evals.create(
             name="label model test with dataset ID",
-            data_source_config=data_source_config,
+            data_source_config=data_source_config,  # type: ignore
             testing_criteria=testing_criteria,  # type: ignore
         )
-        print(f"Eval Group created")
+        print(f"Evaluation created")
 
-        print("Get Eval Group by Id")
+        print("Get Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
         print("Eval Run Response:")
         pprint(eval_object_response)
@@ -309,34 +308,50 @@ def schedule_dataset_evaluation() -> None:
         print(f"Schedule created for dataset evaluation: {schedule_response.id}")
         pprint(schedule_response)
 
-        schedule_runs = project_client.schedules.list_runs(id=schedule_response.id)
+        time.sleep(5)  # Wait for schedule to be fully created
+        schedule_runs = project_client.schedules.list_runs(schedule_response.id)
         print(f"Listing schedule runs for schedule id: {schedule_response.id}")
         for run in schedule_runs:
             pprint(run)
+
+        project_client.schedules.delete(schedule_response.id)
+        print("Schedule deleted")
+
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")
+
+        project_client.datasets.delete(name=dataset.name, version=dataset.version)
+        print("Dataset deleted")
 
 
 def schedule_redteam_evaluation() -> None:
     load_dotenv()
     #
-    endpoint = os.environ.get(
-        "AZURE_AI_PROJECT_ENDPOINT", ""
-    )  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
-    agent_name = os.environ.get("AGENT_NAME", "")
+    endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
+    agent_name = os.environ.get("AZURE_AI_AGENT_NAME", "")
 
     # Construct the paths to the data folder and data file used in this sample
     script_dir = os.path.dirname(os.path.abspath(__file__))
     data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 
     with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as client,
-    ):
-        agent_versions = project_client.agents.get(agent_name=agent_name)
-        agent = agent_versions.versions.latest
-        agent_version = agent.version
-        print(f"Retrieved agent: {agent_name}, version: {agent_version}")
-        eval_group_name = "Red Team Agent Safety Eval Group -" + str(int(time.time()))
+            DefaultAzureCredential() as credential,
+            AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+            project_client.get_openai_client() as client,
+        ):
+
+        agent_version = project_client.agents.create_version(
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                instructions="You are a helpful assistant that answers general questions",
+            ),
+        )
+        print(
+            f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
+        )
+
+        eval_group_name = "Red Team Agent Safety Evaluation -" + str(int(time.time()))
         eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
         data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
 
@@ -344,24 +359,24 @@ def schedule_redteam_evaluation() -> None:
         print(f"Defining testing criteria for red teaming for agent target")
         pprint(testing_criteria)
 
-        print("Creating Eval Group")
+        print("Creating Evaluation")
         eval_object = client.evals.create(
             name=eval_group_name,
-            data_source_config=data_source_config,  # type: ignore
-            testing_criteria=testing_criteria,  # type: ignore
+            data_source_config=data_source_config,   # type: ignore
+            testing_criteria=testing_criteria,   # type: ignore
         )
-        print(f"Eval Group created for red teaming: {eval_group_name}")
+        print(f"Evaluation created for red teaming: {eval_group_name}")
 
-        print(f"Get Eval Group by Id: {eval_object.id}")
+        print(f"Get Evaluation by Id: {eval_object.id}")
         eval_object_response = client.evals.retrieve(eval_object.id)
-        print("Eval Group Response:")
+        print("Evaluation Response:")
         pprint(eval_object_response)
 
         risk_categories_for_taxonomy: list[Union[str, RiskCategory]] = [RiskCategory.PROHIBITED_ACTIONS]
         target = AzureAIAgentTarget(
-            name=agent_name, version=agent_version, tool_descriptions=_get_tool_descriptions(agent)
+            name=agent_name, version=agent_version.version, tool_descriptions=_get_tool_descriptions(agent_version)
         )
-        agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target)
+        agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target) 
         print("Creating Eval Taxonomies")
         eval_taxonomy_input = EvaluationTaxonomy(
             description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
@@ -403,12 +418,17 @@ def schedule_redteam_evaluation() -> None:
         print(f"Schedule created for red teaming: {schedule_response.id}")
         pprint(schedule_response)
 
-        schedule_runs = project_client.schedules.list_runs(id=schedule_response.id)
+        time.sleep(5)  # Wait for schedule to be fully created
+        schedule_runs = project_client.schedules.list_runs(schedule_response.id)
         print(f"Listing schedule runs for schedule id: {schedule_response.id}")
         for run in schedule_runs:
             pprint(run)
 
-        # [END evaluations_sample]
+        project_client.schedules.delete(schedule_response.id)
+        print("Schedule deleted")
+
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")
 
 
 def _get_tool_descriptions(agent: AgentVersionObject):

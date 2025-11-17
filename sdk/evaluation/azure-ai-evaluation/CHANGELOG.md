@@ -1,5 +1,12 @@
 # Release History
 
+## 1.13.7 (2025-11-14)
+
+### Bugs Fixed
+
+- Fixed NoneType error when generating usage summary in evaluation results.
+- Fixed results for f1_score.
+
 ## 1.13.6 (2025-11-12)
 
 ### Bugs Fixed
