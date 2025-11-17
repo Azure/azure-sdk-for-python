@@ -39,54 +39,6 @@ class ResponseInputItemParam(Protocol):
         ...
 
 
-@runtime_checkable
-class ResponseFunctionToolCallParam(Protocol):
-    """
-    Protocol for function tool call parameters.
-    
-    This protocol describes the interface for function tool calls, typically
-    containing fields like call_id, name, and arguments.
-    """
-    
-    def get(self, key: str, default: Any = None) -> Any:
-        """
-        Get a value from the function tool call by key.
-        
-        :param key: The key to retrieve.
-        :type key: str
-        :param default: The default value if key is not found.
-        :type default: Any
-        :return: The value associated with the key, or default if not found.
-        :rtype: Any
-        """
-        ...
-
-
-@runtime_checkable
-class FunctionCallOutput(Protocol):
-    """
-    Protocol for function call output parameters.
-    
-    This protocol describes the interface for function call outputs, typically
-    containing fields like call_id and output.
-    """
-    
-    def get(self, key: str, default: Any = None) -> Any:
-        """
-        Get a value from the function call output by key.
-        
-        :param key: The key to retrieve.
-        :type key: str
-        :param default: The default value if key is not found.
-        :type default: Any
-        :return: The value associated with the key, or default if not found.
-        :rtype: Any
-        """
-        ...
-
-
 __all__ = [
     "ResponseInputItemParam",
-    "ResponseFunctionToolCallParam",
-    "FunctionCallOutput",
 ]
