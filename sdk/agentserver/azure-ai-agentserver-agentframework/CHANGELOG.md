@@ -2,6 +2,10 @@
 
 ## 1.0.0b5 (2025-11-16)
 
+### Feature Added
+
+- Support Tools Oauth
+
 ### Bugs Fixed
 
 - Fixed streaming generation issues.
