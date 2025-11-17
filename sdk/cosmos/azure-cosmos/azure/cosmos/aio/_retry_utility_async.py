@@ -31,7 +31,7 @@ from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import _default_retry_policy, _health_check_retry_policy
 from .. import _endpoint_discovery_retry_policy
-from .. import _gone_retry_policy
+from ._gone_retry_policy_async import PartitionKeyRangeGoneRetryPolicyAsync
 from .. import _resource_throttle_retry_policy
 from .. import _service_response_retry_policy, _service_request_retry_policy
 from .. import _session_retry_policy
@@ -86,7 +86,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     sessionRetry_policy = _session_retry_policy._SessionRetryPolicy(
         client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, pk_range_wrapper, *args
     )
-    partition_key_range_gone_retry_policy = _gone_retry_policy.PartitionKeyRangeGoneRetryPolicy(client, *args)
+    partition_key_range_gone_retry_policy = PartitionKeyRangeGoneRetryPolicyAsync(client, *args)
     timeout_failover_retry_policy = _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy(
         client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args
     )
@@ -176,6 +176,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
+                # Call async ShouldRetry immediately to trigger routing map refresh
+                await retry_policy.ShouldRetry(e)
             elif exceptions._container_recreate_exception(e):
                 retry_policy = container_recreate_retry_policy
                 # Before we retry if retry policy is container recreate, we need refresh the cache of the
@@ -212,7 +214,11 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             # If none of the retry policies applies or there is no retry needed, set the
             # throttle related response headers and re-throw the exception back arg[0]
             # is the request. It needs to be modified for write forbidden exception
-            if not retry_policy.ShouldRetry(e):
+            # Check if we need to await ShouldRetry (for async retry policies)
+            should_retry = (await retry_policy.ShouldRetry(e)
+                            if retry_policy == partition_key_range_gone_retry_policy
+                            else retry_policy.ShouldRetry(e))
+            if not should_retry:
                 if not client.last_response_headers:
                     client.last_response_headers = {}
                 client.last_response_headers[

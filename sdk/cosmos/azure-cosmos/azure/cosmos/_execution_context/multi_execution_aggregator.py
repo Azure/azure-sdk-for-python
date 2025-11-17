@@ -84,12 +84,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
-    """
-    When a split occurs, the peek() call on a document producer might raise a CosmosHttpResponseError. Current logic in __next__ 
-    doesn't handle this, which would halt query execution instead of repairing the context and continuing. added the necessary 
-    exception handling to catch partition split errors, trigger _repair_document_producer, 
-    and then transparently retry the operation.
-    """
+
     def __next__(self):
         """Returns the next result
 
@@ -107,11 +102,13 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 targetRangeExContext.peek()
                 self._orderByPQ.push(targetRangeExContext)
             except exceptions.CosmosHttpResponseError as e:
-                print(
-                    f"DEBUG: multi_execution_aggregator - in the __next__ method  exception block and the exception is {e}")
+                # Handle partition split during peek(). The _configure_partition_ranges method
+                # handles Gone errors during initial setup when calling peek() on document producers.
+                # However, partition splits can also occur while iterating through results. When
+                # peek() is called to check if there are more results in a partition range and that
+                # range has been split, it raises a Gone (410) error. We repair the document
+                # producers with refreshed partition ranges and retry the fetch.
                 if exceptions._partition_range_is_gone(e):
-                    print(
-                        f"DEBUG: multi_execution_aggregator - in the __next__ method  exception block and going to repair the document producer")
                     self._repair_document_producer()
                     return next(self)  # Retry fetching the next document
                 raise

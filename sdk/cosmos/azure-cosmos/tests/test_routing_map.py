@@ -54,7 +54,16 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
             routing_range.Range("", "FF", True, False),
             {})
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
-        self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
+
+        # The extra _lsn field in overlapping_partition_key_ranges is appearing because modified code is now using the change
+        # feed to fetch partition key ranges, while _ReadPartitionKeyRanges uses the standard read feed.
+        # Verify that all fields from expected partition_key_ranges exist in actual results
+        # and have the same values, allowing additional change feed metadata fields
+        for actual, expected in zip(overlapping_partition_key_ranges, partition_key_ranges):
+            for key, expected_value in expected.items():
+                self.assertIn(key, actual, f"Expected key '{key}' not found in actual range")
+                self.assertEqual(actual[key], expected_value,
+                                 f"Value mismatch for key '{key}': expected {expected_value}, got {actual[key]}")
 
 
 if __name__ == "__main__":

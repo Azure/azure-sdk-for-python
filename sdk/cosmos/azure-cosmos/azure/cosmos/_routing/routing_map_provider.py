@@ -235,16 +235,15 @@ class PartitionKeyRangeCache(object):
             raise RuntimeError(f"Routing map for collection {collection_link} not found.")
 
         if not partition_key_ranges:
-            ranges = list(routing_map.get_ordered_partition_key_ranges())
-        else:
-            ranges = routing_map.get_overlapping_ranges(partition_key_ranges)
+            return []  # Return empty list instead of all ranges
 
+        ranges = routing_map.get_overlapping_ranges(partition_key_ranges)
         return ranges
 
     def get_range_by_partition_key_range_id(
             self,
             collection_link: str,
-            partition_key_range_id: int,
+            partition_key_range_id: str,
             feed_options: Dict[str, Any],
             **kwargs: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:

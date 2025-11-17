@@ -3335,7 +3335,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return partitionKey
 
-    def refresh_routing_map_provider(
+    async def refresh_routing_map_provider(
             self,
             collection_link: Optional[str] = None,
             previous_routing_map: Optional[Any] = None) -> None:
@@ -3349,7 +3349,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if collection_link and previous_routing_map:
             # Force a refresh for a specific collection.
-            self._routing_map_provider.get_or_refresh_routing_map_for_collection(
+            await self._routing_map_provider.get_or_refresh_routing_map_for_collection(
                 collection_link,
                 feed_options={},
                 force_refresh=True,
@@ -3357,7 +3357,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
         else:
             # Full refresh - create a new provider instance. This clears all cached routing maps.
-            self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+            self._routing_map_provider = SmartRoutingMapProvider(self)
 
     async def _refresh_container_properties_cache(self, container_link: str):
         # If container properties cache is stale, refresh it by reading the container.

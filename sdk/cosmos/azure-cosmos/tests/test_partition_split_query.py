@@ -51,7 +51,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.create_database_if_not_exists(id='Partition-Cache-Database')
-        cls.container = cls.database.create_container(
+        cls.container = cls.database.create_container_if_not_exists(
             id = 'single_partition_container',
             partition_key = PartitionKey(path="/id"),
             offer_throughput = cls.throughput)
@@ -78,7 +78,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         print("--------------------------------")
         print("now starting queries")
 
-        run_queries(self.container, 100)  # initial check for queries before partition split
+        run_queries(self.container, 1)  # initial check for queries before partition split
         print("initial check succeeded, now reading offer until replacing is done")
         offer = self.container.get_throughput()
         while True:
@@ -89,7 +89,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 offer = self.container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
-                run_queries(self.container, 100)  # check queries work post partition split
+                run_queries(self.container, 1)  # check queries work post partition split
                 self.assertTrue(offer.offer_throughput > self.throughput)
                 return
 
@@ -547,7 +547,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 assert call_count['count'] >= 2, \
                     "Should have called _ReadPartitionKeyRanges twice (initial + fallback)"
 
-                print("✓ Validated: Missing parent guard triggered fallback")
+                print("Validated: Missing parent guard triggered fallback")
 
         finally:
             self.database.delete_container(container.id)

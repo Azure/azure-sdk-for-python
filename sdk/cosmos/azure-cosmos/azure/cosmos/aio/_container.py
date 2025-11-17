@@ -819,6 +819,7 @@ class ContainerProxy:
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
         feed_options["correlatedActivityId"] = GenerateGuidId()
+        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         # Set query with 'query' and 'parameters' from kwargs
         if utils.valid_key_value_exist(kwargs, "parameters"):
