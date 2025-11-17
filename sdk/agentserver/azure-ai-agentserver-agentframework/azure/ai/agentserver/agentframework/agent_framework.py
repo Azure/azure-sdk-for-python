@@ -225,32 +225,6 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                             update_count += 1
                             yield event
 
-                        # timeout_s = self._resolve_stream_timeout(context.request)
-                        # logger.info("Starting streaming with idle-timeout=%.2fs", timeout_s)
-                        # for ev in streaming_converter.initial_events():
-                        #     yield ev
-                        #
-                        # # Iterate with per-update timeout; terminate if idle too long
-                        # aiter = agent.run_stream(message).__aiter__()
-                        # while True:
-                        #     try:
-                        #         update = await asyncio.wait_for(aiter.__anext__(), timeout=timeout_s)
-                        #     except StopAsyncIteration:
-                        #         logger.debug("Agent streaming iterator finished (StopAsyncIteration)")
-                        #         break
-                        #     except asyncio.TimeoutError:
-                        #         logger.warning(
-                        #             "Streaming idle timeout reached (%.1fs); terminating stream.", timeout_s
-                        #         )
-                        #         for ev in streaming_converter.completion_events():
-                        #             yield ev
-                        #         return
-                        #     update_count += 1
-                        #     transformed = streaming_converter.transform_output_for_streaming(update)
-                        #     for event in transformed:
-                        #         yield event
-                        # for ev in streaming_converter.completion_events():
-                        #     yield ev
                         logger.info("Streaming completed with %d updates", update_count)
                     finally:
                         # Close tool_client if it was created for this request

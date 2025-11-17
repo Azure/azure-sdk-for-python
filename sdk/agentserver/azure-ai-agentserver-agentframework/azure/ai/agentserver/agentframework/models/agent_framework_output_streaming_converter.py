@@ -299,13 +299,16 @@ class AgentFrameworkOutputStreamingConverter:
             elif isinstance(first, FunctionResultContent):
                 state = _FunctionCallOutputStreamingState(self)
             elif isinstance(first, ErrorContent):
-                yield ResponseErrorEvent(
-                    sequence_number=self.next_sequence(),
-                    code=getattr(first, "error_code", None) or "server_error",
-                    message=getattr(first, "message", None) or "An error occurred",
-                    param="",
-                )
-                continue
+                code=getattr(first, "error_code", None) or "server_error"
+                message=getattr(first, "message", None) or "An error occurred"
+                raise ValueError(f"ErrorContent received: code={code}, message={message}")
+                # yield ResponseErrorEvent(
+                #     sequence_number=self.next_sequence(),
+                #     code=getattr(first, "error_code", None) or "server_error",
+                #     message=getattr(first, "message", None) or "An error occurred",
+                #     param="",
+                # )
+                # continue
             if not state:
                 continue
 

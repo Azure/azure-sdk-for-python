@@ -158,7 +158,6 @@ class FoundryCBAgent:
                                 logger.error("Error in non-async generator: %s\n%s", e, traceback.format_exc())
                                 payload = {"error": err_msg}
                                 yield f"event: error\ndata: {json.dumps(payload)}\n\n"
-                                yield "data: [DONE]\n\n"
                                 error_sent = True
                             finally:
                                 logger.info("End of processing CreateResponse request.")
