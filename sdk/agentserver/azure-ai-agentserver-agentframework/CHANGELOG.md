@@ -1,5 +1,10 @@
 # Release History
 
+## 1.0.0b5 (2025-11-16)
+
+### Bugs Fixed
+
+- Fixed streaming generation issues.
 
 ## 1.0.0b4 (2025-11-13)
 
@@ -27,7 +32,7 @@
 
 - Fixed Id generator format.
 
-- Improved stream mode error messsage.
+- Improved stream mode error message.
 
 - Updated application insights related configuration environment variables.
 

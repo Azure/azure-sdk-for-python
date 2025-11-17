@@ -274,11 +274,11 @@ class AgentFrameworkOutputStreamingConverter:
 
             state = None
             if isinstance(first, TextContent):
-                state = _TextContentStreamingState(self._context)
+                state = _TextContentStreamingState(self)
             elif isinstance(first, (FunctionCallContent, FunctionApprovalRequestContent)):
-                state = _FunctionCallStreamingState(self._context)
+                state = _FunctionCallStreamingState(self)
             elif isinstance(first, FunctionResultContent):
-                state = _FunctionCallOutputStreamingState(self._context)
+                state = _FunctionCallOutputStreamingState(self)
             elif isinstance(first, ErrorContent):
                 yield ResponseErrorEvent(
                     sequence_number=self.next_sequence(),
