@@ -1337,7 +1337,7 @@ class RunsOperations:
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
+         AgentsNamedToolChoice. Default value is None.
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
@@ -1511,7 +1511,7 @@ class RunsOperations:
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
+         AgentsNamedToolChoice. Default value is None.
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
@@ -4834,7 +4834,7 @@ class _AgentsClientOperationsMixin(
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
+         AgentsNamedToolChoice. Default value is None.
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
@@ -4968,7 +4968,7 @@ class _AgentsClientOperationsMixin(
         :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
+         AgentsNamedToolChoice. Default value is None.
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
