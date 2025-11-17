@@ -413,8 +413,6 @@
         "azure.ai.projects.aio.operations.AgentsOperations.list_versions": "Azure.AI.Projects.Agents.listAgentVersions",
         "azure.ai.projects.operations.MemoryStoresOperations.create": "Azure.AI.Projects.MemoryStores.createMemoryStore",
         "azure.ai.projects.aio.operations.MemoryStoresOperations.create": "Azure.AI.Projects.MemoryStores.createMemoryStore",
-        "azure.ai.projects.operations.MemoryStoresOperations.update": "Azure.AI.Projects.MemoryStores.updateMemoryStore",
-        "azure.ai.projects.aio.operations.MemoryStoresOperations.update": "Azure.AI.Projects.MemoryStores.updateMemoryStore",
         "azure.ai.projects.operations.MemoryStoresOperations.get": "Azure.AI.Projects.MemoryStores.getMemoryStore",
         "azure.ai.projects.aio.operations.MemoryStoresOperations.get": "Azure.AI.Projects.MemoryStores.getMemoryStore",
         "azure.ai.projects.operations.MemoryStoresOperations.list": "Azure.AI.Projects.MemoryStores.listMemoryStores",

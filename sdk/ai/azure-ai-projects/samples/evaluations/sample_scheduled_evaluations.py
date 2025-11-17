@@ -335,10 +335,10 @@ def schedule_redteam_evaluation() -> None:
     data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 
     with (
-            DefaultAzureCredential() as credential,
-            AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-            project_client.get_openai_client() as client,
-        ):
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as client,
+    ):
 
         agent_version = project_client.agents.create_version(
             agent_name=agent_name,
@@ -347,9 +347,7 @@ def schedule_redteam_evaluation() -> None:
                 instructions="You are a helpful assistant that answers general questions",
             ),
         )
-        print(
-            f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
-        )
+        print(f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})")
 
         eval_group_name = "Red Team Agent Safety Evaluation -" + str(int(time.time()))
         eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
@@ -362,8 +360,8 @@ def schedule_redteam_evaluation() -> None:
         print("Creating Evaluation")
         eval_object = client.evals.create(
             name=eval_group_name,
-            data_source_config=data_source_config,   # type: ignore
-            testing_criteria=testing_criteria,   # type: ignore
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Evaluation created for red teaming: {eval_group_name}")
 
@@ -376,7 +374,7 @@ def schedule_redteam_evaluation() -> None:
         target = AzureAIAgentTarget(
             name=agent_name, version=agent_version.version, tool_descriptions=_get_tool_descriptions(agent_version)
         )
-        agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target) 
+        agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target)
         print("Creating Eval Taxonomies")
         eval_taxonomy_input = EvaluationTaxonomy(
             description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input

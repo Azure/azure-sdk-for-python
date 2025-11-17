@@ -1967,7 +1967,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update(
+    async def _update(
         self,
         name: str,
         *,
@@ -1975,59 +1975,15 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword description: A human-readable description of the memory store. Default value is None.
-        :paramtype description: str
-        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
-         value is None.
-        :paramtype metadata: dict[str, str]
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.MemoryStoreObject: ...
     @overload
-    async def update(
+    async def _update(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.MemoryStoreObject: ...
     @overload
-    async def update(
+    async def _update(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.MemoryStoreObject: ...
 
     @distributed_trace_async
     @api_version_validation(
@@ -2035,7 +1991,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def update(
+    async def _update(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
