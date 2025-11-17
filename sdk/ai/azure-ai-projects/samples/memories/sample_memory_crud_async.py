@@ -71,10 +71,10 @@ async def main() -> None:
         print(f"Retrieved: {get_store.name} ({get_store.id}): {get_store.description}")
 
         # Update Memory Store
-        updated_store = await project_client.memory_stores.update(
-            name=memory_store.name, description="Updated description"
-        )
-        print(f"Updated: {updated_store.name} ({updated_store.id}): {updated_store.description}")
+        # updated_store = await project_client.memory_stores.update(
+        #     name=memory_store.name, description="Updated description"
+        # )
+        # print(f"Updated: {updated_store.name} ({updated_store.id}): {updated_store.description}")
 
         # List Memory Store
         memory_stores = []
