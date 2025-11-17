@@ -104,12 +104,20 @@ class AzureAIToolClient:
         tools: List[FoundryTool] = []
 
         # Fetch MCP tools
-        mcp_tools = self._mcp_tools.list_tools(existing_names)
-        tools.extend(mcp_tools)
+        if (
+            self._config.tool_config._named_mcp_tools
+            and len(self._config.tool_config._named_mcp_tools) > 0
+        ):
+            mcp_tools = self._mcp_tools.list_tools(existing_names)
+            tools.extend(mcp_tools)
 
         # Fetch Tools API tools
-        tools_api_tools = self._remote_tools.resolve_tools(existing_names)
-        tools.extend(tools_api_tools)
+        if (
+            self._config.tool_config._remote_tools
+            and len(self._config.tool_config._remote_tools) > 0
+        ):
+            tools_api_tools = self._remote_tools.resolve_tools(existing_names)
+            tools.extend(tools_api_tools)
 
         for tool in tools:
             # Capture tool in a closure to avoid shadowing issues
