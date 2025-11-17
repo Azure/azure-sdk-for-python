@@ -169,7 +169,7 @@ Creates a custom analyzer with content categories for document classification an
 
 ### Custom Analyzer Management
 
-#### `create_or_replace.py`
+#### `create_analyzer.py`
 Creates or replaces a custom analyzer with field schemas and analysis configuration.
 
 #### `get_analyzer.py`
