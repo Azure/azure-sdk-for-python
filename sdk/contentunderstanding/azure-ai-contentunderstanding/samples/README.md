@@ -186,7 +186,7 @@ Deletes a custom analyzer.
 
 ### Advanced Features
 
-#### `build_custom_model_with_training.py`
+#### `create_analyzer_with_labels.py`
 Builds a custom analyzer using training data from Azure Blob Storage. Requires additional configuration (see `env.sample`).
 
 #### `copy_analyzer.py`

@@ -1,6 +1,6 @@
 # Training Samples for Custom Model Building
 
-This directory contains training files for the `build_custom_model_with_training.py` sample.
+This directory contains training files for the `create_analyzer_with_labels.py` sample.
 
 ## File Requirements
 
@@ -46,7 +46,7 @@ This directory contains 2 labeled IRS 1040 forms with 5 fields:
 1. Upload all files to Azure Blob Storage
 2. Set the `CONTENT_UNDERSTANDING_STORAGE_CONTAINER_SAS_URL` environment variable
 3. Set the `CONTENT_UNDERSTANDING_STORAGE_PREFIX` to point to your training files
-4. Run `python build_custom_model_with_training.py`
+4. Run `python create_analyzer_with_labels.py`
 
 See `../../env.sample` for configuration details.
 
