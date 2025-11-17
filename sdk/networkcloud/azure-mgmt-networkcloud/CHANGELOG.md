@@ -42,9 +42,9 @@
   - Added model `StorageApplianceCommandSpecification`
   - Added model `StorageApplianceRunReadCommandsParameters`
   - Added model `VirtualMachineAssignRelayParameters`
-  - Model `BareMetalMachinesOperations` added method `begin_run_data_extracts_restricted`
-  - Model `StorageAppliancesOperations` added method `begin_run_read_commands`
-  - Model `VirtualMachinesOperations` added method `begin_assign_relay`
+  - Operation group `BareMetalMachinesOperations` added method `begin_run_data_extracts_restricted`
+  - Operation group `StorageAppliancesOperations` added method `begin_run_read_commands`
+  - Operation group `VirtualMachinesOperations` added method `begin_assign_relay`
 
 ## 2.1.0 (2025-06-16)
 
