@@ -11,6 +11,7 @@ from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import StructuredTool
 from langgraph.graph.state import CompiledStateGraph
 
+from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
 from azure.ai.agentserver.core.constants import Constants
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.server.base import FoundryCBAgent
@@ -31,7 +32,7 @@ logger = get_logger()
 
 class GraphFactory(Protocol):
     """Protocol for graph factory functions.
-    
+
     A graph factory is a callable that takes a ToolClient and returns
     a CompiledStateGraph, either synchronously or asynchronously.
     """
@@ -93,7 +94,7 @@ class LangGraphAdapter(FoundryCBAgent):
     def graph(self) -> "Optional[CompiledStateGraph]":
         """
         Get the resolved graph. This property provides backward compatibility.
-        
+
         :return: The resolved CompiledStateGraph if available, None otherwise.
         :rtype: Optional[CompiledStateGraph]
         """
@@ -115,17 +116,34 @@ class LangGraphAdapter(FoundryCBAgent):
             input_data = self.state_converter.request_to_state(context)
             logger.debug(f"Converted input data: {input_data}")
             if not context.stream:
-                response = await self.agent_run_non_stream(input_data, context, graph)
-                return response
-            return self.agent_run_astream(input_data, context, graph, tool_client)
-        finally:
-            # Close tool_client if it was created for this request
-            if tool_client is not None:
                 try:
-                    await tool_client.close()
-                    logger.debug("Closed tool_client after request processing")
-                except Exception as e:
-                    logger.warning(f"Error closing tool_client: {e}")
+                    response = await self.agent_run_non_stream(input_data, context, graph)
+                    return response
+                finally:
+                    # Close tool_client for non-streaming requests
+                    if tool_client is not None:
+                        try:
+                            await tool_client.close()
+                            logger.debug("Closed tool_client after non-streaming request")
+                        except Exception as e:
+                            logger.warning(f"Error closing tool_client: {e}")
+
+            # For streaming, pass tool_client to be closed after streaming completes
+            return self.agent_run_astream(input_data, context, graph, tool_client)
+        except OAuthConsentRequiredError as e:
+            # Clean up tool_client if OAuth error occurs before streaming starts
+            if tool_client is not None:
+                await tool_client.close()
+
+            if not context.stream:
+                response = await self.respond_with_oauth_consent(context, e)
+                return response
+            return self.respond_with_oauth_consent_astream(context, e)
+        except Exception:
+            # Clean up tool_client if error occurs before streaming starts
+            if tool_client is not None:
+                await tool_client.close()
+            raise
 
     async def _resolve_graph(self, context: AgentRunContext):
         """Resolve the graph if it's a factory function (for single-use/first-time resolution).
@@ -169,7 +187,7 @@ class LangGraphAdapter(FoundryCBAgent):
         Resolve a fresh graph instance for a single request to avoid concurrency issues.
         Creates a ToolClient and calls the factory function with it.
         This method returns a new graph instance and the tool_client for cleanup.
-        
+
         :param context: The context for the agent run.
         :type context: AgentRunContext
         :return: A tuple of (compiled graph instance, tool_client wrapper).

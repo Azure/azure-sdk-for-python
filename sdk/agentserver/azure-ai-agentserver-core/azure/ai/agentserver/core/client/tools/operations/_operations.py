@@ -63,7 +63,7 @@ REMOTE_TOOLS_HEADERS = {
 # Helper functions for request/response processing
 def prepare_request_headers(base_headers: Dict[str, str], custom_headers: Mapping[str, str] = None) -> Dict[str, str]:
 	"""Prepare request headers by merging base and custom headers.
-	
+
 	:param base_headers: Base headers to use
 	:param custom_headers: Custom headers to merge
 	:return: Merged headers dictionary
@@ -75,7 +75,7 @@ def prepare_request_headers(base_headers: Dict[str, str], custom_headers: Mappin
 
 def prepare_error_map(custom_error_map: Mapping[int, Any] = None) -> MutableMapping:
 	"""Prepare error map by merging default and custom error mappings.
-	
+
 	:param custom_error_map: Custom error mappings to merge
 	:return: Merged error map
 	"""
@@ -91,7 +91,7 @@ def format_and_execute_request(
 	**kwargs: Any
 ) -> HttpResponse:
 	"""Format request URL and execute pipeline.
-	
+
 	:param client: Pipeline client
 	:param request: HTTP request to execute
 	:param endpoint: Endpoint URL for formatting
@@ -104,7 +104,7 @@ def format_and_execute_request(
 
 def handle_response_error(response: HttpResponse, error_map: MutableMapping) -> None:
 	"""Handle HTTP response errors.
-	
+
 	:param response: HTTP response to check
 	:param error_map: Error map for status code mapping
 	:raises HttpResponseError: If response status is not 200
@@ -119,7 +119,7 @@ def process_list_tools_response(
 	existing_names: set
 ) -> List[FoundryTool]:
 	"""Process list_tools response and build descriptors.
-	
+
 	:param response: HTTP response with MCP tools
 	:param named_mcp_tools: Named MCP tools configuration
 	:param existing_names: Set of existing tool names
@@ -139,13 +139,24 @@ def process_resolve_tools_response(
 	existing_names: set
 ) -> List[FoundryTool]:
 	"""Process resolve_tools response and build descriptors.
-	
+
 	:param response: HTTP response with remote tools
 	:param remote_tools: Remote tools configuration
 	:param existing_names: Set of existing tool names
 	:return: List of tool descriptors
 	"""
-	toolResponse = ToolsResponse.from_dict(response.json(), remote_tools)
+	payload = response.json()
+	response_type = payload.get("type")
+	result = payload.get("toolResult")
+
+	if response_type == "OAuthConsentRequired":
+		consent_url = result.get("consentUrl")
+		message = result.get("message")
+		if not consent_url:
+			consent_url = message
+		raise OAuthConsentRequiredError(message, consent_url=consent_url, payload=payload)
+
+	toolResponse = ToolsResponse.from_dict(payload, remote_tools)
 	return ToolDescriptorBuilder.build_descriptors(
 		toolResponse.enriched_tools,
 		ToolSource.REMOTE_TOOLS,
@@ -157,7 +168,7 @@ def build_list_tools_request(
 	kwargs: Dict[str, Any]
 ) -> Tuple[HttpRequest, MutableMapping, Dict[str, str]]:
 	"""Build request for listing MCP tools.
-	
+
 	:param api_version: API version
 	:param kwargs: Additional arguments (headers, params, error_map)
 	:return: Tuple of (request, error_map, params)
@@ -165,11 +176,11 @@ def build_list_tools_request(
 	error_map = prepare_error_map(kwargs.pop("error_map", None))
 	_headers = prepare_request_headers(MCP_HEADERS, kwargs.pop("headers", None))
 	_params = kwargs.pop("params", {}) or {}
-	
+
 	_content = prepare_mcptools_list_tools_request_content()
 	content = json.dumps(_content)
 	_request = build_mcptools_list_tools_request(api_version=api_version, headers=_headers, params=_params, content=content)
-	
+
 	return _request, error_map, kwargs
 
 def build_invoke_mcp_tool_request(
@@ -179,7 +190,7 @@ def build_invoke_mcp_tool_request(
 	**kwargs: Any
 ) -> Tuple[HttpRequest, MutableMapping]:
 	"""Build request for invoking MCP tool.
-	
+
 	:param api_version: API version
 	:param tool: Tool descriptor
 	:param arguments: Tool arguments
@@ -188,12 +199,12 @@ def build_invoke_mcp_tool_request(
 	error_map = prepare_error_map()
 	_headers = prepare_request_headers(MCP_HEADERS)
 	_params = {}
-	
+
 	_content = prepare_mcptools_invoke_tool_request_content(tool, arguments, TOOL_PROPERTY_OVERRIDES)
 
 	content = json.dumps(_content)
 	_request = build_mcptools_invoke_tool_request(api_version=api_version, headers=_headers, params=_params, content=content)
-	
+
 	return _request, error_map
 
 def build_resolve_tools_request(
@@ -204,7 +215,7 @@ def build_resolve_tools_request(
 	kwargs: Dict[str, Any]
 ) -> Union[Tuple[HttpRequest, MutableMapping, Dict[str, Any]], Tuple[None, None, None]]:
 	"""Build request for resolving remote tools.
-	
+
 	:param agent_name: Agent name
 	:param api_version: API version
 	:param tool_config: Tool configuration
@@ -215,14 +226,14 @@ def build_resolve_tools_request(
 	error_map = prepare_error_map(kwargs.pop("error_map", None))
 	_headers = prepare_request_headers(REMOTE_TOOLS_HEADERS, kwargs.pop("headers", None))
 	_params = kwargs.pop("params", {}) or {}
-	
+
 	_content = prepare_remotetools_resolve_tools_request_content(tool_config, user)
 	if _content is None:
 		return None, None, None
-	
+
 	content = json.dumps(_content.to_dict())
 	_request = build_remotetools_resolve_tools_request(agent_name, api_version=api_version, headers=_headers, params=_params, content=content)
-	
+
 	return _request, error_map, kwargs
 
 def build_invoke_remote_tool_request(
@@ -233,7 +244,7 @@ def build_invoke_remote_tool_request(
 	arguments: Mapping[str, Any]
 ) -> Tuple[HttpRequest, MutableMapping]:
 	"""Build request for invoking remote tool.
-	
+
 	:param agent_name: Agent name
 	:param api_version: API version
 	:param tool: Tool descriptor
@@ -244,16 +255,16 @@ def build_invoke_remote_tool_request(
 	error_map = prepare_error_map()
 	_headers = prepare_request_headers(REMOTE_TOOLS_HEADERS)
 	_params = {}
-	
+
 	_content = prepare_remotetools_invoke_tool_request_content(tool, user, arguments)
 	content = json.dumps(_content)
 	_request = build_remotetools_invoke_tool_request(agent_name, api_version=api_version, headers=_headers, params=_params, content=content)
-	
+
 	return _request, error_map
 
 def process_invoke_remote_tool_response(response: HttpResponse) -> Any:
 	"""Process remote tool invocation response.
-	
+
 	:param response: HTTP response
 	:return: Tool result
 	:raises OAuthConsentRequiredError: If OAuth consent is required
@@ -261,7 +272,7 @@ def process_invoke_remote_tool_response(response: HttpResponse) -> Any:
 	payload = response.json()
 	response_type = payload.get("type")
 	result = payload.get("toolResult")
-	
+
 	if response_type == "OAuthConsentRequired":
 		raise OAuthConsentRequiredError(result.get("message"), consent_url=result.get("consentUrl"), payload=payload)
 	return result
@@ -270,7 +281,7 @@ class MCPToolsOperations:
 
 	def __init__(self, *args, **kwargs) -> None:
 		"""Initialize MCP client.
-		
+
 		Parameters
 		----------
 		client : PipelineClient
@@ -284,10 +295,10 @@ class MCPToolsOperations:
 
 		if self._client is None or self._config is None:
 			raise ValueError("Both 'client' and 'config' must be provided")
-	
+
 		self._endpoint_path = MCP_ENDPOINT_PATH
 		self._api_version = API_VERSION
-		
+
 	def list_tools(self, existing_names: set, **kwargs: Any) -> List[FoundryTool]:
 		"""List MCP tools.
 
@@ -298,12 +309,11 @@ class MCPToolsOperations:
 		response = format_and_execute_request(self._client, _request, self._config.endpoint, **remaining_kwargs)
 		handle_response_error(response, error_map)
 		return process_list_tools_response(response, self._config.tool_config._named_mcp_tools, existing_names)
-	
+
 	def invoke_tool(
 		self,
 		tool: FoundryTool,
 		arguments: Mapping[str, Any],
-		**kwargs: Any
 	) -> Any:
 		"""Invoke an MCP tool.
 
@@ -315,7 +325,7 @@ class MCPToolsOperations:
 		:rtype: Any
 		"""
 		_request, error_map = build_invoke_mcp_tool_request(self._api_version, tool, arguments)
-		response = format_and_execute_request(self._client, _request, self._config.endpoint, **kwargs)
+		response = format_and_execute_request(self._client, _request, self._config.endpoint)
 		handle_response_error(response, error_map)
 		return response.json().get("result")
 
@@ -357,9 +367,9 @@ def prepare_mcptools_invoke_tool_request_content(tool: FoundryTool, arguments: M
 			"name": tool.name,
 			"arguments": dict(arguments),
 	}
-	
+
 	if tool.tool_definition:
-		
+
 		key_overrides = tool_overrides.get(tool.name, {})
 		meta_config = MetadataMapper.prepare_metadata_dict(
 				tool.metadata,
@@ -404,7 +414,7 @@ def build_mcptools_invoke_tool_request(
 class RemoteToolsOperations:
 	def __init__(self, *args, **kwargs) -> None:
 		"""Initialize Tools API client.
-		
+
 		:param client: Azure PipelineClient for HTTP requests.
 		:type client: ~azure.core.PipelineClient
 		:param config: Configuration object.
@@ -418,7 +428,7 @@ class RemoteToolsOperations:
 		if self._client is None or self._config is None:
 			raise ValueError("Both 'client' and 'config' must be provided")
 
-		
+
 		# Apply agent name substitution to endpoint paths
 		self.agent = self._config.agent_name.strip() if self._config.agent_name and self._config.agent_name.strip() else "$default"
 		self._api_version = API_VERSION
@@ -432,12 +442,12 @@ class RemoteToolsOperations:
 		result = build_resolve_tools_request(self.agent, self._api_version, self._config.tool_config, self._config.user, kwargs)
 		if result[0] is None:
 			return []
-		
+
 		_request, error_map, remaining_kwargs = result
 		response = format_and_execute_request(self._client, _request, self._config.endpoint, **remaining_kwargs)
 		handle_response_error(response, error_map)
 		return process_resolve_tools_response(response, self._config.tool_config._remote_tools, existing_names)
-	
+
 	def invoke_tool(
 		self,
 		tool: FoundryTool,
@@ -456,7 +466,7 @@ class RemoteToolsOperations:
 		response = format_and_execute_request(self._client, _request, self._config.endpoint)
 		handle_response_error(response, error_map)
 		return process_invoke_remote_tool_response(response)
-	
+
 def prepare_remotetools_invoke_tool_request_content(tool: FoundryTool,  user: UserInfo, arguments: Mapping[str, Any]) -> Any:
 	payload = {
 			"toolName": tool.name,
@@ -539,4 +549,3 @@ def build_remotetools_resolve_tools_request(
 
         _url = f"/agents/{agent_name}/tools/resolve"
         return HttpRequest(method="POST", url=_url, headers=_headers, params=_params, **kwargs)
-        

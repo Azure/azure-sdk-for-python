@@ -44,13 +44,14 @@ async def quickstart():
             "Set it to your Azure AI project endpoint, e.g., "
              "https://<your-account>.services.ai.azure.com/api/projects/<your-project>"
         )
+    tool_connection_id = os.getenv("AZURE_AI_PROJECT_TOOL_CONNECTION_ID")
     
     # Create Azure credentials
     credential = DefaultAzureCredential()
     tool_definitions = [
     {
         "type": "mcp",
-        "project_connection_id": "<your-connection-id>"
+        "project_connection_id": tool_connection_id
     },
     {
         "type": "code_interpreter",
