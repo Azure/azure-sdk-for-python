@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from typing import Any, List, Mapping, Union, TYPE_CHECKING
-
+from asyncio import gather
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -107,12 +107,25 @@ class AzureAIToolClient:
 
         tools: List[FoundryTool] = []
 
-        # Fetch MCP tools
-        mcp_tools = await self._mcp_tools.list_tools(existing_names)
-        tools.extend(mcp_tools)
-        # Fetch Tools API tools
-        tools_api_tools = await self._remote_tools.resolve_tools(existing_names)
-        tools.extend(tools_api_tools)
+        # Fetch MCP tools and Tools API tools in parallel
+        # Build list of coroutines to gather based on configuration
+        tasks = []
+        if (
+            self._config.tool_config._named_mcp_tools
+            and len(self._config.tool_config._named_mcp_tools) > 0
+        ):
+            tasks.append(self._mcp_tools.list_tools(existing_names))
+        if (
+            self._config.tool_config._remote_tools
+            and len(self._config.tool_config._remote_tools) > 0
+        ):
+            tasks.append(self._remote_tools.resolve_tools(existing_names))
+
+        # Execute all tasks in parallel if any exist
+        if tasks:
+            results = await gather(*tasks)
+            for result in results:
+                tools.extend(result)
 
         for tool in tools:
             # Capture tool in a closure to avoid shadowing issues
