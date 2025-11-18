@@ -1,9 +1,10 @@
 # Release History
 
-## 15.0.0 (2025-11-17)
+## 14.0.1 (2025-11-17)
 
-### Breaking Changes
+### Bugs Fixed
 
+  - Certain models that were not available in last release version `14.0.0` was removed.
   - Model `AccountProperties` deleted or renamed its instance variable `ldap_configuration`
   - Model `ReplicationObject` deleted or renamed its instance variable `external_replication_setup_status`
   - Model `ReplicationObject` deleted or renamed its instance variable `external_replication_setup_info`
