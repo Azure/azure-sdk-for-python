@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtVolumesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_volumes_list_by_subscription(self, resource_group):
         response = self.client.volumes.list_by_subscription(
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtVolumesOperations(AzureMgmtRecordedTestCase):
     def test_volumes_list_by_resource_group(self, resource_group):
         response = self.client.volumes.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtVolumesOperations(AzureMgmtRecordedTestCase):
         response = self.client.volumes.get(
             resource_group_name=resource_group.name,
             volume_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -61,6 +61,7 @@ class TestNetworkCloudMgmtVolumesOperations(AzureMgmtRecordedTestCase):
                 "extendedLocation": {"name": "str", "type": "str"},
                 "location": "str",
                 "sizeMiB": 0,
+                "allocatedSizeMiB": 0,
                 "attachedTo": ["str"],
                 "detailedStatus": "str",
                 "detailedStatusMessage": "str",
@@ -69,6 +70,7 @@ class TestNetworkCloudMgmtVolumesOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "provisioningState": "str",
                 "serialNumber": "str",
+                "storageApplianceId": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -80,7 +82,7 @@ class TestNetworkCloudMgmtVolumesOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,7 +94,7 @@ class TestNetworkCloudMgmtVolumesOperations(AzureMgmtRecordedTestCase):
         response = self.client.volumes.begin_delete(
             resource_group_name=resource_group.name,
             volume_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -104,7 +106,7 @@ class TestNetworkCloudMgmtVolumesOperations(AzureMgmtRecordedTestCase):
         response = self.client.volumes.update(
             resource_group_name=resource_group.name,
             volume_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself

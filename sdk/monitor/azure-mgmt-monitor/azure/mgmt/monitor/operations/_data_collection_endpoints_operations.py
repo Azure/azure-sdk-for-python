@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -31,7 +31,8 @@ from .._configuration import MonitorManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -324,7 +325,10 @@ class DataCollectionEndpointsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponseCommonV2, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponseCommonV2,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -391,7 +395,10 @@ class DataCollectionEndpointsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponseCommonV2, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponseCommonV2,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -449,7 +456,10 @@ class DataCollectionEndpointsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseCommonV2, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseCommonV2,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DataCollectionEndpointResource", pipeline_response.http_response)
@@ -557,9 +567,10 @@ class DataCollectionEndpointsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-11"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.DataCollectionEndpointResource] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if body else None
         _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -592,7 +603,10 @@ class DataCollectionEndpointsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseCommonV2, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseCommonV2,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DataCollectionEndpointResource", pipeline_response.http_response)
@@ -700,9 +714,10 @@ class DataCollectionEndpointsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-11"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.DataCollectionEndpointResource] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if body else None
         _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -735,7 +750,10 @@ class DataCollectionEndpointsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseCommonV2, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseCommonV2,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DataCollectionEndpointResource", pipeline_response.http_response)
@@ -796,7 +814,10 @@ class DataCollectionEndpointsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseCommonV2, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseCommonV2,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

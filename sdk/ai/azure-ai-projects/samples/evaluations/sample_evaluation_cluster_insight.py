@@ -34,7 +34,7 @@ from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
 from azure.ai.projects.models._enums import OperationState
-from azure.ai.projects.models._models import EvaluationComparisonRequest, EvaluationRunClusterInsightsRequest, Insight
+from azure.ai.projects.models._models import EvaluationRunClusterInsightsRequest, Insight, InsightModelConfiguration
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
@@ -45,6 +45,10 @@ from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+
+if not model_deployment_name:
+    raise ValueError("AZURE_AI_MODEL_DEPLOYMENT_NAME environment variable is not set")
 
 with (
     DefaultAzureCredential() as credential,
@@ -61,7 +65,7 @@ with (
         TestingCriterionLabelModel(
             type="label_model",
             name="sentiment_analysis",
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=model_deployment_name,
             input=[
                 {
                     "role": "developer",
@@ -75,8 +79,8 @@ with (
     ]
     eval_object = openai_client.evals.create(
         name="Sentiment Evaluation",
-        data_source_config=data_source_config,
-        testing_criteria=testing_criteria,
+        data_source_config=data_source_config, 
+        testing_criteria=testing_criteria, 
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
@@ -127,7 +131,13 @@ with (
         clusterInsight = project_client.insights.generate(
             Insight(
                 display_name="Cluster analysis",
-                request=EvaluationRunClusterInsightsRequest(eval_id=eval_object.id, run_ids=[eval_run.id]),
+                request=EvaluationRunClusterInsightsRequest(
+                    eval_id=eval_object.id,
+                    run_ids=[eval_run.id],
+                    model_configuration=InsightModelConfiguration(
+                        model_deployment_name=model_deployment_name
+                    ),
+                ),
             )
         )
         print(f"Started insight generation (id: {clusterInsight.id})")

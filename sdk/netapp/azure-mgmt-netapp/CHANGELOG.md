@@ -1,5 +1,25 @@
 # Release History
 
+## 14.0.1 (2025-11-17)
+
+### Bugs Fixed
+
+  - Certain models that were not available in last release version `14.0.0` was removed.
+  - Model `AccountProperties` deleted or renamed its instance variable `ldap_configuration`
+  - Model `ReplicationObject` deleted or renamed its instance variable `external_replication_setup_status`
+  - Model `ReplicationObject` deleted or renamed its instance variable `external_replication_setup_info`
+  - Model `ReplicationObject` deleted or renamed its instance variable `mirror_state`
+  - Model `ReplicationObject` deleted or renamed its instance variable `relationship_status`
+  - Model `VolumeProperties` deleted or renamed its instance variable `ldap_server_type`
+  - Model `VolumeProperties` deleted or renamed its instance variable `language`
+  - Deleted or renamed model `ExternalReplicationSetupStatus`
+  - Deleted or renamed model `LdapConfiguration`
+  - Deleted or renamed model `LdapServerType`
+  - Deleted or renamed model `ListQuotaReportResponse`
+  - Deleted or renamed model `QuotaReport`
+  - Deleted or renamed model `VolumeLanguage`
+  - Deleted or renamed method `VolumesOperations.begin_list_quota_report`
+
 ## 14.0.0 (2025-11-10)
 
 ### Features Added

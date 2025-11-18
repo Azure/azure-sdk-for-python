@@ -20,11 +20,11 @@ class TestMicrosoftElasticListAssociatedTrafficFiltersOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_list_associated_traffic_filters_list(self, resource_group):
         response = self.client.list_associated_traffic_filters.list(
             resource_group_name=resource_group.name,
             monitor_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
