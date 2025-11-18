@@ -9,7 +9,7 @@ from langchain_core.messages import AnyMessage
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import ResponseStreamEvent
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
+from azure.ai.agentserver.core import AgentRunContext
 
 from .response_event_generators import (
     ResponseEventGenerator,

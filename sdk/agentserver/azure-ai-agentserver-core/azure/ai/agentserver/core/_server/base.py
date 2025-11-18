@@ -30,8 +30,8 @@ from ..models import (
 )
 from .common.agent_run_context import AgentRunContext
 
-from ..client.tools.aio._client import AzureAIToolClient
-from ..client.tools._utils._model_base import ToolDefinition, UserInfo
+from .._client.tools.aio._client import AzureAIToolClient
+from .._client.tools._utils._model_base import ToolDefinition, UserInfo
 
 logger = get_logger()
 DEBUG_ERRORS = os.environ.get(Constants.AGENT_DEBUG_ERRORS, "false").lower() == "true"

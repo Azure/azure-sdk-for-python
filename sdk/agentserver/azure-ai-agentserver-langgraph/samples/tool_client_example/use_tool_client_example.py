@@ -14,7 +14,7 @@ from importlib.metadata import version
 from langchain_openai import AzureChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 
-from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient
+from azure.ai.agentserver.core import AzureAIToolClient
 from azure.ai.agentserver.langgraph import ToolClient, from_langgraph
 from azure.identity.aio import DefaultAzureCredential
 

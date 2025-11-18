@@ -6,7 +6,7 @@
 from typing import List
 
 from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
+from azure.ai.agentserver.core import AgentRunContext
 
 from .response_event_generator import (
     ResponseEventGenerator,

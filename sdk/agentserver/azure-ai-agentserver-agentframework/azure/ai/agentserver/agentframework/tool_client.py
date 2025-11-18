@@ -9,7 +9,7 @@ from agent_framework import AIFunction
 from pydantic import Field, create_model
 from azure.ai.agentserver.core.logger import get_logger
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient, FoundryTool
+    from azure.ai.agentserver.core import AzureAIToolClient, FoundryTool
 
 logger = get_logger()
 
@@ -21,13 +21,13 @@ class ToolClient:
     in a format compatible with Agent Framework agents.
 
     :param tool_client: The AzureAIToolClient instance to use for tool operations.
-    :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
+    :type tool_client: ~azure.ai.agentserver.core.AzureAIToolClient
 
     .. admonition:: Example:
 
         .. code-block:: python
 
-            from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient
+            from azure.ai.agentserver.core import AzureAIToolClient
             from azure.ai.agentserver.agentframework import ToolClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -55,7 +55,7 @@ class ToolClient:
         """Initialize the ToolClient.
 
         :param tool_client: The AzureAIToolClient instance to use for tool operations.
-        :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
+        :type tool_client: ~azure.ai.agentserver.core.AzureAIToolClient
         """
         self._tool_client = tool_client
         self._aifunction_cache: List[AIFunction] = None
@@ -96,7 +96,7 @@ class ToolClient:
         """Convert an AzureAITool to an Agent Framework AI Function
 
         :param azure_tool: The AzureAITool to convert.
-        :type azure_tool: ~azure.ai.agentserver.core.client.tools.aio.FoundryTool
+        :type azure_tool: ~azure.ai.agentserver.core.FoundryTool
         :return: An AI Function Tool.
         :rtype: AIFunction
         """
