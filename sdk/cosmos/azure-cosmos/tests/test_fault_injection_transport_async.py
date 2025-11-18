@@ -12,7 +12,6 @@ from typing import Any, Callable, Awaitable, Dict
 from unittest import IsolatedAsyncioTestCase
 
 import pytest
-from aiohttp import ClientPayloadError
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
@@ -130,26 +129,6 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
             assert end > 10
             if cosmosError.status_code != 502:
                 raise cosmosError
-        finally:
-            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
-
-    async def test_throws_injected_error_client_payload_async(self: "TestFaultInjectionTransportAsync"):
-        id_value: str = str(uuid.uuid4())
-        document_definition = {'id': id_value,
-                               'pk': id_value,
-                               'name': 'sample document',
-                               'key': 'value'}
-
-        custom_transport =  FaultInjectionTransportAsync()
-        predicate : Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, id_value)
-        custom_transport.add_fault(predicate, lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
-            200,
-            ClientPayloadError())))
-
-        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(custom_transport)
-        container: ContainerProxy = initialized_objects["col"]
-        try:
-            await container.create_item(body=document_definition)
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 

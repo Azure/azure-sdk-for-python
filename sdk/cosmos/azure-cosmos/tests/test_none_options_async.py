@@ -170,15 +170,13 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
 
 
     async def test_query_items_change_feed_none_options_async(self):
-        async def create_items():
-            for _ in range(15):
-                await self.container.create_item({"id": str(uuid.uuid4()), "pk": "cf-pk", "value": 100},
-                                                 pre_trigger_include=None, post_trigger_include=None, indexing_directive=None,
-                                                 enable_automatic_id_generation=False, session_token=None, initial_headers=None,
-                                                 priority=None, no_response=None, retry_write=None, throughput_bucket=None)
+        for _ in range(15):
+            await self.container.create_item({"id": str(uuid.uuid4()), "pk": "cf-pk", "value": 100},
+                                             pre_trigger_include=None, post_trigger_include=None, indexing_directive=None,
+                                             enable_automatic_id_generation=False, session_token=None, initial_headers=None,
+                                             priority=None, no_response=None, retry_write=None, throughput_bucket=None)
         # Obtain the change feed pager with all optional parameters set to None (including partition_key)
-        asyncio.create_task(create_items())
-        pager = self.container.query_items_change_feed(max_item_count=None, start_time=None, partition_key=None,
+        pager = self.container.query_items_change_feed(max_item_count=None, start_time="Beginning", partition_key=None,
                                                        priority=None, mode=None, response_hook=None)
 
         changes = [doc async for doc in pager]
