@@ -54,12 +54,7 @@ class PartitionKeyRangeCache(object):
         # keeps the cached collection routing map by collection id
         self._collection_routing_map_by_item = {}
 
-    """Initialize or update collection routing map using change feed.
-            :param str collection_link: The collection link
-            :param str collection_id: The collection unique identifier  
-            :param dict feed_options: The request options
-            :param bool force_refresh: Force refresh even if cache exists
-    :return: None """
+
 
     def get_or_refresh_routing_map_for_collection(
             self,
@@ -69,6 +64,13 @@ class PartitionKeyRangeCache(object):
             previous_routing_map: Optional[CollectionRoutingMap] = None,
             **kwargs: Any
     ) -> Optional[CollectionRoutingMap]:
+        """Initialize or update collection routing map using change feed.
+           :param str collection_link: The collection link
+           :param str collection_link: The collection unique identifier
+           :param dict feed_options: The request options
+           :param bool force_refresh: Force refresh even if cache exists
+        :return: None
+        """
 
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         existing_routing_map = self._collection_routing_map_by_item.get(collection_id)
@@ -189,7 +191,7 @@ class PartitionKeyRangeCache(object):
                         range_info = parent_range_tuple[1]  # Get the range_info from the parent
                         range_tuples.append((r, range_info))
                     else:
-                        # This would be an inconsistent state from the server.Force a full refresh by clearing the cache for the collection and retrying.
+                        # This would be an inconsistent state from the server. Force a full refresh by clearing the cache for the collection and retrying.
                         logger.warning(
                             f"Incremental update failed: Parent range '{parent_id}' not found in routing map "
                             f"for collection '{collection_link}'. Falling back to full refresh."
@@ -204,7 +206,7 @@ class PartitionKeyRangeCache(object):
                         range_info = existing_range_tuple[1]
                         range_tuples.append((r, range_info))
                     else:
-                        # This would be an inconsistent state.Force a full refresh by clearing the cache for the collection and retrying.
+                        # This would be an inconsistent state. Force a full refresh by clearing the cache for the collection and retrying.
                         logger.warning(
                             f"Incremental update failed: Existing range '{range_id}' not found in routing map "
                             f"for collection '{collection_link}'. Falling back to full refresh."
@@ -331,13 +333,11 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
                     queryRange = _subtract_range(currentProvidedRange, target_partition_key_ranges[-1])
                 else:
                     queryRange = currentProvidedRange
-                """
-                This line calls its parent's get_overlapping_ranges method inside a loop. While it correctly requests the 
-                routing_map on each call, it overwrites the routing_map variable in every iteration. 
-                This means only the routing_map from the very last call will be retained and returned. If the query spans 
-                ranges that are covered by different routing map versions (e.g., due to a split happening during the query)
-                , this could lead to using a stale or incomplete map.
-                """
+                # This line calls its parent's get_overlapping_ranges method inside a loop. While it correctly requests the
+                # routing_map on each call, it overwrites the routing_map variable in every iteration.
+                # This means only the routing_map from the very last call will be retained and returned. If the query spans
+                # ranges that are covered by different routing map versions (e.g., due to a split happening during the query),
+                # this could lead to using a stale or incomplete map.
                 overlappingRanges = (
                     PartitionKeyRangeCache.get_overlapping_ranges(
                         self,

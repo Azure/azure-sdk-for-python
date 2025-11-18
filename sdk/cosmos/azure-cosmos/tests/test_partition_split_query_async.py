@@ -108,7 +108,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             item = {'id': f'item_{i}', 'pk': f'pk_{i % 2}', 'value': i}
             await self.container.create_item(item)
 
-        # VERIFY: We start with 1 partition
+        # Verify: We start with 1 partition
         initial_pk_ranges = [r async for r in self.container.client_connection._ReadPartitionKeyRanges(
             self.container.container_link
         )]
@@ -119,7 +119,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Force initial routing map cache by running a query
         await run_queries(self.container, 1)
 
-        # Trigger split (1 → 2 partitions)
+        # Trigger split (1 -> 2 partitions)
         await self.container.replace_throughput(11000)
         pending = True
         while pending:
@@ -131,7 +131,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Run queries to trigger routing map refresh
         await run_queries(self.container, 1)
 
-        # VERIFY: Split created 2 partitions using _ReadPartitionKeyRanges
+        # Verify: Split created 2 partitions using _ReadPartitionKeyRanges
         post_split_pk_ranges = [r async for r in self.container.client_connection._ReadPartitionKeyRanges(
             self.container.container_link
         )]
@@ -140,7 +140,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(post_split_pk_ranges) == 2, \
             f"Expected 2 partitions after split, got {len(post_split_pk_ranges)}"
 
-        # VERIFY: Access routing map
+        # Verify: Access routing map
         provider = self.container.client_connection._routing_map_provider
         # The routing map is cached by collection link
         cached_map = provider._collection_routing_map_by_item.get(
@@ -191,7 +191,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 item = {'id': f'item_{i}', 'pk': f'pk_{i % 2}', 'value': i}
                 await new_container.create_item(item)
 
-            # VERIFY: We start with 2 partitions
+            # Verify: We start with 2 partitions
             initial_pk_ranges = [r async for r in new_container.client_connection._ReadPartitionKeyRanges(
                 new_container.container_link
             )]
@@ -202,7 +202,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             # Force initial routing map cache
             await run_queries(new_container, 1)
 
-            # Trigger split (2 → 3 partitions: 1 stable + 2 from split)
+            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)
             await new_container.replace_throughput(25000)
             pending = True
             while pending:
@@ -214,7 +214,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             # Run queries to trigger routing map refresh
             await run_queries(new_container, 1)
 
-            # VERIFY: Split created 3 partitions
+            # Verify: Split created 3 partitions
             post_split_pk_ranges = [r async for r in new_container.client_connection._ReadPartitionKeyRanges(
                 new_container.container_link
             )]
@@ -223,7 +223,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert len(post_split_pk_ranges) == 3, \
                 f"Expected 3 partitions after partial split, got {len(post_split_pk_ranges)}"
 
-            # VERIFY: Access routing map and validate both code paths
+            # Verify: Access routing map and validate both code paths
             provider = new_container.client_connection._routing_map_provider
             cached_map = provider._collection_routing_map_by_item.get(
                 new_container.container_link
@@ -265,7 +265,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         - Create 2 containers: container_A and container_B
         - Both start with 1 partition (400 RU/s)
         - Run queries on both to populate routing map cache
-        - Split ONLY container_A (400 → 11000 RU/s)
+        - Split ONLY container_A (400 -> 11000 RU/s)
         - Verify:
           1. container_A's routing map is refreshed (2 partitions)
           2. container_B's routing map is unchanged (1 partition)
@@ -455,7 +455,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert refreshed_ranges[0]['minInclusive'] == ''
             assert refreshed_ranges[0]['maxExclusive'] == 'FF'
 
-            print("✓ Validated: routing_map_provider successfully fell back to full refresh")
+            print("Validated: routing_map_provider successfully fell back to full refresh")
 
             # Verify queries still work after fallback
             query_results = [item async for item in container.query_items(

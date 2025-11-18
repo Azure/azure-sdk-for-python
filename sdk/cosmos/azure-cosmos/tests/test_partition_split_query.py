@@ -117,7 +117,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 item = {'id': f'item_{i}', 'pk': f'pk_{i % 2}', 'value': i}
                 container.create_item(item)
 
-            # VERIFY: We start with 1 partition
+            # Verify: We start with 1 partition
             initial_pk_ranges = list(container.client_connection._ReadPartitionKeyRanges(
                 container.container_link
             ))
@@ -128,7 +128,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache by running a query
             run_queries(container, 1)
 
-            # Trigger split (1 → 2 partitions)
+            # Trigger split (1 -> 2 partitions)
             container.replace_throughput(11000)
             pending = True
             while pending:
@@ -140,7 +140,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Run queries to trigger routing map refresh
             run_queries(container, 1)
 
-            # VERIFY: Split created 2 partitions using _ReadPartitionKeyRanges
+            # Verify: Split created 2 partitions using _ReadPartitionKeyRanges
             post_split_pk_ranges = list(container.client_connection._ReadPartitionKeyRanges(
                 container.container_link
             ))
@@ -149,7 +149,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             assert len(post_split_pk_ranges) == 2, \
                 f"Expected 2 partitions after split, got {len(post_split_pk_ranges)}"
 
-            # VERIFY: Access routing map
+            # Verify: Access routing map
             provider = container.client_connection._routing_map_provider
             # The routing map is cached by collection link
             cached_map = provider._collection_routing_map_by_item.get(
@@ -204,7 +204,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 item = {'id': f'item_{i}', 'pk': f'pk_{i % 2}', 'value': i}
                 container.create_item(item)
 
-            #VERIFY: We start with 2 partitions
+            # Verify: We start with 2 partitions
             initial_pk_ranges = list(container.client_connection._ReadPartitionKeyRanges(
                 container.container_link
             ))
@@ -215,7 +215,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache
             run_queries(container, 1)
 
-            # Trigger split (2 → 3 partitions: 1 stable + 2 from split)
+            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)
             container.replace_throughput(25000)
             pending = True
             while pending:
@@ -227,7 +227,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Run queries to trigger routing map refresh
             run_queries(container, 1)
 
-            # VERIFY: Split created 3 partitions
+            # Verify: Split created 3 partitions
             post_split_pk_ranges = list(container.client_connection._ReadPartitionKeyRanges(
                 container.container_link
             ))
@@ -236,7 +236,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             assert len(post_split_pk_ranges) == 3, \
                 f"Expected 3 partitions after partial split, got {len(post_split_pk_ranges)}"
 
-            # VERIFY: Access routing map and validate both code paths
+            # Verify: Access routing map and validate both code paths
             provider = container.client_connection._routing_map_provider
             cached_map = provider._collection_routing_map_by_item.get(
                 container.container_link
@@ -328,7 +328,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # SPLIT ONLY CONTAINER A
+            # Split only Container A
             container_a.replace_throughput(11000)
             pending = True
             while pending:
@@ -512,7 +512,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 'id': 'child_with_missing_parent',
                 'minInclusive': '',
                 'maxExclusive': '80',
-                'parents': ['non_existent_parent_id']  #  Parent doesn't exist
+                'parents': ['non_existent_parent_id']  # Parent doesn't exist
             }
 
             # Track how many times _ReadPartitionKeyRanges is called
@@ -599,7 +599,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 pytest.fail("Range should NOT be in fake previous map")
             else:
                 # Guard should trigger here
-                print(f" Guard triggered: Existing range '{range_id}' not found in cache")
+                print(f"Guard triggered: Existing range '{range_id}' not found in cache")
 
                 # Verify fallback by manually clearing cache and refreshing
                 provider._collection_routing_map_by_item.clear()
@@ -614,7 +614,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 refreshed_ranges = list(refreshed_map._orderedPartitionKeyRanges)
                 assert len(refreshed_ranges) == 1
 
-                print(" Validated: Fallback to full refresh succeeded")
+                print("Validated: Fallback to full refresh succeeded")
 
                 # Verify queries work after fallback
                 results = list(container.query_items(
@@ -623,7 +623,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 ))
                 assert len(results) == 30
 
-                print(" Validated: Queries work after fallback")
+                print("Validated: Queries work after fallback")
 
         finally:
             self.database.delete_container(container.id)

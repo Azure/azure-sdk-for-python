@@ -3480,7 +3480,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         If collection_rid and previous_routing_map are provided, refreshes only that collection incrementally.
         Otherwise, it creates a new provider instance for a full refresh.
 
-        :param str collection_rid: The resource ID of the collection to refresh.
+        :param str collection_link: The collection link.
         :param object previous_routing_map: The routing map that is considered stale.
         """
         if collection_link and previous_routing_map:
