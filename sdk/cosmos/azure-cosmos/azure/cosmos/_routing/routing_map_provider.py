@@ -135,6 +135,11 @@ class PartitionKeyRangeCache(object):
             nonlocal response_headers
             response_headers = headers
 
+        # The 'accessCondition' is not valid for reading the partition key range feed.
+        # It may be passed down from public API calls, so we remove it from a copy of the options.
+        change_feed_options = feed_options.copy() if feed_options else {}
+        change_feed_options.pop('accessCondition', None)
+
         # Prepare headers for change feed
         headers = kwargs.get('headers', {}).copy()
         headers[http_constants.HttpHeaders.PageSize] = self.PAGE_SIZE_CHANGE_FEED
@@ -144,7 +149,6 @@ class PartitionKeyRangeCache(object):
             headers[http_constants.HttpHeaders.IfNoneMatch] = previous_routing_map.change_feed_next_if_none_match
 
         kwargs['headers'] = headers
-        change_feed_options = feed_options.copy() if feed_options else {}
 
         try:
             pk_range_generator = self._documentClient._ReadPartitionKeyRanges(
