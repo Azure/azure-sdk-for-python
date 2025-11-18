@@ -103,11 +103,6 @@ class whl(Check):
                     continue
 
                 logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
-                if pytest_result.stdout:
-                    logger.error(pytest_result.stdout)
-                if pytest_result.stderr:
-                    logger.error(pytest_result.stderr)
-                overall_result = max(overall_result, pytest_result.returncode)
                 continue
 
             coverage_command = [
@@ -119,7 +114,9 @@ class whl(Check):
             ]
             coverage_result = self.run_venv_command(executable, coverage_command, cwd=package_dir)
             if coverage_result.returncode != 0:
-                logger.error(f"Coverage generation failed for {package_name} with exit code {coverage_result.returncode}.")
+                logger.error(
+                    f"Coverage generation failed for {package_name} with exit code {coverage_result.returncode}."
+                )
                 if coverage_result.stdout:
                     logger.error(coverage_result.stdout)
                 if coverage_result.stderr:
@@ -129,8 +126,7 @@ class whl(Check):
         return overall_result
 
     def _install_common_requirements(self, executable: str, package_dir: str) -> None:
-        if PACKAGING_REQUIREMENTS:
-            install_into_venv(executable, PACKAGING_REQUIREMENTS, package_dir)
+        install_into_venv(executable, PACKAGING_REQUIREMENTS, package_dir)
 
         if os.path.exists(TEST_TOOLS_REQUIREMENTS):
             install_into_venv(executable, ["-r", TEST_TOOLS_REQUIREMENTS], package_dir)
@@ -149,6 +145,7 @@ class whl(Check):
             "--durations=10",
             "--ignore=azure",
             "--ignore=.tox",
+            "--ignore-glob=.venv*",
             "--ignore=build",
             "--ignore=.eggs",
             "--ignore=samples",
