@@ -24,11 +24,7 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
 
     @distributed_trace
     def transcribe_from_url(
-        self,
-        audio_url: str,
-        *,
-        options: Optional[_models.TranscriptionOptions] = None,
-        **kwargs: Any
+        self, audio_url: str, *, options: Optional[_models.TranscriptionOptions] = None, **kwargs: Any
     ) -> _models.TranscriptionResult:
         """Transcribes audio from a URL.
 
