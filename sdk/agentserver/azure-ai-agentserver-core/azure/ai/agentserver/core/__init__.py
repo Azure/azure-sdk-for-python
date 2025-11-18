@@ -5,8 +5,8 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._version import VERSION
 from .logger import configure as config_logging
-from .server.base import FoundryCBAgent
-from .server.common.agent_run_context import AgentRunContext
+from ._server.base import FoundryCBAgent
+from ._server.common.agent_run_context import AgentRunContext
 
 config_logging()
 
