@@ -7,6 +7,9 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixes LogDeprecated warnings - `LogDeprecatedInitWarning: LogRecord init with trace_id, span_id, and/or trace_flags is deprecated since 1.35.0. Use context instead`
+  ([#44090](https://github.com/Azure/azure-sdk-for-python/pull/44090))
+
 - Fixes issue #43442: SyntaxWarning: 'return' in a 'finally' block in azure-monitor-opentelemetry-exporter with Python 3.14
   ([#44053](https://github.com/Azure/azure-sdk-for-python/pull/44053))
 
