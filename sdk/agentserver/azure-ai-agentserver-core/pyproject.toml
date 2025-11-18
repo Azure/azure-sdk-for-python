@@ -20,7 +20,7 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "azure-monitor-opentelemetry>=1.5.0",
-    "azure-ai-projects>=2.0.0b1",
+    "azure-ai-projects>=1.1.0b4",
     "azure-ai-agents==1.2.0b5",
     "azure-core>=1.35.0",
     "azure-identity",
