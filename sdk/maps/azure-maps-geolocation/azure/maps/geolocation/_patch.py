@@ -46,9 +46,6 @@ class MapsGeolocationClient(MapsGeolocationClientGenerated):
      `Manage authentication in Azure
      Maps </azure/azure-maps/how-to-manage-authentication>`_. Default value is None.
     :type client_id: str
-    :keyword endpoint: Required. Note that overriding this default value may result in unsupported
-     behavior.
-    :paramtype endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is "1.0". Note
      that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
