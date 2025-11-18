@@ -10,7 +10,7 @@
 
 #### Bugs Fixed
 * Fixed bug where customer provided excluded region was not always being honored during certain transient failures. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
-* Fixed bug when passing in None for some option in `query_items` would cause unexpected errors. See [PR g4353]()
+* Fixed bug when passing in None for some option in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
 
 #### Other Changes
 * Further optimized health checks for sync and async clients. See [PR 43339](https://github.com/Azure/azure-sdk-for-python/pull/43339)
