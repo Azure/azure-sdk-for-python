@@ -88,7 +88,6 @@ from ...operations._operations import (
     build_memory_stores_delete_request,
     build_memory_stores_delete_scope_request,
     build_memory_stores_get_request,
-    build_memory_stores_get_update_result_request,
     build_memory_stores_list_request,
     build_memory_stores_search_memories_request,
     build_memory_stores_update_memories_request,
@@ -2751,78 +2750,6 @@ class MemoryStoresOperations:
         return AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "update_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def get_update_result(self, name: str, update_id: str, **kwargs: Any) -> _models.MemoryStoreUpdateResult:
-        """Get memory store update result.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param update_id: The ID of the memory update operation. Required.
-        :type update_id: str
-        :return: MemoryStoreUpdateResult. The MemoryStoreUpdateResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreUpdateResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.MemoryStoreUpdateResult] = kwargs.pop("cls", None)
-
-        _request = build_memory_stores_get_update_result_request(
-            name=name,
-            update_id=update_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.MemoryStoreUpdateResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
     @overload
     async def delete_scope(
