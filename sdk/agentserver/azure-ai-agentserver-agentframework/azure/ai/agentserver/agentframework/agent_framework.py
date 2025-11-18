@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Prot
 import inspect
 
 from agent_framework import AgentProtocol, AIFunction
-from agent_framework.azure import AzureAIAgentClient  # pylint: disable=no-name-in-module
+from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
 from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
@@ -182,8 +182,9 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 applicationinsights_connection_string=app_insights_conn_str,
             )
         elif project_endpoint:
-            project_client = AIProjectClient(endpoint=project_endpoint, credential=DefaultAzureCredential())
-            agent_client = AzureAIAgentClient(project_client=project_client)
+            from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
+
+            agent_client = AzureAIClient(project_client=project_endpoint, async_credential=AsyncDefaultAzureCredential())
             agent_client.setup_azure_ai_observability()
         self.tracer = trace.get_tracer(__name__)
 
