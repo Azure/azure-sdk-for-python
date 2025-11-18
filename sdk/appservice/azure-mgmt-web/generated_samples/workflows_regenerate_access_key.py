@@ -39,6 +39,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/Workflows_RegenerateAccessKey.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/AppService/stable/2025-03-01/examples/Workflows_RegenerateAccessKey.json
 if __name__ == "__main__":
     main()

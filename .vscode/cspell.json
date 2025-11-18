@@ -155,6 +155,7 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "qnas",
     "msedge",
     "spinup",
     "cibuildwheel",
@@ -530,7 +531,7 @@
     "logprobs",
     "pyaudio",
     "PyAudio",
-	"libasound",
+    "libasound",
     "ingraph"
   ],
   "overrides": [
@@ -908,7 +909,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
-      "words": [ "unassigning" ],
+      "words": [ "unassigning", "unassignment" ],
       "caseSensitive": false
     },
     {

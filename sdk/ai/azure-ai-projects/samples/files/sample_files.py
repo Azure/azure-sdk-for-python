@@ -35,7 +35,7 @@ script_dir = Path(__file__).parent
 file_path = os.environ.get("FILE_PATH", os.path.join(script_dir, "data", "test_file.jsonl"))
 
 with (
-    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):

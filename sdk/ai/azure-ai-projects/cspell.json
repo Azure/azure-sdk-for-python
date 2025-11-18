@@ -21,7 +21,9 @@
         "Tadmaq",
         "Udbk",
         "Ministral",
-        "cogsvc"
+        "cogsvc",
+        "evals",
+        "FineTuning"
     ],
     "ignorePaths": [
         "*.csv",

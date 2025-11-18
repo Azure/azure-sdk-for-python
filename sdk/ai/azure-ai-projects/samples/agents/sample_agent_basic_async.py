@@ -35,58 +35,55 @@ from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
 
 async def main() -> None:
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
 
-    credential = DefaultAzureCredential()
+        agent = await project_client.agents.create_version(
+            agent_name="MyAgent",
+            definition=PromptAgentDefinition(
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                instructions="You are a helpful assistant that answers general questions.",
+            ),
+        )
+        print(f"Agent created (name: {agent.name}, id: {agent.id}, version: {agent.version})")
 
-    async with credential:
+        conversation = await openai_client.conversations.create(
+            items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
+        )
+        print(f"Created conversation with initial user message (id: {conversation.id})")
 
-        project_client = AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential)
+        response = await openai_client.responses.create(
+            conversation=conversation.id,
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            input="",
+        )
+        print(f"Response output: {response.output_text}")
 
-        async with project_client:
+        await openai_client.conversations.items.create(
+            conversation_id=conversation.id,
+            items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
+        )
+        print(f"Added a second user message to the conversation")
 
-            openai_client = project_client.get_openai_client()
+        response = await openai_client.responses.create(
+            conversation=conversation.id,
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            input="",
+        )
+        print(f"Response output: {response.output_text}")
 
-            agent = await project_client.agents.create_version(
-                agent_name="MyAgent",
-                definition=PromptAgentDefinition(
-                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                    instructions="You are a helpful assistant that answers general questions.",
-                ),
-            )
-            print(f"Agent created (name: {agent.name}, id: {agent.id}, version: {agent.version})")
+        await openai_client.conversations.delete(conversation_id=conversation.id)
+        print("Conversation deleted")
 
-            conversation = await openai_client.conversations.create(
-                items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
-            )
-            print(f"Created conversation with initial user message (id: {conversation.id})")
-
-            response = await openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                input="",
-            )
-            print(f"Response output: {response.output_text}")
-
-            await openai_client.conversations.items.create(
-                conversation_id=conversation.id,
-                items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
-            )
-            print(f"Added a second user message to the conversation")
-
-            response = await openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                input="",
-            )
-            print(f"Response output: {response.output_text}")
-
-            await openai_client.conversations.delete(conversation_id=conversation.id)
-            print("Conversation deleted")
-
-            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-            print("Agent deleted")
+        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        print("Agent deleted")
 
 
 if __name__ == "__main__":
