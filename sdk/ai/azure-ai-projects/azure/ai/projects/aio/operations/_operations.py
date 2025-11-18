@@ -1967,7 +1967,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def _update(
+    async def update(
         self,
         name: str,
         *,
@@ -1975,15 +1975,59 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject: ...
+    ) -> _models.MemoryStoreObject:
+        """Update a memory store.
+
+        :param name: The name of the memory store to update. Required.
+        :type name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword description: A human-readable description of the memory store. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
+         value is None.
+        :paramtype metadata: dict[str, str]
+        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _update(
+    async def update(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject: ...
+    ) -> _models.MemoryStoreObject:
+        """Update a memory store.
+
+        :param name: The name of the memory store to update. Required.
+        :type name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _update(
+    async def update(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject: ...
+    ) -> _models.MemoryStoreObject:
+        """Update a memory store.
+
+        :param name: The name of the memory store to update. Required.
+        :type name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace_async
     @api_version_validation(
@@ -1991,7 +2035,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def _update(
+    async def update(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -2584,7 +2628,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self,
         name: str,
         *,
@@ -2594,74 +2638,15 @@ class MemoryStoresOperations:
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :paramtype scope: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
-        :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
-         memory updates from where the last operation left off. Default value is None.
-        :paramtype previous_update_id: str
-        :keyword update_delay: Timeout period before processing the memory update in seconds.
-         If a new update request is received during this period, it will cancel the current request and
-         reset the timeout.
-         Set to 0 to immediately trigger the update without delay.
-         Defaults to 300 (5 minutes). Default value is None.
-        :paramtype update_delay: int
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
 
     @distributed_trace_async
     @api_version_validation(
@@ -2669,7 +2654,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
