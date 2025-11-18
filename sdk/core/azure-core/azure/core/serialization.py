@@ -365,10 +365,10 @@ def _get_flattened_attribute(obj: Any) -> Optional[str]:
             # Check if this property contains a nested model
             if not hasattr(v, '_class_type'):
                 continue
-                
+
             # Get backcompat names from the nested model
             nested_backcompat_names = set(_get_backcompat_attr_to_rest_field(v._class_type).keys())  # pylint: disable=protected-access
-            
+
             # If any flattened items match the backcompat names in the nested model, this is our flattened attribute
             if flattened_items_set.intersection(nested_backcompat_names):
                 return k
@@ -446,13 +446,13 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
                     # Get the backcompat name for this attribute
                     original_tsp_name = getattr(rest_field, "_original_tsp_name", None)
                     backcompat_name = original_tsp_name if original_tsp_name else actual_attr_name
-                    
+
                     if backcompat_name == flattened_attribute:
                         flattened_actual_attr = actual_attr_name
                         break
             except StopIteration:
                 pass
-        
+
         for attr_name, rest_field in _get_backcompat_attr_to_rest_field(obj).items():  # pylint: disable=protected-access
 
             if exclude_readonly and _is_readonly(rest_field):
@@ -467,7 +467,7 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
                         rest_to_attr[nested_field._rest_name] = flattened_name  # pylint: disable=protected-access
             else:
                 rest_to_attr[rest_field._rest_name] = attr_name  # pylint: disable=protected-access
-        
+
         for k, v in obj.items():
             if exclude_readonly and k in readonly_props:  # pyright: ignore
                 continue
@@ -478,7 +478,9 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
                         mapped_name = rest_to_attr.get(fk, fk)
                         if mapped_name in (flattened_items or []):
                             # Check if this flattened item should be excluded due to readonly
-                            nested_backcompat_map = _get_backcompat_attr_to_rest_field(getattr(obj._attr_to_rest_field[flattened_actual_attr], '_class_type'))  # pylint: disable=protected-access
+                            nested_backcompat_map = _get_backcompat_attr_to_rest_field(
+                                getattr(obj._attr_to_rest_field[flattened_actual_attr], '_class_type')
+                            )  # pylint: disable=protected-access
                             if mapped_name in nested_backcompat_map:
                                 nested_field = nested_backcompat_map[mapped_name]
                                 if exclude_readonly and _is_readonly(nested_field):
