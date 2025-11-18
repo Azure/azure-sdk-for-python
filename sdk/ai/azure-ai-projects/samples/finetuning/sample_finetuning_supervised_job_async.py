@@ -115,7 +115,7 @@ async def deploy_model(openai_client, credential, job_id):
     return deployment_name
 
 
-async def inference_model(openai_client, deployment_name):
+async def infer(openai_client, deployment_name):
     """Perform inference on the deployed fine-tuned model."""
     print(f"Testing fine-tuned model via deployment: {deployment_name}")
 
@@ -217,7 +217,7 @@ async def main():
 
         # deployment_name = await deploy_model(openai_client, credential, fine_tuning_job.id)
 
-        # await inference_model(openai_client, deployment_name)
+        # await infer(openai_client, deployment_name)
 
 
 if __name__ == "__main__":

@@ -113,7 +113,7 @@ def deploy_model(openai_client, credential, job_id):
     return deployment_name
 
 
-def inference_model(openai_client, deployment_name):
+def infer(openai_client, deployment_name):
     """Perform inference on the deployed fine-tuned model."""
     print(f"Testing fine-tuned model via deployment: {deployment_name}")
 
@@ -213,7 +213,7 @@ def main() -> None:
 
         # deployment_name = deploy_model(openai_client, credential, fine_tuning_job.id)
 
-        # inference_model(openai_client, deployment_name)
+        # infer(openai_client, deployment_name)
 
 
 if __name__ == "__main__":
