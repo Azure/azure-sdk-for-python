@@ -30,7 +30,7 @@ class _MapsGeolocationClientOperationsMixin(_MapsGeolocationClientOperationsMixi
         from which the application is accessed.
 
         :param ip_address: The IP address. Both IPv4 and IPv6 are allowed. Required.
-        :paramtype ip_address: str
+        :type ip_address: str
         :return: CountryRegionResult.
         :rtype: ~azure.maps.geolocation.models.CountryRegionResult
         :raises ~azure.core.exceptions.HttpResponseError:
