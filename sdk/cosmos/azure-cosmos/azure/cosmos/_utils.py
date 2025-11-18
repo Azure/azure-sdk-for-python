@@ -145,4 +145,8 @@ def valid_key_value_exist(
     :return: True if the key exists and its value is not None, False otherwise.
     :rtype: bool
     """
+    if key in kwargs and kwargs[key] is None:
+        kwargs.pop(key)
+        return False
+
     return key in kwargs and kwargs[key] is not invalid_value
