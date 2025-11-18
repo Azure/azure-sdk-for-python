@@ -8,17 +8,13 @@
 FILE: sample_chat_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to ask a follow-up question (chit-chat) from a knowledge base.
+    Async follow-up (contextual) question with answer_context.
 
 USAGE:
     python sample_chat_async.py
-
-    Set the environment variables with your own values before running the sample:
-    1) AZURE_QUESTIONANSWERING_ENDPOINT - the endpoint to your QuestionAnswering resource.
-    2) AZURE_QUESTIONANSWERING_KEY - your QuestionAnswering API key.
-    3) AZURE_QUESTIONANSWERING_PROJECT - the name of a knowledge base project.
 """
 
+from __future__ import annotations
 import asyncio
 
 
@@ -27,62 +23,72 @@ async def sample_chit_chat():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-    from azure.ai.language.questionanswering import models as qna
+    from azure.ai.language.questionanswering.models import (
+        AnswersOptions,
+        ShortAnswerOptions,
+        KnowledgeBaseAnswerContext,
+    )
 
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
-    knowledge_base_project = os.environ["AZURE_QUESTIONANSWERING_PROJECT"]
+    project = os.environ["AZURE_QUESTIONANSWERING_PROJECT"]
+    deployment = os.environ.get("AZURE_QUESTIONANSWERING_DEPLOYMENT", "production")
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     async with client:
-        first_question="How long should my Surface battery last?"
-        output = await client.get_answers(
+        first_question = "How long should my Surface battery last?"
+        first_options = AnswersOptions(
             question=first_question,
             top=3,
             confidence_threshold=0.2,
             include_unstructured_sources=True,
-            short_answer_options=qna.ShortAnswerOptions(
-                confidence_threshold=0.2,
-                top=1
-            ),
-            project_name=knowledge_base_project,
-            deployment_name="test"
+            short_answer_options=ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
         )
-        if output.answers:
-            best_candidate = [a for a in output.answers if a.confidence and a.confidence > 0.7][0]
-            print("Q: {}".format(first_question))
-            print("A: {}".format(best_candidate.answer))
-        else:
-            print(f"No answers returned from question '{first_question}'")
+        first_output = await client.get_answers(
+            first_options,
+            project_name=project,
+            deployment_name=deployment,
+        )
+        best_candidate = next(
+            (a for a in (first_output.answers or []) if a.confidence and a.confidence > 0.7),
+            None,
+        )
+        if not best_candidate:
+            print(f"No answers for '{first_question}'")
             return
 
-        if best_candidate.qna_id:
-            followup_question = "How long it takes to charge Surface?"
+        print(f"Q: {first_question}")
+        print(f"A: {best_candidate.answer}")
 
-            output = await client.get_answers(
+        if best_candidate.qna_id:
+            followup_question = "How long does it take to charge a Surface?"
+            followup_options = AnswersOptions(
                 question=followup_question,
                 top=3,
                 confidence_threshold=0.2,
-                answer_context=qna.KnowledgeBaseAnswerContext(
+                answer_context=KnowledgeBaseAnswerContext(
                     previous_question=first_question,
-                    previous_qna_id=best_candidate.qna_id
+                    previous_qna_id=best_candidate.qna_id,
                 ),
-                short_answer_options=qna.ShortAnswerOptions(
-                    confidence_threshold=0.2,
-                    top=1
-                ),
+                short_answer_options=ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
                 include_unstructured_sources=True,
-                project_name=knowledge_base_project,
-                deployment_name="test"
             )
-            if output.answers:
-                print(u"Q: {}".format(followup_question))
-                print(u"A: {}".format(output.answers[0].answer))
+            follow_output = await client.get_answers(
+                followup_options,
+                project_name=project,
+                deployment_name=deployment,
+            )
+            follow_best = next(
+                (a for a in (follow_output.answers or []) if a.confidence and a.confidence > 0.2),
+                None,
+            )
+            if follow_best:
+                print(f"Q: {followup_question}")
+                print(f"A: {follow_best.answer}")
             else:
-                print(f"No answers returned from question '{followup_question}'")
-
+                print(f"No answers for follow-up '{followup_question}'")
     # [END chit_chat_async]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(sample_chit_chat())

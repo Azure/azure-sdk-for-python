@@ -49,6 +49,9 @@ from ._restorable_gremlin_resources_operations import RestorableGremlinResources
 from ._restorable_tables_operations import RestorableTablesOperations  # type: ignore
 from ._restorable_table_resources_operations import RestorableTableResourcesOperations  # type: ignore
 from ._service_operations import ServiceOperations  # type: ignore
+from ._fleet_operations import FleetOperations  # type: ignore
+from ._fleetspace_operations import FleetspaceOperations  # type: ignore
+from ._fleetspace_account_operations import FleetspaceAccountOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -92,6 +95,9 @@ __all__ = [
     "RestorableTablesOperations",
     "RestorableTableResourcesOperations",
     "ServiceOperations",
+    "FleetOperations",
+    "FleetspaceOperations",
+    "FleetspaceAccountOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

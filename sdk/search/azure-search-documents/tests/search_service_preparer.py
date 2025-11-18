@@ -75,7 +75,10 @@ def _clean_up_indexers(endpoint, cred):
         for skillset in client.get_skillset_names():
             client.delete_skillset(skillset)
     except HttpResponseError as ex:
-        if "skillset related operations are not enabled in this region" in ex.message.lower():
+        if (
+            "skillset related operations are not enabled in this region"
+            in ex.message.lower()
+        ):
             pass
         else:
             raise

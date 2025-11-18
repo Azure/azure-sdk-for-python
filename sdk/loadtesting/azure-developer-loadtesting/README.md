@@ -293,7 +293,7 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
-[api_reference_doc]: https://docs.microsoft.com/rest/api/loadtesting/
+[api_reference_doc]: https://learn.microsoft.com/rest/api/apptesting/loadtest/
 [product_documentation]: https://azure.microsoft.com/services/load-testing/
-[obtaining_data_plane_uri]: https://learn.microsoft.com/rest/api/loadtesting/data-plane-uri
+[obtaining_data_plane_uri]: https://learn.microsoft.com/rest/api/apptesting/loadtest/data-plane-uri
 [python_logging]: https://docs.python.org/3/library/logging.html
