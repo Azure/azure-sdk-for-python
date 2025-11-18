@@ -35,9 +35,7 @@ async def sample_transcribe_from_url_async():
     api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
     # Create the transcription client
-    async with TranscriptionClient(
-        endpoint=endpoint, credential=AzureKeyCredential(api_key)
-    ) as client:
+    async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
         # URL to your audio file (must be publicly accessible)
         audio_url = "https://example.com/path/to/audio.wav"
 
