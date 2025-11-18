@@ -116,7 +116,7 @@ class Check(abc.ABC):
         cwd: str,
         check: bool = False,
         append_executable: bool = True,
-        immediately_dump: bool = False
+        immediately_dump: bool = False,
     ) -> subprocess.CompletedProcess[str]:
         """Run a command in the given virtual environment.
         - Prepends the virtual environment's bin directory to the PATH environment variable (if one exists)
@@ -157,9 +157,7 @@ class Check(abc.ABC):
 
         s_out = None if immediately_dump else subprocess.PIPE
         s_err = None if immediately_dump else subprocess.PIPE
-        result = subprocess.run(
-            cmd_to_run, cwd=cwd, stdout=s_out, stderr=s_err, text=True, check=check, env=env
-        )
+        result = subprocess.run(cmd_to_run, cwd=cwd, stdout=s_out, stderr=s_err, text=True, check=check, env=env)
 
         return result
 
