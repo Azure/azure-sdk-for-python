@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.healthdataaiservices import HealthDataAIServicesMgmtClient
+from azure.mgmt.healthdataaiservices import HealthDataAIServicesMgmt
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.healthdataaiservices import HealthDataAIServicesMgmtClient
 
 
 def main():
-    client = HealthDataAIServicesMgmtClient(
+    client = HealthDataAIServicesMgmt(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

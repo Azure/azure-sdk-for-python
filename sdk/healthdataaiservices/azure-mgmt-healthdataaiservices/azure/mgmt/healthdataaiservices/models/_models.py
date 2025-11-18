@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,16 +9,15 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class DeidPropertiesUpdate(_model_base.Model):
+class DeidPropertiesUpdate(_Model):
     """The template for adding optional properties.
 
     :ivar public_network_access: Gets or sets allow or disallow public network access to resource.
@@ -26,7 +26,9 @@ class DeidPropertiesUpdate(_model_base.Model):
      ~azure.mgmt.healthdataaiservices.models.PublicNetworkAccess
     """
 
-    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(name="publicNetworkAccess")
+    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Gets or sets allow or disallow public network access to resource. Known values are: \"Enabled\"
      and \"Disabled\"."""
 
@@ -48,13 +50,11 @@ class DeidPropertiesUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -68,7 +68,7 @@ class Resource(_model_base.Model):
 
     id: Optional[str] = rest_field(visibility=["read"])
     """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long"""
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the resource."""
     type: Optional[str] = rest_field(visibility=["read"])
@@ -79,14 +79,10 @@ class Resource(_model_base.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -102,7 +98,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -112,7 +108,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -129,11 +125,8 @@ class TrackedResource(Resource):
 class DeidService(TrackedResource):
     """A HealthDataAIServicesProviderHub resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -153,9 +146,13 @@ class DeidService(TrackedResource):
     :vartype identity: ~azure.mgmt.healthdataaiservices.models.ManagedServiceIdentity
     """
 
-    properties: Optional["_models.DeidServiceProperties"] = rest_field()
+    properties: Optional["_models.DeidServiceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field()
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The managed service identities assigned to this resource."""
 
     @overload
@@ -163,7 +160,7 @@ class DeidService(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.DeidServiceProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
@@ -179,10 +176,8 @@ class DeidService(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class DeidServiceProperties(_model_base.Model):
+class DeidServiceProperties(_Model):
     """Details of the HealthDataAIServices DeidService.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
@@ -205,11 +200,13 @@ class DeidServiceProperties(_model_base.Model):
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
     service_url: Optional[str] = rest_field(name="serviceUrl", visibility=["read"])
     """Deid service url."""
-    private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = rest_field(
+    private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
     """List of private endpoint connections."""
-    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(name="publicNetworkAccess")
+    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Gets or sets allow or disallow public network access to resource. Known values are: \"Enabled\"
      and \"Disabled\"."""
 
@@ -231,7 +228,7 @@ class DeidServiceProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidUpdate(_model_base.Model):
+class DeidUpdate(_Model):
     """Patch request body for DeidService.
 
     :ivar tags: Resource tags.
@@ -242,18 +239,22 @@ class DeidUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.healthdataaiservices.models.DeidPropertiesUpdate
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    identity: Optional["_models.ManagedServiceIdentityUpdate"] = rest_field()
+    identity: Optional["_models.ManagedServiceIdentityUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Updatable managed service identity."""
-    properties: Optional["_models.DeidPropertiesUpdate"] = rest_field()
+    properties: Optional["_models.DeidPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """RP-specific properties."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentityUpdate"] = None,
         properties: Optional["_models.DeidPropertiesUpdate"] = None,
     ) -> None: ...
@@ -269,10 +270,8 @@ class DeidUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The additional info type.
     :vartype type: str
@@ -286,10 +285,8 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -309,23 +306,22 @@ class ErrorDetail(_model_base.Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.healthdataaiservices.models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object."""
 
     @overload
@@ -346,11 +342,8 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_model_base.Model):
+class ManagedServiceIdentity(_Model):
     """Managed service identity (system assigned and/or user assigned identities).
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -372,11 +365,13 @@ class ManagedServiceIdentity(_model_base.Model):
     tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
     """The tenant ID of the system assigned identity. This property will only be provided for a system
      assigned identity."""
-    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field()
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
-        name="userAssignedIdentities"
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
 
@@ -385,7 +380,7 @@ class ManagedServiceIdentity(_model_base.Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -399,7 +394,7 @@ class ManagedServiceIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentityUpdate(_model_base.Model):
+class ManagedServiceIdentityUpdate(_Model):
     """The template for adding optional properties.
 
     :ivar type: The type of managed identity assigned to this resource. Known values are: "None",
@@ -410,11 +405,13 @@ class ManagedServiceIdentityUpdate(_model_base.Model):
      ~azure.mgmt.healthdataaiservices.models.UserAssignedIdentity]
     """
 
-    type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = rest_field()
+    type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of managed identity assigned to this resource. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
-        name="userAssignedIdentities"
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
 
@@ -423,7 +420,7 @@ class ManagedServiceIdentityUpdate(_model_base.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -437,10 +434,8 @@ class ManagedServiceIdentityUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -466,13 +461,15 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
+    display: Optional["_models.OperationDisplay"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
 
@@ -480,7 +477,7 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
+        display: Optional["_models.OperationDisplay"] = None,
     ) -> None: ...
 
     @overload
@@ -494,10 +491,8 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -527,26 +522,22 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class PrivateEndpoint(_model_base.Model):
-    """The Private Endpoint resource.
+class PrivateEndpoint(_Model):
+    """The private endpoint resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource identifier for private endpoint.
+    :ivar id: The resource identifier of the private endpoint.
     :vartype id: str
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
-    """The resource identifier for private endpoint."""
+    """The resource identifier of the private endpoint."""
 
 
 class PrivateEndpointConnection(Resource):
     """The private endpoint connection resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -561,7 +552,9 @@ class PrivateEndpointConnection(Resource):
      ~azure.mgmt.healthdataaiservices.models.PrivateEndpointConnectionProperties
     """
 
-    properties: Optional["_models.PrivateEndpointConnectionProperties"] = rest_field()
+    properties: Optional["_models.PrivateEndpointConnectionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The private endpoint connection properties."""
 
     @overload
@@ -582,11 +575,8 @@ class PrivateEndpointConnection(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_model_base.Model):
+class PrivateEndpointConnectionProperties(_Model):
     """Properties of the private endpoint connection.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar group_ids: The group ids for the private endpoint resource.
     :vartype group_ids: list[str]
@@ -602,12 +592,14 @@ class PrivateEndpointConnectionProperties(_model_base.Model):
      ~azure.mgmt.healthdataaiservices.models.PrivateEndpointConnectionProvisioningState
     """
 
-    group_ids: Optional[List[str]] = rest_field(name="groupIds", visibility=["read"])
+    group_ids: Optional[list[str]] = rest_field(name="groupIds", visibility=["read"])
     """The group ids for the private endpoint resource."""
-    private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(name="privateEndpoint")
+    private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(
+        name="privateEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The private endpoint resource."""
     private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState" = rest_field(
-        name="privateLinkServiceConnectionState"
+        name="privateLinkServiceConnectionState", visibility=["read", "create", "update", "delete", "query"]
     )
     """A collection of information about the state of the connection between service consumer and
      provider. Required."""
@@ -637,13 +629,10 @@ class PrivateEndpointConnectionProperties(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -659,10 +648,8 @@ class ProxyResource(Resource):
 class PrivateEndpointConnectionResource(ProxyResource):
     """Holder for private endpoint connections.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -677,7 +664,9 @@ class PrivateEndpointConnectionResource(ProxyResource):
      ~azure.mgmt.healthdataaiservices.models.PrivateEndpointConnectionProperties
     """
 
-    properties: Optional["_models.PrivateEndpointConnectionProperties"] = rest_field()
+    properties: Optional["_models.PrivateEndpointConnectionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -701,10 +690,8 @@ class PrivateEndpointConnectionResource(ProxyResource):
 class PrivateLinkResource(ProxyResource):
     """Private Links for DeidService resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -718,7 +705,9 @@ class PrivateLinkResource(ProxyResource):
     :vartype properties: ~azure.mgmt.healthdataaiservices.models.PrivateLinkResourceProperties
     """
 
-    properties: Optional["_models.PrivateLinkResourceProperties"] = rest_field()
+    properties: Optional["_models.PrivateLinkResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -739,10 +728,8 @@ class PrivateLinkResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_model_base.Model):
+class PrivateLinkResourceProperties(_Model):
     """Properties of a private link resource.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar group_id: The private link resource group id.
     :vartype group_id: str
@@ -754,16 +741,18 @@ class PrivateLinkResourceProperties(_model_base.Model):
 
     group_id: Optional[str] = rest_field(name="groupId", visibility=["read"])
     """The private link resource group id."""
-    required_members: Optional[List[str]] = rest_field(name="requiredMembers", visibility=["read"])
+    required_members: Optional[list[str]] = rest_field(name="requiredMembers", visibility=["read"])
     """The private link resource required member names."""
-    required_zone_names: Optional[List[str]] = rest_field(name="requiredZoneNames")
+    required_zone_names: Optional[list[str]] = rest_field(
+        name="requiredZoneNames", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The private link resource private link DNS zone name."""
 
     @overload
     def __init__(
         self,
         *,
-        required_zone_names: Optional[List[str]] = None,
+        required_zone_names: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -777,7 +766,7 @@ class PrivateLinkResourceProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_model_base.Model):
+class PrivateLinkServiceConnectionState(_Model):
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -792,12 +781,16 @@ class PrivateLinkServiceConnectionState(_model_base.Model):
     :vartype actions_required: str
     """
 
-    status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = rest_field()
+    status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates whether the connection has been Approved/Rejected/Removed by the owner of the
      service. Known values are: \"Pending\", \"Approved\", and \"Rejected\"."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The reason for approval/rejection of the connection."""
-    actions_required: Optional[str] = rest_field(name="actionsRequired")
+    actions_required: Optional[str] = rest_field(
+        name="actionsRequired", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A message indicating if changes on the service provider require any updates on the consumer."""
 
     @overload
@@ -820,7 +813,7 @@ class PrivateLinkServiceConnectionState(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -839,19 +832,29 @@ class SystemData(_model_base.Model):
     :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource creation (UTC)."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
+    last_modified_by: Optional[str] = rest_field(
+        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource last modification (UTC)."""
 
     @overload
@@ -877,10 +880,8 @@ class SystemData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_model_base.Model):
+class UserAssignedIdentity(_Model):
     """User assigned identity properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str

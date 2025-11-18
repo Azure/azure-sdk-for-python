@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0 (2025-11-18)
+
+### Breaking Changes
+
+  - Deleted or renamed client `HealthDataAIServicesMgmtClient`
+
 ## 1.0.0 (2024-11-21)
 
 ### Breaking Changes

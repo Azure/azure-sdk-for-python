@@ -77,7 +77,7 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
     """The private endpoint connection status."""
 
     PENDING = "Pending"
-    """Connectionaiting for approval or rejection"""
+    """Connection waiting for approval or rejection"""
     APPROVED = "Approved"
     """Connection approved"""
     REJECTED = "Rejected"
