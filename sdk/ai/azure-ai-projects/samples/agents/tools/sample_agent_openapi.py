@@ -69,7 +69,6 @@ with (
             instructions="You are a helpful assistant.",
             tools=[tool],
         ),
-        description="You are a helpful assistant.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
