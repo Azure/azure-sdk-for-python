@@ -1649,14 +1649,14 @@ class TestTypeHandlerRegistry:
 class TestBackcompatPropertyMatrix:
     """
     Systematic test matrix for DPG model property backcompat scenarios.
-    
+
     Tests all combinations of 5 key dimensions:
     1. wireName: same/different from attr_name
-    2. attr_name: normal/padded (reserved word)  
+    2. attr_name: normal/padded (reserved word)
     3. original_tsp_name: None/present (TSP name before padding)
     4. visibility: readonly/readwrite (affects exclude_readonly)
     5. structure: regular/nested/flattened models
-    
+
     COMPLETE TEST MATRIX:
     ┌───────┬─────────────┬──────────────┬─────────────────┬────────────┬──────────────┬─────────────────────────────┐
     │ Test  │ Wire Name   │ Attr Name    │ Original TSP    │ Visibility │ Structure    │ Expected Behavior           │
@@ -1675,189 +1675,177 @@ class TestBackcompatPropertyMatrix:
     │ 6c    │ various     │ mixed        │ mixed           │ readonly   │ flat-mixed   │ flattened + exclude         │
     └───────┴─────────────┴──────────────┴─────────────────┴────────────┴──────────────┴─────────────────────────────┘
     """
-    
+
     # ========== DIMENSION 1-4 COMBINATIONS: REGULAR STRUCTURE ==========
-    
+
     def test_1a_same_wire_normal_attr_no_original_readwrite_regular(self):
         """Wire=attr, normal attr, no original, readwrite, regular model"""
-        
+
         class RegularModel(HybridModel):
             field_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-        
+
         model = RegularModel(field_name="value")
-        
+
         # Should use attr_name (same as wire name)
         assert attribute_list(model) == ["field_name"]
         assert as_attribute_dict(model) == {"field_name": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {"field_name": "value"}
-    
+
     def test_1b_same_wire_normal_attr_no_original_readonly_regular(self):
         """Wire=attr, normal attr, no original, readonly, regular model"""
-        
+
         class ReadonlyModel(HybridModel):
             field_name: str = rest_field(visibility=["read"])
-        
+
         model = ReadonlyModel(field_name="value")
-        
+
         # Should use attr_name, but excluded when exclude_readonly=True
         assert attribute_list(model) == ["field_name"]
         assert as_attribute_dict(model) == {"field_name": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {}
-    
+
     def test_2a_different_wire_normal_attr_no_original_readwrite_regular(self):
         """Wire≠attr, normal attr, no original, readwrite, regular model"""
-        
+
         class DifferentWireModel(HybridModel):
             client_field: str = rest_field(name="wireField", visibility=["read", "create", "update", "delete", "query"])
-        
+
         model = DifferentWireModel(client_field="value")
-        
+
         # Should use attr_name (wire name is different)
         assert attribute_list(model) == ["client_field"]
         assert as_attribute_dict(model) == {"client_field": "value"}
         # Verify wire representation uses different name
         assert dict(model) == {"wireField": "value"}
-    
+
     def test_2b_different_wire_normal_attr_no_original_readonly_regular(self):
         """Wire≠attr, normal attr, no original, readonly, regular model"""
-        
+
         class ReadonlyDifferentWireModel(HybridModel):
             client_field: str = rest_field(name="wireField", visibility=["read"])
-        
+
         model = ReadonlyDifferentWireModel(client_field="value")
-        
+
         # Should use attr_name, excluded when exclude_readonly=True
         assert attribute_list(model) == ["client_field"]
         assert as_attribute_dict(model) == {"client_field": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {}
-    
+
     def test_3a_same_wire_padded_attr_with_original_readwrite_regular(self):
         """Wire=original, padded attr, original present, readwrite, regular model"""
-        
+
         class PaddedModel(HybridModel):
             keys_property: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-            
+
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
                 # Set original TSP name for backcompat
-                self._attr_to_rest_field['keys_property']._original_tsp_name = "keys"
+                self._attr_to_rest_field["keys_property"]._original_tsp_name = "keys"
                 # Create backcompat mapping
-                self._backcompat_attr_to_rest_field = {
-                    "keys": self._attr_to_rest_field['keys_property']
-                }
-        
+                self._backcompat_attr_to_rest_field = {"keys": self._attr_to_rest_field["keys_property"]}
+
         model = PaddedModel(keys_property="value")
-        
+
         # Should use original_tsp_name when available
         assert attribute_list(model) == ["keys"]
         assert as_attribute_dict(model) == {"keys": "value"}
-    
+
     def test_3b_same_wire_padded_attr_with_original_readonly_regular(self):
         """Wire=original, padded attr, original present, readonly, regular model"""
-        
+
         class ReadonlyPaddedModel(HybridModel):
             keys_property: str = rest_field(visibility=["read"], original_tsp_name="keys")
-        
+
         model = ReadonlyPaddedModel(keys_property="value")
-        
+
         # Should use original_tsp_name, excluded when exclude_readonly=True
         assert attribute_list(model) == ["keys"]
         assert as_attribute_dict(model) == {"keys": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {}
-    
+
     def test_4a_different_wire_padded_attr_with_original_readwrite_regular(self):
         """Wire≠original, padded attr, original present, readwrite, regular model"""
-        
+
         class DifferentWirePaddedModel(HybridModel):
             keys_property: str = rest_field(name="keysWire", original_tsp_name="keys")
-        
+
         model = DifferentWirePaddedModel(keys_property="value")
-        
+
         # Should use original_tsp_name
         assert attribute_list(model) == ["keys"]
         assert as_attribute_dict(model) == {"keys": "value"}
         # Verify wire uses different name
         assert dict(model) == {"keysWire": "value"}
-    
+
     def test_4b_different_wire_padded_attr_with_original_readonly_regular(self):
         """Wire≠original, padded attr, original present, readonly, regular model"""
-        
+
         class ReadonlyDifferentWirePaddedModel(HybridModel):
-            keys_property: str = rest_field(
-                name="keysWire", 
-                visibility=["read"], 
-                original_tsp_name="keys"
-            )
-        
+            keys_property: str = rest_field(name="keysWire", visibility=["read"], original_tsp_name="keys")
+
         model = ReadonlyDifferentWirePaddedModel(keys_property="value")
-        
-        # Should use original_tsp_name, excluded when exclude_readonly=True  
+
+        # Should use original_tsp_name, excluded when exclude_readonly=True
         assert attribute_list(model) == ["keys"]
         assert as_attribute_dict(model) == {"keys": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {}
-    
+
     # ========== DIMENSION 5: STRUCTURE VARIATIONS ==========
-    
+
     def test_5a_nested_model_backcompat_recursive(self):
         """Nested models with mixed backcompat scenarios"""
-        
+
         class NestedBackcompatModel(HybridModel):
             keys_property: str = rest_field(name="keysWire", original_tsp_name="keys")
             normal_field: str = rest_field(name="normalWire")
-        
+
         class ParentModel(HybridModel):
             nested: NestedBackcompatModel = rest_field()
             type_property: str = rest_field(original_tsp_name="type")
-        
-        nested_model = NestedBackcompatModel(
-            keys_property="nested_keys", 
-            normal_field="nested_normal"
-        )
+
+        nested_model = NestedBackcompatModel(keys_property="nested_keys", normal_field="nested_normal")
         parent_model = ParentModel(nested=nested_model, type_property="parent_type")
-        
+
         # Test nested model independently
         nested_attrs = attribute_list(nested_model)
         assert set(nested_attrs) == {"keys", "normal_field"}
-        
+
         nested_dict = as_attribute_dict(nested_model)
         assert nested_dict == {"keys": "nested_keys", "normal_field": "nested_normal"}
-        
+
         # Test parent model with recursive backcompat
         parent_attrs = attribute_list(parent_model)
         assert set(parent_attrs) == {"nested", "type"}
-        
+
         parent_dict = as_attribute_dict(parent_model)
-        expected_parent = {
-            "nested": {"keys": "nested_keys", "normal_field": "nested_normal"},
-            "type": "parent_type"
-        }
+        expected_parent = {"nested": {"keys": "nested_keys", "normal_field": "nested_normal"}, "type": "parent_type"}
         assert parent_dict == expected_parent
-    
+
     def test_6a_flattened_container_with_backcompat(self):
         """Flattened property where container has backcompat (keys_property → keys)"""
-        
+
         # Helper model for flattening content
         class ContentModel(HybridModel):
             name: str = rest_field()
             description: str = rest_field()
-        
+
         class FlattenedContainerModel(HybridModel):
             id: str = rest_field()
             keys_property: ContentModel = rest_field(original_tsp_name="keys")
-            
+
             __flattened_items = ["name", "description"]
-            
+
             def __init__(self, *args, **kwargs):
                 _flattened = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
                 super().__init__(*args, **kwargs)
                 for k, v in _flattened.items():
                     setattr(self, k, v)
-            
+
             def __getattr__(self, name: str):
                 if name in self.__flattened_items and self.keys_property is not None:
                     return getattr(self.keys_property, name)
                 raise AttributeError(f"No attribute '{name}'")
-            
+
             def __setattr__(self, key: str, value):
                 if key in self.__flattened_items:
                     if self.keys_property is None:
@@ -1865,44 +1853,40 @@ class TestBackcompatPropertyMatrix:
                     setattr(self.keys_property, key, value)
                 else:
                     super().__setattr__(key, value)
-        
-        model = FlattenedContainerModel(
-            id="test_id",
-            name="flattened_name",
-            description="flattened_desc"
-        )
-        
+
+        model = FlattenedContainerModel(id="test_id", name="flattened_name", description="flattened_desc")
+
         # Flattened items should appear at top level
         attrs = attribute_list(model)
         assert set(attrs) == {"id", "name", "description"}
-        
+
         # Flattened dict should use top-level names
         attr_dict = as_attribute_dict(model)
         expected = {"id": "test_id", "name": "flattened_name", "description": "flattened_desc"}
         assert attr_dict == expected
-    
+
     def test_6b_flattened_properties_with_backcompat(self):
         """Flattened properties themselves have backcompat (type_property → type)"""
-        
+
         class BackcompatContentModel(HybridModel):
             type_property: str = rest_field(name="typeWire", original_tsp_name="type")
             class_property: str = rest_field(name="classWire", original_tsp_name="class")
-            
+
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
-                self._attr_to_rest_field['type_property']._original_tsp_name = "type"
-                self._attr_to_rest_field['class_property']._original_tsp_name = "class"
+                self._attr_to_rest_field["type_property"]._original_tsp_name = "type"
+                self._attr_to_rest_field["class_property"]._original_tsp_name = "class"
                 self._backcompat_attr_to_rest_field = {
-                    "type": self._attr_to_rest_field['type_property'],
-                    "class": self._attr_to_rest_field['class_property']
+                    "type": self._attr_to_rest_field["type_property"],
+                    "class": self._attr_to_rest_field["class_property"],
                 }
-        
+
         class FlattenedPropsBackcompatModel(HybridModel):
             name: str = rest_field()
             properties: BackcompatContentModel = rest_field()
-            
+
             __flattened_items = ["type", "class"]  # Use original names
-            
+
             def __init__(self, *args, **kwargs):
                 _flattened = {}
                 for item in ["type", "class"]:
@@ -1911,13 +1895,13 @@ class TestBackcompatPropertyMatrix:
                 super().__init__(*args, **kwargs)
                 for k, v in _flattened.items():
                     setattr(self, k, v)
-            
+
             def __getattr__(self, name: str):
                 if name in self.__flattened_items and self.properties is not None:
                     attr_map = {"type": "type_property", "class": "class_property"}
                     return getattr(self.properties, attr_map[name])
                 raise AttributeError(f"No attribute '{name}'")
-            
+
             def __setattr__(self, key: str, value):
                 if key in self.__flattened_items:
                     if self.properties is None:
@@ -1926,180 +1910,150 @@ class TestBackcompatPropertyMatrix:
                     setattr(self.properties, attr_map[key], value)
                 else:
                     super().__setattr__(key, value)
-        
-        model = FlattenedPropsBackcompatModel(
-            name="test_name",
-            type="test_type",
-            **{"class": "test_class"}
-        )
-        
+
+        model = FlattenedPropsBackcompatModel(name="test_name", type="test_type", **{"class": "test_class"})
+
         # Should use original names for flattened properties
         attrs = attribute_list(model)
         assert set(attrs) == {"name", "type", "class"}
-        
+
         attr_dict = as_attribute_dict(model)
         expected = {"name": "test_name", "type": "test_type", "class": "test_class"}
         assert attr_dict == expected
-    
+
     def test_6c_flattened_with_readonly_exclusion(self):
         """Flattened model with readonly properties and exclude_readonly behavior"""
-        
+
         class ReadonlyContentModel(HybridModel):
             readonly_field: str = rest_field(
-                name="readonlyWire", 
-                visibility=["read"], 
-                original_tsp_name="readonly_prop"
+                name="readonlyWire", visibility=["read"], original_tsp_name="readonly_prop"
             )
-            readwrite_field: str = rest_field(
-                name="readwriteWire", 
-                original_tsp_name="readwrite_prop"
-            )
-            
+            readwrite_field: str = rest_field(name="readwriteWire", original_tsp_name="readwrite_prop")
+
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
-                self._attr_to_rest_field['readonly_field']._original_tsp_name = "readonly_prop"
-                self._attr_to_rest_field['readwrite_field']._original_tsp_name = "readwrite_prop"
+                self._attr_to_rest_field["readonly_field"]._original_tsp_name = "readonly_prop"
+                self._attr_to_rest_field["readwrite_field"]._original_tsp_name = "readwrite_prop"
                 self._backcompat_attr_to_rest_field = {
-                    "readonly_prop": self._attr_to_rest_field['readonly_field'],
-                    "readwrite_prop": self._attr_to_rest_field['readwrite_field']
+                    "readonly_prop": self._attr_to_rest_field["readonly_field"],
+                    "readwrite_prop": self._attr_to_rest_field["readwrite_field"],
                 }
-        
+
         class FlattenedReadonlyModel(HybridModel):
             id: str = rest_field()
             content: ReadonlyContentModel = rest_field()
-            
+
             __flattened_items = ["readonly_prop", "readwrite_prop"]
-            
+
             def __init__(self, *args, **kwargs):
                 _flattened = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
                 super().__init__(*args, **kwargs)
                 for k, v in _flattened.items():
                     setattr(self, k, v)
-            
+
             def __getattr__(self, name: str):
                 if name in self.__flattened_items and self.content is not None:
-                    attr_map = {
-                        "readonly_prop": "readonly_field", 
-                        "readwrite_prop": "readwrite_field"
-                    }
+                    attr_map = {"readonly_prop": "readonly_field", "readwrite_prop": "readwrite_field"}
                     return getattr(self.content, attr_map[name])
                 raise AttributeError(f"No attribute '{name}'")
-            
+
             def __setattr__(self, key: str, value):
                 if key in self.__flattened_items:
                     if self.content is None:
                         self.content = ReadonlyContentModel()
-                    attr_map = {
-                        "readonly_prop": "readonly_field", 
-                        "readwrite_prop": "readwrite_field"
-                    }
+                    attr_map = {"readonly_prop": "readonly_field", "readwrite_prop": "readwrite_field"}
                     setattr(self.content, attr_map[key], value)
                 else:
                     super().__setattr__(key, value)
-        
-        model = FlattenedReadonlyModel(
-            id="test_id",
-            readonly_prop="readonly_value",
-            readwrite_prop="readwrite_value"
-        )
-        
+
+        model = FlattenedReadonlyModel(id="test_id", readonly_prop="readonly_value", readwrite_prop="readwrite_value")
+
         # All properties included by default
         full_dict = as_attribute_dict(model, exclude_readonly=False)
-        expected_full = {
-            "id": "test_id",
-            "readonly_prop": "readonly_value",
-            "readwrite_prop": "readwrite_value"
-        }
+        expected_full = {"id": "test_id", "readonly_prop": "readonly_value", "readwrite_prop": "readwrite_value"}
         assert full_dict == expected_full
-        
+
         # Readonly properties excluded when requested
         filtered_dict = as_attribute_dict(model, exclude_readonly=True)
-        expected_filtered = {
-            "id": "test_id",
-            "readwrite_prop": "readwrite_value"
-        }
+        expected_filtered = {"id": "test_id", "readwrite_prop": "readwrite_value"}
         assert filtered_dict == expected_filtered
-    
+
     # ========== EDGE CASES ==========
-    
+
     def test_mixed_combinations_comprehensive(self):
         """Comprehensive test mixing all backcompat scenarios in one model"""
-        
+
         class ComprehensiveModel(HybridModel):
             # Case 1: Normal field, same wire name, no original
             normal_field: str = rest_field()
-            
-            # Case 2: Normal field, different wire name, no original  
+
+            # Case 2: Normal field, different wire name, no original
             different_wire: str = rest_field(name="wireNameDifferent")
-            
+
             # Case 3: Padded field with original, same wire name
             keys_property: str = rest_field(original_tsp_name="keys")
-            
+
             # Case 4: Padded field with original, different wire name
             type_property: str = rest_field(name="typeWire", original_tsp_name="type")
-            
+
             # Case 5: Readonly field with original
-            readonly_class: str = rest_field(
-                name="classWire", 
-                visibility=["read"], 
-                original_tsp_name="class"
-            )
-        
+            readonly_class: str = rest_field(name="classWire", visibility=["read"], original_tsp_name="class")
+
         model = ComprehensiveModel(
             normal_field="normal",
             different_wire="different",
             keys_property="keys_val",
             type_property="type_val",
-            readonly_class="class_val"
+            readonly_class="class_val",
         )
-        
+
         # attribute_list should use backcompat names where available
         attrs = attribute_list(model)
         expected_attrs = {"normal_field", "different_wire", "keys", "type", "class"}
         assert set(attrs) == expected_attrs
-        
+
         # Full as_attribute_dict
         full_dict = as_attribute_dict(model)
         expected_full = {
             "normal_field": "normal",
             "different_wire": "different",
             "keys": "keys_val",
-            "type": "type_val", 
-            "class": "class_val"
+            "type": "type_val",
+            "class": "class_val",
         }
         assert full_dict == expected_full
-        
+
         # Exclude readonly
         filtered_dict = as_attribute_dict(model, exclude_readonly=True)
         expected_filtered = {
             "normal_field": "normal",
             "different_wire": "different",
             "keys": "keys_val",
-            "type": "type_val"
+            "type": "type_val",
             # "class" excluded because it's readonly
         }
         assert filtered_dict == expected_filtered
-        
+
         # Verify wire representations use correct wire names
         wire_dict = dict(model)
         expected_wire = {
-            "normal_field": "normal",      # same as attr
+            "normal_field": "normal",  # same as attr
             "wireNameDifferent": "different",  # different wire name
-            "keys_property": "keys_val",    # same as attr (padded)
-            "typeWire": "type_val",        # different wire name
-            "classWire": "class_val"       # different wire name
+            "keys_property": "keys_val",  # same as attr (padded)
+            "typeWire": "type_val",  # different wire name
+            "classWire": "class_val",  # different wire name
         }
         assert wire_dict == expected_wire
-    
+
     def test_no_backcompat_fallback(self):
         """Test fallback behavior when no backcompat mapping exists"""
-        
+
         class NoBackcompatModel(HybridModel):
             padded_attr: str = rest_field(name="wireField")
             # Note: No original_tsp_name set, so no backcompat should occur
-        
+
         model = NoBackcompatModel(padded_attr="value")
-        
+
         # Should fall back to using actual attribute names
         assert attribute_list(model) == ["padded_attr"]
         assert as_attribute_dict(model) == {"padded_attr": "value"}
@@ -2107,7 +2061,7 @@ class TestBackcompatPropertyMatrix:
 
     def test_property_with_padding_in_actual_name(self):
         """Test handling of properties that have padding in their actual attribute names"""
-        
+
         class PaddingInNameModel(HybridModel):
             keys_property: str = rest_field(name="myKeys")
 

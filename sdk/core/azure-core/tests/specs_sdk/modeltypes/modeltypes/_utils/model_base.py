@@ -655,8 +655,8 @@ class Model(_MyMutableMapping):
                     rf._rest_name_input = attr
             cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
             cls._backcompat_attr_to_rest_field: typing.Dict[str, _RestField] = {
-                Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf for attr, rf in cls
-                ._attr_to_rest_field.items()
+                Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
+                for attr, rf in cls._attr_to_rest_field.items()
             }
             cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
@@ -676,7 +676,6 @@ class Model(_MyMutableMapping):
         if original_tsp_name:
             return original_tsp_name
         return attr_name
-
 
     @classmethod
     def _get_discriminator(cls, exist_discriminators) -> typing.Optional["_RestField"]:
