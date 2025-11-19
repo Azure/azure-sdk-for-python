@@ -131,7 +131,9 @@ class _QueryExecutionContextBase(object):
         return fetched_items
 
     async def _fetch_items_helper_with_retries(self, fetch_function):
-        async def callback(**kwargs):
+        # the callback keep the **kwargs parameter to maintain compatibility with the retry utility's execution pattern.
+        # Removing **kwargs results in a TypeError when ExecuteAsync tries to pass these parameters
+        async def callback(**_unused_kwargs):  # Underscore indicates intentionally unused
             return await self._fetch_items_helper_no_retries(fetch_function)
 
         return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback, **self._options)

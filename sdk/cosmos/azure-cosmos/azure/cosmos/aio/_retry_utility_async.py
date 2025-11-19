@@ -28,7 +28,7 @@ import logging
 
 import requests
 from azure.core.exceptions import (AzureError, ClientAuthenticationError, ServiceRequestError,
-                                   ServiceResponseError, ServiceResponseTimeoutError)
+                                   ServiceResponseError)
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import _default_retry_policy, _database_account_retry_policy
@@ -177,12 +177,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         except (exceptions.CosmosHttpResponseError, ServiceRequestError, ServiceResponseError) as e:
             # Store the last error
             last_error = e
-
-            if timeout:
-                elapsed = time.time() - operation_start_time
-                if elapsed >= timeout:
-                    raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
-
             if isinstance(e, exceptions.CosmosHttpResponseError):
                 if request:
                     # update session token for relevant operations
@@ -251,6 +245,11 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                         client.session.clear_session_token(client.last_response_headers)
                     raise
 
+                # Check timeout only before retrying
+                if timeout:
+                   elapsed = time.time() - operation_start_time
+                   if elapsed >= timeout:
+                      raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
                 # Wait for retry_after_in_milliseconds time before the next retry
                 await asyncio.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
 

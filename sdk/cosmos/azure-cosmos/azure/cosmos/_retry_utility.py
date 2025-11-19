@@ -180,11 +180,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             # Store the last error
             last_error = e
 
-            if timeout:
-                elapsed = time.time() - operation_start_time
-                if elapsed >= timeout:
-                    raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
-
             if isinstance(e, exceptions.CosmosHttpResponseError):
                 if request:
                     # update session token for relevant operations
@@ -254,6 +249,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                         client.session.clear_session_token(client.last_response_headers)
 
                     raise
+
+                # Now check timeout before retrying
+                if timeout:
+                    elapsed = time.time() - operation_start_time
+                    if elapsed >= timeout:
+                        raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
 
                 # Wait for retry_after_in_milliseconds time before the next retry
                 time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)

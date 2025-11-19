@@ -122,10 +122,7 @@ class CosmosClientTimeoutError(AzureError):
             message = "The request failed to complete within the given timeout."
         self.response = None
         self.history = None
-        # Pass inner_exception as 'error' to parent class
-        if inner_exception is not None:
-            kwargs['error'] = inner_exception
-        super(CosmosClientTimeoutError, self).__init__(message, **kwargs)
+        super(CosmosClientTimeoutError, self).__init__(message, error=inner_exception, **kwargs)
 
 class InternalException:
     def __init__(self, status_code, headers, reason=None):

@@ -1010,24 +1010,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 await client.create_database_if_not_exists("test", timeout=2)
 
 
-    async def test_timeout_on_server_error_async(self):
-        # Server Error (500)-Retry policy doesn't retry, it fails fast by raising
-        # CosmosHttpResponseError. So if we increase the timeout below to a higher value
-        # it will return in CosmosHttpResponseError instead of CosmosClientTimeoutError which is correct.
-        status_response = 500  # server error
-        timeout_transport = TimeoutTransport(status_response, passthrough=True)
-        async with CosmosClient(
-                self.host, self.masterKey, transport=timeout_transport) as client:
-
-            timeout_transport.passthrough = False
-            with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                await client.create_database("test", timeout=2)
-
-            databases = client.list_databases(timeout=2)
-            with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                async for _ in databases:
-                    pass
-
     async def test_timeout_on_throttling_error_async(self):
         # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry

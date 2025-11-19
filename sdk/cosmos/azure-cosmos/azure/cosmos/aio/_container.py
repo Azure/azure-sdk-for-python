@@ -498,7 +498,7 @@ class ContainerProxy:
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
-        query_options[Constants.UseOperationTimeout] = True
+        query_options[Constants.TimeoutScope] = True
 
         item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
         return await self.client_connection.read_items(

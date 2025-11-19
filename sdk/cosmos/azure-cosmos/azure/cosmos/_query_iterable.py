@@ -77,7 +77,7 @@ class QueryIterable(PageIterator):
             options['continuation'] = continuation_token
         # Capture timeout and start time
         self.timeout = options.get('timeout')
-        self.use_operation_timeout = options.get(_Constants.UseOperationTimeout)
+        self.use_operation_timeout = options.get(_Constants.TimeoutScope)
 
         self._fetch_function = fetch_function
         self._collection_link = collection_link
