@@ -65,10 +65,8 @@ def main() -> None:
                 instructions="You are a helpful assistant that answers general questions",
             ),
         )
-        print(
-            f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
-        )
-        
+        print(f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})")
+
         eval_group_name = "Red Team Agent Safety Evaluation -" + str(int(time.time()))
         eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
         data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
@@ -80,8 +78,8 @@ def main() -> None:
         print("Creating red teaming evaluation")
         eval_object = client.evals.create(
             name=eval_group_name,
-            data_source_config=data_source_config,   # type: ignore
-            testing_criteria=testing_criteria,   # type: ignore
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Evaluation created for red teaming: {eval_group_name}")
 
@@ -144,7 +142,7 @@ def main() -> None:
                 print(
                     f"RedTeam Eval Run completed with status: {run.status}. Output items written to {output_items_path}"
                 )
-                break            
+                break
             time.sleep(5)
             print(f"Waiting for eval run to complete... {run.status}")
 

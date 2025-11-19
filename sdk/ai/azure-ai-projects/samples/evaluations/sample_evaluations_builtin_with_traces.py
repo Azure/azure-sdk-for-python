@@ -158,8 +158,8 @@ def main() -> None:
         print("\nCreating evaluation")
         eval_object = client.evals.create(
             name="agent_trace_eval_group",
-            data_source_config=data_source_config,   # type: ignore
-            testing_criteria=testing_criteria,   # type: ignore
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
