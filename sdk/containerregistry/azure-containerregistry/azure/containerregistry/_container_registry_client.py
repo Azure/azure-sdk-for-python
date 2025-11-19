@@ -47,6 +47,7 @@ from ._models import (
     GetManifestResult,
     DigestValidationError,
     TagAttributesBase,
+    ManifestAttributesBase,
 )
 
 from .models import AcrManifests
@@ -355,7 +356,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def extract_data(pipeline_response):
             list_of_elem = _deserialize(
-                list[AcrManifests],
+                list[ManifestAttributesBase],
                 pipeline_response.http_response.internal_response.json().get("manifests", [])
             )
             if cls:
