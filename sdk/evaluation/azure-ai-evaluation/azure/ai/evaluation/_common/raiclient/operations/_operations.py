@@ -117,6 +117,7 @@ def build_rai_svc_get_attack_objectives_request(  # pylint: disable=name-too-lon
     risk_categories: Optional[List[str]] = None,
     lang: Optional[str] = None,
     strategy: Optional[str] = None,
+    target_type: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -140,6 +141,8 @@ def build_rai_svc_get_attack_objectives_request(  # pylint: disable=name-too-lon
         _params["lang"] = _SERIALIZER.query("lang", lang, "str")
     if strategy is not None:
         _params["strategy"] = _SERIALIZER.query("strategy", strategy, "str")
+    if target_type is not None:
+        _params["targetType"] = _SERIALIZER.query("target_type", target_type, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -586,6 +589,7 @@ class RAISvcOperations:
         risk_types: Optional[List[str]] = None,
         lang: Optional[str] = None,
         strategy: Optional[str] = None,
+        target_type: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.AttackObjective]:
         """Get the attack objectives.
@@ -599,6 +603,8 @@ class RAISvcOperations:
         :paramtype lang: str
         :keyword strategy: The strategy. Default value is None.
         :paramtype strategy: str
+        :keyword target_type: The target, model/agent. Default value is None.
+        :paramtype target_type: str
         :return: list of AttackObjective
         :rtype: list[~raiclient.models.AttackObjective]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -624,6 +630,7 @@ class RAISvcOperations:
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
+            target_type=target_type,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
