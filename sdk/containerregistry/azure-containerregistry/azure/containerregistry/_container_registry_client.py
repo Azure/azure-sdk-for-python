@@ -53,7 +53,7 @@ from .models import AcrManifests
 from ._utils.model_base import _deserialize
 
 if TYPE_CHECKING:
-    from ._generated.models import ArtifactManifestOrder, ArtifactTagOrder
+    from .models import ArtifactManifestOrder, ArtifactTagOrder
 JSON = MutableMapping[str, Any]
 
 
