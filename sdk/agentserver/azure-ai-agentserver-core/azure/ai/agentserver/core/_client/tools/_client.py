@@ -89,13 +89,7 @@ class AzureAIToolClient:
         Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
         returning them as FoundryTool instances ready for invocation.
         :return: List of available tools from all configured sources.
-        :rtype: List[~AzureAITool]
-        :raises ~exceptions.OAuthConsentRequiredError:
-            Raised when the service requires user OAuth consent.
-        :raises ~exceptions.MCPToolApprovalRequiredError:
-            Raised when tool access requires human approval.
-        :raises ~azure.core.exceptions.HttpResponseError:
-            Raised for HTTP communication failures.
+        :rtype: List[~AzureAITool] or  ~exceptions.MCPToolApprovalRequiredError or ~azure.core.exceptions.HttpResponseError:
 
         """
 

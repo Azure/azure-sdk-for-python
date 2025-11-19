@@ -6,14 +6,6 @@ azure.ai.agentserver.core package
    :members:
    :undoc-members:
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   azure.ai.agentserver.core.server
-
 Submodules
 ----------
 
