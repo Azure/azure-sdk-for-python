@@ -16,11 +16,9 @@ resources in your Microsoft Foundry Project. Use it to:
   * File Search
   * Function Tool
   * Image Generation
-  * MCP with Project Connection
   * Microsoft Fabric
   * Model Context Protocol (MCP)
   * OpenAPI
-  * OpenAPI with Project Connection
   * SharePoint
   * Web Search
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evals and FineTuning operations with your Agent.
