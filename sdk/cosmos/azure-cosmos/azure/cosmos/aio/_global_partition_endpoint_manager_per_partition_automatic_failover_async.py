@@ -53,8 +53,8 @@ class PartitionLevelFailoverInfo:
         """
         with self._lock:
             if endpoint_region != self.current_region and self.current_region is not None:
-                regional_endpoint = available_account_regional_endpoints[self.current_region]
-                request.route_to_location(regional_endpoint.primary_endpoint)
+                regional_endpoint = available_account_regional_endpoints[self.current_region].primary_endpoint
+                request.route_to_location(regional_endpoint)
                 return True
 
             for regional_endpoint in available_account_regional_endpoints:
@@ -66,8 +66,8 @@ class PartitionLevelFailoverInfo:
 
                 self.current_region = regional_endpoint
                 logger.warning("PPAF - Moving to next available regional endpoint: %s", self.current_region)
-                regional_endpoint = available_account_regional_endpoints[self.current_region]
-                request.route_to_location(regional_endpoint.primary_endpoint)
+                regional_endpoint = available_account_regional_endpoints[self.current_region].primary_endpoint
+                request.route_to_location(regional_endpoint)
                 return True
 
             return False

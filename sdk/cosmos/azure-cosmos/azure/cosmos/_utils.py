@@ -155,6 +155,10 @@ def get_user_agent_features(global_endpoint_manager: Any) -> str:
     """
     Check the account and client configurations in order to add feature flags
     to the user agent using bitmask logic and hex encoding (matching .NET/Java).
+    
+    :param Any global_endpoint_manager: The GlobalEndpointManager instance.
+    :return: A string representing the user agent feature flags.
+    :rtype: str
     """
     feature_flag = 0
     # Bitwise OR for feature flags

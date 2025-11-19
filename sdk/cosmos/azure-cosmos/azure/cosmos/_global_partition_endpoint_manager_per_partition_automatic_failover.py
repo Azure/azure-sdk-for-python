@@ -45,7 +45,7 @@ class PartitionLevelFailoverInfo:
             request: RequestObject) -> bool:
         """
         Tries to move to the next available regional endpoint for the partition key range.
-        :param Dict[str, RegionalRoutingContext] available_account_regional_endpoints: The available regional endpoints
+        :param dict[str, RegionalRoutingContext] available_account_regional_endpoints: The available regional endpoints
         :param str endpoint_region: The current regional endpoint
         :param RequestObject request: The request object containing the routing context.
         :return: True if the move was successful, False otherwise.
@@ -53,8 +53,8 @@ class PartitionLevelFailoverInfo:
         """
         with self._lock:
             if endpoint_region != self.current_region and self.current_region is not None:
-                regional_endpoint = available_account_regional_endpoints[self.current_region]
-                request.route_to_location(regional_endpoint.primary_endpoint)
+                regional_endpoint = available_account_regional_endpoints[self.current_region].primary_endpoint
+                request.route_to_location(regional_endpoint)
                 return True
 
             for regional_endpoint in available_account_regional_endpoints:
@@ -66,8 +66,8 @@ class PartitionLevelFailoverInfo:
 
                 self.current_region = regional_endpoint
                 logger.warning("PPAF - Moving to next available regional endpoint: %s", self.current_region)
-                regional_endpoint = available_account_regional_endpoints[self.current_region]
-                request.route_to_location(regional_endpoint.primary_endpoint)
+                regional_endpoint = available_account_regional_endpoints[self.current_region].primary_endpoint
+                request.route_to_location(regional_endpoint)
                 return True
 
             return False
