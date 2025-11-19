@@ -46,7 +46,7 @@ from ._cosmos_http_logging_policy import _log_diagnostics_error
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
-# cspell:ignore PPAF,ppaf
+# cspell:ignore PPAF,ppaf,ppcb
 
 # args [0] is the request object
 # args [1] is the connection policy
