@@ -1,5 +1,11 @@
 # Release History
 
+## 15.1.0b2 (2025-10-01)
+
+### Breaking Changes
+
+- Removed all Certifcate API's
+
 ## 15.1.0b1 (2025-10-01)
 
 ### Features Added

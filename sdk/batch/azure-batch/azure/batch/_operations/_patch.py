@@ -24,7 +24,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
 from ._polling import (
-    DeleteCertificatePollingMethod,
     DeallocateNodePollingMethod,
     DeleteJobPollingMethod,
     DeleteJobSchedulePollingMethod,
@@ -452,69 +451,6 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeletePoolPollingMethod(self, pipeline_response, None, pool_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
-
-    @distributed_trace
-    def begin_delete_certificate(
-        self,
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        polling_interval: int = 5,
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Deletes a Certificate from the specified Account with Long Running Operation support.
-
-        You cannot delete a Certificate if a resource (Pool or Compute Node) is using
-        it. Before you can delete a Certificate, you must therefore make sure that the
-        Certificate is not associated with any existing Pools, the Certificate is not
-        installed on any Nodes (even if you remove a Certificate from a Pool, it is not
-        removed from existing Compute Nodes in that Pool until they restart), and no
-        running Tasks depend on the Certificate. If you try to delete a Certificate
-        that is in use, the deletion fails. The Certificate status changes to
-        deleteFailed. You can use Cancel Delete Certificate to set the status back to
-        active if you decide that you want to continue using the Certificate.
-
-        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1. Required.
-        :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to be deleted. Required.
-        :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
-        :paramtype polling_interval: int
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
-            return pipeline_response
-
-        pipeline_response = cast(
-            PipelineResponse,
-            self._delete_certificate_internal(
-                thumbprint_algorithm,
-                thumbprint,
-                timeout=timeout,
-                ocpdate=ocpdate,
-                cls=capture_pipeline_response,
-                **kwargs,
-            ),
-        )
-
-        polling_method = DeleteCertificatePollingMethod(
-            self, pipeline_response, None, thumbprint_algorithm, thumbprint, polling_interval
-        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace

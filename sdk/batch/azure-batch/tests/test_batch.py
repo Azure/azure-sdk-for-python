@@ -114,7 +114,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ),
             task_scheduling_policy=models.BatchTaskSchedulingPolicy(node_fill_type=models.BatchNodeFillType.PACK),
             user_accounts=users,
-            target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
         response = await wrap_result(client.create_pool(test_iaas_pool))
         assert response is None
@@ -185,8 +184,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
                 node_agent_sku_id="batch.node.ubuntu 22.04",
                 data_disks=[data_disk],
-            ),
-            target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
+            )
         )
         response = await wrap_result(client.create_pool(test_disk_pool))
         assert response is None
@@ -195,7 +193,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert disk_pool.virtual_machine_configuration.data_disks is not None
         assert disk_pool.virtual_machine_configuration.data_disks[0].logical_unit_number == 1
         assert disk_pool.virtual_machine_configuration.data_disks[0].disk_size_gb == 50
-        assert disk_pool.target_node_communication_mode == models.BatchNodeCommunicationMode.CLASSIC
 
         # Test Create Pool with Azure Disk Encryption
         test_ade_pool = models.BatchPoolCreateOptions(
@@ -309,10 +306,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Update Pool Options
         params = models.BatchPoolReplaceOptions(
-            certificate_references=[],
             application_package_references=[],
             metadata=[models.BatchMetadataItem(name="foo", value="bar")],
-            target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
         response = await wrap_result(client.replace_pool_properties(test_paas_pool.id, params))
         assert response is None
@@ -337,7 +332,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.metadata is not None
         assert pool.metadata[0].name == "foo2"
         assert pool.metadata[0].value == "bar2"
-        assert pool.target_node_communication_mode == models.BatchNodeCommunicationMode.CLASSIC
 
         # Test Get Pool with OData Clauses
         pool = await wrap_result(client.get_pool(pool_id=test_paas_pool.id, select=["id,state"], expand=["stats"]))
