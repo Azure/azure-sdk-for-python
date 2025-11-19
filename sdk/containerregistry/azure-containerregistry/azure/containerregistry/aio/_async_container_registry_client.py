@@ -222,7 +222,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         async def extract_data(pipeline_response):
             list_of_elem = _deserialize(
                 list[str],
-                pipeline_response.http_response.internal_response.json().get("repositories", [])
+                await pipeline_response.http_response.internal_response.json().get("repositories", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -358,7 +358,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         async def extract_data(pipeline_response):
             list_of_elem = _deserialize(
                 list[AcrManifests],
-                pipeline_response.http_response.internal_response.json().get("manifests", [])
+                await pipeline_response.http_response.internal_response.json().get("manifests", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -581,7 +581,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         async def extract_data(pipeline_response):
             list_of_elem = _deserialize(
-                list[TagAttributesBase], pipeline_response.http_response.internal_response.json().get("tags", [])
+                list[TagAttributesBase], await pipeline_response.http_response.internal_response.json().get("tags", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)
