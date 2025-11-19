@@ -1,7 +1,14 @@
 {
   "apiVersion": "2025-06-01-preview",
-  "commit": "1d3ac611f503e05650fb85520582b06140d2599e",
+  "commit": "b61ac84b569118b89c1ebce6bdb94600c58e1066",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers",
-  "emitterVersion": "0.53.1"
+  "emitterVersion": "0.53.1",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.42.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/s/azure-sdk-for-python/sdk --use=@autorest/python@6.42.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/readme.md"
 }
