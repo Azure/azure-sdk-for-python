@@ -542,7 +542,7 @@ def build_container_registry_blob_mount_blob_request(  # pylint: disable=name-to
 
 
 def build_container_registry_blob_get_upload_status_request(  # pylint: disable=name-too-long
-    location: str, **kwargs: Any
+    next_blob_uuid_link: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -550,7 +550,7 @@ def build_container_registry_blob_get_upload_status_request(  # pylint: disable=
     # Construct URL
     _url = "/{nextBlobUuidLink}"
     path_format_arguments = {
-        "nextBlobUuidLink": _SERIALIZER.url("location", location, "str"),
+        "nextBlobUuidLink": _SERIALIZER.url("next_blob_uuid_link", next_blob_uuid_link, "str", skip_quote=True),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -562,7 +562,7 @@ def build_container_registry_blob_get_upload_status_request(  # pylint: disable=
 
 
 def build_container_registry_blob_upload_chunk_request(  # pylint: disable=name-too-long
-    location: str, **kwargs: Any
+    next_blob_uuid_link: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -572,7 +572,7 @@ def build_container_registry_blob_upload_chunk_request(  # pylint: disable=name-
     # Construct URL
     _url = "/{nextBlobUuidLink}"
     path_format_arguments = {
-        "nextBlobUuidLink": _SERIALIZER.url("location", location, "str"),
+        "nextBlobUuidLink": _SERIALIZER.url("next_blob_uuid_link", next_blob_uuid_link, "str", skip_quote=True),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -587,7 +587,7 @@ def build_container_registry_blob_upload_chunk_request(  # pylint: disable=name-
 
 
 def build_container_registry_blob_complete_upload_request(  # pylint: disable=name-too-long
-    location: str, *, digest: str, **kwargs: Any
+    next_blob_uuid_link: str, *, digest: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -597,7 +597,7 @@ def build_container_registry_blob_complete_upload_request(  # pylint: disable=na
     # Construct URL
     _url = "/{nextBlobUuidLink}"
     path_format_arguments = {
-        "nextBlobUuidLink": _SERIALIZER.url("location", location, "str"),
+        "nextBlobUuidLink": _SERIALIZER.url("next_blob_uuid_link", next_blob_uuid_link, "str", skip_quote=True),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -614,7 +614,7 @@ def build_container_registry_blob_complete_upload_request(  # pylint: disable=na
 
 
 def build_container_registry_blob_cancel_upload_request(  # pylint: disable=name-too-long
-    location: str, **kwargs: Any
+    next_blob_uuid_link: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -622,7 +622,7 @@ def build_container_registry_blob_cancel_upload_request(  # pylint: disable=name
     # Construct URL
     _url = "/{nextBlobUuidLink}"
     path_format_arguments = {
-        "nextBlobUuidLink": _SERIALIZER.url("location", location, "str"),
+        "nextBlobUuidLink": _SERIALIZER.url("next_blob_uuid_link", next_blob_uuid_link, "str", skip_quote=True),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1278,7 +1278,7 @@ class ContainerRegistryOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -2393,14 +2393,16 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def get_upload_status(self, location: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def get_upload_status(  # pylint: disable=inconsistent-return-statements
+        self, next_blob_uuid_link: str, **kwargs: Any
+    ) -> None:
         """Retrieve status of upload identified by uuid. The primary purpose of this
         endpoint is to resolve the current status of a resumable upload.
 
-        :param location: Link acquired from upload start or previous chunk. Note, do not include
-         initial
+        :param next_blob_uuid_link: Link acquired from upload start or previous chunk. Note, do not
+         include initial
          / (must do substring(1) ). Required.
-        :type location: str
+        :type next_blob_uuid_link: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2419,7 +2421,7 @@ class ContainerRegistryBlobOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_registry_blob_get_upload_status_request(
-            location=location,
+            next_blob_uuid_link=next_blob_uuid_link,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2449,14 +2451,14 @@ class ContainerRegistryBlobOperations:
 
     @distributed_trace
     def upload_chunk(  # pylint: disable=inconsistent-return-statements
-        self, location: str, value: bytes, **kwargs: Any
+        self, next_blob_uuid_link: str, value: bytes, **kwargs: Any
     ) -> None:
         """Upload a stream of data without completing the upload.
 
-        :param location: Link acquired from upload start or previous chunk. Note, do not include
-         initial
+        :param next_blob_uuid_link: Link acquired from upload start or previous chunk. Note, do not
+         include initial
          / (must do substring(1) ). Required.
-        :type location: str
+        :type next_blob_uuid_link: str
         :param value: Raw data of blob. Required.
         :type value: bytes
         :return: None
@@ -2480,7 +2482,7 @@ class ContainerRegistryBlobOperations:
         _content = value
 
         _request = build_container_registry_blob_upload_chunk_request(
-            location=location,
+            next_blob_uuid_link=next_blob_uuid_link,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2513,16 +2515,16 @@ class ContainerRegistryBlobOperations:
 
     @distributed_trace
     def complete_upload(  # pylint: disable=inconsistent-return-statements
-        self, location: str, value: Optional[bytes] = None, *, digest: str, **kwargs: Any
+        self, next_blob_uuid_link: str, value: Optional[bytes] = None, *, digest: str, **kwargs: Any
     ) -> None:
         """Complete the upload, providing all the data in the body, if necessary. A
         request without a body will just complete the upload with previously uploaded
         content.
 
-        :param location: Link acquired from upload start or previous chunk. Note, do not include
-         initial
+        :param next_blob_uuid_link: Link acquired from upload start or previous chunk. Note, do not
+         include initial
          / (must do substring(1) ). Required.
-        :type location: str
+        :type next_blob_uuid_link: str
         :param value: Optional raw data of blob. Default value is None.
         :type value: bytes
         :keyword digest: Digest of a BLOB. Required.
@@ -2551,7 +2553,7 @@ class ContainerRegistryBlobOperations:
         _content = value
 
         _request = build_container_registry_blob_complete_upload_request(
-            location=location,
+            next_blob_uuid_link=next_blob_uuid_link,
             digest=digest,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2586,14 +2588,16 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def cancel_upload(self, location: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def cancel_upload(  # pylint: disable=inconsistent-return-statements
+        self, next_blob_uuid_link: str, **kwargs: Any
+    ) -> None:
         """Cancel outstanding upload processes, releasing associated resources. If this is
         not called, the unfinished uploads will eventually timeout.
 
-        :param location: Link acquired from upload start or previous chunk. Note, do not include
-         initial
+        :param next_blob_uuid_link: Link acquired from upload start or previous chunk. Note, do not
+         include initial
          / (must do substring(1) ). Required.
-        :type location: str
+        :type next_blob_uuid_link: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2612,7 +2616,7 @@ class ContainerRegistryBlobOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_registry_blob_cancel_upload_request(
-            location=location,
+            next_blob_uuid_link=next_blob_uuid_link,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

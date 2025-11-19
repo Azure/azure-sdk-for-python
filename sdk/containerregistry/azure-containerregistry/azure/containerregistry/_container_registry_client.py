@@ -46,7 +46,11 @@ from ._models import (
     ArtifactManifestProperties,
     GetManifestResult,
     DigestValidationError,
+    TagAttributesBase,
 )
+
+from .models import AcrManifests
+from ._utils.model_base import _deserialize
 
 if TYPE_CHECKING:
     from ._generated.models import ArtifactManifestOrder, ArtifactTagOrder
@@ -214,10 +218,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._client._deserialize(  # pylint: disable=protected-access
-                "Repositories", pipeline_response
+            list_of_elem = _deserialize(
+                list[str],
+                pipeline_response.http_response.internal_response.json().get("repositories", [])
             )
-            list_of_elem = deserialized.repositories or []
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
@@ -304,8 +308,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 # Construct URL
                 url = "/acr/v1/{name}/_manifests"
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url",
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.endpoint",
                         self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
@@ -335,8 +339,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url",
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.endpoint",
                         self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
@@ -350,10 +354,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._client._deserialize(  # pylint: disable=protected-access
-                "AcrManifests", pipeline_response
+            list_of_elem = _deserialize(
+                list[AcrManifests],
+                pipeline_response.http_response.internal_response.json().get("manifests", [])
             )
-            list_of_elem = deserialized.manifests or []
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
@@ -556,8 +560,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url",
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._client._config.endpoint",
                         self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
@@ -571,8 +575,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._client._deserialize("TagList", pipeline_response)  # pylint: disable=protected-access
-            list_of_elem = deserialized.tag_attribute_bases or []
+            list_of_elem = _deserialize(
+                list[TagAttributesBase], pipeline_response.http_response.internal_response.json().get("tags", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
@@ -991,7 +996,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             complete_upload_response_headers = cast(
                 Dict[str, str],
                 self._client.container_registry_blob.complete_upload(
-                    digest=digest, next_link=location, cls=_return_response_headers, **kwargs
+                    location, digest=digest, cls=_return_response_headers, **kwargs
                 ),
             )
             if digest != complete_upload_response_headers["Docker-Content-Digest"]:
