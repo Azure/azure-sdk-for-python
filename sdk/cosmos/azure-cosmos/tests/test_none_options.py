@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-import threading
-import time
 import unittest
 import uuid
 
@@ -163,7 +161,7 @@ class TestNoneOptions(unittest.TestCase):
         assert any(r.get("resourceBody").get("id") == id1 for r in batch_result) or any(r.get("resourceBody").get("id") == id2 for r in batch_result)
 
     def test_query_items_change_feed_none_options(self):
-        # Acquire pager and then create items concurrently to ensure they show up starting at implicit 'Now'.
+        #Create an item, then acquire the change feed pager to verify the item appears in the feed.
         self.container.create_item({"id": str(uuid.uuid4()), "pk": "cf-pk", "value": 100},
                                    pre_trigger_include=None, post_trigger_include=None, indexing_directive=None,
                                    enable_automatic_id_generation=False, session_token=None, initial_headers=None,

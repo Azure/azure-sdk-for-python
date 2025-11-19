@@ -137,7 +137,8 @@ def valid_key_value_exist(
         kwargs: dict[str, Any],
         key: str,
         invalid_value: Any = None) -> bool:
-    """Check if a valid key and value exists in kwargs. By default, it checks if the value is not None.
+    """Check if a valid key and value exists in kwargs. It always checks if the value is not None and it will remove
+    from the kwargs the None value.
 
     :param dict[str, Any] kwargs: The dictionary of keyword arguments.
     :param str key: The key to check.
