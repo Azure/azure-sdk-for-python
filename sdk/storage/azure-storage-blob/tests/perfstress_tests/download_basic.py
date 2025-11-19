@@ -40,20 +40,11 @@ class DownloadBasicTest(_BlobTest):
 
     async def run_async(self):
         chunk_ranges = self._get_chunk_ranges()
+        semaphore = asyncio.Semaphore(self.args.max_concurrency)
+        
         async with aiohttp.ClientSession() as session:
-            running_tasks = []
-            chunk_index = 0
-
-            while chunk_index < len(chunk_ranges) or running_tasks:
-                while len(running_tasks) < self.args.max_concurrency and chunk_index < len(chunk_ranges):
-                    offset, end = chunk_ranges[chunk_index]
-                    task = asyncio.create_task(self.download_chunk_aiohttp(session, offset, end))
-                    running_tasks.append(task)
-                    chunk_index += 1
-
-                if running_tasks:
-                    done, pending = await asyncio.wait(running_tasks, return_when=asyncio.FIRST_COMPLETED)
-                    running_tasks = list(pending)
+            tasks = [self.download_chunk_aiohttp(session, offset, end, semaphore) for offset, end in chunk_ranges]
+            await asyncio.gather(*tasks)
 
     def _get_chunk_ranges(self):
         chunk_ranges = []
@@ -73,10 +64,11 @@ class DownloadBasicTest(_BlobTest):
         else:
             raise Exception(f"Download failed with status code {response.status_code}")
 
-    async def download_chunk_aiohttp(self, session: aiohttp.ClientSession, offset: int, end: int):
-        headers = {'x-ms-version': self.blob_client.api_version, 'Range': f'bytes={offset}-{end}', 'Authorization': self.auth_header}
-        async with session.get(self.blob_client.url, headers=headers) as response:
-            if response.status in (200, 206):
-                await response.read()
-            else:
-                raise Exception(f"Download failed with status code {response.status}")
+    async def download_chunk_aiohttp(self, session: aiohttp.ClientSession, offset: int, end: int, semaphore: asyncio.Semaphore):
+        async with semaphore:
+            headers = {'x-ms-version': self.blob_client.api_version, 'Range': f'bytes={offset}-{end}', 'Authorization': self.auth_header}
+            async with session.get(self.blob_client.url, headers=headers) as response:
+                if response.status in (200, 206):
+                    await response.read()
+                else:
+                    raise Exception(f"Download failed with status code {response.status}")
