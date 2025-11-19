@@ -109,7 +109,6 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             error = _failsafe_deserialize(_models.AcrErrors, response.json())
             raise HttpResponseError(response=response, model=error)
         deserialized = _deserialize(_models.AcrRefreshToken, response.json())
-        
 
         if cls:
             return cls(pipeline_response, deserialized, {})
