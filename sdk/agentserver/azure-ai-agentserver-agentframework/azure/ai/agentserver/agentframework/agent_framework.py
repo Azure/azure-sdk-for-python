@@ -188,7 +188,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
     def setup_tracing_with_azure_ai_client(self, project_endpoint: str):
         async def setup_async():
             async with AzureAIClient(
-                project_client=project_endpoint, async_credential=self.credentials
+                project_endpoint=project_endpoint, async_credential=self.credentials
                 ) as agent_client:
                 await agent_client.setup_azure_ai_observability()
 
