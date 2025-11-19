@@ -209,8 +209,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
             elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
                 if args:
-                    # record the failure for ppaf/circuit breaker tracking
-                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
+                    # record the failure for circuit breaker tracking
+                    global_endpoint_manager.record_ppcb_failure(args[0], pk_range_wrapper)
                 retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:

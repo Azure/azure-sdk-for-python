@@ -152,19 +152,19 @@ def valid_key_value_exist(
 
 
 def get_user_agent_features(global_endpoint_manager: Any) -> str:
-    """Check the account and client configurations in order to add feature flags to the user agent.
-
-    :param Any global_endpoint_manager: The global endpoint manager instance used to check against.
-    :return: The string representing the user agent features to include.
-    :rtype: str
+    """
+    Check the account and client configurations in order to add feature flags
+    to the user agent using bitmask logic and hex encoding (matching .NET/Java).
     """
     feature_flag = 0
+    # Bitwise OR for feature flags
     if global_endpoint_manager._database_account_cache is not None:
         if global_endpoint_manager._database_account_cache._EnablePerPartitionFailoverBehavior is True:
-            feature_flag += _Constants.UserAgentFeatureFlags.PER_PARTITION_AUTOMATIC_FAILOVER
+            feature_flag |= _Constants.UserAgentFeatureFlags.PER_PARTITION_AUTOMATIC_FAILOVER
     ppcb_check = os.environ.get(
         _Constants.CIRCUIT_BREAKER_ENABLED_CONFIG,
-        _Constants.CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT).lower()
+        _Constants.CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT
+    ).lower()
     if ppcb_check == "true" or feature_flag > 0:
-        feature_flag += _Constants.UserAgentFeatureFlags.PER_PARTITION_CIRCUIT_BREAKER
-    return f"| F{feature_flag}" if feature_flag > 0 else ""
+        feature_flag |= _Constants.UserAgentFeatureFlags.PER_PARTITION_CIRCUIT_BREAKER
+    return f"| F{feature_flag:X}" if feature_flag > 0 else ""

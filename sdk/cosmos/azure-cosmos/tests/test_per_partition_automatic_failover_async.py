@@ -13,11 +13,10 @@ from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.aio import CosmosClient
-from azure.cosmos._request_object import RequestObject
 from _fault_injection_transport import FaultInjectionTransport
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_per_partition_automatic_failover import create_failover_errors, create_threshold_errors, session_retry_hook, ppaf_user_agent_hook
-from test_per_partition_circuit_breaker_mm import REGION_1, REGION_2, PK_VALUE, BATCH, write_operations_and_errors, write_operations_and_boolean
+from test_per_partition_circuit_breaker_mm import REGION_1, REGION_2, PK_VALUE, BATCH, write_operations_errors_and_boolean
 from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 
 #cspell:ignore PPAF, ppaf
@@ -96,12 +95,15 @@ class TestPerPartitionAutomaticFailoverAsync:
                                                         exclude_client_regions=exclude_client_regions, **kwargs)
         return setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate
 
-    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_failover_errors()))
-    async def test_ppaf_partition_info_cache_and_routing_async(self, write_operation, error):
+    @pytest.mark.parametrize("write_operation, error, exclude_regions", write_operations_errors_and_boolean(create_failover_errors()))
+    async def test_ppaf_partition_info_cache_and_routing_async(self, write_operation, error, exclude_regions):
         # This test validates that the partition info cache is updated correctly upon failures, and that the
-        # per-partition automatic failover logic routes requests to the next available regional endpoint
+        # per-partition automatic failover logic routes requests to the next available regional endpoint.
+        # We also verify that this logic is unaffected by user excluded regions, since write-region routing is
+        # entirely taken care of on the service.
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
-        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, 1, write_operation == BATCH)
+        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, 1,
+                                                                                                              write_operation == BATCH, exclude_regions=exclude_regions)
         container = setup['col']
         fault_injection_container = custom_setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
@@ -139,12 +141,15 @@ class TestPerPartitionAutomaticFailoverAsync:
         assert initial_region not in partition_info.unavailable_regional_endpoints
         assert partition_info.current_region is None
 
-    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_threshold_errors()))
-    async def test_ppaf_partition_thresholds_and_routing_async(self, write_operation, error):
+    @pytest.mark.parametrize("write_operation, error, exclude_regions", write_operations_errors_and_boolean(create_threshold_errors()))
+    async def test_ppaf_partition_thresholds_and_routing_async(self, write_operation, error, exclude_regions):
         # This test validates that the partition info cache is updated correctly upon failures, and that the
-        # per-partition automatic failover logic routes requests to the next available regional endpoint
+        # per-partition automatic failover logic routes requests to the next available regional endpoint.
+        # We also verify that this logic is unaffected by user excluded regions, since write-region routing is
+        # entirely taken care of on the service.
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
-        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda)
+        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda,
+                                                                                                              exclude_regions=exclude_regions,)
         container = setup['col']
         fault_injection_container = custom_setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
@@ -202,29 +207,17 @@ class TestPerPartitionAutomaticFailoverAsync:
         failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
         assert failure_count == 2
 
-    @pytest.mark.parametrize("write_operation, exclude_client_regions", write_operations_and_boolean())
-    async def test_ppaf_exclude_regions_async(self, write_operation, exclude_client_regions):
-        # This test validates that the per-partition automatic failover logic does not apply to configs without enough regions.
-        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(exclude_client_regions=exclude_client_regions)
-        fault_injection_container = custom_setup['col']
-        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
-        # Check that computing valid regions for PPAF only returns a single region
-        request_object = RequestObject(resource_type="docs", operation_type=write_operation, headers={})
-        if exclude_client_regions is False:
-            request_object.excluded_locations = [REGION_2]
-        available_ppaf_regions = global_endpoint_manager.compute_available_preferred_regions(request_object)
-        assert len(available_ppaf_regions) == 1
-        # Check that all requests are marked as non-PPAF available due to the fact that we only have one region
-        assert global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_object) is False
-
-    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_failover_errors()))
-    async def test_ppaf_session_unavailable_retry_async(self, write_operation, error):
+    @pytest.mark.parametrize("write_operation, error, exclude_regions", write_operations_errors_and_boolean(create_failover_errors()))
+    async def test_ppaf_session_unavailable_retry_async(self, write_operation, error, exclude_regions):
         # Account config has 2 regions: West US 3 (A) and West US (B). This test validates that after marking the write
         # region (A) as unavailable, the next request is retried to the read region (B) and succeeds. The next read request
         # should see that the write region (A) is unavailable for the partition, and should retry to the read region (B) as well.
+        # We also verify that this logic is unaffected by user excluded regions, since write-region routing is
+        # entirely taken care of on the service.
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, max_count=1,
-                                                                                                        is_batch=write_operation==BATCH, session_error=True)
+                                                                                                        is_batch=write_operation==BATCH,
+                                                                                                        session_error=True, exclude_regions=exclude_regions)
         container = setup['col']
         fault_injection_container = custom_setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager

@@ -116,6 +116,9 @@ class _Constants:
         suffix. This number will then be used to determine what features are enabled by decoding the hex string back
         to a number and checking what bits are set.
 
+        Features being developed should align with the .NET SDK as a source of truth for feature flag assignments:
+        https://github.com/Azure/azure-cosmos-dotnet-v3/blob/master/Microsoft.Azure.Cosmos/src/Diagnostics/UserAgentFeatureFlags.cs
+
         Example:
             If the user agent suffix has "F3", this means that flags 1 and 2.
         """

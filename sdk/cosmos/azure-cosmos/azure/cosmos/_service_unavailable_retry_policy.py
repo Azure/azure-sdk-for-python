@@ -57,7 +57,7 @@ class _ServiceUnavailableRetryPolicy(object):
                 location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
                     str(self.request.location_endpoint_to_route))
                 regional_context = (self.global_endpoint_manager.location_cache.
-                                    account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
+                                    account_read_regional_routing_contexts_by_location.get(location))
                 partition_level_info.unavailable_regional_endpoints[location] = regional_context
                 self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
                 return True
