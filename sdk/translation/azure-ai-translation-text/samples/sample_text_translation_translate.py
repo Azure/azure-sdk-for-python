@@ -26,7 +26,13 @@ USAGE:
 """
 
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import TranslateInputItem, TranslationTarget, TextType, ProfanityAction, ProfanityMarker
+from azure.ai.translation.text.models import (
+    TranslateInputItem,
+    TranslationTarget,
+    TextType,
+    ProfanityAction,
+    ProfanityMarker,
+)
 
 # -------------------------------------------------------------------------
 # Text translation client
@@ -53,7 +59,9 @@ def get_text_translation():
 
         if translation:
             for translated_text in translation.translations:
-                print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'.")
+                print(
+                    f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+                )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -79,7 +87,9 @@ def get_text_translation_auto():
                     f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
                 )
             for translated_text in translation.translations:
-                print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'.")
+                print(
+                    f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+                )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -112,8 +122,10 @@ def get_text_translation_with_llm():
                     f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
                 )
             for translated_text in translation.translations:
-                print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}' using LLM.")
-    
+                print(
+                    f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}' using LLM."
+                )
+
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
@@ -196,7 +208,9 @@ def get_text_translation_multiple_languages():
                     f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
                 )
             for translated_text in translation.translations:
-                print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'.")
+                print(
+                    f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+                )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -227,7 +241,9 @@ def get_text_translation_type():
                     f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
                 )
             for translated_text in translation.translations:
-                print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'.")
+                print(
+                    f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+                )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -255,7 +271,9 @@ def get_text_translation_exclude():
 
         if translation:
             for translated_text in translation.translations:
-                print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'.")
+                print(
+                    f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+                )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -281,7 +299,9 @@ def get_text_translation_entity():
 
         if translation:
             for translated_text in translation.translations:
-                print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'.")
+                print(
+                    f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+                )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -299,7 +319,11 @@ def get_text_translation_profanity():
         input_text = "This is ***."
         input_text_element = TranslateInputItem(
             text=input_text,
-            targets=[TranslationTarget(language=to_language, profanity_action=profanity_action, profanity_marker=profanity_maker)],
+            targets=[
+                TranslationTarget(
+                    language=to_language, profanity_action=profanity_action, profanity_marker=profanity_maker
+                )
+            ],
         )
 
         response = text_translator.translate(body=[input_text_element])
@@ -312,7 +336,9 @@ def get_text_translation_profanity():
                     f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
                 )
             for translated_text in translation.translations:
-                print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'.")
+                print(
+                    f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+                )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -342,7 +368,9 @@ def get_text_translation_custom():
                     f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
                 )
             for translated_text in translation.translations:
-                print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'.")
+                print(
+                    f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+                )
 
     except HttpResponseError as exception:
         if exception.error is not None:

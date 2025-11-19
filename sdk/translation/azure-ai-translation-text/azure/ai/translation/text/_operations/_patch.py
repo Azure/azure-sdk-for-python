@@ -9,12 +9,96 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from collections.abc import MutableMapping
 from typing import Any, cast, IO, List, Optional, overload, Union
+from azure.core import MatchConditions, PipelineClient
+
+JSON = MutableMapping[str, Any]
+from azure.core.rest import HttpRequest, HttpResponse
 from .. import models as _models
-from ._operations import _TextTranslationClientOperationsMixin as TextTranslationClientOperationsMixinGenerated
+from .._configuration import TextTranslationClientConfiguration
+from .._utils.utils import ClientMixinABC
+from ._operations import _TextTranslationClientOperationsMixin as _TextTranslationClientOperationsMixinGenerated
 
 
-class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinGenerated):
+class _TextTranslationClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], TextTranslationClientConfiguration]
+):
+    """Mixin class that delegates to the generated operations class while providing custom method signatures."""
+
+    def _get_generated_operations(self) -> _TextTranslationClientOperationsMixinGenerated:
+        """Get an instance of the generated operations mixin.
+        
+        This creates a wrapper object that shares the same _client, _config, _serialize, and _deserialize
+        attributes with self, allowing the generated operations to work correctly.
+        """
+        if not hasattr(self, "_generated_ops_cache"):
+            # Create a lightweight wrapper that shares attributes with self
+            class GeneratedOpsWrapper(_TextTranslationClientOperationsMixinGenerated):
+                pass
+            
+            wrapper = GeneratedOpsWrapper.__new__(GeneratedOpsWrapper)
+            # Share the client infrastructure from self
+            wrapper._client = self._client  # type: ignore
+            wrapper._config = self._config  # type: ignore
+            wrapper._serialize = self._serialize  # type: ignore
+            wrapper._deserialize = self._deserialize  # type: ignore
+            self._generated_ops_cache = wrapper  # type: ignore
+        return self._generated_ops_cache  # type: ignore
+
+    def get_supported_languages(
+        self,
+        *,
+        client_trace_id: Optional[str] = None,
+        scope: Optional[str] = None,
+        accept_language: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.GetSupportedLanguagesResult:
+        """Gets the set of languages currently supported by other operations of the Translator.
+
+        Gets the set of languages currently supported by other operations of the Translator.
+
+        :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
+         value is None.
+        :paramtype client_trace_id: str
+        :keyword scope: A comma-separated list of names defining the group of languages to return.
+         Allowed group names are: ``translation``, ``transliteration`` and ``dictionary``.
+         If no scope is given, then all groups are returned, which is equivalent to passing
+         ``scope=translation,transliteration,dictionary``. To decide which set of supported languages
+         is appropriate for your scenario, see the description of the `response object
+         <#response-body>`_. Default value is None.
+        :paramtype scope: str
+        :keyword accept_language: The language to use for user interface strings. Some of the fields in
+         the response are names of languages or
+         names of regions. Use this parameter to define the language in which these names are returned.
+         The language is specified by providing a well-formed BCP 47 language tag. For instance, use
+         the value ``fr``
+         to request names in French or use the value ``zh-Hant`` to request names in Chinese
+         Traditional.
+         Names are provided in the English language when a target language is not specified or when
+         localization
+         is not available. Default value is None.
+        :paramtype accept_language: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: GetSupportedLanguagesResult. The GetSupportedLanguagesResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.translation.text.models.GetSupportedLanguagesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self._get_generated_operations().get_supported_languages(
+            client_trace_id=client_trace_id,
+            scope=scope,
+            accept_language=accept_language,
+            etag=etag,
+            match_condition=match_condition,
+            **kwargs
+        )
 
     @overload  # type: ignore[override]
     def translate(
@@ -61,7 +145,7 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
     ) -> List[_models.TranslatedTextItem]:
         """Translate text.
 
-        Translates a list of input items with specified 
+        Translates a list of input items with specified configurations.
 
         :param body: List of TranslateInputItem objects containing text and configurations for translation. Required.
         :type body: list[~azure.ai.translation.text.models.TranslateInputItem]
@@ -76,9 +160,35 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    @overload  # type: ignore[override]
+    def translate(
+        self,
+        body: JSON,
+        *,
+        client_trace_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> List[_models.TranslatedTextItem]:
+        """Translate text.
+
+        Translates text using a JSON body.
+
+        :param body: JSON body containing translation request. Required.
+        :type body: JSON
+        :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
+         value is None.
+        :paramtype client_trace_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     def translate(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
-        body: Union[List[str], List[_models.TranslateInputItem], IO[bytes]],
+        body: Union[List[str], List[_models.TranslateInputItem], JSON, IO[bytes]],
         *,
         to_language: Optional[List[str]] = None,
         from_language: Optional[str] = None,
@@ -86,7 +196,7 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
-        request_body: Union[_models.TranslateBody, IO[bytes]]
+        request_body: Union[_models.TranslateBody, JSON, IO[bytes]]
 
         if isinstance(body, list):
             if all(isinstance(item, _models.TranslateInputItem) for item in body):
@@ -105,10 +215,10 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
                     "Invalid body type: list must contain either all strings or all TranslateInputItem objects"
                 )
         else:
-            # Handle IO[bytes]
-            request_body = cast(Union[_models.TranslateBody, IO[bytes]], body)
+            # Handle JSON (dict/MutableMapping) or IO[bytes]
+            request_body = body  # type: ignore
 
-        result = super().translate(
+        result = self._get_generated_operations().translate(
             body=request_body, content_type=content_type, client_trace_id=client_trace_id, **kwargs
         )
 
@@ -196,9 +306,10 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    def transliterate(  # pyright: ignore[reportIncompatibleMethodOverride]
+    @overload  # type: ignore[override]
+    def transliterate(
         self,
-        body: Union[List[str], List[_models.InputTextItem], IO[bytes]],
+        body: JSON,
         *,
         language: str,
         from_script: str,
@@ -207,7 +318,47 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
-        request_body: Union[_models.TransliterateBody, IO[bytes]]
+        """Transliterate Text.
+
+        Transliterates text using a JSON body.
+
+        :param body: JSON body containing transliteration request. Required.
+        :type body: JSON
+        :keyword language: Specifies the language of the text to convert from one script to another.
+         Possible languages are listed in the transliteration scope obtained by querying the service
+         for its supported languages. Required.
+        :paramtype language: str
+        :keyword from_script: Specifies the script used by the input text. Look up supported languages
+         using the transliteration scope,
+         to find input scripts available for the selected language. Required.
+        :paramtype from_script: str
+        :keyword to_script: Specifies the output script. Look up supported languages using the
+         transliteration scope, to find output
+         scripts available for the selected combination of input language and input script. Required.
+        :paramtype to_script: str
+        :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
+         value is None.
+        :paramtype client_trace_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of TransliteratedText
+        :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    def transliterate(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        body: Union[List[str], List[_models.InputTextItem], JSON, IO[bytes]],
+        *,
+        language: str,
+        from_script: str,
+        to_script: str,
+        client_trace_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> List[_models.TransliteratedText]:
+        request_body: Union[_models.TransliterateBody, JSON, IO[bytes]]
         if isinstance(body, list):
             inputs: List[_models.InputTextItem] = []
             if all(isinstance(item, _models.InputTextItem) for item in body):
@@ -217,9 +368,10 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
                     inputs.append(_models.InputTextItem(text=cast(str, text)))
             request_body = _models.TransliterateBody(inputs=inputs)
         else:
-            request_body = cast(Union[_models.TransliterateBody, IO[bytes]], body)
+            # Handle JSON (dict) or IO[bytes]
+            request_body = body  # type: ignore
 
-        result = super().transliterate(
+        result = self._get_generated_operations().transliterate(
             body=request_body,
             language=language,
             from_script=from_script,

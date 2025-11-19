@@ -200,7 +200,7 @@ class TestTranslation(TextTranslationTest):
         client = self.create_client(endpoint, apikey, region)
 
         input_text_element = TranslateInputItem(
-            text="shit this is fucking crazy",
+            text="Shit this is fucking crazy",
             targets=[
                 TranslationTarget(
                     language="zh-cn", profanity_action=ProfanityAction.MARKED, profanity_marker=ProfanityMarker.ASTERISK
