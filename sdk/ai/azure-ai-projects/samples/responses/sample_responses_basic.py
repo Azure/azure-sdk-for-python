@@ -31,26 +31,24 @@ from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with project_client:
-
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
     # [START responses]
-    openai_client = project_client.get_openai_client()
+    with project_client.get_openai_client() as openai_client:
+        response = openai_client.responses.create(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            input="What is the size of France in square miles?",
+        )
+        print(f"Response output: {response.output_text}")
 
-    response = openai_client.responses.create(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-        input="What is the size of France in square miles?",
-    )
-    print(f"Response output: {response.output_text}")
-
-    response = openai_client.responses.create(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-        input="And what is the capital city?",
-        previous_response_id=response.id,
-    )
-    print(f"Response output: {response.output_text}")
-    # [END responses]
+        response = openai_client.responses.create(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            input="And what is the capital city?",
+            previous_response_id=response.id,
+        )
+        print(f"Response output: {response.output_text}")
+        # [END responses]
