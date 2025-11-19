@@ -26,6 +26,8 @@ class AIFoundryModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cohere-embed-v3-english"""
     COHERE_EMBED_V3_MULTILINGUAL = "Cohere-embed-v3-multilingual"
     """Cohere-embed-v3-multilingual"""
+    COHERE_EMBED_V4 = "Cohere-embed-v4"
+    """Cohere embed v4 model for generating embeddings from both text and images."""
 
 
 class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -37,6 +39,22 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TextEmbedding3Large model."""
     TEXT_EMBEDDING3_SMALL = "text-embedding-3-small"
     """TextEmbedding3Small model."""
+    GPT4_O = "gpt-4o"
+    """Gpt4o model."""
+    GPT4_O_MINI = "gpt-4o-mini"
+    """Gpt4oMini model."""
+    GPT41 = "gpt-4.1"
+    """Gpt41 model."""
+    GPT41_MINI = "gpt-4.1-mini"
+    """Gpt41Mini model."""
+    GPT41_NANO = "gpt-4.1-nano"
+    """Gpt41Nano model."""
+    GPT5 = "gpt-5"
+    """Gpt5 model."""
+    GPT5_MINI = "gpt-5-mini"
+    """Gpt5Mini model."""
+    GPT5_NANO = "gpt-5-nano"
+    """Gpt5Nano model."""
 
 
 class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -120,7 +138,7 @@ class CharFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ChatCompletionExtraParametersBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how 'extraParameters' should be handled by Azure AI Foundry. Defaults to 'error'."""
 
-    PASS_THROUGH = "passThrough"
+    PASS_THROUGH = "pass-through"
     """Passes any extra parameters directly to the model."""
     DROP = "drop"
     """Drops all extra parameters."""
@@ -1433,7 +1451,7 @@ class OcrSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UZ = "uz"
     """Uzbek (Latin)"""
     VO = "vo"
-    """VolapÃ¼k"""
+    """Volapük"""
     WAE = "wae"
     """Walser"""
     CY = "cy"
@@ -1481,9 +1499,9 @@ class PhoneticEncoder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NYSIIS = "nysiis"
     """Encodes a token into a NYSIIS value."""
     KOELNER_PHONETIK = "koelnerPhonetik"
-    """Encodes a token using the KÃ¶lner Phonetik algorithm."""
+    """Encodes a token using the Kölner Phonetik algorithm."""
     HAASE_PHONETIK = "haasePhonetik"
-    """Encodes a token using the Haase refinement of the KÃ¶lner Phonetik algorithm."""
+    """Encodes a token using the Haase refinement of the Kölner Phonetik algorithm."""
     BEIDER_MORSE = "beiderMorse"
     """Encodes a token into a Beider-Morse value."""
 
@@ -1548,6 +1566,8 @@ class ScoringFunctionAggregation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Boost scores by the maximum of all scoring function results."""
     FIRST_MATCHING = "firstMatching"
     """Boost scores using the first applicable scoring function in the scoring profile."""
+    PRODUCT = "product"
+    """Boost scores by the product of all scoring function results."""
 
 
 class ScoringFunctionInterpolation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1622,6 +1642,8 @@ class SearchIndexerDataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates an ADLS Gen2 datasource."""
     ONE_LAKE = "onelake"
     """Indicates a Microsoft Fabric OneLake datasource."""
+    SHARE_POINT = "sharepoint"
+    """Indicates a SharePoint datasource."""
 
 
 class SearchIndexPermissionFilterOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -245,38 +245,38 @@ class FacetResult(_Model):
     :ivar count: The approximate count of documents falling within the bucket described by this
      facet.
     :vartype count: int
+    :ivar avg: The resulting total avg for the facet when a avg metric is requested.
+    :vartype avg: float
+    :ivar min: The resulting total min for the facet when a min metric is requested.
+    :vartype min: float
+    :ivar max: The resulting total max for the facet when a max metric is requested.
+    :vartype max: float
+    :ivar sum: The resulting total sum for the facet when a sum metric is requested.
+    :vartype sum: float
+    :ivar cardinality: The resulting total cardinality for the facet when a cardinality metric is
+     requested.
+    :vartype cardinality: int
     :ivar facets: The nested facet query results for the search operation, organized as a
      collection of buckets for each faceted field; null if the query did not contain any nested
      facets.
     :vartype facets: dict[str, list[~azure.search.documents.models.FacetResult]]
-    :ivar sum: The resulting total sum for the facet when a sum metric is requested.
-    :vartype sum: int
     """
 
-    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    count: Optional[int] = rest_field(visibility=["read"])
     """The approximate count of documents falling within the bucket described by this facet."""
+    avg: Optional[float] = rest_field(visibility=["read"])
+    """The resulting total avg for the facet when a avg metric is requested."""
+    min: Optional[float] = rest_field(visibility=["read"])
+    """The resulting total min for the facet when a min metric is requested."""
+    max: Optional[float] = rest_field(visibility=["read"])
+    """The resulting total max for the facet when a max metric is requested."""
+    sum: Optional[float] = rest_field(visibility=["read"])
+    """The resulting total sum for the facet when a sum metric is requested."""
+    cardinality: Optional[int] = rest_field(visibility=["read"])
+    """The resulting total cardinality for the facet when a cardinality metric is requested."""
     facets: Optional[dict[str, list["_models.FacetResult"]]] = rest_field(name="@search.facets", visibility=["read"])
     """The nested facet query results for the search operation, organized as a collection of buckets
      for each faceted field; null if the query did not contain any nested facets."""
-    sum: Optional[int] = rest_field(visibility=["read"])
-    """The resulting total sum for the facet when a sum metric is requested."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        count: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class HybridSearch(_Model):
@@ -441,41 +441,19 @@ class IndexingResult(_Model):
     :vartype status_code: int
     """
 
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    key: str = rest_field(visibility=["read"])
     """The key of a document that was in the indexing request. Required."""
-    error_message: Optional[str] = rest_field(
-        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
-    )
+    error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
     """The error message explaining why the indexing operation failed for the document identified by
      the key; null if indexing succeeded."""
-    succeeded: bool = rest_field(name="status", visibility=["read", "create", "update", "delete", "query"])
+    succeeded: bool = rest_field(name="status", visibility=["read"])
     """A value indicating whether the indexing operation succeeded for the document identified by the
      key. Required."""
-    status_code: int = rest_field(name="statusCode", visibility=["read", "create", "update", "delete", "query"])
+    status_code: int = rest_field(name="statusCode", visibility=["read"])
     """The status code of the indexing operation. Possible values include: 200 for a successful update
      or delete, 201 for successful document creation, 400 for a malformed input document, 404 for
      document not found, 409 for a version conflict, 422 when the index is temporarily unavailable,
      or 503 for when the service is too busy. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key: str,
-        succeeded: bool,
-        status_code: int,
-        error_message: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class LookupDocument(_Model):
@@ -852,7 +830,7 @@ class SearchRequest(_Model):
      "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
      "te-in", and "ur-pk".
     :vartype query_language: str or ~azure.search.documents.models.QueryLanguage
-    :ivar query_speller: A value that specified the type of the speller to use to spell-correct
+    :ivar query_speller: A value that specifies the type of the speller to use to spell-correct
      individual search query terms. Known values are: "none" and "lexicon".
     :vartype query_speller: str or ~azure.search.documents.models.QuerySpellerType
     :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
@@ -1009,7 +987,7 @@ class SearchRequest(_Model):
     query_speller: Optional[Union[str, "_models.QuerySpellerType"]] = rest_field(
         name="speller", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A value that specified the type of the speller to use to spell-correct individual search query
+    """A value that specifies the type of the speller to use to spell-correct individual search query
      terms. Known values are: \"none\" and \"lexicon\"."""
     select: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The comma-separated list of fields to retrieve. If unspecified, all fields marked as
@@ -1152,7 +1130,7 @@ class SearchResult(_Model):
     :vartype captions: list[~azure.search.documents.models.QueryCaptionResult]
     :ivar document_debug_info: Contains debugging information that can be used to further explore
      your search results.
-    :vartype document_debug_info: list[~azure.search.documents.models.DocumentDebugInfo]
+    :vartype document_debug_info: ~azure.search.documents.models.DocumentDebugInfo
     """
 
     score: float = rest_field(name="@search.score", visibility=["read", "create", "update", "delete", "query"])
@@ -1181,7 +1159,7 @@ class SearchResult(_Model):
     """Captions are the most representative passages from the document relatively to the search query.
      They are often used as document summary. Captions are only returned for queries of type
      'semantic'."""
-    document_debug_info: Optional[list["_models.DocumentDebugInfo"]] = rest_field(
+    document_debug_info: Optional["_models.DocumentDebugInfo"] = rest_field(
         name="@search.documentDebugInfo", visibility=["read"]
     )
     """Contains debugging information that can be used to further explore your search results."""
@@ -1456,9 +1434,10 @@ class VectorQuery(_Model):
      no filter expression is defined at the vector level, the expression defined in the top level
      filter parameter is used instead.
     :vartype filter_override: str
-    :ivar per_document_vector_limit: The OData filter expression to apply to this specific vector
-     query. If no filter expression is defined at the vector level, the expression defined in the
-     top level filter parameter is used instead.
+    :ivar per_document_vector_limit: Controls how many vectors can be matched from each document in
+     a vector search query. Setting it to 1 ensures at most one vector per document is matched,
+     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
+     relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
     :ivar kind: Type of query. Required. Known values are: "vector", "text", "imageUrl", and
      "imageBinary".
@@ -1501,9 +1480,10 @@ class VectorQuery(_Model):
     per_document_vector_limit: Optional[int] = rest_field(
         name="perDocumentVectorLimit", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The OData filter expression to apply to this specific vector query. If no filter expression is
-     defined at the vector level, the expression defined in the top level filter parameter is used
-     instead."""
+    """Controls how many vectors can be matched from each document in a vector search query. Setting
+     it to 1 ensures at most one vector per document is matched, guaranteeing results come from
+     distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
+     document to be matched. Default is 0."""
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Type of query. Required. Known values are: \"vector\", \"text\", \"imageUrl\", and
      \"imageBinary\"."""
@@ -1566,22 +1546,22 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
      no filter expression is defined at the vector level, the expression defined in the top level
      filter parameter is used instead.
     :vartype filter_override: str
-    :ivar per_document_vector_limit: The OData filter expression to apply to this specific vector
-     query. If no filter expression is defined at the vector level, the expression defined in the
-     top level filter parameter is used instead.
+    :ivar per_document_vector_limit: Controls how many vectors can be matched from each document in
+     a vector search query. Setting it to 1 ensures at most one vector per document is matched,
+     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
+     relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
     :ivar base64_image: The base 64 encoded binary of an image to be vectorized to perform a vector
-     search query.
+     search query. Required.
     :vartype base64_image: str
     :ivar kind: The kind of vector query being performed. Required. Vector query where a base 64
      encoded binary of an image that needs to be vectorized is provided.
     :vartype kind: str or ~azure.search.documents.models.IMAGE_BINARY
     """
 
-    base64_image: Optional[str] = rest_field(
-        name="base64Image", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The base 64 encoded binary of an image to be vectorized to perform a vector search query."""
+    base64_image: str = rest_field(name="base64Image", visibility=["read", "create", "update", "delete", "query"])
+    """The base 64 encoded binary of an image to be vectorized to perform a vector search query.
+     Required."""
     kind: Literal[VectorQueryKind.IMAGE_BINARY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of vector query being performed. Required. Vector query where a base 64 encoded binary
      of an image that needs to be vectorized is provided."""
@@ -1590,6 +1570,7 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
     def __init__(
         self,
         *,
+        base64_image: str,
         k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
@@ -1598,7 +1579,6 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
-        base64_image: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1645,19 +1625,20 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
      no filter expression is defined at the vector level, the expression defined in the top level
      filter parameter is used instead.
     :vartype filter_override: str
-    :ivar per_document_vector_limit: The OData filter expression to apply to this specific vector
-     query. If no filter expression is defined at the vector level, the expression defined in the
-     top level filter parameter is used instead.
+    :ivar per_document_vector_limit: Controls how many vectors can be matched from each document in
+     a vector search query. Setting it to 1 ensures at most one vector per document is matched,
+     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
+     relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
-    :ivar url: The URL of an image to be vectorized to perform a vector search query.
+    :ivar url: The URL of an image to be vectorized to perform a vector search query. Required.
     :vartype url: str
     :ivar kind: The kind of vector query being performed. Required. Vector query where an url that
      represents an image value that needs to be vectorized is provided.
     :vartype kind: str or ~azure.search.documents.models.IMAGE_URL
     """
 
-    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL of an image to be vectorized to perform a vector search query."""
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL of an image to be vectorized to perform a vector search query. Required."""
     kind: Literal[VectorQueryKind.IMAGE_URL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of vector query being performed. Required. Vector query where an url that represents
      an image value that needs to be vectorized is provided."""
@@ -1666,6 +1647,7 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
     def __init__(
         self,
         *,
+        url: str,
         k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
@@ -1674,7 +1656,6 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
-        url: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1721,9 +1702,10 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
      no filter expression is defined at the vector level, the expression defined in the top level
      filter parameter is used instead.
     :vartype filter_override: str
-    :ivar per_document_vector_limit: The OData filter expression to apply to this specific vector
-     query. If no filter expression is defined at the vector level, the expression defined in the
-     top level filter parameter is used instead.
+    :ivar per_document_vector_limit: Controls how many vectors can be matched from each document in
+     a vector search query. Setting it to 1 ensures at most one vector per document is matched,
+     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
+     relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
     :ivar text: The text to be vectorized to perform a vector search query. Required.
     :vartype text: str
@@ -1805,9 +1787,10 @@ class VectorizedQuery(VectorQuery, discriminator="vector"):
      no filter expression is defined at the vector level, the expression defined in the top level
      filter parameter is used instead.
     :vartype filter_override: str
-    :ivar per_document_vector_limit: The OData filter expression to apply to this specific vector
-     query. If no filter expression is defined at the vector level, the expression defined in the
-     top level filter parameter is used instead.
+    :ivar per_document_vector_limit: Controls how many vectors can be matched from each document in
+     a vector search query. Setting it to 1 ensures at most one vector per document is matched,
+     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
+     relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
     :ivar vector: The vector representation of a search query. Required.
     :vartype vector: list[float]

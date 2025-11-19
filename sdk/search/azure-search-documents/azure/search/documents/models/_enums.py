@@ -399,7 +399,8 @@ class VectorFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRE_FILTER = "preFilter"
     """The filter will be applied before the search query."""
     STRICT_POST_FILTER = "strictPostFilter"
-    """The filter will be applied after the global top-k candidate set of vector results is returned."""
+    """The filter will be applied after the global top-k candidate set of vector results is returned.
+    This will result in fewer results than requested by the parameter 'k'."""
 
 
 class VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -418,7 +419,7 @@ class VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class VectorThresholdKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of vector query being performed."""
+    """The kind of threshold used to filter vector queries."""
 
     VECTOR_SIMILARITY = "vectorSimilarity"
     """The results of the vector query will be filtered based on the vector similarity metric. Note

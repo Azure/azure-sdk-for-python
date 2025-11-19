@@ -39,10 +39,8 @@ class KnowledgeRetrievalReasoningEffortKind(str, Enum, metaclass=CaseInsensitive
     """The amount of effort to use during retrieval."""
 
     MINIMAL = "minimal"
-    """Does not perform any source selections, any query planning, or any iterative search."""
+    """Does not perform any source selections, query planning, or iterative search."""
     LOW = "low"
     """Use low reasoning during retrieval."""
     MEDIUM = "medium"
     """Use a moderate amount of reasoning during retrieval."""
-    HIGH = "high"
-    """Use a high amount of reasoning during retrieval."""

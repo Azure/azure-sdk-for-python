@@ -818,7 +818,7 @@ class _SearchClientOperationsMixin(
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 206]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -1033,7 +1033,7 @@ class _SearchClientOperationsMixin(
          "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
          "te-in", and "ur-pk". Default value is None.
         :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
+        :keyword query_speller: A value that specifies the type of the speller to use to spell-correct
          individual search query terms. Known values are: "none" and "lexicon". Default value is None.
         :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
         :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
@@ -1170,7 +1170,7 @@ class _SearchClientOperationsMixin(
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 206]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket

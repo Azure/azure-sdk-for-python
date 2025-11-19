@@ -10,6 +10,7 @@
 
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
+from ......search.models._enums import KnowledgeBaseActivityRecordType, KnowledgeBaseReferenceType
 from ..._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ...indexes.models._enums import KnowledgeSourceKind
 from ._enums import KnowledgeBaseMessageContentType, KnowledgeRetrievalIntentType, KnowledgeRetrievalReasoningEffortKind
@@ -241,7 +242,8 @@ class IndexedSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminato
 
 
 class KnowledgeBaseActivityRecord(_Model):
-    """Base type for activity records.
+    """Base type for activity records. Tracks execution details, timing, and errors for knowledge base
+    operations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     KnowledgeBaseAgenticReasoningActivityRecord, KnowledgeBaseModelAnswerSynthesisActivityRecord,
@@ -249,8 +251,10 @@ class KnowledgeBaseActivityRecord(_Model):
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
-    :ivar type: The type of the activity record. Required. Default value is None.
-    :vartype type: str
+    :ivar type: The type of the activity record. Required. Known values are: "searchIndex",
+     "azureBlob", "indexedSharePoint", "indexedOneLake", "web", "remoteSharePoint",
+     "modelQueryPlanning", "modelAnswerSynthesis", and "agenticReasoning".
+    :vartype type: str or ~search.models.KnowledgeBaseActivityRecordType
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -262,7 +266,9 @@ class KnowledgeBaseActivityRecord(_Model):
     id: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the activity record. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of the activity record. Required. Default value is None."""
+    """The type of the activity record. Required. Known values are: \"searchIndex\", \"azureBlob\",
+     \"indexedSharePoint\", \"indexedOneLake\", \"web\", \"remoteSharePoint\",
+     \"modelQueryPlanning\", \"modelAnswerSynthesis\", and \"agenticReasoning\"."""
     elapsed_ms: Optional[int] = rest_field(name="elapsedMs", visibility=["read", "create", "update", "delete", "query"])
     """The elapsed time in milliseconds for the retrieval activity."""
     error: Optional["_models.KnowledgeBaseErrorDetail"] = rest_field(
@@ -304,8 +310,8 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
     :ivar error: The error detail explaining why the operation failed. This property is only
      included when the activity does not succeed.
     :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
-    :ivar type: The discriminator value. Required. Default value is "agenticReasoning".
-    :vartype type: str
+    :ivar type: The discriminator value. Required. Agentic reasoning activity.
+    :vartype type: str or ~search.models.AGENTIC_REASONING
     :ivar reasoning_tokens: The number of input tokens for agentic reasoning.
     :vartype reasoning_tokens: int
     :ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
@@ -313,8 +319,8 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
      ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalReasoningEffort
     """
 
-    type: Literal["agenticReasoning"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Default value is \"agenticReasoning\"."""
+    type: Literal[KnowledgeBaseActivityRecordType.AGENTIC_REASONING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Agentic reasoning activity."""
     reasoning_tokens: Optional[int] = rest_field(
         name="reasoningTokens", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -344,7 +350,7 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "agenticReasoning"  # type: ignore
+        self.type = KnowledgeBaseActivityRecordType.AGENTIC_REASONING  # type: ignore
 
 
 class KnowledgeBaseReference(_Model):
@@ -355,26 +361,28 @@ class KnowledgeBaseReference(_Model):
     KnowledgeBaseIndexedSharePointReference, KnowledgeBaseRemoteSharePointReference,
     KnowledgeBaseSearchIndexReference, KnowledgeBaseWebReference
 
-    :ivar type: The type of the reference. Required. Default value is None.
-    :vartype type: str
+    :ivar type: The type of the reference. Required. Known values are: "searchIndex", "azureBlob",
+     "indexedSharePoint", "indexedOneLake", "web", and "remoteSharePoint".
+    :vartype type: str or ~search.models.KnowledgeBaseReferenceType
     :ivar id: The ID of the reference. Required.
     :vartype id: str
     :ivar activity_source: The source activity ID for the reference. Required.
     :vartype activity_source: int
     :ivar source_data: The source data for the reference.
-    :vartype source_data: dict[str, str]
+    :vartype source_data: dict[str, any]
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of the reference. Required. Default value is None."""
+    """The type of the reference. Required. Known values are: \"searchIndex\", \"azureBlob\",
+     \"indexedSharePoint\", \"indexedOneLake\", \"web\", and \"remoteSharePoint\"."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the reference. Required."""
     activity_source: int = rest_field(name="activitySource", visibility=["read", "create", "update", "delete", "query"])
     """The source activity ID for the reference. Required."""
-    source_data: Optional[dict[str, str]] = rest_field(
+    source_data: Optional[dict[str, Any]] = rest_field(
         name="sourceData", visibility=["read", "create", "update", "delete", "query"]
     )
     """The source data for the reference."""
@@ -390,7 +398,7 @@ class KnowledgeBaseReference(_Model):
         type: str,
         id: str,  # pylint: disable=redefined-builtin
         activity_source: int,
-        source_data: Optional[dict[str, str]] = None,
+        source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
     ) -> None: ...
 
@@ -413,17 +421,17 @@ class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azu
     :ivar activity_source: The source activity ID for the reference. Required.
     :vartype activity_source: int
     :ivar source_data: The source data for the reference.
-    :vartype source_data: dict[str, str]
+    :vartype source_data: dict[str, any]
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
-    :ivar type: The discriminator value. Required. Default value is "azureBlob".
-    :vartype type: str
+    :ivar type: The discriminator value. Required. Azure Blob document reference.
+    :vartype type: str or ~search.models.AZURE_BLOB
     :ivar blob_url: The blob URL for the reference.
     :vartype blob_url: str
     """
 
-    type: Literal["azureBlob"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Default value is \"azureBlob\"."""
+    type: Literal[KnowledgeBaseReferenceType.AZURE_BLOB] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Azure Blob document reference."""
     blob_url: Optional[str] = rest_field(name="blobUrl", visibility=["read", "create", "update", "delete", "query"])
     """The blob URL for the reference."""
 
@@ -433,7 +441,7 @@ class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azu
         *,
         id: str,  # pylint: disable=redefined-builtin
         activity_source: int,
-        source_data: Optional[dict[str, str]] = None,
+        source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
         blob_url: Optional[str] = None,
     ) -> None: ...
@@ -447,7 +455,7 @@ class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azu
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "azureBlob"  # type: ignore
+        self.type = KnowledgeBaseReferenceType.AZURE_BLOB  # type: ignore
 
 
 class KnowledgeBaseErrorAdditionalInfo(_Model):
@@ -456,31 +464,13 @@ class KnowledgeBaseErrorAdditionalInfo(_Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: dict[str, str]
+    :vartype info: dict[str, any]
     """
 
-    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Optional[str] = rest_field(visibility=["read"])
     """The additional info type."""
-    info: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    info: Optional[dict[str, Any]] = rest_field(visibility=["read"])
     """The additional info."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        info: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class KnowledgeBaseErrorDetail(_Model):
@@ -499,41 +489,18 @@ class KnowledgeBaseErrorDetail(_Model):
      list[~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorAdditionalInfo]
     """
 
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    code: Optional[str] = rest_field(visibility=["read"])
     """The error code."""
-    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    message: Optional[str] = rest_field(visibility=["read"])
     """The error message."""
-    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[list["_models.KnowledgeBaseErrorDetail"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    details: Optional[list["_models.KnowledgeBaseErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
     additional_info: Optional[list["_models.KnowledgeBaseErrorAdditionalInfo"]] = rest_field(
-        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
+        name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[list["_models.KnowledgeBaseErrorDetail"]] = None,
-        additional_info: Optional[list["_models.KnowledgeBaseErrorAdditionalInfo"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class KnowledgeBaseImageContent(_Model):
@@ -572,17 +539,17 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
     :ivar activity_source: The source activity ID for the reference. Required.
     :vartype activity_source: int
     :ivar source_data: The source data for the reference.
-    :vartype source_data: dict[str, str]
+    :vartype source_data: dict[str, any]
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
-    :ivar type: The discriminator value. Required. Default value is "indexedOneLake".
-    :vartype type: str
+    :ivar type: The discriminator value. Required. Indexed OneLake document reference.
+    :vartype type: str or ~search.models.INDEXED_ONE_LAKE
     :ivar doc_url: The document URL for the reference.
     :vartype doc_url: str
     """
 
-    type: Literal["indexedOneLake"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Default value is \"indexedOneLake\"."""
+    type: Literal[KnowledgeBaseReferenceType.INDEXED_ONE_LAKE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Indexed OneLake document reference."""
     doc_url: Optional[str] = rest_field(name="docUrl", visibility=["read", "create", "update", "delete", "query"])
     """The document URL for the reference."""
 
@@ -592,7 +559,7 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
         *,
         id: str,  # pylint: disable=redefined-builtin
         activity_source: int,
-        source_data: Optional[dict[str, str]] = None,
+        source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
         doc_url: Optional[str] = None,
     ) -> None: ...
@@ -606,7 +573,7 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "indexedOneLake"  # type: ignore
+        self.type = KnowledgeBaseReferenceType.INDEXED_ONE_LAKE  # type: ignore
 
 
 class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discriminator="indexedSharePoint"):
@@ -617,17 +584,17 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
     :ivar activity_source: The source activity ID for the reference. Required.
     :vartype activity_source: int
     :ivar source_data: The source data for the reference.
-    :vartype source_data: dict[str, str]
+    :vartype source_data: dict[str, any]
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
-    :ivar type: The discriminator value. Required. Default value is "indexedSharePoint".
-    :vartype type: str
+    :ivar type: The discriminator value. Required. Indexed SharePoint document reference.
+    :vartype type: str or ~search.models.INDEXED_SHARE_POINT
     :ivar doc_url: The document URL for the reference.
     :vartype doc_url: str
     """
 
-    type: Literal["indexedSharePoint"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Default value is \"indexedSharePoint\"."""
+    type: Literal[KnowledgeBaseReferenceType.INDEXED_SHARE_POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Indexed SharePoint document reference."""
     doc_url: Optional[str] = rest_field(name="docUrl", visibility=["read", "create", "update", "delete", "query"])
     """The document URL for the reference."""
 
@@ -637,7 +604,7 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
         *,
         id: str,  # pylint: disable=redefined-builtin
         activity_source: int,
-        source_data: Optional[dict[str, str]] = None,
+        source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
         doc_url: Optional[str] = None,
     ) -> None: ...
@@ -651,7 +618,7 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "indexedSharePoint"  # type: ignore
+        self.type = KnowledgeBaseReferenceType.INDEXED_SHARE_POINT  # type: ignore
 
 
 class KnowledgeBaseMessage(_Model):
@@ -801,16 +768,16 @@ class KnowledgeBaseModelAnswerSynthesisActivityRecord(
     :ivar error: The error detail explaining why the operation failed. This property is only
      included when the activity does not succeed.
     :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
-    :ivar type: The discriminator value. Required. Default value is "modelAnswerSynthesis".
-    :vartype type: str
+    :ivar type: The discriminator value. Required. LLM answer synthesis activity.
+    :vartype type: str or ~search.models.MODEL_ANSWER_SYNTHESIS
     :ivar input_tokens: The number of input tokens for the LLM answer synthesis activity.
     :vartype input_tokens: int
     :ivar output_tokens: The number of output tokens for the LLM answer synthesis activity.
     :vartype output_tokens: int
     """
 
-    type: Literal["modelAnswerSynthesis"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Default value is \"modelAnswerSynthesis\"."""
+    type: Literal[KnowledgeBaseActivityRecordType.MODEL_ANSWER_SYNTHESIS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. LLM answer synthesis activity."""
     input_tokens: Optional[int] = rest_field(
         name="inputTokens", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -840,7 +807,7 @@ class KnowledgeBaseModelAnswerSynthesisActivityRecord(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "modelAnswerSynthesis"  # type: ignore
+        self.type = KnowledgeBaseActivityRecordType.MODEL_ANSWER_SYNTHESIS  # type: ignore
 
 
 class KnowledgeBaseModelQueryPlanningActivityRecord(
@@ -855,16 +822,16 @@ class KnowledgeBaseModelQueryPlanningActivityRecord(
     :ivar error: The error detail explaining why the operation failed. This property is only
      included when the activity does not succeed.
     :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
-    :ivar type: The discriminator value. Required. Default value is "modelQueryPlanning".
-    :vartype type: str
+    :ivar type: The discriminator value. Required. LLM query planning activity.
+    :vartype type: str or ~search.models.MODEL_QUERY_PLANNING
     :ivar input_tokens: The number of input tokens for the LLM query planning activity.
     :vartype input_tokens: int
     :ivar output_tokens: The number of output tokens for the LLM query planning activity.
     :vartype output_tokens: int
     """
 
-    type: Literal["modelQueryPlanning"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Default value is \"modelQueryPlanning\"."""
+    type: Literal[KnowledgeBaseActivityRecordType.MODEL_QUERY_PLANNING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. LLM query planning activity."""
     input_tokens: Optional[int] = rest_field(
         name="inputTokens", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -894,7 +861,7 @@ class KnowledgeBaseModelQueryPlanningActivityRecord(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "modelQueryPlanning"  # type: ignore
+        self.type = KnowledgeBaseActivityRecordType.MODEL_QUERY_PLANNING  # type: ignore
 
 
 class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminator="remoteSharePoint"):
@@ -905,11 +872,11 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
     :ivar activity_source: The source activity ID for the reference. Required.
     :vartype activity_source: int
     :ivar source_data: The source data for the reference.
-    :vartype source_data: dict[str, str]
+    :vartype source_data: dict[str, any]
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
-    :ivar type: The discriminator value. Required. Default value is "remoteSharePoint".
-    :vartype type: str
+    :ivar type: The discriminator value. Required. Remote SharePoint document reference.
+    :vartype type: str or ~search.models.REMOTE_SHARE_POINT
     :ivar web_url: The url the reference data originated from. Required.
     :vartype web_url: str
     :ivar search_sensitivity_label_info: Information about the sensitivity label applied to the
@@ -918,8 +885,8 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
      ~azure.search.documents.knowledgebase.models.SharePointSensitivityLabelInfo
     """
 
-    type: Literal["remoteSharePoint"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Default value is \"remoteSharePoint\"."""
+    type: Literal[KnowledgeBaseReferenceType.REMOTE_SHARE_POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Remote SharePoint document reference."""
     web_url: str = rest_field(name="webUrl", visibility=["read", "create", "update", "delete", "query"])
     """The url the reference data originated from. Required."""
     search_sensitivity_label_info: Optional["_models.SharePointSensitivityLabelInfo"] = rest_field(
@@ -934,7 +901,7 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
         id: str,  # pylint: disable=redefined-builtin
         activity_source: int,
         web_url: str,
-        source_data: Optional[dict[str, str]] = None,
+        source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
         search_sensitivity_label_info: Optional["_models.SharePointSensitivityLabelInfo"] = None,
     ) -> None: ...
@@ -948,7 +915,7 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "remoteSharePoint"  # type: ignore
+        self.type = KnowledgeBaseReferenceType.REMOTE_SHARE_POINT  # type: ignore
 
 
 class KnowledgeBaseRetrievalRequest(_Model):
@@ -1088,17 +1055,17 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
     :ivar activity_source: The source activity ID for the reference. Required.
     :vartype activity_source: int
     :ivar source_data: The source data for the reference.
-    :vartype source_data: dict[str, str]
+    :vartype source_data: dict[str, any]
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
-    :ivar type: The discriminator value. Required. Default value is "searchIndex".
-    :vartype type: str
+    :ivar type: The discriminator value. Required. Search index document reference.
+    :vartype type: str or ~search.models.SEARCH_INDEX
     :ivar doc_key: The document key for the reference.
     :vartype doc_key: str
     """
 
-    type: Literal["searchIndex"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Default value is \"searchIndex\"."""
+    type: Literal[KnowledgeBaseReferenceType.SEARCH_INDEX] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Search index document reference."""
     doc_key: Optional[str] = rest_field(name="docKey", visibility=["read", "create", "update", "delete", "query"])
     """The document key for the reference."""
 
@@ -1108,7 +1075,7 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
         *,
         id: str,  # pylint: disable=redefined-builtin
         activity_source: int,
-        source_data: Optional[dict[str, str]] = None,
+        source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
         doc_key: Optional[str] = None,
     ) -> None: ...
@@ -1122,7 +1089,7 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "searchIndex"  # type: ignore
+        self.type = KnowledgeBaseReferenceType.SEARCH_INDEX  # type: ignore
 
 
 class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
@@ -1133,19 +1100,19 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
     :ivar activity_source: The source activity ID for the reference. Required.
     :vartype activity_source: int
     :ivar source_data: The source data for the reference.
-    :vartype source_data: dict[str, str]
+    :vartype source_data: dict[str, any]
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
-    :ivar type: The discriminator value. Required. Default value is "web".
-    :vartype type: str
+    :ivar type: The discriminator value. Required. Web document reference.
+    :vartype type: str or ~search.models.WEB
     :ivar url: The url the reference data originated from. Required.
     :vartype url: str
     :ivar title: The title of the web document.
     :vartype title: str
     """
 
-    type: Literal["web"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Default value is \"web\"."""
+    type: Literal[KnowledgeBaseReferenceType.WEB] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Web document reference."""
     url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The url the reference data originated from. Required."""
     title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1158,7 +1125,7 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
         id: str,  # pylint: disable=redefined-builtin
         activity_source: int,
         url: str,
-        source_data: Optional[dict[str, str]] = None,
+        source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
         title: Optional[str] = None,
     ) -> None: ...
@@ -1172,70 +1139,7 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "web"  # type: ignore
-
-
-class KnowledgeRetrievalReasoningEffort(_Model):
-    """Base type for reasoning effort.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    KnowledgeRetrievalHighReasoningEffort, KnowledgeRetrievalLowReasoningEffort,
-    KnowledgeRetrievalMediumReasoningEffort, KnowledgeRetrievalMinimalReasoningEffort
-
-    :ivar kind: The kind of reasoning effort. Required. Known values are: "minimal", "low",
-     "medium", and "high".
-    :vartype kind: str or
-     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalReasoningEffortKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of reasoning effort. Required. Known values are: \"minimal\", \"low\", \"medium\", and
-     \"high\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class KnowledgeRetrievalHighReasoningEffort(KnowledgeRetrievalReasoningEffort, discriminator="high"):
-    """Run knowledge retrieval with high reasoning effort.
-
-    :ivar kind: The discriminator value. Required. Use a high amount of reasoning during retrieval.
-    :vartype kind: str or ~azure.search.documents.knowledgebase.models.HIGH
-    """
-
-    kind: Literal[KnowledgeRetrievalReasoningEffortKind.HIGH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Use a high amount of reasoning during retrieval."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = KnowledgeRetrievalReasoningEffortKind.HIGH  # type: ignore
+        self.type = KnowledgeBaseReferenceType.WEB  # type: ignore
 
 
 class KnowledgeRetrievalIntent(_Model):
@@ -1257,6 +1161,41 @@ class KnowledgeRetrievalIntent(_Model):
         self,
         *,
         type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeRetrievalReasoningEffort(_Model):
+    """Base type for reasoning effort.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    KnowledgeRetrievalLowReasoningEffort, KnowledgeRetrievalMediumReasoningEffort,
+    KnowledgeRetrievalMinimalReasoningEffort
+
+    :ivar kind: The kind of reasoning effort. Required. Known values are: "minimal", "low", and
+     "medium".
+    :vartype kind: str or
+     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalReasoningEffortKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of reasoning effort. Required. Known values are: \"minimal\", \"low\", and \"medium\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
     ) -> None: ...
 
     @overload
@@ -1328,14 +1267,14 @@ class KnowledgeRetrievalMediumReasoningEffort(KnowledgeRetrievalReasoningEffort,
 class KnowledgeRetrievalMinimalReasoningEffort(KnowledgeRetrievalReasoningEffort, discriminator="minimal"):
     """Run knowledge retrieval with minimal reasoning effort.
 
-    :ivar kind: The discriminator value. Required. Does not perform any source selections, any
-     query planning, or any iterative search.
+    :ivar kind: The discriminator value. Required. Does not perform any source selections, query
+     planning, or iterative search.
     :vartype kind: str or ~azure.search.documents.knowledgebase.models.MINIMAL
     """
 
     kind: Literal[KnowledgeRetrievalReasoningEffortKind.MINIMAL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The discriminator value. Required. Does not perform any source selections, any query planning,
-     or any iterative search."""
+    """The discriminator value. Required. Does not perform any source selections, query planning, or
+     iterative search."""
 
     @overload
     def __init__(
@@ -1407,40 +1346,20 @@ class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from remote
      SharePoint.
     :vartype kind: str or ~azure.search.documents.indexes.models.REMOTE_SHARE_POINT
-    :ivar filter_expression: Keyword Query Language (KQL) expression with queryable SharePoint
-     properties and attributes to scope the retrieval before the query runs. See documentation:
-     `https://learn.microsoft.com/en-us/sharepoint/dev/general-development/keyword-query-language-kql-syntax-reference
-     <https://learn.microsoft.com/en-us/sharepoint/dev/general-development/keyword-query-language-kql-syntax-reference>`_.
-    :vartype filter_expression: str
-    :ivar resource_metadata: A list of metadata fields to be returned for each item in the
-     response. Only retrievable metadata properties can be included in this list. By default, no
-     metadata is returned. Optional.
-    :vartype resource_metadata: list[str]
-    :ivar container_type_id: Container ID for SharePoint Embedded connection. When this is null, it
-     will use SharePoint Online.
-    :vartype container_type_id: str
+    :ivar filter_expression_add_on: A filter condition applied to the SharePoint data source. It
+     must be specified in the Keyword Query Language syntax. It will be combined as a conjunction
+     with the filter expression specified in the knowledge source definition.
+    :vartype filter_expression_add_on: str
     """
 
     kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that reads data from remote SharePoint."""
-    filter_expression: Optional[str] = rest_field(
-        name="filterExpression", visibility=["read", "create", "update", "delete", "query"]
+    filter_expression_add_on: Optional[str] = rest_field(
+        name="filterExpressionAddOn", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Keyword Query Language (KQL) expression with queryable SharePoint properties and attributes to
-     scope the retrieval before the query runs. See documentation:
-     `https://learn.microsoft.com/en-us/sharepoint/dev/general-development/keyword-query-language-kql-syntax-reference
-     <https://learn.microsoft.com/en-us/sharepoint/dev/general-development/keyword-query-language-kql-syntax-reference>`_."""
-    resource_metadata: Optional[list[str]] = rest_field(
-        name="resourceMetadata", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A list of metadata fields to be returned for each item in the response. Only retrievable
-     metadata properties can be included in this list. By default, no metadata is returned.
-     Optional."""
-    container_type_id: Optional[str] = rest_field(
-        name="containerTypeId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Container ID for SharePoint Embedded connection. When this is null, it will use SharePoint
-     Online."""
+    """A filter condition applied to the SharePoint data source. It must be specified in the Keyword
+     Query Language syntax. It will be combined as a conjunction with the filter expression
+     specified in the knowledge source definition."""
 
     @overload
     def __init__(
@@ -1451,9 +1370,7 @@ class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator
         include_reference_source_data: Optional[bool] = None,
         always_query_source: Optional[bool] = None,
         reranker_threshold: Optional[float] = None,
-        filter_expression: Optional[str] = None,
-        resource_metadata: Optional[list[str]] = None,
-        container_type_id: Optional[str] = None,
+        filter_expression_add_on: Optional[str] = None,
     ) -> None: ...
 
     @overload
