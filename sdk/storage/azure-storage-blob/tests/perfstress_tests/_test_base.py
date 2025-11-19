@@ -42,13 +42,13 @@ class _ServiceTest(PerfStressTest):
             use_managed_identity = os.environ.get("AZURE_STORAGE_USE_MANAGED_IDENTITY", "false").lower() == "true"
             if self.args.use_entra_id or use_managed_identity:
                 account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
-                sync_token_credential = SyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=False)
-                async_token_credential = AsyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=True)
+                self.sync_token_credential = SyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=False)
+                self.async_token_credential = AsyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=True)
 
                 # We assume these tests will only be run on the Azure public cloud for now.
                 url = f"https://{account_name}.blob.core.windows.net"
-                _ServiceTest.service_client = SyncBlobServiceClient(account_url=url, credential=sync_token_credential, **self._client_kwargs)
-                _ServiceTest.async_service_client = AsyncBlobServiceClient(account_url=url, credential=async_token_credential, **self._client_kwargs)
+                _ServiceTest.service_client = SyncBlobServiceClient(account_url=url, credential=self.sync_token_credential, **self._client_kwargs)
+                _ServiceTest.async_service_client = AsyncBlobServiceClient(account_url=url, credential=self.async_token_credential, **self._client_kwargs)
             else:
                 connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
                 _ServiceTest.service_client = SyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
