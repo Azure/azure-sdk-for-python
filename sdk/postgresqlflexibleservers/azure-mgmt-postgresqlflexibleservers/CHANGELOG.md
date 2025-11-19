@@ -120,24 +120,24 @@
   - Added model `VirtualNetworkSubnetUsageModel`
   - Added enum `ZoneRedundantHighAvailabilityAndGeographicallyRedundantBackupSupport`
   - Added enum `ZoneRedundantHighAvailabilitySupport`
-  - Model `MigrationsOperations` added method `cancel`
-  - Model `MigrationsOperations` added method `check_name_availability`
-  - Model `PrivateEndpointConnectionsOperations` added method `begin_delete`
-  - Model `PrivateEndpointConnectionsOperations` added method `begin_update`
-  - Model `ServersOperations` added method `begin_create_or_update`
-  - Model `ServersOperations` added method `list_by_subscription`
-  - Model `VirtualNetworkSubnetUsageOperations` added method `list`
-  - Added model `AdministratorsMicrosoftEntraOperations`
-  - Added model `AdvancedThreatProtectionSettingsOperations`
-  - Added model `BackupsAutomaticAndOnDemandOperations`
-  - Added model `BackupsLongTermRetentionOperations`
-  - Added model `CapabilitiesByLocationOperations`
-  - Added model `CapabilitiesByServerOperations`
-  - Added model `CapturedLogsOperations`
-  - Added model `NameAvailabilityOperations`
-  - Added model `PrivateDnsZoneSuffixOperations`
-  - Added model `QuotaUsagesOperations`
-  - Added model `TuningOptionsOperations`
+  - Operation group `MigrationsOperations` added method `cancel`
+  - Operation group `MigrationsOperations` added method `check_name_availability`
+  - Operation group `PrivateEndpointConnectionsOperations` added method `begin_delete`
+  - Operation group `PrivateEndpointConnectionsOperations` added method `begin_update`
+  - Operation group `ServersOperations` added method `begin_create_or_update`
+  - Operation group `ServersOperations` added method `list_by_subscription`
+  - Operation group `VirtualNetworkSubnetUsageOperations` added method `list`
+  - Added operation group `AdministratorsMicrosoftEntraOperations`
+  - Added operation group `AdvancedThreatProtectionSettingsOperations`
+  - Added operation group `BackupsAutomaticAndOnDemandOperations`
+  - Added operation group `BackupsLongTermRetentionOperations`
+  - Added operation group `CapabilitiesByLocationOperations`
+  - Added operation group `CapabilitiesByServerOperations`
+  - Added operation group `CapturedLogsOperations`
+  - Added operation group `NameAvailabilityOperations`
+  - Added operation group `PrivateDnsZoneSuffixOperations`
+  - Added operation group `QuotaUsagesOperations`
+  - Added operation group `TuningOptionsOperations`
 
 ### Breaking Changes
 
@@ -153,10 +153,9 @@
   - Deleted or renamed client operation group `PostgreSQLManagementClient.private_endpoint_connection`
   - Deleted or renamed client operation group `PostgreSQLManagementClient.log_files`
   - Deleted or renamed client method `PostgreSQLManagementClient.check_migration_name_availability`
-  - Method `Operations.list` changed from `asynchronous` to `synchronous`
-  - Method `AuthConfig.__init__` parameter `password_auth` changed default value from `str` to `none`
-  - Method `Backup.__init__` parameter `geo_redundant_backup` changed default value from `str` to `none`
-  - Method `HighAvailability.__init__` parameter `mode` changed default value from `str` to `none`
+  - Parameter `password_auth` of `AuthConfig.__init__` is now optional
+  - Parameter `geo_redundant_backup` of `Backup.__init__` is now optional
+  - Parameter `mode` of `HighAvailability.__init__` is now optional
   - Deleted or renamed enum value `HighAvailabilityMode.DISABLED`
   - Deleted or renamed model `ActiveDirectoryAdministrator`
   - Deleted or renamed model `ActiveDirectoryAdministratorAdd`
@@ -203,36 +202,32 @@
   - Deleted or renamed model `VirtualNetworkSubnetUsageResult`
   - Deleted or renamed model `ZoneRedundantHaAndGeoBackupSupportedEnum`
   - Deleted or renamed model `ZoneRedundantHaSupportedEnum`
-  - Method `MigrationsOperations.create` inserted a `positional_or_keyword` parameter `server_name`
+  - Method `MigrationsOperations.create` renamed its parameter `target_db_server_name` to `server_name`
   - Method `MigrationsOperations.create` deleted or renamed its parameter `subscription_id` of kind `positional_or_keyword`
-  - Method `MigrationsOperations.create` deleted or renamed its parameter `target_db_server_name` of kind `positional_or_keyword`
-  - Method `MigrationsOperations.get` inserted a `positional_or_keyword` parameter `server_name`
+  - Method `MigrationsOperations.get` renamed its parameter `target_db_server_name` to `server_name`
   - Method `MigrationsOperations.get` deleted or renamed its parameter `subscription_id` of kind `positional_or_keyword`
-  - Method `MigrationsOperations.get` deleted or renamed its parameter `target_db_server_name` of kind `positional_or_keyword`
-  - Method `MigrationsOperations.list_by_target_server` inserted a `positional_or_keyword` parameter `server_name`
+  - Method `MigrationsOperations.list_by_target_server` renamed its parameter `target_db_server_name` to `server_name`
   - Method `MigrationsOperations.list_by_target_server` deleted or renamed its parameter `subscription_id` of kind `positional_or_keyword`
-  - Method `MigrationsOperations.list_by_target_server` deleted or renamed its parameter `target_db_server_name` of kind `positional_or_keyword`
-  - Method `MigrationsOperations.update` inserted a `positional_or_keyword` parameter `server_name`
+  - Method `MigrationsOperations.update` renamed its parameter `target_db_server_name` to `server_name`
   - Method `MigrationsOperations.update` deleted or renamed its parameter `subscription_id` of kind `positional_or_keyword`
-  - Method `MigrationsOperations.update` deleted or renamed its parameter `target_db_server_name` of kind `positional_or_keyword`
   - Deleted or renamed method `MigrationsOperations.delete`
   - Deleted or renamed method `ServerThreatProtectionSettingsOperations.get`
   - Deleted or renamed method `ServerThreatProtectionSettingsOperations.list_by_server`
   - Deleted or renamed method `ServersOperations.begin_create`
   - Deleted or renamed method `ServersOperations.list`
   - Deleted or renamed method `VirtualNetworkSubnetUsageOperations.execute`
-  - Deleted or renamed model `AdministratorsOperations`
-  - Deleted or renamed model `BackupsOperations`
-  - Deleted or renamed model `CheckNameAvailabilityOperations`
-  - Deleted or renamed model `CheckNameAvailabilityWithLocationOperations`
-  - Deleted or renamed model `FlexibleServerOperations`
-  - Deleted or renamed model `GetPrivateDnsZoneSuffixOperations`
-  - Deleted or renamed model `LocationBasedCapabilitiesOperations`
-  - Deleted or renamed model `LogFilesOperations`
-  - Deleted or renamed model `LtrBackupOperationsOperations`
-  - Deleted or renamed model `PostgreSQLManagementClientOperationsMixin`
-  - Deleted or renamed model `PrivateEndpointConnectionOperations`
-  - Deleted or renamed model `ServerCapabilitiesOperations`
+  - Deleted or renamed operation group `AdministratorsOperations`
+  - Deleted or renamed operation group `BackupsOperations`
+  - Deleted or renamed operation group `CheckNameAvailabilityOperations`
+  - Deleted or renamed operation group `CheckNameAvailabilityWithLocationOperations`
+  - Deleted or renamed operation group `FlexibleServerOperations`
+  - Deleted or renamed operation group `GetPrivateDnsZoneSuffixOperations`
+  - Deleted or renamed operation group `LocationBasedCapabilitiesOperations`
+  - Deleted or renamed operation group `LogFilesOperations`
+  - Deleted or renamed operation group `LtrBackupOperationsOperations`
+  - Deleted or renamed operation group `PostgreSQLManagementClientOperationsMixin`
+  - Deleted or renamed operation group `PrivateEndpointConnectionOperations`
+  - Deleted or renamed operation group `ServerCapabilitiesOperations`
 
 ## 1.2.0b1 (2025-05-19)
 
@@ -288,8 +283,8 @@
   - Added model `TuningOptionsListResult`
   - Added model `TuningOptionsResource`
   - Added operation group `QuotaUsagesOperations`
-  - Added operation group `TuningConfigurationOperations`
   - Added operation group `TuningIndexOperations`
+  - Added operation group `TuningConfigurationOperations`
   - Added operation group `TuningOptionsOperations`
 
 ## 1.1.0 (2025-03-24)
