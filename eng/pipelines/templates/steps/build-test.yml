@@ -44,6 +44,8 @@ steps:
       $(PIP_EXE) freeze
     displayName: 'Prep Environment'
 
+  # this needs to move under eng/scripts from scripts/devops_tasks/
+  # AND be renamed prior to merging any PR with this changeset
   - task: PythonScript@0
     displayName: 'Set Tox Environment'
     inputs:
@@ -64,8 +66,6 @@ steps:
 
   - ${{ parameters.BeforeTestSteps }}
 
-  - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
-
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
 
     - task: AzurePowerShell@5
@@ -79,6 +79,7 @@ steps:
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
+          $env:TOX_PIP_IMPL="uv"
           $account = (Get-AzContext).Account;
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
@@ -92,20 +93,20 @@ steps:
             $markArg = "${{ parameters.TestMarkArgument }}"
           }
 
-          python scripts/devops_tasks/dispatch_tox.py
+          python eng/scripts/dispatch_checks.py
           "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
           ${{ parameters.CoverageArg }}
           --mark_arg="$markArg"
           --service="${{ parameters.ServiceDirectory }}"
-          --toxenv="${{ parameters.ToxTestEnv }}"
+          --checks="${{ parameters.ToxTestEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}"
-          --tenvparallel="${{ parameters.ToxEnvParallel }}";
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
 
   - ${{ else }}:
     - pwsh: |
+        $env:TOX_PIP_IMPL="uv"
         Write-Host (Get-Command python).Source
 
         if ($env:TESTMARKARGUMENT) {
@@ -115,14 +116,13 @@ steps:
           $markArg = "${{ parameters.TestMarkArgument }}"
         }
 
-        python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
+        python eng/scripts/dispatch_checks.py "$(TargetingString)" `
           ${{ parameters.AdditionalTestArgs }} `
           ${{ parameters.CoverageArg }} `
           --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
-          --toxenv="${{ parameters.ToxTestEnv }}" `
+          --checks="${{ parameters.ToxTestEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}" `
-          --tenvparallel="${{ parameters.ToxEnvParallel }}";
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
       displayName: Run Tests
@@ -147,49 +147,44 @@ steps:
     displayName: Report Coverage
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
-  - ${{ if eq('true', parameters.UseFederatedAuth) }}:
-    - task: AzurePowerShell@5
-      displayName: Test Samples (AzurePowerShell@5)
-      condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
-      env:
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-        # Enable samples tests that use DefaultAzureCredential to load the federated pipeline credential
-        AZURE_POD_IDENTITY_AUTHORITY_HOST: 'https://FakeAuthorityHost'
-        ${{ insert }}: ${{ parameters.EnvVars }}
-      inputs:
-        azureSubscription: azure-sdk-tests-public
-        azurePowerShellVersion: LatestVersion
-        pwsh: true
-        ScriptType: InlineScript
-        Inline: |
-          $account = (Get-AzContext).Account;
-          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
-          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+  # re-enable after migrating `samples`
+  # - ${{ if eq('true', parameters.UseFederatedAuth) }}:
+  #   - task: AzurePowerShell@5
+  #     displayName: Test Samples (AzurePowerShell@5)
+  #     condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
+  #     env:
+  #       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  #       # Enable samples tests that use DefaultAzureCredential to load the federated pipeline credential
+  #       AZURE_POD_IDENTITY_AUTHORITY_HOST: 'https://FakeAuthorityHost'
+  #       ${{ insert }}: ${{ parameters.EnvVars }}
+  #     inputs:
+  #       azureSubscription: azure-sdk-tests-public
+  #       azurePowerShellVersion: LatestVersion
+  #       pwsh: true
+  #       ScriptType: InlineScript
+  #       Inline: |
+  #         $account = (Get-AzContext).Account;
+  #         $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+  #         $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
-          Write-Host (Get-Command python).Source
+  #         Write-Host (Get-Command python).Source
 
-          python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
-            --service="${{ parameters.ServiceDirectory }}" `
-            --toxenv="samples"
+  #         python eng/scripts/dispatch_checks.py "$(TargetingString)" `
+  #           --service="${{ parameters.ServiceDirectory }}" `
+  #           --checks="samples"
 
-          Write-Host "Last exit code: $LASTEXITCODE";
-          exit $LASTEXITCODE;
-  - ${{ else }}:
-    - pwsh: |
-        if ($IsWindows) {
-          . $(VENV_LOCATION)/Scripts/Activate.ps1
-        }
-        else {
-          . $(VENV_LOCATION)/bin/activate.ps1
-        }
-        Write-Host (Get-Command python).Source
-        python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
-          --service="${{ parameters.ServiceDirectory }}" `
-          --toxenv="samples"
-        exit $LASTEXITCODE;
-      env: ${{ parameters.EnvVars }}
-      displayName: 'Test Samples'
-      condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
+  #         Write-Host "Last exit code: $LASTEXITCODE";
+  #         exit $LASTEXITCODE;
+  # - ${{ else }}:
+  #   - pwsh: |
+  #       Write-Host (Get-Command python).Source
+  #       python eng/scripts/dispatch_checks.py "$(TargetingString)" `
+  #         --service="${{ parameters.ServiceDirectory }}" `
+  #         --checks="samples"
+  #       exit $LASTEXITCODE;
+  #     env: ${{ parameters.EnvVars }}
+  #     displayName: 'Test Samples'
+  #     condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
 
   - task: PublishTestResults@2
     condition: always()
