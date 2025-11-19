@@ -592,7 +592,7 @@ class ContainerRegistryOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1706,14 +1706,14 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_upload_status(self, location: str, **kwargs: Any) -> None:
+    async def get_upload_status(self, next_blob_uuid_link: str, **kwargs: Any) -> None:
         """Retrieve status of upload identified by uuid. The primary purpose of this
         endpoint is to resolve the current status of a resumable upload.
 
-        :param location: Link acquired from upload start or previous chunk. Note, do not include
-         initial
+        :param next_blob_uuid_link: Link acquired from upload start or previous chunk. Note, do not
+         include initial
          / (must do substring(1) ). Required.
-        :type location: str
+        :type next_blob_uuid_link: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1732,7 +1732,7 @@ class ContainerRegistryBlobOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_registry_blob_get_upload_status_request(
-            location=location,
+            next_blob_uuid_link=next_blob_uuid_link,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1761,13 +1761,13 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def upload_chunk(self, location: str, value: bytes, **kwargs: Any) -> None:
+    async def upload_chunk(self, next_blob_uuid_link: str, value: bytes, **kwargs: Any) -> None:
         """Upload a stream of data without completing the upload.
 
-        :param location: Link acquired from upload start or previous chunk. Note, do not include
-         initial
+        :param next_blob_uuid_link: Link acquired from upload start or previous chunk. Note, do not
+         include initial
          / (must do substring(1) ). Required.
-        :type location: str
+        :type next_blob_uuid_link: str
         :param value: Raw data of blob. Required.
         :type value: bytes
         :return: None
@@ -1791,7 +1791,7 @@ class ContainerRegistryBlobOperations:
         _content = value
 
         _request = build_container_registry_blob_upload_chunk_request(
-            location=location,
+            next_blob_uuid_link=next_blob_uuid_link,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1824,16 +1824,16 @@ class ContainerRegistryBlobOperations:
 
     @distributed_trace_async
     async def complete_upload(
-        self, location: str, value: Optional[bytes] = None, *, digest: str, **kwargs: Any
+        self, next_blob_uuid_link: str, value: Optional[bytes] = None, *, digest: str, **kwargs: Any
     ) -> None:
         """Complete the upload, providing all the data in the body, if necessary. A
         request without a body will just complete the upload with previously uploaded
         content.
 
-        :param location: Link acquired from upload start or previous chunk. Note, do not include
-         initial
+        :param next_blob_uuid_link: Link acquired from upload start or previous chunk. Note, do not
+         include initial
          / (must do substring(1) ). Required.
-        :type location: str
+        :type next_blob_uuid_link: str
         :param value: Optional raw data of blob. Default value is None.
         :type value: bytes
         :keyword digest: Digest of a BLOB. Required.
@@ -1862,7 +1862,7 @@ class ContainerRegistryBlobOperations:
         _content = value
 
         _request = build_container_registry_blob_complete_upload_request(
-            location=location,
+            next_blob_uuid_link=next_blob_uuid_link,
             digest=digest,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1897,14 +1897,14 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def cancel_upload(self, location: str, **kwargs: Any) -> None:
+    async def cancel_upload(self, next_blob_uuid_link: str, **kwargs: Any) -> None:
         """Cancel outstanding upload processes, releasing associated resources. If this is
         not called, the unfinished uploads will eventually timeout.
 
-        :param location: Link acquired from upload start or previous chunk. Note, do not include
-         initial
+        :param next_blob_uuid_link: Link acquired from upload start or previous chunk. Note, do not
+         include initial
          / (must do substring(1) ). Required.
-        :type location: str
+        :type next_blob_uuid_link: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1923,7 +1923,7 @@ class ContainerRegistryBlobOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_registry_blob_cancel_upload_request(
-            location=location,
+            next_blob_uuid_link=next_blob_uuid_link,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
