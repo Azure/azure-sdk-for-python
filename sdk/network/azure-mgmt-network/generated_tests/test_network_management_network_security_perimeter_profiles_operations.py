@@ -25,7 +25,7 @@ class TestNetworkManagementNetworkSecurityPerimeterProfilesOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             profile_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestNetworkManagementNetworkSecurityPerimeterProfilesOperations(AzureMgmtR
                 },
                 "type": "str",
             },
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestNetworkManagementNetworkSecurityPerimeterProfilesOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             profile_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestNetworkManagementNetworkSecurityPerimeterProfilesOperations(AzureMgmtR
         response = self.client.network_security_perimeter_profiles.list(
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
