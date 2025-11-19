@@ -1056,7 +1056,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         first_chunk, headers = cast(
             Tuple[PipelineResponse, Dict[str, str]],
             await self._client.container_registry_blob.get_chunk(
-                repository, digest, range_header=f"bytes=0-{end_range}", cls=_return_response_and_headers, **kwargs
+                repository, digest, range=f"bytes=0-{end_range}", cls=_return_response_and_headers, **kwargs
             ),
         )
         blob_size = _get_blob_size(headers)
