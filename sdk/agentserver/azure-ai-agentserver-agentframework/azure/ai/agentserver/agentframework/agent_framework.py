@@ -182,11 +182,25 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 applicationinsights_connection_string=app_insights_conn_str,
             )
         elif project_endpoint:
-            from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
-
-            agent_client = AzureAIClient(project_client=project_endpoint, async_credential=AsyncDefaultAzureCredential())
-            agent_client.setup_azure_ai_observability()
+            self.setup_tracing_with_azure_ai_client(project_endpoint)
         self.tracer = trace.get_tracer(__name__)
+
+    def setup_tracing_with_azure_ai_client(self, project_endpoint: str):
+        async def setup_async():
+            async with AzureAIClient(
+                project_client=project_endpoint, async_credential=self.credentials
+                ) as agent_client:
+                await agent_client.setup_azure_ai_observability()
+
+        import asyncio
+
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # If loop is already running, schedule as a task
+            asyncio.create_task(setup_async())
+        else:
+            # Run in new event loop
+            loop.run_until_complete(setup_async())
 
     async def agent_run(  # pylint: disable=too-many-statements
         self, context: AgentRunContext

@@ -12,6 +12,7 @@ from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 from opentelemetry import context as otel_context, trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.applications import Starlette
@@ -115,7 +116,7 @@ class FoundryCBAgent:
     _cached_agent_name: Optional[str] = None
 
     def __init__(self, credentials: Optional["AsyncTokenCredential"] = None, **kwargs: Any) -> None:
-        self.credentials = credentials
+        self.credentials = credentials or AsyncDefaultTokenCredential()
         self.tools = kwargs.get("tools", [])
 
         async def runs_endpoint(request):
