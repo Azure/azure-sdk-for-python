@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import asyncio
+import copy
 import importlib.metadata
 import logging
 import math
@@ -14,7 +15,7 @@ from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
-from azure.ai.evaluation._common.onedp.models import QueryResponseInlineMessage
+from azure.ai.evaluation._common.onedp.models import QueryResponseInlineMessage, EvaluatorMessage
 from azure.ai.evaluation._common.onedp._utils.model_base import SdkJSONEncoder
 from azure.core.exceptions import HttpResponseError
 
@@ -985,6 +986,7 @@ def _build_sync_eval_payload(
 
     return sync_eval_payload
 
+
 async def evaluate_with_rai_service_sync(
     data: dict,
     metric_name: str,
@@ -1070,8 +1072,11 @@ def _build_sync_eval_multimodal_payload(messages, metric_name: str) -> Dict:
     :rtype: Dict
     """
 
-    normalized_messages = messages
-    if normalized_messages and not isinstance(normalized_messages[0], dict):
+    def _coerce_messages(raw_messages):
+        if not raw_messages:
+            return []
+        if isinstance(raw_messages[0], dict):
+            return [copy.deepcopy(message) for message in raw_messages]
         try:
             from azure.ai.inference.models import ChatRequestMessage
         except ImportError as ex:
@@ -1079,96 +1084,119 @@ def _build_sync_eval_multimodal_payload(messages, metric_name: str) -> Dict:
                 "Please install 'azure-ai-inference' package to use SystemMessage, UserMessage, AssistantMessage"
             )
             raise MissingRequiredPackage(message=error_message) from ex
+        if isinstance(raw_messages[0], ChatRequestMessage):
+            return [message.as_dict() for message in raw_messages]
+        return [copy.deepcopy(message) for message in raw_messages]
 
-        if isinstance(normalized_messages[0], ChatRequestMessage):
-            normalized_messages = [message.as_dict() for message in normalized_messages]
+    def _normalize_message(message):
+        normalized = copy.deepcopy(message)
+        content = normalized.get("content")
+        if content is None:
+            normalized["content"] = []
+        elif isinstance(content, list):
+            normalized["content"] = [
+                copy.deepcopy(part) if isinstance(part, dict) else {"type": "text", "text": str(part)}
+                for part in content
+            ]
+        elif isinstance(content, dict):
+            normalized["content"] = [copy.deepcopy(content)]
+        else:
+            normalized["content"] = [{"type": "text", "text": str(content)}]
+        return normalized
 
+    def _content_to_text(parts):
+        text_parts = []
+        for part in parts:
+            if not isinstance(part, dict):
+                text_parts.append(str(part))
+            elif part.get("text"):
+                text_parts.append(part["text"])
+            elif part.get("type") in {"image_url", "input_image"}:
+                image_part = part.get("image_url") or part.get("image")
+                text_parts.append(json.dumps(image_part))
+            elif part.get("type") == "input_text" and part.get("text"):
+                text_parts.append(part["text"])
+            else:
+                text_parts.append(json.dumps(part))
+        return "\n".join(filter(None, text_parts))
+
+    normalized_messages = [_normalize_message(message) for message in _coerce_messages(messages)]
     filtered_messages = [message for message in normalized_messages if message.get("role") != "system"]
+
     assistant_messages = [message for message in normalized_messages if message.get("role") == "assistant"]
     user_messages = [message for message in normalized_messages if message.get("role") == "user"]
     content_type = retrieve_content_type(assistant_messages, metric_name)
 
-    def _extract_text_content(message_content):
-        if message_content is None:
-            return ""
-        if isinstance(message_content, str):
-            return message_content
-        if isinstance(message_content, list):
-            text_parts = []
-            for part in message_content:
-                if isinstance(part, dict):
-                    if part.get("text"):
-                        text_parts.append(part["text"])
-                    elif part.get("type") in {"image_url", "input_image"}:
-                        image_part = part.get("image_url") or part.get("image")
-                        text_parts.append(json.dumps(image_part))
-                    elif part.get("type") == "input_text" and part.get("text"):
-                        text_parts.append(part["text"])
-                    else:
-                        text_parts.append(json.dumps(part))
-                else:
-                    text_parts.append(str(part))
-            return "\n".join([text for text in text_parts if text])
-        if isinstance(message_content, dict):
-            if message_content.get("text"):
-                return message_content["text"]
-            return json.dumps(message_content)
-        return str(message_content)
+    last_assistant_text = _content_to_text(assistant_messages[-1]["content"]) if assistant_messages else ""
+    last_user_text = _content_to_text(user_messages[-1]["content"]) if user_messages else ""
 
-    last_assistant_text = _extract_text_content(assistant_messages[-1].get("content")) if assistant_messages else ""
-    last_user_text = _extract_text_content(user_messages[-1].get("content")) if user_messages else ""
+    if filtered_messages and filtered_messages[-1].get("role") == "assistant":
+        response_messages = [filtered_messages[-1]]
+        query_messages = filtered_messages[:-1]
+    else:
+        response_messages = []
+        query_messages = filtered_messages
 
-    template_messages = []
+    properties = {}
     if last_user_text:
-        template_messages.append(
+        properties["query_text"] = last_user_text
+    if last_assistant_text:
+        properties["response_text"] = last_assistant_text
+    if content_type:
+        properties["content_type"] = content_type
+
+    item_content = {
+        "type": "azure_ai_evaluator_messages",
+        "query": query_messages,
+        "response": response_messages,
+    }
+    if properties:
+        item_content["properties"] = properties
+
+    template = []
+    if "query_text" in properties:
+        template.append(
             {
                 "type": "message",
                 "role": "user",
-                "content": {"text": "{{item.query}}"},
+                "content": {"text": "{{item.properties.query_text}}"},
             }
         )
-    template_messages.append(
-        {
-            "type": "message",
-            "role": "assistant",
-            "content": {"text": "{{item.response}}"},
-        }
-    )
+    if "response_text" in properties:
+        template.append(
+            {
+                "type": "message",
+                "role": "assistant",
+                "content": {"text": "{{item.properties.response_text}}"},
+            }
+        )
 
-    item_content = {
-        "messages": filtered_messages,
-        "content_type": content_type,
-        "query": last_user_text,
-        "response": last_assistant_text,
+    data_source = {
+        "type": "jsonl",
+        "source": {"type": "file_content", "content": {"item": item_content}},
     }
+    if template:
+        data_source["input_messages"] = {"type": "template", "template": template}
 
-    input_messages = {
-        "type": "template",
-        "template": template_messages,
+    data_mapping = {
+        "query": "{{item.query}}",
+        "response": "{{item.response}}",
     }
+    if "content_type" in properties:
+        data_mapping["content_type"] = "{{item.properties.content_type}}"
 
-    payload = {
+    return {
         "name": f"Safety Eval - {metric_name}",
-        "data_source": {
-            "type": "jsonl",
-            "input_messages": input_messages,
-            "source": {"type": "file_content", "content": {"item": item_content}},
-        },
+        "data_source": data_source,
         "testing_criteria": [
             {
                 "type": "azure_ai_evaluator",
                 "name": metric_name,
                 "evaluator_name": metric_name,
-                "data_mapping": {
-                    "query": "{{item.query}}",
-                    "response": "{{item.response}}",
-                    "content_type": "{{item.content_type}}",
-                },
+                "data_mapping": data_mapping,
             }
         ],
     }
-
-    return payload
 
 
 async def evaluate_with_rai_service_sync_multimodal(

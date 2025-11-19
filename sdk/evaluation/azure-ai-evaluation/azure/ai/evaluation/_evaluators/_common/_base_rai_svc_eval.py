@@ -140,7 +140,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             project_scope=self._azure_ai_project,
             credential=self._credential,
         )
-        return result
+        return self._parse_eval_result(result)
 
     async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
         query = eval_input.get("query", None)
