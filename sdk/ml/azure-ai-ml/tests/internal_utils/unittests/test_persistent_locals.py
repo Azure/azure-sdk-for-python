@@ -136,6 +136,10 @@ class TestPersistentLocalsProfiler:
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+@pytest.mark.skipif(
+    condition=sys.version_info >= (3, 14),
+    reason="Bytecode builder only supports CPython 3.7-3.11. Runtime automatically uses profiler for 3.12+ (see is_bytecode_optimization_enabled in utils.py)",
+)
 class TestPersistentLocalsPrivatePreview(TestPersistentLocalsProfiler):
     _PACKAGE = "bytecode"
 
