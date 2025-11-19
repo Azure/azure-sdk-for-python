@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Prot
 import inspect
 
 from agent_framework import AgentProtocol, AIFunction
-from agent_framework.azure import AzureAIAgentClient  # pylint: disable=no-name-in-module
+from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
 from azure.ai.agentserver.core.client.tools import OAuthConsentRequiredError
@@ -182,10 +182,25 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 applicationinsights_connection_string=app_insights_conn_str,
             )
         elif project_endpoint:
-            project_client = AIProjectClient(endpoint=project_endpoint, credential=DefaultAzureCredential())
-            agent_client = AzureAIAgentClient(project_client=project_client)
-            agent_client.setup_azure_ai_observability()
+            self.setup_tracing_with_azure_ai_client(project_endpoint)
         self.tracer = trace.get_tracer(__name__)
+
+    def setup_tracing_with_azure_ai_client(self, project_endpoint: str):
+        async def setup_async():
+            async with AzureAIClient(
+                project_endpoint=project_endpoint, async_credential=self.credentials
+                ) as agent_client:
+                await agent_client.setup_azure_ai_observability()
+
+        import asyncio
+
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # If loop is already running, schedule as a task
+            asyncio.create_task(setup_async())
+        else:
+            # Run in new event loop
+            loop.run_until_complete(setup_async())
 
     async def agent_run(  # pylint: disable=too-many-statements
         self, context: AgentRunContext
