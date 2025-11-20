@@ -294,7 +294,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             # Build a dictionary keyed by configuration key
             snapshot_settings = {}
             for config in configurations:
-                # Use lexicographic ordering - last wins for duplicate keys
+                # Last wins for duplicate keys during iteration
                 snapshot_settings[config.key] = config
 
             return snapshot_settings

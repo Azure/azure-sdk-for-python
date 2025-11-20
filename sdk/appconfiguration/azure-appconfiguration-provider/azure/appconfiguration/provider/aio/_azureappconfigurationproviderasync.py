@@ -440,7 +440,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         raise exception
 
     async def _process_configurations(
-        self, configuration_settings: List[ConfigurationSetting], client
+        self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
     ) -> Dict[str, Any]:
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
         # precedence. Only process the settings with the highest priority (i.e. the last one in the list).

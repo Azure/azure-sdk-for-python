@@ -423,7 +423,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
         raise exception
 
-    def _process_configurations(self, configuration_settings: List[ConfigurationSetting], client) -> Dict[str, Any]:
+    def _process_configurations(self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient) -> Dict[str, Any]:
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
         # precedence. Only process the settings with the highest priority (i.e. the last one in the list).
         unique_settings = self._deduplicate_settings(configuration_settings)
