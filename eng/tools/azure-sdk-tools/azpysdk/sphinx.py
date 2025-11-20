@@ -282,7 +282,7 @@ class sphinx(Check):
         try:
             logger.info("Sphinx build command: {}".format(command_array))
 
-            self.run_venv_command(executable, command_array, cwd=package_dir, check=True, append_executable=False)
+            self.run_venv_command(executable, command_array, cwd=package_dir, check=True, append_executable=False, immediately_dump=True)
         except CalledProcessError as e:
             logger.error("sphinx-build failed for path {} exited with error {}".format(target_dir, e.returncode))
             if in_analyze_weekly():
@@ -306,14 +306,14 @@ class sphinx(Check):
         try:
             logger.info("Command to generate management sphinx sources: {}".format(command_array))
 
-            self.run_venv_command(executable, command_array, cwd=target_folder, check=True, append_executable=False)
+            self.run_venv_command(executable, command_array, cwd=target_folder, check=True, append_executable=False, immediately_dump=True)
         except CalledProcessError as e:
             logger.error("script failed for path {} exited with error {}".format(output_dir, e.returncode))
             return 1
         return 0
 
     def sphinx_apidoc(self, output_dir: str, target_dir: str, namespace: str, executable: str) -> int:
-        working_doc_folder = os.path.join(output_dir, "doc")
+        working_doc_folder = os.path.join(target_dir, "doc")
         command_array = [
             "sphinx-apidoc",
             "--no-toc",
