@@ -44,7 +44,7 @@ from ._base import (
     _build_properties_cache
 )
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
-from ._constants import _Constants as Constants
+from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
@@ -359,7 +359,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
-        query_options[Constants.TimeoutScope] = True
+        query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
 
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 

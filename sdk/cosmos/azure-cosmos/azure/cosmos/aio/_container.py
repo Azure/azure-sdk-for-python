@@ -46,7 +46,7 @@ from .._base import (
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._cosmos_responses import CosmosDict, CosmosList
-from .._constants import _Constants as Constants
+from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
@@ -498,7 +498,7 @@ class ContainerProxy:
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
-        query_options[Constants.TimeoutScope] = True
+        query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
 
         item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
         return await self.client_connection.read_items(

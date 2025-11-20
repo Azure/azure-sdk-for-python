@@ -23,7 +23,7 @@
 """
 from azure.core.paging import PageIterator  # type: ignore
 
-from azure.cosmos._constants import _Constants
+from azure.cosmos._constants import _Constants, TimeoutScope
 from azure.cosmos._execution_context import execution_dispatcher
 import time
 from azure.cosmos import exceptions
@@ -77,8 +77,6 @@ class QueryIterable(PageIterator):
             options['continuation'] = continuation_token
         # Capture timeout and start time
         self.timeout = options.get('timeout')
-        self.use_operation_timeout = options.get(_Constants.TimeoutScope)
-
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
@@ -108,7 +106,7 @@ class QueryIterable(PageIterator):
         :rtype: list
         """
         # reset the operation start time if it's a paged request
-        if self.timeout and not self.use_operation_timeout:
+        if self.timeout and self._options.get(_Constants.TimeoutScope) != TimeoutScope.OPERATION:
             self._options[_Constants.OperationStartTime] = time.time()
 
         # Check timeout before fetching next block

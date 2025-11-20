@@ -123,7 +123,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         if timeout:
             elapsed = time.time() - operation_start_time
             if elapsed >= timeout:
-                raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
+                raise exceptions.CosmosClientTimeoutError(error=last_error)
 
         try:
             if args:
@@ -135,7 +135,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             if timeout:
                 elapsed = time.time() - operation_start_time
                 if elapsed >= timeout:
-                    raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
+                    raise exceptions.CosmosClientTimeoutError(error=last_error)
 
             if not client.last_response_headers:
                 client.last_response_headers = {}
@@ -254,7 +254,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 if timeout:
                     elapsed = time.time() - operation_start_time
                     if elapsed >= timeout:
-                        raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
+                        raise exceptions.CosmosClientTimeoutError(error=last_error)
 
                 # Wait for retry_after_in_milliseconds time before the next retry
                 time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)

@@ -26,7 +26,7 @@ import time
 
 from azure.core.async_paging import AsyncPageIterator
 
-from azure.cosmos._constants import _Constants
+from azure.cosmos._constants import _Constants, TimeoutScope
 from azure.cosmos._execution_context.aio import execution_dispatcher
 from azure.cosmos import exceptions
 
@@ -79,7 +79,6 @@ class QueryIterable(AsyncPageIterator):
             options['continuation'] = continuation_token
         # Capture timeout and start time
         self.timeout = options.get('timeout')
-        self.use_operation_timeout = options.get(_Constants.TimeoutScope)
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
@@ -113,7 +112,7 @@ class QueryIterable(AsyncPageIterator):
 
         # Check timeout before fetching next block
 
-        if self.timeout and not self.use_operation_timeout:
+        if self.timeout and self._options.get(_Constants.TimeoutScope) != TimeoutScope.OPERATION:
             self._options[_Constants.OperationStartTime] = time.time()
 
         # Check timeout before fetching next block

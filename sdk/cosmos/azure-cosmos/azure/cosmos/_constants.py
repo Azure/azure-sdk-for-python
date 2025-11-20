@@ -26,6 +26,10 @@
 from typing import Dict
 from typing_extensions import Literal
 
+class TimeoutScope:
+    """Defines the scope of timeout application"""
+    OPERATION: Literal["operation"] = "operation"  # Apply timeout to entire logical operation
+    PAGE: Literal["page"] = "page"  # Apply timeout to individual page requests
 
 class _Constants:
     """Constants used in the azure-cosmos package"""
