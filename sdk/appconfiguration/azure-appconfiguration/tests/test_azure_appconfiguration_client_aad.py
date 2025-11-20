@@ -394,7 +394,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("timestamp", str(datetime.now(timezone.utc)))
 
-        with self.create_client(appconfiguration_endpoint_string) as client:
+        with self.create_aad_client(appconfiguration_endpoint_string) as client:
             # Confirm all configuration settings are cleaned up
             current_config_settings = client.list_configuration_settings()
             if len(list(current_config_settings)) != 0:

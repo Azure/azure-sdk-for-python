@@ -7,7 +7,6 @@ import pytest
 import copy
 import json
 import re
-import copy
 from datetime import datetime, timezone
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -652,7 +651,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
             assert temp["enabled"] == False
             assert temp["conditions"] == set_flag_value["conditions"]
 
-            c = json.loads(copy.deepcopy(changed_flag.value))
+            c = json.loads(changed_flag.value)
             c["enabled"] = True
             changed_flag.value = json.dumps(c)
             assert changed_flag.enabled == True
