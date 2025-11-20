@@ -35,10 +35,7 @@ The following are **ignored**:
 
 If strict version pins are detected, the workflow:
 1. Posts a comment on the PR listing the detected pins
-2. Checks if any of the following architects have approved the PR:
-   - `@kashifkhan`
-   - `@annatisch`
-   - `@johanste`
+2. Checks if any of the designated architects have approved the PR
 3. **Blocks merging** if no architect approval is found (workflow fails with exit code 1)
 4. **Allows merging** if an architect has approved
 
@@ -131,10 +128,7 @@ If the workflow incorrectly flags a dependency:
 ### Override Process
 If a strict pin is necessary:
 1. Document the justification in the PR description
-2. Request review from one of the architects:
-   - @kashifkhan
-   - @annatisch
-   - @johanste
+2. Request review from one of the designated architects
 3. Architect provides approval review
 4. Workflow will pass and allow merge
 
