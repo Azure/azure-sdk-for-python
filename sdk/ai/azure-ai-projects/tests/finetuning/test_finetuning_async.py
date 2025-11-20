@@ -347,7 +347,7 @@ class TestFineTuningAsync(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy_async
-    async def test_sft_finetuning_create_job_oss_model_async(self, **kwargs):
+    async def test_sft_finetuning_create_job_oss_using_model_async(self, **kwargs):
 
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()

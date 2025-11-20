@@ -14,9 +14,16 @@ from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
     reason="Skipped because we cannot record network calls with AOAI client",
 )
 class TestFineTuning(TestBase):
+    
+    SFT_JOB_TYPE = "sft"
+    DPO_JOB_TYPE = "dpo"
+    RFT_JOB_TYPE = "rft"
+    
+    STANDARD_TRAINING_TYPE = "Standard"
+    GLOBAL_STANDARD_TRAINING_TYPE = "GlobalStandard"
 
     def _create_sft_finetuning_job(
-        self, openai_client, train_file_id, validation_file_id, model_type="openai", training_type="Standard"
+        self, openai_client, train_file_id, validation_file_id, training_type, model_type="openai"
     ):
         """Helper method to create a supervised fine-tuning job."""
         return openai_client.fine_tuning.jobs.create(
@@ -36,12 +43,12 @@ class TestFineTuning(TestBase):
             extra_body={"trainingType": training_type},
         )
 
-    def _create_dpo_finetuning_job(self, openai_client, train_file_id, validation_file_id):
+    def _create_dpo_finetuning_job(self, openai_client, train_file_id, validation_file_id, training_type, model_type="openai"):
         """Helper method to create a DPO fine-tuning job."""
         return openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
             validation_file=validation_file_id,
-            model=self.test_finetuning_params["dpo"]["openai"]["model_name"],
+            model=self.test_finetuning_params["dpo"][model_type]["model_name"],
             method={
                 "type": "dpo",
                 "dpo": {
@@ -52,10 +59,10 @@ class TestFineTuning(TestBase):
                     }
                 },
             },
-            extra_body={"trainingType": "Standard"},
+            extra_body={"trainingType": training_type},
         )
 
-    def _create_rft_finetuning_job(self, openai_client, train_file_id, validation_file_id):
+    def _create_rft_finetuning_job(self, openai_client, train_file_id, validation_file_id, training_type, model_type="openai"):
         """Helper method to create an RFT fine-tuning job."""
         grader = {
             "name": "Response Quality Grader",
@@ -73,7 +80,7 @@ class TestFineTuning(TestBase):
         return openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
             validation_file=validation_file_id,
-            model=self.test_finetuning_params["rft"]["openai"]["model_name"],
+            model=self.test_finetuning_params["rft"][model_type]["model_name"],
             method={
                 "type": "reinforcement",
                 "reinforcement": {
@@ -88,7 +95,7 @@ class TestFineTuning(TestBase):
                     },
                 },
             },
-            extra_body={"trainingType": "Standard"},
+            extra_body={"trainingType": training_type},
         )
 
     def _upload_test_files(self, openai_client, job_type="sft"):
@@ -103,7 +110,7 @@ class TestFineTuning(TestBase):
         assert train_processed_file is not None
         assert train_processed_file.id is not None
         TestBase.assert_equal_or_not_none(train_processed_file.status, "processed")
-        print(f"[test_finetuning_{job_type}] Uploaded training file: {train_processed_file.id}")
+        print(f"[test_finetuning] Uploaded training file: {train_processed_file.id}")
 
         with open(validation_file_path, "rb") as f:
             validation_file = openai_client.files.create(file=f, purpose="fine-tune")
@@ -111,67 +118,252 @@ class TestFineTuning(TestBase):
         assert validation_processed_file is not None
         assert validation_processed_file.id is not None
         TestBase.assert_equal_or_not_none(validation_processed_file.status, "processed")
-        print(f"[test_finetuning_{job_type}] Uploaded validation file: {validation_processed_file.id}")
+        print(f"[test_finetuning] Uploaded validation file: {validation_processed_file.id}")
 
         return train_processed_file, validation_processed_file
 
-    def _cleanup_test_files(self, openai_client, train_file, validation_file, job_type):
-        """Helper method to clean up uploaded files after testing."""
-        openai_client.files.delete(train_file.id)
-        print(f"[test_finetuning_{job_type}] Deleted training file: {train_file.id}")
+    def _cleanup_test_file(self, openai_client, file_id):
+        """Helper method to clean up uploaded file."""
+        openai_client.files.delete(file_id)
+        print(f"[test_finetuning] Deleted file: {file_id}")
 
-        openai_client.files.delete(validation_file.id)
-        print(f"[test_finetuning_{job_type}] Deleted validation file: {validation_file.id}")
-
-    @servicePreparer()
-    @recorded_by_proxy
-    def test_sft_finetuning_create_job(self, **kwargs):
-
+    def _test_cancel_job_helper(self, job_type, model_type, training_type, expected_method_type, **kwargs):
+        """Helper method for testing canceling fine-tuning jobs across different configurations."""
+        
         with self.create_client(**kwargs) as project_client:
-
             with project_client.get_openai_client() as openai_client:
+                
+                train_file, validation_file = self._upload_test_files(openai_client, job_type)
+                
+                if job_type == self.SFT_JOB_TYPE:
+                    fine_tuning_job = self._create_sft_finetuning_job(
+                        openai_client, train_file.id, validation_file.id, training_type, model_type
+                    )
+                elif job_type == self.DPO_JOB_TYPE:
+                    fine_tuning_job = self._create_dpo_finetuning_job(
+                        openai_client, train_file.id, validation_file.id, training_type, model_type
+                    )
+                elif job_type == self.RFT_JOB_TYPE:
+                    fine_tuning_job = self._create_rft_finetuning_job(
+                        openai_client, train_file.id, validation_file.id, training_type, model_type
+                    )
+                else:
+                    raise ValueError(f"Unsupported job type: {job_type}")
+                
+                print(f"[test_finetuning_cancel_{job_type}_{model_type}_{training_type}] Created job: {fine_tuning_job.id}")
+                
+                cancelled_job = openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_cancel_{job_type}_{model_type}_{training_type}] Cancelled job: {cancelled_job.id}")
+                
+                # Validate the cancelled job
+                TestBase.validate_fine_tuning_job(cancelled_job, expected_job_id=fine_tuning_job.id)
+                TestBase.assert_equal_or_not_none(cancelled_job.status, "cancelled")
+                TestBase.assert_equal_or_not_none(cancelled_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(cancelled_job.validation_file, validation_file.id)
+                
+                # Validate method type
+                assert cancelled_job.method is not None, f"Method should not be None for {job_type} job"
+                TestBase.assert_equal_or_not_none(cancelled_job.method.type, expected_method_type)
+                print(f"[test_finetuning_cancel_{job_type}_{model_type}_{training_type}] Method validation passed - type: {cancelled_job.method.type}")
+                
+                # Verify cancellation persisted by retrieving the job
+                retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
+                print(f"[test_finetuning_cancel_{job_type}_{model_type}_{training_type}] Verified cancellation persisted for job: {retrieved_job.id}")
+                TestBase.validate_fine_tuning_job(
+                    retrieved_job, expected_job_id=fine_tuning_job.id, expected_status="cancelled"
+                )
+                
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
 
-                train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
-                print(f"[test_finetuning_sft] Created fine-tuning job: {fine_tuning_job.id}")
-
+    def _test_sft_create_job_helper(self, model_type, training_type, **kwargs):
+        """Helper method for testing SFT fine-tuning job creation across different configurations."""
+        
+        with self.create_client(**kwargs) as project_client:
+            with project_client.get_openai_client() as openai_client:
+                
+                train_file, validation_file = self._upload_test_files(openai_client, self.SFT_JOB_TYPE)
+                
+                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id, training_type, model_type)
+                print(f"[test_finetuning_sft_{model_type}_{training_type}] Created fine-tuning job: {fine_tuning_job.id}")
+                
                 TestBase.validate_fine_tuning_job(fine_tuning_job)
                 TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
                 TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.trainingType.lower(), training_type.lower())
                 assert fine_tuning_job.method is not None, "Method should not be None for SFT job"
                 TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "supervised")
-                print(f"[test_finetuning_sft] SFT method validation passed - type: {fine_tuning_job.method.type}")
-
+                print(f"[test_finetuning_sft_{model_type}_{training_type}] SFT method validation passed - type: {fine_tuning_job.method.type}")
+                
+                # For OSS models, validate the specific model name
+                if model_type == "oss":
+                    TestBase.validate_fine_tuning_job(
+                        fine_tuning_job, expected_model=self.test_finetuning_params["sft"]["oss"]["model_name"]
+                    )
+                
                 openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-                print(f"[test_finetuning_sft] Cancelled job: {fine_tuning_job.id}")
+                print(f"[test_finetuning_sft_{model_type}_{training_type}] Cancelled job: {fine_tuning_job.id}")
+                
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
 
-                self._cleanup_test_files(openai_client, train_file, validation_file, "sft")
+    def _test_dpo_create_job_helper(self, model_type, training_type, **kwargs):
+        """Helper method for testing DPO fine-tuning job creation across different configurations."""
+        
+        with self.create_client(**kwargs) as project_client:
+            with project_client.get_openai_client() as openai_client:
+                
+                train_file, validation_file = self._upload_test_files(openai_client, self.DPO_JOB_TYPE)
+                
+                fine_tuning_job = self._create_dpo_finetuning_job(openai_client, train_file.id, validation_file.id, training_type, model_type)
+                print(f"[test_finetuning_dpo_{model_type}_{training_type}] Created DPO fine-tuning job: {fine_tuning_job.id}")
+                print(fine_tuning_job)
+                
+                TestBase.validate_fine_tuning_job(fine_tuning_job)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.trainingType.lower(), training_type.lower())
+                assert fine_tuning_job.method is not None, "Method should not be None for DPO job"
+                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "dpo")
+                
+                print(f"[test_finetuning_dpo_{model_type}_{training_type}] DPO method validation passed - type: {fine_tuning_job.method.type}")
+                
+                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_dpo_{model_type}_{training_type}] Cancelled job: {fine_tuning_job.id}")
+                
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
+
+    def _test_rft_create_job_helper(self, model_type, training_type, **kwargs):
+        """Helper method for testing RFT fine-tuning job creation across different configurations."""
+        
+        with self.create_client(**kwargs) as project_client:
+            with project_client.get_openai_client() as openai_client:
+                
+                train_file, validation_file = self._upload_test_files(openai_client, self.RFT_JOB_TYPE)
+                
+                fine_tuning_job = self._create_rft_finetuning_job(openai_client, train_file.id, validation_file.id, training_type, model_type)
+                print(f"[test_finetuning_rft_{model_type}_{training_type}] Created RFT fine-tuning job: {fine_tuning_job.id}")
+                
+                TestBase.validate_fine_tuning_job(fine_tuning_job)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.trainingType.lower(), training_type.lower())
+                assert fine_tuning_job.method is not None, "Method should not be None for RFT job"
+                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "reinforcement")
+                
+                print(f"[test_finetuning_rft_{model_type}_{training_type}] RFT method validation passed - type: {fine_tuning_job.method.type}")
+                
+                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_rft_{model_type}_{training_type}] Cancelled job: {fine_tuning_job.id}")
+                
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
 
     @servicePreparer()
     @recorded_by_proxy
-    def test_finetuning_retrieve_job(self, **kwargs):
+    def test_sft_finetuning_create_job_openai_standard(self, **kwargs):
+        """Test creating SFT fine-tuning job with OpenAI model and Standard training."""
+        self._test_sft_create_job_helper("openai", self.STANDARD_TRAINING_TYPE, **kwargs)
 
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_sft_finetuning_create_job_openai_globalstandard(self, **kwargs):
+        """Test creating SFT fine-tuning job with OpenAI model and GlobalStandard training."""
+        self._test_sft_create_job_helper("openai", self.GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_sft_finetuning_create_job_oss_globalstandard(self, **kwargs):
+        """Test creating SFT fine-tuning job with OSS model and GlobalStandard training."""
+        self._test_sft_create_job_helper("oss", self.GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_finetuning_retrieve_sft_job(self, **kwargs):
+        """Test retrieving SFT fine-tuning job."""
         with self.create_client(**kwargs) as project_client:
-
             with project_client.get_openai_client() as openai_client:
 
-                train_file, validation_file = self._upload_test_files(openai_client, "sft")
+                train_file, validation_file = self._upload_test_files(openai_client, self.SFT_JOB_TYPE)
 
-                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
-                print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
+                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE)
+                print(f"[test_finetuning_retrieve_sft] Created job: {fine_tuning_job.id}")
 
                 retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
-                print(f"[test_finetuning_sft] Retrieved job: {retrieved_job.id}")
+                print(f"[test_finetuning_retrieve_sft] Retrieved job: {retrieved_job.id}")
 
                 TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
                 TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
                 TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), self.STANDARD_TRAINING_TYPE.lower())
+                assert retrieved_job.method is not None, "Method should not be None for SFT job"
+                TestBase.assert_equal_or_not_none(retrieved_job.method.type, "supervised")
+                assert self.test_finetuning_params["sft"]["openai"]["model_name"] in retrieved_job.model, f"Expected model name {self.test_finetuning_params['sft']['openai']['model_name']} not found in {retrieved_job.model}"
 
                 openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-                print(f"[test_finetuning_sft] Cancelled job: {fine_tuning_job.id}")
+                print(f"[test_finetuning_retrieve_sft] Cancelled job: {fine_tuning_job.id}")
 
-                self._cleanup_test_files(openai_client, train_file, validation_file, "sft")
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_finetuning_retrieve_dpo_job(self, **kwargs):
+        """Test retrieving DPO fine-tuning job."""
+        with self.create_client(**kwargs) as project_client:
+            with project_client.get_openai_client() as openai_client:
+
+                train_file, validation_file = self._upload_test_files(openai_client, self.DPO_JOB_TYPE)
+
+                fine_tuning_job = self._create_dpo_finetuning_job(openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE)
+                print(f"[test_finetuning_retrieve_dpo] Created job: {fine_tuning_job.id}")
+
+                retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
+                print(f"[test_finetuning_retrieve_dpo] Retrieved job: {retrieved_job.id}")
+
+                TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), self.STANDARD_TRAINING_TYPE.lower())
+                assert retrieved_job.method is not None, "Method should not be None for DPO job"
+                TestBase.assert_equal_or_not_none(retrieved_job.method.type, "dpo")
+                assert self.test_finetuning_params["dpo"]["openai"]["model_name"] in retrieved_job.model, f"Expected model name {self.test_finetuning_params['dpo']['openai']['model_name']} not found in {retrieved_job.model}"
+
+                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_retrieve_dpo] Cancelled job: {fine_tuning_job.id}")
+
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_finetuning_retrieve_rft_job(self, **kwargs):
+        """Test retrieving RFT fine-tuning job."""
+        with self.create_client(**kwargs) as project_client:
+            with project_client.get_openai_client() as openai_client:
+
+                train_file, validation_file = self._upload_test_files(openai_client, self.RFT_JOB_TYPE)
+
+                fine_tuning_job = self._create_rft_finetuning_job(openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE)
+                print(f"[test_finetuning_retrieve_rft] Created job: {fine_tuning_job.id}")
+
+                retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
+                print(f"[test_finetuning_retrieve_rft] Retrieved job: {retrieved_job.id}")
+
+                TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), self.STANDARD_TRAINING_TYPE.lower())
+                assert retrieved_job.method is not None, "Method should not be None for RFT job"
+                TestBase.assert_equal_or_not_none(retrieved_job.method.type, "reinforcement")
+                assert self.test_finetuning_params["rft"]["openai"]["model_name"] in retrieved_job.model, f"Expected model name {self.test_finetuning_params['rft']['openai']['model_name']} not found in {retrieved_job.model}"
+
+                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_retrieve_rft] Cancelled job: {fine_tuning_job.id}")
+
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
 
     @servicePreparer()
     @recorded_by_proxy
@@ -181,9 +373,9 @@ class TestFineTuning(TestBase):
 
             with project_client.get_openai_client() as openai_client:
 
-                train_file, validation_file = self._upload_test_files(openai_client, "sft")
+                train_file, validation_file = self._upload_test_files(openai_client, self.SFT_JOB_TYPE)
 
-                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
+                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE)
                 print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
 
                 jobs_list = list(openai_client.fine_tuning.jobs.list())
@@ -197,87 +389,80 @@ class TestFineTuning(TestBase):
                 openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"[test_finetuning_sft] Cancelled job: {fine_tuning_job.id}")
 
-                self._cleanup_test_files(openai_client, train_file, validation_file, "sft")
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
+
+    
 
     @servicePreparer()
     @recorded_by_proxy
-    def test_finetuning_cancel_job(self, **kwargs):
-
-        with self.create_client(**kwargs) as project_client:
-
-            with project_client.get_openai_client() as openai_client:
-
-                train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
-                print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
-
-                cancelled_job = openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-                print(f"[test_finetuning_sft] Cancelled job: {cancelled_job.id}")
-
-                TestBase.validate_fine_tuning_job(cancelled_job, expected_job_id=fine_tuning_job.id)
-                TestBase.assert_equal_or_not_none(cancelled_job.status, "cancelled")
-
-                retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
-                print(f"[test_finetuning_sft] Verified cancellation persisted for job: {retrieved_job.id}")
-                TestBase.validate_fine_tuning_job(
-                    retrieved_job, expected_job_id=fine_tuning_job.id, expected_status="cancelled"
-                )
-
-                self._cleanup_test_files(openai_client, train_file, validation_file, "sft")
+    def test_sft_cancel_job_openai_standard(self, **kwargs):
+        """Test canceling SFT fine-tuning job with OpenAI model and Standard training."""
+        self._test_cancel_job_helper(self.SFT_JOB_TYPE, "openai", self.STANDARD_TRAINING_TYPE, "supervised", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy
-    def test_dpo_finetuning_create_job(self, **kwargs):
-
-        with self.create_client(**kwargs) as project_client:
-
-            with project_client.get_openai_client() as openai_client:
-
-                train_file, validation_file = self._upload_test_files(openai_client, "dpo")
-
-                fine_tuning_job = self._create_dpo_finetuning_job(openai_client, train_file.id, validation_file.id)
-                print(f"[test_finetuning_dpo] Created DPO fine-tuning job: {fine_tuning_job.id}")
-                print(fine_tuning_job)
-
-                TestBase.validate_fine_tuning_job(fine_tuning_job)
-                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
-                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
-                assert fine_tuning_job.method is not None, "Method should not be None for DPO job"
-                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "dpo")
-
-                print(f"[test_finetuning_dpo] DPO method validation passed - type: {fine_tuning_job.method.type}")
-
-                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-                print(f"[test_finetuning_dpo] Cancelled job: {fine_tuning_job.id}")
-
-                self._cleanup_test_files(openai_client, train_file, validation_file, "dpo")
+    def test_sft_cancel_job_openai_globalstandard(self, **kwargs):
+        """Test canceling SFT fine-tuning job with OpenAI model and GlobalStandard training."""
+        self._test_cancel_job_helper(self.SFT_JOB_TYPE, "openai", self.GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy
-    def test_rft_finetuning_create_job(self, **kwargs):
+    def test_sft_cancel_job_oss_globalstandard(self, **kwargs):
+        """Test canceling SFT fine-tuning job with OSS model and GlobalStandard training."""
+        self._test_cancel_job_helper(self.SFT_JOB_TYPE, "oss", self.GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs)
 
-        with self.create_client(**kwargs) as project_client:
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_dpo_cancel_job_openai_standard(self, **kwargs):
+        """Test canceling DPO fine-tuning job with OpenAI model and Standard training."""
+        self._test_cancel_job_helper(self.DPO_JOB_TYPE, "openai", self.STANDARD_TRAINING_TYPE, "dpo", **kwargs)
 
-            with project_client.get_openai_client() as openai_client:
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_dpo_cancel_job_openai_globalstandard(self, **kwargs):
+        """Test canceling DPO fine-tuning job with OpenAI model and GlobalStandard training."""
+        self._test_cancel_job_helper(self.DPO_JOB_TYPE, "openai", self.GLOBAL_STANDARD_TRAINING_TYPE, "dpo", **kwargs)
 
-                train_file, validation_file = self._upload_test_files(openai_client, "rft")
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_rft_cancel_job_openai_standard(self, **kwargs):
+        """Test canceling RFT fine-tuning job with OpenAI model and Standard training."""
+        self._test_cancel_job_helper(self.RFT_JOB_TYPE, "openai", self.STANDARD_TRAINING_TYPE, "reinforcement", **kwargs)
 
-                fine_tuning_job = self._create_rft_finetuning_job(openai_client, train_file.id, validation_file.id)
-                print(f"[test_finetuning_rft] Created RFT fine-tuning job: {fine_tuning_job.id}")
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_rft_cancel_job_openai_globalstandard(self, **kwargs):
+        """Test canceling RFT fine-tuning job with OpenAI model and GlobalStandard training."""
+        self._test_cancel_job_helper(self.RFT_JOB_TYPE, "openai", self.GLOBAL_STANDARD_TRAINING_TYPE, "reinforcement", **kwargs)
 
-                TestBase.validate_fine_tuning_job(fine_tuning_job)
-                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
-                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
-                assert fine_tuning_job.method is not None, "Method should not be None for RFT job"
-                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "reinforcement")
+    
 
-                print(f"[test_finetuning_rft] RFT method validation passed - type: {fine_tuning_job.method.type}")
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_dpo_finetuning_create_job_openai_standard(self, **kwargs):
+        """Test creating DPO fine-tuning job with OpenAI model and Standard training."""
+        self._test_dpo_create_job_helper("openai", self.STANDARD_TRAINING_TYPE, **kwargs)
 
-                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-                print(f"[test_finetuning_rft] Cancelled job: {fine_tuning_job.id}")
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_dpo_finetuning_create_job_openai_globalstandard(self, **kwargs):
+        """Test creating DPO fine-tuning job with OpenAI model and GlobalStandard training."""
+        self._test_dpo_create_job_helper("openai", self.GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
-                self._cleanup_test_files(openai_client, train_file, validation_file, "rft")
+    
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_rft_finetuning_create_job_openai_standard(self, **kwargs):
+        """Test creating RFT fine-tuning job with OpenAI model and Standard training."""
+        self._test_rft_create_job_helper("openai", self.STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_rft_finetuning_create_job_openai_globalstandard(self, **kwargs):
+        """Test creating RFT fine-tuning job with OpenAI model and GlobalStandard training."""
+        self._test_rft_create_job_helper("openai", self.GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy
@@ -287,9 +472,9 @@ class TestFineTuning(TestBase):
 
             with project_client.get_openai_client() as openai_client:
 
-                train_file, validation_file = self._upload_test_files(openai_client, "sft")
+                train_file, validation_file = self._upload_test_files(openai_client, self.SFT_JOB_TYPE)
 
-                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id)
+                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE)
                 print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
 
                 TestBase.validate_fine_tuning_job(fine_tuning_job)
@@ -315,33 +500,7 @@ class TestFineTuning(TestBase):
                     assert event.type is not None, "Event should have a type"
                 print(f"[test_finetuning_sft] Successfully validated {len(events_list)} events")
 
-                self._cleanup_test_files(openai_client, train_file, validation_file, "sft")
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
 
-    @servicePreparer()
-    @recorded_by_proxy
-    def test_sft_finetuning_create_job_oss_model(self, **kwargs):
 
-        with self.create_client(**kwargs) as project_client:
-
-            with project_client.get_openai_client() as openai_client:
-
-                train_file, validation_file = self._upload_test_files(openai_client, "sft")
-
-                fine_tuning_job = self._create_sft_finetuning_job(
-                    openai_client, train_file.id, validation_file.id, "oss", "GlobalStandard"
-                )
-                print(f"[test_finetuning_sft_oss] Created fine-tuning job: {fine_tuning_job.id}")
-
-                TestBase.validate_fine_tuning_job(
-                    fine_tuning_job, expected_model=self.test_finetuning_params["sft"]["oss"]["model_name"]
-                )
-                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
-                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
-                assert fine_tuning_job.method is not None, "Method should not be None for SFT job"
-                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "supervised")
-                print(f"[test_finetuning_sft_oss] SFT method validation passed - type: {fine_tuning_job.method.type}")
-
-                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-                print(f"[test_finetuning_sft_oss] Cancelled job: {fine_tuning_job.id}")
-
-                self._cleanup_test_files(openai_client, train_file, validation_file, "sft_oss")
