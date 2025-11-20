@@ -10,9 +10,8 @@ from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.provider import SettingSelector
 from azure.appconfiguration.provider.aio._async_client_manager import AsyncConfigurationClientManager
 from azure.appconfiguration.provider._constants import SNAPSHOT_REF_CONTENT_TYPE
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, AzureError
 from azure.identity.aio import DefaultAzureCredential
-
 
 class TestAsyncClientManagerSnapshotReferences:
     """Integration tests for snapshot references in the async client manager."""
@@ -84,9 +83,6 @@ class TestAsyncClientManagerSnapshotReferences:
             value='{"snapshot_name": "nonexistent-snapshot"}',
             content_type=SNAPSHOT_REF_CONTENT_TYPE,
         )
-
-        # Mock the load_configuration_settings method to raise ResourceNotFoundError
-        from azure.core.exceptions import AzureError
 
         with patch.object(
             client_manager._original_client, "load_configuration_settings", new_callable=AsyncMock
