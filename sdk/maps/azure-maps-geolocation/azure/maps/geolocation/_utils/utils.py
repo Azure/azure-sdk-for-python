@@ -1,4 +1,3 @@
-# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,4 +5,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0b1"
+from abc import ABC
+from typing import Generic, TYPE_CHECKING, TypeVar
+
+if TYPE_CHECKING:
+    from .serialization import Deserializer, Serializer
+
+
+TClient = TypeVar("TClient")
+TConfig = TypeVar("TConfig")
+
+
+class ClientMixinABC(ABC, Generic[TClient, TConfig]):
+    """DO NOT use this class. It is for internal typing use only."""
+
+    _client: TClient
+    _config: TConfig
+    _serialize: "Serializer"
+    _deserialize: "Deserializer"
