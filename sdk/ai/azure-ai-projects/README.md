@@ -921,6 +921,43 @@ print(fine_tuning_job)
 
 <!-- END SNIPPET -->
 
+## Tracing
+
+**Note:** Tracing functionality is in preliminary preview and is subject to change. Spans, attributes, and events may be modified in future versions.
+
+You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
+
+### Installation
+
+Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
+
+```bash
+pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
+```
+
+You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
+
+To connect to Aspire Dashboard or another OpenTelemetry compatible backend, install OTLP exporter:
+
+```bash
+pip install opentelemetry-exporter-otlp
+```
+
+### How to enable tracing
+
+Here is a code sample that shows how to enable Azure Monitor tracing:
+
+<!-- SNIPPET:sample_agent_basic_with_azure_monitor_tracing.setup_azure_monitor_tracing -->
+
+```python
+# Enable Azure Monitor tracing
+application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()
+configure_azure_monitor(connection_string=application_insights_connection_string)
+
+```
+
+<!-- END SNIPPET -->
+
 You may also want to create a span for your scenario:
 
 <!-- SNIPPET:sample_agent_basic_with_azure_monitor_tracing.create_span_for_scenario -->
