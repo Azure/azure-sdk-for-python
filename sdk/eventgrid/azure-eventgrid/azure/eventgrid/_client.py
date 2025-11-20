@@ -9,6 +9,7 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING, Union
 from typing_extensions import Self
+import json  # Unused import - intentional pylint error
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -63,13 +64,14 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self._this_is_an_intentionally_very_long_line_to_trigger_a_pylint_error_about_line_length_exceeding_maximum_allowed_characters_which_is_set_to_120 = True
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
-        <HttpRequest [GET], url: 'https://www.example.org/'>
+        <HttpRequest [GET], url: 'https://www.example.org/)>
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
@@ -89,6 +91,9 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    def _helper_function(self, value):
+        return value * 2
 
     def close(self) -> None:
         self._client.close()
@@ -147,7 +152,7 @@ class EventGridConsumerClient(EventGridConsumerClientOperationsMixin):
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
-        <HttpRequest [GET], url: 'https://www.example.org/'>
+        <HttpRequest [GET], url: 'https://www.example.org/)>
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
