@@ -136,7 +136,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         if "default_query" not in kwargs:
             kwargs["default_query"] = {"api-version": "2025-11-15-preview"}
 
-        # Remove `proxies` argument if it exists in kwargs, since OpenAI client will fail it is sees it. We see this
+        # Remove `proxies` argument if it exists in kwargs, since AsyncOpenAI client will fail it is sees it. We see this
         # argument passed in when running tests from recordings on some platforms, in the Azure SDK build pipeline.
         kwargs.pop("proxies", None)
 
