@@ -33,6 +33,14 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) IMAGE_GEN_DEPLOYMENT_NAME - The deployment name of the image generation model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) (Optional) LOG_LEVEL - Logging level for HTTP client debugging. Valid values:
+       - CRITICAL or 50 - Suppresses all logs except critical errors
+       - FATAL - same as CRITICAL
+       - ERROR or 40 - Shows errors only
+       - WARNING or WARN or 30 - Shows warnings and errors
+       - INFO or 20 - Shows informational messages, warnings, and errors
+       - DEBUG or 10 - Shows detailed HTTP requests/responses and all other logs
+       - NOTSET or 0 - Uses parent logger configuration
 """
 
 import asyncio
@@ -48,12 +56,13 @@ from mcp.client.streamable_http import streamablehttp_client
 
 load_dotenv()
 
-# Configure logging level from environment variable (default: CRITICAL)
+# Configure logging level from environment variable
 # Set LOG_LEVEL=DEBUG to see detailed HTTP requests and responses
-log_level = os.getenv("LOG_LEVEL", "CRITICAL").upper()
-logging.basicConfig(level=getattr(logging, log_level, logging.CRITICAL))
-# Enable httpx logging to see HTTP requests at the same level
-logging.getLogger("httpx").setLevel(getattr(logging, log_level, logging.CRITICAL))
+log_level = os.getenv("LOG_LEVEL", "").upper()
+if log_level:
+    logging.basicConfig(level=getattr(logging, log_level, logging.CRITICAL))
+    # Enable httpx logging to see HTTP requests at the same level
+    logging.getLogger("httpx").setLevel(getattr(logging, log_level, logging.CRITICAL))
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
