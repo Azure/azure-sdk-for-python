@@ -19,7 +19,6 @@ class TestTranscriptionAsync(TranscriptionClientTestBaseAsync):
         client = self.create_async_client(endpoint=transcription_endpoint)
         response = await client.transcribe(
             body={
-                "audio": "filetype",
                 "definition": {
                     "audioUrl": "str",
                     "channels": [0],
@@ -30,6 +29,7 @@ class TestTranscriptionAsync(TranscriptionClientTestBaseAsync):
                     "phraseList": {"biasingWeight": 0.0, "phrases": ["str"]},
                     "profanityFilterMode": "str",
                 },
+                "audio": "filetype",
             },
         )
 

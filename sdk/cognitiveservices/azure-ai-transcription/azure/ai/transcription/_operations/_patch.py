@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -57,7 +58,7 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
             options.audio_url = audio_url
 
         # Create request content without audio file (service will fetch from URL)
-        body = _models.TranscriptionContent(definition=options, audio=None)
+        body = _models.TranscriptionContent(definition=options, audio=b"\x00\x00")  # type: ignore[call-overload]  # pyright: ignore[reportArgumentType]
 
         # Call the underlying protocol method
         return super().transcribe(body, **kwargs)

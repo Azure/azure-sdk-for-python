@@ -37,8 +37,7 @@ async def sample_transcribe_from_url_async():
     # Create the transcription client
     async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
         # URL to your audio file (must be publicly accessible)
-        #audio_url = "https://example.com/path/to/audio.wav"
-        audio_url = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-speech-sdk/master/samples/csharp/sharedcontent/console/whatstheweatherlike.wav"
+        audio_url = "https://example.com/path/to/audio.wav"
 
         # Configure transcription options
         options = TranscriptionOptions(locales=["en-US"])

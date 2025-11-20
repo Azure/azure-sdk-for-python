@@ -252,26 +252,26 @@ class TranscriptionContent(_Model):
     :vartype definition: ~azure.ai.transcription.models.TranscriptionOptions
     :ivar audio: The content of the audio file to be transcribed. The audio file must be shorter
      than 2 hours in audio duration and smaller than 250 MB in size. Optional if audioUrl is
-     provided in the definition. Required.
+     provided in the definition.
     :vartype audio: ~azure.ai.transcription._utils.utils.FileType
     """
 
     definition: "_models.TranscriptionOptions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metadata for a transcription request. This field contains a JSON-serialized object of type
      ``TranscriptionOptions``. Required."""
-    audio: FileType = rest_field(
+    audio: Optional[FileType] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
     )
     """The content of the audio file to be transcribed. The audio file must be shorter than 2 hours in
      audio duration and smaller than 250 MB in size. Optional if audioUrl is provided in the
-     definition. Required."""
+     definition."""
 
     @overload
     def __init__(
         self,
         *,
         definition: "_models.TranscriptionOptions",
-        audio: FileType,
+        audio: Optional[FileType] = None,
     ) -> None: ...
 
     @overload
