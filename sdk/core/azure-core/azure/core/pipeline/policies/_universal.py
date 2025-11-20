@@ -427,7 +427,9 @@ class HttpLoggingPolicy(
     REDACTED_PLACEHOLDER: str = "REDACTED"
     MULTI_RECORD_LOG: str = "AZURE_SDK_LOGGING_MULTIRECORD"
 
-    def __init__(self, logger: Optional[logging.Logger] = None, *, logging_level: int = logging.INFO, **kwargs: Any):  # pylint: disable=unused-argument
+    def __init__(
+        self, logger: Optional[logging.Logger] = None, *, logging_level: int = logging.INFO, **kwargs: Any
+    ):  # pylint: disable=unused-argument
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         self.logging_level: int = logging_level
         self.allowed_query_params: Set[str] = set()
