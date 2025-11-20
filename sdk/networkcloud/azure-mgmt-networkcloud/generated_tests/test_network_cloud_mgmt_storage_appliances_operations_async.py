@@ -23,7 +23,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_storage_appliances_list_by_subscription(self, resource_group):
         response = self.client.storage_appliances.list_by_subscription(
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
     async def test_storage_appliances_list_by_resource_group(self, resource_group):
         response = self.client.storage_appliances.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.storage_appliances.get(
             resource_group_name=resource_group.name,
             storage_appliance_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,6 +67,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
                     "rackSlot": 0,
                     "serialNumber": "str",
                     "storageApplianceSkuId": "str",
+                    "caCertificate": {"hash": "str", "value": "str"},
                     "capacity": 0,
                     "capacityUsed": 0,
                     "clusterId": "str",
@@ -88,6 +89,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
                             "rotationPeriodDays": 0,
                             "secretArchiveReference": {
                                 "keyVaultId": "str",
+                                "keyVaultUri": "str",
                                 "secretName": "str",
                                 "secretVersion": "str",
                             },
@@ -106,7 +108,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
                     "type": "str",
                     "version": "str",
                 },
-                api_version="2025-02-01",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -120,7 +122,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
             await self.client.storage_appliances.begin_delete(
                 resource_group_name=resource_group.name,
                 storage_appliance_name="str",
-                api_version="2025-02-01",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -134,7 +136,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
             await self.client.storage_appliances.begin_update(
                 resource_group_name=resource_group.name,
                 storage_appliance_name="str",
-                api_version="2025-02-01",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -148,7 +150,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
             await self.client.storage_appliances.begin_disable_remote_vendor_management(
                 resource_group_name=resource_group.name,
                 storage_appliance_name="str",
-                api_version="2025-02-01",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -162,7 +164,25 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
             await self.client.storage_appliances.begin_enable_remote_vendor_management(
                 resource_group_name=resource_group.name,
                 storage_appliance_name="str",
-                api_version="2025-02-01",
+                api_version="2025-07-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_storage_appliances_begin_run_read_commands(self, resource_group):
+        response = await (
+            await self.client.storage_appliances.begin_run_read_commands(
+                resource_group_name=resource_group.name,
+                storage_appliance_name="str",
+                storage_appliance_run_read_commands_parameters={
+                    "commands": [{"command": "str", "arguments": ["str"]}],
+                    "limitTimeSeconds": 0,
+                },
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

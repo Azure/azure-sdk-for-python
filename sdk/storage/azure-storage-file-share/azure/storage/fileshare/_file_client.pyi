@@ -200,6 +200,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         validate_content: bool = False,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader: ...

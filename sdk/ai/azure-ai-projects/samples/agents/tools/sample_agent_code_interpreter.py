@@ -32,14 +32,13 @@ from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool,
 
 load_dotenv()
 
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-with project_client:
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     # [START tool_declaration]
     # Load the CSV file to be processed
@@ -51,7 +50,7 @@ with project_client:
     file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
     tool = CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))
     # [END tool_declaration]
-    
+
     print(f"File uploaded (id: {file.id})")
 
     # Create agent with code interpreter tool

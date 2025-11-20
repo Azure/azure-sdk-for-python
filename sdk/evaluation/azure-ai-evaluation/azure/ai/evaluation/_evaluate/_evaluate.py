@@ -1060,7 +1060,7 @@ def _build_internal_log_attributes(
     event_data: Dict[str, Any],
     metric_name: str,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]],
-    internal_log_attributes: Dict[str, str],
+    log_attributes: Dict[str, str],
 ) -> Dict[str, str]:
     """
     Build internal log attributes for OpenTelemetry logging.
@@ -1074,6 +1074,8 @@ def _build_internal_log_attributes(
     :return: Dictionary of internal log attributes
     :rtype: Dict[str, str]
     """
+    # Create a copy of the base log attributes
+    internal_log_attributes: Dict[str, str] = log_attributes.copy()
     # Add threshold if present
     if event_data.get("threshold"):
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
@@ -1104,6 +1106,12 @@ def _build_internal_log_attributes(
                         internal_log_attributes["gen_ai.evaluation.min_value"] = str(metric_config_detail["min_value"])
                     if metric_config_detail.get("max_value") is not None:
                         internal_log_attributes["gen_ai.evaluation.max_value"] = str(metric_config_detail["max_value"])
+                    if metric_config_detail.get("desirable_direction") is not None:
+                        internal_log_attributes["gen_ai.evaluation.desirable_direction"] = str(
+                            metric_config_detail["desirable_direction"]
+                        )
+                    if metric_config_detail.get("type") is not None:
+                        internal_log_attributes["gen_ai.evaluation.type"] = str(metric_config_detail["type"])
 
     return internal_log_attributes
 
@@ -2310,6 +2318,9 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     elif metric_key == "xpia_information_gathering":
         metric = "xpia_information_gathering"
         return metric
+    elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score":
+        metric = "f1_score"
+        return metric
     for expected_metric in metric_list:
         if metric_key.startswith(expected_metric):
             metric = expected_metric
@@ -2448,6 +2459,8 @@ def _calculate_aoai_evaluation_summary(
         for sample_data in sample_data_list:
             if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:
                 usage_data = sample_data["usage"]
+                if usage_data is None or not isinstance(usage_data, dict):
+                    continue
                 model_name = sample_data.get("model", "unknown") if usage_data.get("model", "unknown") else "unknown"
                 if _is_none_or_nan(model_name):
                     continue

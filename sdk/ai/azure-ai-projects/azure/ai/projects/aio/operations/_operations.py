@@ -88,7 +88,6 @@ from ...operations._operations import (
     build_memory_stores_delete_request,
     build_memory_stores_delete_scope_request,
     build_memory_stores_get_request,
-    build_memory_stores_get_update_result_request,
     build_memory_stores_list_request,
     build_memory_stores_search_memories_request,
     build_memory_stores_update_memories_request,
@@ -2482,7 +2481,7 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items_property": items,
+                "items": items,
                 "options": options,
                 "previous_search_id": previous_search_id,
                 "scope": scope,
@@ -2572,7 +2571,7 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items_property": items,
+                "items": items,
                 "previous_update_id": previous_update_id,
                 "scope": scope,
                 "update_delay": update_delay,
@@ -2628,7 +2627,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self,
         name: str,
         *,
@@ -2638,74 +2637,15 @@ class MemoryStoresOperations:
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :paramtype scope: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
-        :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
-         memory updates from where the last operation left off. Default value is None.
-        :paramtype previous_update_id: str
-        :keyword update_delay: Timeout period before processing the memory update in seconds.
-         If a new update request is received during this period, it will cancel the current request and
-         reset the timeout.
-         Set to 0 to immediately trigger the update without delay.
-         Defaults to 300 (5 minutes). Default value is None.
-        :paramtype update_delay: int
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
 
     @distributed_trace_async
     @api_version_validation(
@@ -2713,7 +2653,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -2810,78 +2750,6 @@ class MemoryStoresOperations:
         return AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "update_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def get_update_result(self, name: str, update_id: str, **kwargs: Any) -> _models.MemoryStoreUpdateResult:
-        """Get memory store update result.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param update_id: The ID of the memory update operation. Required.
-        :type update_id: str
-        :return: MemoryStoreUpdateResult. The MemoryStoreUpdateResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreUpdateResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.MemoryStoreUpdateResult] = kwargs.pop("cls", None)
-
-        _request = build_memory_stores_get_update_result_request(
-            name=name,
-            update_id=update_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.MemoryStoreUpdateResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
     @overload
     async def delete_scope(
