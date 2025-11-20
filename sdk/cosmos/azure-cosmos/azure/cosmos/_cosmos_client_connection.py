@@ -3168,7 +3168,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :raises SystemError: If the query compatibility mode is undefined.
         """
         if options is None:
-             options = {}
+            options = {}
         read_timeout = options.get("read_timeout")
         if read_timeout is not None:
             # we currently have a gap where kwargs are not getting passed correctly down the pipeline. In order to make

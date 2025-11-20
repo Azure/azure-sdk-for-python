@@ -136,10 +136,12 @@ class _QueryExecutionContextBase(object):
         # ExecuteAsync passes retry context parameters (timeout, operation start time, logger, etc.)
         # The callback need to accept these parameters even if unused
         # Removing **kwargs results in a TypeError when ExecuteAsync tries to pass these parameters
-        async def callback(**kwargs):  # Underscore indicates intentionally unused
+        async def callback(**kwargs):  # pylint: disable=unused-argument
             return await self._fetch_items_helper_no_retries(fetch_function)
 
-        return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback, **self._options)
+        return await _retry_utility_async.ExecuteAsync(
+            self._client, self._client._global_endpoint_manager, callback, **self._options
+        )
 
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):

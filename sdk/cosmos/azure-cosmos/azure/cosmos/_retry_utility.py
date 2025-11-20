@@ -247,9 +247,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
             # Now check timeout before retrying
             if timeout:
-               elapsed = time.time() - operation_start_time
-               if elapsed >= timeout:
-                  raise exceptions.CosmosClientTimeoutError(error=last_error)
+                elapsed = time.time() - operation_start_time
+                if elapsed >= timeout:
+                    raise exceptions.CosmosClientTimeoutError(error=last_error)
             # Wait for retry_after_in_milliseconds time before the next retry
             time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
 

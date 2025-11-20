@@ -245,9 +245,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
             # Check timeout only before retrying
             if timeout:
-               elapsed = time.time() - operation_start_time
-               if elapsed >= timeout:
-                   raise exceptions.CosmosClientTimeoutError(error=last_error)
+                elapsed = time.time() - operation_start_time
+                if elapsed >= timeout:
+                    raise exceptions.CosmosClientTimeoutError(error=last_error)
             # Wait for retry_after_in_milliseconds time before the next retry
             await asyncio.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
 

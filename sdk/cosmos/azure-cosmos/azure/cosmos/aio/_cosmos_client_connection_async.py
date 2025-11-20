@@ -3396,7 +3396,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             "isQueryPlanRequest": True,
             "supportedQueryFeatures": supported_query_features,
             "queryVersion": http_constants.Versions.QueryVersion,
-            "read_timeout": kwargs.pop("read_timeout", None)
         }
         if excluded_locations is not None:
             options["excludedLocations"] = excluded_locations

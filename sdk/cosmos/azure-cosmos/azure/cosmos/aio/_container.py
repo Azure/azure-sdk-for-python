@@ -98,12 +98,12 @@ class ContainerProxy:
     async def _get_properties_with_options(self, options: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         kwargs = {}
         if options:
-           if "excludedLocations" in options:
-               kwargs['excluded_locations'] = options['excludedLocations']
-           if Constants.OperationStartTime in options:
-               kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
-           if "timeout" in options:
-               kwargs['timeout'] = options['timeout']
+            if "excludedLocations" in options:
+                kwargs['excluded_locations'] = options['excludedLocations']
+            if Constants.OperationStartTime in options:
+                kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
+            if "timeout" in options:
+                kwargs['timeout'] = options['timeout']
 
         return await self._get_properties(**kwargs)
 

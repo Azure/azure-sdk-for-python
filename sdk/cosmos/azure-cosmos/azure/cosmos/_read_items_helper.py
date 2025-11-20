@@ -23,6 +23,7 @@ import logging
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Tuple, Any, Optional, TYPE_CHECKING, Mapping
+
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _base, exceptions
@@ -66,6 +67,7 @@ class ReadItemsHelperSync:
         :return: A list of the retrieved items in the same order as the input.
         :rtype: ~azure.cosmos.CosmosList
         """
+
         if not self.items:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 

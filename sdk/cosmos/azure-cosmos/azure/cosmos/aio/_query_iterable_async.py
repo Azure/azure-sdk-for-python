@@ -77,8 +77,6 @@ class QueryIterable(AsyncPageIterator):
         self._options = options
         if continuation_token:
             options['continuation'] = continuation_token
-        # Capture timeout and start time
-        self.timeout = options.get('timeout')
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
@@ -107,18 +105,19 @@ class QueryIterable(AsyncPageIterator):
         :return: List of results.
         :rtype: list
         """
+        timeout = self._options.get('timeout')
         if 'partitionKey' in self._options and asyncio.iscoroutine(self._options['partitionKey']):
             self._options['partitionKey'] = await self._options['partitionKey']
 
         # Check timeout before fetching next block
 
-        if self.timeout and self._options.get(_Constants.TimeoutScope) != TimeoutScope.OPERATION:
+        if timeout and self._options.get(_Constants.TimeoutScope) != TimeoutScope.OPERATION:
             self._options[_Constants.OperationStartTime] = time.time()
 
         # Check timeout before fetching next block
-        if self.timeout:
+        if timeout:
             elapsed = time.time() - self._options.get(_Constants.OperationStartTime)
-            if elapsed >= self.timeout:
+            if elapsed >= timeout:
                 raise exceptions.CosmosClientTimeoutError()
 
         block = await self._ex_context.fetch_next_block()

@@ -38,7 +38,8 @@ class _Constants:
     UserConsistencyPolicy: Literal["userConsistencyPolicy"] = "userConsistencyPolicy"
     DefaultConsistencyLevel: Literal["defaultConsistencyLevel"] = "defaultConsistencyLevel"
     OperationStartTime: Literal["operationStartTime"] = "operationStartTime"
-    TimeoutScope: Literal["timeoutScope"] = "timeoutScope" # whether to apply timeout to the whole logical operation or just a page request
+    # whether to apply timeout to the whole logical operation or just a page request
+    TimeoutScope: Literal["timeoutScope"] = "timeoutScope"
 
     # GlobalDB related constants
     WritableLocations: Literal["writableLocations"] = "writableLocations"
