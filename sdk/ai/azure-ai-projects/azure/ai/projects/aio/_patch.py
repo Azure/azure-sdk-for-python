@@ -254,7 +254,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         return client
 
-    def as_agent_framework_client(
+    def get_agent_framework_client(
         self,
         *,
         agent_name: str | None = None,
@@ -262,7 +262,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         conversation_id: str | None = None,
         **kwargs: Any,
     ) -> Any:
-        """Create a new instance of AzureAIClient with the same configuration as the AIProjectClient.
+        """Get a new authenticated instance of AzureAIClient for `Agent Framework `.
 
         :param agent_name: The name to use when creating new agents or using existing agents.
         :type agent_name: str or None
@@ -289,7 +289,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 async with (
                     AzureCliCredential() as credential,
                     AIProjectClient(endpoint="https://your-project-endpoint", credential=credential) as project_client,
-                    project_client.as_agent_framework_client(agent_name="my-agent").create_agent(
+                    project_client.get_agent_framework_client(agent_name="my-agent").create_agent(
                         instructions="You are a helpful assistant."
                     ) as agent,
                 ):
