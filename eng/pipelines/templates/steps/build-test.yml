@@ -67,7 +67,6 @@ steps:
   - ${{ parameters.BeforeTestSteps }}
 
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
-
     - task: AzurePowerShell@5
       displayName: Run Tests (AzurePowerShell@5)
       env:
@@ -122,7 +121,7 @@ steps:
           --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
           --checks="${{ parameters.ToxTestEnv }}" `
-          --injected-packages="${{ parameters.InjectedPackages }}" `
+          --injected-packages="${{ parameters.InjectedPackages }}"
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
       displayName: Run Tests
