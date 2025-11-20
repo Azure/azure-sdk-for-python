@@ -7,6 +7,7 @@ import pytest
 import copy
 import json
 import re
+import time
 from datetime import datetime, timezone
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -82,7 +83,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     # method: set_configuration_setting
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_set_configuration_setting(self, appconfiguration_connection_string):
+    async def test_set_existing_configuration_setting_label_etag(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
             to_set_kv = self.create_config_setting()
             to_set_kv.value = to_set_kv.value + "a"
@@ -90,7 +91,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             set_kv = await client.set_configuration_setting(to_set_kv)
             assert (
                 to_set_kv.key == set_kv.key
-                and to_set_kv.label == to_set_kv.label
+                and to_set_kv.label == set_kv.label
                 and to_set_kv.value == set_kv.value
                 and to_set_kv.content_type == set_kv.content_type
                 and to_set_kv.tags == set_kv.tags
@@ -100,7 +101,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_set_configuration1_setting_with_wrong_etag(self, appconfiguration_connection_string):
+    async def test_set_configuration_setting_wrong_etag(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
             to_set_kv = self.create_config_setting()
             to_set_kv.value = to_set_kv.value + "a"
@@ -126,6 +127,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             assert fetched_kv.label is None
             await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
+    # method: get_configuration_setting
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_get_configuration_setting(self, appconfiguration_connection_string):
@@ -227,7 +229,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
-        items = await self.convert_to_list(self.client.list_configuration_settings(KEY, LABEL))
+        items = await self.convert_to_list(self.client.list_configuration_settings(key_filter=KEY, label_filter=LABEL))
         assert len(items) == 1
         assert all(x.key == KEY and x.label == LABEL for x in items)
 
@@ -275,7 +277,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
-        items = await self.convert_to_list(self.client.list_configuration_settings(KEY))
+        items = await self.convert_to_list(self.client.list_configuration_settings(key_filter=KEY))
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
         await self.tear_down()
@@ -385,7 +387,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_no_label(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_null_label(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
@@ -399,14 +401,14 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         recorded_variables = kwargs.pop("variables", {})
-        recorded_variables.setdefault("timestamp", str(datetime.utcnow()))
+        recorded_variables.setdefault("timestamp", str(datetime.now(timezone.utc)))
 
         async with self.create_client(appconfiguration_connection_string) as client:
             # Confirm all configuration settings are cleaned up
             current_config_settings = await self.convert_to_list(client.list_configuration_settings())
             if len(current_config_settings) != 0:
                 for config_setting in current_config_settings:
-                    client.delete_configuration_setting(config_setting)
+                    await client.delete_configuration_setting(config_setting)
 
             revision = await self.convert_to_list(
                 client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
@@ -426,12 +428,12 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
-        to_list1 = self.create_config_setting()
+        to_list = self.create_config_setting()
         items = await self.convert_to_list(
-            self.client.list_revisions(label_filter=to_list1.label, key_filter=to_list1.key)
+            self.client.list_revisions(label_filter=to_list.label, key_filter=to_list.key)
         )
         assert len(items) >= 2
-        assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
+        assert all(x.key == to_list.key and x.label == to_list.label for x in items)
         await self.tear_down()
 
     @app_config_decorator_async
@@ -1000,11 +1002,16 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_create_snapshot(self, appconfiguration_connection_string):
+    async def test_create_snapshot(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
-        snapshot_name = self.get_resource_name("snapshot")
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
@@ -1018,14 +1025,20 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         self._assert_snapshots(received_snapshot, created_snapshot)
 
         await self.tear_down()
+        return variables
 
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_update_snapshot_status(self, appconfiguration_connection_string):
+    async def test_update_snapshot_status(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
-        snapshot_name = self.get_resource_name("snapshot")
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
@@ -1038,14 +1051,20 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert recovered_snapshot.status == "ready"
 
         await self.tear_down()
+        return variables
 
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_update_snapshot_status_with_etag(self, appconfiguration_connection_string):
+    async def test_update_snapshot_status_with_etag(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
-        snapshot_name = self.get_resource_name("snapshot")
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
@@ -1060,10 +1079,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert archived_snapshot.status == "archived"
 
         await self.tear_down()
+        return variables
 
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_list_snapshots(self, appconfiguration_connection_string):
+    async def test_list_snapshots(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
@@ -1071,8 +1091,12 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         result = await self.convert_to_list(self.client.list_snapshots())
         initial_snapshots = len(result)
 
-        snapshot_name1 = self.get_resource_name("snapshot1")
-        snapshot_name2 = self.get_resource_name("snapshot2")
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name1 = f"{self.get_resource_name('snapshot1')}_{dynamic_snapshot_name_postfix}"
+        snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
+
         filters1 = [ConfigurationSettingsFilter(key=KEY)]
         response1 = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1)
         created_snapshot1 = await response1.result()
@@ -1086,14 +1110,20 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(result) == initial_snapshots + 2
 
         await self.tear_down()
+        return variables
 
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
+    async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_connection_string)
-        snapshot_name1 = self.get_resource_name("snapshot1")
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name1 = f"{self.get_resource_name('snapshot1')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters)
         created_snapshot = await response.result()
@@ -1102,7 +1132,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name1))
         assert len(items) == 1
 
-        snapshot_name2 = self.get_resource_name("snapshot2")
+        snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
+
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL, tags=["tag1=invalid"])]
         response = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters)
         created_snapshot = await response.result()
@@ -1112,6 +1143,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(items) == 0
 
         await self.tear_down()
+        return variables
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -1225,9 +1257,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 continuation_token = link[1 : link.index(">")] if link else None
 
             # clean up
-            config_settings = client.list_configuration_settings()
-            async for config_setting in config_settings:
-                await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+            await self.tear_down()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -1249,13 +1279,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             in str(error.value)
         )
 
-        config_settings = self.client.list_configuration_settings()
-        async for config_setting in config_settings:
-            await self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+        await self.tear_down()
         rep = await self.convert_to_list(self.client.list_labels())
         assert len(list(rep)) == 0
 
-        self.client.close()
+        await self.client.close()
 
 
 class TestAppConfigurationClientUnitTest:
