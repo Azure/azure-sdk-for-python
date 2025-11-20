@@ -254,6 +254,64 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         return client
 
+    def as_agent_framework_client(
+        self,
+        *,
+        agent_name: str | None = None,
+        agent_version: str | None = None,
+        conversation_id: str | None = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Create a new instance of AzureAIClient with the same configuration as the AIProjectClient.
+
+        :param agent_name: The name to use when creating new agents or using existing agents.
+        :type agent_name: str or None
+        :param agent_version:  The version of the agent to use.
+         If not provided, the Agent Framework client will use the latest.
+        :type agent_version: str or None
+        :param conversation_id: Default conversation ID to use for conversations.
+         Can be overridden by conversation_id property when making a request.
+        :type conversation_id: str or None
+        :param kwargs: Additional keyword arguments to pass to the AzureAIClient constructor.
+        :type kwargs: Any
+        :return: A new instance of a Agent Framework AzureAIClient.
+        :rtype: agent_framework.azure.AzureAIClient
+
+        :raises ImportError: If the 'agent-framework-azure-ai' package is not installed.
+
+        :example:
+
+            .. code-block:: python
+
+                from azure.ai.projects.aio import AIProjectClient
+                from azure.identity.aio import AzureCliCredential
+
+                async with (
+                    AzureCliCredential() as credential,
+                    AIProjectClient(endpoint="https://your-project-endpoint", credential=credential) as project_client,
+                    project_client.as_agent_framework_client(agent_name="my-agent").create_agent(
+                        instructions="You are a helpful assistant."
+                    ) as agent,
+                ):
+                    print((await agent.run("Hello, how can you assist me today?")).text)
+
+        """
+        try:
+            from agent_framework.azure import AzureAIClient
+        except ImportError:
+            raise ImportError(
+                "To use the Agent Framework Client, please install the 'agent-framework-azure-ai' package: "
+                "`pip install agent-framework-azure-ai`"
+            ) from None
+
+        return AzureAIClient(
+            project_client=self,
+            agent_name=agent_name,
+            agent_version=agent_version,
+            conversation_id=conversation_id,
+            **kwargs,
+        )
+
 
 __all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
 
