@@ -1129,9 +1129,10 @@ class TestAppConfigurationClient(AppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+            self.client = client
             # prepare 200 configuration settings
             for i in range(200):
-                client.add_configuration_setting(
+                self.client.add_configuration_setting(
                     ConfigurationSetting(
                         key=f"sample_key_{str(i)}",
                         label=f"sample_label_{str(i)}",
@@ -1141,7 +1142,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
             # get page etags
             page_etags = []
-            items = client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
             for page in iterator:
                 etag = iterator.etag
@@ -1158,7 +1159,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
                     "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
                 },
             )
-            first_page_response = client.send_request(request)
+            first_page_response = self.client.send_request(request)
             assert first_page_response.status_code == 304
 
             link = first_page_response.headers.get("Link", None)
@@ -1169,14 +1170,14 @@ class TestAppConfigurationClient(AppConfigTestCase):
                     method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
                 )
                 index += 1
-                response = client.send_request(request)
+                response = self.client.send_request(request)
                 assert response.status_code == 304
 
                 link = response.headers.get("Link", None)
                 continuation_token = link[1 : link.index(">")] if link else None
 
             # do some changes
-            client.add_configuration_setting(
+            self.client.add_configuration_setting(
                 ConfigurationSetting(
                     key="sample_key_201",
                     label="sample_label_202",
@@ -1186,7 +1187,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
             # get page etags after updates
             new_page_etags = []
-            items = client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
             for page in iterator:
                 etag = iterator.etag
@@ -1207,7 +1208,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
                     "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
                 },
             )
-            first_page_response = client.send_request(request)
+            first_page_response = self.client.send_request(request)
             # 304 means the page doesn't have changes.
             assert first_page_response.status_code == 304
 
@@ -1219,13 +1220,14 @@ class TestAppConfigurationClient(AppConfigTestCase):
                     method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
                 )
                 index += 1
-                response = client.send_request(request)
+                response = self.client.send_request(request)
 
                 # 200 means the page has changes.
                 assert response.status_code == 200
                 items = response.json()["items"]
                 for item in items:
-                    print(f"Key: {item['key']}, Label: {item['label']}")
+                    # Read the keys
+                    pass
 
                 link = response.headers.get("Link", None)
                 continuation_token = link[1 : link.index(">")] if link else None
