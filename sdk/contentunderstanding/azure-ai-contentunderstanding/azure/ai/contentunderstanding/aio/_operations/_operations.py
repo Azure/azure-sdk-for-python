@@ -617,7 +617,8 @@ class _ContentUnderstandingClientOperationsMixin(
         response = pipeline_response.http_response
 
         # Accept both 201 (Created) and 202 (Accepted) for copy analyzer operation
-        # Service may return 201 instead of 202 for this LRO
+        # Service currently returns 201 but may return 202 in the future
+        # This ensures compatibility with both current and future service behavior
         if response.status_code not in [201, 202]:
             try:
                 await response.read()  # Load the body in memory and close the socket
