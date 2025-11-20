@@ -19,7 +19,7 @@ def pytest_collection_modifyitems(items):
         if "tests\\evaluation" in item.fspath.strpath or "tests/evaluation" in item.fspath.strpath:
             item.add_marker(
                 pytest.mark.skip(
-                    reason="Skip running Evaluations tests in PR pipeline until we can sort out the failures related to AI Foundry project settings"
+                    reason="Skip running Evaluations tests in PR pipeline until we can sort out the failures related to Microsoft Foundry project settings"
                 )
             )
 
@@ -95,11 +95,11 @@ def add_sanitizers(test_proxy, sanitized_values):
     sanitize_url_paths()
 
     # Sanitize API key from service response (this includes Application Insights connection string)
-    add_body_key_sanitizer(json_path="credentials.key", value="Sanitized-api-key")
+    add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
 
     # Sanitize SAS URI from Datasets get credential response
-    add_body_key_sanitizer(json_path="blobReference.credential.sasUri", value="Sanitized-sas-uri")
-    add_body_key_sanitizer(json_path="blobReferenceForConsumption.credential.sasUri", value="Sanitized-sas-uri")
+    add_body_key_sanitizer(json_path="blobReference.credential.sasUri", value="sanitized-sas-uri")
+    add_body_key_sanitizer(json_path="blobReferenceForConsumption.credential.sasUri", value="sanitized-sas-uri")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name

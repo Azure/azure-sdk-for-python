@@ -1,5 +1,16 @@
 # Release History
 
+## 41.0.0b2 (2025-11-17)
+
+### Features Added
+
+  - Model `ManagedClusterIngressProfile` added property `application_load_balancer`
+  - Model `ManagedClusterIngressProfileWebAppRouting` added property `default_domain`
+  - Enum `Mode` added member `NFTABLES`
+  - Enum `WorkloadRuntime` added member `KATA_VM_ISOLATION`
+  - Added model `ManagedClusterIngressDefaultDomainProfile`
+  - Added model `ManagedClusterIngressProfileApplicationLoadBalancer`
+
 ## 40.1.0 (2025-10-31)
 
 ### Features Added
