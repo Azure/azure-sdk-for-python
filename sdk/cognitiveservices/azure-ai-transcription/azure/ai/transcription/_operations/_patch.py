@@ -57,7 +57,7 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
             options.audio_url = audio_url
 
         # Create request content without audio file (service will fetch from URL)
-        body = _models.TranscriptionContent(options=options, audio=None)
+        body = _models.TranscriptionContent(definition=options, audio=None)
 
         # Call the underlying protocol method
         return super().transcribe(body, **kwargs)

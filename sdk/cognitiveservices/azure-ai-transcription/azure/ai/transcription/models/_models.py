@@ -247,33 +247,31 @@ class TranscribedWord(_Model):
 class TranscriptionContent(_Model):
     """Request model for transcription operation.
 
-    :ivar options: Metadata for a transcription request. This field contains a JSON-serialized
-     object of type ``TranscriptionOptions``.
-    :vartype options: ~azure.ai.transcription.models.TranscriptionOptions
+    :ivar definition: Metadata for a transcription request. This field contains a JSON-serialized
+     object of type ``TranscriptionOptions``. Required.
+    :vartype definition: ~azure.ai.transcription.models.TranscriptionOptions
     :ivar audio: The content of the audio file to be transcribed. The audio file must be shorter
      than 2 hours in audio duration and smaller than 250 MB in size. Optional if audioUrl is
-     provided in the definition.
+     provided in the definition. Required.
     :vartype audio: ~azure.ai.transcription._utils.utils.FileType
     """
 
-    options: Optional["_models.TranscriptionOptions"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    definition: "_models.TranscriptionOptions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metadata for a transcription request. This field contains a JSON-serialized object of type
-     ``TranscriptionOptions``."""
-    audio: Optional[FileType] = rest_field(
+     ``TranscriptionOptions``. Required."""
+    audio: FileType = rest_field(
         visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
     )
     """The content of the audio file to be transcribed. The audio file must be shorter than 2 hours in
      audio duration and smaller than 250 MB in size. Optional if audioUrl is provided in the
-     definition."""
+     definition. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        options: Optional["_models.TranscriptionOptions"] = None,
-        audio: Optional[FileType] = None,
+        definition: "_models.TranscriptionOptions",
+        audio: FileType,
     ) -> None: ...
 
     @overload

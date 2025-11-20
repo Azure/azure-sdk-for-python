@@ -19,7 +19,7 @@ class TestTranscription(TranscriptionClientTestBase):
         response = client.transcribe(
             body={
                 "audio": "filetype",
-                "options": {
+                "definition": {
                     "audioUrl": "str",
                     "channels": [0],
                     "diarization": {"enabled": bool, "maxSpeakers": 0},
