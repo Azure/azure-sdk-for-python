@@ -108,7 +108,7 @@ class TestPerPartitionAutomaticFailover:
         # taken care of on the service.
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = self.setup_info(error_lambda, 1,
-                                                                                                        write_operation == BATCH, exclude_regions=exclude_regions)
+                                                                                                        write_operation == BATCH, exclude_client_regions=exclude_regions)
         container = setup['col']
         fault_injection_container = custom_setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
@@ -222,7 +222,7 @@ class TestPerPartitionAutomaticFailover:
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = self.setup_info(error_lambda, max_count=1,
                                                                                                         is_batch=write_operation==BATCH,
-                                                                                                        session_error=True, exclude_regions=exclude_regions)
+                                                                                                        session_error=True, exclude_client_regions=exclude_regions)
         container = setup['col']
         fault_injection_container = custom_setup['col']
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
