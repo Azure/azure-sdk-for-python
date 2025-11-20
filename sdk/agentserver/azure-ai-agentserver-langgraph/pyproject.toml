@@ -20,11 +20,9 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "azure-ai-agentserver-core>=1.0.0b5",
-    "langchain>0.3.5",
+    "langchain>0.3.20",
     "langchain-openai>0.3.10",
-    "langchain-azure-ai[opentelemetry]>=0.1.4",
-    "langgraph>0.5.0",
-    "opentelemetry-exporter-otlp-proto-http",
+    "langchain-azure-ai[opentelemetry]>=0.1.8",
 ]
 
 [build-system]
