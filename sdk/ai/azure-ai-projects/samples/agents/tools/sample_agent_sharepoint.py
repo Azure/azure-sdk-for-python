@@ -67,10 +67,12 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
+    user_input = input("Enter your question corresponded to the documents in SharePoint:\n")
+
     # Send initial request that will trigger the SharePoint tool
     stream_response = openai_client.responses.create(
         stream=True,
-        input="Please summarize the last meeting notes stored in SharePoint.",
+        input=user_input,
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
 

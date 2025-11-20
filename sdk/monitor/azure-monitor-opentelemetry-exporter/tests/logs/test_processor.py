@@ -5,7 +5,7 @@ from unittest import mock
 from opentelemetry.sdk import _logs
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry._logs.severity import SeverityNumber
-from opentelemetry.trace import TraceFlags
+from opentelemetry.trace import TraceFlags, set_span_in_context, SpanContext, NonRecordingSpan
 
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
     AzureMonitorLogExporter,
@@ -55,7 +55,6 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             options={}
         )
         
-        mock_context = mock.Mock()
         mock_span_context = mock.Mock()
         mock_span_context.is_valid = True
         mock_span_context.trace_flags.sampled = False
@@ -63,16 +62,22 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         mock_span = mock.Mock()
         mock_span.get_span_context.return_value = mock_span_context
 
+        span_context = SpanContext(
+            trace_id=125960616039069540489478540494783893221,
+            span_id=2909973987304607650,
+            trace_flags=TraceFlags.DEFAULT,
+            is_remote=False,
+        )
+        span = NonRecordingSpan(span_context)
+        ctx = set_span_in_context(span)
+
         log_record = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="INFO",
-                trace_flags=TraceFlags.DEFAULT,
                 severity_number=SeverityNumber.INFO,
                 body="Test log",
-                context=mock_context
             ),
             InstrumentationScope("test_name"),
         )
@@ -89,8 +94,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             self._exporter,
             options={"enable_trace_based_sampling_for_logs": True}
         )
-        
-        mock_context = mock.Mock()
+
         mock_span_context = mock.Mock()
         mock_span_context.is_valid = True
         mock_span_context.trace_flags.sampled = False
@@ -98,16 +102,22 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         mock_span = mock.Mock()
         mock_span.get_span_context.return_value = mock_span_context
 
+        span_context = SpanContext(
+            trace_id=125960616039069540489478540494783893221,
+            span_id=2909973987304607650,
+            trace_flags=TraceFlags.DEFAULT,
+            is_remote=False,
+        )
+        span = NonRecordingSpan(span_context)
+        ctx = set_span_in_context(span)
+
         log_record = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="INFO",
-                trace_flags=TraceFlags.DEFAULT,
                 severity_number=SeverityNumber.INFO,
                 body="Test log",
-                context=mock_context
             ),
             InstrumentationScope("test_name"),
         )
@@ -125,25 +135,30 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             self._exporter,
             options={"enable_trace_based_sampling_for_logs": True}
         )
-        
-        mock_context = mock.Mock()
+
         mock_span_context = mock.Mock()
         mock_span_context.is_valid = True
         mock_span_context.trace_flags.sampled = True
 
         mock_span = mock.Mock()
         mock_span.get_span_context.return_value = mock_span_context
+        
+        span_context = SpanContext(
+            trace_id=125960616039069540489478540494783893221,
+            span_id=2909973987304607650,
+            trace_flags=TraceFlags.SAMPLED,
+            is_remote=False,
+        )
+        span = NonRecordingSpan(span_context)
+        ctx = set_span_in_context(span)
 
         log_record = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="INFO",
-                trace_flags=TraceFlags.SAMPLED,
                 severity_number=SeverityNumber.INFO,
                 body="Test log",
-                context=mock_context
             ),
             InstrumentationScope("test_name"),
         )
@@ -160,24 +175,29 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             self._exporter,
             options={"enable_trace_based_sampling_for_logs": True}
         )
-        
-        mock_context = mock.Mock()
+
         mock_span_context = mock.Mock()
         mock_span_context.is_valid = False
 
         mock_span = mock.Mock()
         mock_span.get_span_context.return_value = mock_span_context
 
+        span_context = SpanContext(
+            trace_id=125960616039069540489478540494783893221,
+            span_id=2909973987304607650,
+            trace_flags=TraceFlags.DEFAULT,
+            is_remote=False,
+        )
+        span = NonRecordingSpan(span_context)
+        ctx = set_span_in_context(span)
+
         log_record = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="INFO",
-                trace_flags=TraceFlags.DEFAULT,
                 severity_number=SeverityNumber.INFO,
                 body="Test log",
-                context=mock_context
             ),
             InstrumentationScope("test_name"),
         )
@@ -198,13 +218,10 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         log_record = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=None,
                 severity_text="INFO",
-                trace_flags=TraceFlags.DEFAULT,
                 severity_number=SeverityNumber.INFO,
                 body="Test log",
-                context=None
             ),
             InstrumentationScope("test_name"),
         )
@@ -220,8 +237,6 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             self._exporter,
             options={"enable_trace_based_sampling_for_logs": True}
         )
-        
-        mock_context = mock.Mock()
 
         # Create unsampled span context # cspell:disable-line
         mock_span_context_unsampled = mock.Mock() # cspell:disable-line
@@ -238,31 +253,43 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
 
         mock_span_sampled = mock.Mock()
         mock_span_sampled.get_span_context.return_value = mock_span_context_sampled
+        
+        span_context = SpanContext(
+            trace_id=125960616039069540489478540494783893221,
+            span_id=2909973987304607650,
+            trace_flags=TraceFlags.DEFAULT,
+            is_remote=False,
+        )
+        span = NonRecordingSpan(span_context)
+        ctx = set_span_in_context(span)
 
         log_record_unsampled = _logs.LogData( # cspell:disable-line
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="INFO",
-                trace_flags=TraceFlags.DEFAULT,
                 severity_number=SeverityNumber.INFO,
                 body="Unsampled log", # cspell:disable-line
-                context=mock_context
             ),
             InstrumentationScope("test_name"),
         )
+        
+        span_context = SpanContext(
+            trace_id=125960616039069540489478540494783893221,
+            span_id=2909973987304607650,
+            trace_flags=TraceFlags.SAMPLED,
+            is_remote=False,
+        )
+        span = NonRecordingSpan(span_context)
+        ctx = set_span_in_context(span)
 
         log_record_sampled = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419457,
-                trace_id=125960616039069540489478540494783893222,
-                span_id=2909973987304607651,
+                context=ctx,
                 severity_text="INFO",
-                trace_flags=TraceFlags.SAMPLED,
                 severity_number=SeverityNumber.INFO,
                 body="Sampled log",
-                context=mock_context
             ),
             InstrumentationScope("test_name"),
         )
