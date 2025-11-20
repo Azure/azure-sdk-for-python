@@ -325,6 +325,49 @@ class AgentDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AgentDetails(_Model):
+    """AgentDetails.
+
+    :ivar object: The object type, which is always 'agent'. Required. Default value is "agent".
+    :vartype object: str
+    :ivar id: The unique identifier of the agent. Required.
+    :vartype id: str
+    :ivar name: The name of the agent. Required.
+    :vartype name: str
+    :ivar versions: The latest version of the agent. Required.
+    :vartype versions: ~azure.ai.projects.models.AgentObjectVersions
+    """
+
+    object: Literal["agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always 'agent'. Required. Default value is \"agent\"."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the agent. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the agent. Required."""
+    versions: "_models.AgentObjectVersions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The latest version of the agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        versions: "_models.AgentObjectVersions",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["agent"] = "agent"
+
+
 class BaseCredentials(_Model):
     """A base class for connection credentials.
 
@@ -425,64 +468,21 @@ class AgentId(_Model):
         self.type: Literal["agent_id"] = "agent_id"
 
 
-class AgentObject(_Model):
-    """AgentObject.
-
-    :ivar object: The object type, which is always 'agent'. Required. Default value is "agent".
-    :vartype object: str
-    :ivar id: The unique identifier of the agent. Required.
-    :vartype id: str
-    :ivar name: The name of the agent. Required.
-    :vartype name: str
-    :ivar versions: The latest version of the agent. Required.
-    :vartype versions: ~azure.ai.projects.models.AgentObjectVersions
-    """
-
-    object: Literal["agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type, which is always 'agent'. Required. Default value is \"agent\"."""
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique identifier of the agent. Required."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the agent. Required."""
-    versions: "_models.AgentObjectVersions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The latest version of the agent. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        name: str,
-        versions: "_models.AgentObjectVersions",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.object: Literal["agent"] = "agent"
-
-
 class AgentObjectVersions(_Model):
     """AgentObjectVersions.
 
     :ivar latest: Required.
-    :vartype latest: ~azure.ai.projects.models.AgentVersionObject
+    :vartype latest: ~azure.ai.projects.models.AgentVersionDetails
     """
 
-    latest: "_models.AgentVersionObject" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    latest: "_models.AgentVersionDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        latest: "_models.AgentVersionObject",
+        latest: "_models.AgentVersionDetails",
     ) -> None: ...
 
     @overload
@@ -607,8 +607,8 @@ class AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator="agent"):
         self.type = EvaluationTaxonomyInputType.AGENT  # type: ignore
 
 
-class AgentVersionObject(_Model):
-    """AgentVersionObject.
+class AgentVersionDetails(_Model):
+    """AgentVersionDetails.
 
     :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
@@ -5486,9 +5486,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A filter to apply. Is either a ComparisonFilter type or a CompoundFilter type."""
 
     @overload
@@ -8369,7 +8367,7 @@ class MemoryStoreDeleteScopeResult(_Model):
         self.object: Literal["memory_store.scope.deleted"] = "memory_store.scope.deleted"
 
 
-class MemoryStoreObject(_Model):
+class MemoryStoreDetails(_Model):
     """A memory store that can store and retrieve user memories.
 
     :ivar object: The object type, which is always 'memory_store'. Required. Default value is
