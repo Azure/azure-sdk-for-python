@@ -114,9 +114,10 @@ class ConversationRequestItem(_Model):
     """Base for any response item; discriminated by ``type``.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    FunctionCallItem, FunctionCallOutputItem, MessageItem
+    FunctionCallItem, FunctionCallOutputItem, MCPApprovalResponseRequestItem, MessageItem
 
-    :ivar type: Required. Known values are: "message", "function_call", and "function_call_output".
+    :ivar type: Required. Known values are: "message", "function_call", "function_call_output",
+     "mcp_list_tools", "mcp_call", "mcp_approval_request", and "mcp_approval_response".
     :vartype type: str or ~azure.ai.voicelive.models.ItemType
     :ivar id:
     :vartype id: str
@@ -124,7 +125,8 @@ class ConversationRequestItem(_Model):
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"message\", \"function_call\", and \"function_call_output\"."""
+    """Required. Known values are: \"message\", \"function_call\", \"function_call_output\",
+     \"mcp_list_tools\", \"mcp_call\", \"mcp_approval_request\", and \"mcp_approval_response\"."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -1111,7 +1113,7 @@ class ClientEvent(_Model):
      "input_audio.turn.start", "input_audio.turn.append", "input_audio.turn.end",
      "input_audio.turn.cancel", "input_audio.clear", "conversation.item.create",
      "conversation.item.retrieve", "conversation.item.truncate", "conversation.item.delete",
-     "response.create", "response.cancel", and "session.avatar.connect".
+     "response.create", "response.cancel", "session.avatar.connect", and "mcp_approval_response".
     :vartype type: str or ~azure.ai.voicelive.models.ClientEventType
     :ivar event_id:
     :vartype event_id: str
@@ -1124,7 +1126,8 @@ class ClientEvent(_Model):
      \"input_audio.turn.start\", \"input_audio.turn.append\", \"input_audio.turn.end\",
      \"input_audio.turn.cancel\", \"input_audio.clear\", \"conversation.item.create\",
      \"conversation.item.retrieve\", \"conversation.item.truncate\", \"conversation.item.delete\",
-     \"response.create\", \"response.cancel\", and \"session.avatar.connect\"."""
+     \"response.create\", \"response.cancel\", \"session.avatar.connect\", and
+     \"mcp_approval_response\"."""
     event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -1986,15 +1989,15 @@ class Tool(_Model):
     """The base representation of a voicelive tool definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    FunctionTool
+    FunctionTool, MCPServer
 
-    :ivar type: Required. "function"
+    :ivar type: Required. Known values are: "function" and "mcp".
     :vartype type: str or ~azure.ai.voicelive.models.ToolType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. \"function\""""
+    """Required. Known values are: \"function\" and \"mcp\"."""
 
     @overload
     def __init__(
@@ -2280,11 +2283,154 @@ class LogProbProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class MCPApprovalResponseRequestItem(ConversationRequestItem, discriminator="mcp_approval_response"):
+    """A request item that represents a response to an MCP approval request.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: The type of the item. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MCP_APPROVAL_RESPONSE
+    :ivar approval_request_id: The ID of the approval request. Required.
+    :vartype approval_request_id: str
+    :ivar approve: Whether the tool call was approved. Required.
+    :vartype approve: bool
+    """
+
+    type: Literal[ItemType.MCP_APPROVAL_RESPONSE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the item. Required."""
+    approval_request_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the approval request. Required."""
+    approve: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the tool call was approved. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        approval_request_id: str,
+        approve: bool,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.MCP_APPROVAL_RESPONSE  # type: ignore
+
+
+class MCPServer(Tool, discriminator="mcp"):
+    """The definition of an MCP server as used by the voicelive endpoint.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MCP
+    :ivar server_label: Required.
+    :vartype server_label: str
+    :ivar server_url: Required.
+    :vartype server_url: str
+    :ivar authorization:
+    :vartype authorization: str
+    :ivar headers:
+    :vartype headers: dict[str, str]
+    :ivar allowed_tools:
+    :vartype allowed_tools: list[str]
+    :ivar require_approval: Is either a Union[str, "_models.MCPApprovalType"] type or a {str:
+     [str]} type.
+    :vartype require_approval: str or ~azure.ai.voicelive.models.MCPApprovalType or dict[str,
+     list[str]]
+    """
+
+    type: Literal[ToolType.MCP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    server_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    allowed_tools: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    require_approval: Optional[Union[str, "_models.MCPApprovalType", dict[str, list[str]]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is either a Union[str, \"_models.MCPApprovalType\"] type or a {str: [str]} type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        server_label: str,
+        server_url: str,
+        authorization: Optional[str] = None,
+        headers: Optional[dict[str, str]] = None,
+        allowed_tools: Optional[list[str]] = None,
+        require_approval: Optional[Union[str, "_models.MCPApprovalType", dict[str, list[str]]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.MCP  # type: ignore
+
+
+class MCPTool(_Model):
+    """Represents a mcp tool definition.
+
+    :ivar name: The name of the tool. Required.
+    :vartype name: str
+    :ivar description: The description of the tool.
+    :vartype description: str
+    :ivar input_schema: The input schema for the tool. Required.
+    :vartype input_schema: any
+    :ivar annotations: The annotations for the tool.
+    :vartype annotations: any
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the tool. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the tool."""
+    input_schema: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The input schema for the tool. Required."""
+    annotations: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The annotations for the tool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        input_schema: Any,
+        description: Optional[str] = None,
+        annotations: Optional[Any] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class OpenAIVoice(_Model):
     """OpenAI voice configuration with explicit type field.
 
     This provides a unified interface for OpenAI voices, complementing the
-    existing string-based OpenAIVoiceName for backward compatibility.
+    existing string-based OAIVoice for backward compatibility.
 
     :ivar type: The type of the voice. Required. Default value is "openai".
     :vartype type: str
@@ -2488,12 +2634,12 @@ class RequestSession(_Model):
     """Optional instructions to guide the model's behavior throughout the session."""
     input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Input audio sampling rate in Hz. Available values:
-     
-     
-     
-     * For pcm16: 8000, 16000, 24000
-     
-     * For g711_alaw/g711_ulaw: 8000."""
+ 
+ 
+ 
+      * For pcm16: 8000, 16000, 24000
+ 
+      * For g711_alaw/g711_ulaw: 8000."""
     input_audio_format: Optional[Union[str, "_models.InputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3021,9 +3167,12 @@ class ResponseItem(_Model):
     """Base for any response item; discriminated by ``type``.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ResponseFunctionCallItem, ResponseFunctionCallOutputItem, ResponseMessageItem
+    ResponseFunctionCallItem, ResponseFunctionCallOutputItem, ResponseMCPApprovalRequestItem,
+    ResponseMCPApprovalResponseItem, ResponseMCPCallItem, ResponseMCPListToolItem,
+    ResponseMessageItem
 
-    :ivar type: Required. Known values are: "message", "function_call", and "function_call_output".
+    :ivar type: Required. Known values are: "message", "function_call", "function_call_output",
+     "mcp_list_tools", "mcp_call", "mcp_approval_request", and "mcp_approval_response".
     :vartype type: str or ~azure.ai.voicelive.models.ItemType
     :ivar id:
     :vartype id: str
@@ -3033,7 +3182,8 @@ class ResponseItem(_Model):
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"message\", \"function_call\", and \"function_call_output\"."""
+    """Required. Known values are: \"message\", \"function_call\", \"function_call_output\",
+     \"mcp_list_tools\", \"mcp_call\", \"mcp_approval_request\", and \"mcp_approval_response\"."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     object: Optional[Literal["realtime.item"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Default value is \"realtime.item\"."""
@@ -3195,6 +3345,212 @@ class ResponseIncompleteDetails(ResponseStatusDetails, discriminator="incomplete
         self.type = ResponseStatus.INCOMPLETE  # type: ignore
 
 
+class ResponseMCPApprovalRequestItem(ResponseItem, discriminator="mcp_approval_request"):
+    """A response item that represents a request for approval to call an MCP tool.
+
+    :ivar id:
+    :vartype id: str
+    :ivar object: Default value is "realtime.item".
+    :vartype object: str
+    :ivar type: The type of the item. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MCP_APPROVAL_REQUEST
+    :ivar arguments: The arguments for the tool call.
+    :vartype arguments: str
+    :ivar name: The name of the tool to call. Required.
+    :vartype name: str
+    :ivar server_label: The label of the server that provides the tool. Required.
+    :vartype server_label: str
+    """
+
+    type: Literal[ItemType.MCP_APPROVAL_REQUEST] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the item. Required."""
+    arguments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The arguments for the tool call."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the tool to call. Required."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label of the server that provides the tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        server_label: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
+        arguments: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.MCP_APPROVAL_REQUEST  # type: ignore
+
+
+class ResponseMCPApprovalResponseItem(ResponseItem, discriminator="mcp_approval_response"):
+    """A response item that represents a response to an MCP approval request.
+
+    :ivar id:
+    :vartype id: str
+    :ivar object: Default value is "realtime.item".
+    :vartype object: str
+    :ivar type: The type of the item. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MCP_APPROVAL_RESPONSE
+    :ivar approval_request_id: The ID of the approval request. Required.
+    :vartype approval_request_id: str
+    :ivar approve: Whether the tool call was approved. Required.
+    :vartype approve: bool
+    :ivar reason: The reason for the approval decision.
+    :vartype reason: str
+    """
+
+    type: Literal[ItemType.MCP_APPROVAL_RESPONSE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the item. Required."""
+    approval_request_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the approval request. Required."""
+    approve: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the tool call was approved. Required."""
+    reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The reason for the approval decision."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        approval_request_id: str,
+        approve: bool,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
+        reason: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.MCP_APPROVAL_RESPONSE  # type: ignore
+
+
+class ResponseMCPCallItem(ResponseItem, discriminator="mcp_call"):
+    """A response item that represents a call to an MCP tool.
+
+    :ivar id:
+    :vartype id: str
+    :ivar object: Default value is "realtime.item".
+    :vartype object: str
+    :ivar type: The type of the item. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MCP_CALL
+    :ivar approval_request_id: The ID of the approval request, if any.
+    :vartype approval_request_id: str
+    :ivar arguments: The arguments for the tool call. Required.
+    :vartype arguments: str
+    :ivar server_label: The label of the server that provides the tool. Required.
+    :vartype server_label: str
+    :ivar name: The name of the tool to call. Required.
+    :vartype name: str
+    :ivar output: The output of the tool call.
+    :vartype output: str
+    :ivar error: The error, if any, from the tool call.
+    :vartype error: any
+    """
+
+    type: Literal[ItemType.MCP_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the item. Required."""
+    approval_request_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the approval request, if any."""
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The arguments for the tool call. Required."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label of the server that provides the tool. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the tool to call. Required."""
+    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The output of the tool call."""
+    error: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error, if any, from the tool call."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        arguments: str,
+        server_label: str,
+        name: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
+        approval_request_id: Optional[str] = None,
+        output: Optional[str] = None,
+        error: Optional[Any] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.MCP_CALL  # type: ignore
+
+
+class ResponseMCPListToolItem(ResponseItem, discriminator="mcp_list_tools"):
+    """A response item that lists the tools available on an MCP server.
+
+    :ivar id:
+    :vartype id: str
+    :ivar object: Default value is "realtime.item".
+    :vartype object: str
+    :ivar type: The type of the item. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MCP_LIST_TOOLS
+    :ivar tools: The tools available on the server. Required.
+    :vartype tools: list[~azure.ai.voicelive.models.MCPTool]
+    :ivar server_label: The label of the server that provides the tools. Required.
+    :vartype server_label: str
+    """
+
+    type: Literal[ItemType.MCP_LIST_TOOLS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the item. Required."""
+    tools: list["_models.MCPTool"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tools available on the server. Required."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label of the server that provides the tools. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tools: list["_models.MCPTool"],
+        server_label: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.MCP_LIST_TOOLS  # type: ignore
+
+
 class ResponseMessageItem(ResponseItem, discriminator="message"):
     """Base type for message item within a conversation.
 
@@ -3301,6 +3657,8 @@ class ResponseSession(_Model):
     :ivar max_response_output_tokens: Maximum number of tokens to generate in the response. Default
      is unlimited. Is either a int type or a Literal["inf"] type.
     :vartype max_response_output_tokens: int or str
+    :ivar agent: The agent configuration for the session, if applicable.
+    :vartype agent: ~azure.ai.voicelive.models.AgentConfig
     :ivar id: The unique identifier for the session.
     :vartype id: str
     """
@@ -3320,12 +3678,12 @@ class ResponseSession(_Model):
     """Optional instructions to guide the model's behavior throughout the session."""
     input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Input audio sampling rate in Hz. Available values:
-     
-     
-     
-     * For pcm16: 8000, 16000, 24000
-     
-     * For g711_alaw/g711_ulaw: 8000."""
+ 
+ 
+ 
+      * For pcm16: 8000, 16000, 24000
+ 
+      * For g711_alaw/g711_ulaw: 8000."""
     input_audio_format: Optional[Union[str, "_models.InputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3370,6 +3728,8 @@ class ResponseSession(_Model):
     )
     """Maximum number of tokens to generate in the response. Default is unlimited. Is either a int
      type or a Literal[\"inf\"] type."""
+    agent: Optional["_models.AgentConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The agent configuration for the session, if applicable."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier for the session."""
 
@@ -3395,6 +3755,7 @@ class ResponseSession(_Model):
         tool_choice: Optional["_types.ToolChoice"] = None,
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
+        agent: Optional["_models.AgentConfig"] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
@@ -3451,14 +3812,17 @@ class ServerEvent(_Model):
     ServerEventConversationItemInputAudioTranscriptionFailed, ServerEventConversationItemRetrieved,
     ServerEventConversationItemTruncated, ServerEventError, ServerEventInputAudioBufferCleared,
     ServerEventInputAudioBufferCommitted, ServerEventInputAudioBufferSpeechStarted,
-    ServerEventInputAudioBufferSpeechStopped, ServerEventResponseAnimationBlendshapeDelta,
-    ServerEventResponseAnimationBlendshapeDone, ServerEventResponseAnimationVisemeDelta,
-    ServerEventResponseAnimationVisemeDone, ServerEventResponseAudioDelta,
-    ServerEventResponseAudioDone, ServerEventResponseAudioTimestampDelta,
-    ServerEventResponseAudioTimestampDone, ServerEventResponseAudioTranscriptDelta,
-    ServerEventResponseAudioTranscriptDone, ServerEventResponseContentPartAdded,
-    ServerEventResponseContentPartDone, ServerEventResponseCreated, ServerEventResponseDone,
+    ServerEventInputAudioBufferSpeechStopped, ServerEventMcpListToolsCompleted,
+    ServerEventMcpListToolsFailed, ServerEventMcpListToolsInProgress,
+    ServerEventResponseAnimationBlendshapeDelta, ServerEventResponseAnimationBlendshapeDone,
+    ServerEventResponseAnimationVisemeDelta, ServerEventResponseAnimationVisemeDone,
+    ServerEventResponseAudioDelta, ServerEventResponseAudioDone,
+    ServerEventResponseAudioTimestampDelta, ServerEventResponseAudioTimestampDone,
+    ServerEventResponseAudioTranscriptDelta, ServerEventResponseAudioTranscriptDone,
+    ServerEventResponseContentPartAdded, ServerEventResponseContentPartDone,
+    ServerEventResponseCreated, ServerEventResponseDone,
     ServerEventResponseFunctionCallArgumentsDelta, ServerEventResponseFunctionCallArgumentsDone,
+    ServerEventResponseMcpCallArgumentsDelta, ServerEventResponseMcpCallArgumentsDone,
     ServerEventResponseOutputItemAdded, ServerEventResponseOutputItemDone,
     ServerEventResponseTextDelta, ServerEventResponseTextDone, ServerEventSessionAvatarConnecting,
     ServerEventSessionCreated, ServerEventSessionUpdated
@@ -3477,8 +3841,11 @@ class ServerEvent(_Model):
      "response.audio.delta", "response.audio.done", "response.animation_blendshapes.delta",
      "response.animation_blendshapes.done", "response.audio_timestamp.delta",
      "response.audio_timestamp.done", "response.animation_viseme.delta",
-     "response.animation_viseme.done", "response.function_call_arguments.delta", and
-     "response.function_call_arguments.done".
+     "response.animation_viseme.done", "response.function_call_arguments.delta",
+     "response.function_call_arguments.done", "mcp_list_tools.in_progress",
+     "mcp_list_tools.completed", "mcp_list_tools.failed", "response.mcp_call_arguments.delta",
+     "response.mcp_call_arguments.done", "mcp_approval_request", "mcp_approval_response",
+     "response.mcp_call.in_progress", "response.mcp_call.completed", and "response.mcp_call.failed".
     :vartype type: str or ~azure.ai.voicelive.models.ServerEventType
     :ivar event_id:
     :vartype event_id: str
@@ -3501,8 +3868,12 @@ class ServerEvent(_Model):
      \"response.audio.delta\", \"response.audio.done\", \"response.animation_blendshapes.delta\",
      \"response.animation_blendshapes.done\", \"response.audio_timestamp.delta\",
      \"response.audio_timestamp.done\", \"response.animation_viseme.delta\",
-     \"response.animation_viseme.done\", \"response.function_call_arguments.delta\", and
-     \"response.function_call_arguments.done\"."""
+     \"response.animation_viseme.done\", \"response.function_call_arguments.delta\",
+     \"response.function_call_arguments.done\", \"mcp_list_tools.in_progress\",
+     \"mcp_list_tools.completed\", \"mcp_list_tools.failed\", \"response.mcp_call_arguments.delta\",
+     \"response.mcp_call_arguments.done\", \"mcp_approval_request\", \"mcp_approval_response\",
+     \"response.mcp_call.in_progress\", \"response.mcp_call.completed\", and
+     \"response.mcp_call.failed\"."""
     event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -3587,12 +3958,12 @@ class ServerEventConversationItemDeleted(ServerEvent, discriminator="conversatio
     ``conversation.item.delete`` event. This event is used to synchronize the
     server's understanding of the conversation history with the client's view.
 
+    :ivar event_id:
+    :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.deleted``. Required.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_DELETED
     :ivar item_id: The ID of the item that was deleted. Required.
     :vartype item_id: str
-    :ivar event_id:
-    :vartype event_id: str
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_DELETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3831,6 +4202,8 @@ class ServerEventConversationItemTruncated(ServerEvent, discriminator="conversat
     This action will truncate the audio and remove the server-side text transcript
     to ensure there is no text in the context that hasn't been heard by the user.
 
+    :ivar event_id:
+    :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.truncated``. Required.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_TRUNCATED
     :ivar item_id: The ID of the assistant message item that was truncated. Required.
@@ -3840,8 +4213,6 @@ class ServerEventConversationItemTruncated(ServerEvent, discriminator="conversat
     :ivar audio_end_ms: The duration up to which the audio was truncated, in milliseconds.
      Required.
     :vartype audio_end_ms: int
-    :ivar event_id:
-    :vartype event_id: str
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_TRUNCATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4138,6 +4509,114 @@ class ServerEventInputAudioBufferSpeechStopped(ServerEvent, discriminator="input
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED  # type: ignore
+
+
+class ServerEventMcpListToolsCompleted(ServerEvent, discriminator="mcp_list_tools.completed"):
+    """MCP list tools completed message.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MCP_LIST_TOOLS_COMPLETED
+    :ivar item_id: The item ID. Required.
+    :vartype item_id: str
+    """
+
+    type: Literal[ServerEventType.MCP_LIST_TOOLS_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The item ID. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item_id: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.MCP_LIST_TOOLS_COMPLETED  # type: ignore
+
+
+class ServerEventMcpListToolsFailed(ServerEvent, discriminator="mcp_list_tools.failed"):
+    """MCP list tools failed message.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MCP_LIST_TOOLS_FAILED
+    :ivar item_id: The item ID. Required.
+    :vartype item_id: str
+    """
+
+    type: Literal[ServerEventType.MCP_LIST_TOOLS_FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The item ID. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item_id: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.MCP_LIST_TOOLS_FAILED  # type: ignore
+
+
+class ServerEventMcpListToolsInProgress(ServerEvent, discriminator="mcp_list_tools.in_progress"):
+    """MCP list tools in progress message.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MCP_LIST_TOOLS_IN_PROGRESS
+    :ivar item_id: The item ID. Required.
+    :vartype item_id: str
+    """
+
+    type: Literal[ServerEventType.MCP_LIST_TOOLS_IN_PROGRESS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The item ID. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item_id: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.MCP_LIST_TOOLS_IN_PROGRESS  # type: ignore
 
 
 class ServerEventResponseAnimationBlendshapeDelta(
@@ -5019,6 +5498,113 @@ class ServerEventResponseFunctionCallArgumentsDone(
         self.type = ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE  # type: ignore
 
 
+class ServerEventResponseMcpCallArgumentsDelta(ServerEvent, discriminator="response.mcp_call_arguments.delta"):
+    """Represents a delta update of the arguments for an MCP tool call.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_ARGUMENTS_DELTA
+    :ivar delta: The delta of the arguments. Required.
+    :vartype delta: str
+    :ivar item_id: The ID of the item associated with the event. Required.
+    :vartype item_id: str
+    :ivar response_id: The ID of the response associated with the event. Required.
+    :vartype response_id: str
+    :ivar output_index: The index of the output associated with the event. Required.
+    :vartype output_index: int
+    :ivar obfuscation: The obfuscation of the arguments.
+    :vartype obfuscation: str
+    """
+
+    type: Literal[ServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The delta of the arguments. Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the item associated with the event. Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the response associated with the event. Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the output associated with the event. Required."""
+    obfuscation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The obfuscation of the arguments."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        delta: str,
+        item_id: str,
+        response_id: str,
+        output_index: int,
+        event_id: Optional[str] = None,
+        obfuscation: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA  # type: ignore
+
+
+class ServerEventResponseMcpCallArgumentsDone(ServerEvent, discriminator="response.mcp_call_arguments.done"):
+    """Indicates the completion of the arguments for an MCP tool call.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_ARGUMENTS_DONE
+    :ivar item_id: The ID of the item associated with the event. Required.
+    :vartype item_id: str
+    :ivar response_id: The ID of the response associated with the event. Required.
+    :vartype response_id: str
+    :ivar output_index: The index of the output associated with the event. Required.
+    :vartype output_index: int
+    :ivar arguments: The full arguments for the tool call.
+    :vartype arguments: str
+    """
+
+    type: Literal[ServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the item associated with the event. Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the response associated with the event. Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the output associated with the event. Required."""
+    arguments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The full arguments for the tool call."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item_id: str,
+        response_id: str,
+        output_index: int,
+        event_id: Optional[str] = None,
+        arguments: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE  # type: ignore
+
+
 class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.output_item.added"):
     """Returned when a new Item is created during Response generation.
 
@@ -5496,13 +6082,13 @@ class ToolChoiceSelection(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ToolChoiceFunctionSelection
 
-    :ivar type: Required. "function"
+    :ivar type: Required. Known values are: "function" and "mcp".
     :vartype type: str or ~azure.ai.voicelive.models.ToolType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. \"function\""""
+    """Required. Known values are: \"function\" and \"mcp\"."""
 
     @overload
     def __init__(

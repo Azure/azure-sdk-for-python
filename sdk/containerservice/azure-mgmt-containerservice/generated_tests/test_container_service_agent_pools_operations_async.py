@@ -27,7 +27,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 agent_pool_name="str",
-                api_version="2025-08-02-preview",
+                api_version="2025-09-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.agent_pools.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -234,7 +234,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "windowsProfile": {"disableOutboundNat": bool},
                     "workloadRuntime": "str",
                 },
-                api_version="2025-08-02-preview",
+                api_version="2025-09-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -249,7 +249,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 agent_pool_name="str",
-                api_version="2025-08-02-preview",
+                api_version="2025-09-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -263,7 +263,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -277,7 +277,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 agent_pool_name="str",
-                api_version="2025-08-02-preview",
+                api_version="2025-09-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -293,7 +293,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_name="str",
                 agent_pool_name="str",
                 machines={"machineNames": ["str"]},
-                api_version="2025-08-02-preview",
+                api_version="2025-09-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -306,7 +306,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.agent_pools.get_available_agent_pool_versions(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -320,7 +320,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 agent_pool_name="str",
-                api_version="2025-08-02-preview",
+                api_version="2025-09-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

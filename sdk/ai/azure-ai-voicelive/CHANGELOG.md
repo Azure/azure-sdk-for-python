@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.2.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,37 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.2.0b1 (2025-11-14)
+
+### Features Added
+
+- **MCP (Model Context Protocol) Support**: Added comprehensive support for Model Context Protocol integration:
+  - `MCPServer` tool type for defining MCP server configurations with authorization, headers, and approval requirements
+  - `MCPTool` model for representing MCP tool definitions with input schemas and annotations
+  - `MCPApprovalType` enum for controlling approval workflows (`never`, `always`, or tool-specific)
+  - New item types: `MCPApprovalResponseRequestItem`, `ResponseMCPApprovalRequestItem`, `ResponseMCPApprovalResponseItem`, `ResponseMCPCallItem`, and `ResponseMCPListToolItem`
+  - New server events: `ServerEventMcpListToolsInProgress`, `ServerEventMcpListToolsCompleted`, `ServerEventMcpListToolsFailed`, `ServerEventResponseMcpCallArgumentsDelta`, and `ServerEventResponseMcpCallArgumentsDone`
+  - Client event `MCP_APPROVAL_RESPONSE` for responding to approval requests
+  - Enhanced `ItemType` enum with MCP-related types: `mcp_list_tools`, `mcp_call`, `mcp_approval_request`, and `mcp_approval_response`
+
+## 1.1.0 (2025-11-03)
+
+### Features Added
+
+- Added support for Agent configuration through the new `AgentConfig` model
+- Added `agent` field to `ResponseSession` model to support agent-based conversations
+- The `AgentConfig` model includes properties for agent type, name, description, agent_id, and thread_id
+
+## 1.1.0b1 (2025-10-06)
+
+### Features Added
+
+- **AgentConfig Support**: Re-introduced `AgentConfig` functionality with enhanced capabilities:
+  - `AgentConfig` model added back to public API with full import and export support
+  - `agent` field re-added to `ResponseSession` model for session-level agent configuration
+  - Updated cross-language package mappings to include `AgentConfig` support
+  - Provides foundation for advanced agent configuration scenarios
 
 ## 1.0.0 (2025-10-01)
 

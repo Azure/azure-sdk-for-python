@@ -205,16 +205,31 @@ op IotDpsResourceGetCustomized(
 );
 ```
 
-## 6. Removal of Unreferenced Models
+## 6. Common Types Upgrade
+
+**Changelog Pattern**:
+
+Multiple changes related to common infrastructure types such as `SystemData` and `IdentityType`:
+
+```md
+- Deleted or renamed model `IdentityType`
+```
+
+**Reason**: Common types are upgraded to their latest versions during TypeSpec migration.
+
+**Impact**: Low impact since these are common infrastructure types rarely used directly by users.
+
+**Resolution**: Accept these breaking changes.
+
+## 7. Removal of Unreferenced Models
 
 **Changelog Pattern**:
 
 Multiple removals of unreferenced models that are typically not used in the SDK:
 
 ```md
-- Deleted or renamed model `ReplicationUsageList`
-- Deleted or renamed model `VaultList`
-- Deleted or renamed model `VaultUsageList`
+- Deleted or renamed model `ProxyResourceWithoutSystemData`
+- Deleted or renamed model `Resource`
 ```
 
 **Reason**: Unreferenced models are removed during TypeSpec migration.
@@ -223,7 +238,27 @@ Multiple removals of unreferenced models that are typically not used in the SDK:
 
 **Resolution**: Accept these breaking changes.
 
-## 7. Parameters Changed to Keyword-only
+## 8. Removal of Pageable Models
+
+**Changelog Pattern**:
+
+Multiple removals of models following the pattern `xxxList`:
+
+```md
+- Deleted or renamed model `ElasticSanList`
+- Deleted or renamed model `SkuInformationList`
+- Deleted or renamed model `SnapshotList`
+- Deleted or renamed model `VolumeGroupList`
+- Deleted or renamed model `VolumeList`
+```
+
+**Reason**: Python will not expose pageable models for list APIs.
+
+**Impact**: Low impact since these models are typically not used directly by users.
+
+**Resolution**: Accept these breaking changes.
+
+## 9. Parameters Changed to Keyword-only
 
 **Changelog Pattern**:
 
@@ -239,7 +274,7 @@ Entries showing the usage of passing parameters positionally is disabled:
 
 **Resolution**: Accept these breaking changes.
 
-## 8. Removal of Parameter `if_match`
+## 10. Removal of Parameter `if_match`
 
 **Changelog Pattern**:
 
@@ -257,7 +292,7 @@ Removal of parameter `if_match` and addition of `etag/match_condition` for the s
 
 **Resolution**: Accept these breaking changes.
 
-## 9. Removal of multi-level flattened properties
+## 11. Removal of multi-level flattened properties
 
 **Changelog Pattern**:
 

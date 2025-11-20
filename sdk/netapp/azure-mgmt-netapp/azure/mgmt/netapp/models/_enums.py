@@ -64,26 +64,6 @@ class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheduled backup"""
 
 
-class BucketPatchPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Access permissions for the bucket. Either ReadOnly or ReadWrite."""
-
-    READ_ONLY = "ReadOnly"
-    """Read-only access to bucket."""
-    READ_WRITE = "ReadWrite"
-    """Read-write access to bucket."""
-
-
-class BucketPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Access permissions for the bucket. Either ReadOnly or ReadWrite. The default is ReadOnly if no
-    value is provided during bucket creation.
-    """
-
-    READ_ONLY = "ReadOnly"
-    """Read-only access to bucket."""
-    READ_WRITE = "ReadWrite"
-    """Read-write access to bucket."""
-
-
 class CheckNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource type used for verification."""
 
@@ -93,6 +73,13 @@ class CheckNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_SNAPSHOTS = (
         "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
     )
+    MICROSOFT_NET_APP_NET_APP_ACCOUNTS_BACKUP_VAULTS_BACKUPS = "Microsoft.NetApp/netAppAccounts/backupVaults/backups"
+    """ANF Backup under a volume , deprecated, use
+    ``Microsoft.NetApp/netAppAccounts/backupVaults/backups`` instead."""
+    MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_BACKUPS = (
+        "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups"
+    )
+    """ANF Backup under a Backup Vault"""
 
 
 class CheckQuotaNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -104,6 +91,13 @@ class CheckQuotaNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_SNAPSHOTS = (
         "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
     )
+    MICROSOFT_NET_APP_NET_APP_ACCOUNTS_BACKUP_VAULTS_BACKUPS = "Microsoft.NetApp/netAppAccounts/backupVaults/backups"
+    """ANF Backup under a volume , deprecated, use
+    ``Microsoft.NetApp/netAppAccounts/backupVaults/backups`` instead."""
+    MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_BACKUPS = (
+        "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups"
+    )
+    """ANF Backup under a Backup Vault"""
 
 
 class ChownMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -118,12 +112,12 @@ class ChownMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class CoolAccessRetrievalPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
-        storage based on the read pattern for cool access enabled volumes. The possible values for this
-        field are:
+    storage based on the read pattern for cool access enabled volumes. The possible values for this
+    field are:
     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-        is the default.
+    is the default.
     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-        sequential and random reads.
+    sequential and random reads.
     Never - No client-driven data is pulled from cool tier to standard storage.
     """
 
@@ -155,22 +149,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
-
-
-class CredentialsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The bucket credentials status. There states:
-    "NoCredentialsSet": Access and Secret key pair have not been generated.
-    "CredentialsExpired": Access and Secret key pair have expired.
-    "Active": The certificate has been installed and credentials are unexpired.
-    """
-
-    NO_CREDENTIALS_SET = "NoCredentialsSet"
-    """Access and Secret key pair have not been generated."""
-    CREDENTIALS_EXPIRED = "CredentialsExpired"
-    """Access and Secret key pair have expired."""
-    ACTIVE = "Active"
-    """The certificate has been installed on the bucket server and the bucket credentials are
-    unexpired."""
 
 
 class EnableSubvolumes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -212,23 +190,15 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DST = "dst"
 
 
-class ExternalReplicationSetupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Property that only applies to external replications. Provides a machine-readable value for the
-    status of the external replication setup.
+class Exclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An option to filter out replications. 'None' returns all replications, 'Deleted' excludes
+    deleted replications. Default is 'None'.
     """
 
-    CLUSTER_PEER_REQUIRED = "ClusterPeerRequired"
-    """Your cluster needs to be peered by using the 'peerExternalCluster' action"""
-    CLUSTER_PEER_PENDING = "ClusterPeerPending"
-    """The peering needs to be accepted on your cluster before the setup can proceed"""
-    V_SERVER_PEER_REQUIRED = "VServerPeerRequired"
-    """Need to call 'authorizeExternalReplication' and accept the returned 'vserver peer accept'
-    command on your cluster to finish setting up the external replication"""
-    REPLICATION_CREATE_REQUIRED = "ReplicationCreateRequired"
-    """Need to call 'authorizeExternalReplication' to finish setting up the external replication"""
-    NO_ACTION_REQUIRED = "NoActionRequired"
-    """External Replication setup is complete, you can now monitor the 'mirrorState' in the
-    replication status for the health of the replication"""
+    NONE = "None"
+    """'None' returns all replications"""
+    DELETED = "Deleted"
+    """'Deleted' excludes deleted replications"""
 
 
 class FileAccessLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -278,15 +248,6 @@ class KeyVaultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """KeyVault connection Updating"""
 
 
-class LdapServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the LDAP server."""
-
-    ACTIVE_DIRECTORY = "ActiveDirectory"
-    """The volume should use Active Directory for LDAP connections."""
-    OPEN_LDAP = "OpenLDAP"
-    """The volume should use OpenLDAP for LDAP connections."""
-
-
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -329,19 +290,21 @@ class NetAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status of the VolumeQuotaRule at the time the operation was called."""
 
     ACCEPTED = "Accepted"
-    """Accepted"""
+    """Resource has been Accepted"""
     CREATING = "Creating"
-    """Creating"""
+    """Resource is being Created"""
     PATCHING = "Patching"
-    """Patching"""
+    """Resource is being Patched"""
+    UPDATING = "Updating"
+    """Resource is updating"""
     DELETING = "Deleting"
-    """Deleting"""
+    """Resource is being Deleted"""
     MOVING = "Moving"
-    """Moving"""
+    """Resource is being Moved"""
     FAILED = "Failed"
-    """Failed"""
+    """Resource has Failed"""
     SUCCEEDED = "Succeeded"
-    """Succeeded"""
+    """Resource has Succeeded"""
 
 
 class NetworkFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -394,6 +357,17 @@ class RegionStorageToNetworkProximity(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Standard T2 and AcrossT2 network connectivity."""
     T1_AND_T2_AND_ACROSS_T2 = "T1AndT2AndAcrossT2"
     """Standard T1, T2 and AcrossT2 network connectivity."""
+
+
+class ReplicationMirrorState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the replication."""
+
+    UNINITIALIZED = "Uninitialized"
+    """Destination volume has not been initialized"""
+    MIRRORED = "Mirrored"
+    """Destination volume has been initialized and is ready"""
+    BROKEN = "Broken"
+    """Destination volume is RW, replication relationship has been broken off"""
 
 
 class ReplicationSchedule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -477,149 +451,6 @@ class VolumeBackupRelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMet
     TRANSFERRING = "Transferring"
     FAILED = "Failed"
     UNKNOWN = "Unknown"
-
-
-class VolumeLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Language supported for volume."""
-
-    C_UTF8 = "c.utf-8"
-    """Posix with UTF-8"""
-    UTF8_MB4 = "utf8mb4"
-    """UTF-8 with 4 byte character support"""
-    AR = "ar"
-    """Arabic - Deprecated"""
-    AR_UTF8 = "ar.utf-8"
-    """Arabic with UTF-8"""
-    HR = "hr"
-    """Croatian - Deprecated"""
-    HR_UTF8 = "hr.utf-8"
-    """Croatian with UTF-8"""
-    CS = "cs"
-    """Czech - Deprecated"""
-    CS_UTF8 = "cs.utf-8"
-    """Czech with UTF-8"""
-    DA = "da"
-    """Danish - Deprecated"""
-    DA_UTF8 = "da.utf-8"
-    """Danish with UTF-8"""
-    NL = "nl"
-    """Dutch - Deprecated"""
-    NL_UTF8 = "nl.utf-8"
-    """Dutch with UTF-8"""
-    EN = "en"
-    """English - Deprecated"""
-    EN_UTF8 = "en.utf-8"
-    """English with UTF-8"""
-    FI = "fi"
-    """Finnish - Deprecated"""
-    FI_UTF8 = "fi.utf-8"
-    """Finnish with UTF-8"""
-    FR = "fr"
-    """French - Deprecated"""
-    FR_UTF8 = "fr.utf-8"
-    """French with UTF-8"""
-    DE = "de"
-    """German - Deprecated"""
-    DE_UTF8 = "de.utf-8"
-    """German with UTF-8"""
-    HE = "he"
-    """Hebrew - Deprecated"""
-    HE_UTF8 = "he.utf-8"
-    """Hebrew with UTF-8"""
-    HU = "hu"
-    """Hungarian - Deprecated"""
-    HU_UTF8 = "hu.utf-8"
-    """Hungarian with UTF-8"""
-    IT = "it"
-    """Italian - Deprecated"""
-    IT_UTF8 = "it.utf-8"
-    """Italian with UTF-8"""
-    JA = "ja"
-    """Japanese euc-j - Deprecated"""
-    JA_UTF8 = "ja.utf-8"
-    """Japanese euc-j with UTF-8"""
-    JA_V1 = "ja-v1"
-    """Japanese euc-j - Deprecated"""
-    JA_V1_UTF8 = "ja-v1.utf-8"
-    """Japanese euc-j with UTF-8"""
-    JA_JP_PCK = "ja-jp.pck"
-    """Japanese pck"""
-    JA_JP_PCK_UTF8 = "ja-jp.pck.utf-8"
-    """Japanese pck with UTF-8 - Deprecated"""
-    JA_JP932 = "ja-jp.932"
-    """Japanese cp932"""
-    JA_JP932_UTF8 = "ja-jp.932.utf-8"
-    """Japanese cp932 with UTF-8 - Deprecated"""
-    JA_JP_PCK_V2 = "ja-jp.pck-v2"
-    """Japanese pck - sjis"""
-    JA_JP_PCK_V2_UTF8 = "ja-jp.pck-v2.utf-8"
-    """Japanese pck - sjis with UTF-8 - Deprecated"""
-    KO = "ko"
-    """Korean - Deprecated"""
-    KO_UTF8 = "ko.utf-8"
-    """Korean with UTF-8"""
-    NO = "no"
-    """Norwegian - Deprecated"""
-    NO_UTF8 = "no.utf-8"
-    """Norwegian with UTF-8"""
-    PL = "pl"
-    """Polish - Deprecated"""
-    PL_UTF8 = "pl.utf-8"
-    """Polish with UTF-8"""
-    PT = "pt"
-    """Portuguese - Deprecated"""
-    PT_UTF8 = "pt.utf-8"
-    """Portuguese with UTF-8"""
-    C = "c"
-    """Posix - Deprecated"""
-    RO = "ro"
-    """Romanian - Deprecated"""
-    RO_UTF8 = "ro.utf-8"
-    """Romanian with UTF-8"""
-    RU = "ru"
-    """Russian - Deprecated"""
-    RU_UTF8 = "ru.utf-8"
-    """Russian with UTF-8"""
-    ZH = "zh"
-    """Simplified Chinese - Deprecated"""
-    ZH_UTF8 = "zh.utf-8"
-    """Simplified Chinese with UTF-8"""
-    ZH_GBK = "zh.gbk"
-    """Simplified gbk Chinese"""
-    ZH_GBK_UTF8 = "zh.gbk.utf-8"
-    """Simplified gbk Chinese with UTF-8 - Deprecated"""
-    ZH_TW_BIG5 = "zh-tw.big5"
-    """Traditional Chinese BIG 5"""
-    ZH_TW_BIG5_UTF8 = "zh-tw.big5.utf-8"
-    """Traditional Chinese BIG 5 with UTF-8 - Deprecated"""
-    ZH_TW = "zh-tw"
-    """Traditional Chinese EUC-TW"""
-    ZH_TW_UTF8 = "zh-tw.utf-8"
-    """Traditional Chinese EUC-TW with UTF-8 - Deprecated"""
-    SK = "sk"
-    """Slovak - Deprecated"""
-    SK_UTF8 = "sk.utf-8"
-    """Slovak with UTF-8"""
-    SL = "sl"
-    """Slovenian - Deprecated"""
-    SL_UTF8 = "sl.utf-8"
-    """Slovenian with UTF-8"""
-    ES = "es"
-    """Spanish - Deprecated"""
-    ES_UTF8 = "es.utf-8"
-    """Spanish with UTF-8"""
-    SV = "sv"
-    """Swedish - Deprecated"""
-    SV_UTF8 = "sv.utf-8"
-    """Swedish with UTF-8"""
-    TR = "tr"
-    """Turkish - Deprecated"""
-    TR_UTF8 = "tr.utf-8"
-    """Turkish with UTF-8"""
-    EN_US = "en-us"
-    """US English - Deprecated"""
-    EN_US_UTF8 = "en-us.utf-8"
-    """US English with UTF-8"""
 
 
 class VolumeReplicationRelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

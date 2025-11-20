@@ -132,6 +132,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
             The default consistency policy for client operations.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for the
+            client. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
@@ -164,6 +167,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         throughput_bucket = kwargs.pop('throughput_bucket', None)
         if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
+
+        priority = kwargs.pop('priority', None)
+        if priority:
+            self.default_headers[http_constants.HttpHeaders.PriorityLevel] = priority
 
         # Keeps the latest response headers from the server.
         self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
@@ -248,7 +255,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
+        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh_on_startup(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
@@ -2691,22 +2698,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook(last_response_headers, result)
         return database_account
 
-    def _GetDatabaseAccountCheck(
+    def health_check(
             self,
             url_connection: Optional[str] = None,
             **kwargs: Any
     ):
-        """Gets database account info.
+        """ Send a request to check the health of region.
 
-        :param str url_connection: the endpoint used to get the database account
-        :return: The Database Account.
-        :rtype: documents.DatabaseAccount
+        :param str url_connection: the endpoint for the region being checked
         """
         if url_connection is None:
             url_connection = self.url_connection
 
         headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
-                                  documents._OperationType.Read,{}, client_id=self.client_id)
+                                  documents._OperationType.Read, {},
+                                  client_id=self.client_id)
         request_params = RequestObject(http_constants.ResourceType.DatabaseAccount,
                                        documents._OperationType.Read,
                                        headers,
@@ -3259,7 +3265,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # If feed_range_epk exist, query with the range
         if feed_range_epk is not None:
-            last_response_headers = CaseInsensitiveDict()
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(resource_id, [feed_range_epk],
                                                                                     options)
             # It is possible to get more than one over lapping range. We need to get the query results for each one

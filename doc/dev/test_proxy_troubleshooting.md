@@ -275,6 +275,9 @@ To run recorded tests successfully when recorded values are inconsistent or rand
 proxy provides a `variables` API. This makes it possible for a test to record the values of variables that were used
 during recording and use the same values in playback mode without a sanitizer.
 
+Note that the recorded variables **must** have string values. For example, trying to record an integer value for a
+variable will cause a test proxy error.
+
 For example, imagine that a test uses a randomized `table_uuid` variable when creating resources. The same random value
 for `table_uuid` can be used in playback mode by using this `variables` API.
 
@@ -293,14 +296,14 @@ class TestExample(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_example(self, **kwargs):
         # In live mode, variables is an empty dictionary
-        # In playback mode, the value of variables is {"table_uuid": "random-value"}
+        # In playback mode, the value of variables is {"current_time": "<previously recorded time>"}
         variables = kwargs.pop("variables", {})
 
-        # To fetch variable values, use the `setdefault` method to look for a key ("table_uuid")
-        # and set a real value for that key if it's not present ("random-value")
-        table_uuid = variables.setdefault("table_uuid", "random-value")
+        # To fetch variable values, use the `setdefault` method to look for a key ("current_time")
+        # and set a real value for that key if it's not present (str(time.time()))
+        # Note that time.time() is converted from a float to a string to record it properly
+        current_time = variables.setdefault("current_time", str(time.time()))
 
-        # use variables["table_uuid"] when using the table UUID throughout the test
         ...
 
         # return the variables at the end of the test to record them

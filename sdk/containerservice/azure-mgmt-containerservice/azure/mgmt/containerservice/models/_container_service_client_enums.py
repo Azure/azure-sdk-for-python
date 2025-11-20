@@ -568,12 +568,14 @@ class MeshMembershipProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMe
 
 
 class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specify which proxy mode to use ('IPTABLES' or 'IPVS')."""
+    """Specify which proxy mode to use ('IPTABLES', 'IPVS' or 'NFTABLES')."""
 
     IPTABLES = "IPTABLES"
     """IPTables proxy mode"""
     IPVS = "IPVS"
     """IPVS proxy mode. Must be using Kubernetes version >= 1.22."""
+    NFTABLES = "NFTABLES"
+    """NFTables proxy mode. Must be using Kubernetes version >= 1.33."""
 
 
 class NamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1170,4 +1172,9 @@ class WorkloadRuntime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KATA_MSHV_VM_ISOLATION = "KataMshvVmIsolation"
     """Nodes can use (Kata + Cloud Hypervisor + Hyper-V) to enable Nested VM-based pods (Preview). Due
     to the use Hyper-V, AKS node OS itself is a nested VM (the root OS) of Hyper-V. Thus it can
-    only be used with VM series that support Nested Virtualization such as Dv3 series."""
+    only be used with VM series that support Nested Virtualization such as Dv3 series. This naming
+    convention will be deprecated in future releases in favor of KataVmIsolation."""
+    KATA_VM_ISOLATION = "KataVmIsolation"
+    """Nodes can use (Kata + Cloud Hypervisor + Hyper-V) to enable Nested VM-based pods. Due to the
+    use Hyper-V, AKS node OS itself is a nested VM (the root OS) of Hyper-V. Thus it can only be
+    used with VM series that support Nested Virtualization such as Dv3 series."""

@@ -317,7 +317,7 @@ class AgentPool(SubResource):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer", "WasmWasi", and "KataMshvVmIsolation".
+     "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -682,7 +682,7 @@ class AgentPool(SubResource):
          data root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
         :paramtype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer", "WasmWasi", and "KataMshvVmIsolation".
+         "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
          base64-encoded string which will be written to /etc/motd after decoding. This allows
@@ -2154,8 +2154,8 @@ class ContainerServiceNetworkProfileKubeProxyConfig(_serialization.Model):  # py
     :ivar enabled: Whether to enable on kube-proxy on the cluster (if no 'kubeProxyConfig' exists,
      kube-proxy is enabled in AKS by default without these customizations).
     :vartype enabled: bool
-    :ivar mode: Specify which proxy mode to use ('IPTABLES' or 'IPVS'). Known values are:
-     "IPTABLES" and "IPVS".
+    :ivar mode: Specify which proxy mode to use ('IPTABLES', 'IPVS' or 'NFTABLES'). Known values
+     are: "IPTABLES", "IPVS", and "NFTABLES".
     :vartype mode: str or ~azure.mgmt.containerservice.models.Mode
     :ivar ipvs_config: Holds configuration customizations for IPVS. May only be specified if 'mode'
      is set to 'IPVS'.
@@ -2181,8 +2181,8 @@ class ContainerServiceNetworkProfileKubeProxyConfig(_serialization.Model):  # py
         :keyword enabled: Whether to enable on kube-proxy on the cluster (if no 'kubeProxyConfig'
          exists, kube-proxy is enabled in AKS by default without these customizations).
         :paramtype enabled: bool
-        :keyword mode: Specify which proxy mode to use ('IPTABLES' or 'IPVS'). Known values are:
-         "IPTABLES" and "IPVS".
+        :keyword mode: Specify which proxy mode to use ('IPTABLES', 'IPVS' or 'NFTABLES'). Known values
+         are: "IPTABLES", "IPVS", and "NFTABLES".
         :paramtype mode: str or ~azure.mgmt.containerservice.models.Mode
         :keyword ipvs_config: Holds configuration customizations for IPVS. May only be specified if
          'mode' is set to 'IPVS'.
@@ -4640,7 +4640,7 @@ class MachineKubernetesProfile(_serialization.Model):
     :ivar node_name: The node name in the Kubernetes cluster.
     :vartype node_name: str
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer", "WasmWasi", and "KataMshvVmIsolation".
+     "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar artifact_streaming_profile: Configuration for using artifact streaming on AKS.
     :vartype artifact_streaming_profile:
@@ -4704,7 +4704,7 @@ class MachineKubernetesProfile(_serialization.Model):
         :keyword max_pods: The maximum number of pods that can run on a node.
         :paramtype max_pods: int
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer", "WasmWasi", and "KataMshvVmIsolation".
+         "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword artifact_streaming_profile: Configuration for using artifact streaming on AKS.
         :paramtype artifact_streaming_profile:
@@ -6168,7 +6168,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer", "WasmWasi", and "KataMshvVmIsolation".
+     "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -6515,7 +6515,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
          data root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
         :paramtype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer", "WasmWasi", and "KataMshvVmIsolation".
+         "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
          base64-encoded string which will be written to /etc/motd after decoding. This allows
@@ -6800,7 +6800,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer", "WasmWasi", and "KataMshvVmIsolation".
+     "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -7153,7 +7153,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
          data root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
         :paramtype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer", "WasmWasi", and "KataMshvVmIsolation".
+         "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
          base64-encoded string which will be written to /etc/motd after decoding. This allows
@@ -8161,6 +8161,37 @@ class ManagedClusterIdentity(_serialization.Model):
         self.user_assigned_identities = user_assigned_identities
 
 
+class ManagedClusterIngressDefaultDomainProfile(_serialization.Model):  # pylint: disable=name-too-long
+    """ManagedClusterIngressDefaultDomainProfile.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar enabled: Whether to enable Default Domain.
+    :vartype enabled: bool
+    :ivar domain_name: The unique fully qualified domain name assigned to the cluster. This will
+     not change even if disabled then reenabled.
+    :vartype domain_name: str
+    """
+
+    _validation = {
+        "domain_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+        "domain_name": {"key": "domainName", "type": "str"},
+    }
+
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword enabled: Whether to enable Default Domain.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+        self.domain_name: Optional[str] = None
+
+
 class ManagedClusterIngressProfile(_serialization.Model):
     """Ingress profile for the container service cluster.
 
@@ -8170,11 +8201,19 @@ class ManagedClusterIngressProfile(_serialization.Model):
     :ivar web_app_routing: Web App Routing settings for the ingress profile.
     :vartype web_app_routing:
      ~azure.mgmt.containerservice.models.ManagedClusterIngressProfileWebAppRouting
+    :ivar application_load_balancer: Settings for the managed Application Load Balancer
+     installation.
+    :vartype application_load_balancer:
+     ~azure.mgmt.containerservice.models.ManagedClusterIngressProfileApplicationLoadBalancer
     """
 
     _attribute_map = {
         "gateway_api": {"key": "gatewayAPI", "type": "ManagedClusterIngressProfileGatewayConfiguration"},
         "web_app_routing": {"key": "webAppRouting", "type": "ManagedClusterIngressProfileWebAppRouting"},
+        "application_load_balancer": {
+            "key": "applicationLoadBalancer",
+            "type": "ManagedClusterIngressProfileApplicationLoadBalancer",
+        },
     }
 
     def __init__(
@@ -8182,6 +8221,7 @@ class ManagedClusterIngressProfile(_serialization.Model):
         *,
         gateway_api: Optional["_models.ManagedClusterIngressProfileGatewayConfiguration"] = None,
         web_app_routing: Optional["_models.ManagedClusterIngressProfileWebAppRouting"] = None,
+        application_load_balancer: Optional["_models.ManagedClusterIngressProfileApplicationLoadBalancer"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8191,10 +8231,47 @@ class ManagedClusterIngressProfile(_serialization.Model):
         :keyword web_app_routing: Web App Routing settings for the ingress profile.
         :paramtype web_app_routing:
          ~azure.mgmt.containerservice.models.ManagedClusterIngressProfileWebAppRouting
+        :keyword application_load_balancer: Settings for the managed Application Load Balancer
+         installation.
+        :paramtype application_load_balancer:
+         ~azure.mgmt.containerservice.models.ManagedClusterIngressProfileApplicationLoadBalancer
         """
         super().__init__(**kwargs)
         self.gateway_api = gateway_api
         self.web_app_routing = web_app_routing
+        self.application_load_balancer = application_load_balancer
+
+
+class ManagedClusterIngressProfileApplicationLoadBalancer(_serialization.Model):  # pylint: disable=name-too-long
+    """Application Load Balancer settings for the ingress profile.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar enabled: Whether to enable Application Load Balancer.
+    :vartype enabled: bool
+    :ivar identity: Managed identity of the Application Load Balancer add-on. This is the identity
+     that should be granted permissions to manage the associated Application Gateway for Containers
+     resource.
+    :vartype identity: ~azure.mgmt.containerservice.models.UserAssignedIdentity
+    """
+
+    _validation = {
+        "identity": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+        "identity": {"key": "identity", "type": "UserAssignedIdentity"},
+    }
+
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword enabled: Whether to enable Application Load Balancer.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+        self.identity: Optional["_models.UserAssignedIdentity"] = None
 
 
 class ManagedClusterIngressProfileGatewayConfiguration(_serialization.Model):  # pylint: disable=name-too-long
@@ -8267,6 +8344,11 @@ class ManagedClusterIngressProfileWebAppRouting(_serialization.Model):  # pylint
     :ivar nginx: Configuration for the default NginxIngressController. See more at
      https://learn.microsoft.com/en-us/azure/aks/app-routing-nginx-configuration#the-default-nginx-ingress-controller.
     :vartype nginx: ~azure.mgmt.containerservice.models.ManagedClusterIngressProfileNginx
+    :ivar default_domain: Configuration for the Default Domain. This is a unique, autogenerated
+     domain that comes with a signed TLS Certificate allowing for secure HTTPS. See `the Default
+     Domain documentation <https://aka.ms/aks/defaultdomain>`_ for more instructions.
+    :vartype default_domain:
+     ~azure.mgmt.containerservice.models.ManagedClusterIngressDefaultDomainProfile
     :ivar identity: Managed identity of the Web Application Routing add-on. This is the identity
      that should be granted permissions, for example, to manage the associated Azure DNS resource
      and get certificates from Azure Key Vault. See `this overview of the add-on
@@ -8284,6 +8366,7 @@ class ManagedClusterIngressProfileWebAppRouting(_serialization.Model):  # pylint
         "enabled": {"key": "enabled", "type": "bool"},
         "dns_zone_resource_ids": {"key": "dnsZoneResourceIds", "type": "[str]"},
         "nginx": {"key": "nginx", "type": "ManagedClusterIngressProfileNginx"},
+        "default_domain": {"key": "defaultDomain", "type": "ManagedClusterIngressDefaultDomainProfile"},
         "identity": {"key": "identity", "type": "UserAssignedIdentity"},
     }
 
@@ -8293,6 +8376,7 @@ class ManagedClusterIngressProfileWebAppRouting(_serialization.Model):  # pylint
         enabled: Optional[bool] = None,
         dns_zone_resource_ids: Optional[list[str]] = None,
         nginx: Optional["_models.ManagedClusterIngressProfileNginx"] = None,
+        default_domain: Optional["_models.ManagedClusterIngressDefaultDomainProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8306,11 +8390,17 @@ class ManagedClusterIngressProfileWebAppRouting(_serialization.Model):  # pylint
         :keyword nginx: Configuration for the default NginxIngressController. See more at
          https://learn.microsoft.com/en-us/azure/aks/app-routing-nginx-configuration#the-default-nginx-ingress-controller.
         :paramtype nginx: ~azure.mgmt.containerservice.models.ManagedClusterIngressProfileNginx
+        :keyword default_domain: Configuration for the Default Domain. This is a unique, autogenerated
+         domain that comes with a signed TLS Certificate allowing for secure HTTPS. See `the Default
+         Domain documentation <https://aka.ms/aks/defaultdomain>`_ for more instructions.
+        :paramtype default_domain:
+         ~azure.mgmt.containerservice.models.ManagedClusterIngressDefaultDomainProfile
         """
         super().__init__(**kwargs)
         self.enabled = enabled
         self.dns_zone_resource_ids = dns_zone_resource_ids
         self.nginx = nginx
+        self.default_domain = default_domain
         self.identity: Optional["_models.UserAssignedIdentity"] = None
 
 
@@ -10969,12 +11059,14 @@ class NamespaceProperties(_serialization.Model):
      CORS, allowing the Azure Portal to function properly.
     :vartype portal_fqdn: str
     :ivar default_resource_quota: The default resource quota enforced upon the namespace. Customers
-     can have other Kubernetes resource quota objects under the namespace. All the resource quotas
-     will be enforced.
+     can have other Kubernetes resource quota objects under the namespace. Resource quotas are
+     additive; if multiple resource quotas are applied to a given namespace, then the effective
+     limit will be one such that all quotas on the namespace can be satisfied.
     :vartype default_resource_quota: ~azure.mgmt.containerservice.models.ResourceQuota
     :ivar default_network_policy: The default network policy enforced upon the namespace. Customers
-     can have other Kubernetes network policy objects under the namespace. All the network policies
-     will be enforced.
+     can have other Kubernetes network policy objects under the namespace. Network policies are
+     additive; if a policy or policies apply to a given pod for a given direction, the connections
+     allowed in that direction for the pod is the union of what all applicable policies allow.
     :vartype default_network_policy: ~azure.mgmt.containerservice.models.NetworkPolicies
     :ivar adoption_policy: Action if Kubernetes namespace with same name already exists. Known
      values are: "Never", "IfIdentical", and "Always".
@@ -11016,12 +11108,15 @@ class NamespaceProperties(_serialization.Model):
         :keyword annotations: The annotations of managed namespace.
         :paramtype annotations: dict[str, str]
         :keyword default_resource_quota: The default resource quota enforced upon the namespace.
-         Customers can have other Kubernetes resource quota objects under the namespace. All the
-         resource quotas will be enforced.
+         Customers can have other Kubernetes resource quota objects under the namespace. Resource quotas
+         are additive; if multiple resource quotas are applied to a given namespace, then the effective
+         limit will be one such that all quotas on the namespace can be satisfied.
         :paramtype default_resource_quota: ~azure.mgmt.containerservice.models.ResourceQuota
         :keyword default_network_policy: The default network policy enforced upon the namespace.
-         Customers can have other Kubernetes network policy objects under the namespace. All the network
-         policies will be enforced.
+         Customers can have other Kubernetes network policy objects under the namespace. Network
+         policies are additive; if a policy or policies apply to a given pod for a given direction, the
+         connections allowed in that direction for the pod is the union of what all applicable policies
+         allow.
         :paramtype default_network_policy: ~azure.mgmt.containerservice.models.NetworkPolicies
         :keyword adoption_policy: Action if Kubernetes namespace with same name already exists. Known
          values are: "Never", "IfIdentical", and "Always".

@@ -119,11 +119,17 @@ class EvaluationProcessor:
             query_response = {
                 "query": "query",
                 "response": " ".join(assistant_messages),
+                "scenario": "redteam",
             }
 
             # Add context to query_response if found
-            if context[0] is not None:
-                query_response["context"] = context[0]
+            if context and context[0] is not None:
+                # If context is a string, wrap it in the expected format for the RAI service
+                context_value = context[0]
+                if isinstance(context_value, str):
+                    query_response["context"] = {"contexts": [{"content": context_value}]}
+                else:
+                    query_response["context"] = context_value
 
             if tool_calls and any(tool_calls):
                 query_response["tool_calls"] = [call for sublist in tool_calls for call in sublist if call]
@@ -142,17 +148,18 @@ class EvaluationProcessor:
             try:
                 self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
 
+                use_sync_endpoint = is_onedp_project(self.azure_ai_project)
+                effective_metric_name = (
+                    "hate_unfairness" if use_sync_endpoint and metric_name == "hate_fairness" else metric_name
+                )
+
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
                     try:
-                        # Use sync_evals endpoint for OneDP projects, legacy endpoint for others
-                        if is_onedp_project(self.azure_ai_project):
-                            # If using sync API use hate_unfairness rather than hate_fairness
-                            if metric_name == "hate_fairness":
-                                metric_name = "hate_unfairness"
+                        if use_sync_endpoint:
                             return await evaluate_with_rai_service_sync(
                                 data=query_response,
-                                metric_name=metric_name,
+                                metric_name=effective_metric_name,
                                 project_scope=self.azure_ai_project,
                                 credential=self.credential,
                                 annotation_task=annotation_task,
@@ -208,9 +215,12 @@ class EvaluationProcessor:
 
                     # Find the result matching our metric/risk category
                     eval_result = None
+                    lookup_names = {metric_name, risk_cat_value, effective_metric_name}
                     for result_item in results:
                         result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
-                        if result_dict.get("name") == metric_name or result_dict.get("metric") == metric_name:
+                        result_name = str(result_dict.get("name") or "")
+                        metric_field = str(result_dict.get("metric") or "")
+                        if result_name in lookup_names or metric_field in lookup_names:
                             eval_result = result_dict
                             break
 
@@ -324,10 +334,16 @@ class EvaluationProcessor:
                         )
                         return row
             except Exception as e:
+                error_msg = str(e)
                 self.logger.error(
-                    f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {str(e)}"
+                    f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {error_msg}"
                 )
-                return {}
+                # Return a row with error information AND conversation data so it can be matched
+                # The error field will be picked up by result processing to populate sample.error
+                return {
+                    "inputs.conversation": {"messages": messages},
+                    "error": error_msg,
+                }
 
         return {}
 
