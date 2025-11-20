@@ -16,6 +16,7 @@ from azure.core.exceptions import ResourceNotModifiedError
 from azure.core.rest import HttpRequest, HttpResponse
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from ._query_param_policy import QueryParamPolicy
 from ._generated import AzureAppConfigurationClient as AzureAppConfigurationClientGenerated
 from ._generated.models import (
     SnapshotStatus,
@@ -65,6 +66,7 @@ class AzureAppConfigurationClient:
 
         credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = SyncTokenPolicy()
+        self._query_param_policy = QueryParamPolicy()
 
         if isinstance(credential, AzureKeyCredential):
             id_credential = kwargs.pop("id_credential")
@@ -85,7 +87,10 @@ class AzureAppConfigurationClient:
             )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfigurationClientGenerated(
-            base_url, credential, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
+            base_url,
+            credential,
+            per_call_policies=[self._query_param_policy, self._sync_token_policy],
+            **kwargs  # type: ignore[arg-type]
         )
 
     @classmethod

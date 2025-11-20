@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added query parameter normalization to support Azure Front Door as a CDN. Query parameter keys are now converted to lowercase and sorted alphabetically.
+
 ### Breaking Changes
 
 ### Bugs Fixed
