@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,14 +9,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
+from azure.mgmt.network import NetworkManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-hdinsightcontainers
+    pip install azure-mgmt-network
 # USAGE
-    python get_cluster.py
+    python public_ip_address_reserve.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,19 +26,19 @@ from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
 
 
 def main():
-    client = HDInsightContainersMgmtClient(
+    client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="10e32bab-26da-4cc4-a441-52b318f824e6",
+        subscription_id="subid",
     )
 
-    response = client.clusters.get(
-        resource_group_name="hiloResourcegroup",
-        cluster_pool_name="clusterpool1",
-        cluster_name="cluster1",
-    )
+    response = client.public_ip_addresses.begin_reserve_cloud_service_public_ip_address(
+        resource_group_name="rg1",
+        public_ip_address_name="test-ip",
+        parameters={"isRollback": "false"},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2024-05-01-preview/examples/GetCluster.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/PublicIpAddressReserve.json
 if __name__ == "__main__":
     main()
