@@ -16,7 +16,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
-from .utils import get_default_authority, normalize_authority, resolve_tenant
+from .utils import get_default_authority, normalize_authority, resolve_tenant, get_regional_authority
 from .aadclient_certificate import AadClientCertificate
 from .._persistent_cache import _load_persistent_cache
 
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 
 
-class AadClientBase(abc.ABC):
+class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
     _POST = ["POST"]
 
     def __init__(
@@ -48,6 +48,7 @@ class AadClientBase(abc.ABC):
         **kwargs: Any
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
+        self._regional_authority = get_regional_authority(self._authority)
 
         self._tenant_id = tenant_id
         self._client_id = client_id
@@ -379,7 +380,8 @@ class AadClientBase(abc.ABC):
         tenant = resolve_tenant(
             self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
-        return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
+        authority = self._regional_authority if self._regional_authority else self._authority
+        return "/".join((authority, tenant, "oauth2/v2.0/token"))
 
     def _post(self, data: Dict, **kwargs: Any) -> HttpRequest:
         url = self._get_token_url(**kwargs)
