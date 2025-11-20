@@ -9,7 +9,7 @@ from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field, create_model
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient, FoundryTool
+    from azure.ai.agentserver.core import AzureAIToolClient, FoundryTool
 
 # pylint: disable=client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 class ToolClient:
@@ -20,13 +20,13 @@ class ToolClient:
     LangGraph's create_react_agent and StateGraph.
     
     :param tool_client: The AzureAIToolClient instance to use for tool operations.
-    :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
+    :type tool_client: ~azure.ai.agentserver.core.AzureAIToolClient
     
     .. admonition:: Example:
     
         .. code-block:: python
         
-            from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient
+            from azure.ai.agentserver.core import AzureAIToolClient
             from azure.ai.agentserver.langgraph import ToolClient
             from azure.identity.aio import DefaultAzureCredential
             
@@ -61,7 +61,7 @@ class ToolClient:
         """Initialize the ToolClient.
         
         :param tool_client: The AzureAIToolClient instance to use for tool operations.
-        :type tool_client: ~azure.ai.agentserver.core.client.tools.aio.AzureAIToolClient
+        :type tool_client: ~azure.ai.agentserver.core.AzureAIToolClient
         """
         self._tool_client = tool_client
         self._langchain_tools_cache: Optional[List[StructuredTool]] = None
@@ -105,7 +105,7 @@ class ToolClient:
         """Convert an AzureAITool to a LangChain StructuredTool.
         
         :param azure_tool: The AzureAITool to convert.
-        :type azure_tool: ~azure.ai.agentserver.core.client.tools.aio.AzureAITool
+        :type azure_tool: ~azure.ai.agentserver.core.FoundryTool
         :return: A LangChain StructuredTool instance.
         :rtype: ~langchain_core.tools.StructuredTool
         """

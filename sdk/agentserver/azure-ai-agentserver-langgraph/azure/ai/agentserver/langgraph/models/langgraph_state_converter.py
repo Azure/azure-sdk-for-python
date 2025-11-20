@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, AsyncIterator, Dict
 
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
+from azure.ai.agentserver.core import AgentRunContext
 
 from .langgraph_request_converter import LangGraphRequestConverter
 from .langgraph_response_converter import LangGraphResponseConverter
