@@ -57,7 +57,7 @@ class TestSnapshotReferenceParser:
             content_type=SNAPSHOT_REF_CONTENT_TYPE,
         )
 
-        with pytest.raises(ValueError, match="Invalid snapshot reference format.*Value cannot be empty"):
+        with pytest.raises(ValueError, match="Invalid snapshot reference format.*snapshot_name.*is required"):
             SnapshotReferenceParser.parse(setting)
 
     def test_parse_whitespace_value_raises_error(self):
