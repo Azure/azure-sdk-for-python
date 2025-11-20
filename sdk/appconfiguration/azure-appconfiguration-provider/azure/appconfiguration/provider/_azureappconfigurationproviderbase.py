@@ -484,8 +484,6 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                 except (json.JSONDecodeError, ValueError):
                     # If the value is not a valid JSON, treat it like regular string value
                     return config.value
-        elif config.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in config.content_type:
-            self._tracing_context.uses_snapshot_reference = True
         return config.value
 
     def _process_feature_flags(
