@@ -9,7 +9,6 @@ from azure.appconfiguration.aio import AzureAppConfigurationClient
 from testcase import get_configs
 from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import AzureAppConfigurationKeyVaultOptions
-from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
@@ -22,7 +21,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         else:
             client = AzureAppConfigurationClient(kwargs["endpoint"], credential)
 
-        await setup_configs(client, kwargs.get("keyvault_secret_url"))
+        await setup_configs(client, kwargs.get("keyvault_secret_url"), kwargs.get("keyvault_secret_url2"))
         kwargs["user_agent"] = "SDK/Integration"
 
         if "endpoint" in kwargs:
@@ -46,18 +45,11 @@ class AppConfigTestCase(AzureRecordedTestCase):
         )
 
     def create_aad_sdk_client(self, appconfiguration_endpoint_string):
-        cred = self.get_credential(AzureAppConfigurationClient)
+        cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
 
-async def setup_configs(client, keyvault_secret_url):
+async def setup_configs(client, keyvault_secret_url, keyvault_secret_url2):
     async with client:
-        for config in get_configs(keyvault_secret_url):
+        for config in get_configs(keyvault_secret_url, keyvault_secret_url2):
             await client.set_configuration_setting(config)
-
-
-def has_feature_flag(client, feature_id, enabled=False):
-    for feature_flag in client[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]:
-        if feature_flag["id"] == feature_id:
-            return feature_flag["enabled"] == enabled
-    return False

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.1 (Unreleased)
+## 1.8.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,34 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.8.2 (2025-11-14)
+
+### Features Added
+
+- Add `trace_based_sampling` logger parameters to filter logs
+  ([#43811](https://github.com/Azure/azure-sdk-for-python/pull/43811))
+- Performance Counters
+  ([#43262](https://github.com/Azure/azure-sdk-for-python/pull/43262))
+- Adding more diagnostic log message IDs
+  ([#43183](https://github.com/Azure/azure-sdk-for-python/pull/43183))
+- Enable Azure AI Project instrumentation
+    ([#43869](https://github.com/Azure/azure-sdk-for-python/pull/43869))
+
+### Bugs Fixed
+
+- Fix detector version
+  ([#43044](https://github.com/Azure/azure-sdk-for-python/pull/43044))
+- Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
+  ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
+
+## 1.8.1 (2025-09-17)
+
+### Bugs Fixed
+- Fixed version pinned for opentelemetry-sdk to resolve dependency conflicts.
+  ([#43012](https://github.com/Azure/azure-sdk-for-python/pull/43012))
+- Modified ordering of dependencies in setup.py to avoid dependency conflicts in future.
+  ([#43023](https://github.com/Azure/azure-sdk-for-python/pull/43023))
 
 ## 1.8.0 (2025-09-08)
 

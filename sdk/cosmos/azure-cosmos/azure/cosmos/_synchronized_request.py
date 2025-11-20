@@ -99,6 +99,10 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         # always override database account call timeouts
         read_timeout = connection_policy.DBAReadTimeout
         connection_timeout = connection_policy.DBAConnectionTimeout
+
+    if request_params.read_timeout_override:
+        read_timeout = request_params.read_timeout_override
+
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)
         if kwargs['timeout'] <= 0:

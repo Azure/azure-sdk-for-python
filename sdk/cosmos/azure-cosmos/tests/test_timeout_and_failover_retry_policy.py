@@ -127,8 +127,8 @@ class TestTimeoutRetryPolicy:
         fake_endpoint = "other-region"
         region_1 = "East US"
         region_2 = "West US"
-        regional_routing_context = RegionalRoutingContext(self.host, self.host)
-        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint, fake_endpoint)
+        regional_routing_context = RegionalRoutingContext(self.host)
+        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint)
         original_location_cache.account_read_locations = [region_1, region_2]
         original_location_cache.account_read_regional_routing_contexts_by_location = {region_1: regional_routing_context,
                                                                                   region_2: regional_routing_context_2

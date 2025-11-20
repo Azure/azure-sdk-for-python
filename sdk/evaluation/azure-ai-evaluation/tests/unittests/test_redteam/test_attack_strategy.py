@@ -20,6 +20,7 @@ class TestAttackStrategyEnum:
         assert AttackStrategy.DIFFICULT.value == "difficult"
         assert AttackStrategy.Baseline.value == "baseline"
         assert AttackStrategy.Jailbreak.value == "jailbreak"
+        assert AttackStrategy.IndirectJailbreak.value == "indirect_jailbreak"
 
         # Test some specific attack strategies
         assert AttackStrategy.Base64.value == "base64"

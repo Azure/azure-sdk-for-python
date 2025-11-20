@@ -33,9 +33,13 @@ extends:
     Artifacts:
     - name: azure-ai-language-questionanswering
       safeName: azureailanguagequestionanswering
+    - name: azure-ai-language-questionanswering-authoring
+      safeName: azureailanguagequestionansweringauthoring
     - name: azure-ai-language-conversations
       safeName: azureailanguageconversations
     - name: azure-ai-language-conversations-authoring
       safeName: azureailanguageconversationsauthoring
+    - name: azure-ai-textanalytics-authoring
+      safeName: azureaitextanalyticsauthoring
     - name: azure-ai-textanalytics
       safeName: azureaitextanalytics

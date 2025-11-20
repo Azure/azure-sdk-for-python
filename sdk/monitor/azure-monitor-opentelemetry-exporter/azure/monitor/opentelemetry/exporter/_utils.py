@@ -9,6 +9,7 @@ import platform
 import threading
 import time
 import warnings
+import hashlib
 from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
@@ -83,8 +84,7 @@ def _is_attach_enabled():
     return False
 
 
-def _get_sdk_version_prefix():
-    sdk_version_prefix = ""
+def _get_rp():
     rp = "u"
     if _is_on_functions():
         rp = "f"
@@ -95,17 +95,29 @@ def _get_sdk_version_prefix():
     #     rp = 'v'
     elif _is_on_aks():
         rp = "k"
+    return rp
 
+
+def _get_os():
     os = "u"
     system = platform.system()
     if system == "Linux":
         os = "l"
     elif system == "Windows":
         os = "w"
+    return os
 
+def _get_attach_type():
     attach_type = "m"
     if _is_attach_enabled():
         attach_type = "i"
+    return attach_type
+
+def _get_sdk_version_prefix():
+    sdk_version_prefix = ""
+    rp = _get_rp()
+    os = _get_os()
+    attach_type = _get_attach_type()
     sdk_version_prefix = "{}{}{}_".format(rp, os, attach_type)
 
     return sdk_version_prefix
@@ -411,3 +423,6 @@ def get_compute_type():
     if _is_on_aks():
         return _RP_Names.AKS.value
     return _RP_Names.UNKNOWN.value
+
+def _get_sha256_hash(input_str: str) -> str:
+    return hashlib.sha256(input_str.encode("utf-8")).hexdigest()

@@ -1,11 +1,11 @@
 {
-  "commit": "ca2020cf5a4953c007f54135db73652bb94dd408",
+  "commit": "33fc84305793ee529921aabe0a72b7fad67c197d",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.38.2",
+    "@autorest/python@6.42.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/containerservice/resource-manager/Microsoft.ContainerService/aks/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --keep-setup-py=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.38.2 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/containerservice/resource-manager/Microsoft.ContainerService/aks/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-preview-2025-09 --use=@autorest/python@6.42.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/containerservice/resource-manager/Microsoft.ContainerService/aks/readme.md"
 }

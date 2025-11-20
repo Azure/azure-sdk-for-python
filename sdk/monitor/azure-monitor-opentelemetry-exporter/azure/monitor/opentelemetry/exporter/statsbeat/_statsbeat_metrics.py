@@ -35,6 +35,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     get_statsbeat_live_metrics_feature_set,
     get_statsbeat_custom_events_feature_set,
+    get_statsbeat_customer_sdkstats_feature_set,
 )
 from azure.monitor.opentelemetry.exporter import _utils
 
@@ -76,6 +77,7 @@ class _StatsbeatFeature:
     CUSTOM_EVENTS_EXTENSION = 4
     DISTRO = 8
     LIVE_METRICS = 16
+    CUSTOMER_SDKSTATS = 32
 
 
 class _AttachTypes:
@@ -138,6 +140,8 @@ class _StatsbeatMetrics:
             self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
         if get_statsbeat_live_metrics_feature_set():
             self._feature |= _StatsbeatFeature.LIVE_METRICS
+        if get_statsbeat_customer_sdkstats_feature_set():
+            self._feature |= _StatsbeatFeature.CUSTOMER_SDKSTATS
         self._ikey = instrumentation_key
         self._meter_provider = meter_provider
         self._meter = self._meter_provider.get_meter(__name__)
@@ -259,6 +263,9 @@ class _StatsbeatMetrics:
             _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
         if get_statsbeat_live_metrics_feature_set():
             self._feature |= _StatsbeatFeature.LIVE_METRICS
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+        if get_statsbeat_customer_sdkstats_feature_set():
+            self._feature |= _StatsbeatFeature.CUSTOMER_SDKSTATS
             _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
 
         # Don't send observation if no features enabled

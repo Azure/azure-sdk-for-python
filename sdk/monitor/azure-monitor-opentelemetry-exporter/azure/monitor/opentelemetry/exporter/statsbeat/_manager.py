@@ -150,10 +150,12 @@ class StatsbeatManager(metaclass=Singleton):
         self._initialized: bool = False  # type: ignore
         self._metrics: Optional[_StatsbeatMetrics] = None  # type: ignore
         self._meter_provider: Optional[MeterProvider] = None  # type: ignore
+
+        # Set during first initialization, preserved in shutdown for potential re-initialization
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
 
     @staticmethod
-    def _validate_config(config: StatsbeatConfig) -> bool:
+    def _validate_config(config: Optional[StatsbeatConfig]) -> bool:
         """Validate that a configuration has all required fields.
 
         :param config: Configuration to validate
@@ -161,7 +163,7 @@ class StatsbeatManager(metaclass=Singleton):
         :return: True if config is valid, False otherwise
         :rtype: bool
         """
-        if not config:
+        if config is None:
             return False
         if not config.instrumentation_key:
             return False
@@ -178,15 +180,14 @@ class StatsbeatManager(metaclass=Singleton):
         if not is_statsbeat_enabled():
             return False
 
+        # Validate config before proceeding
         if not self._validate_config(config):
-            logger.error("Cannot initialize statsbeat: configuration is invalid or missing required fields")
             return False
 
         with self._lock:
             if self._initialized:
                 # If already initialized with the same config, return True
                 if self._config and self._config == config:
-                    logger.warning("Statsbeat re-initialized with the same configuration.")
                     return True
                 # If config is different, reconfigure
                 return self._reconfigure(config)
@@ -258,9 +259,9 @@ class StatsbeatManager(metaclass=Singleton):
                 self._meter_provider.shutdown()
             except Exception:  # pylint: disable=broad-except
                 pass
+        # We leave config intact for potential re-initialization
         self._meter_provider = None
         self._metrics = None
-        self._config = None
         self._initialized = False
 
     def shutdown(self) -> bool:
@@ -302,7 +303,6 @@ class StatsbeatManager(metaclass=Singleton):
         # Reset state but keep initialized=True
         self._meter_provider = None
         self._metrics = None
-        self._config = None
 
         # Initialize with new config
         success: bool = self._do_initialize(new_config)
@@ -335,3 +335,12 @@ class StatsbeatManager(metaclass=Singleton):
                 distro_version=self._config.distro_version,
                 connection_string=self._config.connection_string
             )
+
+    def is_initialized(self) -> bool:
+        """Check if the StatsbeatManager is currently initialized.
+
+        :return: True if initialized, False otherwise
+        :rtype: bool
+        """
+        with self._lock:
+            return self._initialized

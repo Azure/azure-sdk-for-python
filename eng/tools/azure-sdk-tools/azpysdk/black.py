@@ -46,11 +46,13 @@ class black(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for black check")
 
+            self.install_dev_reqs(executable, args, package_dir)
+
             # install black
             try:
                 install_into_venv(executable, [f"black=={BLACK_VERSION}"], package_dir)
             except CalledProcessError as e:
-                logger.error("Failed to install black:", e)
+                logger.error(f"Failed to install black: {e}")
                 return e.returncode
 
             logger.info(f"Running black against {package_name}")
@@ -58,7 +60,7 @@ class black(Check):
             config_file_location = os.path.join(REPO_ROOT, "eng/black-pyproject.toml")
 
             if in_ci():
-                if not is_check_enabled(package_dir, "black"):
+                if not is_check_enabled(package_dir, "black", default=False):
                     logger.info(f"Package {package_name} opts-out of black check.")
                     continue
             try:
@@ -74,6 +76,7 @@ class black(Check):
                     stderr=subprocess.PIPE,
                     check=True,
                 )
+
                 if run_result.stderr and "reformatted" in run_result.stderr.decode("utf-8"):
                     if in_ci():
                         logger.info(f"The package {package_name} needs reformat. Run `black` locally to reformat.")

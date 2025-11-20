@@ -25,7 +25,7 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,8 +39,136 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             agent_pool_name="str",
             machine_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-02-preview",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_machines_begin_create_or_update(self, resource_group):
+        response = self.client.machines.begin_create_or_update(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            agent_pool_name="str",
+            machine_name="str",
+            parameters={
+                "id": "str",
+                "name": "str",
+                "properties": {
+                    "eTag": "str",
+                    "hardware": {
+                        "gpuInstanceProfile": "str",
+                        "gpuProfile": {"driver": "str", "driverType": "str"},
+                        "vmSize": "str",
+                    },
+                    "kubernetes": {
+                        "artifactStreamingProfile": {"enabled": bool},
+                        "currentOrchestratorVersion": "str",
+                        "kubeletConfig": {
+                            "allowedUnsafeSysctls": ["str"],
+                            "containerLogMaxFiles": 0,
+                            "containerLogMaxSizeMB": 0,
+                            "cpuCfsQuota": bool,
+                            "cpuCfsQuotaPeriod": "str",
+                            "cpuManagerPolicy": "str",
+                            "failSwapOn": bool,
+                            "imageGcHighThreshold": 0,
+                            "imageGcLowThreshold": 0,
+                            "podMaxPids": 0,
+                            "seccompDefault": "str",
+                            "topologyManagerPolicy": "str",
+                        },
+                        "kubeletDiskType": "str",
+                        "maxPods": 0,
+                        "nodeInitializationTaints": ["str"],
+                        "nodeLabels": {"str": "str"},
+                        "nodeName": "str",
+                        "nodeTaints": ["str"],
+                        "orchestratorVersion": "str",
+                        "workloadRuntime": "str",
+                    },
+                    "mode": "str",
+                    "network": {
+                        "enableNodePublicIP": bool,
+                        "ipAddresses": [{"family": "str", "ip": "str"}],
+                        "nodePublicIPPrefixID": "str",
+                        "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
+                        "podSubnetID": "str",
+                        "vnetSubnetID": "str",
+                    },
+                    "nodeImageVersion": "str",
+                    "operatingSystem": {
+                        "enableFIPS": bool,
+                        "linuxProfile": {
+                            "linuxOSConfig": {
+                                "swapFileSizeMB": 0,
+                                "sysctls": {
+                                    "fsAioMaxNr": 0,
+                                    "fsFileMax": 0,
+                                    "fsInotifyMaxUserWatches": 0,
+                                    "fsNrOpen": 0,
+                                    "kernelThreadsMax": 0,
+                                    "netCoreNetdevMaxBacklog": 0,
+                                    "netCoreOptmemMax": 0,
+                                    "netCoreRmemDefault": 0,
+                                    "netCoreRmemMax": 0,
+                                    "netCoreSomaxconn": 0,
+                                    "netCoreWmemDefault": 0,
+                                    "netCoreWmemMax": 0,
+                                    "netIpv4IpLocalPortRange": "str",
+                                    "netIpv4NeighDefaultGcThresh1": 0,
+                                    "netIpv4NeighDefaultGcThresh2": 0,
+                                    "netIpv4NeighDefaultGcThresh3": 0,
+                                    "netIpv4TcpFinTimeout": 0,
+                                    "netIpv4TcpKeepaliveProbes": 0,
+                                    "netIpv4TcpKeepaliveTime": 0,
+                                    "netIpv4TcpMaxSynBacklog": 0,
+                                    "netIpv4TcpMaxTwBuckets": 0,
+                                    "netIpv4TcpTwReuse": bool,
+                                    "netIpv4TcpkeepaliveIntvl": 0,
+                                    "netNetfilterNfConntrackBuckets": 0,
+                                    "netNetfilterNfConntrackMax": 0,
+                                    "vmMaxMapCount": 0,
+                                    "vmSwappiness": 0,
+                                    "vmVfsCachePressure": 0,
+                                },
+                                "transparentHugePageDefrag": "str",
+                                "transparentHugePageEnabled": "str",
+                            },
+                            "messageOfTheDay": "str",
+                        },
+                        "osDiskSizeGB": 0,
+                        "osDiskType": "str",
+                        "osSKU": "str",
+                        "osType": "Linux",
+                        "windowsProfile": {"disableOutboundNat": bool},
+                    },
+                    "priority": "Regular",
+                    "provisioningState": "str",
+                    "resourceId": "str",
+                    "security": {"enableSecureBoot": bool, "enableVTPM": bool, "sshAccess": "str"},
+                    "status": {
+                        "creationTimestamp": "2020-02-20 00:00:00",
+                        "driftAction": "str",
+                        "driftReason": "str",
+                        "provisioningError": {
+                            "additionalInfo": [{"info": {}, "type": "str"}],
+                            "code": "str",
+                            "details": [...],
+                            "message": "str",
+                            "target": "str",
+                        },
+                        "vmState": "str",
+                    },
+                    "tags": {"str": "str"},
+                },
+                "type": "str",
+                "zones": ["str"],
+            },
+            api_version="2025-09-02-preview",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

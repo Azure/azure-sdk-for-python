@@ -13,7 +13,7 @@ from enum import Enum
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
     get_local_storage_setup_state_exception,
     get_local_storage_setup_state_readonly,
     set_local_storage_setup_state_exception,
@@ -46,7 +46,7 @@ class StorageExportResult(Enum):
 # pylint: disable=broad-except
 class LocalFileBlob:
     def __init__(self, fullpath: str) -> None:
-        self.fullpath = fullpath
+        self.fullpath: str = fullpath
 
     def delete(self) -> None:
         try:
@@ -82,7 +82,7 @@ class LocalFileBlob:
 
     def lease(self, period: int) -> Optional['LocalFileBlob']:
         timestamp = _now() + _seconds(period)
-        fullpath = self.fullpath
+        fullpath: str = self.fullpath
         if fullpath.endswith(".lock"):
             fullpath = fullpath[: fullpath.rindex("@")]
         fullpath += "@{}.lock".format(_fmt(timestamp))
@@ -189,7 +189,7 @@ class LocalFileStorage:
         else:
             pass
 
-    def get(self) -> Optional['LocalFileBlob']:
+    def get(self) -> Optional[LocalFileBlob]:
         if not self._enabled:
             return None
         cursor = self.gets()

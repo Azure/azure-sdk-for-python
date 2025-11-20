@@ -33,13 +33,11 @@ def main():
     response = client.mongo_clusters.begin_update(
         resource_group_name="TestResourceGroup",
         mongo_cluster_name="myMongoCluster",
-        properties={
-            "properties": {"storage": {"iops": 5000, "sizeGb": 128, "throughput": 1000, "type": "PremiumSSDv2"}}
-        },
+        properties={"properties": {"storage": {"sizeGb": 128, "type": "PremiumSSDv2"}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/MongoClusters_PatchSSDv2.json
+# x-ms-original-file: 2025-09-01/MongoClusters_PatchSSDv2.json
 if __name__ == "__main__":
     main()

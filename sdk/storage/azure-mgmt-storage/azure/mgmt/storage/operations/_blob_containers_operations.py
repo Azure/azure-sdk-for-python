@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -36,7 +36,8 @@ from .._configuration import StorageManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -55,7 +56,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -96,7 +97,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -135,7 +136,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -174,7 +175,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -209,7 +210,7 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -240,7 +241,7 @@ def build_set_legal_hold_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -279,7 +280,7 @@ def build_clear_legal_hold_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -325,7 +326,7 @@ def build_create_or_update_immutability_policy_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     immutability_policy_name: Literal["default"] = kwargs.pop("immutability_policy_name", "default")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -374,7 +375,7 @@ def build_get_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     immutability_policy_name: Literal["default"] = kwargs.pop("immutability_policy_name", "default")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -420,7 +421,7 @@ def build_delete_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     immutability_policy_name: Literal["default"] = kwargs.pop("immutability_policy_name", "default")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -464,7 +465,7 @@ def build_lock_immutability_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -507,7 +508,7 @@ def build_extend_immutability_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -547,7 +548,7 @@ def build_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -586,7 +587,7 @@ def build_object_level_worm_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1637,9 +1638,10 @@ class BlobContainersOperations:
         immutability_policy_name: Literal["default"] = kwargs.pop("immutability_policy_name", "default")
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -2056,9 +2058,10 @@ class BlobContainersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -2221,9 +2224,10 @@ class BlobContainersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[_models.LeaseContainerResponse] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):

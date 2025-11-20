@@ -14,16 +14,9 @@ class AnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the types of animation data to output."""
 
     BLENDSHAPES = "blendshapes"
+    """Blendshapes output type."""
     VISEME_ID = "viseme_id"
-    EMOTION = "emotion"
-
-
-class AudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of AudioFormat."""
-
-    PCM16 = "pcm16"
-    G711_ULAW = "g711_ulaw"
-    G711_ALAW = "g711_alaw"
+    """Viseme ID output type."""
 
 
 class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -31,6 +24,17 @@ class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     WORD = "word"
     """Timestamps per word in the output audio."""
+
+
+class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Union of all supported Azure voice types."""
+
+    AZURE_CUSTOM = "azure-custom"
+    """Azure custom voice."""
+    AZURE_STANDARD = "azure-standard"
+    """Azure standard voice."""
+    AZURE_PERSONAL = "azure-personal"
+    """Azure personal voice."""
 
 
 class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -52,6 +56,7 @@ class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_CREATE = "response.create"
     RESPONSE_CANCEL = "response.cancel"
     SESSION_AVATAR_CONNECT = "session.avatar.connect"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
 
 
 class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -63,12 +68,37 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUDIO = "audio"
 
 
-class ItemParamStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ItemParamStatus."""
+class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Threshold level settings for Azure semantic end-of-utterance detection."""
 
-    IN_PROGRESS = "in_progress"
+    LOW = "low"
+    """Low sensitivity threshold level."""
+    MEDIUM = "medium"
+    """Medium sensitivity threshold level."""
+    HIGH = "high"
+    """High sensitivity threshold level."""
+    DEFAULT = "default"
+    """Default sensitivity threshold level."""
+
+
+class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Input audio format types supported."""
+
+    PCM16 = "pcm16"
+    """16-bit PCM audio format at default sampling rate (24kHz)"""
+    G711_ULAW = "g711_ulaw"
+    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate"""
+    G711_ALAW = "g711_alaw"
+    """G.711 A-law audio format at 8kHz sampling rate"""
+
+
+class ItemParamStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the processing status of an item or parameter."""
+
     COMPLETED = "completed"
+    """Item or parameter is still being processed."""
     INCOMPLETE = "incomplete"
+    """Item or parameter is not yet complete."""
 
 
 class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -77,6 +107,19 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MESSAGE = "message"
     FUNCTION_CALL = "function_call"
     FUNCTION_CALL_OUTPUT = "function_call_output"
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    MCP_CALL = "mcp_call"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+
+
+class MCPApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The available set of MCP approval types."""
+
+    NEVER = "never"
+    """Approval is never required."""
+    ALWAYS = "always"
+    """Approval is always required."""
 
 
 class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -88,39 +131,74 @@ class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of Modality."""
+    """Supported modalities for the session."""
 
     TEXT = "text"
+    """Text modality."""
     AUDIO = "audio"
+    """Audio modality."""
     ANIMATION = "animation"
+    """Animation modality."""
     AVATAR = "avatar"
+    """Avatar modality."""
 
 
-class OAIVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported OpenAI voice names (string enum)."""
 
     ALLOY = "alloy"
+    """Alloy voice."""
     ASH = "ash"
+    """Ash voice."""
     BALLAD = "ballad"
+    """Ballard voice."""
     CORAL = "coral"
+    """Coral voice."""
     ECHO = "echo"
+    """Echo voice."""
     SAGE = "sage"
+    """Sage voice."""
     SHIMMER = "shimmer"
+    """Shimmer voice."""
     VERSE = "verse"
+    """Verse voice."""
 
 
-class Phi4mmVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice identifier for Phi4mm voices."""
+class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Output audio format types supported."""
 
-    COSYVOICE = "cosyvoice"
+    PCM16 = "pcm16"
+    """16-bit PCM audio format at default sampling rate (24kHz)"""
+    PCM16_8000_HZ = "pcm16-8000hz"
+    """16-bit PCM audio format at 8kHz sampling rate"""
+    PCM16_16000_HZ = "pcm16-16000hz"
+    """16-bit PCM audio format at 16kHz sampling rate"""
+    G711_ULAW = "g711_ulaw"
+    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate"""
+    G711_ALAW = "g711_alaw"
+    """G.711 A-law audio format at 8kHz sampling rate"""
+
+
+class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PersonalVoice models."""
+
+    DRAGON_LATEST_NEURAL = "DragonLatestNeural"
+    """Use the latest Dragon model."""
+    PHOENIX_LATEST_NEURAL = "PhoenixLatestNeural"
+    """Use the latest Phoenix model."""
+    PHOENIX_V2_NEURAL = "PhoenixV2Neural"
+    """Use the Phoenix V2 model."""
 
 
 class ResponseItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ResponseItemStatus."""
+    """Indicates the processing status of a response item."""
 
     IN_PROGRESS = "in_progress"
+    """Item that is in progress."""
     COMPLETED = "completed"
+    """Item has been fully processed and is complete."""
     INCOMPLETE = "incomplete"
+    """Item has been processed but is incomplete."""
 
 
 class ResponseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -165,13 +243,22 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_AUDIO_DONE = "response.audio.done"
     RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
     RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
-    RESPONSE_EMOTION_HYPOTHESIS = "response.emotion_hypothesis"
     RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
     RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
     RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
     RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
+    MCP_LIST_TOOLS_IN_PROGRESS = "mcp_list_tools.in_progress"
+    MCP_LIST_TOOLS_COMPLETED = "mcp_list_tools.completed"
+    MCP_LIST_TOOLS_FAILED = "mcp_list_tools.failed"
+    RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call_arguments.delta"
+    RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call_arguments.done"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
+    RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
+    RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
 
 
 class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -191,3 +278,13 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     FUNCTION = "function"
+    MCP = "mcp"
+
+
+class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TurnDetectionType."""
+
+    SERVER_VAD = "server_vad"
+    AZURE_SEMANTIC_VAD = "azure_semantic_vad"
+    AZURE_SEMANTIC_VAD_EN = "azure_semantic_vad_en"
+    AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"

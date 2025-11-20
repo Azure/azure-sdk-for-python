@@ -25,7 +25,7 @@ class TestKeyVaultManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
             resource_group_name=resource_group.name,
             vault_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestKeyVaultManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestKeyVaultManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
             resource_group_name=resource_group.name,
             vault_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestKeyVaultManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
         response = self.client.private_endpoint_connections.list_by_resource(
             resource_group_name=resource_group.name,
             vault_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

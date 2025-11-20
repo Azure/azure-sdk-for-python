@@ -1,193 +1,200 @@
-# Basic Voice Assistant Sample
+# Basic Voice Assistant
 
-This sample demonstrates the fundamental capabilities of the Azure VoiceLive SDK by creating a basic voice assistant that can engage in natural conversation with proper interruption handling.
+This sample demonstrates a complete voice assistant implementation using the Azure AI VoiceLive SDK with async patterns. It provides real-time speech-to-speech interaction with interruption handling and server-side voice activity detection.
 
 ## Features
 
-- **Real-time Voice Conversation**: Full duplex audio communication with the AI assistant
-- **Server VAD**: Automatic turn detection using server-side voice activity detection
-- **Interruption Handling**: Graceful handling of user interruptions during assistant responses
-- **Cross-platform Audio**: PCM16, 24kHz, mono audio format with platform-appropriate handling
-- **Error Recovery**: Robust connection management with exponential backoff retry logic
-- **Environment Configuration**: Easy setup using .env files
+- **Real-time Speech Streaming**: Continuous audio capture and playback
+- **Server-Side Voice Activity Detection (VAD)**: Automatic detection of speech start/end
+- **Interruption Handling**: Users can interrupt the AI assistant mid-response
+- **High-Quality Audio Processing**: 24kHz PCM16 mono audio for optimal quality
+- **Robust Error Handling**: Connection error recovery and graceful shutdown
+- **Async Architecture**: Non-blocking operations for responsive interaction
 
 ## Prerequisites
 
-- Python 3.8 or later
-- Azure subscription with access to Azure AI VoiceLive
+- Python 3.9+
 - Microphone and speakers/headphones
-- Required Python packages (see installation below)
+- Azure AI VoiceLive API key and endpoint
 
 ## Installation
 
-1. **Install required packages**:
-   ```bash
-   pip install azure-ai-voicelive pyaudio python-dotenv
-   ```
-
-2. **Set up environment variables**:
-   
-   Copy the `.env.template` file to `.env` and fill in your values:
-   ```bash
-   cp ../.env.template .env
-   ```
-   
-   Or set environment variables directly:
-   ```bash
-   export AZURE_VOICELIVE_KEY="your-api-key"
-   export AZURE_VOICELIVE_ENDPOINT="wss://api.voicelive.com/v1"
-   export VOICELIVE_MODEL="gpt-4o-realtime-preview"
-   export VOICELIVE_VOICE="en-US-AvaNeural"
-   ```
-
-## Usage
-
-### Basic Usage
-
-Run the voice assistant with default settings:
-
 ```bash
-python basic_voice_assistant.py
+pip install azure-ai-voicelive pyaudio python-dotenv
 ```
 
-### Advanced Usage
+## Configuration
 
-Customize the voice assistant with command-line options:
+Create a `.env` file with your credentials:
 
 ```bash
-python basic_voice_assistant.py \
+AZURE_VOICELIVE_API_KEY=your-api-key
+AZURE_VOICELIVE_ENDPOINT=your-endpoint
+AZURE_VOICELIVE_MODEL=gpt-4o-realtime-preview
+AZURE_VOICELIVE_VOICE=en-US-AvaNeural
+AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful AI assistant. Respond naturally and conversationally.
+```
+
+## Running the Sample
+
+```bash
+python basic_voice_assistant_async.py
+```
+
+Optional command-line arguments:
+
+```bash
+python basic_voice_assistant_async.py \
     --model gpt-4o-realtime-preview \
-    --voice en-US-JennyNeural \
-    --instructions "You are a helpful coding assistant. Keep responses technical but friendly."
+    --voice en-US-AvaNeural \
+    --instructions "You are a helpful assistant" \
+    --verbose
 ```
-
-### Available Options
-
-- `--api-key`: Azure VoiceLive API key (or use AZURE_VOICELIVE_KEY env var)
-- `--endpoint`: VoiceLive endpoint URL
-- `--model`: Model to use (default: gpt-4o-realtime-preview)
-- `--voice`: Voice for the assistant (alloy, echo, fable, onyx, nova, shimmer, en-US-AvaNeural, etc.)
-- `--instructions`: Custom system instructions for the AI
-- `--use-token-credential`: Use Azure token authentication instead of API key
-- `--verbose`: Enable detailed logging
 
 ## How It Works
 
-### 1. Session Setup
-The assistant establishes a WebSocket connection and configures the session using strongly-typed objects:
-- Bidirectional audio streaming (PCM16, 24kHz, mono)
-- Server-side voice activity detection with configurable thresholds
-- Strongly-typed session configuration (RequestSession)
-- Azure voice configuration (AzureStandardVoice) or OpenAI voices
-
-### 2. Audio Processing
-Real-time audio capture and playback using PyAudio:
-- Microphone input is captured in 1024-sample chunks
-- Audio is base64-encoded and streamed to VoiceLive
-- Response audio is decoded and played back immediately
-
-### 3. Event Handling
-Strongly-typed event handling for real-time communication:
-- `session.updated`: Session ready, start audio capture
-- `input_audio_buffer.speech_started`: User speaking, stop playback
-- `input_audio_buffer.speech_stopped`: User finished, process input  
-- `response.audio.delta`: Stream response audio to speakers
-- `response.audio.done`: Assistant finished speaking
-
-### 4. Interruption Support
-Graceful handling of user interruptions:
-- Automatic detection when user starts speaking
-- Immediate cancellation of ongoing assistant responses
-- Seamless resumption of conversation flow
-
-## Audio Requirements
-
-- **Input**: Microphone capable of 24kHz sampling
-- **Output**: Speakers or headphones
-- **Format**: PCM16, 24kHz, mono
-- **Latency**: Optimized for real-time conversation (< 300ms end-to-end)
-
-## Troubleshooting
-
-### Audio Issues
-- **No microphone detected**: Check microphone permissions and connections
-- **No audio output**: Verify speaker/headphone setup and volume levels
-- **Audio quality issues**: Ensure quiet environment and quality microphone
-
-### Connection Issues
-- **Authentication errors**: Verify API key and endpoint configuration
-- **Network timeouts**: Check internet connection and firewall settings
-- **Connection drops**: SDK handles reconnection internally with appropriate retry logic
-
-### Dependencies
-- **PyAudio installation**: On some systems, may require additional setup:
-  ```bash
-  # Ubuntu/Debian
-  sudo apt-get install portaudio19-dev
-  pip install pyaudio
-  
-  # macOS
-  brew install portaudio
-  pip install pyaudio
-  
-  # Windows
-  pip install pyaudio
-  ```
-
-## Key Learning Outcomes
-
-After running this sample, developers will understand:
-
-1. **SDK Integration**: How to integrate VoiceLive SDK into applications
-2. **Strongly-Typed Configuration**: Using typed objects for session setup instead of raw JSON
-3. **Event-Driven Architecture**: Handling real-time events with strong typing
-4. **Audio Processing**: Platform-specific audio handling through SDK abstractions
-5. **Connection Management**: Letting the SDK handle connection retry logic internally
-6. **Real-Time Applications**: Building responsive voice-enabled applications
-
-### Strongly-Typed Configuration Example
-
-The sample demonstrates proper use of typed objects:
+### 1. Connection Setup
+The sample establishes an async WebSocket connection to the Azure VoiceLive service:
 
 ```python
-# Strongly-typed voice configuration
-voice_config = AzureStandardVoice(
-    name="en-US-AvaNeural",
-    type="azure-standard"
-)
+async with connect(
+    endpoint=endpoint,
+    credential=credential,
+    model=model
+) as connection:
+    # Voice assistant logic here
+```
 
-# Strongly-typed turn detection
-turn_detection_config = ServerVad(
-    threshold=0.5,
-    prefix_padding_ms=300,
-    silence_duration_ms=500
-)
+### 2. Session Configuration
+Configures audio formats, voice settings, and VAD parameters:
 
-# Strongly-typed session configuration
+```python
 session_config = RequestSession(
     modalities=[Modality.TEXT, Modality.AUDIO],
     instructions=instructions,
     voice=voice_config,
-    input_audio_format=AudioFormat.PCM16,
-    output_audio_format=AudioFormat.PCM16,
-    turn_detection=turn_detection_config
+    input_audio_format=InputAudioFormat.PCM16,
+    output_audio_format=OutputAudioFormat.PCM16,
+    turn_detection=ServerVad(
+        threshold=0.5,
+        prefix_padding_ms=300,
+        silence_duration_ms=500
+    ),
 )
+```
 
-await connection.session.update(session=session_config)
+### 3. Audio Processing
+- **Input**: Captures microphone audio in real-time using PyAudio
+- **Streaming**: Sends base64-encoded audio chunks to the service
+- **Output**: Receives and plays AI-generated speech responses
+
+### 4. Event Handling
+Processes various server events:
+
+- `SESSION_UPDATED`: Session is ready for interaction
+- `INPUT_AUDIO_BUFFER_SPEECH_STARTED`: User starts speaking (interrupt AI)
+- `INPUT_AUDIO_BUFFER_SPEECH_STOPPED`: User stops speaking (process input)
+- `RESPONSE_AUDIO_DELTA`: Receive AI speech audio chunks
+- `RESPONSE_DONE`: AI response complete
+- `ERROR`: Handle service errors
+
+## Threading Architecture
+
+The sample uses a multi-threaded approach for real-time audio processing:
+
+- **Main Thread**: Async event loop and UI
+- **Capture Thread**: PyAudio input stream reading
+- **Send Thread**: Audio data transmission to service
+- **Playback Thread**: PyAudio output stream writing
+
+## Key Classes
+
+### AudioProcessor
+Manages real-time audio capture and playback with proper threading and queue management.
+
+### BasicVoiceAssistant
+Main application class that coordinates WebSocket connection, session management, and audio processing.
+
+## Supported Voices
+
+### Azure Neural Voices
+- `en-US-AvaNeural` - Female, natural and professional
+- `en-US-JennyNeural` - Female, conversational  
+- `en-US-GuyNeural` - Male, professional
+
+### OpenAI Voices
+- `alloy` - Versatile, neutral
+- `echo` - Precise, clear
+- `fable` - Animated, expressive
+- `onyx` - Deep, authoritative
+- `nova` - Warm, conversational
+- `shimmer` - Optimistic, friendly
+
+## Troubleshooting
+
+### Audio Issues
+- **No microphone detected**: Check device connections and permissions
+- **No audio output**: Verify speakers/headphones are connected
+- **Audio quality issues**: Ensure 24kHz sample rate support
+
+### Connection Issues
+- **WebSocket errors**: Verify endpoint and credentials
+- **API errors**: Check model availability and account permissions
+- **Network timeouts**: Check firewall settings and network connectivity
+
+### PyAudio Installation Issues
+- **Linux**: `sudo apt-get install -y portaudio19-dev libasound2-dev`
+- **macOS**: `brew install portaudio`
+- **Windows**: Usually installs without issues
+
+## Advanced Usage
+
+### Custom Instructions
+Modify the AI assistant's behavior by customizing the instructions:
+
+```bash
+python basic_voice_assistant_async.py --instructions "You are a coding assistant that helps with Python programming questions."
+```
+
+### Voice Selection
+Choose different voices for varied experience:
+
+```bash
+# Azure Neural Voice
+python basic_voice_assistant_async.py --voice en-US-JennyNeural
+
+# OpenAI Voice  
+python basic_voice_assistant_async.py --voice nova
+```
+
+### Debug Mode
+Enable verbose logging for troubleshooting:
+
+```bash
+python basic_voice_assistant_async.py --verbose
+```
+
+## Code Structure
+
+```
+basic_voice_assistant_async.py
+├── AudioProcessor class
+│   ├── Audio capture (microphone input)
+│   ├── Audio streaming (to service)
+│   └── Audio playback (AI responses)
+├── BasicVoiceAssistant class
+│   ├── WebSocket connection management
+│   ├── Session configuration
+│   └── Event processing
+└── Main execution
+    ├── Argument parsing
+    ├── Environment setup
+    └── Assistant initialization
 ```
 
 ## Next Steps
 
-This foundational sample can be extended with:
-
-- **Custom voice selection**: Different voice options and characteristics
-- **Audio controls**: Volume adjustment and quality settings
-- **Session persistence**: Conversation history and context management
-- **Multi-language support**: Language detection and switching
-- **Custom instructions**: Dynamic instruction updates during conversation
-
-## Related Samples
-
-- `audio_streaming_sample.py`: Low-level audio streaming patterns
-- `typed_event_handling_sample.py`: Advanced event handling techniques
-- `session_management_sample.py`: Session configuration and management
+- Explore `async_function_calling_sample.py` for function calling capabilities
+- Check out other samples in the `samples/` directory
+- Read the main SDK documentation in `README.md`
+- Review the API reference for advanced usage patterns

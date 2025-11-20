@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-06-01-preview",
+  "commit": "23e8495fba7c3a1ef9ac40cc6317ac29db76130d",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/edge/Microsoft.Edge.DisconnectedOperations.Management",
+  "emitterVersion": "0.50.0"
+}

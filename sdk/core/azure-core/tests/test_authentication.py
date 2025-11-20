@@ -74,7 +74,7 @@ def test_bearer_policy_authorize_request(http_request):
     assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
     assert fake_credential.get_token.call_count == 1
     assert fake_credential.get_token.call_args[0] == ("scope",)
-    assert fake_credential.get_token.call_args[1] == {"claims": "foo"}
+    assert fake_credential.get_token.call_args[1] == {"claims": "foo", "enable_cae": True}
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -119,7 +119,7 @@ def test_bearer_policy_authorize_request_access_token_info(http_request):
     assert policy._token is expected_token
     assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
     assert fake_credential.get_token_info.call_args[0] == ("scope",)
-    assert fake_credential.get_token_info.call_args[1] == {"options": {"claims": "foo"}}
+    assert fake_credential.get_token_info.call_args[1] == {"options": {"claims": "foo", "enable_cae": True}}
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -263,7 +263,7 @@ def test_bearer_policy_default_context(http_request):
 
     pipeline.run(http_request("GET", "https://localhost"))
 
-    credential.get_token.assert_called_once_with(expected_scope)
+    credential.get_token.assert_called_once_with(expected_scope, enable_cae=True)
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -333,7 +333,7 @@ def test_bearer_policy_cannot_complete_challenge(http_request):
 
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
-    credential.get_token.assert_called_once_with(expected_scope)
+    credential.get_token.assert_called_once_with(expected_scope, enable_cae=True)
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

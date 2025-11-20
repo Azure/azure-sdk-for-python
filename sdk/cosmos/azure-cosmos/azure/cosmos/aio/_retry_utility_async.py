@@ -26,12 +26,11 @@ import json
 import time
 import logging
 
-import requests
 from azure.core.exceptions import (AzureError, ClientAuthenticationError, ServiceRequestError,
                                    ServiceResponseError)
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from .. import _default_retry_policy, _database_account_retry_policy
+from .. import _default_retry_policy, _health_check_retry_policy
 from .. import _endpoint_discovery_retry_policy
 from .. import _gone_retry_policy
 from .. import _resource_throttle_retry_policy
@@ -81,8 +80,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
     )
-    database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
-        client.connection_policy
+    health_check_retry_policy = _health_check_retry_policy.HealthCheckRetryPolicy(
+        client.connection_policy,
+        *args
     )
     resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
         client.connection_policy.RetryOptions.MaxRetryAttemptCount,
@@ -154,8 +154,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
-                response = exceptions.InternalException(status_code=StatusCodes.NOT_FOUND,
-                                                        headers={HttpHeaders.SubStatus:
+                response = exceptions._InternalCosmosException(status_code=StatusCodes.NOT_FOUND,
+                                                               headers={HttpHeaders.SubStatus:
                                                                      SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND})
                 e_offer = exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
@@ -174,113 +174,110 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 raise e_offer
 
             return result
-        except (exceptions.CosmosHttpResponseError, ServiceRequestError, ServiceResponseError) as e:
-            # Store the last error
+        except exceptions.CosmosHttpResponseError as e:
             last_error = e
-            if isinstance(e, exceptions.CosmosHttpResponseError):
-                if request:
-                    # update session token for relevant operations
-                    client._UpdateSessionIfRequired(request.headers, {}, e.headers)
-                if request and _has_database_account_header(request.headers):
-                    retry_policy = database_account_retry_policy
-                elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
-                        [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
-                    retry_policy = endpointDiscovery_retry_policy
-                elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
-                    retry_policy = resourceThrottle_retry_policy
-                elif (
-                    e.status_code == StatusCodes.NOT_FOUND
-                    and e.sub_status
-                    and e.sub_status == SubStatusCodes.READ_SESSION_NOTAVAILABLE
-                ):
-                    retry_policy = sessionRetry_policy
-                elif exceptions._partition_range_is_gone(e):
-                    retry_policy = partition_key_range_gone_retry_policy
-                elif exceptions._container_recreate_exception(e):
-                    retry_policy = container_recreate_retry_policy
-                    # Before we retry if retry policy is container recreate, we need refresh the cache of the
-                    # container properties and pass in the new RID in the headers.
-                    await client._refresh_container_properties_cache(retry_policy.container_link)
-                    if e.sub_status != SubStatusCodes.COLLECTION_RID_MISMATCH and retry_policy.check_if_rid_different(
-                          retry_policy.container_link, client._container_properties_cache, retry_policy.container_rid):
-                        retry_policy.refresh_container_properties_cache = False
+            if request:
+                # update session token for relevant operations
+                client._UpdateSessionIfRequired(request.headers, {}, e.headers)
+            if request and _has_database_account_header(request.headers):
+                retry_policy = health_check_retry_policy
+            elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
+                    [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
+                retry_policy = endpointDiscovery_retry_policy
+            elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
+                retry_policy = resourceThrottle_retry_policy
+            elif (
+                e.status_code == StatusCodes.NOT_FOUND
+                and e.sub_status
+                and e.sub_status == SubStatusCodes.READ_SESSION_NOTAVAILABLE
+            ):
+                retry_policy = sessionRetry_policy
+            elif exceptions._partition_range_is_gone(e):
+                retry_policy = partition_key_range_gone_retry_policy
+            elif exceptions._container_recreate_exception(e):
+                retry_policy = container_recreate_retry_policy
+                # Before we retry if retry policy is container recreate, we need refresh the cache of the
+                # container properties and pass in the new RID in the headers.
+                await client._refresh_container_properties_cache(retry_policy.container_link)
+                if e.sub_status != SubStatusCodes.COLLECTION_RID_MISMATCH and retry_policy.check_if_rid_different(
+                        retry_policy.container_link, client._container_properties_cache, retry_policy.container_rid):
+                    retry_policy.refresh_container_properties_cache = False
+                else:
+                    cached_container = client._container_properties_cache[retry_policy.container_link]
+                    # If partition key value was previously extracted from the document definition
+                    # reattempt to extract partition key with updated partition key definition
+                    if retry_policy.should_extract_partition_key(cached_container):
+                        new_partition_key = await retry_policy._extract_partition_key_async(
+                            client, container_cache=cached_container, body=request.body
+                        )
+                        request.headers[HttpHeaders.PartitionKey] = new_partition_key
+                    # If getting throughput, we have to replace the container link received from stale cache
+                    # with refreshed cache
+                    if retry_policy.should_update_throughput_link(request.body, cached_container):
+                        new_body = retry_policy._update_throughput_link(request.body)
+                        request.body = new_body
+
+                    retry_policy.container_rid = cached_container["_rid"]
+                    request.headers[retry_policy._intended_headers] = retry_policy.container_rid
+            elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
+                # record the failure for circuit breaker tracking
+                if args:
+                    await global_endpoint_manager.record_failure(args[0])
+                retry_policy = timeout_failover_retry_policy
+            else:
+                retry_policy = defaultRetry_policy
+
+            # If none of the retry policies applies or there is no retry needed, set the
+            # throttle related response headers and re-throw the exception back arg[0]
+            # is the request. It needs to be modified for write forbidden exception
+            if not retry_policy.ShouldRetry(e):
+                if not client.last_response_headers:
+                    client.last_response_headers = {}
+                client.last_response_headers[
+                    HttpHeaders.ThrottleRetryCount
+                ] = resourceThrottle_retry_policy.current_retry_attempt_count
+                client.last_response_headers[
+                    HttpHeaders.ThrottleRetryWaitTimeInMs
+                ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
+                if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
+                    client.session.clear_session_token(client.last_response_headers)
+                raise
+
+            # Check timeout only before retrying
+            if timeout:
+               elapsed = time.time() - operation_start_time
+               if elapsed >= timeout:
+                   raise exceptions.CosmosClientTimeoutError(error=last_error)
+            # Wait for retry_after_in_milliseconds time before the next retry
+            await asyncio.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
+
+        except ServiceRequestError as e:
+            if request and _has_database_account_header(request.headers):
+                if not health_check_retry_policy.ShouldRetry(e):
+                    raise e
+            else:
+                _handle_service_request_retries(client, service_request_retry_policy, e, *args)
+
+        except ServiceResponseError as e:
+            if request and _has_database_account_header(request.headers):
+                if not health_check_retry_policy.ShouldRetry(e):
+                    raise e
+            else:
+                try:
+                    # pylint: disable=networking-import-outside-azure-core-transport
+                    from aiohttp.client_exceptions import (
+                        ClientConnectionError)
+                    if isinstance(e.inner_exception, ClientConnectionError):
+                        _handle_service_request_retries(client, service_request_retry_policy, e, *args)
                     else:
-                        cached_container = client._container_properties_cache[retry_policy.container_link]
-                        # If partition key value was previously extracted from the document definition
-                        # reattempt to extract partition key with updated partition key definition
-                        if retry_policy.should_extract_partition_key(cached_container):
-                            new_partition_key = await retry_policy._extract_partition_key_async(
-                                client, container_cache=cached_container, body=request.body
-                            )
-                            request.headers[HttpHeaders.PartitionKey] = new_partition_key
-                        # If getting throughput, we have to replace the container link received from stale cache
-                        # with refreshed cache
-                        if retry_policy.should_update_throughput_link(request.body, cached_container):
-                            new_body = retry_policy._update_throughput_link(request.body)
-                            request.body = new_body
-
-                        retry_policy.container_rid = cached_container["_rid"]
-                        request.headers[retry_policy._intended_headers] = retry_policy.container_rid
-                elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
-                    # record the failure for circuit breaker tracking
-                    if args:
-                        await global_endpoint_manager.record_failure(args[0])
-                    retry_policy = timeout_failover_retry_policy
-                else:
-                    retry_policy = defaultRetry_policy
-
-                # If none of the retry policies applies or there is no retry needed, set the
-                # throttle related response headers and re-throw the exception back arg[0]
-                # is the request. It needs to be modified for write forbidden exception
-                if not retry_policy.ShouldRetry(e):
-                    if not client.last_response_headers:
-                        client.last_response_headers = {}
-                    client.last_response_headers[
-                        HttpHeaders.ThrottleRetryCount
-                    ] = resourceThrottle_retry_policy.current_retry_attempt_count
-                    client.last_response_headers[
-                        HttpHeaders.ThrottleRetryWaitTimeInMs
-                    ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
-                    if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
-                        client.session.clear_session_token(client.last_response_headers)
-                    raise
-
-                # Check timeout only before retrying
-                if timeout:
-                   elapsed = time.time() - operation_start_time
-                   if elapsed >= timeout:
-                      raise exceptions.CosmosClientTimeoutError(error=last_error)
-                # Wait for retry_after_in_milliseconds time before the next retry
-                await asyncio.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
-
-
-            elif isinstance(e, ServiceRequestError):
-                if request and _has_database_account_header(request.headers):
-                    if not database_account_retry_policy.ShouldRetry(e):
-                        raise e
-                else:
-                    _handle_service_request_retries(client, service_request_retry_policy, e, *args)
-
-            elif isinstance(e, ServiceResponseError):
-                if request and _has_database_account_header(request.headers):
-                    if not database_account_retry_policy.ShouldRetry(e):
-                        raise e
-                else:
-                    try:
-                        # pylint: disable=networking-import-outside-azure-core-transport
-                        from aiohttp.client_exceptions import (
-                            ClientConnectionError)
-                        if isinstance(e.inner_exception, ClientConnectionError):
-                            _handle_service_request_retries(client, service_request_retry_policy, e, *args)
-                        else:
-                            if args:
-                                await global_endpoint_manager.record_failure(args[0])
-                            _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
-                    # in case customer is not using aiohttp
-                    except ImportError:
                         if args:
                             await global_endpoint_manager.record_failure(args[0])
                         _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+                # in case customer is not using aiohttp
+                except ImportError:
+                    if args:
+                        await global_endpoint_manager.record_failure(args[0])
+                    _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 
 async def ExecuteFunctionAsync(function, *args, **kwargs):

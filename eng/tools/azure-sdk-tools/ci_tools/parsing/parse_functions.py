@@ -12,7 +12,7 @@ except:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, List, Tuple, Any, Optional, Union
 
 # this assumes the presence of "packaging"
 from packaging.requirements import Requirement
@@ -46,53 +46,198 @@ EXCLUDE = {
     "local",
     "scripts",
     "images",
-    ".tox"
+    ".tox",
 }
+
+
+def extract_package_metadata(package_path: str) -> Dict[str, Any]:
+    """Extract package metadata from a built package or source directory with comprehensive PEP 566/621 normalization."""
+    from pkginfo import get_metadata
+
+    try:
+        # Note: metadata may be different between source directory and built packages since
+        # some metadata may be normalized/transformed during build process
+        pkg_info = get_metadata(package_path)
+
+        if not pkg_info:
+            return {}
+
+        # Convert pkginfo object to dictionary with normalized keys
+        metadata: Dict[str, Any] = {}
+
+        # Core metadata fields (always normalized to same key names)
+        if pkg_info.name:
+            metadata["name"] = pkg_info.name
+        if pkg_info.version:
+            metadata["version"] = pkg_info.version
+        if pkg_info.keywords:
+            metadata["keywords"] = pkg_info.keywords
+
+        # Summary/Description normalization
+        if pkg_info.summary:
+            metadata["summary"] = pkg_info.summary
+        if pkg_info.description:
+            metadata["description"] = pkg_info.description
+
+        # Classifiers (consistent across PEPs)
+        if pkg_info.classifiers:
+            metadata["classifiers"] = pkg_info.classifiers
+
+        # Python version requirements
+        if pkg_info.requires_python:
+            metadata["requires_python"] = pkg_info.requires_python
+
+        # Dependencies normalization
+        if pkg_info.requires_dist:
+            metadata["requires_dist"] = pkg_info.requires_dist
+
+        # Author/Maintainer normalization - handle both simple and complex formats
+        _normalize_person_fields(pkg_info, metadata, "author")
+        _normalize_person_fields(pkg_info, metadata, "maintainer")
+
+        # License normalization - handle both PEP 566 and PEP 621 formats
+        _normalize_license_field(pkg_info, metadata)
+
+        # URL normalization - handle both home_page and project_urls
+        _normalize_url_fields(pkg_info, metadata)
+
+        # Additional optional fields
+        _add_optional_fields(pkg_info, metadata)
+        return metadata
+
+    except Exception as e:
+        logging.warning(f"Error extracting metadata from {package_path}: {e}")
+        return {}
+
+
+def _normalize_person_fields(pkg_info, metadata: Dict[str, Any], role: str) -> None:
+    """Normalize author/maintainer fields from both PEP 566 and PEP 621 formats."""
+    name_attr = getattr(pkg_info, role, None)
+    email_attr = getattr(pkg_info, f"{role}_email", None)
+
+    # Handle PEP 566 style (separate fields)
+    if name_attr and email_attr:
+        metadata[role] = name_attr
+        metadata[f"{role}_email"] = email_attr
+    # Handle PEP 621 style where name might be embedded in email field
+    elif email_attr:
+        # Check if email contains name in format "Name <email>"
+        if "<" in email_attr and ">" in email_attr:
+            # Extract name and email from "Name <email>" format
+            match = re.match(r"^(.+?)\s*<(.+?)>$", email_attr.strip())
+            if match:
+                name_part = match.group(1).strip()
+                email_part = match.group(2).strip()
+                metadata[role] = name_part
+                metadata[f"{role}_email"] = email_part
+            else:
+                metadata[f"{role}_email"] = email_attr
+        else:
+            metadata[f"{role}_email"] = email_attr
+    # Handle case where only name is provided
+    elif name_attr:
+        metadata[f"{role}"] = name_attr
+
+
+def _normalize_license_field(pkg_info, metadata: Dict[str, Any]) -> None:
+    """Normalize license field from both PEP 566 and PEP 621 formats."""
+    if pkg_info.license:
+        metadata["license"] = pkg_info.license
+    # Handle license expression (PEP 639) if available
+    if hasattr(pkg_info, "license_expression") and getattr(pkg_info, "license_expression", None):
+        metadata["license"] = pkg_info.license_expression
+    # Handle license file references if available
+    if hasattr(pkg_info, "license_file") and getattr(pkg_info, "license_file", None):
+        metadata["license"] = pkg_info.license_file
+
+
+def _normalize_url_fields(pkg_info, metadata: Dict[str, Any]) -> None:
+    """Normalize URL fields from both PEP 566 and PEP 621 formats."""
+    # Homepage from PEP 566 style
+    if pkg_info.home_page:
+        metadata["homepage"] = pkg_info.home_page
+    elif pkg_info.project_urls:  # If homepage not found, try to extract from project_urls
+        if isinstance(pkg_info.project_urls, (list, tuple)):
+            for url_entry in pkg_info.project_urls:
+                if isinstance(url_entry, str) and "," in url_entry:
+                    # Format: "Label, https://example.com"
+                    label, url_value = url_entry.split(",", 1)
+                    label_lower = label.strip().lower()
+                    url_value = url_value.strip()
+                    if label_lower in ["homepage", "home-page", "home"]:
+                        metadata["homepage"] = url_value
+                    elif label_lower == "repository":
+                        metadata["repository"] = url_value
+        elif isinstance(pkg_info.project_urls, dict):
+            for key, value in pkg_info.project_urls.items():
+                key_lower = key.lower()
+                if key_lower in ["homepage", "home-page", "home"]:
+                    metadata["homepage"] = value
+                elif key_lower == "repository":
+                    metadata["repository"] = value
+
+    # Download URL
+    if hasattr(pkg_info, "download_url") and getattr(pkg_info, "download_url", None):
+        metadata["download_url"] = pkg_info.download_url
+
+
+def _add_optional_fields(pkg_info, metadata: Dict[str, Any]) -> None:
+    """Add optional metadata fields that may be present."""
+    optional_fields = ["obsoletes_dist", "provides_dist", "requires_external", "platform", "supported_platform"]
+
+    for field in optional_fields:
+        if hasattr(pkg_info, field):
+            value = getattr(pkg_info, field, None)
+            if value:
+                metadata[field] = value
+
+
+def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
+    """
+    Given a list of subdirectories, return those that are not part of the package source and should be skipped.
+
+    :param List[str] subdirs: List of subdirectory names
+    :rtype: List[str]
+    :return: Filtered list of subdirectory names to skip
+    """
+    return [x for x in subdirs if (x.startswith(("_", ".")) or x == "build" or x in EXCLUDE or x.endswith(".egg-info"))]
 
 
 def discover_namespace(package_root_path: str) -> Optional[str]:
     """
     Discover the true namespace of a package by walking through its directory structure
     and finding the first __init__.py that contains actual content (not just namespace extension).
-    
+
     :param str package_root_path: Root path of the package directory
     :rtype: str or None
     :return: The discovered namespace string, or None if no suitable namespace found
     """
     if not os.path.exists(package_root_path):
         return None
-        
+
     namespace = None
-    
+
     for root, subdirs, files in os.walk(package_root_path):
-        # Ignore any modules with name starts with "_"
-        # For e.g. _generated, _shared etc
-        # Ignore build, which is created when installing a package from source.
-        # Ignore tests, which may have an __init__.py but is not part of the package.
-        dirs_to_skip = [x for x in subdirs if x.startswith(("_", ".", "test", "build")) or x in EXCLUDE]
+        dirs_to_skip = get_dirs_to_skip(subdirs)
         for d in dirs_to_skip:
             logging.debug("Dirs to skip: {}".format(dirs_to_skip))
             subdirs.remove(d)
-            
+
         if INIT_PY_FILE in files:
-            module_name = os.path.relpath(root, package_root_path).replace(
-                os.path.sep, "."
-            )
-            
+            module_name = os.path.relpath(root, package_root_path).replace(os.path.sep, ".")
+
             # If namespace has not been set yet, try to find the first __init__.py that's not purely for extension.
             if not namespace:
-                namespace = _set_root_namespace(
-                    os.path.join(root, INIT_PY_FILE), module_name
-                )
-    
+                namespace = _set_root_namespace(os.path.join(root, INIT_PY_FILE), module_name)
+
     return namespace
 
 
 def _set_root_namespace(init_file_path: str, module_name: str) -> Optional[str]:
     """
-    Examine an __init__.py file to determine if it represents a substantial namespace 
+    Examine an __init__.py file to determine if it represents a substantial namespace
     or is just a namespace extension file.
-    
+
     :param str init_file_path: Path to the __init__.py file
     :param str module_name: The module name corresponding to this __init__.py
     :rtype: str or None
@@ -111,16 +256,14 @@ def _set_root_namespace(init_file_path: str, module_name: str) -> Optional[str]:
                 # If comment, skip line. Otherwise, add to content.
                 if not in_docstring and not stripped_line.startswith("#"):
                     content.append(line)
-            
+
             # If there's more than one line of content, or if there's one line that's not just namespace extension
-            if len(content) > 1 or (
-                len(content) == 1 and INIT_EXTENSION_SUBSTRING not in content[0]
-            ):
+            if len(content) > 1 or (len(content) == 1 and INIT_EXTENSION_SUBSTRING not in content[0]):
                 return module_name
-                
+
     except Exception as e:
         logging.error(f"Error reading {init_file_path}: {e}")
-        
+
     return None
 
 
@@ -168,7 +311,8 @@ class ParsedSetup:
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
         """
-        Creates a new ParsedSetup instance from a path to a setup.py, pyproject.toml (with [project] member), or a directory containing either of those files.
+        Creates a new ParsedSetup instance from a path to a setup.py, pyproject.toml (with [project] member),
+        or a directory containing either of those files.
         """
         (
             name,
@@ -212,6 +356,29 @@ class ParsedSetup:
 
     def is_reporting_suppressed(self, setting: str) -> bool:
         return compare_string_to_glob_array(setting, self.get_config_setting("suppressed_skip_warnings", []))
+
+    def __str__(self):
+        lines = [f"ParsedSetup from {self.folder}"]
+        for attr in [
+            "name",
+            "version",
+            "python_requires",
+            "requires",
+            "is_new_sdk",
+            "setup_filename",
+            "namespace",
+            "package_data",
+            "include_package_data",
+            "classifiers",
+            "keywords",
+            "ext_package",
+            "ext_modules",
+            "is_metapackage",
+            "is_pyproject",
+        ]:
+            value = getattr(self, attr)
+            lines.append(f"\t{attr}={value}")
+        return "\n".join(lines)
 
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
@@ -370,9 +537,9 @@ def parse_setup_py(
 
     fixed = ast.fix_missing_locations(parsed)
     codeobj = compile(fixed, setup_filename, "exec")
-    local_vars = {}
+    local_vars: Dict[str, Any] = {}
     kwargs = {}
-    global_vars = {"__setup_calls__": []}
+    global_vars: Dict[str, Any] = {"__setup_calls__": []}
     current_dir = os.getcwd()
     working_dir = os.path.dirname(setup_filename)
     os.chdir(working_dir)
@@ -390,7 +557,7 @@ def parse_setup_py(
 
     version = kwargs.get("version")
     name = kwargs.get("name")
-    name_space = name.replace("-", ".")
+    name_space = name.replace("-", ".") if name else ""
     packages = kwargs.get("packages", [])
 
     if packages:
@@ -459,7 +626,9 @@ def parse_pyproject(
 
     project_config = toml_dict.get("project", None)
 
-    assert project_config is not None, f"Unable to find [project] section in {pyproject_filename}. Please ensure it is present."
+    assert (
+        project_config is not None
+    ), f"Unable to find [project] section in {pyproject_filename}. Please ensure it is present."
 
     # to pull a version from pyproject.toml, we need to get a dynamic version out. We can ask
     # setuptools to give us the metadata for a package, but that will involve _partially building_ the package
@@ -533,7 +702,8 @@ def get_version_py(setup_path: str) -> Optional[str]:
 
     # Find path to _version.py recursively
     for root, dirs, files in os.walk(file_path):
-        dirs[:] = [d for d in dirs if d not in EXCLUDE and not d.endswith(".egg-info")]
+        dirs_to_skip = get_dirs_to_skip(dirs)
+        dirs[:] = [d for d in dirs if d not in dirs_to_skip]
 
         if VERSION_PY in files:
             return os.path.join(root, VERSION_PY)
@@ -588,11 +758,12 @@ def parse_setup(
         <keywords>,
         <ext_packages>,
         <ext_modules>,
-        <is_metapackage>
+        <is_metapackage>,
     )
 
     If a pyproject.toml (containing [project]) or a setup.py is NOT found, a ValueError will be raised.
     """
+
     targeted_path = setup_filename_or_folder
     if os.path.isfile(setup_filename_or_folder):
         targeted_path = os.path.dirname(setup_filename_or_folder)
@@ -602,9 +773,11 @@ def parse_setup(
         raise ValueError(f"Unable to find a setup.py or pyproject.toml in {setup_filename_or_folder}")
 
     if resolved_filename.endswith(".toml"):
-        return parse_pyproject(resolved_filename)
+        result = parse_pyproject(resolved_filename)
     else:
-        return parse_setup_py(resolved_filename)
+        result = parse_setup_py(resolved_filename)
+
+    return result
 
 
 def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:

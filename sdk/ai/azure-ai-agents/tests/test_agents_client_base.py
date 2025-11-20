@@ -76,6 +76,7 @@ def fetch_current_datetime_recordings():
     time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
     return time_json
 
+
 def image_to_base64(image_path: str) -> str:
     """
     Convert an image file to a Base64-encoded string.
@@ -94,6 +95,7 @@ def image_to_base64(image_path: str) -> str:
         return base64.b64encode(file_data).decode("utf-8")
     except Exception as exc:
         raise OSError(f"Error reading file '{image_path}'") from exc
+
 
 class TestAgentClientBase(AzureRecordedTestCase):
     """Base class for Agents Client tests. Please put all code common to sync and async tests here."""

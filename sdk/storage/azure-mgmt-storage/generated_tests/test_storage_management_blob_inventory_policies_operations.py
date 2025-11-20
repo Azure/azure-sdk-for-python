@@ -25,7 +25,7 @@ class TestStorageManagementBlobInventoryPoliciesOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             blob_inventory_policy_name="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestStorageManagementBlobInventoryPoliciesOperations(AzureMgmtRecordedTest
                 },
                 "type": "str",
             },
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestStorageManagementBlobInventoryPoliciesOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             blob_inventory_policy_name="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestStorageManagementBlobInventoryPoliciesOperations(AzureMgmtRecordedTest
         response = self.client.blob_inventory_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

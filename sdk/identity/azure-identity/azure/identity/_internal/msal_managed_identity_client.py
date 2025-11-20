@@ -61,7 +61,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
             )
         error_desc = ""
         if result and "error" in result:
-            error_desc = cast(str, result["error"])
+            error_desc = f"Token request error: ({result['error']}) {result.get('error_description', '')}"
         error_message = self.get_unavailable_message(error_desc)
         raise CredentialUnavailableError(error_message)
 

@@ -39,6 +39,7 @@ def main():
             "properties": {
                 "destinationAccount": "dst112",
                 "metrics": {"enabled": True},
+                "priorityReplication": {"enabled": True},
                 "rules": [
                     {
                         "destinationContainer": "dcont139",
@@ -53,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2024-01-01/examples/StorageAccountCreateObjectReplicationPolicyOnDestination.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2025-06-01/examples/StorageAccountCreateObjectReplicationPolicyOnDestination.json
 if __name__ == "__main__":
     main()

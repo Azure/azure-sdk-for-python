@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -32,7 +32,8 @@ from ...operations._private_link_resources_operations import build_get_request, 
 from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class PrivateLinkResourcesOperations:
@@ -57,7 +58,7 @@ class PrivateLinkResourcesOperations:
     @distributed_trace
     def list_by_database_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateLinkResource"]:
+    ) -> AsyncItemPaged["_models.PrivateLinkResource"]:
         """Gets the private link resources that need to be created for a Cosmos DB account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

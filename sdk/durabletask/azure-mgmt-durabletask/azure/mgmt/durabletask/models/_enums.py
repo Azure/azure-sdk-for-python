@@ -84,3 +84,12 @@ class RedundancyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource is not redundant"""
     ZONE = "Zone"
     """The resource is zone redundant"""
+
+
+class SchedulerSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the Stock Keeping Unit (SKU) of a Durable Task Scheduler."""
+
+    DEDICATED = "Dedicated"
+    """Dedicated SKU"""
+    CONSUMPTION = "Consumption"
+    """Consumption SKU"""

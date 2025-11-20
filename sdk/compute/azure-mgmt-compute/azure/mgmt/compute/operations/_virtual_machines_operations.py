@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -35,7 +35,8 @@ from .._configuration import ComputeManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -45,7 +46,7 @@ def build_list_by_location_request(location: str, subscription_id: str, **kwargs
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,7 +81,7 @@ def build_list_all_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -117,7 +118,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -158,7 +159,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -199,7 +200,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -245,7 +246,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -290,7 +291,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -325,7 +326,7 @@ def build_assess_patches_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -358,7 +359,7 @@ def build_attach_detach_data_disks_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -392,7 +393,7 @@ def build_capture_request(resource_group_name: str, vm_name: str, subscription_i
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -428,7 +429,7 @@ def build_convert_to_managed_disks_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -461,7 +462,7 @@ def build_deallocate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -496,7 +497,7 @@ def build_generalize_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -529,7 +530,7 @@ def build_install_patches_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -565,7 +566,7 @@ def build_instance_view_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -598,7 +599,7 @@ def build_migrate_to_vm_scale_set_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -634,7 +635,7 @@ def build_perform_maintenance_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -667,7 +668,7 @@ def build_power_off_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -700,7 +701,7 @@ def build_reapply_request(resource_group_name: str, vm_name: str, subscription_i
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -731,7 +732,7 @@ def build_redeploy_request(resource_group_name: str, vm_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -762,7 +763,7 @@ def build_reimage_request(resource_group_name: str, vm_name: str, subscription_i
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -796,7 +797,7 @@ def build_restart_request(resource_group_name: str, vm_name: str, subscription_i
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -834,7 +835,7 @@ def build_retrieve_boot_diagnostics_data_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -871,7 +872,7 @@ def build_run_command_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -907,7 +908,7 @@ def build_simulate_eviction_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -938,7 +939,7 @@ def build_start_request(resource_group_name: str, vm_name: str, subscription_id:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -971,7 +972,7 @@ def build_list_available_sizes_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1030,7 +1031,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1113,7 +1114,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1198,7 +1199,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1289,7 +1290,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -1341,7 +1342,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -1511,7 +1512,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -1579,7 +1580,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -1745,7 +1746,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -1812,7 +1813,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
@@ -1875,7 +1876,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1927,7 +1928,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_assess_patches_request(
@@ -1988,7 +1989,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.VirtualMachineAssessPatchesResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2049,7 +2050,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -2186,7 +2187,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StorageProfile] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -2250,7 +2251,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -2388,7 +2389,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineCaptureResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -2448,7 +2449,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_convert_to_managed_disks_request(
@@ -2506,7 +2507,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2559,7 +2560,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_deallocate_request(
@@ -2622,7 +2623,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2693,7 +2694,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_generalize_request(
@@ -2738,7 +2739,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -2879,7 +2880,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineInstallPatchesResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -2951,7 +2952,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.VirtualMachineInstanceView] = kwargs.pop("cls", None)
 
         _request = build_instance_view_request(
@@ -3000,11 +3001,12 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -3137,8 +3139,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3191,7 +3194,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_perform_maintenance_request(
@@ -3248,7 +3251,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3301,7 +3304,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_power_off_request(
@@ -3366,7 +3369,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3418,7 +3421,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_reapply_request(
@@ -3475,7 +3478,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3526,7 +3529,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_redeploy_request(
@@ -3583,7 +3586,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3640,11 +3643,12 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -3792,8 +3796,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3846,7 +3851,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_restart_request(
@@ -3903,7 +3908,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3976,7 +3981,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.RetrieveBootDiagnosticsDataResult] = kwargs.pop("cls", None)
 
         _request = build_retrieve_boot_diagnostics_data_request(
@@ -4026,7 +4031,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -4161,7 +4166,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RunCommandResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -4233,7 +4238,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_simulate_eviction_request(
@@ -4272,7 +4277,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_start_request(
@@ -4329,7 +4334,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -4387,7 +4392,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.VirtualMachineSizeListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {

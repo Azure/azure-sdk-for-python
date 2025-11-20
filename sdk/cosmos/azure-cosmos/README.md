@@ -686,7 +686,7 @@ The snippet below shows how to enable this feature at the client and request lev
 cosmos_client = CosmosClient(
     url=URL,
     credential=KEY,
-    retry_write=True,  # enables native retryable writes at the client level
+    retry_write=1,  # enables a single native retryable write at the client level
 )
 
 database = cosmos_client.get_database_client(DATABASE_NAME)
@@ -694,7 +694,7 @@ container = database.get_container_client(CONTAINER_NAME)
 
 container.create_item(
     item_body,
-    retry_write=True  # enables native retryable writes at the request level
+    retry_write=1  # enables a single native retryable write at the request level
 )
 ```
 

@@ -1,0 +1,7 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.communication.email.EmailClient.begin_send": null,
+        "azure.communication.email.aio.EmailClient.begin_send": null
+    }
+}

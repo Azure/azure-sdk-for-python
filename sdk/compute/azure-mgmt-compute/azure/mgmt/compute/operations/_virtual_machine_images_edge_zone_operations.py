@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -29,7 +29,8 @@ from .._configuration import ComputeManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -39,7 +40,7 @@ def build_list_publishers_request(location: str, edge_zone: str, subscription_id
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +71,7 @@ def build_list_offers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -102,7 +103,7 @@ def build_list_skus_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -145,7 +146,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -192,7 +193,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -265,7 +266,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_list_publishers_request(
@@ -324,7 +325,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_list_offers_request(
@@ -386,7 +387,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_list_skus_request(
@@ -468,7 +469,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[List[_models.VirtualMachineImageResource]] = kwargs.pop("cls", None)
 
         _request = build_list_request(
@@ -538,7 +539,7 @@ class VirtualMachineImagesEdgeZoneOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.VirtualMachineImage] = kwargs.pop("cls", None)
 
         _request = build_get_request(

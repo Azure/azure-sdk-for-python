@@ -29,6 +29,7 @@ from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
 from azure.core.serialization import _Null
+from azure.core.rest import HttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -940,13 +941,13 @@ def _deserialize(
 
 def _failsafe_deserialize(
     deserializer: typing.Any,
-    value: typing.Any,
+    response: HttpResponse,
     module: typing.Optional[str] = None,
     rf: typing.Optional["_RestField"] = None,
     format: typing.Optional[str] = None,
 ) -> typing.Any:
     try:
-        return _deserialize(deserializer, value, module, rf, format)
+        return _deserialize(deserializer, response.json(), module, rf, format)
     except DeserializationError:
         _LOGGER.warning(
             "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
@@ -956,10 +957,10 @@ def _failsafe_deserialize(
 
 def _failsafe_deserialize_xml(
     deserializer: typing.Any,
-    value: typing.Any,
+    response: HttpResponse,
 ) -> typing.Any:
     try:
-        return _deserialize_xml(deserializer, value)
+        return _deserialize_xml(deserializer, response.text())
     except DeserializationError:
         _LOGGER.warning(
             "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True

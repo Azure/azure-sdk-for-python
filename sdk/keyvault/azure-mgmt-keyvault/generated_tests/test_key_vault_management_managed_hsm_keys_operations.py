@@ -58,7 +58,7 @@ class TestKeyVaultManagementManagedHsmKeysOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestKeyVaultManagementManagedHsmKeysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             key_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestKeyVaultManagementManagedHsmKeysOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_hsm_keys.list(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestKeyVaultManagementManagedHsmKeysOperations(AzureMgmtRecordedTestCase):
             name="str",
             key_name="str",
             key_version="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -110,7 +110,7 @@ class TestKeyVaultManagementManagedHsmKeysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             key_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

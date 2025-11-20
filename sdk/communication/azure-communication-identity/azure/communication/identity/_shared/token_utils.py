@@ -8,7 +8,7 @@
 import json
 from datetime import datetime, timezone
 from typing import Tuple, Any, List, Optional
-import isodate  # type: ignore
+import isodate
 from azure.core.exceptions import HttpResponseError
 
 TEAMS_EXTENSION_SCOPE_PREFIX = "https://auth.msft.communication.azure.com/"
@@ -21,6 +21,7 @@ COMMUNICATION_CLIENTS_API_VERSION = "2025-03-02-preview"
 
 def create_request_message(resource_endpoint: str, scopes: Optional[List[str]]) -> Any:
     from azure.core.pipeline.transport import HttpRequest
+
     request_uri = create_request_uri(resource_endpoint, scopes)
     request = HttpRequest("POST", request_uri)
     request.headers["Accept"] = "application/json"
@@ -59,26 +60,26 @@ def parse_expires_on(expires_on, response):
             return expires_on_epoch
         except Exception as exc:
             raise HttpResponseError(
-                message="Unknown format for expires_on field in access token response",
-                response=response.http_response) from exc
+                message="Unknown format for expires_on field in access token response", response=response.http_response
+            ) from exc
     else:
         raise HttpResponseError(
-            message="Missing expires_on field in access token response",
-            response=response.http_response)
+            message="Missing expires_on field in access token response", response=response.http_response
+        )
 
 
 def is_entra_token_cache_valid(entra_token_cache, request):
     current_entra_token = request.http_request.headers.get("Authorization", "")
-    cache_valid = (
-        entra_token_cache is not None and
-        current_entra_token == entra_token_cache
-    )
+    cache_valid = entra_token_cache is not None and current_entra_token == entra_token_cache
     return cache_valid, current_entra_token
 
 
 def is_acs_token_cache_valid(response_cache):
-    if (response_cache is None or response_cache.http_response is None or
-            response_cache.http_response.status_code != 200):
+    if (
+        response_cache is None
+        or response_cache.http_response is None
+        or response_cache.http_response.status_code != 200
+    ):
         return False
     try:
         content = response_cache.http_response.text()
@@ -86,6 +87,5 @@ def is_acs_token_cache_valid(response_cache):
         expires_on = data["accessToken"]["expiresOn"]
         expires_on_dt = isodate.parse_datetime(expires_on)
         return datetime.now(timezone.utc) < expires_on_dt
-    except (KeyError, ValueError, json.JSONDecodeError):
-        raise ValueError(  # pylint: disable=W0707
-                "Invalid token response")
+    except (KeyError, ValueError, json.JSONDecodeError) as e:
+        raise ValueError("Invalid token response") from e

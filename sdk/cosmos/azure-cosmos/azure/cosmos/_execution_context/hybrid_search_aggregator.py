@@ -3,7 +3,7 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-from typing import List, Union
+from typing import Union
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
@@ -36,7 +36,7 @@ def _retrieve_component_scores(drained_results):
     return component_scores_list
 
 
-def _compute_rrf_scores(ranks: List[List[int]], component_weights: List[Union[int, float]], query_results: List[dict]):
+def _compute_rrf_scores(ranks: list[list[int]], component_weights: list[Union[int, float]], query_results: list[dict]):
     component_count = len(ranks)
     for index, result in enumerate(query_results):
         rrf_score = 0.0

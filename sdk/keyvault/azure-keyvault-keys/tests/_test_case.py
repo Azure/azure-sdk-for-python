@@ -13,7 +13,7 @@ from azure.keyvault.keys._shared.client_base import ApiVersion
 from devtools_testutils import AzureRecordedTestCase
 
 
-HSM_SUPPORTED_VERSIONS = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4, ApiVersion.V7_5, ApiVersion.V7_6}
+HSM_UNSUPPORTED_VERSIONS = {ApiVersion.V2016_10_01, ApiVersion.V7_0, ApiVersion.V7_1}
 
 
 def get_attestation_token(attestation_uri):
@@ -47,7 +47,7 @@ def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
     versions = api_versions or pytest.api_version  # pytest.api_version -> [DEFAULT_VERSION] if live, ApiVersion if not
 
     for api_version in versions:
-        if not only_vault and api_version in HSM_SUPPORTED_VERSIONS:
+        if not only_vault and api_version not in HSM_UNSUPPORTED_VERSIONS:
             combinations.append([api_version, True])
         if not only_hsm:
             combinations.append([api_version, False])

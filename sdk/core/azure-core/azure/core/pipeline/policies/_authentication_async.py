@@ -40,7 +40,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     :type credential: ~azure.core.credentials_async.AsyncTokenProvider
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
-        tokens. Defaults to False.
+        tokens. Defaults to True.
     """
 
     def __init__(self, credential: AsyncTokenProvider, *scopes: str, **kwargs: Any) -> None:
@@ -49,7 +49,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         self._scopes = scopes
         self._lock_instance = None
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
-        self._enable_cae: bool = kwargs.get("enable_cae", False)
+        self._enable_cae: bool = kwargs.get("enable_cae", True)
 
     @property
     def _lock(self):

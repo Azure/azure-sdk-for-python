@@ -1,4 +1,5 @@
 import importlib
+import platform
 import re
 import sys
 from importlib import reload
@@ -63,6 +64,10 @@ def mock_function_multi_return_expected(__self, mock_arg):
 
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
+@pytest.mark.skipif(
+    condition=sys.version_info >= (3, 13) or platform.python_implementation() == "PyPy",
+    reason="historical implementation doesn't support Python 3.13+, and relies on CPython bytecode optimization; PyPy does not support required opcodes",
+)
 class TestPersistentLocalsProfiler:
     @classmethod
     def get_persistent_locals_builder(cls) -> _func_utils.PersistentLocalsFunctionBuilder:

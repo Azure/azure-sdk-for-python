@@ -21,11 +21,11 @@ class TestContainerServiceOperationStatusResultOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_operation_status_result_list(self, resource_group):
         response = self.client.operation_status_result.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-10-02-preview",
+            api_version="2025-09-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerServiceOperationStatusResultOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_operation_status_result_get(self, resource_group):
         response = await self.client.operation_status_result.get(
             resource_group_name=resource_group.name,
             resource_name="str",
             operation_id="str",
-            api_version="2023-10-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,13 +46,13 @@ class TestContainerServiceOperationStatusResultOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_agent_pool(self, resource_group):
+    async def test_operation_status_result_get_by_agent_pool(self, resource_group):
         response = await self.client.operation_status_result.get_by_agent_pool(
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
             operation_id="str",
-            api_version="2023-10-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself

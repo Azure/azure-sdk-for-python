@@ -22,7 +22,7 @@ class TestIotHubResourceProviderCommonOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_resource_provider_common_get_subscription_quota(self, resource_group):
         response = self.client.resource_provider_common.get_subscription_quota(
-            api_version="2023-06-30-preview",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself

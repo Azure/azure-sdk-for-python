@@ -33,6 +33,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 from typing import List
 
+
 def path_excluded(path, additional_excludes):
     return (
         any([excl in path for excl in additional_excludes])
@@ -81,7 +82,10 @@ def set_version_py(setup_path, new_version):
     version_py_location = get_version_py(setup_path)
 
     if not version_py_location:
-        logger.error("No version.py file found in {}".format(setup_path))
+        if "nspkg" in setup_path:
+            logger.warning(f"No version.py file found in {setup_path}. This is expected for nspkg packages.")
+            return
+        logger.error(f"No version.py file found in {setup_path}")
         sys.exit(1)
 
     version_contents = ""

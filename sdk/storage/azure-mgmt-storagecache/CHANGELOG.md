@@ -1,5 +1,49 @@
 # Release History
 
+## 3.0.1 (2025-10-09)
+
+### Bugs Fixed
+
+- Exclude `generated_samples` and `generated_tests` from wheel
+
+## 3.0.0 (2025-09-25)
+
+### Features Added
+
+  - Model `StorageCacheManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `StorageCacheManagementClient` added operation group `auto_export_jobs`
+  - Client `StorageCacheManagementClient` added operation group `auto_import_jobs`
+  - Model `ImportJob` added property `admin_status`
+  - Model `ImportJob` added property `imported_files`
+  - Model `ImportJob` added property `imported_directories`
+  - Model `ImportJob` added property `imported_symlinks`
+  - Model `ImportJob` added property `preexisting_files`
+  - Model `ImportJob` added property `preexisting_directories`
+  - Model `ImportJob` added property `preexisting_symlinks`
+  - Model `ImportJobUpdate` added property `admin_status`
+  - Added model `AutoExportJob`
+  - Added enum `AutoExportJobAdminStatus`
+  - Added enum `AutoExportJobProvisioningStateType`
+  - Added model `AutoExportJobUpdate`
+  - Added model `AutoExportJobsListResult`
+  - Added enum `AutoExportStatusType`
+  - Added model `AutoImportJob`
+  - Added enum `AutoImportJobPropertiesAdminStatus`
+  - Added enum `AutoImportJobPropertiesProvisioningState`
+  - Added model `AutoImportJobPropertiesStatusBlobSyncEvents`
+  - Added enum `AutoImportJobState`
+  - Added model `AutoImportJobUpdate`
+  - Added enum `AutoImportJobUpdatePropertiesAdminStatus`
+  - Added model `AutoImportJobsListResult`
+  - Added enum `ImportJobAdminStatus`
+  - Added operation group `AutoExportJobsOperations`
+  - Added operation group `AutoImportJobsOperations`
+
+### Breaking Changes
+
+  - Parameter `conflict_resolution_mode` of method `ImportJob.__init__` is now optional
+  - Deleted or renamed operation group `StorageCacheManagementClientOperationsMixin`
+
 ## 2.0.0 (2024-05-20)
 
 ### Features Added

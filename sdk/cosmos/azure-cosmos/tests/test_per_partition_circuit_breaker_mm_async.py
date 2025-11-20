@@ -4,7 +4,7 @@ import asyncio
 import os
 import unittest
 import uuid
-from typing import Dict, Any, List
+from typing import Any
 
 import pytest
 from azure.core.pipeline.transport._aiohttp import AioHttpTransport
@@ -98,7 +98,7 @@ async def perform_read_operation(operation, container, doc_id, pk, expected_uri)
         async for _ in container.read_all_items():
             pass
 
-async def cleanup_method(initialized_objects: List[Dict[str, Any]]):
+async def cleanup_method(initialized_objects: list[dict[str, Any]]):
     for obj in initialized_objects:
         method_client: CosmosClient = obj["client"]
         await method_client.close()

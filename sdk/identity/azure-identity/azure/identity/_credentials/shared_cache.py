@@ -198,9 +198,9 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
                 return token
             except Exception as e:  # pylint: disable=broad-except
                 if within_dac.get():
-                    raise CredentialUnavailableError(  # pylint: disable=raise-missing-from
+                    raise CredentialUnavailableError(
                         message=getattr(e, "message", str(e)), response=getattr(e, "response", None)
-                    )
+                    ) from e
                 raise
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))

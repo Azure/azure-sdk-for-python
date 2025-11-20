@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -40,7 +40,8 @@ from ...operations._ssh_public_keys_operations import (
 from .._configuration import ComputeManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class SshPublicKeysOperations:
@@ -76,7 +77,7 @@ class SshPublicKeysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.SshPublicKeysGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -147,7 +148,7 @@ class SshPublicKeysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.SshPublicKeysGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -226,7 +227,7 @@ class SshPublicKeysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[_models.SshPublicKeyResource] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -344,7 +345,7 @@ class SshPublicKeysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SshPublicKeyResource] = kwargs.pop("cls", None)
 
@@ -474,7 +475,7 @@ class SshPublicKeysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SshPublicKeyResource] = kwargs.pop("cls", None)
 
@@ -541,7 +542,7 @@ class SshPublicKeysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
@@ -661,11 +662,12 @@ class SshPublicKeysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[_models.SshPublicKeyGenerateKeyPairResult] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):

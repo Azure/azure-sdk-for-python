@@ -42,7 +42,7 @@ class TestKeyVaultManagementSecretsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestKeyVaultManagementSecretsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestKeyVaultManagementSecretsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vault_name="str",
             secret_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestKeyVaultManagementSecretsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.secrets.list(
             resource_group_name=resource_group.name,
             vault_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

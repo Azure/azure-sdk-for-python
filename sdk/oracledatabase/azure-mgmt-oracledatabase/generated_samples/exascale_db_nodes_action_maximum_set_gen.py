@@ -32,13 +32,13 @@ def main():
 
     response = client.exascale_db_nodes.begin_action(
         resource_group_name="rgopenapi",
-        exadb_vm_cluster_name="vmClusterName",
-        exascale_db_node_name="dbNodeName",
+        exadb_vm_cluster_name="exadbvmcluster1",
+        exascale_db_node_name="exascaledbnode1",
         body={"action": "Start"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/ExascaleDbNodes_Action_MaximumSet_Gen.json
+# x-ms-original-file: 2025-09-01/ExascaleDbNodes_Action_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
