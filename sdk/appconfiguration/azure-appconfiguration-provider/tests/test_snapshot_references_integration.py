@@ -197,15 +197,3 @@ class TestRequestTracingContextIntegration:
 
         # Should contain snapshot reference tag
         assert "UsesSnapshotReference" in correlation_header
-
-
-# Note: These are true integration tests that test the actual functionality
-# without mocking any core components. They test:
-# 1. Snapshot reference parser with comprehensive input validation
-# 2. Content type detection logic for different configuration setting types
-# 3. Constants validation to ensure proper values
-# 4. Request tracing context integration with snapshot reference tracking
-#
-# For full end-to-end tests that require Azure App Configuration service,
-# those would be in a separate test file (e.g., test_e2e_snapshots.py)
-# and would require live Azure resources or recordings.
