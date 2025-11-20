@@ -121,7 +121,7 @@ steps:
           ${{ parameters.CoverageArg }} `
           --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
-          --checks="${{ parameters.ToxTestEnv }}"
+          --checks="${{ parameters.ToxTestEnv }}" `
           --injected-packages="${{ parameters.InjectedPackages }}" `
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
