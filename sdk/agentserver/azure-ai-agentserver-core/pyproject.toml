@@ -66,6 +66,4 @@ known-first-party = ["azure.ai.agentserver.core"]
 combine-as-imports = true
 
 [tool.azure-sdk-build]
-breaking = false   # incompatible python version
 pyright = false
-verifytypes = false
