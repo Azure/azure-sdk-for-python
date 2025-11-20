@@ -18,6 +18,8 @@ from .key_wrapper import KeyWrapper
 class _ServiceTest(PerfStressTest):
     service_client = None
     async_service_client = None
+    sync_token_credential = None
+    async_token_credential = None
 
     def __init__(self, arguments):
         super().__init__(arguments)

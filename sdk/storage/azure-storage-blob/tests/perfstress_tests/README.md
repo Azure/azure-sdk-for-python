@@ -78,7 +78,7 @@ The tests currently written for the T2 SDK:
 - `UploadBlockTest` Upload a single block of `size` bytes within a Blob.
 - `DownloadTest` Download a stream of `size` bytes. 
 - `DownloadToFileTest` Downloads a blob of `size` bytes to a local file.
-- `DownlaadBasicTest` Downloads using basic HTTP library primitives, ignoring content.
+- `DownloadBasicTest` Downloads using basic HTTP library primitives, ignoring content.
 - `ListBlobsTest` List a specified number of blobs.
 
 ### T1 Tests
