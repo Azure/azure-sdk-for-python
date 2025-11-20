@@ -456,8 +456,8 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
 
         # Check if correlation context header exists and contains snapshot reference tag
         correlation_header = updated_headers.get("Correlation-Context", "")
-        self.assertIn("RequestType=Startup", correlation_header)
-        self.assertIn(SNAPSHOT_REFERENCE_TAG, correlation_header)
+        assert "RequestType=Startup" in correlation_header
+        assert SNAPSHOT_REFERENCE_TAG in correlation_header
 
 
 class TestSnapshotReferenceTracking(unittest.TestCase):
