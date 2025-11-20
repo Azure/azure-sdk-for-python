@@ -40,7 +40,7 @@ from azure.mgmt.authorization import AuthorizationManagementClient
 from azure.mgmt.resource import ResourceManagementClient
 import uuid
 from azure.ai.projects.models import (
-    AgentVersionObject,
+    AgentVersionDetails,
     EvaluationTaxonomy,
     AzureAIAgentTarget,
     AgentTaxonomyInput,
@@ -429,7 +429,7 @@ def schedule_redteam_evaluation() -> None:
         print("Evaluation deleted")
 
 
-def _get_tool_descriptions(agent: AgentVersionObject):
+def _get_tool_descriptions(agent: AgentVersionDetails):
     tools = agent.definition.get("tools", [])
     tool_descriptions = []
     for tool in tools:
