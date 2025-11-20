@@ -29,7 +29,7 @@ from ._key_vault._async_secret_provider import SecretProvider
 from .._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
-    APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE,
+    SNAPSHOT_REF_CONTENT_TYPE,
 )
 from .._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
@@ -458,7 +458,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
                 if self._feature_flag_refresh_enabled:
                     self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
-            elif settings.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in settings.content_type:
+            elif settings.content_type and SNAPSHOT_REF_CONTENT_TYPE in settings.content_type:
                 # Check if this is a snapshot reference
 
                 # Track snapshot reference usage for telemetry

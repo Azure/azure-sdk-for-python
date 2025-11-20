@@ -27,7 +27,7 @@ from .._client_manager_base import (
 from .._models import SettingSelector
 from .._constants import FEATURE_FLAG_PREFIX
 from .._snapshot_reference_parser import SnapshotReferenceParser
-from .._constants import APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE
+from .._constants import SNAPSHOT_REF_CONTENT_TYPE
 from ._async_discovery import find_auto_failover_endpoints
 
 if TYPE_CHECKING:
@@ -278,7 +278,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: Dict[str, ConfigurationSetting]
         :raises ValueError: When the setting is not a valid snapshot reference
         """
-        if not setting.content_type or not APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in setting.content_type:
+        if not setting.content_type or not SNAPSHOT_REF_CONTENT_TYPE in setting.content_type:
             raise ValueError("Setting is not a snapshot reference")
 
         try:

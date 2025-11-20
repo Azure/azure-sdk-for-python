@@ -27,7 +27,7 @@ from ._key_vault._secret_provider import SecretProvider
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
-    APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE,
+    SNAPSHOT_REF_CONTENT_TYPE,
 )
 from ._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
@@ -423,7 +423,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
         raise exception
 
-    def _process_configurations(self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient) -> Dict[str, Any]:
+    def _process_configurations(
+        self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
+    ) -> Dict[str, Any]:
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
         # precedence. Only process the settings with the highest priority (i.e. the last one in the list).
         unique_settings = self._deduplicate_settings(configuration_settings)
@@ -441,7 +443,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
                 if self._feature_flag_refresh_enabled:
                     self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
-            elif settings.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in settings.content_type:
+            elif settings.content_type and SNAPSHOT_REF_CONTENT_TYPE in settings.content_type:
                 # Check if this is a snapshot reference
 
                 # Track snapshot reference usage for telemetry

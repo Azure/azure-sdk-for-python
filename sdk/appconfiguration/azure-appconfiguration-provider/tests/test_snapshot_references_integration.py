@@ -7,7 +7,7 @@
 import pytest
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.provider._snapshot_reference_parser import SnapshotReferenceParser
-from azure.appconfiguration.provider._constants import SNAPSHOT_REF_CONTENT_TYPE, APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE
+from azure.appconfiguration.provider._constants import SNAPSHOT_REF_CONTENT_TYPE
 from azure.appconfiguration.provider._request_tracing_context import _RequestTracingContext
 
 
@@ -121,10 +121,7 @@ class TestSnapshotReferenceContentTypeDetection:
         )
 
         # Should detect as snapshot reference
-        assert (
-            snapshot_ref_setting.content_type
-            and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in snapshot_ref_setting.content_type
-        )
+        assert snapshot_ref_setting.content_type and SNAPSHOT_REF_CONTENT_TYPE in snapshot_ref_setting.content_type
 
     def test_regular_setting_content_type_detection(self):
         """Test that regular settings are not detected as snapshot references."""
@@ -136,9 +133,7 @@ class TestSnapshotReferenceContentTypeDetection:
         )
 
         # Should not detect as snapshot reference
-        assert not (
-            regular_setting.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in regular_setting.content_type
-        )
+        assert not (regular_setting.content_type and SNAPSHOT_REF_CONTENT_TYPE in regular_setting.content_type)
 
     def test_feature_flag_content_type_detection(self):
         """Test that feature flags are not detected as snapshot references."""
@@ -151,8 +146,7 @@ class TestSnapshotReferenceContentTypeDetection:
 
         # Should not detect as snapshot reference
         assert not (
-            feature_flag_setting.content_type
-            and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in feature_flag_setting.content_type
+            feature_flag_setting.content_type and SNAPSHOT_REF_CONTENT_TYPE in feature_flag_setting.content_type
         )
 
     def test_key_vault_reference_content_type_detection(self):
@@ -165,7 +159,7 @@ class TestSnapshotReferenceContentTypeDetection:
         )
 
         # Should not detect as snapshot reference
-        assert not (kv_ref_setting.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in kv_ref_setting.content_type)
+        assert not (kv_ref_setting.content_type and SNAPSHOT_REF_CONTENT_TYPE in kv_ref_setting.content_type)
 
 
 class TestRequestTracingContextIntegration:

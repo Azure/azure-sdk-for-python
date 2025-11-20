@@ -9,9 +9,7 @@ from unittest.mock import Mock, patch
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.provider._snapshot_reference_parser import SnapshotReferenceParser
 from azure.appconfiguration.provider._constants import (
-    APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE,
     SNAPSHOT_REF_CONTENT_TYPE,
-    SNAPSHOT_NAME_FIELD,
 )
 
 

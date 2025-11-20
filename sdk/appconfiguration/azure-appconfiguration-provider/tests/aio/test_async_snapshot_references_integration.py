@@ -13,6 +13,7 @@ from azure.appconfiguration.provider._constants import SNAPSHOT_REF_CONTENT_TYPE
 from azure.core.exceptions import ResourceNotFoundError, AzureError
 from azure.identity.aio import DefaultAzureCredential
 
+
 class TestAsyncClientManagerSnapshotReferences:
     """Integration tests for snapshot references in the async client manager."""
 
