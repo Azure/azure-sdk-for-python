@@ -1,5 +1,6 @@
-# Sample output files
-samples/sample_output/
+# Sample and test output files (any directory starting with these names)
+**/test_output*/
+**/sample_output*/
 
 # Virtual environment
 .venv/
