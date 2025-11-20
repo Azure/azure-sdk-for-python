@@ -932,7 +932,7 @@ You can add an Application Insights Azure resource to your Microsoft Foundry pro
 Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
 ```bash
-pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
+pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry azure-monitor-opentelemetry
 ```
 
 You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
