@@ -29,6 +29,7 @@ dependencies = [
     "opentelemetry-exporter-otlp-proto-http",
     "starlette>=0.45.0",
     "uvicorn>=0.31.0",
+    "aiohttp", # used by azure-identity aio
 ]
 
 [build-system]
