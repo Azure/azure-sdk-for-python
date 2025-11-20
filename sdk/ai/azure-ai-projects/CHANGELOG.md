@@ -6,9 +6,17 @@
 
 ### Breaking changes
 
+* Rename class `AgentObject` to `AgentDetails`
+* Rename class `AgentVersionObject` to `AgentVersionDetails`
+* Rename class `MemoryStoreObject` to `MemoryStoreDetails`
+
 ### Bugs Fixed
 
 ### Sample updates
+
+* Added OpenAPI tool sample. See `sample_agent_openapi.py`.
+* Added OpenAPI with Project Connection sample. See `sample_agent_openapi_with_project_connection.py`.
+* Added SharePoint grounding tool sample. See `sample_agent_sharepoint.py`.
 
 ## 2.0.0b2 (2025-11-14)
 

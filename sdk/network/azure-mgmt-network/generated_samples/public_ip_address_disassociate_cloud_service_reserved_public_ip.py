@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,18 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
+from azure.mgmt.network import NetworkManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-hdinsightcontainers
+    pip install azure-mgmt-network
 # USAGE
-    python locations_name_availability.py
+    python public_ip_address_disassociate_cloud_service_reserved_public_ip.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,18 +26,21 @@ from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
 
 
 def main():
-    client = HDInsightContainersMgmtClient(
+    client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="10e32bab-26da-4cc4-a441-52b318f824e6",
+        subscription_id="subid",
     )
 
-    response = client.locations.check_name_availability(
-        location="southeastasia",
-        name_availability_parameters={"name": "contosemember1", "type": "Microsoft.HDInsight/clusterPools/clusters"},
-    )
+    response = client.public_ip_addresses.begin_disassociate_cloud_service_reserved_public_ip(
+        resource_group_name="rg1",
+        public_ip_address_name="pip1",
+        parameters={
+            "publicIpArmId": "/subscriptions/subid/resourcegroups/rg1/providers/Microsoft.Network/publicIpAddresses/pip2"
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2024-05-01-preview/examples/LocationsNameAvailability.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/PublicIpAddressDisassociateCloudServiceReservedPublicIp.json
 if __name__ == "__main__":
     main()
