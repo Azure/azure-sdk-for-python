@@ -1151,6 +1151,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+            self.client = client
             # prepare 200 configuration settings
             for i in range(200):
                 await client.add_configuration_setting(
@@ -1251,7 +1252,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 assert response.status_code == 200
                 items = response.json()["items"]
                 for item in items:
-                    print(f"Key: {item['key']}, Label: {item['label']}")
+                    # Read the keys
+                    pass
 
                 link = response.headers.get("Link", None)
                 continuation_token = link[1 : link.index(">")] if link else None
@@ -1279,10 +1281,12 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             in str(error.value)
         )
 
-        await self.tear_down()
+        config_settings = self.client.list_configuration_settings()
+        async for config_setting in config_settings:
+            await self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+
         rep = await self.convert_to_list(self.client.list_labels())
         assert len(list(rep)) == 0
-
         await self.client.close()
 
 
