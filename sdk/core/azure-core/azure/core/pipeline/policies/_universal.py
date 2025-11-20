@@ -390,6 +390,7 @@ class HttpLoggingPolicy(
     :param logger: The logger to use for logging. Default to azure.core.pipeline.policies.http_logging_policy.
     :type logger: logging.Logger
     :keyword int logging_level: The logging level to use for request and response logs. Defaults to logging.INFO.
+    :type logging_level: int
     """
 
     DEFAULT_HEADERS_ALLOWLIST: Set[str] = set(
