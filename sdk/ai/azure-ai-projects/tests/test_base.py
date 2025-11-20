@@ -28,7 +28,7 @@ from azure.ai.projects.models import (
     ResponsesMessageRole,
     ItemContentType,
 )
-from azure.ai.projects.models._models import AgentObject, AgentVersionObject
+from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live_and_not_recording
 from azure.ai.projects import AIProjectClient as AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
@@ -371,10 +371,10 @@ class TestBase(AzureRecordedTestCase):
         print(f"Conversation validated (id: {conversation.id})")
 
     def _validate_agent_version(
-        self, agent: AgentVersionObject, expected_name: Optional[str] = None, expected_version: Optional[str] = None
+        self, agent: AgentVersionDetails, expected_name: Optional[str] = None, expected_version: Optional[str] = None
     ) -> None:
         assert agent is not None
-        assert isinstance(agent, AgentVersionObject)
+        assert isinstance(agent, AgentVersionDetails)
         assert agent.id is not None
         if expected_name:
             assert agent.name == expected_name
@@ -383,10 +383,10 @@ class TestBase(AzureRecordedTestCase):
         print(f"Agent version validated (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     def _validate_agent(
-        self, agent: AgentObject, expected_name: Optional[str] = None, expected_latest_version: Optional[str] = None
+        self, agent: AgentDetails, expected_name: Optional[str] = None, expected_latest_version: Optional[str] = None
     ) -> None:
         assert agent is not None
-        assert isinstance(agent, AgentObject)
+        assert isinstance(agent, AgentDetails)
         assert agent.id is not None
         if expected_name:
             assert agent.name == expected_name

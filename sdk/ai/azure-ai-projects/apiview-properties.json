@@ -16,7 +16,7 @@
         "azure.ai.projects.models.AgentReference": "Azure.AI.Projects.AgentReference",
         "azure.ai.projects.models.EvaluationTaxonomyInput": "Azure.AI.Projects.EvaluationTaxonomyInput",
         "azure.ai.projects.models.AgentTaxonomyInput": "Azure.AI.Projects.AgentTaxonomyInput",
-        "azure.ai.projects.models.AgentVersionDetails": "Azure.AI.Projects.AgentVersionObject",
+        "azure.ai.projects.models.AgentVersionDetails": "Azure.AI.Projects.AgentVersionDetails",
         "azure.ai.projects.models.AISearchIndexResource": "Azure.AI.Projects.AISearchIndexResource",
         "azure.ai.projects.models.Annotation": "OpenAI.Annotation",
         "azure.ai.projects.models.AnnotationFileCitation": "OpenAI.AnnotationFileCitation",
