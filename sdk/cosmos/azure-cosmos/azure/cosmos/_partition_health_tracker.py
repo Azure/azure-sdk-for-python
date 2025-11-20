@@ -312,11 +312,13 @@ class _PPAFPartitionThresholdsTracker(object):
 
     def __init__(self) -> None:
         self.pk_range_wrapper_to_failure_count: dict[PartitionKeyRangeWrapper, int] = {}
+        self._failure_lock = threading.Lock()
 
     def add_failure(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
-        if pk_range_wrapper not in self.pk_range_wrapper_to_failure_count:
-            self.pk_range_wrapper_to_failure_count[pk_range_wrapper] = 0
-        self.pk_range_wrapper_to_failure_count[pk_range_wrapper] += 1
+        with self._failure_lock:
+            if pk_range_wrapper not in self.pk_range_wrapper_to_failure_count:
+                self.pk_range_wrapper_to_failure_count[pk_range_wrapper] = 0
+            self.pk_range_wrapper_to_failure_count[pk_range_wrapper] += 1
 
     def clear_pk_failures(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
         if pk_range_wrapper in self.pk_range_wrapper_to_failure_count:
