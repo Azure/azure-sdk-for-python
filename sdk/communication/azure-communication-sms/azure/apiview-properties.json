@@ -1,0 +1,29 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.communication.sms.models.DeliveryAttempt": null,
+        "azure.communication.sms.models.DeliveryReport": null,
+        "azure.communication.sms.models.MessagingConnectOptions": null,
+        "azure.communication.sms.models.OptOutRecipient": null,
+        "azure.communication.sms.models.OptOutRequest": null,
+        "azure.communication.sms.models.OptOutResponse": null,
+        "azure.communication.sms.models.OptOutResponseItem": null,
+        "azure.communication.sms.models.SendMessageRequest": null,
+        "azure.communication.sms.models.SmsRecipient": null,
+        "azure.communication.sms.models.SmsSendOptions": null,
+        "azure.communication.sms.models.SmsSendResponse": null,
+        "azure.communication.sms.models.SmsSendResponseItem": null,
+        "azure.communication.sms.models.SmsSendResponseItemRepeatabilityResult": null,
+        "azure.communication.sms.models.DeliveryReportDeliveryStatus": null,
+        "azure.communication.sms.operations.SmsOperations.send": null,
+        "azure.communication.sms.aio.operations.SmsOperations.send": null,
+        "azure.communication.sms.operations.OptOutsOperations.add": null,
+        "azure.communication.sms.aio.operations.OptOutsOperations.add": null,
+        "azure.communication.sms.operations.OptOutsOperations.remove": null,
+        "azure.communication.sms.aio.operations.OptOutsOperations.remove": null,
+        "azure.communication.sms.operations.OptOutsOperations.check": null,
+        "azure.communication.sms.aio.operations.OptOutsOperations.check": null,
+        "azure.communication.sms.operations.DeliveryReportsOperations.get": null,
+        "azure.communication.sms.aio.operations.DeliveryReportsOperations.get": null
+    }
+}

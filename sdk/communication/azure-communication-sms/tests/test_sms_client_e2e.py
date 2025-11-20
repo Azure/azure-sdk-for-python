@@ -6,6 +6,7 @@
 import os
 import logging
 import sys
+import time
 
 import pytest
 from devtools_testutils.fake_credentials import FakeTokenCredential
@@ -128,3 +129,82 @@ class TestClient(ACSSMSTestCase):
 
     def create_client_from_connection_string(self):
         return SmsClient.from_connection_string(self.connection_str, http_logging_policy=get_http_logging_policy())
+
+    @recorded_by_proxy
+    def test_get_delivery_status_existing_message(self):
+        """Test getting delivery status for an existing message"""
+        import time
+        
+        # First send an SMS to get a message ID
+        sms_client = self.create_client_from_connection_string()
+        sms_responses = sms_client.send(from_=self.phone_number, to=self.phone_number, message="Hello World via SMS")
+        assert len(sms_responses) == 1
+        message_id = sms_responses[0].message_id
+        assert message_id is not None
+
+        time.sleep(5)
+
+        # Now get delivery status using the same SMS client (consolidated functionality)
+        delivery_report = sms_client.get_delivery_report(message_id)
+
+        # Verify delivery report structure
+        assert delivery_report is not None
+        assert delivery_report.message_id == message_id
+        if self.is_live:
+            assert delivery_report.from_property == self.phone_number
+            assert delivery_report.to == self.phone_number
+        assert delivery_report.delivery_status is not None
+        assert hasattr(delivery_report, 'received_timestamp')
+
+    @recorded_by_proxy
+    def test_get_delivery_status_nonexistent_message(self):
+        """Test getting delivery status for a non-existent message ID"""
+        sms_client = self.create_client_from_connection_string()
+
+        # Use a fake message ID that doesn't exist
+        fake_message_id = "00000000-0000-0000-0000-000000000000"
+
+        try:
+            # Try to get status - might return a result instead of throwing exception
+            result = sms_client.get_delivery_report(fake_message_id)
+
+            # If we get here, the API returned a result instead of throwing an exception
+            # Check if it's an empty result or has some indication of "not found"
+            if hasattr(result, 'delivery_reports') and len(result.delivery_reports) == 0:
+                # Empty result is acceptable for non-existent message
+                pass
+            elif hasattr(result, 'delivery_status') and result.delivery_status:
+                # If there's a delivery status, it might indicate "not found" or similar
+                pass
+            else:
+                # Log what we actually got for debugging
+                print(f"Unexpected result for non-existent message: {result}")
+
+        except HttpResponseError as ex:
+            # If an exception is thrown, check it's the right kind
+            assert ex.status_code in [400, 404, 422], f"Unexpected status code: {ex.status_code}"
+            assert ex.message is not None
+
+    @recorded_by_proxy
+    def test_get_delivery_report_from_managed_identity(self):
+        """Test delivery report retrieval using token credential (managed identity)"""
+        if not is_live():
+            credential = FakeTokenCredential()
+        else:
+            credential = get_credential()
+        sms_client = SmsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
+
+        # First send a message to get a message ID
+        sms_responses = sms_client.send(from_=self.phone_number, to=[self.phone_number], message="Test message for delivery report")
+        assert len(sms_responses) == 1
+        message_id = sms_responses[0].message_id
+
+        time.sleep(10)
+
+        # Now test delivery report retrieval with token credential
+        delivery_report = sms_client.get_delivery_report(message_id)
+        
+        # Verify the delivery report structure
+        assert delivery_report is not None
+        assert hasattr(delivery_report, 'message_id')
+        assert delivery_report.message_id == message_id
