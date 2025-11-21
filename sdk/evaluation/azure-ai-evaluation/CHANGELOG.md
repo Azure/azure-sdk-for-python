@@ -72,6 +72,7 @@
 ### Bugs Fixed
 
 - `image_tag` parameter in `AzureOpenAIPythonGrader` is now optional.
+- Fixed issue where `groundedness` evaluation failed when `query` is provided while using a reasoning model.
 
 ## 1.11.2 (2025-10-09)
 
