@@ -953,7 +953,6 @@ Here is a code sample that shows how to enable Azure Monitor tracing:
 # Enable Azure Monitor tracing
 application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()
 configure_azure_monitor(connection_string=application_insights_connection_string)
-
 ```
 
 <!-- END SNIPPET -->
