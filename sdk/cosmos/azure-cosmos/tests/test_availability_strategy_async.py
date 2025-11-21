@@ -374,6 +374,7 @@ class TestAsyncAvailabilityStrategy:
             availability_strategy_config=client_availability_strategy)
         doc = create_doc()
         await setup_with_transport['col'].create_item(doc)
+        await asyncio.sleep(0.5)
 
         container = setup_with_transport['col']
         expected_uris = [_location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])]
@@ -664,7 +665,7 @@ class TestAsyncAvailabilityStrategy:
                             FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
-            500,  # Add delay to trigger hedging
+            1000,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
