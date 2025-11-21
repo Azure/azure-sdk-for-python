@@ -90,7 +90,7 @@ class AzureAppConfigurationClient:
             base_url,
             credential,
             per_call_policies=[self._query_param_policy, self._sync_token_policy],
-            **kwargs  # type: ignore[arg-type]
+            **kwargs,  # type: ignore[arg-type]
         )
 
     @classmethod
