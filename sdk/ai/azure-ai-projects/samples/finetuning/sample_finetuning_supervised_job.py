@@ -43,7 +43,7 @@ from pathlib import Path
 load_dotenv()
 
 # For fine-tuning
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = "https://foundrysdk-eastus2-foundry-resou.services.ai.azure.com/api/projects/foundrysdk-eastus2-project"
 model_name = os.environ.get("MODEL_NAME", "gpt-4.1")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "sft_training_set.jsonl"))
@@ -52,9 +52,9 @@ validation_file_path = os.environ.get(
 )
 
 # For Deployment and inferencing on model
-subscription_id = os.environ["AZURE_AI_PROJECTS_AZURE_SUBSCRIPTION_ID"]
-resource_group = os.environ["AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP"]
-account_name = os.environ["AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT"]
+subscription_id = "856c80fd-f14e-436b-b434-fbc44a9103f7"
+resource_group = "foundrysdk-eastus2-rg"
+account_name = "foundrysdk-eastus2-foundry-resou"
 
 
 def pause_job(openai_client, job_id):
@@ -167,34 +167,7 @@ def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
-        print("Uploading training file...")
-        with open(training_file_path, "rb") as f:
-            train_file = openai_client.files.create(file=f, purpose="fine-tune")
-        print(f"Uploaded training file with ID: {train_file.id}")
-
-        print("Uploading validation file...")
-        with open(validation_file_path, "rb") as f:
-            validation_file = openai_client.files.create(file=f, purpose="fine-tune")
-        print(f"Uploaded validation file with ID: {validation_file.id}")
-
-        print("Waits for the training and validation files to be processed...")
-        openai_client.files.wait_for_processing(train_file.id)
-        openai_client.files.wait_for_processing(validation_file.id)
-
-        print("Creating supervised fine-tuning job")
-        fine_tuning_job = openai_client.fine_tuning.jobs.create(
-            training_file=train_file.id,
-            validation_file=validation_file.id,
-            model=model_name,
-            method={
-                "type": "supervised",
-                "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
-            },
-            extra_body={
-                "trainingType": "Standard"
-            },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
-        )
-        print(fine_tuning_job)
+        
 
         # Uncomment any of the following methods to test specific functionalities:
         # retrieve_job(openai_client, fine_tuning_job.id)
@@ -213,7 +186,7 @@ def main() -> None:
 
         # deployment_name = deploy_model(openai_client, credential, fine_tuning_job.id)
 
-        # infer(openai_client, deployment_name)
+        infer(openai_client, "gpt-4-1-fine-tuned")
 
 
 if __name__ == "__main__":

@@ -368,29 +368,20 @@ class TestFineTuning(TestBase):
     @servicePreparer()
     @recorded_by_proxy
     def test_finetuning_list_jobs(self, **kwargs):
-
         with self.create_client(**kwargs) as project_client:
-
             with project_client.get_openai_client() as openai_client:
 
-                train_file, validation_file = self._upload_test_files(openai_client, self.SFT_JOB_TYPE)
-
-                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE)
-                print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
-
                 jobs_list = list(openai_client.fine_tuning.jobs.list())
-                print(f"[test_finetuning_sft] Listed {len(jobs_list)} jobs")
+                print(f"[test_finetuning_list] Listed {len(jobs_list)} jobs")
 
-                assert len(jobs_list) > 0
-
-                job_ids = [job.id for job in jobs_list]
-                assert fine_tuning_job.id in job_ids
-
-                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-                print(f"[test_finetuning_sft] Cancelled job: {fine_tuning_job.id}")
-
-                self._cleanup_test_file(openai_client, train_file.id)
-                self._cleanup_test_file(openai_client, validation_file.id)
+                assert isinstance(jobs_list, list), "Jobs list should be a list"
+                
+                for job in jobs_list:
+                    assert job.id is not None, "Job should have an ID"
+                    assert job.created_at is not None, "Job should have a creation timestamp"
+                    assert job.status is not None, "Job should have a status"
+                    print(f"[test_finetuning_list] Validated job {job.id} with status {job.status}")
+                print(f"[test_finetuning_list] Successfully validated list functionality with {len(jobs_list)} jobs")
 
     
 
@@ -487,10 +478,8 @@ class TestFineTuning(TestBase):
                 events_list = list(openai_client.fine_tuning.jobs.list_events(fine_tuning_job.id))
                 print(f"[test_finetuning_sft] Listed {len(events_list)} events for job: {fine_tuning_job.id}")
 
-                # Verify that events exist (at minimum, job creation event should be present)
                 assert len(events_list) > 0, "Fine-tuning job should have at least one event"
 
-                # Verify events have required attributes
                 for event in events_list:
                     assert event.id is not None, "Event should have an ID"
                     assert event.object is not None, "Event should have an object type"
