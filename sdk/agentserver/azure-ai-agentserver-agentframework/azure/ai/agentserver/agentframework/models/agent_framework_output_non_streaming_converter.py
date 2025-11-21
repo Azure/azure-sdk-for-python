@@ -212,19 +212,25 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
     def _construct_response_data(self, output_items: List[dict]) -> OpenAIResponse:
         agent_id = AgentIdGenerator.generate(self._context)
 
-        response_data = {
+        # Ensure _response_created_at is set (should have been set by _ensure_response_started)
+        created_timestamp = self._response_created_at if self._response_created_at is not None else int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+
+        response_data: OpenAIResponse = {
             "metadata": {},
-            "agent": agent_id,
-            "conversation": self._context.get_conversation_object(),
-            "type": "message",
-            "role": "assistant",
             "temperature": Constants.DEFAULT_TEMPERATURE,
             "top_p": Constants.DEFAULT_TOP_P,
             "user": "",
             "id": self._context.response_id,
-            "created_at": self._response_created_at,
-            "output": output_items,
+            "object": "response",
+            "created_at": datetime.datetime.fromtimestamp(created_timestamp, tz=datetime.timezone.utc),
+            "output": cast(List[Any], output_items),
+            "instructions": "",
             "parallel_tool_calls": True,
-            "status": "completed",
         }
-        return cast(OpenAIResponse, response_data)
+        # Add optional fields
+        if agent_id is not None:
+            response_data["agent"] = agent_id  # type: ignore[typeddict-item]
+        if self._context.get_conversation_object() is not None:
+            response_data["conversation"] = self._context.get_conversation_object()  # type: ignore[typeddict-item]
+        response_data["status"] = "completed"  # type: ignore[typeddict-item]
+        return response_data
