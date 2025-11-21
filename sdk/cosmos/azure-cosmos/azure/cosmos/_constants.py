@@ -25,14 +25,21 @@
 
 from typing_extensions import Literal
 
-# cspell:ignore reranker
+class TimeoutScope:
+    """Defines the scope of timeout application"""
+    OPERATION: Literal["operation"] = "operation"  # Apply timeout to entire logical operation
+    PAGE: Literal["page"] = "page"  # Apply timeout to individual page requests
 
+# cspell:ignore reranker
 
 class _Constants:
     """Constants used in the azure-cosmos package"""
 
     UserConsistencyPolicy: Literal["userConsistencyPolicy"] = "userConsistencyPolicy"
     DefaultConsistencyLevel: Literal["defaultConsistencyLevel"] = "defaultConsistencyLevel"
+    OperationStartTime: Literal["operationStartTime"] = "operationStartTime"
+    # whether to apply timeout to the whole logical operation or just a page request
+    TimeoutScope: Literal["timeoutScope"] = "timeoutScope"
 
     # GlobalDB related constants
     WritableLocations: Literal["writableLocations"] = "writableLocations"
