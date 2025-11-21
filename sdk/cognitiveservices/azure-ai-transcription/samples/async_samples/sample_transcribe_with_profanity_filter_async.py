@@ -46,7 +46,7 @@ async def sample_transcribe_with_profanity_filter_async():
         with open(audio_file_path, "rb") as audio_file:
             options = TranscriptionOptions(locales=["en-US"], profanity_filter_mode="Masked")
 
-            request_content = TranscriptionContent(options=options, audio=audio_file)
+            request_content = TranscriptionContent(definition=options, audio=audio_file)
 
             result = await client.transcribe(request_content)
             print(f"Transcription (with profanity masked): {result.combined_phrases[0].text}")
@@ -55,7 +55,7 @@ async def sample_transcribe_with_profanity_filter_async():
         with open(audio_file_path, "rb") as audio_file:
             options = TranscriptionOptions(locales=["en-US"], profanity_filter_mode="Removed")
 
-            request_content = TranscriptionContent(options=options, audio=audio_file)
+            request_content = TranscriptionContent(definition=options, audio=audio_file)
 
             result = await client.transcribe(request_content)
             print(f"\nTranscription (with profanity removed): {result.combined_phrases[0].text}")
@@ -64,7 +64,7 @@ async def sample_transcribe_with_profanity_filter_async():
         with open(audio_file_path, "rb") as audio_file:
             options = TranscriptionOptions(locales=["en-US"], profanity_filter_mode="Tags")
 
-            request_content = TranscriptionContent(options=options, audio=audio_file)
+            request_content = TranscriptionContent(definition=options, audio=audio_file)
 
             result = await client.transcribe(request_content)
             print(f"\nTranscription (with profanity tagged): {result.combined_phrases[0].text}")

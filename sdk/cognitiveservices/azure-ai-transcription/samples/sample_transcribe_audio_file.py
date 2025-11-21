@@ -47,7 +47,7 @@ def sample_transcribe_audio_file():
         options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
         # Create the request content
-        request_content = TranscriptionContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(definition=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)

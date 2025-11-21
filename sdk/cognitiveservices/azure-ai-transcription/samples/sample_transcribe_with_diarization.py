@@ -57,7 +57,7 @@ def sample_transcribe_with_diarization():
         options = TranscriptionOptions(locales=["en-US"], diarization_options=diarization_options)
 
         # Create the request content
-        request_content = TranscriptionContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(definition=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)

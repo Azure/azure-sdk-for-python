@@ -63,7 +63,7 @@ def sample_transcribe_with_enhanced_mode():
         options = TranscriptionOptions(locales=["en-US"], enhanced_mode=enhanced_mode)
 
         # Create the request content
-        request_content = TranscriptionContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(definition=options, audio=audio_file)
 
         # Transcribe the audio with enhanced mode
         result = client.transcribe(request_content)

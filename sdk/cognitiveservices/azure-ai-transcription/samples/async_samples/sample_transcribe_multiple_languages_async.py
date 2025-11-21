@@ -49,7 +49,7 @@ async def sample_transcribe_multiple_languages_async():
             options = TranscriptionOptions(locales=["en-US", "es-ES", "fr-FR", "de-DE"])  # Multiple candidates
 
             # Create the request content
-            request_content = TranscriptionContent(options=options, audio=audio_file)
+            request_content = TranscriptionContent(definition=options, audio=audio_file)
 
             # Transcribe the audio
             result = await client.transcribe(request_content)

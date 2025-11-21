@@ -47,7 +47,7 @@ async def sample_transcribe_audio_file_async():
             options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
             # Create the request content
-            request_content = TranscriptionContent(options=options, audio=audio_file)
+            request_content = TranscriptionContent(definition=options, audio=audio_file)
 
             # Transcribe the audio
             result = await client.transcribe(request_content)
