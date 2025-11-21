@@ -1,5 +1,11 @@
 # Release History
 
+## 40.2.0 (2025-12-21)
+
+### Features Added
+
+  - Enum `OSSKU` added member `UBUNTU2404`
+
 ## 41.0.0b2 (2025-11-17)
 
 ### Features Added
