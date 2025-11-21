@@ -22,7 +22,7 @@ USAGE:
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) MCP_PROJECT_CONNECTION_ID - The connection resource ID in Custom keys
-       with key equals to "Authorization" and value to be "Bear <your GitHub PAT token>".
+       with key equals to "Authorization" and value to be "Bearer <your GitHub PAT token>".
        Token can be created in https://github.com/settings/personal-access-tokens/new
 """
 
