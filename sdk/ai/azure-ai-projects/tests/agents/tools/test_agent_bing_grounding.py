@@ -54,10 +54,10 @@ class TestAgentBingGrounding(TestBase):
         # Note: This test requires BING_PROJECT_CONNECTION_ID environment variable
         # to be set with a valid Bing connection ID from the project
         bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_connection_id")
-        
+
         if not bing_connection_id:
             pytest.skip("BING_PROJECT_CONNECTION_ID environment variable not set")
-        
+
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
         # Create agent with Bing grounding tool
@@ -70,9 +70,7 @@ class TestAgentBingGrounding(TestBase):
                     BingGroundingAgentTool(
                         bing_grounding=BingGroundingSearchToolParameters(
                             search_configurations=[
-                                BingGroundingSearchConfiguration(
-                                    project_connection_id=bing_connection_id
-                                )
+                                BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
                             ]
                         )
                     )
@@ -88,7 +86,7 @@ class TestAgentBingGrounding(TestBase):
         # Test agent with a query that requires current web information
         output_text = ""
         url_citations = []
-        
+
         stream_response = openai_client.responses.create(
             stream=True,
             tool_choice="required",
@@ -121,14 +119,14 @@ class TestAgentBingGrounding(TestBase):
 
         # Verify that we got a response
         assert len(output_text) > 0, "Expected non-empty response text"
-        
+
         # Verify that we got URL citations (Bing grounding should provide sources)
         assert len(url_citations) > 0, "Expected URL citations from Bing grounding"
-        
+
         # Verify that citations are valid URLs
         for url in url_citations:
             assert url.startswith("http://") or url.startswith("https://"), f"Invalid URL citation: {url}"
-        
+
         print(f"Test completed successfully with {len(url_citations)} URL citations")
 
         # Teardown
@@ -155,10 +153,10 @@ class TestAgentBingGrounding(TestBase):
         openai_client = project_client.get_openai_client()
 
         bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_connection_id")
-        
+
         if not bing_connection_id:
             pytest.skip("BING_PROJECT_CONNECTION_ID environment variable not set")
-        
+
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
         # Create agent with Bing grounding tool
@@ -171,9 +169,7 @@ class TestAgentBingGrounding(TestBase):
                     BingGroundingAgentTool(
                         bing_grounding=BingGroundingSearchToolParameters(
                             search_configurations=[
-                                BingGroundingSearchConfiguration(
-                                    project_connection_id=bing_connection_id
-                                )
+                                BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
                             ]
                         )
                     )
@@ -193,7 +189,7 @@ class TestAgentBingGrounding(TestBase):
             print(f"\nTesting query: {query}")
             output_text = ""
             url_citations = []
-            
+
             stream_response = openai_client.responses.create(
                 stream=True,
                 tool_choice="required",

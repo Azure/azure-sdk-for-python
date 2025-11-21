@@ -49,7 +49,16 @@ class TestAgentAISearchAsync(TestBase):
         },
     ]
 
-    async def _ask_question_async(self, openai_client, agent_name: str, title: str, question: str, expected_answer: bool, question_num: int, total_questions: int):
+    async def _ask_question_async(
+        self,
+        openai_client,
+        agent_name: str,
+        title: str,
+        question: str,
+        expected_answer: bool,
+        question_num: int,
+        total_questions: int,
+    ):
         """Helper method to ask a single question asynchronously."""
         print(f"\n{'='*80}")
         print(f"Q{question_num}/{total_questions}: {title}")
@@ -117,7 +126,7 @@ class TestAgentAISearchAsync(TestBase):
         and handle multiple concurrent requests to search indexed content and provide
         accurate answers to questions based on the search results.
 
-        The test asks 5 true/false questions IN PARALLEL using asyncio.gather() and 
+        The test asks 5 true/false questions IN PARALLEL using asyncio.gather() and
         validates that at least 4 are answered correctly by the agent using the search index.
 
         This should be significantly faster than the sequential version.
@@ -140,7 +149,7 @@ class TestAgentAISearchAsync(TestBase):
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
-        
+
         async with project_client:
             openai_client = await project_client.get_openai_client()
 
@@ -197,21 +206,15 @@ class TestAgentAISearchAsync(TestBase):
                 title = qa_pair["title"]
                 question = qa_pair["question"]
                 expected_answer = qa_pair["answer"]
-                
+
                 task = self._ask_question_async(
-                    openai_client, 
-                    agent.name,
-                    title,
-                    question, 
-                    expected_answer, 
-                    i, 
-                    total_questions
+                    openai_client, agent.name, title, question, expected_answer, i, total_questions
                 )
                 tasks.append(task)
 
             # Run all tasks in parallel and collect results
             results = await asyncio.gather(*tasks)
-            
+
             # Count correct answers
             correct_answers = sum(1 for is_correct in results if is_correct)
 
@@ -226,7 +229,9 @@ class TestAgentAISearchAsync(TestBase):
                 f"but got {correct_answers}. The agent needs to answer at least 80% correctly."
             )
 
-            print(f"\n✓ Test passed! Agent answered {correct_answers}/{total_questions} questions correctly (>= 4 required)")
+            print(
+                f"\n✓ Test passed! Agent answered {correct_answers}/{total_questions} questions correctly (>= 4 required)"
+            )
 
             # Teardown
             await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

@@ -68,12 +68,12 @@ class TestAgentWebSearch(TestBase):
 
         # Ask a question that requires web search for current information
         print("\nAsking agent about current weather...")
-        
+
         response = openai_client.responses.create(
             input="What is the current weather in Seattle?",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         print(f"Response completed (id: {response.id})")
         assert response.id is not None
         assert response.output is not None
@@ -82,16 +82,16 @@ class TestAgentWebSearch(TestBase):
         # Get the response text
         response_text = response.output_text
         print(f"\nAgent's response: {response_text[:300]}...")
-        
+
         # Verify we got a meaningful response
         assert len(response_text) > 30, "Expected a substantial response from the agent"
-        
+
         # The response should mention weather-related terms or Seattle
         response_lower = response_text.lower()
-        assert any(keyword in response_lower for keyword in ["weather", "temperature", "seattle", "forecast"]), (
-            f"Expected response to contain weather information, but got: {response_text[:200]}"
-        )
-        
+        assert any(
+            keyword in response_lower for keyword in ["weather", "temperature", "seattle", "forecast"]
+        ), f"Expected response to contain weather information, but got: {response_text[:200]}"
+
         print("\n✓ Agent successfully used web search tool to get current information")
 
         # Teardown

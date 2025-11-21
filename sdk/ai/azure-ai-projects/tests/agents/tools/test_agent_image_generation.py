@@ -43,16 +43,18 @@ class TestAgentImageGeneration(TestBase):
         # Teardown:
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
-        
+
         # Get the image model deployment name from environment variable
-        image_model_deployment = os.environ.get("AZURE_AI_PROJECTS_TESTS_IMAGE_MODEL_DEPLOYMENT_NAME", "gpt-image-1-mini")
-        
+        image_model_deployment = os.environ.get(
+            "AZURE_AI_PROJECTS_TESTS_IMAGE_MODEL_DEPLOYMENT_NAME", "gpt-image-1-mini"
+        )
+
         model = self.test_agents_params["model_deployment_name"]
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
         openai_client = project_client.get_openai_client()
-        
+
         # Check if the image model deployment exists in the project
         try:
             deployment = project_client.deployments.get(image_model_deployment)
@@ -61,7 +63,7 @@ class TestAgentImageGeneration(TestBase):
             pytest.skip(f"Image generation model '{image_model_deployment}' not available in this project")
         except Exception as e:
             pytest.skip(f"Unable to verify image model deployment: {e}")
-        
+
         # Disable retries for faster failure when service returns 500
         openai_client.max_retries = 0
 
@@ -82,7 +84,7 @@ class TestAgentImageGeneration(TestBase):
 
         # Request image generation
         print("\nAsking agent to generate an image of a simple geometric shape...")
-        
+
         response = openai_client.responses.create(
             input="Generate an image of a blue circle on a white background.",
             extra_headers={
@@ -90,7 +92,7 @@ class TestAgentImageGeneration(TestBase):
             },  # Required for image generation
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         print(f"Response created (id: {response.id})")
         assert response.id is not None
         assert response.output is not None
@@ -102,7 +104,7 @@ class TestAgentImageGeneration(TestBase):
         # Verify image was generated
         assert len(image_data) > 0, "Expected at least one image to be generated"
         assert image_data[0], "Expected image data to be non-empty"
-        
+
         print(f"✓ Image data received ({len(image_data[0])} base64 characters)")
 
         # Decode the base64 image
@@ -116,7 +118,7 @@ class TestAgentImageGeneration(TestBase):
 
         # Verify it's a PNG image (check magic bytes)
         # PNG files start with: 89 50 4E 47 (‰PNG)
-        assert image_bytes[:4] == b'\x89PNG', "Image does not appear to be a valid PNG"
+        assert image_bytes[:4] == b"\x89PNG", "Image does not appear to be a valid PNG"
         print("✓ Image is a valid PNG")
 
         # Verify reasonable image size (should be > 1KB for a 1024x1024 image)

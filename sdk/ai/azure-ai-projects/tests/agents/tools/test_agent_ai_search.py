@@ -53,7 +53,7 @@ class TestAgentAISearch(TestBase):
         """
         Test agent with Azure AI Search capabilities for question answering.
 
-        NOTE: This test is skipped in favor of the parallel async version which is 
+        NOTE: This test is skipped in favor of the parallel async version which is
         significantly faster (~3x) and provides the same coverage.
         See test_agent_ai_search_async.py::test_agent_ai_search_question_answering_async_parallel
 
@@ -201,7 +201,9 @@ class TestAgentAISearch(TestBase):
             f"but got {correct_answers}. The agent needs to answer at least 80% correctly."
         )
 
-        print(f"\n✓ Test passed! Agent answered {correct_answers}/{total_questions} questions correctly (>= 4 required)")
+        print(
+            f"\n✓ Test passed! Agent answered {correct_answers}/{total_questions} questions correctly (>= 4 required)"
+        )
 
         # Teardown
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

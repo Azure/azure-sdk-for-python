@@ -78,14 +78,16 @@ class TestAgentFunctionTool(TestBase):
             ),
             description="Agent for testing function tool capabilities.",
         )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}, model: {agent.definition['model']})")
+        print(
+            f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}, model: {agent.definition['model']})"
+        )
         assert agent.id is not None
         assert agent.name == "function-tool-agent"
         assert agent.version is not None
 
         # Ask a question that should trigger the function call
         print("\nAsking agent: What's the weather in Seattle?")
-        
+
         response = openai_client.responses.create(
             input="What's the weather in Seattle?",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -103,16 +105,18 @@ class TestAgentFunctionTool(TestBase):
             if item.type == "function_call":
                 function_calls_found += 1
                 print(f"Found function call (id: {item.call_id}, name: {item.name})")
-                
+
                 # Parse the arguments
                 arguments = json.loads(item.arguments)
                 print(f"Function arguments: {arguments}")
-                
+
                 # Verify the function call is for get_weather
                 assert item.name == "get_weather", f"Expected function name 'get_weather', got '{item.name}'"
                 assert "location" in arguments, "Expected 'location' in function arguments"
-                assert "seattle" in arguments["location"].lower(), f"Expected Seattle in location, got {arguments['location']}"
-                
+                assert (
+                    "seattle" in arguments["location"].lower()
+                ), f"Expected Seattle in location, got {arguments['location']}"
+
                 # Simulate the function execution and provide a result
                 weather_result = {
                     "location": arguments["location"],
@@ -120,7 +124,7 @@ class TestAgentFunctionTool(TestBase):
                     "condition": "Sunny",
                     "humidity": "45%",
                 }
-                
+
                 # Add the function result to the input list
                 input_list.append(
                     FunctionCallOutput(
@@ -137,7 +141,7 @@ class TestAgentFunctionTool(TestBase):
 
         # Send the function results back to get the final response
         print("\nSending function results back to agent...")
-        
+
         response = openai_client.responses.create(
             input=input_list,
             previous_response_id=response.id,
@@ -146,20 +150,20 @@ class TestAgentFunctionTool(TestBase):
 
         print(f"Final response completed (id: {response.id})")
         assert response.id is not None
-        
+
         # Get the final response text
         response_text = response.output_text
         print(f"\nAgent's final response: {response_text}")
-        
+
         # Verify the response incorporates the weather data
         assert len(response_text) > 20, "Expected a meaningful response from the agent"
-        
+
         # Check that the response mentions the weather information we provided
         response_lower = response_text.lower()
-        assert any(keyword in response_lower for keyword in ["72", "sunny", "weather", "seattle"]), (
-            f"Expected response to mention weather information, but got: {response_text}"
-        )
-        
+        assert any(
+            keyword in response_lower for keyword in ["72", "sunny", "weather", "seattle"]
+        ), f"Expected response to mention weather information, but got: {response_text}"
+
         print("\n✓ Agent successfully used function tool and incorporated results into response")
 
         # Teardown
@@ -174,7 +178,7 @@ class TestAgentFunctionTool(TestBase):
     def test_agent_function_tool_multi_turn_with_multiple_calls(self, **kwargs):
         """
         Test multi-turn conversation where agent calls functions multiple times.
-        
+
         This tests:
         - Multiple function calls across different turns
         - Context retention between turns
@@ -204,7 +208,7 @@ class TestAgentFunctionTool(TestBase):
             },
             strict=True,
         )
-        
+
         get_temperature_forecast = FunctionTool(
             name="get_temperature_forecast",
             description="Get 3-day temperature forecast for a city",
@@ -240,14 +244,14 @@ class TestAgentFunctionTool(TestBase):
             input="What's the weather in New York?",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         # Handle function call
         input_list: ResponseInputParam = []
         for item in response_1.output:
             if item.type == "function_call":
                 print(f"Function called: {item.name} with args: {item.arguments}")
                 assert item.name == "get_weather"
-                
+
                 # Simulate weather API response
                 weather_data = {"temperature": 68, "condition": "Cloudy", "humidity": 65}
                 input_list.append(
@@ -257,18 +261,18 @@ class TestAgentFunctionTool(TestBase):
                         output=json.dumps(weather_data),
                     )
                 )
-        
+
         # Get response with function results
         response_1 = openai_client.responses.create(
             input=input_list,
             previous_response_id=response_1.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_1_text = response_1.output_text
         print(f"Response 1: {response_1_text[:200]}...")
         assert "68" in response_1_text or "cloudy" in response_1_text.lower()
-        
+
         # Turn 2: Follow-up with forecast (requires context)
         print("\n--- Turn 2: Follow-up forecast query ---")
         response_2 = openai_client.responses.create(
@@ -276,26 +280,26 @@ class TestAgentFunctionTool(TestBase):
             previous_response_id=response_1.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         # Handle forecast function call
         input_list = []
         for item in response_2.output:
             if item.type == "function_call":
                 print(f"Function called: {item.name} with args: {item.arguments}")
                 assert item.name == "get_temperature_forecast"
-                
+
                 # Agent should remember we're talking about New York
                 args = json.loads(item.arguments)
                 assert "new york" in args["city"].lower()
-                
+
                 # Simulate forecast API response
                 forecast_data = {
                     "city": "New York",
                     "forecast": [
                         {"day": "Tomorrow", "temp": 70},
                         {"day": "Day 2", "temp": 72},
-                        {"day": "Day 3", "temp": 69}
-                    ]
+                        {"day": "Day 3", "temp": 69},
+                    ],
                 }
                 input_list.append(
                     FunctionCallOutput(
@@ -304,18 +308,18 @@ class TestAgentFunctionTool(TestBase):
                         output=json.dumps(forecast_data),
                     )
                 )
-        
+
         # Get response with forecast
         response_2 = openai_client.responses.create(
             input=input_list,
             previous_response_id=response_2.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_2_text = response_2.output_text
         print(f"Response 2: {response_2_text[:200]}...")
         assert "70" in response_2_text or "72" in response_2_text
-        
+
         # Turn 3: Compare with another city
         print("\n--- Turn 3: New city query ---")
         response_3 = openai_client.responses.create(
@@ -323,7 +327,7 @@ class TestAgentFunctionTool(TestBase):
             previous_response_id=response_2.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         # Handle function calls for Seattle (agent might call both weather and forecast)
         input_list = []
         for item in response_3.output:
@@ -331,7 +335,7 @@ class TestAgentFunctionTool(TestBase):
                 print(f"Function called: {item.name} with args: {item.arguments}")
                 args = json.loads(item.arguments)
                 assert "seattle" in args["city"].lower()
-                
+
                 # Handle based on function name
                 if item.name == "get_weather":
                     weather_data = {"temperature": 58, "condition": "Rainy", "humidity": 80}
@@ -348,8 +352,8 @@ class TestAgentFunctionTool(TestBase):
                         "forecast": [
                             {"day": "Tomorrow", "temp": 56},
                             {"day": "Day 2", "temp": 59},
-                            {"day": "Day 3", "temp": 57}
-                        ]
+                            {"day": "Day 3", "temp": 57},
+                        ],
                     }
                     input_list.append(
                         FunctionCallOutput(
@@ -358,14 +362,14 @@ class TestAgentFunctionTool(TestBase):
                             output=json.dumps(forecast_data),
                         )
                     )
-        
+
         # Get final comparison response
         response_3 = openai_client.responses.create(
             input=input_list,
             previous_response_id=response_3.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_3_text = response_3.output_text
         print(f"Response 3: {response_3_text[:200]}...")
         # Agent should mention Seattle weather (either 58 for current or comparison)
@@ -388,7 +392,7 @@ class TestAgentFunctionTool(TestBase):
     def test_agent_function_tool_context_dependent_followup(self, **kwargs):
         """
         Test deeply context-dependent follow-ups (e.g., unit conversion, clarification).
-        
+
         This tests that the agent truly uses previous response content, not just
         remembering parameters from the first query.
         """
@@ -435,7 +439,7 @@ class TestAgentFunctionTool(TestBase):
             input="What's the temperature in Boston?",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         # Handle function call
         input_list: ResponseInputParam = []
         for item in response_1.output:
@@ -448,17 +452,17 @@ class TestAgentFunctionTool(TestBase):
                         output=json.dumps({"temperature": 72, "unit": "F"}),
                     )
                 )
-        
+
         response_1 = openai_client.responses.create(
             input=input_list,
             previous_response_id=response_1.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_1_text = response_1.output_text
         print(f"Response 1: {response_1_text[:200]}...")
         assert "72" in response_1_text, "Should mention 72°F"
-        
+
         # Turn 2: Context-dependent follow-up (convert the previous number)
         print("\n--- Turn 2: Context-dependent conversion ---")
         response_2 = openai_client.responses.create(
@@ -466,18 +470,20 @@ class TestAgentFunctionTool(TestBase):
             previous_response_id=response_1.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_2_text = response_2.output_text
         print(f"Response 2: {response_2_text[:200]}...")
-        
+
         # Should convert 72°F to ~22°C (without calling the function again)
         # The agent should use the previous response's value
         response_2_lower = response_2_text.lower()
-        assert "celsius" in response_2_lower or "°c" in response_2_lower or "c" in response_2_lower, \
-            "Response should mention Celsius"
-        assert any(temp in response_2_text for temp in ["22", "22.2", "22.22", "20", "21", "23"]), \
-            f"Response should calculate Celsius from 72°F (~22°C), got: {response_2_text}"
-        
+        assert (
+            "celsius" in response_2_lower or "°c" in response_2_lower or "c" in response_2_lower
+        ), "Response should mention Celsius"
+        assert any(
+            temp in response_2_text for temp in ["22", "22.2", "22.22", "20", "21", "23"]
+        ), f"Response should calculate Celsius from 72°F (~22°C), got: {response_2_text}"
+
         # Turn 3: Another context-dependent follow-up (comparison)
         print("\n--- Turn 3: Compare to another value ---")
         response_3 = openai_client.responses.create(
@@ -485,15 +491,16 @@ class TestAgentFunctionTool(TestBase):
             previous_response_id=response_2.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_3_text = response_3.output_text
         print(f"Response 3: {response_3_text[:200]}...")
-        
+
         # 22°C is colder than 25°C
         response_3_lower = response_3_text.lower()
-        assert "colder" in response_3_lower or "cooler" in response_3_lower or "lower" in response_3_lower, \
-            f"Response should indicate 22°C is colder than 25°C, got: {response_3_text}"
-        
+        assert (
+            "colder" in response_3_lower or "cooler" in response_3_lower or "lower" in response_3_lower
+        ), f"Response should indicate 22°C is colder than 25°C, got: {response_3_text}"
+
         print("\n✓ Context-dependent follow-ups successful!")
         print("  - Agent converted temperature from previous response")
         print("  - Agent compared values from conversation history")

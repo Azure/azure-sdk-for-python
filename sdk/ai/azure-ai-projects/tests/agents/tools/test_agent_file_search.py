@@ -54,7 +54,7 @@ class TestAgentFileSearch(TestBase):
         asset_file_path = os.path.abspath(
             os.path.join(os.path.dirname(__file__), "../../../samples/agents/assets/product_info.md")
         )
-        
+
         assert os.path.exists(asset_file_path), f"Test file not found at: {asset_file_path}"
         print(f"Using test file: {asset_file_path}")
 
@@ -69,7 +69,7 @@ class TestAgentFileSearch(TestBase):
                 vector_store_id=vector_store.id,
                 file=f,
             )
-        
+
         print(f"File uploaded (id: {file.id}, status: {file.status})")
         assert file.id is not None
         assert file.status == "completed", f"Expected file status 'completed', got '{file.status}'"
@@ -91,12 +91,12 @@ class TestAgentFileSearch(TestBase):
 
         # Ask a question about the uploaded document
         print("\nAsking agent about the product information...")
-        
+
         response = openai_client.responses.create(
             input="What products are mentioned in the document?",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         print(f"Response completed (id: {response.id})")
         assert response.id is not None
         assert response.output is not None
@@ -105,10 +105,10 @@ class TestAgentFileSearch(TestBase):
         # Get the response text
         response_text = response.output_text
         print(f"\nAgent's response: {response_text[:300]}...")
-        
+
         # Verify we got a meaningful response
         assert len(response_text) > 50, "Expected a substantial response from the agent"
-        
+
         # The response should mention finding information (indicating file search was used)
         # We can't assert exact product names without knowing the file content,
         # but we can verify the agent provided an answer
@@ -118,7 +118,7 @@ class TestAgentFileSearch(TestBase):
         print("\nCleaning up...")
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print("Agent deleted")
-        
+
         openai_client.vector_stores.delete(vector_store.id)
         print("Vector store deleted")
 
@@ -130,12 +130,12 @@ class TestAgentFileSearch(TestBase):
     def test_agent_file_search_unsupported_file_type(self, **kwargs):
         """
         Negative test: Verify that unsupported file types are rejected with clear error messages.
-        
+
         This test validates that:
         1. CSV files (unsupported format) are rejected
         2. The error message clearly indicates the file type is not supported
         3. The error message lists supported file types
-        
+
         This ensures good developer experience by providing actionable error messages.
         """
 
@@ -146,18 +146,19 @@ class TestAgentFileSearch(TestBase):
         # Create vector store
         vector_store = openai_client.vector_stores.create(name="UnsupportedFileTestStore")
         print(f"Vector store created (id: {vector_store.id})")
-        
+
         # Create CSV file (unsupported format)
         csv_content = """product,quarter,revenue
 Widget A,Q1,15000
 Widget B,Q1,22000
 Widget A,Q2,18000
 Widget B,Q2,25000"""
-        
+
         from io import BytesIO
-        csv_file = BytesIO(csv_content.encode('utf-8'))
+
+        csv_file = BytesIO(csv_content.encode("utf-8"))
         csv_file.name = "sales_data.csv"
-        
+
         # Attempt to upload unsupported file type
         print("\nAttempting to upload CSV file (unsupported format)...")
         try:
@@ -168,32 +169,30 @@ Widget B,Q2,25000"""
             # If we get here, the test should fail
             openai_client.vector_stores.delete(vector_store.id)
             pytest.fail("Expected BadRequestError for CSV file upload, but upload succeeded")
-            
+
         except Exception as e:
             error_message = str(e)
             print(f"\n✓ Upload correctly rejected with error: {error_message[:200]}...")
-            
+
             # Verify error message quality
-            assert "400" in error_message or "BadRequestError" in type(e).__name__, \
-                "Should be a 400 Bad Request error"
-            
-            assert ".csv" in error_message.lower(), \
-                "Error message should mention the CSV file extension"
-            
-            assert "not supported" in error_message.lower() or "unsupported" in error_message.lower(), \
-                "Error message should clearly state the file type is not supported"
-            
+            assert "400" in error_message or "BadRequestError" in type(e).__name__, "Should be a 400 Bad Request error"
+
+            assert ".csv" in error_message.lower(), "Error message should mention the CSV file extension"
+
+            assert (
+                "not supported" in error_message.lower() or "unsupported" in error_message.lower()
+            ), "Error message should clearly state the file type is not supported"
+
             # Check that supported file types are mentioned (helpful for developers)
             error_lower = error_message.lower()
             has_supported_list = any(ext in error_lower for ext in [".txt", ".pdf", ".md", ".py"])
-            assert has_supported_list, \
-                "Error message should list examples of supported file types"
-            
+            assert has_supported_list, "Error message should list examples of supported file types"
+
             print("✓ Error message is clear and actionable")
             print("  - Mentions unsupported file type (.csv)")
             print("  - States it's not supported")
             print("  - Lists supported file types")
-        
+
         # Cleanup
         openai_client.vector_stores.delete(vector_store.id)
         print("\nVector store deleted")
@@ -206,7 +205,7 @@ Widget B,Q2,25000"""
     def test_agent_file_search_multi_turn_conversation(self, **kwargs):
         """
         Test multi-turn conversation with File Search.
-        
+
         This test verifies that an agent can maintain context across multiple turns
         while using File Search to answer follow-up questions.
         """
@@ -242,11 +241,12 @@ Widget C:
         # Create vector store and upload document
         vector_store = openai_client.vector_stores.create(name="ProductCatalog")
         print(f"Vector store created: {vector_store.id}")
-        
+
         from io import BytesIO
-        product_file = BytesIO(product_info.encode('utf-8'))
+
+        product_file = BytesIO(product_info.encode("utf-8"))
         product_file.name = "products.txt"
-        
+
         file = openai_client.vector_stores.files.upload_and_poll(
             vector_store_id=vector_store.id,
             file=product_file,
@@ -271,12 +271,11 @@ Widget C:
             input="What is the price of Widget B?",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_1_text = response_1.output_text
         print(f"Response 1: {response_1_text[:200]}...")
-        assert "$220" in response_1_text or "220" in response_1_text, \
-            "Response should mention Widget B's price"
-        
+        assert "$220" in response_1_text or "220" in response_1_text, "Response should mention Widget B's price"
+
         # Turn 2: Follow-up question (requires context from turn 1)
         print("\n--- Turn 2: Follow-up query (testing context retention) ---")
         response_2 = openai_client.responses.create(
@@ -284,12 +283,13 @@ Widget C:
             previous_response_id=response_1.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_2_text = response_2.output_text
         print(f"Response 2: {response_2_text[:200]}...")
-        assert "30" in response_2_text or "thirty" in response_2_text.lower(), \
-            "Response should mention Widget B's stock (30 units)"
-        
+        assert (
+            "30" in response_2_text or "thirty" in response_2_text.lower()
+        ), "Response should mention Widget B's stock (30 units)"
+
         # Turn 3: Another follow-up (compare with different product)
         print("\n--- Turn 3: Comparison query ---")
         response_3 = openai_client.responses.create(
@@ -297,12 +297,13 @@ Widget C:
             previous_response_id=response_2.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_3_text = response_3.output_text
         print(f"Response 3: {response_3_text[:200]}...")
-        assert "50" in response_3_text or "fifty" in response_3_text.lower(), \
-            "Response should mention Widget A's stock (50 units)"
-        
+        assert (
+            "50" in response_3_text or "fifty" in response_3_text.lower()
+        ), "Response should mention Widget A's stock (50 units)"
+
         # Turn 4: New topic (testing topic switching)
         print("\n--- Turn 4: Topic switch ---")
         response_4 = openai_client.responses.create(
@@ -310,11 +311,12 @@ Widget C:
             previous_response_id=response_3.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_4_text = response_4.output_text
         print(f"Response 4: {response_4_text[:200]}...")
-        assert "widget b" in response_4_text.lower() or "4.8" in response_4_text, \
-            "Response should identify Widget B as highest rated (4.8/5)"
+        assert (
+            "widget b" in response_4_text.lower() or "4.8" in response_4_text
+        ), "Response should identify Widget B as highest rated (4.8/5)"
 
         print("\n✓ Multi-turn conversation successful!")
         print("  - Context maintained across turns")
