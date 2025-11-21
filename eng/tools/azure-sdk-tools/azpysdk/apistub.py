@@ -13,6 +13,7 @@ from ci_tools.logging import logger
 from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
+MAX_PYTHON_VERSION = (3, 11)
 
 
 def get_package_wheel_path(pkg_root: str, out_path: Optional[str]) -> tuple[str, Optional[str]]:
@@ -38,7 +39,7 @@ def get_package_wheel_path(pkg_root: str, out_path: Optional[str]) -> tuple[str,
 
     # Otherwise, use wheel created in staging directory, or fall back on source directory
     pkg_path = find_whl(pkg_root, pkg_details.name, pkg_details.version) or pkg_root
-    out_token_path = pkg_root
+    out_token_path = out_path
 
     return pkg_path, out_token_path
 
@@ -64,11 +65,15 @@ class apistub(Check):
         )
         p.set_defaults(func=self.run)
 
-        p.add_argument("-o", "--out-path", dest="out_path", help="Output directory to generate json token file")
-
     def run(self, args: argparse.Namespace) -> int:
         """Run the apistub check command."""
         logger.info("Running apistub check...")
+
+        if sys.version_info > MAX_PYTHON_VERSION:
+            logger.error(
+                f"Python version {sys.version_info.major}.{sys.version_info.minor} is not supported. Maximum supported version is {MAX_PYTHON_VERSION[0]}.{MAX_PYTHON_VERSION[1]}."
+            )
+            return 1
 
         set_envvar_defaults()
         targeted = self.get_targeted_directories(args)
@@ -112,7 +117,7 @@ class apistub(Check):
 
             self.pip_freeze(executable)
 
-            pkg_path, out_token_path = get_package_wheel_path(package_dir, args.out_path)
+            pkg_path, out_token_path = get_package_wheel_path(package_dir, staging_directory)
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
             cmds = ["-m", "apistub", "--pkg-path", pkg_path]
