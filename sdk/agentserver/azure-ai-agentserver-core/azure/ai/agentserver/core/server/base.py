@@ -12,7 +12,6 @@ from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 from opentelemetry import context as otel_context, trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.applications import Starlette
@@ -22,6 +21,9 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 from starlette.types import ASGIApp
+
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
+
 from  ..models import projects as project_models
 from ..constants import Constants
 from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, request_context
@@ -466,7 +468,7 @@ class FoundryCBAgent:
             project_endpoint = os.getenv(Constants.AZURE_AI_PROJECT_ENDPOINT)
 
             if not tools_endpoint:
-                # project endpoint corrupted could have been an overridden enviornment variable
+                # project endpoint corrupted could have been an overridden environment variable
                 # try to reconstruct tools endpoint from workspace endpoint
                 # Robustly reconstruct project_endpoint from workspace_endpoint if needed.
 

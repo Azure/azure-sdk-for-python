@@ -18,7 +18,8 @@
       "SETFL",
       "Planifica",
       "mcptools",
-      "ainvoke"
+      "ainvoke",
+      "oauthreq"
     ],
     "ignorePaths": [
       "*.csv",

@@ -6,7 +6,8 @@
       "envtemplate",
       "pysort",
       "redef",
-      "aifunction"
+      "aifunction",
+      "ainvoke"
     ],
     "ignorePaths": [
       "*.csv",
