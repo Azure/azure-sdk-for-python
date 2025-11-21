@@ -123,7 +123,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         # Remove `proxies` argument if it exists in kwargs, since OpenAI client will fail it is sees it. We see this
         # argument passed in when running tests from recordings on some platforms, in the Azure SDK build pipeline.
-        #kwargs.pop("proxies", None)
+        # kwargs.pop("proxies", None)
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long

@@ -26,14 +26,14 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 requires-python = ">=3.9"
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "azure-core>=1.35.0",
-    "azure-identity",
-    "typing-extensions>=4.6.0",
+    "azure-identity>=1.25.0",
     "openai>=2.0.0",
     "azure-storage-blob>=12.15.0",
 ]
