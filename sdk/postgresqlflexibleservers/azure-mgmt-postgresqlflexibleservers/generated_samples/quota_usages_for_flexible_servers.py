@@ -32,12 +32,12 @@ def main():
     )
 
     response = client.quota_usages.list(
-        location_name="westus",
+        location_name="eastus",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/QuotaUsagesForFlexibleServers.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2025-08-01/examples/QuotaUsagesForFlexibleServers.json
 if __name__ == "__main__":
     main()

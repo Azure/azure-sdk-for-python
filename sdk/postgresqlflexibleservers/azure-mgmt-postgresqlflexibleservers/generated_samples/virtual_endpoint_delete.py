@@ -32,12 +32,12 @@ def main():
     )
 
     client.virtual_endpoints.begin_delete(
-        resource_group_name="testrg",
-        server_name="pgtestsvc4",
-        virtual_endpoint_name="pgVirtualEndpoint1",
+        resource_group_name="exampleresourcegroup",
+        server_name="exampleserver",
+        virtual_endpoint_name="examplebasename",
     ).result()
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/VirtualEndpointDelete.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2025-08-01/examples/VirtualEndpointDelete.json
 if __name__ == "__main__":
     main()

@@ -32,28 +32,27 @@ def main():
     )
 
     response = client.migrations.create(
-        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
-        resource_group_name="testrg",
-        target_db_server_name="testtarget",
-        migration_name="testmigration",
+        resource_group_name="exampleresourcegroup",
+        server_name="exampleserver",
+        migration_name="examplemigration",
         parameters={
-            "location": "westus",
+            "location": "eastus",
             "properties": {
-                "dbsToMigrate": ["db1", "db2", "db3", "db4"],
+                "dbsToMigrate": ["exampledatabase1", "exampledatabase2", "exampledatabase3", "exampledatabase4"],
                 "migrationMode": "Offline",
                 "overwriteDbsInTarget": "True",
                 "secretParameters": {
                     "adminCredentials": {"sourceServerPassword": "xxxxxxxx", "targetServerPassword": "xxxxxxxx"}
                 },
-                "sourceDbServerFullyQualifiedDomainName": "testsourcefqdn.example.com",
-                "sourceDbServerResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.DBForPostgreSql/servers/testsource",
-                "targetDbServerFullyQualifiedDomainName": "test-target-fqdn.example.com",
+                "sourceDbServerFullyQualifiedDomainName": "examplesource.contoso.com",
+                "sourceDbServerResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/exampleresourcegroup/providers/Microsoft.DBForPostgreSql/servers/examplesource",
+                "targetDbServerFullyQualifiedDomainName": "exampletarget.contoso.com",
             },
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/Migrations_Create_With_FullyQualifiedDomainName.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2025-08-01/examples/MigrationsCreateWithFullyQualifiedDomainName.json
 if __name__ == "__main__":
     main()

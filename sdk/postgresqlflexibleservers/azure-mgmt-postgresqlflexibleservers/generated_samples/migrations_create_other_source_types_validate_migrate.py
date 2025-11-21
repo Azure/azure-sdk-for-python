@@ -32,21 +32,23 @@ def main():
     )
 
     response = client.migrations.create(
-        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
-        resource_group_name="testrg",
-        target_db_server_name="testtarget",
-        migration_name="testmigration",
+        resource_group_name="exampleresourcegroup",
+        server_name="exampleserver",
+        migration_name="examplemigration",
         parameters={
-            "location": "westus",
+            "location": "eastus",
             "properties": {
-                "dbsToMigrate": ["db1", "db2", "db3", "db4"],
+                "dbsToMigrate": ["exampledatabase1", "exampledatabase2", "exampledatabase3", "exampledatabase4"],
                 "migrationMode": "Offline",
                 "migrationOption": "ValidateAndMigrate",
                 "overwriteDbsInTarget": "True",
                 "secretParameters": {
-                    "adminCredentials": {"sourceServerPassword": "xxxxxxxx", "targetServerPassword": "xxxxxxxx"}
+                    "adminCredentials": {
+                        "sourceServerPassword": "examplesourcepassword",
+                        "targetServerPassword": "exampletargetpassword",
+                    }
                 },
-                "sourceDbServerResourceId": "testsource:5432@pguser",
+                "sourceDbServerResourceId": "examplesource:5432@exampleuser",
                 "sourceType": "OnPremises",
                 "sslMode": "Prefer",
             },
@@ -55,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/Migrations_Create_Other_SourceTypes_Validate_Migrate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2025-08-01/examples/MigrationsCreateOtherSourceTypesValidateMigrate.json
 if __name__ == "__main__":
     main()
