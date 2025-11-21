@@ -87,8 +87,8 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
                 if region:
                     # Format the endpoint using the detected region
-                    # return f"https://int.experiments.azureml-test.net"
-                    return f"https://{region}.api.azureml.ms"
+                    return f"https://int.experiments.azureml-test.net"
+                    # return f"https://{region}.api.azureml.ms"
 
         except Exception as e:
             module_logger.warning("Could not determine registry region dynamically: %s. Using default.", e)

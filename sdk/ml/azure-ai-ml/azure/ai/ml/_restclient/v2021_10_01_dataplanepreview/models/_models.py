@@ -4555,7 +4555,7 @@ class ModelVersionDetails(AssetBase):
         'model_type': {'key': 'modelType', 'type': 'str'},
         'model_uri': {'key': 'modelUri', 'type': 'str'},
         'origin_asset_id': {'key': 'originAssetId', 'type': 'str'},
-        'default_deployment_template': {'key': 'DefaultDeploymentTemplate', 'type': 'ModelVersionDefaultDeploymentTemplate'},
+        'default_deployment_template': {'key': 'defaultDeploymentTemplate', 'type': 'ModelVersionDefaultDeploymentTemplate'},
     }
 
     def __init__(
