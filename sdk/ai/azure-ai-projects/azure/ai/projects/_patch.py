@@ -12,6 +12,8 @@ import logging
 from typing import List, Any, Optional, TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
+from azure.identity import get_bearer_token_provider
+from openai import OpenAI
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
@@ -132,20 +134,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        try:
-            from openai import OpenAI
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "OpenAI SDK is not installed. Please install it using 'pip install openai'"
-            ) from e
-
-        try:
-            from azure.identity import get_bearer_token_provider
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "azure.identity package not installed. Please install it using 'pip install azure.identity'"
-            ) from e
-
         base_url = self._config.endpoint.rstrip("/") + "/openai"  # pylint: disable=protected-access
 
         if "default_query" not in kwargs:
@@ -153,7 +141,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         # Remove `proxies` argument if it exists in kwargs, since OpenAI client will fail it is sees it. We see this
         # argument passed in when running tests from recordings on some platforms, in the Azure SDK build pipeline.
-        kwargs.pop("proxies", None)
+        #kwargs.pop("proxies", None)
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
