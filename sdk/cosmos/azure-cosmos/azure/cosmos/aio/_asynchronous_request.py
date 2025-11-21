@@ -38,7 +38,7 @@ from .._utils import get_user_agent_features
 from ..documents import _OperationType
 from ..http_constants import ResourceType
 
-
+# cspell:ignore ppaf
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
 

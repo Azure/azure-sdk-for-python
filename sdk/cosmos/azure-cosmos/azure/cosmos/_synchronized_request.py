@@ -36,7 +36,7 @@ from ._utils import get_user_agent_features
 from .documents import _OperationType
 from .http_constants import ResourceType
 
-
+# cspell:ignore ppaf
 def _is_readable_stream(obj):
     """Checks whether obj is a file-like readable stream.
 
