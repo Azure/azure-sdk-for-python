@@ -22,7 +22,7 @@ class TestCosmosDBManagementFleetOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_fleet_list(self, resource_group):
         response = self.client.fleet.list(
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestCosmosDBManagementFleetOperations(AzureMgmtRecordedTestCase):
     def test_fleet_list_by_resource_group(self, resource_group):
         response = self.client.fleet.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestCosmosDBManagementFleetOperations(AzureMgmtRecordedTestCase):
         response = self.client.fleet.get(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestCosmosDBManagementFleetOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestCosmosDBManagementFleetOperations(AzureMgmtRecordedTestCase):
         response = self.client.fleet.update(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestCosmosDBManagementFleetOperations(AzureMgmtRecordedTestCase):
         response = self.client.fleet.begin_delete(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

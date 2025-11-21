@@ -22,7 +22,7 @@ class TestCosmosDBManagementLocationsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_locations_list(self, resource_group):
         response = self.client.locations.list(
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestCosmosDBManagementLocationsOperations(AzureMgmtRecordedTestCase):
     def test_locations_get(self, resource_group):
         response = self.client.locations.get(
             location="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself

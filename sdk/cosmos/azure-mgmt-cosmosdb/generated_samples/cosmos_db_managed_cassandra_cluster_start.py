@@ -28,7 +28,7 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 def main():
     client = CosmosDBManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     client.cassandra_clusters.begin_start(
@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/DocumentDB/stable/2025-10-15/examples/CosmosDBManagedCassandraClusterStart.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/DocumentDB/preview/2025-11-01-preview/examples/CosmosDBManagedCassandraClusterStart.json
 if __name__ == "__main__":
     main()
