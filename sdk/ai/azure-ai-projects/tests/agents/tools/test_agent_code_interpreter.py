@@ -69,12 +69,12 @@ class TestAgentCodeInterpreter(TestBase):
         # Problem: Calculate the sum of cubes from 1 to 50, then add 12!/(8!)
         # Expected answer: 1637505
         print("\nAsking agent to calculate: sum of cubes from 1 to 50, plus 12!/(8!)")
-        
+
         response = openai_client.responses.create(
             input="Calculate this using Python: First, find the sum of cubes from 1 to 50 (1³ + 2³ + ... + 50³). Then add 12 factorial divided by 8 factorial (12!/8!). What is the final result?",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         print(f"Response completed (id: {response.id})")
         assert response.id is not None
         assert response.output is not None
@@ -83,20 +83,20 @@ class TestAgentCodeInterpreter(TestBase):
         # Get the response text
         last_message = response.output[-1]
         response_text = ""
-        
+
         if last_message.type == "message":
             for content_item in last_message.content:
                 if content_item.type == "output_text":
                     response_text += content_item.text
-        
+
         print(f"Agent's response: {response_text}")
-        
+
         # Verify the response contains the correct answer (1637505)
         # Note: sum of cubes 1-50 = 1,625,625; 12!/8! = 11,880; total = 1,637,505
-        assert "1637505" in response_text or "1,637,505" in response_text, (
-            f"Expected answer 1637505 to be in response, but got: {response_text}"
-        )
-        
+        assert (
+            "1637505" in response_text or "1,637,505" in response_text
+        ), f"Expected answer 1637505 to be in response, but got: {response_text}"
+
         print("✓ Code interpreter successfully executed Python code and returned correct answer")
 
         # Teardown
@@ -142,16 +142,18 @@ class TestAgentCodeInterpreter(TestBase):
 
         # Get the path to the test CSV file
         asset_file_path = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../../samples/agents/assets/synthetic_500_quarterly_results.csv")
+            os.path.join(
+                os.path.dirname(__file__), "../../../samples/agents/assets/synthetic_500_quarterly_results.csv"
+            )
         )
-        
+
         assert os.path.exists(asset_file_path), f"Test CSV file not found at: {asset_file_path}"
         print(f"Using test CSV file: {asset_file_path}")
 
         # Upload the CSV file
         with open(asset_file_path, "rb") as f:
             file = openai_client.files.create(purpose="assistants", file=f)
-        
+
         print(f"File uploaded (id: {file.id})")
         assert file.id is not None
 
@@ -172,12 +174,12 @@ class TestAgentCodeInterpreter(TestBase):
 
         # Ask the agent to create a chart from the CSV
         print("\nAsking agent to create a bar chart...")
-        
+
         response = openai_client.responses.create(
             input="Create a bar chart showing operating profit by sector from the uploaded CSV file. Save it as a PNG file.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         print(f"Response completed (id: {response.id})")
         assert response.id is not None
         assert response.output is not None
@@ -205,29 +207,29 @@ class TestAgentCodeInterpreter(TestBase):
         assert file_id, "Expected a file to be generated but no file ID found in response"
         assert filename, "Expected a filename but none found in response"
         assert container_id, "Expected a container ID but none found in response"
-        
+
         print(f"✓ File generated successfully: {filename}")
 
         # Download the generated file
         print(f"Downloading file {filename}...")
         file_content = openai_client.containers.files.content.retrieve(file_id=file_id, container_id=container_id)
-        
+
         # Read the content
         content_bytes = file_content.read()
         assert len(content_bytes) > 0, "Expected file content but got empty bytes"
-        
+
         print(f"✓ File downloaded successfully ({len(content_bytes)} bytes)")
-        
+
         # Verify it's a PNG file (check magic bytes)
-        if filename.endswith('.png'):
+        if filename.endswith(".png"):
             # PNG files start with: 89 50 4E 47 (‰PNG)
-            assert content_bytes[:4] == b'\x89PNG', "File does not appear to be a valid PNG"
+            assert content_bytes[:4] == b"\x89PNG", "File does not appear to be a valid PNG"
             print("✓ File is a valid PNG image")
 
         # Teardown
         print("\nCleaning up...")
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print("Agent deleted")
-        
+
         openai_client.files.delete(file.id)
         print("Uploaded file deleted")

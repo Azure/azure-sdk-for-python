@@ -41,11 +41,12 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
         # Create data file
         txt_content = "Sample data: 10, 20, 30, 40, 50"
         vector_store = openai_client.vector_stores.create(name="DataStore")
-        
+
         from io import BytesIO
-        txt_file = BytesIO(txt_content.encode('utf-8'))
+
+        txt_file = BytesIO(txt_content.encode("utf-8"))
         txt_file.name = "data.txt"
-        
+
         file = openai_client.vector_stores.files.upload_and_poll(
             vector_store_id=vector_store.id,
             file=txt_file,
@@ -66,18 +67,18 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
             description="Agent with File Search and Code Interpreter.",
         )
         print(f"Agent created (id: {agent.id})")
-        
+
         # Use the agent
         response = openai_client.responses.create(
             input="Find the data file and calculate the average.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response received (id: {response.id})")
-        
+
         assert response.id is not None
         assert len(response.output_text) > 20
         print("✓ File Search + Code Interpreter works!")
-        
+
         # Cleanup
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         openai_client.vector_stores.delete(vector_store.id)
@@ -109,11 +110,12 @@ print(f"Fibonacci(10) = {result}")
 """
 
         vector_store = openai_client.vector_stores.create(name="CodeAnalysisStore")
-        
+
         from io import BytesIO
-        code_file = BytesIO(python_code.encode('utf-8'))
+
+        code_file = BytesIO(python_code.encode("utf-8"))
         code_file.name = "fibonacci.py"
-        
+
         file = openai_client.vector_stores.files.upload_and_poll(
             vector_store_id=vector_store.id,
             file=code_file,
@@ -134,23 +136,24 @@ print(f"Fibonacci(10) = {result}")
             description="Agent for code analysis.",
         )
         print(f"Agent created (id: {agent.id})")
-        
+
         # Request analysis
         response = openai_client.responses.create(
             input="Find the fibonacci code and explain what it does. What is the computational complexity?",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_text = response.output_text
         print(f"Response: {response_text[:300]}...")
-        
+
         assert len(response_text) > 50
         response_lower = response_lower = response_text.lower()
-        assert any(keyword in response_lower for keyword in ["fibonacci", "recursive", "complexity", "exponential"]), \
-            "Expected analysis of fibonacci algorithm"
-        
+        assert any(
+            keyword in response_lower for keyword in ["fibonacci", "recursive", "complexity", "exponential"]
+        ), "Expected analysis of fibonacci algorithm"
+
         print("✓ Code file analysis completed")
-        
+
         # Cleanup
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         openai_client.vector_stores.delete(vector_store.id)

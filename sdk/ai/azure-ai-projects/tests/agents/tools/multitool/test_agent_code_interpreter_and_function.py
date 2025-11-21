@@ -69,17 +69,17 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
             description="Agent with Code Interpreter and Function Tool.",
         )
         print(f"Agent created (id: {agent.id})")
-        
+
         # Use the agent
         response = openai_client.responses.create(
             input="Calculate 5 + 3 and save the result.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response received (id: {response.id})")
-        
+
         assert response.id is not None
         print("✓ Code Interpreter + Function Tool works!")
-        
+
         # Cleanup
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 
@@ -129,16 +129,16 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
             description="Agent for data generation and reporting.",
         )
         print(f"Agent created (id: {agent.id})")
-        
+
         # Request data generation and report
         response = openai_client.responses.create(
             input="Generate a list of 10 random numbers between 1 and 100, calculate their average, and create a report.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         print(f"Response received (id: {response.id})")
         assert response.id is not None
         print("✓ Data generation and reporting works!")
-        
+
         # Cleanup
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

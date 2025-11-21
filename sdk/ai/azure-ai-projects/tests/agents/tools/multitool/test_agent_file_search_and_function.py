@@ -61,11 +61,12 @@ Overall Total Revenue: $129,000
         # Create vector store and upload
         vector_store = openai_client.vector_stores.create(name="SalesDataStore")
         print(f"Vector store created (id: {vector_store.id})")
-        
+
         from io import BytesIO
-        txt_file = BytesIO(txt_content.encode('utf-8'))
+
+        txt_file = BytesIO(txt_content.encode("utf-8"))
         txt_file.name = "sales_data.txt"
-        
+
         file = openai_client.vector_stores.files.upload_and_poll(
             vector_store_id=vector_store.id,
             file=txt_file,
@@ -108,31 +109,31 @@ Overall Total Revenue: $129,000
 
         # Request analysis
         print("\nAsking agent to analyze the sales data...")
-        
+
         response = openai_client.responses.create(
             input="Analyze the sales data and calculate the total revenue for each product. Then save the results.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         print(f"Initial response completed (id: {response.id})")
-        
+
         # Check if function was called
         function_calls_found = 0
         input_list: ResponseInputParam = []
-        
+
         for item in response.output:
             if item.type == "function_call":
                 function_calls_found += 1
                 print(f"Function call detected (id: {item.call_id}, name: {item.name})")
-                
+
                 assert item.name == "save_analysis_results"
-                
+
                 arguments = json.loads(item.arguments)
                 print(f"Function arguments: {arguments}")
-                
+
                 assert "summary" in arguments
                 assert len(arguments["summary"]) > 20
-                
+
                 input_list.append(
                     FunctionCallOutput(
                         type="function_call_output",
@@ -142,7 +143,7 @@ Overall Total Revenue: $129,000
                 )
 
         assert function_calls_found > 0, "Expected save_analysis_results function to be called"
-        
+
         # Send function results back
         if input_list:
             response = openai_client.responses.create(
@@ -214,23 +215,23 @@ Overall Total Revenue: $129,000
 
         # Request analysis of non-existent file
         print("\nAsking agent to find non-existent data...")
-        
+
         response = openai_client.responses.create(
             input="Find and analyze the quarterly sales report.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_text = response.output_text
         print(f"Response: '{response_text[:200] if response_text else '(empty)'}...'")
-        
+
         # Verify agent didn't crash
         assert response.id is not None, "Agent should return a valid response"
         assert len(response.output) >= 0, "Agent should return output items"
-        
+
         # If there's text, it should be meaningful
         if response_text:
             assert len(response_text) > 10, "Non-empty response should be meaningful"
-        
+
         print("\n✓ Agent handled missing data gracefully")
 
         # Teardown
@@ -267,11 +268,12 @@ print(f"Sum: {result}")
 
         # Create vector store and upload
         vector_store = openai_client.vector_stores.create(name="CodeStore")
-        
+
         from io import BytesIO
-        code_file = BytesIO(python_code.encode('utf-8'))
+
+        code_file = BytesIO(python_code.encode("utf-8"))
         code_file.name = "sample_code.py"
-        
+
         file = openai_client.vector_stores.files.upload_and_poll(
             vector_store_id=vector_store.id,
             file=code_file,
@@ -313,22 +315,23 @@ print(f"Sum: {result}")
 
         # Request code analysis
         print("\nAsking agent to find and analyze the Python code...")
-        
+
         response = openai_client.responses.create(
             input="Find the Python code file and tell me what the calculate_sum function does.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_text = response.output_text
         print(f"Response: {response_text[:300]}...")
-        
+
         # Verify agent found and analyzed the code
         assert len(response_text) > 50, "Expected detailed analysis"
-        
+
         response_lower = response_text.lower()
-        assert any(keyword in response_lower for keyword in ["sum", "calculate", "function", "numbers", "code", "python"]), \
-            "Expected response to discuss the code"
-        
+        assert any(
+            keyword in response_lower for keyword in ["sum", "calculate", "function", "numbers", "code", "python"]
+        ), "Expected response to discuss the code"
+
         print("\n✓ Agent successfully found code file using File Search")
 
         # Teardown
@@ -344,7 +347,7 @@ print(f"Sum: {result}")
     def test_multi_turn_search_and_save_workflow(self, **kwargs):
         """
         Test multi-turn workflow: search documents, ask follow-ups, save findings.
-        
+
         This tests:
         - File Search across multiple turns
         - Function calls interspersed with searches
@@ -383,13 +386,14 @@ Responsible AI development requires multistakeholder collaboration and transpare
         # Create vector store and upload documents
         vector_store = openai_client.vector_stores.create(name="ResearchStore")
         print(f"Vector store created: {vector_store.id}")
-        
+
         from io import BytesIO
-        file1 = BytesIO(doc1_content.encode('utf-8'))
+
+        file1 = BytesIO(doc1_content.encode("utf-8"))
         file1.name = "ml_healthcare.txt"
-        file2 = BytesIO(doc2_content.encode('utf-8'))
+        file2 = BytesIO(doc2_content.encode("utf-8"))
         file2.name = "ai_ethics.txt"
-        
+
         uploaded1 = openai_client.vector_stores.files.upload_and_poll(
             vector_store_id=vector_store.id,
             file=file1,
@@ -437,11 +441,11 @@ Responsible AI development requires multistakeholder collaboration and transpare
             input="What does the research say about machine learning in healthcare?",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_1_text = response_1.output_text
         print(f"Response 1: {response_1_text[:200]}...")
         assert "95" in response_1_text or "accuracy" in response_1_text.lower()
-        
+
         # Turn 2: Follow-up for specifics
         print("\n--- Turn 2: Follow-up for details ---")
         response_2 = openai_client.responses.create(
@@ -449,12 +453,12 @@ Responsible AI development requires multistakeholder collaboration and transpare
             previous_response_id=response_1.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_2_text = response_2.output_text
         print(f"Response 2: {response_2_text[:200]}...")
         response_2_lower = response_2_text.lower()
         assert any(keyword in response_2_lower for keyword in ["imaging", "drug", "risk", "prediction"])
-        
+
         # Turn 3: Save the finding
         print("\n--- Turn 3: Save finding ---")
         response_3 = openai_client.responses.create(
@@ -462,7 +466,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
             previous_response_id=response_2.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         # Handle function call
         input_list: ResponseInputParam = []
         function_called = False
@@ -471,12 +475,12 @@ Responsible AI development requires multistakeholder collaboration and transpare
                 function_called = True
                 print(f"Function called: {item.name} with args: {item.arguments}")
                 assert item.name == "save_finding"
-                
+
                 args = json.loads(item.arguments)
                 assert "topic" in args and "finding" in args
                 print(f"  Topic: {args['topic']}")
                 print(f"  Finding: {args['finding'][:100]}...")
-                
+
                 input_list.append(
                     FunctionCallOutput(
                         type="function_call_output",
@@ -484,9 +488,9 @@ Responsible AI development requires multistakeholder collaboration and transpare
                         output=json.dumps({"status": "saved", "id": "finding_001"}),
                     )
                 )
-        
+
         assert function_called, "Expected save_finding to be called"
-        
+
         # Send function result
         response_3 = openai_client.responses.create(
             input=input_list,
@@ -494,7 +498,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response 3: {response_3.output_text[:150]}...")
-        
+
         # Turn 4: Switch to different topic (AI ethics)
         print("\n--- Turn 4: New search topic ---")
         response_4 = openai_client.responses.create(
@@ -502,7 +506,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
             previous_response_id=response_3.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        
+
         response_4_text = response_4.output_text
         print(f"Response 4: {response_4_text[:200]}...")
         response_4_lower = response_4_text.lower()

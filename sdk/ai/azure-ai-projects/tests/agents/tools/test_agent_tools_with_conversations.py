@@ -34,7 +34,7 @@ class TestAgentToolsWithConversations(TestBase):
     def test_function_tool_with_conversation(self, **kwargs):
         """
         Test using FunctionTool within a conversation.
-        
+
         This tests:
         - Creating a conversation
         - Multiple turns with function calls
@@ -99,7 +99,7 @@ class TestAgentToolsWithConversations(TestBase):
             if item.type == "function_call":
                 print(f"Function called: {item.name} with {item.arguments}")
                 args = json.loads(item.arguments)
-                
+
                 # Execute calculator
                 result = {
                     "add": args["a"] + args["b"],
@@ -107,7 +107,7 @@ class TestAgentToolsWithConversations(TestBase):
                     "multiply": args["a"] * args["b"],
                     "divide": args["a"] / args["b"] if args["b"] != 0 else "Error: Division by zero",
                 }[args["operation"]]
-                
+
                 input_list.append(
                     FunctionCallOutput(
                         type="function_call_output",
@@ -138,11 +138,11 @@ class TestAgentToolsWithConversations(TestBase):
             if item.type == "function_call":
                 print(f"Function called: {item.name} with {item.arguments}")
                 args = json.loads(item.arguments)
-                
+
                 # Should be multiplying 42 by 2
                 assert args["operation"] == "multiply"
                 assert args["a"] == 42 or args["b"] == 42
-                
+
                 result = args["a"] * args["b"]
                 input_list.append(
                     FunctionCallOutput(
@@ -168,18 +168,18 @@ class TestAgentToolsWithConversations(TestBase):
         print("\n--- Verifying conversation state ---")
         all_items = list(openai_client.conversations.items.list(conversation.id))
         print(f"Total conversation items: {len(all_items)}")
-        
+
         # Count different item types
         user_messages = sum(1 for item in all_items if item.type == "message" and item.role == "user")
         assistant_messages = sum(1 for item in all_items if item.type == "message" and item.role == "assistant")
         function_calls = sum(1 for item in all_items if item.type == "function_call")
         function_outputs = sum(1 for item in all_items if item.type == "function_call_output")
-        
+
         print(f"  User messages: {user_messages}")
         print(f"  Assistant messages: {assistant_messages}")
         print(f"  Function calls: {function_calls}")
         print(f"  Function outputs: {function_outputs}")
-        
+
         # Verify we have expected items
         assert user_messages >= 2, "Expected at least 2 user messages (two turns)"
         assert function_calls >= 2, "Expected at least 2 function calls (one per turn)"
@@ -199,7 +199,7 @@ class TestAgentToolsWithConversations(TestBase):
     def test_file_search_with_conversation(self, **kwargs):
         """
         Test using FileSearchTool within a conversation.
-        
+
         This tests:
         - Server-side tool execution within conversation
         - Multiple search queries in same conversation
@@ -239,7 +239,8 @@ Widget C:
         print(f"Vector store created: {vector_store.id}")
 
         from io import BytesIO
-        file = BytesIO(doc_content.encode('utf-8'))
+
+        file = BytesIO(doc_content.encode("utf-8"))
         file.name = "products.txt"
 
         uploaded = openai_client.vector_stores.files.upload_and_poll(
@@ -318,7 +319,7 @@ Widget C:
     def test_code_interpreter_with_conversation(self, **kwargs):
         """
         Test using CodeInterpreterTool within a conversation.
-        
+
         This tests:
         - Server-side code execution within conversation
         - Multiple code executions in same conversation
