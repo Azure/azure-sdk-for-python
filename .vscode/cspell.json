@@ -14,6 +14,7 @@
     ".devcontainer/**",
     "eng/**",
     ".github/CODEOWNERS",
+    ".github/scripts/**",
     "scripts/**",
     "**/tests/recordings/**",
     ".vscode/cspell.json",
