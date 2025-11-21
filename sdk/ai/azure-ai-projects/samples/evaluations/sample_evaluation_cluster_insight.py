@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -30,25 +31,31 @@ import os
 import time
 import json
 import tempfile
+from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
 from azure.ai.projects.models._enums import OperationState
-from azure.ai.projects.models._models import EvaluationComparisonRequest, EvaluationRunClusterInsightsRequest, Insight
+from azure.ai.projects.models._models import EvaluationRunClusterInsightsRequest, Insight, InsightModelConfiguration
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
+from openai.types.evals.run_create_response import RunCreateResponse
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
-with project_client:
+if not model_deployment_name:
+    raise ValueError("AZURE_AI_MODEL_DEPLOYMENT_NAME environment variable is not set")
 
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     # Create an evaluation
     data_source_config = DataSourceConfigCustom(
@@ -59,7 +66,7 @@ with project_client:
         TestingCriterionLabelModel(
             type="label_model",
             name="sentiment_analysis",
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=model_deployment_name,
             input=[
                 {
                     "role": "developer",
@@ -73,8 +80,8 @@ with project_client:
     ]
     eval_object = openai_client.evals.create(
         name="Sentiment Evaluation",
-        data_source_config=data_source_config, # type: ignore
-        testing_criteria=testing_criteria, # type: ignore
+        data_source_config=data_source_config,
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
@@ -104,7 +111,7 @@ with project_client:
         raise ValueError("Dataset ID is None")
 
     # Create an eval run using the uploaded dataset
-    eval_run = openai_client.evals.runs.create(
+    eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id,
         name="Eval Run",
         data_source=CreateEvalJSONLRunDataSourceParam(source=SourceFileID(id=dataset.id, type="file_id"), type="jsonl"),
@@ -125,7 +132,11 @@ with project_client:
         clusterInsight = project_client.insights.generate(
             Insight(
                 display_name="Cluster analysis",
-                request=EvaluationRunClusterInsightsRequest(eval_id=eval_object.id, run_ids=[eval_run.id]),
+                request=EvaluationRunClusterInsightsRequest(
+                    eval_id=eval_object.id,
+                    run_ids=[eval_run.id],
+                    model_configuration=InsightModelConfiguration(model_deployment_name=model_deployment_name),
+                ),
             )
         )
         print(f"Started insight generation (id: {clusterInsight.id})")

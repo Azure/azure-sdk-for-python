@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity azure-monitor-opentelemetry load_dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -40,12 +40,10 @@ from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
-with project_client:
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+):
     # [START setup_azure_monitor_tracing]
     # Enable Azure Monitor tracing
     application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()

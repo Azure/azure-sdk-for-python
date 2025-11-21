@@ -9,16 +9,15 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
-from typing import List, Any, TYPE_CHECKING
-from azure.core.tracing.decorator_async import distributed_trace_async
+from typing import List, Any
+from openai import AsyncOpenAI
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity.aio import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .._patch import _patch_user_agent
 from .operations import TelemetryOperations
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -95,8 +94,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
-    @distributed_trace_async
-    async def get_openai_client(self, **kwargs: Any) -> "AsyncOpenAI":  # type: ignore[name-defined]  # pylint: disable=too-many-statements
+    @distributed_trace
+    def get_openai_client(self, **kwargs: Any) -> "AsyncOpenAI":  # type: ignore[name-defined]  # pylint: disable=too-many-statements
         """Get an authenticated AsyncOpenAI client from the `openai` package.
 
         Keyword arguments are passed to the AsyncOpenAI client constructor.
@@ -116,20 +115,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
          is not installed.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        try:
-            from openai import AsyncOpenAI
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "OpenAI SDK is not installed. Please install it using 'pip install openai'"
-            ) from e
-
-        try:
-            from azure.identity.aio import get_bearer_token_provider
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "azure.identity package not installed. Please install it using 'pip install azure.identity'"
-            ) from e
 
         base_url = self._config.endpoint.rstrip("/") + "/openai"  # pylint: disable=protected-access
 

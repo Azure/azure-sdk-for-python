@@ -22,7 +22,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -45,30 +45,30 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
-with project_client:
+    # [START tool_declaration]
+    tool = BingGroundingAgentTool(
+        bing_grounding=BingGroundingSearchToolParameters(
+            search_configurations=[
+                BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])
+            ]
+        )
+    )
+    # [END tool_declaration]
+
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant.",
-            tools=[
-                BingGroundingAgentTool(
-                    bing_grounding=BingGroundingSearchToolParameters(
-                        search_configurations=[
-                            BingGroundingSearchConfiguration(
-                                project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"]
-                            )
-                        ]
-                    )
-                )
-            ],
+            tools=[tool],
         ),
         description="You are a helpful agent.",
     )

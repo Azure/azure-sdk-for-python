@@ -21,7 +21,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -44,57 +44,51 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 
 load_dotenv()
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 
 async def main():
-    credential = DefaultAzureCredential()
-
-    async with credential:
-        project_client = AIProjectClient(
-            endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-            credential=credential,
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
+        agent = await project_client.agents.create_version(
+            agent_name="MyAgent",
+            definition=PromptAgentDefinition(
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                instructions="Generate images based on user prompts",
+                tools=[ImageGenTool(quality="low", size="1024x1024")],
+            ),
+            description="Agent for image generation.",
         )
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-        async with project_client:
-            agent = await project_client.agents.create_version(
-                agent_name="MyAgent",
-                definition=PromptAgentDefinition(
-                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                    instructions="Generate images based on user prompts",
-                    tools=[ImageGenTool(quality="low", size="1024x1024")],
-                ),
-                description="Agent for image generation.",
-            )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        response = await openai_client.responses.create(
+            input="Generate an image of Microsoft logo.",
+            extra_headers={
+                "x-ms-oai-image-generation-deployment": "gpt-image-1"
+            },  # this is required at the moment for image generation
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        )
+        print(f"Response created: {response.id}")
 
-            openai_client = await project_client.get_openai_client()
+        # Save the image to a file
+        image_data = [output.result for output in response.output if output.type == "image_generation_call"]
 
-            async with openai_client:
-                response = await openai_client.responses.create(
-                    input="Generate an image of Microsoft logo.",
-                    extra_headers={
-                        "x-ms-oai-image-generation-deployment": "gpt-image-1"
-                    },  # this is required at the moment for image generation
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                )
-                print(f"Response created: {response.id}")
+        if image_data and image_data[0]:
+            print("Downloading generated image...")
+            filename = "microsoft.png"
+            file_path = os.path.abspath(filename)
 
-                # Save the image to a file
-                image_data = [output.result for output in response.output if output.type == "image_generation_call"]
+            with open(file_path, "wb") as f:
+                f.write(base64.b64decode(image_data[0]))
 
-                if image_data and image_data[0]:
-                    print("Downloading generated image...")
-                    filename = "microsoft.png"
-                    file_path = os.path.abspath(filename)
+            print(f"Image downloaded and saved to: {file_path}")
 
-                    with open(file_path, "wb") as f:
-                        f.write(base64.b64decode(image_data[0]))
-
-                    print(f"Image downloaded and saved to: {file_path}")
-
-            print("\nCleaning up...")
-            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-            print("Agent deleted")
+        print("\nCleaning up...")
+        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        print("Agent deleted")
 
 
 if __name__ == "__main__":

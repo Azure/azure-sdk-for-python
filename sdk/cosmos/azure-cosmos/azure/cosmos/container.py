@@ -933,10 +933,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         # Set query with 'query' and 'parameters' from kwargs
-        if utils.valid_key_value_exist(kwargs, "parameters"):
-            query = {"query": kwargs.pop("query", None), "parameters": kwargs.pop("parameters", None)}
+        query_str = kwargs.pop("query", None)
+        parameters = kwargs.pop("parameters", None)
+        if parameters is not None:
+            query = {"query": query_str, "parameters": parameters}
         else:
-            query = kwargs.pop("query", None)
+            query = query_str
 
         # Set range filters for a query. Options are either 'feed_range' or 'partition_key'
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)

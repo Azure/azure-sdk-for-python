@@ -29,7 +29,7 @@ class TestAgentResponsesCrudAsync(TestBase):
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
-        openai_client = await project_client.get_openai_client()
+        openai_client = project_client.get_openai_client()
 
         async with project_client:
 
@@ -140,7 +140,7 @@ class TestAgentResponsesCrudAsync(TestBase):
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
-        openai_client = await project_client.get_openai_client()
+        openai_client = project_client.get_openai_client()
 
         class CalendarEvent(BaseModel):
             model_config = {"extra": "forbid"}

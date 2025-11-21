@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list eval group and and eval runs
+    `openai.evals.*` methods to create, get and list evaluation and and eval runs
     for Any agentic evaluator using inline dataset content.
 
 USAGE:
@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -25,7 +25,7 @@ USAGE:
 
 from dotenv import load_dotenv
 import os
-from samples.evaluation.sample_agentic_evaluators.sample_generic_agentic_evaluator.agent_utils import run_evaluator
+from agent_utils import run_evaluator
 from schema_mappings import evaluator_to_data_source_config, evaluator_to_data_mapping
 from openai.types.evals.create_eval_jsonl_run_data_source_param import SourceFileContentContent
 

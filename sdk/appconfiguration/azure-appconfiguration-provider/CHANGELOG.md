@@ -1,5 +1,11 @@
 # Release History
 
+## 2.3.1 (2025-11-13)
+
+### Bugs Fixed
+
+* Fixed a bug where calling the refresh method would always trigger it.
+
 ## 2.3.0 (2025-11-12)
 
 ### Features Added

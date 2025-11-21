@@ -48,7 +48,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -125,7 +125,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -210,7 +210,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -255,7 +255,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -309,7 +309,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             # Define a function tool
@@ -412,7 +412,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -452,7 +451,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -472,7 +470,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "tool",
-                    "gen_ai.event.content": '{"tool_call_outputs": [{"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call_output", "tool_call_output": {"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}',
                 },
             },
             {
@@ -507,7 +505,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             # Define a function tool
@@ -604,7 +602,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -644,7 +641,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "responses"),
-            ("gen_ai.request.model", deployment_name),
             ("gen_ai.request.assistant_name", agent.name),
             ("gen_ai.provider.name", "azure.openai"),
             ("server.address", ""),
@@ -695,7 +691,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             # Create a conversation
@@ -783,7 +779,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             # Create a conversation
@@ -879,7 +875,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             # Create a conversation
@@ -971,7 +967,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             # Send only an image (no text)
@@ -1033,7 +1029,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             result = await client.responses.create(
@@ -1094,7 +1090,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             result = await client.responses.create(
@@ -1155,7 +1151,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             result = await client.responses.create(
@@ -1220,7 +1216,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             # Send text + image
@@ -1285,7 +1281,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             result = await client.responses.create(
@@ -1349,7 +1345,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             result = await client.responses.create(
@@ -1413,7 +1409,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             result = await client.responses.create(
@@ -1481,7 +1477,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             stream = await client.responses.create(
@@ -1551,7 +1547,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             stream = await client.responses.create(
@@ -1620,7 +1616,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             stream = await client.responses.create(
@@ -1689,7 +1685,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             stream = await client.responses.create(
@@ -1762,7 +1758,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             stream = await client.responses.create(
@@ -1834,7 +1830,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             stream = await client.responses.create(
@@ -1906,7 +1902,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             stream = await client.responses.create(
@@ -1978,7 +1974,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         deployment_name = self.test_agents_params["model_deployment_name"]
 
         async with project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             conversation = await client.conversations.create()
 
             stream = await client.responses.create(
@@ -2050,7 +2046,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             # Create a conversation
@@ -2149,7 +2145,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             conversation = await client.conversations.create()
@@ -2225,7 +2221,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             conversation = await client.conversations.create()
@@ -2303,7 +2299,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             # Define a function tool
@@ -2420,7 +2416,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "tool",
-                    "gen_ai.event.content": '{"tool_call_outputs": [{"type": "function", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call_output", "tool_call_output": {"type": "function", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}',
                 },
             },
             {
@@ -2452,7 +2448,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
-            client = await project_client.get_openai_client()
+            client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
 
             # Define a function tool
@@ -2608,7 +2604,7 @@ trigger:
                 definition=WorkflowAgentDefinition(workflow=workflow_yaml),
             )
 
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
             response = await openai_client.responses.create(
@@ -2706,7 +2702,7 @@ trigger:
                 definition=WorkflowAgentDefinition(workflow=workflow_yaml),
             )
 
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
             response = await openai_client.responses.create(
@@ -2808,7 +2804,7 @@ trigger:
                 definition=WorkflowAgentDefinition(workflow=workflow_yaml),
             )
 
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
             stream = await openai_client.responses.create(
@@ -2911,7 +2907,7 @@ trigger:
                 definition=WorkflowAgentDefinition(workflow=workflow_yaml),
             )
 
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
             stream = await openai_client.responses.create(

@@ -1,5 +1,28 @@
 # Release History
 
+## 30.1.0 (2025-11-19)
+
+### Features Added
+
+  - Added operation PublicIPAddressesOperations.begin_disassociate_cloud_service_reserved_public_ip
+  - Added operation PublicIPAddressesOperations.begin_reserve_cloud_service_public_ip_address
+  - Model ApplicationGateway has a new parameter entra_jwt_validation_configs
+  - Model ApplicationGatewayBackendSettings has a new parameter enable_l4_client_ip_preservation
+  - Model ApplicationGatewayClientAuthConfiguration has a new parameter verify_client_auth_mode
+  - Model ApplicationGatewayOnDemandProbe has a new parameter enable_probe_proxy_protocol_header
+  - Model ApplicationGatewayProbe has a new parameter enable_probe_proxy_protocol_header
+  - Model ApplicationGatewayRequestRoutingRule has a new parameter entra_jwt_validation_config
+  - Model DdosCustomPolicy has a new parameter detection_rules
+  - Model DdosCustomPolicy has a new parameter front_end_ip_configuration
+  - Model FlowLog has a new parameter record_types
+  - Model FlowLogInformation has a new parameter record_types
+  - Model LoadBalancer has a new parameter scope
+  - Model NetworkManagerRoutingConfiguration has a new parameter route_table_usage_mode
+  - Model PrivateEndpoint has a new parameter ip_version_type
+  - Model PrivateLinkService has a new parameter access_mode
+  - Model VirtualNetworkGatewayConnection has a new parameter authentication_type
+  - Model VirtualNetworkGatewayConnection has a new parameter certificate_authentication
+
 ## 30.0.0 (2025-10-24)
 
 ### Features Added
