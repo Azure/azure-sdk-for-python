@@ -1,5 +1,6 @@
-import pytest
 import sys
+
+import pytest
 
 from azure.ai.ml._restclient.v2024_01_01_preview.models import MLFlowModelJobInput, UriFileJobInput
 from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType
@@ -14,9 +15,6 @@ from azure.ai.ml.entities._workspace.connections.connection_subtypes import Serv
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 
 
-@pytest.mark.skipif(
-    condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
-)
 class TestDistillationJobConversion:
     @pytest.mark.parametrize(
         "data_generation_task_type",

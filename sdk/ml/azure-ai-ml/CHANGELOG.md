@@ -9,6 +9,7 @@
 ### Other Changes
 
 - Ensuring that azureml-dataprep-rslex is only installed for PyPy below 3.10 and CPython below 3.13.
+- Adding support for Python 3.14.
 
 ## 1.30.0 (2025-10-29)
 

@@ -10,7 +10,7 @@ We are excited to introduce the GA of Azure Machine Learning Python SDK v2. The 
 | [Samples][ml_samples]
 
 
-This package has been tested with Python 3.8, 3.9, 3.10, 3.11, 3.12 and 3.13.
+This package has been tested with Python 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 and 3.14.
 
 For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
 
