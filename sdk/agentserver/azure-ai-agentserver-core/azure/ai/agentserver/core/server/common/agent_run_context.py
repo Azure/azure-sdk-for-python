@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import cast
 from ...logger import get_logger
 from ...models import CreateResponse
 from ...models.projects import AgentId, AgentReference, ResponseConversation1
@@ -17,7 +18,7 @@ class AgentRunContext:
         self._id_generator = FoundryIdGenerator.from_request(payload)
         self._response_id = self._id_generator.response_id
         self._conversation_id = self._id_generator.conversation_id
-        self._stream = self.request.get("stream", False)
+        self._stream = self.request.get("stream") or False
 
     @property
     def raw_payload(self) -> dict:
@@ -49,9 +50,9 @@ class AgentRunContext:
             return None   # type: ignore
         return AgentId(
             {
-                "type": agent.type,
-                "name": agent.name,
-                "version": agent.version,
+                "type": agent["type"],
+                "name": agent["name"],
+                "version": agent["version"],
             }
         )
 
@@ -73,4 +74,4 @@ def _deserialize_create_response(payload: dict) -> CreateResponse:
 def _deserialize_agent_reference(payload: dict) -> AgentReference:
     if not payload:
         return None   # type: ignore
-    return AgentReference(**payload)
+    return cast(AgentReference, payload)

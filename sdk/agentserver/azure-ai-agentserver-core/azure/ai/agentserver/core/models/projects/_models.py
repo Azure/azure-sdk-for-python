@@ -57,8 +57,6 @@ class ItemResource(TypedDict):
 
 class FunctionToolCallItemResource(ItemResource):
     """Function tool call item resource with discriminator 'function_call'."""
-    type: ReadOnly[Literal['function_call']]
-    """Required. Discriminator value is \"function_call\"."""
     status: Union[str, Literal["in_progress"], Literal["completed"], Literal["incomplete"]]
     """The status of the function call."""
     call_id: str
@@ -70,8 +68,6 @@ class FunctionToolCallItemResource(ItemResource):
 
 class FunctionToolCallOutputItemResource(ItemResource):
     """Function tool call output item resource with discriminator 'function_call_output'."""
-    type: ReadOnly[Literal["function_call_output"]]
-    """Required. Discriminator value is \"function_call_output\"."""
     status: Union[str, Literal["in_progress"], Literal["completed"], Literal["incomplete"]]
     """The status of the function call."""
     call_id: str
@@ -101,8 +97,6 @@ class LogProb(TypedDict):
 
 class ItemContentOutputText(ItemContent):
 
-    type: ReadOnly[Literal["output_text"]]
-    """The type of the output text. Always ``output_text``. Required."""
     text: str
     """The text output from the model. Required."""
     annotations: List[Annotation]
@@ -334,14 +328,10 @@ class ResponseStreamEvent(TypedDict):
 
 
 class ResponseCompletedEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response_completed"]]
-    """Required. Discriminator value is \"response_completed\"."""
     response: Response
     """The completed response object. Required."""
 
 class ResponseContentPartAddedEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.content_part.added"]]
-    """Required. Discriminator value is \"response.content_part.added\"."""
     item_id: str
     """The ID of the output item that the content part was added to. Required."""
     output_index: int
@@ -352,8 +342,6 @@ class ResponseContentPartAddedEvent(ResponseStreamEvent):
     """The content part that was added. Required."""
 
 class ResponseContentPartDoneEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.content_part.done"]]
-    """Required. Discriminator value is \"response.content_part.done\"."""
     item_id: str
     """The ID of the output item that the content part was added to. Required."""
     output_index: int
@@ -364,14 +352,10 @@ class ResponseContentPartDoneEvent(ResponseStreamEvent):
     """The content part that was added. Required."""
 
 class ResponseCreatedEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.created"]]
-    """Required. Discriminator value is \"response.created\"."""
     response: Response
     """The created response object. Required."""
 
 class ResponseErrorEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["error"]]
-    """Required. Discriminator value is \"error\"."""
     code: str
     """The error code. Required."""
     message: str
@@ -380,8 +364,6 @@ class ResponseErrorEvent(ResponseStreamEvent):
     """The error parameter. Required."""
 
 class ResponseFunctionCallArgumentsDeltaEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.function_call_arguments.delta"]]
-    """Required. Discriminator value is \"response.function_call_arguments.delta\"."""
     item_id: str
     """ The ID of thee output item that the function call arguments delta belongs to. Required."""
     output_index: int
@@ -391,8 +373,6 @@ class ResponseFunctionCallArgumentsDeltaEvent(ResponseStreamEvent):
 
 
 class ResponseFunctionCallArgumentsDoneEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.function_call_arguments.done"]]
-    """Required. Discriminator value is \"response.function_call_arguments.done\"."""
     item_id: str
     """The ID of the output item that the function call arguments belongs to. Required."""
     output_index: int
@@ -402,15 +382,11 @@ class ResponseFunctionCallArgumentsDoneEvent(ResponseStreamEvent):
 
 
 class ResponseInProgressEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.in_progress"]]
-    """Required. Discriminator value is \"response.in_progress\"."""
     response: Response
     """The in-progress response object. Required."""
 
 
 class ResponseOutputItemAddedEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.output_item.added"]]
-    """Required. Discriminator value is \"response.output_item.added\"."""
     output_index: int
     """The index of the output item that was added. Required."""
     item: ItemResource
@@ -418,8 +394,6 @@ class ResponseOutputItemAddedEvent(ResponseStreamEvent):
 
 
 class ResponseOutputItemDoneEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.output_item.done"]]
-    """Required. Discriminator value is \"response.output_item.done\"."""
     output_index: int
     """The index of the output item that was completed. Required."""
     item: ItemResource
@@ -427,8 +401,6 @@ class ResponseOutputItemDoneEvent(ResponseStreamEvent):
 
 
 class ResponseTextDeltaEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.output_text.delta"]]
-    """Required. Discriminator value is \"response.output_text.delta\"."""
     item_id: str
     """The ID of the output item that the text delta belongs to. Required."""
     output_index: int
@@ -440,8 +412,6 @@ class ResponseTextDeltaEvent(ResponseStreamEvent):
 
 
 class ResponseTextDoneEvent(ResponseStreamEvent):
-    type: ReadOnly[Literal["response.output_text.done"]]
-    """Required. Discriminator value is \"response.output_text.done\"."""
     item_id: str
     """The ID of the output item that the text belongs to. Required."""
     output_index: int
@@ -454,8 +424,6 @@ class ResponseTextDoneEvent(ResponseStreamEvent):
 
 class ResponsesMessageItemResource(ItemResource):
     """Base message item resource."""
-    type: ReadOnly[Literal["message"]]
-    """Required. Discriminator value is \"message\"."""
     role: ReadOnly[Union[str, Literal["assistant", "user", "system", "developer"]]]
     """The role of the message. Required."""
     status: Union[str, Literal["in_progress", "completed", "incomplete"]]
@@ -464,8 +432,6 @@ class ResponsesMessageItemResource(ItemResource):
 
 class ResponsesAssistantMessageItemResource(ResponsesMessageItemResource):
     """Assistant message item resource with role='assistant'."""
-    role: ReadOnly[Literal["assistant"]]
-    """The role of the message. Always ``assistant``. Required."""
     content: List[ItemContent]
     """The content of the message. Required."""
 

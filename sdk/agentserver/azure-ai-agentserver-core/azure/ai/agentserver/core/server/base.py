@@ -219,7 +219,7 @@ class FoundryCBAgent:
 
     @abstractmethod
     async def agent_run(
-        self, context: "azure.ai.agentserver.core.server.common.agent_run_context.AgentRunContext"
+        self, context: "AgentRunContext"
     ) -> Union["OpenAIResponse", Generator["ResponseStreamEvent", Any, Any], AsyncGenerator["ResponseStreamEvent", Any]]:
         raise NotImplementedError
 
@@ -306,9 +306,9 @@ class FoundryCBAgent:
 
 
 def _event_to_sse_chunk(event: "ResponseStreamEvent") -> str:
-    event_data = json.dumps(event.as_dict())
-    if event.type:
-        return f"event: {event.type}\ndata: {event_data}\n\n"
+    event_data = json.dumps(event)
+    if event["type"]:
+        return f"event: {event['type']}\ndata: {event_data}\n\n"
     return f"data: {event_data}\n\n"
 
 
