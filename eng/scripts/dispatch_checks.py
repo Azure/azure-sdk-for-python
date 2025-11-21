@@ -77,6 +77,9 @@ async def run_check(
         # Print captured output after completion to avoid interleaving
         header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
         trailer = "=" * len(header)
+        if in_ci():
+            print(f"##[group]{package} :: {check}")
+
         if stdout:
             print(header)
             print(stdout.rstrip())
@@ -85,6 +88,9 @@ async def run_check(
             print(header.replace("OUTPUT", "STDERR"))
             print(stderr.rstrip())
             print(trailer)
+
+        if in_ci():
+            print("##[endgroup]")
 
         # if we have any output collections to complete, do so now here
 
