@@ -1,0 +1,15 @@
+{
+  "env_files": [
+    ".env.usw21"
+  ],
+  "test_suites": [
+    "tests/agents/tools/test_agent_function_tool.py"
+  ],
+  "output_dir": "test_output",
+  "max_parallel": 1,
+  "timeout_seconds": 120,
+  "pytest_args": [
+    "-v",
+    "-s"
+  ]
+}

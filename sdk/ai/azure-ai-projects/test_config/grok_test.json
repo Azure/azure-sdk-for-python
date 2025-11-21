@@ -1,0 +1,17 @@
+{
+  "env_files": [    
+    ".env.generated.swc1",
+    ".env.generated.usw21"
+  ],
+  "models": ["grok-3"],
+  "test_suites": [
+    "tests/agents/test_model_verification.py"
+  ],
+  "output_dir": "test_output",
+  "max_parallel": 4,
+  "timeout_seconds": 900,
+  "pytest_args": [
+    "-v",
+    "-s"
+  ]
+}

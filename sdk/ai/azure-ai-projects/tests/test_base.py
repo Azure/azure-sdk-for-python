@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import random
 import re
 import functools
@@ -66,7 +67,8 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_ai_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
     azure_ai_projects_tests_ai_search_index_name="sanitized-index-name",
     azure_ai_projects_tests_mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
-    azure_ai_projects_tests_image_model_deployment_name="gpt-image-1-mini"
+    azure_ai_projects_tests_image_model_deployment_name="gpt-image-1-mini",
+    azure_ai_projects_tests_model_deployment_name="gpt-4o"
 )
 
 
@@ -91,7 +93,7 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_agents_params = {
-        "model_deployment_name": "gpt-4o",
+        "model_deployment_name": os.environ.get("AZURE_AI_PROJECTS_TESTS_MODEL_DEPLOYMENT_NAME", "gpt-4o"),
         "agent_name": "agent-for-python-projects-sdk-testing",
     }
 
@@ -166,12 +168,22 @@ class TestBase(AzureRecordedTestCase):
         )
         endpoint = kwargs.pop(project_endpoint_env_variable)
         credential = self.get_credential(AIProjectClient, is_async=False)
-
-        # create and return client
-        client = AIProjectClient(
-            endpoint=endpoint,
-            credential=credential,
-        )
+        
+        # Check for optional testenv header
+        testenv = kwargs.get("azure_ai_projects_tests_testenv", "")
+        
+        # Only pass headers if testenv is non-empty
+        if testenv and testenv.strip():
+            client = AIProjectClient(
+                endpoint=endpoint,
+                credential=credential,
+                headers={"x-ms-oai-response-testenv": testenv},
+            )
+        else:
+            client = AIProjectClient(
+                endpoint=endpoint,
+                credential=credential,
+            )
 
         return client
 
@@ -185,12 +197,22 @@ class TestBase(AzureRecordedTestCase):
         )
         endpoint = kwargs.pop(project_endpoint_env_variable)
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
-
-        # create and return async client
-        client = AsyncAIProjectClient(
-            endpoint=endpoint,
-            credential=credential,
-        )
+        
+        # Check for optional testenv header
+        testenv = kwargs.get("azure_ai_projects_tests_testenv", "")
+        
+        # Only pass headers if testenv is non-empty
+        if testenv and testenv.strip():
+            client = AsyncAIProjectClient(
+                endpoint=endpoint,
+                credential=credential,
+                headers={"x-ms-oai-response-testenv": testenv},
+            )
+        else:
+            client = AsyncAIProjectClient(
+                endpoint=endpoint,
+                credential=credential,
+            )
 
         return client
 

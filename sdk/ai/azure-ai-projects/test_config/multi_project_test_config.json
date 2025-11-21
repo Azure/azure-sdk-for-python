@@ -1,0 +1,16 @@
+{
+  "env_files": [
+    ".env.generated.usw21.gpt4o",
+    ".env.generated.swc1.gpt4o"
+  ],
+  "test_suites": [
+    "tests/agents/tools/test_agent_function_tool.py"
+  ],
+  "output_dir": "test_output",
+  "max_parallel": 4,
+  "timeout_seconds": 900,
+  "pytest_args": [
+    "-v",
+    "-s"    
+  ]
+}

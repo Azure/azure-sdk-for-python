@@ -1,0 +1,16 @@
+{
+  "env_files": [
+    ".env.generated.swc1"
+  ],
+  "models": ["gpt-4o", "gpt-5-mini", "grok-3"],
+  "test_suites": [
+    "tests/agents/test_model_verification.py"
+  ],
+  "output_dir": "test_output",
+  "max_parallel": 1,
+  "timeout_seconds": 300,
+  "pytest_args": [
+    "-v",
+    "-s"
+  ]
+}

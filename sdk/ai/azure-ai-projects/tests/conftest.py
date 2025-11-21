@@ -8,8 +8,14 @@ import pytest
 from dotenv import load_dotenv, find_dotenv
 from devtools_testutils import remove_batch_sanitizers, add_general_regex_sanitizer, add_body_key_sanitizer
 
-if not load_dotenv(find_dotenv(), override=True):
-    print("Did not find a .env file. Using default environment variable values for tests.")
+# Skip loading .env if explicitly disabled (e.g., during parallel test runs)
+# When running multiple projects in parallel, each should use its own env vars
+# passed via subprocess, not load from a shared .env file
+if os.environ.get("AZURE_AI_PROJECTS_SKIP_DOTENV") != "true":
+    if not load_dotenv(find_dotenv(), override=True):
+        print("Did not find a .env file. Using default environment variable values for tests.")
+else:
+    print("Skipping .env file loading (AZURE_AI_PROJECTS_SKIP_DOTENV is set)")
 
 
 def pytest_collection_modifyitems(items):

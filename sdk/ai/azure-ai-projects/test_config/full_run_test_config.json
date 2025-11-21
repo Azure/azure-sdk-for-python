@@ -1,0 +1,17 @@
+{
+  "env_files": [
+    ".env.generated.usw21",
+    ".env.generated.swc1"
+  ],
+  "models": ["gpt-4o", "gpt-5-mini"],
+  "test_suites": [
+    "tests/agents/tools/"
+  ],
+  "output_dir": "test_output",
+  "max_parallel": 4,
+  "timeout_seconds": 3000,
+  "pytest_args": [
+    "-v",
+    "-s"
+  ]
+}

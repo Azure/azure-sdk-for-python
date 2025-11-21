@@ -36,8 +36,17 @@ dependencies = [
     "typing-extensions>=4.6.0",
     "azure-storage-blob>=12.15.0",
 ]
+
 dynamic = [
-"version", "readme"
+    "version", 
+    "readme"
+]
+
+[project.optional-dependencies]
+samples = [
+    "python-dotenv>=1.2.1",
+    "azure-identity>=1.25.1",
+    "openai>=2.7.2",
 ]
 
 [project.urls]
@@ -63,3 +72,20 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 verifytypes = false
+sphinx = false
+
+[tool.mypy]
+exclude = [
+    "samples/evaluations/.*"
+]
+
+[dependency-groups]
+dev = [
+    "aiohttp>=3.13.2",
+    "azure-devtools>=1.2.0",
+    "azure-identity>=1.25.1",
+    "pytest>=8.4.2",
+    "pytest-html>=4.1.1",
+    "pytest-json>=0.4.0",
+    "python-dotenv>=1.2.1",
+]

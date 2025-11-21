@@ -1,0 +1,17 @@
+{
+  "env_files": [
+    ".env.generated.usw21",
+    ".env.generated.swc1"
+  ],
+  "models": ["gpt-4o", "gpt-5-mini", "grok-3"],
+  "test_suites": [
+    "tests/agents/tools/test_agent_tools_with_conversations.py"
+  ],
+  "output_dir": "test_output",
+  "max_parallel": 4,
+  "timeout_seconds": 900,
+  "pytest_args": [
+    "-v",
+    "-s"
+  ]
+}

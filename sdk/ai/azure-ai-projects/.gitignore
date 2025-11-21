@@ -1,0 +1,10 @@
+# Environment files
+.env
+.env.*
+*.env
+
+# Exclude the template/example env file if you want to keep one in source control
+# !.env.example
+
+# Test output from multi-project orchestrator
+test_output/
