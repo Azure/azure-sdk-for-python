@@ -37,9 +37,9 @@ def get_package_wheel_path(pkg_root: str, out_path: Optional[str]) -> tuple[str,
         return pkg_path, out_token_path
 
     # Otherwise, use wheel created in staging directory, or fall back on source directory
-    pkg_path = pkg_root
+    pkg_path = find_whl(pkg_root, pkg_details.name, pkg_details.version) or pkg_root
+
     if out_path:
-        pkg_path = find_whl(out_path, pkg_details.name, pkg_details.version) or pkg_root
         out_token_path = os.path.join(out_path, os.path.basename(pkg_root))
 
     return pkg_path, out_token_path
