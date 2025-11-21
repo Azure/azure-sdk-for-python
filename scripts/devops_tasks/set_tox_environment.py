@@ -14,13 +14,14 @@ from ci_tools.environment_exclusions import is_check_enabled
 
 FULL_BUILD_SET = [
     "whl",
-    "sdist",
-    "depends",
-    "latestdependency",
-    "mindependency",
-    "whl_no_aio",
+    # "sdist",
+    # "depends",
+    # "latestdependency",
+    # "mindependency",
+    # "whl_no_aio",
 ]
-PR_BUILD_SET = ["whl", "sdist", "mindependency"]
+# this branch is checking only whl for now. rest will follow as they migrate
+PR_BUILD_SET = ["whl"] #, "sdist", "mindependency"
 
 
 def resolve_devops_variable(var_value: str) -> List[str]:
