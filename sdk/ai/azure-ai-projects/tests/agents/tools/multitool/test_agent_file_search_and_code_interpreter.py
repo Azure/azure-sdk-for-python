@@ -14,10 +14,10 @@ All tests use the same tool combination but different inputs and workflows.
 
 import os
 import pytest
+from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, CodeInterpreterTool, CodeInterpreterToolAuto
-
 
 class TestAgentFileSearchAndCodeInterpreter(TestBase):
     """Tests for agents using File Search + Code Interpreter combination."""
@@ -40,9 +40,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
 
         # Create data file
         txt_content = "Sample data: 10, 20, 30, 40, 50"
-        vector_store = openai_client.vector_stores.create(name="DataStore")
-
-        from io import BytesIO
+        vector_store = openai_client.vector_stores.create(name="DataStore")        
 
         txt_file = BytesIO(txt_content.encode("utf-8"))
         txt_file.name = "data.txt"

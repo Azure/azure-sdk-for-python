@@ -51,12 +51,12 @@ class TestAgentBingGrounding(TestBase):
         project_client = self.create_client(operation_group="agents", **kwargs)
         openai_client = project_client.get_openai_client()
 
-        # Note: This test requires BING_PROJECT_CONNECTION_ID environment variable
+        # Note: This test requires AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable
         # to be set with a valid Bing connection ID from the project
-        bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_connection_id")
+        bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
 
         if not bing_connection_id:
-            pytest.skip("BING_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.skip("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
@@ -152,10 +152,10 @@ class TestAgentBingGrounding(TestBase):
         project_client = self.create_client(operation_group="agents", **kwargs)
         openai_client = project_client.get_openai_client()
 
-        bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_connection_id")
+        bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
 
         if not bing_connection_id:
-            pytest.skip("BING_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.skip("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
