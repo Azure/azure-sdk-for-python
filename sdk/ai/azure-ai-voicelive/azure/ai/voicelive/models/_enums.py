@@ -26,6 +26,24 @@ class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Timestamps per word in the output audio."""
 
 
+class AvatarConfigTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Avatar config types."""
+
+    VIDEO_AVATAR = "video-avatar"
+    """Video avatar"""
+    PHOTO_AVATAR = "photo-avatar"
+    """Photo avatar"""
+
+
+class AvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Avatar config output protocols."""
+
+    WEBRTC = "webrtc"
+    """WebRTC protocol, output the audio/video streams via WebRTC"""
+    WEBSOCKET = "websocket"
+    """WebSocket protocol, output the video frames over WebSocket"""
+
+
 class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Union of all supported Azure voice types."""
 
@@ -64,6 +82,7 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INPUT_TEXT = "input_text"
     INPUT_AUDIO = "input_audio"
+    INPUT_IMAGE = "input_image"
     TEXT = "text"
     AUDIO = "audio"
 
@@ -162,6 +181,10 @@ class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Shimmer voice."""
     VERSE = "verse"
     """Verse voice."""
+    MARIN = "marin"
+    """Marin voice."""
+    CEDAR = "cedar"
+    """Cedar voice."""
 
 
 class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -188,6 +211,24 @@ class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use the latest Phoenix model."""
     PHOENIX_V2_NEURAL = "PhoenixV2Neural"
     """Use the Phoenix V2 model."""
+
+
+class PhotoAvatarBaseModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Photo avatar base modes."""
+
+    VASA1 = "vasa-1"
+    """VASA-1 model"""
+
+
+class RequestImageContentPartDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an image's detail level. Can be 'auto', 'low', 'high', or an unknown future value."""
+
+    AUTO = "auto"
+    """Automatically select an appropriate detail level."""
+    LOW = "low"
+    """Use a lower detail level to reduce bandwidth or cost."""
+    HIGH = "high"
+    """Use a higher detail level—potentially more resource-intensive."""
 
 
 class ResponseItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
