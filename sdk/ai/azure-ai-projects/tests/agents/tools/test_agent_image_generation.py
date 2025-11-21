@@ -5,11 +5,13 @@
 # ------------------------------------
 # cSpell:disable
 
+import os
 import base64
 import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
+from azure.core.exceptions import ResourceNotFoundError
 
 
 class TestAgentImageGeneration(TestBase):
@@ -42,16 +44,23 @@ class TestAgentImageGeneration(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
         
-        # Skip for usw21 - image model not deployed there
-        endpoint = kwargs.get("azure_ai_projects_tests_agents_project_endpoint", "")
-        if "usw2" in endpoint.lower():
-            pytest.skip("Image generation not available in usw21 (image model not deployed)")
-
+        # Get the image model deployment name from environment variable
+        image_model_deployment = os.environ.get("AZURE_AI_PROJECTS_TESTS_IMAGE_MODEL_DEPLOYMENT_NAME", "gpt-image-1-mini")
+        
         model = self.test_agents_params["model_deployment_name"]
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
         openai_client = project_client.get_openai_client()
+        
+        # Check if the image model deployment exists in the project
+        try:
+            deployment = project_client.deployments.get(image_model_deployment)
+            print(f"Image model deployment found: {deployment.name}")
+        except ResourceNotFoundError:
+            pytest.skip(f"Image generation model '{image_model_deployment}' not available in this project")
+        except Exception as e:
+            pytest.skip(f"Unable to verify image model deployment: {e}")
         
         # Disable retries for faster failure when service returns 500
         openai_client.max_retries = 0
@@ -77,7 +86,7 @@ class TestAgentImageGeneration(TestBase):
         response = openai_client.responses.create(
             input="Generate an image of a blue circle on a white background.",
             extra_headers={
-                "x-ms-oai-image-generation-deployment": "gpt-image-1-mini"
+                "x-ms-oai-image-generation-deployment": image_model_deployment
             },  # Required for image generation
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
