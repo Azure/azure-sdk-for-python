@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fix `attribute_list` and `as_attribute_dict` to return original model attribute name in cases where we pad the name now but used to not pad #44084
+
 ### Other Changes
 
 - Updated `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to set the `enable_cae` parameter to `True` by default. This change enables Continuous Access Evaluation (CAE) for all token requests made through these policies.  #42941
