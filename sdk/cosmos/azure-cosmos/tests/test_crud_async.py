@@ -1135,7 +1135,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             await created_container.read_item(
                 item='test_item_1',
                 partition_key='partition1',
-                timeout=0.000002
+                timeout=0.00000002
             )
 
         # Long timeout should succeed

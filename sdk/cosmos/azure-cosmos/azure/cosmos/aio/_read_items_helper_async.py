@@ -66,7 +66,6 @@ class ReadItemsHelperAsync:
         :return: A list of the retrieved items in the same order as the input.
         :rtype: ~azure.cosmos.CosmosList
         """
-
         if not self.items:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 
