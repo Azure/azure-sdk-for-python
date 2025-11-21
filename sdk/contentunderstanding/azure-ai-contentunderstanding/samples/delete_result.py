@@ -29,6 +29,7 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import AnalyzeInput
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
@@ -41,8 +42,9 @@ load_dotenv()
 # 1. Authenticate with Azure AI Content Understanding
 # 2. Analyze an invoice document using prebuilt-invoice analyzer
 # 3. Extract the operation ID from the analysis operation
-# 4. Get the analysis result using the operation ID
+# 4. Get the analysis result using the operation ID and verify accessibility
 # 5. Delete the analysis result to free up storage
+# 6. Verify deletion by confirming the result is no longer accessible (404 error)
 #
 # Note: Deleting results is useful for managing storage and cleaning up
 # temporary analysis results that are no longer needed.
@@ -101,6 +103,14 @@ async def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
         result = await poller.result()
         print(f"✅ Analysis completed successfully!")
 
+        # Verify we can access the result before deletion (this is for demonstration only)
+        print(f"\n🔍 Step 2.5: Verifying result accessibility before deletion...")
+        try:
+            status_before = await client._get_result(operation_id=operation_id)  # type: ignore[attr-defined]
+            print(f"✅ Result accessible before deletion (status: {status_before.status})")
+        except Exception as e:
+            print(f"⚠️  Unexpected error accessing result before deletion: {e}")
+
         # Step 3: Display sample results from the analysis
         print(f"\n📊 Step 3: Analysis Results Summary")
         print("=" * 60)
@@ -142,13 +152,20 @@ async def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
         print(f"   Attempting to access the deleted result...")
         try:
             # Try to get the operation status after deletion (this is for demonstration only)
-            deleted_status = await client._operations._get_result(operation_id=operation_id)  # type: ignore[attr-defined]
+            deleted_status = await client._get_result(operation_id=operation_id)  # type: ignore[attr-defined]
             print("❌ Unexpected: Result still exists after deletion!")
         except Exception as delete_error:
-            print(f"✅ Verification successful: Result properly deleted")
-            print(f"   Expected error when trying to access deleted result: {type(delete_error).__name__}")
-            if "404" in str(delete_error) or "Not Found" in str(delete_error):
-                print(f"   ✓ Confirmed: 404 error as expected for deleted result")
+            if isinstance(delete_error, ResourceNotFoundError):
+                print(f"✅ Verification successful: Result properly deleted")
+                print(f"   Error type: {type(delete_error).__name__}")
+                if hasattr(delete_error, 'error') and delete_error.error:
+                    print(f"   Code: {delete_error.error.code}")
+                    print(f"   Message: {delete_error.error.message}")
+                print(f"   ✓ Confirmed: Result is no longer accessible as expected")
+            else:
+                print(f"❌ Unexpected error type: {type(delete_error).__name__}")
+                print(f"   Error details: {delete_error}")
+                print(f"   Expected ResourceNotFoundError for deleted result")
 
         print("\n💡 Why delete results?")
         print("   • Free up storage space in your Content Understanding resource")
