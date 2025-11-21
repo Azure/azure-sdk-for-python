@@ -45,14 +45,7 @@ class QueryParamPolicy(HTTPPolicy):
                     if len(values) > 1:
                         # Empty values last, space values second to last, other non-empty values sorted
                         # lexicographically first
-                        def sort_key(v):
-                            if v == "":
-                                return (2, "")  # empty string last
-                            if v == " ":
-                                return (1, v)  # space second to last
-                            return (0, v)  # other non-empty values first
-
-                        values = sorted(values, key=sort_key)
+                        values = sorted(values, key=self.__sort_key)
                     normalized_params.extend([(k, v) for v in values])
 
                 # Rebuild the query string, encoding spaces as %20 instead of +
@@ -72,9 +65,17 @@ class QueryParamPolicy(HTTPPolicy):
 
                 # Update the request URL
                 request.http_request.url = new_url
-        except Exception:  # pylint: disable=broad-except
-            # If URL normalization fails, continue with the original URL
+        except (ValueError, TypeError):
+            # If URL normalization fails due to parsing or encoding errors, continue with the original URL
             # This ensures the policy doesn't break existing functionality
             pass
 
         return self.next.send(request)
+
+    @staticmethod
+    def __sort_key(v: str):
+        if v == "":
+            return (2, "")  # empty string last
+        if v == " ":
+            return (1, v)  # space second to last
+        return (0, v)  # other non-empty values first
