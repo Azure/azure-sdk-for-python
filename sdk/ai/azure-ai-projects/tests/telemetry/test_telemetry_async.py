@@ -14,7 +14,6 @@ class TestTelemetryAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\telemetry\test_telemetry_async.py::TestTelemetryAsync::test_telemetry_async -s
-    #@pytest.mark.skip(reason="Temporary skip test until we have an AppInsights resource connected")
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_telemetry_async(self, **kwargs):
