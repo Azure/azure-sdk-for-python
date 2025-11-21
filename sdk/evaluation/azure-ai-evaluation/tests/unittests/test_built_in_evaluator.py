@@ -217,7 +217,7 @@ class TestBuiltInEvaluators:
     def test_groundedness_evaluator_with_context(self, mock_model_config):
         """Test GroundednessEvaluator with direct context (traditional use)"""
         groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
-        groundedness_eval._flow = MagicMock(return_value=quality_response_async_mock())
+        groundedness_eval._flow_no_query = MagicMock(return_value=quality_response_async_mock())
 
         result = groundedness_eval(
             response="The capital of Japan is Tokyo.",
@@ -231,7 +231,7 @@ class TestBuiltInEvaluators:
     def test_groundedness_evaluator_missing_required_inputs(self, mock_model_config):
         """Test GroundednessEvaluator with missing required inputs for agent response mode"""
         groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
-        groundedness_eval._flow = MagicMock(return_value=quality_response_async_mock())
+        groundedness_eval._flow_no_query = MagicMock(return_value=quality_response_async_mock())
 
         with pytest.raises(EvaluationException) as exc_info:
             groundedness_eval(
