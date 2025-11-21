@@ -127,7 +127,7 @@ class apistub(Check):
             if cross_language_mapping_path:
                 cmds.extend(["--mapping-path", cross_language_mapping_path])
 
-            logger.info("Running apistubgen {}.".format(cmds))
+            logger.info("Running apistub {}.".format(cmds))
 
             try:
                 self.run_venv_command(executable, cmds, cwd=package_dir, check=True, immediately_dump=True)
