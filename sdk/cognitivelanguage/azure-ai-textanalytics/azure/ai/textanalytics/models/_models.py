@@ -176,7 +176,8 @@ class AbstractiveSummarizationOperationAction(AnalyzeTextOperationAction, discri
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.ABSTRACTIVE_SUMMARIZATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.ABSTRACTIVE_SUMMARIZATION  # type: ignore
 
 
 class AnalyzeTextLROResult(_Model):
@@ -291,9 +292,8 @@ class AbstractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminato
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS  # type: ignore
 
 
 class AbstractiveSummarizationResult(_Model):
@@ -444,7 +444,7 @@ class BaseMetadata(_Model):
     """The abstract base class for entity Metadata.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AgeMetadata, AreaMetadata, CurrencyMetadata, DateMetadata, DateTimeMetadata,
+    AddressMetadata, AgeMetadata, AreaMetadata, CurrencyMetadata, DateMetadata, DateTimeMetadata,
     InformationMetadata, LengthMetadata, NumberMetadata, NumericRangeMetadata, OrdinalMetadata,
     SpeedMetadata, TemperatureMetadata, TemporalSetMetadata, TemporalSpanMetadata, TimeMetadata,
     VolumeMetadata, WeightMetadata
@@ -453,7 +453,7 @@ class BaseMetadata(_Model):
      "DateMetadata", "DateTimeMetadata", "TimeMetadata", "TemporalSetMetadata", "NumberMetadata",
      "OrdinalMetadata", "SpeedMetadata", "WeightMetadata", "LengthMetadata", "VolumeMetadata",
      "AreaMetadata", "AgeMetadata", "InformationMetadata", "TemperatureMetadata",
-     "CurrencyMetadata", "NumericRangeMetadata", and "TemporalSpanMetadata".
+     "CurrencyMetadata", "NumericRangeMetadata", "TemporalSpanMetadata", and "AddressMetadata".
     :vartype metadata_kind: str or ~azure.ai.textanalytics.models.MetadataKind
     """
 
@@ -465,8 +465,8 @@ class BaseMetadata(_Model):
      \"DateTimeMetadata\", \"TimeMetadata\", \"TemporalSetMetadata\", \"NumberMetadata\",
      \"OrdinalMetadata\", \"SpeedMetadata\", \"WeightMetadata\", \"LengthMetadata\",
      \"VolumeMetadata\", \"AreaMetadata\", \"AgeMetadata\", \"InformationMetadata\",
-     \"TemperatureMetadata\", \"CurrencyMetadata\", \"NumericRangeMetadata\", and
-     \"TemporalSpanMetadata\"."""
+     \"TemperatureMetadata\", \"CurrencyMetadata\", \"NumericRangeMetadata\",
+     \"TemporalSpanMetadata\", and \"AddressMetadata\"."""
 
     @overload
     def __init__(
@@ -484,6 +484,74 @@ class BaseMetadata(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class AddressMetadata(BaseMetadata, discriminator="AddressMetadata"):
+    """Represents the Address entity Metadata model.
+
+    :ivar metadata_kind: Kind of the metadata. Required. Metadata for address-related values.
+    :vartype metadata_kind: str or ~azure.ai.textanalytics.models.ADDRESS_METADATA
+    :ivar formated_address: The fully formatted address string following postal conventions for the
+     address's country/region. Required.
+    :vartype formated_address: str
+    :ivar address_lines: The full address string as recognized from the input text. Required.
+    :vartype address_lines: list[str]
+    :ivar city: The city name of the address.
+    :vartype city: str
+    :ivar state: The state or province name of the address.
+    :vartype state: str
+    :ivar postal_code: The postal or ZIP code of the address.
+    :vartype postal_code: str
+    :ivar country_or_region: The country or region name of the address.
+    :vartype country_or_region: str
+    """
+
+    metadata_kind: Literal[MetadataKind.ADDRESS_METADATA] = rest_discriminator(name="metadataKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the metadata. Required. Metadata for address-related values."""
+    formated_address: str = rest_field(
+        name="formatedAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully formatted address string following postal conventions for the address's
+     country/region. Required."""
+    address_lines: list[str] = rest_field(
+        name="addressLines", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full address string as recognized from the input text. Required."""
+    city: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The city name of the address."""
+    state: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The state or province name of the address."""
+    postal_code: Optional[str] = rest_field(
+        name="postalCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The postal or ZIP code of the address."""
+    country_or_region: Optional[str] = rest_field(
+        name="countryOrRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The country or region name of the address."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        formated_address: str,
+        address_lines: list[str],
+        city: Optional[str] = None,
+        state: Optional[str] = None,
+        postal_code: Optional[str] = None,
+        country_or_region: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.ADDRESS_METADATA  # type: ignore
 
 
 class AgeMetadata(BaseMetadata, discriminator="AgeMetadata"):
@@ -522,7 +590,8 @@ class AgeMetadata(BaseMetadata, discriminator="AgeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.AGE_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.AGE_METADATA  # type: ignore
 
 
 class EntityOverlapPolicy(_Model):
@@ -586,7 +655,8 @@ class AllowOverlapEntityPolicyType(EntityOverlapPolicy, discriminator="allowOver
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=PolicyKind.ALLOW_OVERLAP, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = PolicyKind.ALLOW_OVERLAP  # type: ignore
 
 
 class AnalyzeTextResult(_Model):
@@ -657,7 +727,8 @@ class AnalyzeTextEntitiesResult(AnalyzeTextResult, discriminator="EntityRecognit
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.ENTITY_RECOGNITION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.ENTITY_RECOGNITION_RESULTS  # type: ignore
 
 
 class AnalyzeTextEntityLinkingResult(AnalyzeTextResult, discriminator="EntityLinkingResults"):
@@ -689,7 +760,8 @@ class AnalyzeTextEntityLinkingResult(AnalyzeTextResult, discriminator="EntityLin
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.ENTITY_LINKING_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.ENTITY_LINKING_RESULTS  # type: ignore
 
 
 class AnalyzeTextError(_Model):
@@ -824,7 +896,8 @@ class AnalyzeTextKeyPhraseResult(AnalyzeTextResult, discriminator="KeyPhraseExtr
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.KEY_PHRASE_EXTRACTION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.KEY_PHRASE_EXTRACTION_RESULTS  # type: ignore
 
 
 class AnalyzeTextLanguageDetectionResult(AnalyzeTextResult, discriminator="LanguageDetectionResults"):
@@ -856,7 +929,8 @@ class AnalyzeTextLanguageDetectionResult(AnalyzeTextResult, discriminator="Langu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.LANGUAGE_DETECTION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.LANGUAGE_DETECTION_RESULTS  # type: ignore
 
 
 class AnalyzeTextOperationState(_Model):
@@ -980,7 +1054,8 @@ class AnalyzeTextPiiResult(AnalyzeTextResult, discriminator="PiiEntityRecognitio
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.PII_ENTITY_RECOGNITION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.PII_ENTITY_RECOGNITION_RESULTS  # type: ignore
 
 
 class AnalyzeTextSentimentResult(AnalyzeTextResult, discriminator="SentimentAnalysisResults"):
@@ -1012,7 +1087,8 @@ class AnalyzeTextSentimentResult(AnalyzeTextResult, discriminator="SentimentAnal
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.SENTIMENT_ANALYSIS_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.SENTIMENT_ANALYSIS_RESULTS  # type: ignore
 
 
 class AreaMetadata(BaseMetadata, discriminator="AreaMetadata"):
@@ -1055,30 +1131,58 @@ class AreaMetadata(BaseMetadata, discriminator="AreaMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.AREA_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.AREA_METADATA  # type: ignore
 
 
 class BaseRedactionPolicy(_Model):
     """The abstract base class for RedactionPolicy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CharacterMaskPolicyType, EntityMaskPolicyType, NoMaskPolicyType
+    CharacterMaskPolicyType, EntityMaskPolicyType, NoMaskPolicyType, SyntheticReplacementPolicyType
 
     :ivar policy_kind: The entity RedactionPolicy object kind. Required. Known values are:
-     "noMask", "characterMask", and "entityMask".
+     "noMask", "characterMask", "entityMask", and "syntheticReplacement".
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.RedactionPolicyKind
+    :ivar entity_types: (Optional) describes the PII categories to which the redaction policy will
+     be applied. If not specified, the redaction policy will be applied to all PII categories.
+    :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
+    :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
+    :vartype policy_name: str
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
     """
 
     __mapping__: dict[str, _Model] = {}
     policy_kind: str = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])
     """The entity RedactionPolicy object kind. Required. Known values are: \"noMask\",
-     \"characterMask\", and \"entityMask\"."""
+     \"characterMask\", \"entityMask\", and \"syntheticReplacement\"."""
+    entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = rest_field(
+        name="entityTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """(Optional) describes the PII categories to which the redaction policy will be applied. If not
+     specified, the redaction policy will be applied to all PII categories."""
+    policy_name: Optional[str] = rest_field(
+        name="policyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """(Optional) name of the redaction policy for identification purposes."""
+    is_default: Optional[bool] = rest_field(
+        name="isDefault", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """(Optional) flag to indicate whether this redaction policy is the default policy to be applied
+     when no specific policy is defined for a PII category. Only one policy can be marked as
+     default."""
 
     @overload
     def __init__(
         self,
         *,
         policy_kind: str,
+        entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
+        policy_name: Optional[str] = None,
+        is_default: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1095,6 +1199,15 @@ class BaseRedactionPolicy(_Model):
 class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"):
     """Represents the policy of redacting with a redaction character.
 
+    :ivar entity_types: (Optional) describes the PII categories to which the redaction policy will
+     be applied. If not specified, the redaction policy will be applied to all PII categories.
+    :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
+    :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
+    :vartype policy_name: str
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
     :ivar policy_kind: The entity RedactionPolicy object kind. Required. React detected entities
      with redaction character.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.CHARACTER_MASK
@@ -1103,6 +1216,12 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
      characters for redaction. Known values are: "!", "#", "$", "%", "&", "*", "+", "-", "=", "?",
      "@", "^", "_", and "~".
     :vartype redaction_character: str or ~azure.ai.textanalytics.models.RedactionCharacter
+    :ivar unmask_length: Optional parameter to indicate the length of unmasked characters at the
+     end of the redacted PII entity. Default is 0.
+    :vartype unmask_length: int
+    :ivar unmask_from_end: Optional parameter to indicate whether to unmask characters from the end
+     of the redacted PII entity. Default is true.
+    :vartype unmask_from_end: bool
     """
 
     policy_kind: Literal[RedactionPolicyKind.CHARACTER_MASK] = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1115,12 +1234,27 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
      character will bce * as before. We allow specific ascii characters for redaction. Known values
      are: \"!\", \"#\", \"$\", \"%\", \"&\", \"*\", \"+\", \"-\", \"=\", \"?\", \"@\", \"^\", \"_\",
      and \"~\"."""
+    unmask_length: Optional[int] = rest_field(
+        name="unmaskLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional parameter to indicate the length of unmasked characters at the end of the redacted PII
+     entity. Default is 0."""
+    unmask_from_end: Optional[bool] = rest_field(
+        name="unmaskFromEnd", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional parameter to indicate whether to unmask characters from the end of the redacted PII
+     entity. Default is true."""
 
     @overload
     def __init__(
         self,
         *,
+        entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
+        policy_name: Optional[str] = None,
+        is_default: Optional[bool] = None,
         redaction_character: Optional[Union[str, "_models.RedactionCharacter"]] = None,
+        unmask_length: Optional[int] = None,
+        unmask_from_end: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1131,7 +1265,8 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=RedactionPolicyKind.CHARACTER_MASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.CHARACTER_MASK  # type: ignore
 
 
 class ClassificationActionResult(_Model):
@@ -1228,6 +1363,202 @@ class ClassificationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ConfidenceScoreThreshold(_Model):
+    """Configuration for confidence score threshold for PII entity recognition.
+
+    :ivar default: Minimum confidence score threshold for the PII entities to be returned in the
+     response. Entities with a confidence score below this threshold will be filtered out. Value
+     should be between 0.0 and 1.0. Required.
+    :vartype default: float
+    :ivar overrides: List of confidence score threshold overrides for specific PII categories.
+    :vartype overrides: list[~azure.ai.textanalytics.models.ConfidenceScoreThresholdOverride]
+    """
+
+    default: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Minimum confidence score threshold for the PII entities to be returned in the response.
+     Entities with a confidence score below this threshold will be filtered out. Value should be
+     between 0.0 and 1.0. Required."""
+    overrides: Optional[list["_models.ConfidenceScoreThresholdOverride"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of confidence score threshold overrides for specific PII categories."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default: float,
+        overrides: Optional[list["_models.ConfidenceScoreThresholdOverride"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfidenceScoreThresholdOverride(_Model):
+    """Confidence score threshold override for a specific PII category.
+
+    :ivar entity: The PII category for which to override the confidence score threshold. Required.
+     Known values are: "ABARoutingNumber", "ARNationalIdentityNumber", "AUBankAccountNumber",
+     "AUDriversLicenseNumber", "AUMedicalAccountNumber", "AUPassportNumber", "AUTaxFileNumber",
+     "AUBusinessNumber", "AUCompanyNumber", "ATIdentityCard", "ATTaxIdentificationNumber",
+     "ATValueAddedTaxNumber", "AzureDocumentDBAuthKey", "AzureIAASDatabaseConnectionAndSQLString",
+     "AzureIoTConnectionString", "AzurePublishSettingPassword", "AzureRedisCacheString", "AzureSAS",
+     "AzureServiceBusString", "AzureStorageAccountKey", "AzureStorageAccountGeneric",
+     "BENationalNumber", "BENationalNumberV2", "BEValueAddedTaxNumber", "BRCPFNumber",
+     "BRLegalEntityNumber", "BRNationalIDRG", "BGUniformCivilNumber", "CABankAccountNumber",
+     "CADriversLicenseNumber", "CAHealthServiceNumber", "CAPassportNumber",
+     "CAPersonalHealthIdentification", "CASocialInsuranceNumber", "CLIdentityCardNumber",
+     "CNResidentIdentityCardNumber", "CreditCardNumber", "HRIdentityCardNumber",
+     "HRNationalIDNumber", "HRPersonalIdentificationNumber", "HRPersonalIdentificationOIBNumberV2",
+     "CYIdentityCard", "CYTaxIdentificationNumber", "CZPersonalIdentityNumber",
+     "CZPersonalIdentityV2", "DKPersonalIdentificationNumber", "DKPersonalIdentificationV2",
+     "DrugEnforcementAgencyNumber", "EEPersonalIdentificationCode", "EUDebitCardNumber",
+     "EUDriversLicenseNumber", "EUGPSCoordinates", "EUNationalIdentificationNumber",
+     "EUPassportNumber", "EUSocialSecurityNumber", "EUTaxIdentificationNumber",
+     "FIEuropeanHealthNumber", "FINationalID", "FINationalIDV2", "FIPassportNumber",
+     "FRDriversLicenseNumber", "FRHealthInsuranceNumber", "FRNationalID", "FRPassportNumber",
+     "FRSocialSecurityNumber", "FRTaxIdentificationNumber", "FRValueAddedTaxNumber",
+     "DEDriversLicenseNumber", "DEPassportNumber", "DEIdentityCardNumber",
+     "DETaxIdentificationNumber", "DEValueAddedNumber", "GRNationalIDCard", "GRNationalIDV2",
+     "GRTaxIdentificationNumber", "HKIdentityCardNumber", "HUValueAddedNumber",
+     "HUPersonalIdentificationNumber", "HUTaxIdentificationNumber", "INPermanentAccount",
+     "INUniqueIdentificationNumber", "IDIdentityCardNumber", "InternationalBankingAccountNumber",
+     "IEPersonalPublicServiceNumber", "IEPersonalPublicServiceNumberV2", "ILBankAccountNumber",
+     "ILNationalID", "ITDriversLicenseNumber", "ITFiscalCode", "ITValueAddedTaxNumber",
+     "JPBankAccountNumber", "JPDriversLicenseNumber", "JPPassportNumber",
+     "JPResidentRegistrationNumber", "JPSocialInsuranceNumber", "JPMyNumberCorporate",
+     "JPMyNumberPersonal", "JPResidenceCardNumber", "LVPersonalCode", "LTPersonalCode",
+     "LUNationalIdentificationNumberNatural", "LUNationalIdentificationNumberNonNatural",
+     "MYIdentityCardNumber", "MTIdentityCardNumber", "MTTaxIDNumber", "NLCitizensServiceNumber",
+     "NLCitizensServiceNumberV2", "NLTaxIdentificationNumber", "NLValueAddedTaxNumber",
+     "NZBankAccountNumber", "NZDriversLicenseNumber", "NZInlandRevenueNumber",
+     "NZMinistryOfHealthNumber", "NZSocialWelfareNumber", "NOIdentityNumber",
+     "PHUnifiedMultiPurposeIDNumber", "PLIdentityCard", "PLNationalID", "PLNationalIDV2",
+     "PLPassportNumber", "PLTaxIdentificationNumber", "PLREGONNumber", "PTCitizenCardNumber",
+     "PTCitizenCardNumberV2", "PTTaxIdentificationNumber", "ROPersonalNumericalCode",
+     "RUPassportNumberDomestic", "RUPassportNumberInternational", "SANationalID",
+     "SGNationalRegistrationIdentityCardNumber", "SKPersonalNumber", "SITaxIdentificationNumber",
+     "SIUniqueMasterCitizenNumber", "ZAIdentificationNumber", "KRResidentRegistrationNumber",
+     "ESDNI", "ESSocialSecurityNumber", "ESTaxIdentificationNumber", "SQLServerConnectionString",
+     "SENationalID", "SENationalIDV2", "SEPassportNumber", "SETaxIdentificationNumber", "SWIFTCode",
+     "CHSocialSecurityNumber", "TWNationalID", "TWPassportNumber", "TWResidentCertificate",
+     "THPopulationIdentificationCode", "TRNationalIdentificationNumber", "UKDriversLicenseNumber",
+     "UKElectoralRollNumber", "UKNationalHealthNumber", "UKNationalInsuranceNumber",
+     "UKUniqueTaxpayerNumber", "USUKPassportNumber", "USBankAccountNumber",
+     "USDriversLicenseNumber", "USIndividualTaxpayerIdentification", "USSocialSecurityNumber",
+     "UAPassportNumberDomestic", "UAPassportNumberInternational", "Organization", "Email", "URL",
+     "Age", "PhoneNumber", "IPAddress", "Date", "Person", "Address", "DateOfBirth",
+     "BankAccountNumber", "PassportNumber", "DriversLicenseNumber", "Neighborhood", "SortCode",
+     "PIN", "VIN", "VehicleIdentificationNumber", "LicensePlate", "KRPassportNumber",
+     "KRDriversLicenseNumber", "KRSocialSecurityNumber", "GovernmentIssuedId", "Password",
+     "NationalId", "ZipCode", "CVV", "ExpirationDate", "CASocialIdentificationNumber",
+     "USMedicareBeneficiaryId", "Location", "City", "State", "Airport", and "GPE".
+    :vartype entity: str or ~azure.ai.textanalytics.models.PiiCategoriesExclude
+    :ivar value: The confidence score threshold for the specified PII category. Required.
+    :vartype value: float
+    :ivar language: The 2 letter ISO 639-1 language for which the override applies. If not
+     specified, the override applies to all languages.
+    :vartype language: str
+    """
+
+    entity: Union[str, "_models.PiiCategoriesExclude"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The PII category for which to override the confidence score threshold. Required. Known values
+     are: \"ABARoutingNumber\", \"ARNationalIdentityNumber\", \"AUBankAccountNumber\",
+     \"AUDriversLicenseNumber\", \"AUMedicalAccountNumber\", \"AUPassportNumber\",
+     \"AUTaxFileNumber\", \"AUBusinessNumber\", \"AUCompanyNumber\", \"ATIdentityCard\",
+     \"ATTaxIdentificationNumber\", \"ATValueAddedTaxNumber\", \"AzureDocumentDBAuthKey\",
+     \"AzureIAASDatabaseConnectionAndSQLString\", \"AzureIoTConnectionString\",
+     \"AzurePublishSettingPassword\", \"AzureRedisCacheString\", \"AzureSAS\",
+     \"AzureServiceBusString\", \"AzureStorageAccountKey\", \"AzureStorageAccountGeneric\",
+     \"BENationalNumber\", \"BENationalNumberV2\", \"BEValueAddedTaxNumber\", \"BRCPFNumber\",
+     \"BRLegalEntityNumber\", \"BRNationalIDRG\", \"BGUniformCivilNumber\", \"CABankAccountNumber\",
+     \"CADriversLicenseNumber\", \"CAHealthServiceNumber\", \"CAPassportNumber\",
+     \"CAPersonalHealthIdentification\", \"CASocialInsuranceNumber\", \"CLIdentityCardNumber\",
+     \"CNResidentIdentityCardNumber\", \"CreditCardNumber\", \"HRIdentityCardNumber\",
+     \"HRNationalIDNumber\", \"HRPersonalIdentificationNumber\",
+     \"HRPersonalIdentificationOIBNumberV2\", \"CYIdentityCard\", \"CYTaxIdentificationNumber\",
+     \"CZPersonalIdentityNumber\", \"CZPersonalIdentityV2\", \"DKPersonalIdentificationNumber\",
+     \"DKPersonalIdentificationV2\", \"DrugEnforcementAgencyNumber\",
+     \"EEPersonalIdentificationCode\", \"EUDebitCardNumber\", \"EUDriversLicenseNumber\",
+     \"EUGPSCoordinates\", \"EUNationalIdentificationNumber\", \"EUPassportNumber\",
+     \"EUSocialSecurityNumber\", \"EUTaxIdentificationNumber\", \"FIEuropeanHealthNumber\",
+     \"FINationalID\", \"FINationalIDV2\", \"FIPassportNumber\", \"FRDriversLicenseNumber\",
+     \"FRHealthInsuranceNumber\", \"FRNationalID\", \"FRPassportNumber\",
+     \"FRSocialSecurityNumber\", \"FRTaxIdentificationNumber\", \"FRValueAddedTaxNumber\",
+     \"DEDriversLicenseNumber\", \"DEPassportNumber\", \"DEIdentityCardNumber\",
+     \"DETaxIdentificationNumber\", \"DEValueAddedNumber\", \"GRNationalIDCard\",
+     \"GRNationalIDV2\", \"GRTaxIdentificationNumber\", \"HKIdentityCardNumber\",
+     \"HUValueAddedNumber\", \"HUPersonalIdentificationNumber\", \"HUTaxIdentificationNumber\",
+     \"INPermanentAccount\", \"INUniqueIdentificationNumber\", \"IDIdentityCardNumber\",
+     \"InternationalBankingAccountNumber\", \"IEPersonalPublicServiceNumber\",
+     \"IEPersonalPublicServiceNumberV2\", \"ILBankAccountNumber\", \"ILNationalID\",
+     \"ITDriversLicenseNumber\", \"ITFiscalCode\", \"ITValueAddedTaxNumber\",
+     \"JPBankAccountNumber\", \"JPDriversLicenseNumber\", \"JPPassportNumber\",
+     \"JPResidentRegistrationNumber\", \"JPSocialInsuranceNumber\", \"JPMyNumberCorporate\",
+     \"JPMyNumberPersonal\", \"JPResidenceCardNumber\", \"LVPersonalCode\", \"LTPersonalCode\",
+     \"LUNationalIdentificationNumberNatural\", \"LUNationalIdentificationNumberNonNatural\",
+     \"MYIdentityCardNumber\", \"MTIdentityCardNumber\", \"MTTaxIDNumber\",
+     \"NLCitizensServiceNumber\", \"NLCitizensServiceNumberV2\", \"NLTaxIdentificationNumber\",
+     \"NLValueAddedTaxNumber\", \"NZBankAccountNumber\", \"NZDriversLicenseNumber\",
+     \"NZInlandRevenueNumber\", \"NZMinistryOfHealthNumber\", \"NZSocialWelfareNumber\",
+     \"NOIdentityNumber\", \"PHUnifiedMultiPurposeIDNumber\", \"PLIdentityCard\", \"PLNationalID\",
+     \"PLNationalIDV2\", \"PLPassportNumber\", \"PLTaxIdentificationNumber\", \"PLREGONNumber\",
+     \"PTCitizenCardNumber\", \"PTCitizenCardNumberV2\", \"PTTaxIdentificationNumber\",
+     \"ROPersonalNumericalCode\", \"RUPassportNumberDomestic\", \"RUPassportNumberInternational\",
+     \"SANationalID\", \"SGNationalRegistrationIdentityCardNumber\", \"SKPersonalNumber\",
+     \"SITaxIdentificationNumber\", \"SIUniqueMasterCitizenNumber\", \"ZAIdentificationNumber\",
+     \"KRResidentRegistrationNumber\", \"ESDNI\", \"ESSocialSecurityNumber\",
+     \"ESTaxIdentificationNumber\", \"SQLServerConnectionString\", \"SENationalID\",
+     \"SENationalIDV2\", \"SEPassportNumber\", \"SETaxIdentificationNumber\", \"SWIFTCode\",
+     \"CHSocialSecurityNumber\", \"TWNationalID\", \"TWPassportNumber\", \"TWResidentCertificate\",
+     \"THPopulationIdentificationCode\", \"TRNationalIdentificationNumber\",
+     \"UKDriversLicenseNumber\", \"UKElectoralRollNumber\", \"UKNationalHealthNumber\",
+     \"UKNationalInsuranceNumber\", \"UKUniqueTaxpayerNumber\", \"USUKPassportNumber\",
+     \"USBankAccountNumber\", \"USDriversLicenseNumber\", \"USIndividualTaxpayerIdentification\",
+     \"USSocialSecurityNumber\", \"UAPassportNumberDomestic\", \"UAPassportNumberInternational\",
+     \"Organization\", \"Email\", \"URL\", \"Age\", \"PhoneNumber\", \"IPAddress\", \"Date\",
+     \"Person\", \"Address\", \"DateOfBirth\", \"BankAccountNumber\", \"PassportNumber\",
+     \"DriversLicenseNumber\", \"Neighborhood\", \"SortCode\", \"PIN\", \"VIN\",
+     \"VehicleIdentificationNumber\", \"LicensePlate\", \"KRPassportNumber\",
+     \"KRDriversLicenseNumber\", \"KRSocialSecurityNumber\", \"GovernmentIssuedId\", \"Password\",
+     \"NationalId\", \"ZipCode\", \"CVV\", \"ExpirationDate\", \"CASocialIdentificationNumber\",
+     \"USMedicareBeneficiaryId\", \"Location\", \"City\", \"State\", \"Airport\", and \"GPE\"."""
+    value: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The confidence score threshold for the specified PII category. Required."""
+    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The 2 letter ISO 639-1 language for which the override applies. If not specified, the override
+     applies to all languages."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        entity: Union[str, "_models.PiiCategoriesExclude"],
+        value: float,
+        language: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CurrencyMetadata(BaseMetadata, discriminator="CurrencyMetadata"):
     """Represents the Currency ) entity Metadata model.
 
@@ -1273,7 +1604,8 @@ class CurrencyMetadata(BaseMetadata, discriminator="CurrencyMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.CURRENCY_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.CURRENCY_METADATA  # type: ignore
 
 
 class CustomEntitiesActionContent(_Model):
@@ -1361,7 +1693,8 @@ class CustomEntitiesLROTask(AnalyzeTextOperationAction, discriminator="CustomEnt
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.CUSTOM_ENTITY_RECOGNITION  # type: ignore
 
 
 class CustomEntitiesResult(_Model):
@@ -1516,9 +1849,8 @@ class CustomEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS  # type: ignore
 
 
 class CustomLabelClassificationResult(_Model):
@@ -1652,7 +1984,8 @@ class CustomMultiLabelClassificationOperationAction(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.CUSTOM_MULTI_LABEL_CLASSIFICATION  # type: ignore
 
 
 class CustomMultiLabelClassificationOperationResult(
@@ -1700,9 +2033,8 @@ class CustomMultiLabelClassificationOperationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS  # type: ignore
 
 
 class CustomSingleLabelClassificationActionContent(_Model):  # pylint: disable=name-too-long
@@ -1782,7 +2114,8 @@ class CustomSingleLabelClassificationOperationAction(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION  # type: ignore
 
 
 class CustomSingleLabelClassificationOperationResult(
@@ -1830,9 +2163,8 @@ class CustomSingleLabelClassificationOperationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS  # type: ignore
 
 
 class DateMetadata(BaseMetadata, discriminator="DateMetadata"):
@@ -1866,7 +2198,8 @@ class DateMetadata(BaseMetadata, discriminator="DateMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.DATE_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.DATE_METADATA  # type: ignore
 
 
 class DateTimeMetadata(BaseMetadata, discriminator="DateTimeMetadata"):
@@ -1900,7 +2233,8 @@ class DateTimeMetadata(BaseMetadata, discriminator="DateTimeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.DATE_TIME_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.DATE_TIME_METADATA  # type: ignore
 
 
 class DateValue(_Model):
@@ -2262,7 +2596,8 @@ class EntitiesLROTask(AnalyzeTextOperationAction, discriminator="EntityRecogniti
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.ENTITY_RECOGNITION  # type: ignore
 
 
 class EntitiesResult(_Model):
@@ -2644,7 +2979,8 @@ class EntityLinkingLROTask(AnalyzeTextOperationAction, discriminator="EntityLink
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.ENTITY_LINKING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.ENTITY_LINKING  # type: ignore
 
 
 class EntityLinkingMatch(_Model):
@@ -2734,7 +3070,8 @@ class EntityLinkingOperationResult(AnalyzeTextLROResult, discriminator="EntityLi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.ENTITY_LINKING_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.ENTITY_LINKING_OPERATION_RESULTS  # type: ignore
 
 
 class EntityLinkingResult(_Model):
@@ -2789,6 +3126,15 @@ class EntityLinkingResult(_Model):
 class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
     """Represents the policy of redacting PII with the entity type.
 
+    :ivar entity_types: (Optional) describes the PII categories to which the redaction policy will
+     be applied. If not specified, the redaction policy will be applied to all PII categories.
+    :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
+    :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
+    :vartype policy_name: str
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
     :ivar policy_kind: The entity OverlapPolicy object kind. Required. Redact detected entities
      with entity type.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.ENTITY_MASK
@@ -2800,6 +3146,10 @@ class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
     @overload
     def __init__(
         self,
+        *,
+        entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
+        policy_name: Optional[str] = None,
+        is_default: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -2810,7 +3160,8 @@ class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=RedactionPolicyKind.ENTITY_MASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.ENTITY_MASK  # type: ignore
 
 
 class EntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="EntityRecognitionLROResults"):
@@ -2853,7 +3204,8 @@ class EntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="Enti
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.ENTITY_RECOGNITION_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.ENTITY_RECOGNITION_OPERATION_RESULTS  # type: ignore
 
 
 class EntitySynonym(_Model):
@@ -3215,7 +3567,8 @@ class ExtractiveSummarizationOperationAction(AnalyzeTextOperationAction, discrim
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.EXTRACTIVE_SUMMARIZATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.EXTRACTIVE_SUMMARIZATION  # type: ignore
 
 
 class ExtractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator="ExtractiveSummarizationLROResults"):
@@ -3260,9 +3613,8 @@ class ExtractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS  # type: ignore
 
 
 class ExtractiveSummarizationResult(_Model):
@@ -3625,7 +3977,8 @@ class HealthcareLROResult(AnalyzeTextLROResult, discriminator="HealthcareLROResu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.HEALTHCARE_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.HEALTHCARE_OPERATION_RESULTS  # type: ignore
 
 
 class HealthcareLROTask(AnalyzeTextOperationAction, discriminator="Healthcare"):
@@ -3662,7 +4015,8 @@ class HealthcareLROTask(AnalyzeTextOperationAction, discriminator="Healthcare"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.HEALTHCARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.HEALTHCARE  # type: ignore
 
 
 class HealthcareRelation(_Model):
@@ -3928,7 +4282,8 @@ class InformationMetadata(BaseMetadata, discriminator="InformationMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.INFORMATION_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.INFORMATION_METADATA  # type: ignore
 
 
 class InnerErrorModel(_Model):
@@ -4071,7 +4426,8 @@ class KeyPhraseExtractionOperationResult(AnalyzeTextLROResult, discriminator="Ke
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS  # type: ignore
 
 
 class KeyPhraseLROTask(AnalyzeTextOperationAction, discriminator="KeyPhraseExtraction"):
@@ -4108,7 +4464,8 @@ class KeyPhraseLROTask(AnalyzeTextOperationAction, discriminator="KeyPhraseExtra
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.KEY_PHRASE_EXTRACTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.KEY_PHRASE_EXTRACTION  # type: ignore
 
 
 class KeyPhraseResult(_Model):
@@ -4463,7 +4820,8 @@ class LengthMetadata(BaseMetadata, discriminator="LengthMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.LENGTH_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.LENGTH_METADATA  # type: ignore
 
 
 class LinkedEntity(_Model):
@@ -4553,7 +4911,8 @@ class MatchLongestEntityPolicyType(EntityOverlapPolicy, discriminator="matchLong
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=PolicyKind.MATCH_LONGEST, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = PolicyKind.MATCH_LONGEST  # type: ignore
 
 
 class MultiLanguageInput(_Model):
@@ -4771,6 +5130,15 @@ class NamedEntityWithMetadata(_Model):
 class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
     """Represents the policy of not redacting found PII.
 
+    :ivar entity_types: (Optional) describes the PII categories to which the redaction policy will
+     be applied. If not specified, the redaction policy will be applied to all PII categories.
+    :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
+    :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
+    :vartype policy_name: str
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
     :ivar policy_kind: The entity RedactionPolicy object kind. Required. Do not redact detected
      entities.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.NO_MASK
@@ -4782,6 +5150,10 @@ class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
     @overload
     def __init__(
         self,
+        *,
+        entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
+        policy_name: Optional[str] = None,
+        is_default: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4792,7 +5164,8 @@ class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=RedactionPolicyKind.NO_MASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.NO_MASK  # type: ignore
 
 
 class NumberMetadata(BaseMetadata, discriminator="NumberMetadata"):
@@ -4833,7 +5206,8 @@ class NumberMetadata(BaseMetadata, discriminator="NumberMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.NUMBER_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.NUMBER_METADATA  # type: ignore
 
 
 class NumericRangeMetadata(BaseMetadata, discriminator="NumericRangeMetadata"):
@@ -4890,7 +5264,8 @@ class NumericRangeMetadata(BaseMetadata, discriminator="NumericRangeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.NUMERIC_RANGE_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.NUMERIC_RANGE_METADATA  # type: ignore
 
 
 class OrdinalMetadata(BaseMetadata, discriminator="OrdinalMetadata"):
@@ -4938,7 +5313,8 @@ class OrdinalMetadata(BaseMetadata, discriminator="OrdinalMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.ORDINAL_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.ORDINAL_METADATA  # type: ignore
 
 
 class PiiActionContent(_Model):
@@ -4958,14 +5334,19 @@ class PiiActionContent(_Model):
     :ivar exclude_pii_categories: Enumeration of PII categories to be excluded in the response.
     :vartype exclude_pii_categories: list[str or
      ~azure.ai.textanalytics.models.PiiCategoriesExclude]
-    :ivar redaction_policy: RedactionPolicy to be used on the input.
-    :vartype redaction_policy: ~azure.ai.textanalytics.models.BaseRedactionPolicy
     :ivar value_exclusion_policy: Policy for specific words and terms that should be excluded from
      detection by the PII detection service.
     :vartype value_exclusion_policy: ~azure.ai.textanalytics.models.ValueExclusionPolicy
     :ivar entity_synonyms: (Optional) request parameter that allows the user to provide synonyms
      for context words that to enhance pii entity detection.
     :vartype entity_synonyms: list[~azure.ai.textanalytics.models.EntitySynonyms]
+    :ivar redaction_policies: List of RedactionPolicies to be used on the input.
+    :vartype redaction_policies: list[~azure.ai.textanalytics.models.BaseRedactionPolicy]
+    :ivar confidence_score_threshold: Confidence score threshold configuration for PII entity
+     recognition.
+    :vartype confidence_score_threshold: ~azure.ai.textanalytics.models.ConfidenceScoreThreshold
+    :ivar disable_entity_validation: Disable entity validation for PII entity recognition.
+    :vartype disable_entity_validation: bool
     """
 
     logging_opt_out: Optional[bool] = rest_field(
@@ -4993,10 +5374,6 @@ class PiiActionContent(_Model):
         name="excludePiiCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enumeration of PII categories to be excluded in the response."""
-    redaction_policy: Optional["_models.BaseRedactionPolicy"] = rest_field(
-        name="redactionPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """RedactionPolicy to be used on the input."""
     value_exclusion_policy: Optional["_models.ValueExclusionPolicy"] = rest_field(
         name="valueExclusionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5007,6 +5384,18 @@ class PiiActionContent(_Model):
     )
     """(Optional) request parameter that allows the user to provide synonyms for context words that to
      enhance pii entity detection."""
+    redaction_policies: Optional[list["_models.BaseRedactionPolicy"]] = rest_field(
+        name="redactionPolicies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of RedactionPolicies to be used on the input."""
+    confidence_score_threshold: Optional["_models.ConfidenceScoreThreshold"] = rest_field(
+        name="confidenceScoreThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Confidence score threshold configuration for PII entity recognition."""
+    disable_entity_validation: Optional[bool] = rest_field(
+        name="disableEntityValidation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Disable entity validation for PII entity recognition."""
 
     @overload
     def __init__(
@@ -5018,9 +5407,11 @@ class PiiActionContent(_Model):
         pii_categories: Optional[list[Union[str, "_models.PiiCategory"]]] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
         exclude_pii_categories: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
-        redaction_policy: Optional["_models.BaseRedactionPolicy"] = None,
         value_exclusion_policy: Optional["_models.ValueExclusionPolicy"] = None,
         entity_synonyms: Optional[list["_models.EntitySynonyms"]] = None,
+        redaction_policies: Optional[list["_models.BaseRedactionPolicy"]] = None,
+        confidence_score_threshold: Optional["_models.ConfidenceScoreThreshold"] = None,
+        disable_entity_validation: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5174,7 +5565,8 @@ class PiiEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="P
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.PII_ENTITY_RECOGNITION_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.PII_ENTITY_RECOGNITION_OPERATION_RESULTS  # type: ignore
 
 
 class PiiLROTask(AnalyzeTextOperationAction, discriminator="PiiEntityRecognition"):
@@ -5211,7 +5603,8 @@ class PiiLROTask(AnalyzeTextOperationAction, discriminator="PiiEntityRecognition
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.PII_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.PII_ENTITY_RECOGNITION  # type: ignore
 
 
 class PiiResult(_Model):
@@ -5733,7 +6126,8 @@ class SentimentAnalysisOperationAction(AnalyzeTextOperationAction, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.SENTIMENT_ANALYSIS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.SENTIMENT_ANALYSIS  # type: ignore
 
 
 class SentimentConfidenceScores(_Model):
@@ -5815,7 +6209,8 @@ class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisL
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.SENTIMENT_ANALYSIS_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.SENTIMENT_ANALYSIS_OPERATION_RESULTS  # type: ignore
 
 
 class SentimentResult(_Model):
@@ -5907,7 +6302,8 @@ class SpeedMetadata(BaseMetadata, discriminator="SpeedMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.SPEED_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.SPEED_METADATA  # type: ignore
 
 
 class SummaryContext(_Model):
@@ -5945,6 +6341,57 @@ class SummaryContext(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class SyntheticReplacementPolicyType(BaseRedactionPolicy, discriminator="syntheticReplacement"):
+    """Represents the policy of replacing detected PII with synthetic values.
+
+    :ivar entity_types: (Optional) describes the PII categories to which the redaction policy will
+     be applied. If not specified, the redaction policy will be applied to all PII categories.
+    :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
+    :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
+    :vartype policy_name: str
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
+    :ivar policy_kind: The entity RedactionPolicy object kind. Required. Replace detected entities
+     with synthetic values.
+    :vartype policy_kind: str or ~azure.ai.textanalytics.models.SYNTHETIC_REPLACEMENT
+    :ivar preserve_data_format: Optional flag to indicate whether to preserve the original data
+     format in the synthetic replacement. Default is false.
+    :vartype preserve_data_format: bool
+    """
+
+    policy_kind: Literal[RedactionPolicyKind.SYNTHETIC_REPLACEMENT] = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The entity RedactionPolicy object kind. Required. Replace detected entities with synthetic
+     values."""
+    preserve_data_format: Optional[bool] = rest_field(
+        name="preserveDataFormat", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional flag to indicate whether to preserve the original data format in the synthetic
+     replacement. Default is false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
+        policy_name: Optional[str] = None,
+        is_default: Optional[bool] = None,
+        preserve_data_format: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.SYNTHETIC_REPLACEMENT  # type: ignore
 
 
 class TargetConfidenceScoreLabel(_Model):
@@ -6052,7 +6499,8 @@ class TemperatureMetadata(BaseMetadata, discriminator="TemperatureMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.TEMPERATURE_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.TEMPERATURE_METADATA  # type: ignore
 
 
 class TemporalSetMetadata(BaseMetadata, discriminator="TemporalSetMetadata"):
@@ -6086,7 +6534,8 @@ class TemporalSetMetadata(BaseMetadata, discriminator="TemporalSetMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.TEMPORAL_SET_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.TEMPORAL_SET_METADATA  # type: ignore
 
 
 class TemporalSpanMetadata(BaseMetadata, discriminator="TemporalSpanMetadata"):
@@ -6120,7 +6569,8 @@ class TemporalSpanMetadata(BaseMetadata, discriminator="TemporalSpanMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.TEMPORAL_SPAN_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.TEMPORAL_SPAN_METADATA  # type: ignore
 
 
 class TemporalSpanValues(_Model):
@@ -6273,7 +6723,8 @@ class TextEntityLinkingInput(AnalyzeTextInput, discriminator="EntityLinking"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.ENTITY_LINKING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.ENTITY_LINKING  # type: ignore
 
 
 class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognition"):
@@ -6314,7 +6765,8 @@ class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognit
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.ENTITY_RECOGNITION  # type: ignore
 
 
 class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExtraction"):
@@ -6355,7 +6807,8 @@ class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExt
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.KEY_PHRASE_EXTRACTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.KEY_PHRASE_EXTRACTION  # type: ignore
 
 
 class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetection"):
@@ -6396,7 +6849,8 @@ class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetect
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.LANGUAGE_DETECTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.LANGUAGE_DETECTION  # type: ignore
 
 
 class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntityRecognition"):
@@ -6437,7 +6891,8 @@ class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntity
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.PII_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.PII_ENTITY_RECOGNITION  # type: ignore
 
 
 class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnalysis"):
@@ -6478,7 +6933,8 @@ class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnaly
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.SENTIMENT_ANALYSIS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.SENTIMENT_ANALYSIS  # type: ignore
 
 
 class TimeMetadata(BaseMetadata, discriminator="TimeMetadata"):
@@ -6512,7 +6968,8 @@ class TimeMetadata(BaseMetadata, discriminator="TimeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.TIME_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.TIME_METADATA  # type: ignore
 
 
 class ValueExclusionPolicy(_Model):
@@ -6596,7 +7053,8 @@ class VolumeMetadata(BaseMetadata, discriminator="VolumeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.VOLUME_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.VOLUME_METADATA  # type: ignore
 
 
 class WeightMetadata(BaseMetadata, discriminator="WeightMetadata"):
@@ -6638,4 +7096,5 @@ class WeightMetadata(BaseMetadata, discriminator="WeightMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.WEIGHT_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.WEIGHT_METADATA  # type: ignore

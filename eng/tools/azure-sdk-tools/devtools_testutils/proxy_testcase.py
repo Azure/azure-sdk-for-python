@@ -114,32 +114,31 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
 
 
 def stop_record_or_playback(test_id: str, recording_id: str, test_variables: "Dict[str, str]") -> None:
-    try:
-        http_client = get_http_client()
-        if is_live():
-            http_client.request(
-                method="POST",
-                url=RECORDING_STOP_URL,
-                headers={
-                    "x-recording-file": test_id,
-                    "x-recording-id": recording_id,
-                    "x-recording-save": "true",
-                    "Content-Type": "application/json",
-                },
-                # tests don't record successfully unless test_variables is a dictionary
-                body=json.dumps(test_variables).encode("utf-8") if test_variables else "{}",
-            )
-        else:
-            http_client.request(
-                method="POST",
-                url=PLAYBACK_STOP_URL,
-                headers={"x-recording-id": recording_id},
-            )
-    except HTTPError as e:
+    http_client = get_http_client()
+    if is_live():
+        response = http_client.request(
+            method="POST",
+            url=RECORDING_STOP_URL,
+            headers={
+                "x-recording-file": test_id,
+                "x-recording-id": recording_id,
+                "x-recording-save": "true",
+                "Content-Type": "application/json",
+            },
+            # tests don't record successfully unless test_variables is a dictionary
+            body=json.dumps(test_variables or {}).encode("utf-8"),
+        )
+    else:
+        response = http_client.request(
+            method="POST",
+            url=PLAYBACK_STOP_URL,
+            headers={"x-recording-id": recording_id},
+        )
+    if response.status >= 400:
         raise HttpResponseError(
             "The test proxy ran into an error while ending the session. Make sure any test variables you record have "
-            "string values."
-        ) from e
+            f"string values. Full error details: {response.data}"
+        )
 
 
 def get_proxy_netloc() -> "Dict[str, str]":

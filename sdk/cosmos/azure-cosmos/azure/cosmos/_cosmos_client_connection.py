@@ -49,6 +49,7 @@ from azure.core.pipeline.transport import HttpRequest, \
 from azure.core.utils import CaseInsensitiveDict
 
 from . import _base as base
+from ._global_partition_endpoint_manager_per_partition_automatic_failover import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover # pylint: disable=line-too-long
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
 from . import _session
@@ -139,6 +140,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The availability strategy configuration for routing requests across regions.
         :param concurrent.futures.ThreadPoolExecutor availability_strategy_executor:
             The thread pool executor for handling availability strategy requests.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for the
+            client. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
@@ -175,11 +179,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
+        priority = kwargs.pop('priority', None)
+        if priority:
+            self.default_headers[http_constants.HttpHeaders.PriorityLevel] = priority
+
         # Keeps the latest response headers from the server.
         self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
 
         self.UseMultipleWriteLocations = False
-        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForCircuitBreaker(self)
+        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(self)
 
         retry_policy = None
         if isinstance(self.connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
@@ -258,7 +266,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
+        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh_on_startup(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
@@ -2699,32 +2707,34 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             database_account._ReadableLocations = result[Constants.ReadableLocations]
         if Constants.EnableMultipleWritableLocations in result:
             database_account._EnableMultipleWritableLocations = result[
-                Constants.EnableMultipleWritableLocations
-            ]
+                Constants.EnableMultipleWritableLocations]
 
         self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
+
+        if Constants.EnablePerPartitionFailoverBehavior in result:
+            database_account._EnablePerPartitionFailoverBehavior = result[Constants.EnablePerPartitionFailoverBehavior]
+
         if response_hook:
             response_hook(last_response_headers, result)
         return database_account
 
-    def _GetDatabaseAccountCheck(
+    def health_check(
             self,
             url_connection: Optional[str] = None,
             **kwargs: Any
     ):
-        """Gets database account info.
+        """ Send a request to check the health of region.
 
-        :param str url_connection: the endpoint used to get the database account
-        :return: The Database Account.
-        :rtype: documents.DatabaseAccount
+        :param str url_connection: the endpoint for the region being checked
         """
         if url_connection is None:
             url_connection = self.url_connection
 
         headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
-                                  documents._OperationType.Read,{}, client_id=self.client_id)
+                                  documents._OperationType.Read, {},
+                                  client_id=self.client_id)
         request_params = RequestObject(http_constants.ResourceType.DatabaseAccount,
                                        documents._OperationType.Read,
                                        headers,
@@ -3293,7 +3303,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # If feed_range_epk exist, query with the range
         if feed_range_epk is not None:
-            last_response_headers = CaseInsensitiveDict()
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(resource_id, [feed_range_epk],
                                                                                     options)
             # It is possible to get more than one over lapping range. We need to get the query results for each one

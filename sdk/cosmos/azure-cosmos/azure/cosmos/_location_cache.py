@@ -499,7 +499,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         )
 
     def get_preferred_regional_routing_contexts(
-        self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
+        self, endpoints_by_location, ordered_locations, expected_available_operation, fallback_endpoint
     ):
         regional_endpoints = []
         # if enableEndpointDiscovery is false, we always use the defaultEndpoint that
@@ -533,7 +533,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 if not regional_endpoints:
                     regional_endpoints.append(fallback_endpoint)
             else:
-                for location in orderedLocations:
+                for location in ordered_locations:
                     if location and location in endpoints_by_location:
                         # location is empty during manual failover
                         regional_endpoint = endpoints_by_location[location]

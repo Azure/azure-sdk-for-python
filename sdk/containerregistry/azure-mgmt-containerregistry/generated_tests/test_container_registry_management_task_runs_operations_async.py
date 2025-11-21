@@ -21,6 +21,18 @@ class TestContainerRegistryManagementTaskRunsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_task_runs_list(self, resource_group):
+        response = self.client.task_runs.list(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            api_version="2025-03-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_task_runs_get(self, resource_group):
         response = await self.client.task_runs.get(
             resource_group_name=resource_group.name,
@@ -119,19 +131,6 @@ class TestContainerRegistryManagementTaskRunsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_task_runs_delete(self, resource_group):
-        response = await self.client.task_runs.delete(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            task_run_name="str",
-            api_version="2025-03-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_task_runs_begin_update(self, resource_group):
         response = await (
             await self.client.task_runs.begin_update(
@@ -159,8 +158,8 @@ class TestContainerRegistryManagementTaskRunsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_task_runs_get_details(self, resource_group):
-        response = await self.client.task_runs.get_details(
+    async def test_task_runs_delete(self, resource_group):
+        response = await self.client.task_runs.delete(
             resource_group_name=resource_group.name,
             registry_name="str",
             task_run_name="str",
@@ -172,12 +171,13 @@ class TestContainerRegistryManagementTaskRunsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_task_runs_list(self, resource_group):
-        response = self.client.task_runs.list(
+    async def test_task_runs_get_details(self, resource_group):
+        response = await self.client.task_runs.get_details(
             resource_group_name=resource_group.name,
             registry_name="str",
+            task_run_name="str",
             api_version="2025-03-01-preview",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...

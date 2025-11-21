@@ -44,11 +44,8 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     ProxyPolicy)
 from azure.core.utils import CaseInsensitiveDict
-
-from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import (
-    _GlobalPartitionEndpointManagerForCircuitBreakerAsync)
-from ._read_items_helper_async import ReadItemsHelperAsync
-
+from azure.cosmos.aio._global_partition_endpoint_manager_per_partition_automatic_failover_async import (
+    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync)
 from .. import _base as base
 from .._availability_strategy_config import CrossRegionHedgingStrategyConfig, _validate_hedging_config
 from .._base import _build_properties_cache
@@ -81,6 +78,7 @@ from ..partition_key import (
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
+from ._read_items_helper_async import ReadItemsHelperAsync
 
 
 
@@ -138,6 +136,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
             The default consistency policy for client operations.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for the
+            client. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
@@ -174,13 +175,17 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
+        priority = kwargs.pop('priority', None)
+        if priority:
+            self.default_headers[http_constants.HttpHeaders.PriorityLevel] = priority
+
         if consistency_level is not None:
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         # Keeps the latest response headers from the server.
         self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
         self.UseMultipleWriteLocations = False
-        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForCircuitBreakerAsync(self)
+        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(self)
 
         retry_policy = None
         if isinstance(self.connection_policy.ConnectionRetryConfiguration, AsyncHTTPPolicy):
@@ -322,7 +327,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     async def _setup(self) -> None:
         if 'database_account' not in self._setup_kwargs:
-            database_account, _ = await self._global_endpoint_manager._GetDatabaseAccount(
+            database_account = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs
             )
             self._setup_kwargs['database_account'] = database_account
@@ -472,26 +477,27 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
+
+        if Constants.EnablePerPartitionFailoverBehavior in result:
+            database_account._EnablePerPartitionFailoverBehavior = result[Constants.EnablePerPartitionFailoverBehavior]
+
         return database_account
 
-    async def _GetDatabaseAccountCheck(
+    async def health_check(
             self,
             url_connection: Optional[str] = None,
             **kwargs: Any
     ):
-        """Gets database account info.
+        """Checks health of region.
 
-        :param str url_connection: the endpoint used to get the database account
-        :return: The Database Account.
-        :rtype: documents.DatabaseAccount
+        :param str url_connection: the endpoint for the region to check health.
         """
         if url_connection is None:
             url_connection = self.url_connection
-
         initial_headers = dict(self.default_headers)
-        headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
+        headers = base.GetHeaders(self, initial_headers, "get", "", "","",
                                   documents._OperationType.Read, {},
-                                  client_id=self.client_id)  # path  # id  # type
+                                  client_id=self.client_id)
 
         request_params = _request_object.RequestObject(http_constants.ResourceType.DatabaseAccount,
                                                        documents._OperationType.Read,
@@ -2277,8 +2283,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return AsyncItemPaged(
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
-
-
 
     async def read_items(
             self,

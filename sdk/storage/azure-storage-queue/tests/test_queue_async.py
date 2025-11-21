@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import jwt
 import unittest
 from datetime import date, datetime, timedelta
 
@@ -915,9 +916,9 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             queue_client.account_name,
             queue_client.queue_name,
             queue_client.credential.account_key,
-            QueueSasPermissions(read=True),
-            datetime.utcnow() + timedelta(hours=1),
-            datetime.utcnow() - timedelta(minutes=5),
+            permission=QueueSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            start=datetime.utcnow() - timedelta(minutes=5),
         )
 
         # Act
@@ -950,8 +951,8 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             queue_client.account_name,
             queue_client.queue_name,
             queue_client.credential.account_key,
-            QueueSasPermissions(add=True),
-            datetime.utcnow() + timedelta(hours=1),
+            permission=QueueSasPermissions(add=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
@@ -985,8 +986,8 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             queue_client.account_name,
             queue_client.queue_name,
             queue_client.credential.account_key,
-            QueueSasPermissions(update=True),
-            datetime.utcnow() + timedelta(hours=1),
+            permission=QueueSasPermissions(update=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
         messages = []
         async for m in queue_client.receive_messages():
@@ -1028,8 +1029,8 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             queue_client.account_name,
             queue_client.queue_name,
             queue_client.credential.account_key,
-            QueueSasPermissions(process=True),
-            datetime.utcnow() + timedelta(hours=1),
+            permission=QueueSasPermissions(process=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
@@ -1446,6 +1447,81 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
         await queue.get_queue_properties()
+
+    @QueuePreparer()
+    @recorded_by_proxy_async
+    async def test_get_user_delegation_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(QueueServiceClient, is_async=True)
+        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=token_credential)
+        start = self.get_datetime_variable(variables, "start", datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, "expiry", datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key_1 = await service.get_user_delegation_key(start=start, expiry=expiry)
+        user_delegation_key_2 = await service.get_user_delegation_key(start=start, expiry=expiry)
+
+        # Assert key1 is valid
+        assert user_delegation_key_1.signed_oid is not None
+        assert user_delegation_key_1.signed_tid is not None
+        assert user_delegation_key_1.signed_start is not None
+        assert user_delegation_key_1.signed_expiry is not None
+        assert user_delegation_key_1.signed_version is not None
+        assert user_delegation_key_1.signed_service is not None
+        assert user_delegation_key_1.value is not None
+
+        # Assert key1 and key2 are equal, since they have the exact same start and end times
+        assert user_delegation_key_1.signed_oid == user_delegation_key_2.signed_oid
+        assert user_delegation_key_1.signed_tid == user_delegation_key_2.signed_tid
+        assert user_delegation_key_1.signed_start == user_delegation_key_2.signed_start
+        assert user_delegation_key_1.signed_expiry == user_delegation_key_2.signed_expiry
+        assert user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
+        assert user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
+        assert user_delegation_key_1.value == user_delegation_key_2.value
+
+        return variables
+
+    @pytest.mark.live_test_only
+    @QueuePreparer()
+    async def test_user_delegation_oid(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        message = "addedmessage"
+
+        token_credential = self.get_credential(QueueServiceClient, is_async=True)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=token_credential)
+        start = datetime.utcnow()
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        user_delegation_key = await qsc.get_user_delegation_key(start=start, expiry=expiry)
+        token = await token_credential.get_token("https://storage.azure.com/.default")
+        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
+
+        queue_name = self.get_resource_name(TEST_QUEUE_PREFIX)
+        queue = qsc.get_queue_client(queue_name)
+        await queue.create_queue()
+
+        queue_token = self.generate_sas(
+            generate_queue_sas,
+            queue.account_name,
+            queue.queue_name,
+            storage_account_key,
+            permission=QueueSasPermissions(add=True),
+            expiry=expiry,
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid,
+        )
+
+        queue_client = QueueClient.from_queue_url(queue_url=f"{queue.url}?{queue_token}", credential=token_credential)
+        queue_msg = await queue_client.send_message(message)
+        assert queue_msg is not None
+
+        result = anext(queue.receive_messages())
+        assert message == result.content
+
+        messages = []
+        async for m in queue.receive_messages():
+            messages.append(m)
+        assert message == messages[0].content
 
 
 # ------------------------------------------------------------------------------

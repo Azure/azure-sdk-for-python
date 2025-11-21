@@ -55,6 +55,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.excluded_locations: Optional[list[str]] = None
         self.excluded_locations_circuit_breaker: list[str] = []
         self.healthy_tentative_location: Optional[str] = None
+        self.read_timeout_override: Optional[int] = None
         self.pk_val = pk_val
         self.retry_write: int = 0
         self.is_hedging_request: bool = False # Flag to track if this is a hedged request

@@ -210,6 +210,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: int = 1,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]: ...
@@ -231,6 +232,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: int = 1,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]: ...
@@ -252,6 +254,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: int = 1,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...
@@ -557,6 +560,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         validate_content: Optional[bool] = None,
         if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -567,6 +574,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         version_id: Optional[str] = None,
         if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, str]: ...

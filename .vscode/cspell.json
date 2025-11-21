@@ -155,6 +155,7 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "qnas",
     "msedge",
     "spinup",
     "cibuildwheel",
@@ -356,6 +357,7 @@
     "nbsp",
     "noarch",
     "NOPERM",
+    "norecursedirs",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -529,7 +531,7 @@
     "logprobs",
     "pyaudio",
     "PyAudio",
-	"libasound",
+    "libasound",
     "ingraph"
   ],
   "overrides": [
@@ -907,12 +909,12 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
-      "words": [ "unassigning" ],
+      "words": [ "unassigning", "unassignment" ],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO" ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram" ],
       "caseSensitive": false
     },
     {
@@ -2185,7 +2187,7 @@
     },
     {
       "filename": "sdk/ai/azure-ai-voicelive/**",
-      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound"]
+      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
     }
   ],
   "allowCompoundWords": true

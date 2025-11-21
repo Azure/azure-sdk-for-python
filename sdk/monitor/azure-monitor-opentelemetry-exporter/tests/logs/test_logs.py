@@ -19,6 +19,7 @@ from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk._logs.export import LogExportResult
 from opentelemetry._logs.severity import SeverityNumber
+from opentelemetry.trace import set_span_in_context, SpanContext, NonRecordingSpan
 
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
@@ -63,41 +64,43 @@ class TestAzureLogExporter(unittest.TestCase):
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = cls._exporter_class()
+        span_context = SpanContext(
+            trace_id=125960616039069540489478540494783893221,
+            span_id=2909973987304607650,
+            trace_flags=None,
+            is_remote=False,
+        )
+        span = NonRecordingSpan(span_context)
+        ctx = set_span_in_context(span)
         cls._log_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="WARNING",
-                trace_flags=None,
                 severity_number=SeverityNumber.WARN,
                 body="Test message",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
-                attributes={"test": "attribute"},
+                attributes={"test": "attribute", "ai.operation.name": "TestOperationName"},
             ),
             InstrumentationScope("test_name"),
         )
         cls._log_data_empty = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="WARNING",
-                trace_flags=None,
                 severity_number=SeverityNumber.WARN,
                 body="",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
-                attributes={"test": "attribute"},
+                attributes={"test": "attribute", "ai.operation.name": "TestOperationName"},
             ),
             InstrumentationScope("test_name"),
         )
         cls._log_data_none = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="WARNING",
-                trace_flags=None,
                 severity_number=SeverityNumber.WARN,
                 body=None,
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -108,24 +111,20 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_complex_body = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="WARNING",
-                trace_flags=None,
                 severity_number=SeverityNumber.WARN,
                 body={"foo": {"bar": "baz", "qux": 42}},
                 resource=Resource.create(attributes={"asd": "test_resource"}),
-                attributes={"test": "attribute"},
+                attributes={"test": "attribute", "ai.operation.name": "TestOperationName"},
             ),
             InstrumentationScope("test_name"),
         )
         cls._log_data_complex_body_not_serializeable = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="WARNING",
-                trace_flags=None,
                 severity_number=SeverityNumber.WARN,
                 body=NotSerializeableClass(),
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -136,10 +135,8 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_empty_with_whitespaces = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="WARNING",
-                trace_flags=None,
                 severity_number=SeverityNumber.WARN,
                 body="  ",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -150,10 +147,8 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_event = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="INFO",
-                trace_flags=None,
                 severity_number=SeverityNumber.INFO,
                 body="Test Event",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -167,10 +162,8 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_event_complex_body = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="INFO",
-                trace_flags=None,
                 severity_number=SeverityNumber.INFO,
                 body={"foo": {"bar": "baz", "qux": 42}},
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -184,10 +177,7 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_event_complex_body_not_serializeable = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
                 severity_text="INFO",
-                trace_flags=None,
                 severity_number=SeverityNumber.INFO,
                 body=NotSerializeableClass(),
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -201,10 +191,8 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._log_data_custom_event = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="INFO",
-                trace_flags=None,
                 severity_number=SeverityNumber.INFO,
                 body="Test Event",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -219,10 +207,8 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._exc_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="EXCEPTION",
-                trace_flags=None,
                 severity_number=SeverityNumber.FATAL,
                 body="Test message",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -238,10 +224,8 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._exc_data_with_exc_body = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="EXCEPTION",
-                trace_flags=None,
                 severity_number=SeverityNumber.FATAL,
                 body=Exception("test exception message"),
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -257,10 +241,8 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._exc_data_blank_exception = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="EXCEPTION",
-                trace_flags=None,
                 severity_number=SeverityNumber.FATAL,
                 body="test exception",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -271,10 +253,8 @@ class TestAzureLogExporter(unittest.TestCase):
         cls._exc_data_empty = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="EXCEPTION",
-                trace_flags=None,
                 severity_number=SeverityNumber.FATAL,
                 body="",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -394,6 +374,7 @@ class TestAzureLogExporter(unittest.TestCase):
         span_id = self._log_data.log_record.span_id
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span_id))
         self._log_data.log_record.resource = old_resource
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
 
     def test_log_to_envelope_partA_default(self):
         exporter = self._exporter
@@ -433,6 +414,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, _DEFAULT_LOG_MESSAGE)
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
     
     def test_log_to_envelope_log_empty_with_whitespaces(self):
         exporter = self._exporter
@@ -447,6 +429,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, json.dumps(self._log_data_complex_body.log_record.body))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
 
     def test_log_to_envelope_log_complex_body_not_serializeable(self):
         exporter = self._exporter
@@ -583,13 +566,19 @@ class TestAzureLogExporter(unittest.TestCase):
                 "service.instance.id": "testServiceInstanceId",
             }
         )
+        span_context = SpanContext(
+            trace_id=125960616039069540489478540494783893221,
+            span_id=2909973987304607650,
+            trace_flags=None,
+            is_remote=False,
+        )
+        span = NonRecordingSpan(span_context)
+        ctx = set_span_in_context(span)
         log_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="WARNING",
-                trace_flags=None,
                 severity_number=SeverityNumber.WARN,
                 body="Test message",
                 resource=resource,
@@ -615,13 +604,19 @@ class TestAzureLogExporter(unittest.TestCase):
                 "service.instance.id": "testServiceInstanceId",
             }
         )
+        span_context = SpanContext(
+            trace_id=125960616039069540489478540494783893221,
+            span_id=2909973987304607650,
+            trace_flags=None,
+            is_remote=False,
+        )
+        span = NonRecordingSpan(span_context)
+        ctx = set_span_in_context(span)
         log_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
-                trace_id=125960616039069540489478540494783893221,
-                span_id=2909973987304607650,
+                context=ctx,
                 severity_text="WARNING",
-                trace_flags=None,
                 severity_number=SeverityNumber.WARN,
                 body="Test message",
                 resource=resource,

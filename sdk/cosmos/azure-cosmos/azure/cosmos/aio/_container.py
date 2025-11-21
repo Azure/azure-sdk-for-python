@@ -868,10 +868,12 @@ class ContainerProxy:
         feed_options["correlatedActivityId"] = GenerateGuidId()
 
         # Set query with 'query' and 'parameters' from kwargs
-        if utils.valid_key_value_exist(kwargs, "parameters"):
-            query = {"query": kwargs.pop("query", None), "parameters": kwargs.pop("parameters", None)}
+        query_str = kwargs.pop("query", None)
+        parameters = kwargs.pop("parameters", None)
+        if parameters is not None:
+            query = {"query": query_str, "parameters": parameters}
         else:
-            query = kwargs.pop("query", None)
+            query = query_str
 
         # Set method to get/cache container properties
         kwargs["containerProperties"] = self._get_properties_with_options

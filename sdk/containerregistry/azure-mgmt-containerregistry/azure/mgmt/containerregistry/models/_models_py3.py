@@ -7,13 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class ActivationProperties(_serialization.Model):
@@ -40,37 +42,6 @@ class ActivationProperties(_serialization.Model):
         self.status: Optional[Union[str, "_models.ActivationStatus"]] = None
 
 
-class ActiveDirectoryObject(_serialization.Model):
-    """The Active Directory Object that will be used for authenticating the token of a container
-    registry.
-
-    :ivar object_id: The user/group/application object ID for Active Directory Object that will be
-     used for authenticating the token of a container registry.
-    :vartype object_id: str
-    :ivar tenant_id: The tenant ID of user/group/application object Active Directory Object that
-     will be used for authenticating the token of a container registry.
-    :vartype tenant_id: str
-    """
-
-    _attribute_map = {
-        "object_id": {"key": "objectId", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-    }
-
-    def __init__(self, *, object_id: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword object_id: The user/group/application object ID for Active Directory Object that will
-         be used for authenticating the token of a container registry.
-        :paramtype object_id: str
-        :keyword tenant_id: The tenant ID of user/group/application object Active Directory Object that
-         will be used for authenticating the token of a container registry.
-        :paramtype tenant_id: str
-        """
-        super().__init__(**kwargs)
-        self.object_id = object_id
-        self.tenant_id = tenant_id
-
-
 class Actor(_serialization.Model):
     """The agent that initiated the event. For most situations, this could be from the authorization
     context of the request.
@@ -95,24 +66,20 @@ class Actor(_serialization.Model):
 
 
 class Resource(_serialization.Model):
-    """An Azure resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The location of the resource. This cannot be changed after the resource is
-     created. Required.
-    :vartype location: str
-    :ivar tags: The tags of the resource.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     """
 
@@ -120,7 +87,6 @@ class Resource(_serialization.Model):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
     }
 
@@ -128,29 +94,73 @@ class Resource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: The location of the resource. This cannot be changed after the resource is
-         created. Required.
-        :paramtype location: str
-        :keyword tags: The tags of the resource.
-        :paramtype tags: dict[str, str]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
-        self.location = location
-        self.tags = tags
         self.system_data: Optional["_models.SystemData"] = None
 
 
-class AgentPool(Resource):
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class AgentPool(TrackedResource):
     """The agentpool that has the ARM resource and properties.
     The agentpool will have all information to create an agent pool.
 
@@ -158,19 +168,21 @@ class AgentPool(Resource):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The location of the resource. This cannot be changed after the resource is
-     created. Required.
-    :vartype location: str
-    :ivar tags: The tags of the resource.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar count: The count of agent machine.
     :vartype count: int
     :ivar tier: The Tier of agent machine.
@@ -189,8 +201,8 @@ class AgentPool(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -198,9 +210,9 @@ class AgentPool(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "count": {"key": "properties.count", "type": "int"},
         "tier": {"key": "properties.tier", "type": "str"},
         "os": {"key": "properties.os", "type": "str"},
@@ -212,7 +224,7 @@ class AgentPool(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         count: Optional[int] = None,
         tier: Optional[str] = None,
         os: Optional[Union[str, "_models.OS"]] = None,
@@ -220,11 +232,10 @@ class AgentPool(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: The location of the resource. This cannot be changed after the resource is
-         created. Required.
-        :paramtype location: str
-        :keyword tags: The tags of the resource.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword count: The count of agent machine.
         :paramtype count: int
         :keyword tier: The Tier of agent machine.
@@ -235,7 +246,7 @@ class AgentPool(Resource):
          agent machine.
         :paramtype virtual_network_subnet_resource_id: str
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.count = count
         self.tier = tier
         self.os = os
@@ -258,7 +269,7 @@ class AgentPoolListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AgentPool"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.AgentPool"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The collection value.
@@ -305,7 +316,7 @@ class AgentPoolUpdateParameters(_serialization.Model):
         "count": {"key": "properties.count", "type": "int"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, count: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, count: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The ARM resource tags.
         :paramtype tags: dict[str, str]
@@ -335,335 +346,6 @@ class AgentProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.cpu = cpu
-
-
-class ProxyResource(_serialization.Model):
-    """The resource model definition for a ARM proxy resource. It will have everything other than
-    required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.system_data: Optional["_models.SystemData"] = None
-
-
-class Archive(ProxyResource):
-    """An object that represents a archive for a container registry.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
-    :ivar package_source: The package source of the archive.
-    :vartype package_source: ~azure.mgmt.containerregistry.models.ArchivePackageSourceProperties
-    :ivar published_version: The published version of the archive.
-    :vartype published_version: str
-    :ivar repository_endpoint_prefix:
-    :vartype repository_endpoint_prefix: str
-    :ivar repository_endpoint:
-    :vartype repository_endpoint: str
-    :ivar provisioning_state: The provisioning state of the archive at the time the operation was
-     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
-     "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "repository_endpoint": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "package_source": {"key": "properties.packageSource", "type": "ArchivePackageSourceProperties"},
-        "published_version": {"key": "properties.publishedVersion", "type": "str"},
-        "repository_endpoint_prefix": {"key": "properties.repositoryEndpointPrefix", "type": "str"},
-        "repository_endpoint": {"key": "properties.repositoryEndpoint", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        package_source: Optional["_models.ArchivePackageSourceProperties"] = None,
-        published_version: Optional[str] = None,
-        repository_endpoint_prefix: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword package_source: The package source of the archive.
-        :paramtype package_source: ~azure.mgmt.containerregistry.models.ArchivePackageSourceProperties
-        :keyword published_version: The published version of the archive.
-        :paramtype published_version: str
-        :keyword repository_endpoint_prefix:
-        :paramtype repository_endpoint_prefix: str
-        """
-        super().__init__(**kwargs)
-        self.package_source = package_source
-        self.published_version = published_version
-        self.repository_endpoint_prefix = repository_endpoint_prefix
-        self.repository_endpoint: Optional[str] = None
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-
-
-class ArchiveListResult(_serialization.Model):
-    """The result of a request to list archives for a container registry.
-
-    :ivar value: The list of archives. Since this list may be incomplete, the nextLink field should
-     be used to request the next list of distributions.
-    :vartype value: list[~azure.mgmt.containerregistry.models.Archive]
-    :ivar next_link: The URI that can be used to request the next list of archives.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Archive]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.Archive"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of archives. Since this list may be incomplete, the nextLink field
-         should be used to request the next list of distributions.
-        :paramtype value: list[~azure.mgmt.containerregistry.models.Archive]
-        :keyword next_link: The URI that can be used to request the next list of archives.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ArchivePackageSourceProperties(_serialization.Model):
-    """The properties of the archive package source.
-
-    :ivar type: The type of package source for a archive. "remote"
-    :vartype type: str or ~azure.mgmt.containerregistry.models.PackageSourceType
-    :ivar url: The external repository url.
-    :vartype url: str
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "url": {"key": "url", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.PackageSourceType"]] = None,
-        url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword type: The type of package source for a archive. "remote"
-        :paramtype type: str or ~azure.mgmt.containerregistry.models.PackageSourceType
-        :keyword url: The external repository url.
-        :paramtype url: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.url = url
-
-
-class ArchiveProperties(_serialization.Model):
-    """The properties of a archive.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar package_source: The package source of the archive.
-    :vartype package_source: ~azure.mgmt.containerregistry.models.ArchivePackageSourceProperties
-    :ivar published_version: The published version of the archive.
-    :vartype published_version: str
-    :ivar repository_endpoint_prefix:
-    :vartype repository_endpoint_prefix: str
-    :ivar repository_endpoint:
-    :vartype repository_endpoint: str
-    :ivar provisioning_state: The provisioning state of the archive at the time the operation was
-     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
-     "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
-    """
-
-    _validation = {
-        "repository_endpoint": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "package_source": {"key": "packageSource", "type": "ArchivePackageSourceProperties"},
-        "published_version": {"key": "publishedVersion", "type": "str"},
-        "repository_endpoint_prefix": {"key": "repositoryEndpointPrefix", "type": "str"},
-        "repository_endpoint": {"key": "repositoryEndpoint", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        package_source: Optional["_models.ArchivePackageSourceProperties"] = None,
-        published_version: Optional[str] = None,
-        repository_endpoint_prefix: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword package_source: The package source of the archive.
-        :paramtype package_source: ~azure.mgmt.containerregistry.models.ArchivePackageSourceProperties
-        :keyword published_version: The published version of the archive.
-        :paramtype published_version: str
-        :keyword repository_endpoint_prefix:
-        :paramtype repository_endpoint_prefix: str
-        """
-        super().__init__(**kwargs)
-        self.package_source = package_source
-        self.published_version = published_version
-        self.repository_endpoint_prefix = repository_endpoint_prefix
-        self.repository_endpoint: Optional[str] = None
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-
-
-class ArchiveUpdateParameters(_serialization.Model):
-    """The parameters for updating a archive.
-
-    :ivar published_version: The published version of the archive.
-    :vartype published_version: str
-    """
-
-    _attribute_map = {
-        "published_version": {"key": "properties.publishedVersion", "type": "str"},
-    }
-
-    def __init__(self, *, published_version: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword published_version: The published version of the archive.
-        :paramtype published_version: str
-        """
-        super().__init__(**kwargs)
-        self.published_version = published_version
-
-
-class ArchiveVersion(ProxyResource):
-    """An object that represents an export pipeline for a container registry.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
-    :ivar provisioning_state: The provisioning state of the archive at the time the operation was
-     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
-     "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
-    :ivar archive_version_error_message: The detailed error message for the archive version in the
-     case of failure.
-    :vartype archive_version_error_message: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "archive_version_error_message": {"key": "properties.archiveVersionErrorMessage", "type": "str"},
-    }
-
-    def __init__(self, *, archive_version_error_message: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword archive_version_error_message: The detailed error message for the archive version in
-         the case of failure.
-        :paramtype archive_version_error_message: str
-        """
-        super().__init__(**kwargs)
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.archive_version_error_message = archive_version_error_message
-
-
-class ArchiveVersionListResult(_serialization.Model):
-    """The result of a request to list export pipelines for a container registry.
-
-    :ivar value: The list of export pipelines. Since this list may be incomplete, the nextLink
-     field should be used to request the next list of export pipelines.
-    :vartype value: list[~azure.mgmt.containerregistry.models.ArchiveVersion]
-    :ivar next_link: The URI that can be used to request the next list of pipeline runs.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ArchiveVersion]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.ArchiveVersion"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of export pipelines. Since this list may be incomplete, the nextLink
-         field should be used to request the next list of export pipelines.
-        :paramtype value: list[~azure.mgmt.containerregistry.models.ArchiveVersion]
-        :keyword next_link: The URI that can be used to request the next list of pipeline runs.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
 
 
 class Argument(_serialization.Model):
@@ -1084,18 +766,41 @@ class BaseImageTriggerUpdateParameters(_serialization.Model):
         self.name = name
 
 
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    """
+
+
 class CacheRule(ProxyResource):
     """An object that represents a cache rule for a container registry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar credential_set_resource_id: The ARM resource ID of the credential store which is
      associated with the cache rule.
@@ -1162,9 +867,10 @@ class CacheRule(ProxyResource):
 class CacheRulesListResult(_serialization.Model):
     """The result of a request to list cache rules for a container registry.
 
-    :ivar value: The list of cache rules.
+    :ivar value: The list of cache rules. Since this list may be incomplete, the nextLink field
+     should be used to request the next list of cache rules.
     :vartype value: list[~azure.mgmt.containerregistry.models.CacheRule]
-    :ivar next_link: If provided, client must use NextLink URI to request next list of cache rules.
+    :ivar next_link: The URI that can be used to request the next list of cache rules.
     :vartype next_link: str
     """
 
@@ -1174,13 +880,13 @@ class CacheRulesListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CacheRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.CacheRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of cache rules.
+        :keyword value: The list of cache rules. Since this list may be incomplete, the nextLink field
+         should be used to request the next list of cache rules.
         :paramtype value: list[~azure.mgmt.containerregistry.models.CacheRule]
-        :keyword next_link: If provided, client must use NextLink URI to request next list of cache
-         rules.
+        :keyword next_link: The URI that can be used to request the next list of cache rules.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1230,7 +936,7 @@ class CallbackConfig(_serialization.Model):
         "custom_headers": {"key": "customHeaders", "type": "{str}"},
     }
 
-    def __init__(self, *, service_uri: str, custom_headers: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, service_uri: str, custom_headers: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword service_uri: The service URI for the webhook to post notifications. Required.
         :paramtype service_uri: str
@@ -1247,13 +953,16 @@ class ConnectedRegistry(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
@@ -1326,10 +1035,10 @@ class ConnectedRegistry(ProxyResource):
         *,
         mode: Optional[Union[str, "_models.ConnectedRegistryMode"]] = None,
         parent: Optional["_models.ParentProperties"] = None,
-        client_token_ids: Optional[List[str]] = None,
+        client_token_ids: Optional[list[str]] = None,
         login_server: Optional["_models.LoginServerProperties"] = None,
         logging: Optional["_models.LoggingProperties"] = None,
-        notifications_list: Optional[List[str]] = None,
+        notifications_list: Optional[list[str]] = None,
         garbage_collection: Optional["_models.GarbageCollectionProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -1363,7 +1072,7 @@ class ConnectedRegistry(ProxyResource):
         self.client_token_ids = client_token_ids
         self.login_server = login_server
         self.logging = logging
-        self.status_details: Optional[List["_models.StatusDetailProperties"]] = None
+        self.status_details: Optional[list["_models.StatusDetailProperties"]] = None
         self.notifications_list = notifications_list
         self.garbage_collection = garbage_collection
 
@@ -1386,7 +1095,7 @@ class ConnectedRegistryListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ConnectedRegistry"]] = None,
+        value: Optional[list["_models.ConnectedRegistry"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1432,8 +1141,8 @@ class ConnectedRegistryUpdateParameters(_serialization.Model):
         *,
         sync_properties: Optional["_models.SyncUpdateProperties"] = None,
         logging: Optional["_models.LoggingProperties"] = None,
-        client_token_ids: Optional[List[str]] = None,
-        notifications_list: Optional[List[str]] = None,
+        client_token_ids: Optional[list[str]] = None,
+        notifications_list: Optional[list[str]] = None,
         garbage_collection: Optional["_models.GarbageCollectionProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -1520,7 +1229,7 @@ class Credentials(_serialization.Model):
         self,
         *,
         source_registry: Optional["_models.SourceRegistryCredentials"] = None,
-        custom_registries: Optional[Dict[str, "_models.CustomRegistryCredentials"]] = None,
+        custom_registries: Optional[dict[str, "_models.CustomRegistryCredentials"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1544,13 +1253,16 @@ class CredentialSet(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar identity: Identities associated with the resource. This is used to access the KeyVault
      secrets.
@@ -1593,7 +1305,7 @@ class CredentialSet(ProxyResource):
         *,
         identity: Optional["_models.IdentityProperties"] = None,
         login_server: Optional[str] = None,
-        auth_credentials: Optional[List["_models.AuthCredential"]] = None,
+        auth_credentials: Optional[list["_models.AuthCredential"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1630,7 +1342,7 @@ class CredentialSetListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CredentialSet"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.CredentialSet"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of credential sets. Since this list may be incomplete, the nextLink
@@ -1664,7 +1376,7 @@ class CredentialSetUpdateParameters(_serialization.Model):
         self,
         *,
         identity: Optional["_models.IdentityProperties"] = None,
-        auth_credentials: Optional[List["_models.AuthCredential"]] = None,
+        auth_credentials: Optional[list["_models.AuthCredential"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1729,106 +1441,6 @@ class CustomRegistryCredentials(_serialization.Model):
         self.user_name = user_name
         self.password = password
         self.identity = identity
-
-
-class DebianArchivePackageSourceProperties(ArchivePackageSourceProperties):
-    """The properties of the archive package source.
-
-    :ivar type: The type of package source for a archive. "remote"
-    :vartype type: str or ~azure.mgmt.containerregistry.models.PackageSourceType
-    :ivar url: The external repository url.
-    :vartype url: str
-    :ivar distribution_name: Upstream Debian distribution Name.
-    :vartype distribution_name: str
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "url": {"key": "url", "type": "str"},
-        "distribution_name": {"key": "distributionName", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.PackageSourceType"]] = None,
-        url: Optional[str] = None,
-        distribution_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword type: The type of package source for a archive. "remote"
-        :paramtype type: str or ~azure.mgmt.containerregistry.models.PackageSourceType
-        :keyword url: The external repository url.
-        :paramtype url: str
-        :keyword distribution_name: Upstream Debian distribution Name.
-        :paramtype distribution_name: str
-        """
-        super().__init__(type=type, url=url, **kwargs)
-        self.distribution_name = distribution_name
-
-
-class DebianArchiveProperties(ArchiveProperties):
-    """The properties of the Debian package Archive.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar package_source: The package source of the archive.
-    :vartype package_source: ~azure.mgmt.containerregistry.models.ArchivePackageSourceProperties
-    :ivar published_version: The published version of the archive.
-    :vartype published_version: str
-    :ivar repository_endpoint_prefix:
-    :vartype repository_endpoint_prefix: str
-    :ivar repository_endpoint:
-    :vartype repository_endpoint: str
-    :ivar provisioning_state: The provisioning state of the archive at the time the operation was
-     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
-     "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
-    :ivar distribution_name: Debian distribution Name.
-    :vartype distribution_name: str
-    """
-
-    _validation = {
-        "repository_endpoint": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "package_source": {"key": "packageSource", "type": "ArchivePackageSourceProperties"},
-        "published_version": {"key": "publishedVersion", "type": "str"},
-        "repository_endpoint_prefix": {"key": "repositoryEndpointPrefix", "type": "str"},
-        "repository_endpoint": {"key": "repositoryEndpoint", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "distribution_name": {"key": "distributionName", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        package_source: Optional["_models.ArchivePackageSourceProperties"] = None,
-        published_version: Optional[str] = None,
-        repository_endpoint_prefix: Optional[str] = None,
-        distribution_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword package_source: The package source of the archive.
-        :paramtype package_source: ~azure.mgmt.containerregistry.models.ArchivePackageSourceProperties
-        :keyword published_version: The published version of the archive.
-        :paramtype published_version: str
-        :keyword repository_endpoint_prefix:
-        :paramtype repository_endpoint_prefix: str
-        :keyword distribution_name: Debian distribution Name.
-        :paramtype distribution_name: str
-        """
-        super().__init__(
-            package_source=package_source,
-            published_version=published_version,
-            repository_endpoint_prefix=repository_endpoint_prefix,
-            **kwargs
-        )
-        self.distribution_name = distribution_name
 
 
 class RunRequest(_serialization.Model):
@@ -1973,11 +1585,11 @@ class DockerBuildRequest(RunRequest):
         is_archive_enabled: bool = False,
         agent_pool_name: Optional[str] = None,
         log_template: Optional[str] = None,
-        image_names: Optional[List[str]] = None,
+        image_names: Optional[list[str]] = None,
         is_push_enabled: bool = True,
         no_cache: bool = False,
         target: Optional[str] = None,
-        arguments: Optional[List["_models.Argument"]] = None,
+        arguments: Optional[list["_models.Argument"]] = None,
         timeout: int = 3600,
         agent_configuration: Optional["_models.AgentProperties"] = None,
         source_location: Optional[str] = None,
@@ -2088,7 +1700,7 @@ class TaskStepProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type: Optional[str] = None
-        self.base_image_dependencies: Optional[List["_models.BaseImageDependency"]] = None
+        self.base_image_dependencies: Optional[list["_models.BaseImageDependency"]] = None
         self.context_path = context_path
         self.context_access_token = context_access_token
 
@@ -2152,11 +1764,11 @@ class DockerBuildStep(TaskStepProperties):
         docker_file_path: str,
         context_path: Optional[str] = None,
         context_access_token: Optional[str] = None,
-        image_names: Optional[List[str]] = None,
+        image_names: Optional[list[str]] = None,
         is_push_enabled: bool = True,
         no_cache: bool = False,
         target: Optional[str] = None,
-        arguments: Optional[List["_models.Argument"]] = None,
+        arguments: Optional[list["_models.Argument"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2293,11 +1905,11 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
         *,
         context_path: Optional[str] = None,
         context_access_token: Optional[str] = None,
-        image_names: Optional[List[str]] = None,
+        image_names: Optional[list[str]] = None,
         is_push_enabled: Optional[bool] = None,
         no_cache: Optional[bool] = None,
         docker_file_path: Optional[str] = None,
-        arguments: Optional[List["_models.Argument"]] = None,
+        arguments: Optional[list["_models.Argument"]] = None,
         target: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2402,7 +2014,7 @@ class EncodedTaskRunRequest(RunRequest):
         agent_pool_name: Optional[str] = None,
         log_template: Optional[str] = None,
         encoded_values_content: Optional[str] = None,
-        values: Optional[List["_models.SetValue"]] = None,
+        values: Optional[list["_models.SetValue"]] = None,
         timeout: int = 3600,
         agent_configuration: Optional["_models.AgentProperties"] = None,
         source_location: Optional[str] = None,
@@ -2504,7 +2116,7 @@ class EncodedTaskStep(TaskStepProperties):
         context_path: Optional[str] = None,
         context_access_token: Optional[str] = None,
         encoded_values_content: Optional[str] = None,
-        values: Optional[List["_models.SetValue"]] = None,
+        values: Optional[list["_models.SetValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2569,7 +2181,7 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
         context_access_token: Optional[str] = None,
         encoded_task_content: Optional[str] = None,
         encoded_values_content: Optional[str] = None,
-        values: Optional[List["_models.SetValue"]] = None,
+        values: Optional[list["_models.SetValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2693,8 +2305,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -2863,7 +2475,7 @@ class EventListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Event"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Event"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of events. Since this list may be incomplete, the nextLink field
@@ -2904,7 +2516,7 @@ class EventRequestMessage(_serialization.Model):
         self,
         *,
         content: Optional["_models.EventContent"] = None,
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         method: Optional[str] = None,
         request_uri: Optional[str] = None,
         version: Optional[str] = None,
@@ -2957,7 +2569,7 @@ class EventResponseMessage(_serialization.Model):
         self,
         *,
         content: Optional[str] = None,
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         reason_phrase: Optional[str] = None,
         status_code: Optional[str] = None,
         version: Optional[str] = None,
@@ -2981,156 +2593,6 @@ class EventResponseMessage(_serialization.Model):
         self.reason_phrase = reason_phrase
         self.status_code = status_code
         self.version = version
-
-
-class ExportPipeline(ProxyResource):
-    """An object that represents an export pipeline for a container registry.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
-    :ivar location: The location of the export pipeline.
-    :vartype location: str
-    :ivar identity: The identity of the export pipeline.
-    :vartype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
-    :ivar target: The target properties of the export pipeline.
-    :vartype target: ~azure.mgmt.containerregistry.models.ExportPipelineTargetProperties
-    :ivar options: The list of all options configured for the pipeline.
-    :vartype options: list[str or ~azure.mgmt.containerregistry.models.PipelineOptions]
-    :ivar provisioning_state: The provisioning state of the pipeline at the time the operation was
-     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
-     "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "location": {"key": "location", "type": "str"},
-        "identity": {"key": "identity", "type": "IdentityProperties"},
-        "target": {"key": "properties.target", "type": "ExportPipelineTargetProperties"},
-        "options": {"key": "properties.options", "type": "[str]"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        identity: Optional["_models.IdentityProperties"] = None,
-        target: Optional["_models.ExportPipelineTargetProperties"] = None,
-        options: Optional[List[Union[str, "_models.PipelineOptions"]]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: The location of the export pipeline.
-        :paramtype location: str
-        :keyword identity: The identity of the export pipeline.
-        :paramtype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
-        :keyword target: The target properties of the export pipeline.
-        :paramtype target: ~azure.mgmt.containerregistry.models.ExportPipelineTargetProperties
-        :keyword options: The list of all options configured for the pipeline.
-        :paramtype options: list[str or ~azure.mgmt.containerregistry.models.PipelineOptions]
-        """
-        super().__init__(**kwargs)
-        self.location = location
-        self.identity = identity
-        self.target = target
-        self.options = options
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-
-
-class ExportPipelineListResult(_serialization.Model):
-    """The result of a request to list export pipelines for a container registry.
-
-    :ivar value: The list of export pipelines. Since this list may be incomplete, the nextLink
-     field should be used to request the next list of export pipelines.
-    :vartype value: list[~azure.mgmt.containerregistry.models.ExportPipeline]
-    :ivar next_link: The URI that can be used to request the next list of pipeline runs.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ExportPipeline]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.ExportPipeline"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of export pipelines. Since this list may be incomplete, the nextLink
-         field should be used to request the next list of export pipelines.
-        :paramtype value: list[~azure.mgmt.containerregistry.models.ExportPipeline]
-        :keyword next_link: The URI that can be used to request the next list of pipeline runs.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ExportPipelineTargetProperties(_serialization.Model):
-    """The properties of the export pipeline target.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The type of target for the export pipeline.
-    :vartype type: str
-    :ivar uri: The target uri of the export pipeline.
-     When 'AzureStorageBlob': "https://accountName.blob.core.windows.net/containerName/blobName"
-     When 'AzureStorageBlobContainer':  "https://accountName.blob.core.windows.net/containerName".
-    :vartype uri: str
-    :ivar key_vault_uri: They key vault secret uri to obtain the target storage SAS token.
-     Required.
-    :vartype key_vault_uri: str
-    """
-
-    _validation = {
-        "key_vault_uri": {"required": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "uri": {"key": "uri", "type": "str"},
-        "key_vault_uri": {"key": "keyVaultUri", "type": "str"},
-    }
-
-    def __init__(
-        self, *, key_vault_uri: str, type: Optional[str] = None, uri: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword type: The type of target for the export pipeline.
-        :paramtype type: str
-        :keyword uri: The target uri of the export pipeline.
-         When 'AzureStorageBlob': "https://accountName.blob.core.windows.net/containerName/blobName"
-         When 'AzureStorageBlobContainer':  "https://accountName.blob.core.windows.net/containerName".
-        :paramtype uri: str
-        :keyword key_vault_uri: They key vault secret uri to obtain the target storage SAS token.
-         Required.
-        :paramtype key_vault_uri: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.uri = uri
-        self.key_vault_uri = key_vault_uri
 
 
 class ExportPolicy(_serialization.Model):
@@ -3223,7 +2685,7 @@ class FileTaskRunRequest(RunRequest):
         agent_pool_name: Optional[str] = None,
         log_template: Optional[str] = None,
         values_file_path: Optional[str] = None,
-        values: Optional[List["_models.SetValue"]] = None,
+        values: Optional[list["_models.SetValue"]] = None,
         timeout: int = 3600,
         agent_configuration: Optional["_models.AgentProperties"] = None,
         source_location: Optional[str] = None,
@@ -3324,7 +2786,7 @@ class FileTaskStep(TaskStepProperties):
         context_path: Optional[str] = None,
         context_access_token: Optional[str] = None,
         values_file_path: Optional[str] = None,
-        values: Optional[List["_models.SetValue"]] = None,
+        values: Optional[list["_models.SetValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3389,7 +2851,7 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
         context_access_token: Optional[str] = None,
         task_file_path: Optional[str] = None,
         values_file_path: Optional[str] = None,
-        values: Optional[List["_models.SetValue"]] = None,
+        values: Optional[list["_models.SetValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3502,7 +2964,7 @@ class GenerateCredentialsResult(_serialization.Model):
         self,
         *,
         username: Optional[str] = None,
-        passwords: Optional[List["_models.TokenPassword"]] = None,
+        passwords: Optional[list["_models.TokenPassword"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3532,7 +2994,7 @@ class IdentityProperties(_serialization.Model):
      user identity
      dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/
-         providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.containerregistry.models.UserIdentityProperties]
     """
@@ -3553,7 +3015,7 @@ class IdentityProperties(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserIdentityProperties"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserIdentityProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3564,7 +3026,7 @@ class IdentityProperties(_serialization.Model):
          The user identity
          dictionary key references will be ARM resource ids in the form:
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/
-             providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.containerregistry.models.UserIdentityProperties]
         """
@@ -3643,7 +3105,7 @@ class ImageUpdateTrigger(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         timestamp: Optional[datetime.datetime] = None,
-        images: Optional[List["_models.ImageDescriptor"]] = None,
+        images: Optional[list["_models.ImageDescriptor"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3694,8 +3156,8 @@ class ImportImageParameters(_serialization.Model):
         self,
         *,
         source: "_models.ImportSource",
-        target_tags: Optional[List[str]] = None,
-        untagged_target_repositories: Optional[List[str]] = None,
+        target_tags: Optional[list[str]] = None,
+        untagged_target_repositories: Optional[list[str]] = None,
         mode: Union[str, "_models.ImportMode"] = "NoForce",
         **kwargs: Any
     ) -> None:
@@ -3718,168 +3180,6 @@ class ImportImageParameters(_serialization.Model):
         self.target_tags = target_tags
         self.untagged_target_repositories = untagged_target_repositories
         self.mode = mode
-
-
-class ImportPipeline(ProxyResource):
-    """An object that represents an import pipeline for a container registry.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
-    :ivar location: The location of the import pipeline.
-    :vartype location: str
-    :ivar identity: The identity of the import pipeline.
-    :vartype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
-    :ivar source: The source properties of the import pipeline.
-    :vartype source: ~azure.mgmt.containerregistry.models.ImportPipelineSourceProperties
-    :ivar trigger: The properties that describe the trigger of the import pipeline.
-    :vartype trigger: ~azure.mgmt.containerregistry.models.PipelineTriggerProperties
-    :ivar options: The list of all options configured for the pipeline.
-    :vartype options: list[str or ~azure.mgmt.containerregistry.models.PipelineOptions]
-    :ivar provisioning_state: The provisioning state of the pipeline at the time the operation was
-     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
-     "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "location": {"key": "location", "type": "str"},
-        "identity": {"key": "identity", "type": "IdentityProperties"},
-        "source": {"key": "properties.source", "type": "ImportPipelineSourceProperties"},
-        "trigger": {"key": "properties.trigger", "type": "PipelineTriggerProperties"},
-        "options": {"key": "properties.options", "type": "[str]"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        identity: Optional["_models.IdentityProperties"] = None,
-        source: Optional["_models.ImportPipelineSourceProperties"] = None,
-        trigger: Optional["_models.PipelineTriggerProperties"] = None,
-        options: Optional[List[Union[str, "_models.PipelineOptions"]]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: The location of the import pipeline.
-        :paramtype location: str
-        :keyword identity: The identity of the import pipeline.
-        :paramtype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
-        :keyword source: The source properties of the import pipeline.
-        :paramtype source: ~azure.mgmt.containerregistry.models.ImportPipelineSourceProperties
-        :keyword trigger: The properties that describe the trigger of the import pipeline.
-        :paramtype trigger: ~azure.mgmt.containerregistry.models.PipelineTriggerProperties
-        :keyword options: The list of all options configured for the pipeline.
-        :paramtype options: list[str or ~azure.mgmt.containerregistry.models.PipelineOptions]
-        """
-        super().__init__(**kwargs)
-        self.location = location
-        self.identity = identity
-        self.source = source
-        self.trigger = trigger
-        self.options = options
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-
-
-class ImportPipelineListResult(_serialization.Model):
-    """The result of a request to list import pipelines for a container registry.
-
-    :ivar value: The list of import pipelines. Since this list may be incomplete, the nextLink
-     field should be used to request the next list of import pipelines.
-    :vartype value: list[~azure.mgmt.containerregistry.models.ImportPipeline]
-    :ivar next_link: The URI that can be used to request the next list of pipeline runs.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ImportPipeline]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.ImportPipeline"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of import pipelines. Since this list may be incomplete, the nextLink
-         field should be used to request the next list of import pipelines.
-        :paramtype value: list[~azure.mgmt.containerregistry.models.ImportPipeline]
-        :keyword next_link: The URI that can be used to request the next list of pipeline runs.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ImportPipelineSourceProperties(_serialization.Model):
-    """The properties of the import pipeline source.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The type of source for the import pipeline. "AzureStorageBlobContainer"
-    :vartype type: str or ~azure.mgmt.containerregistry.models.PipelineSourceType
-    :ivar uri: The source uri of the import pipeline.
-     When 'AzureStorageBlob': "https://accountName.blob.core.windows.net/containerName/blobName"
-     When 'AzureStorageBlobContainer': "https://accountName.blob.core.windows.net/containerName".
-    :vartype uri: str
-    :ivar key_vault_uri: They key vault secret uri to obtain the source storage SAS token.
-     Required.
-    :vartype key_vault_uri: str
-    """
-
-    _validation = {
-        "key_vault_uri": {"required": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "uri": {"key": "uri", "type": "str"},
-        "key_vault_uri": {"key": "keyVaultUri", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        key_vault_uri: str,
-        type: Union[str, "_models.PipelineSourceType"] = "AzureStorageBlobContainer",
-        uri: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword type: The type of source for the import pipeline. "AzureStorageBlobContainer"
-        :paramtype type: str or ~azure.mgmt.containerregistry.models.PipelineSourceType
-        :keyword uri: The source uri of the import pipeline.
-         When 'AzureStorageBlob': "https://accountName.blob.core.windows.net/containerName/blobName"
-         When 'AzureStorageBlobContainer': "https://accountName.blob.core.windows.net/containerName".
-        :paramtype uri: str
-        :keyword key_vault_uri: They key vault secret uri to obtain the source storage SAS token.
-         Required.
-        :paramtype key_vault_uri: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.uri = uri
-        self.key_vault_uri = key_vault_uri
 
 
 class ImportSource(_serialization.Model):
@@ -4144,7 +3444,7 @@ class NetworkRuleSet(_serialization.Model):
         self,
         *,
         default_action: Union[str, "_models.DefaultAction"] = "Allow",
-        ip_rules: Optional[List["_models.IPRule"]] = None,
+        ip_rules: Optional[list["_models.IPRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4286,7 +3586,7 @@ class OperationListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.OperationDefinition"]] = None,
+        value: Optional[list["_models.OperationDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4421,8 +3721,8 @@ class OperationServiceSpecificationDefinition(_serialization.Model):
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["_models.OperationMetricSpecificationDefinition"]] = None,
-        log_specifications: Optional[List["_models.OperationLogSpecificationDefinition"]] = None,
+        metric_specifications: Optional[list["_models.OperationMetricSpecificationDefinition"]] = None,
+        log_specifications: Optional[list["_models.OperationLogSpecificationDefinition"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4471,9 +3771,9 @@ class OverrideTaskStepProperties(_serialization.Model):
         *,
         context_path: Optional[str] = None,
         file: Optional[str] = None,
-        arguments: Optional[List["_models.Argument"]] = None,
+        arguments: Optional[list["_models.Argument"]] = None,
         target: Optional[str] = None,
-        values: Optional[List["_models.SetValue"]] = None,
+        values: Optional[list["_models.SetValue"]] = None,
         update_trigger_token: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4500,36 +3800,6 @@ class OverrideTaskStepProperties(_serialization.Model):
         self.target = target
         self.values = values
         self.update_trigger_token = update_trigger_token
-
-
-class PackageType(_serialization.Model):
-    """The properties of a package type.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The name of the package type.
-    :vartype name: str
-    :ivar endpoint: The endpoint of the package type.
-    :vartype endpoint: str
-    """
-
-    _validation = {
-        "endpoint": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "endpoint": {"key": "endpoint", "type": "str"},
-    }
-
-    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword name: The name of the package type.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.endpoint: Optional[str] = None
 
 
 class ParentProperties(_serialization.Model):
@@ -4569,407 +3839,6 @@ class ParentProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.id = id
         self.sync_properties = sync_properties
-
-
-class PipelineRun(ProxyResource):
-    """An object that represents a pipeline run for a container registry.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
-    :ivar provisioning_state: The provisioning state of a pipeline run. Known values are:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
-    :ivar request: The request parameters for a pipeline run.
-    :vartype request: ~azure.mgmt.containerregistry.models.PipelineRunRequest
-    :ivar response: The response of a pipeline run.
-    :vartype response: ~azure.mgmt.containerregistry.models.PipelineRunResponse
-    :ivar force_update_tag: How the pipeline run should be forced to recreate even if the pipeline
-     run configuration has not changed.
-    :vartype force_update_tag: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "response": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "request": {"key": "properties.request", "type": "PipelineRunRequest"},
-        "response": {"key": "properties.response", "type": "PipelineRunResponse"},
-        "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        request: Optional["_models.PipelineRunRequest"] = None,
-        force_update_tag: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword request: The request parameters for a pipeline run.
-        :paramtype request: ~azure.mgmt.containerregistry.models.PipelineRunRequest
-        :keyword force_update_tag: How the pipeline run should be forced to recreate even if the
-         pipeline run configuration has not changed.
-        :paramtype force_update_tag: str
-        """
-        super().__init__(**kwargs)
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.request = request
-        self.response: Optional["_models.PipelineRunResponse"] = None
-        self.force_update_tag = force_update_tag
-
-
-class PipelineRunListResult(_serialization.Model):
-    """The result of a request to list pipeline runs for a container registry.
-
-    :ivar value: The list of pipeline runs. Since this list may be incomplete, the nextLink field
-     should be used to request the next list of pipeline runs.
-    :vartype value: list[~azure.mgmt.containerregistry.models.PipelineRun]
-    :ivar next_link: The URI that can be used to request the next list of pipeline runs.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[PipelineRun]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.PipelineRun"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of pipeline runs. Since this list may be incomplete, the nextLink
-         field should be used to request the next list of pipeline runs.
-        :paramtype value: list[~azure.mgmt.containerregistry.models.PipelineRun]
-        :keyword next_link: The URI that can be used to request the next list of pipeline runs.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class PipelineRunRequest(_serialization.Model):
-    """The request properties provided for a pipeline run.
-
-    :ivar pipeline_resource_id: The resource ID of the pipeline to run.
-    :vartype pipeline_resource_id: str
-    :ivar artifacts: List of source artifacts to be transferred by the pipeline.
-     Specify an image by repository ('hello-world'). This will use the 'latest' tag.
-     Specify an image by tag ('hello-world:latest').
-     Specify an image by sha256-based manifest digest ('hello-world@sha256:abc123').
-    :vartype artifacts: list[str]
-    :ivar source: The source properties of the pipeline run.
-    :vartype source: ~azure.mgmt.containerregistry.models.PipelineRunSourceProperties
-    :ivar target: The target properties of the pipeline run.
-    :vartype target: ~azure.mgmt.containerregistry.models.PipelineRunTargetProperties
-    :ivar catalog_digest: The digest of the tar used to transfer the artifacts.
-    :vartype catalog_digest: str
-    """
-
-    _attribute_map = {
-        "pipeline_resource_id": {"key": "pipelineResourceId", "type": "str"},
-        "artifacts": {"key": "artifacts", "type": "[str]"},
-        "source": {"key": "source", "type": "PipelineRunSourceProperties"},
-        "target": {"key": "target", "type": "PipelineRunTargetProperties"},
-        "catalog_digest": {"key": "catalogDigest", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        pipeline_resource_id: Optional[str] = None,
-        artifacts: Optional[List[str]] = None,
-        source: Optional["_models.PipelineRunSourceProperties"] = None,
-        target: Optional["_models.PipelineRunTargetProperties"] = None,
-        catalog_digest: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword pipeline_resource_id: The resource ID of the pipeline to run.
-        :paramtype pipeline_resource_id: str
-        :keyword artifacts: List of source artifacts to be transferred by the pipeline.
-         Specify an image by repository ('hello-world'). This will use the 'latest' tag.
-         Specify an image by tag ('hello-world:latest').
-         Specify an image by sha256-based manifest digest ('hello-world@sha256:abc123').
-        :paramtype artifacts: list[str]
-        :keyword source: The source properties of the pipeline run.
-        :paramtype source: ~azure.mgmt.containerregistry.models.PipelineRunSourceProperties
-        :keyword target: The target properties of the pipeline run.
-        :paramtype target: ~azure.mgmt.containerregistry.models.PipelineRunTargetProperties
-        :keyword catalog_digest: The digest of the tar used to transfer the artifacts.
-        :paramtype catalog_digest: str
-        """
-        super().__init__(**kwargs)
-        self.pipeline_resource_id = pipeline_resource_id
-        self.artifacts = artifacts
-        self.source = source
-        self.target = target
-        self.catalog_digest = catalog_digest
-
-
-class PipelineRunResponse(_serialization.Model):
-    """The response properties returned for a pipeline run.
-
-    :ivar status: The current status of the pipeline run.
-    :vartype status: str
-    :ivar imported_artifacts: The artifacts imported in the pipeline run.
-    :vartype imported_artifacts: list[str]
-    :ivar progress: The current progress of the copy operation.
-    :vartype progress: ~azure.mgmt.containerregistry.models.ProgressProperties
-    :ivar start_time: The time the pipeline run started.
-    :vartype start_time: ~datetime.datetime
-    :ivar finish_time: The time the pipeline run finished.
-    :vartype finish_time: ~datetime.datetime
-    :ivar source: The source of the pipeline run.
-    :vartype source: ~azure.mgmt.containerregistry.models.ImportPipelineSourceProperties
-    :ivar target: The target of the pipeline run.
-    :vartype target: ~azure.mgmt.containerregistry.models.ExportPipelineTargetProperties
-    :ivar catalog_digest: The digest of the tar used to transfer the artifacts.
-    :vartype catalog_digest: str
-    :ivar trigger: The trigger that caused the pipeline run.
-    :vartype trigger: ~azure.mgmt.containerregistry.models.PipelineTriggerDescriptor
-    :ivar pipeline_run_error_message: The detailed error message for the pipeline run in the case
-     of failure.
-    :vartype pipeline_run_error_message: str
-    """
-
-    _attribute_map = {
-        "status": {"key": "status", "type": "str"},
-        "imported_artifacts": {"key": "importedArtifacts", "type": "[str]"},
-        "progress": {"key": "progress", "type": "ProgressProperties"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "finish_time": {"key": "finishTime", "type": "iso-8601"},
-        "source": {"key": "source", "type": "ImportPipelineSourceProperties"},
-        "target": {"key": "target", "type": "ExportPipelineTargetProperties"},
-        "catalog_digest": {"key": "catalogDigest", "type": "str"},
-        "trigger": {"key": "trigger", "type": "PipelineTriggerDescriptor"},
-        "pipeline_run_error_message": {"key": "pipelineRunErrorMessage", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[str] = None,
-        imported_artifacts: Optional[List[str]] = None,
-        progress: Optional["_models.ProgressProperties"] = None,
-        start_time: Optional[datetime.datetime] = None,
-        finish_time: Optional[datetime.datetime] = None,
-        source: Optional["_models.ImportPipelineSourceProperties"] = None,
-        target: Optional["_models.ExportPipelineTargetProperties"] = None,
-        catalog_digest: Optional[str] = None,
-        trigger: Optional["_models.PipelineTriggerDescriptor"] = None,
-        pipeline_run_error_message: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword status: The current status of the pipeline run.
-        :paramtype status: str
-        :keyword imported_artifacts: The artifacts imported in the pipeline run.
-        :paramtype imported_artifacts: list[str]
-        :keyword progress: The current progress of the copy operation.
-        :paramtype progress: ~azure.mgmt.containerregistry.models.ProgressProperties
-        :keyword start_time: The time the pipeline run started.
-        :paramtype start_time: ~datetime.datetime
-        :keyword finish_time: The time the pipeline run finished.
-        :paramtype finish_time: ~datetime.datetime
-        :keyword source: The source of the pipeline run.
-        :paramtype source: ~azure.mgmt.containerregistry.models.ImportPipelineSourceProperties
-        :keyword target: The target of the pipeline run.
-        :paramtype target: ~azure.mgmt.containerregistry.models.ExportPipelineTargetProperties
-        :keyword catalog_digest: The digest of the tar used to transfer the artifacts.
-        :paramtype catalog_digest: str
-        :keyword trigger: The trigger that caused the pipeline run.
-        :paramtype trigger: ~azure.mgmt.containerregistry.models.PipelineTriggerDescriptor
-        :keyword pipeline_run_error_message: The detailed error message for the pipeline run in the
-         case of failure.
-        :paramtype pipeline_run_error_message: str
-        """
-        super().__init__(**kwargs)
-        self.status = status
-        self.imported_artifacts = imported_artifacts
-        self.progress = progress
-        self.start_time = start_time
-        self.finish_time = finish_time
-        self.source = source
-        self.target = target
-        self.catalog_digest = catalog_digest
-        self.trigger = trigger
-        self.pipeline_run_error_message = pipeline_run_error_message
-
-
-class PipelineRunSourceProperties(_serialization.Model):
-    """PipelineRunSourceProperties.
-
-    :ivar type: The type of the source. "AzureStorageBlob"
-    :vartype type: str or ~azure.mgmt.containerregistry.models.PipelineRunSourceType
-    :ivar name: The name of the source.
-    :vartype name: str
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.PipelineRunSourceType"] = "AzureStorageBlob",
-        name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword type: The type of the source. "AzureStorageBlob"
-        :paramtype type: str or ~azure.mgmt.containerregistry.models.PipelineRunSourceType
-        :keyword name: The name of the source.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.name = name
-
-
-class PipelineRunTargetProperties(_serialization.Model):
-    """PipelineRunTargetProperties.
-
-    :ivar type: The type of the target. "AzureStorageBlob"
-    :vartype type: str or ~azure.mgmt.containerregistry.models.PipelineRunTargetType
-    :ivar name: The name of the target.
-    :vartype name: str
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.PipelineRunTargetType"] = "AzureStorageBlob",
-        name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword type: The type of the target. "AzureStorageBlob"
-        :paramtype type: str or ~azure.mgmt.containerregistry.models.PipelineRunTargetType
-        :keyword name: The name of the target.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.name = name
-
-
-class PipelineSourceTriggerDescriptor(_serialization.Model):
-    """PipelineSourceTriggerDescriptor.
-
-    :ivar timestamp: The timestamp when the source update happened.
-    :vartype timestamp: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        "timestamp": {"key": "timestamp", "type": "iso-8601"},
-    }
-
-    def __init__(self, *, timestamp: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
-        """
-        :keyword timestamp: The timestamp when the source update happened.
-        :paramtype timestamp: ~datetime.datetime
-        """
-        super().__init__(**kwargs)
-        self.timestamp = timestamp
-
-
-class PipelineSourceTriggerProperties(_serialization.Model):
-    """PipelineSourceTriggerProperties.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar status: The current status of the source trigger. Required. Known values are: "Disabled"
-     and "Enabled".
-    :vartype status: str or ~azure.mgmt.containerregistry.models.TriggerStatus
-    """
-
-    _validation = {
-        "status": {"required": True},
-    }
-
-    _attribute_map = {
-        "status": {"key": "status", "type": "str"},
-    }
-
-    def __init__(self, *, status: Union[str, "_models.TriggerStatus"], **kwargs: Any) -> None:
-        """
-        :keyword status: The current status of the source trigger. Required. Known values are:
-         "Disabled" and "Enabled".
-        :paramtype status: str or ~azure.mgmt.containerregistry.models.TriggerStatus
-        """
-        super().__init__(**kwargs)
-        self.status = status
-
-
-class PipelineTriggerDescriptor(_serialization.Model):
-    """PipelineTriggerDescriptor.
-
-    :ivar source_trigger: The source trigger that caused the pipeline run.
-    :vartype source_trigger: ~azure.mgmt.containerregistry.models.PipelineSourceTriggerDescriptor
-    """
-
-    _attribute_map = {
-        "source_trigger": {"key": "sourceTrigger", "type": "PipelineSourceTriggerDescriptor"},
-    }
-
-    def __init__(
-        self, *, source_trigger: Optional["_models.PipelineSourceTriggerDescriptor"] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword source_trigger: The source trigger that caused the pipeline run.
-        :paramtype source_trigger: ~azure.mgmt.containerregistry.models.PipelineSourceTriggerDescriptor
-        """
-        super().__init__(**kwargs)
-        self.source_trigger = source_trigger
-
-
-class PipelineTriggerProperties(_serialization.Model):
-    """PipelineTriggerProperties.
-
-    :ivar source_trigger: The source trigger properties of the pipeline.
-    :vartype source_trigger: ~azure.mgmt.containerregistry.models.PipelineSourceTriggerProperties
-    """
-
-    _attribute_map = {
-        "source_trigger": {"key": "sourceTrigger", "type": "PipelineSourceTriggerProperties"},
-    }
-
-    def __init__(
-        self, *, source_trigger: Optional["_models.PipelineSourceTriggerProperties"] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword source_trigger: The source trigger properties of the pipeline.
-        :paramtype source_trigger: ~azure.mgmt.containerregistry.models.PipelineSourceTriggerProperties
-        """
-        super().__init__(**kwargs)
-        self.source_trigger = source_trigger
 
 
 class PlatformProperties(_serialization.Model):
@@ -5079,8 +3948,6 @@ class Policies(_serialization.Model):
      audience token for a container registry.
     :vartype azure_ad_authentication_as_arm_policy:
      ~azure.mgmt.containerregistry.models.AzureADAuthenticationAsArmPolicy
-    :ivar soft_delete_policy: The soft delete policy for a container registry.
-    :vartype soft_delete_policy: ~azure.mgmt.containerregistry.models.SoftDeletePolicy
     """
 
     _attribute_map = {
@@ -5092,7 +3959,6 @@ class Policies(_serialization.Model):
             "key": "azureADAuthenticationAsArmPolicy",
             "type": "AzureADAuthenticationAsArmPolicy",
         },
-        "soft_delete_policy": {"key": "softDeletePolicy", "type": "SoftDeletePolicy"},
     }
 
     def __init__(
@@ -5103,7 +3969,6 @@ class Policies(_serialization.Model):
         retention_policy: Optional["_models.RetentionPolicy"] = None,
         export_policy: Optional["_models.ExportPolicy"] = None,
         azure_ad_authentication_as_arm_policy: Optional["_models.AzureADAuthenticationAsArmPolicy"] = None,
-        soft_delete_policy: Optional["_models.SoftDeletePolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5119,8 +3984,6 @@ class Policies(_serialization.Model):
          audience token for a container registry.
         :paramtype azure_ad_authentication_as_arm_policy:
          ~azure.mgmt.containerregistry.models.AzureADAuthenticationAsArmPolicy
-        :keyword soft_delete_policy: The soft delete policy for a container registry.
-        :paramtype soft_delete_policy: ~azure.mgmt.containerregistry.models.SoftDeletePolicy
         """
         super().__init__(**kwargs)
         self.quarantine_policy = quarantine_policy
@@ -5128,7 +3991,6 @@ class Policies(_serialization.Model):
         self.retention_policy = retention_policy
         self.export_policy = export_policy
         self.azure_ad_authentication_as_arm_policy = azure_ad_authentication_as_arm_policy
-        self.soft_delete_policy = soft_delete_policy
 
 
 class PrivateEndpoint(_serialization.Model):
@@ -5157,13 +4019,16 @@ class PrivateEndpointConnection(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar private_endpoint: The resource of private endpoint.
     :vartype private_endpoint: ~azure.mgmt.containerregistry.models.PrivateEndpoint
@@ -5237,7 +4102,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
+        value: Optional[list["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5254,66 +4119,57 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class PrivateLinkResource(_serialization.Model):
-    """A resource that supports private link capabilities.
+class PrivateLinkResource(Resource):
+    """A private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The resource type is private link resource.
-    :vartype type: str
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar group_id: The private link resource group id.
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
     :vartype required_members: list[str]
-    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :ivar required_zone_names: The private link resource private link DNS zone name.
     :vartype required_zone_names: list[str]
     """
 
     _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        "type": {"key": "type", "type": "str"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "group_id": {"key": "properties.groupId", "type": "str"},
         "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        name: Optional[str] = None,
-        group_id: Optional[str] = None,
-        required_members: Optional[List[str]] = None,
-        required_zone_names: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
-        :keyword id: The resource ID.
-        :paramtype id: str
-        :keyword name: The name of the resource.
-        :paramtype name: str
-        :keyword group_id: The private link resource group id.
-        :paramtype group_id: str
-        :keyword required_members: The private link resource required member names.
-        :paramtype required_members: list[str]
-        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :keyword required_zone_names: The private link resource private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.type: Optional[str] = None
-        self.id = id
-        self.name = name
-        self.group_id = group_id
-        self.required_members = required_members
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -5335,7 +4191,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.PrivateLinkResource"]] = None,
+        value: Optional[list["_models.PrivateLinkResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5397,26 +4253,6 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         self.actions_required = actions_required
 
 
-class ProgressProperties(_serialization.Model):
-    """ProgressProperties.
-
-    :ivar percentage: The percentage complete of the copy operation.
-    :vartype percentage: str
-    """
-
-    _attribute_map = {
-        "percentage": {"key": "percentage", "type": "str"},
-    }
-
-    def __init__(self, *, percentage: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword percentage: The percentage complete of the copy operation.
-        :paramtype percentage: str
-        """
-        super().__init__(**kwargs)
-        self.percentage = percentage
-
-
 class QuarantinePolicy(_serialization.Model):
     """The quarantine policy for a container registry.
 
@@ -5467,26 +4303,28 @@ class RegenerateCredentialParameters(_serialization.Model):
         self.name = name
 
 
-class Registry(Resource):
+class Registry(TrackedResource):
     """An object that represents a container registry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The location of the resource. This cannot be changed after the resource is
-     created. Required.
-    :vartype location: str
-    :ivar tags: The tags of the resource.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar sku: The SKU of the container registry. Required.
     :vartype sku: ~azure.mgmt.containerregistry.models.Sku
     :ivar identity: The identity of the container registry.
@@ -5533,9 +4371,6 @@ class Registry(Resource):
     :vartype zone_redundancy: str or ~azure.mgmt.containerregistry.models.ZoneRedundancy
     :ivar anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
     :vartype anonymous_pull_enabled: bool
-    :ivar metadata_search: Determines whether registry artifacts are indexed for metadata search.
-     Known values are: "Enabled" and "Disabled".
-    :vartype metadata_search: str or ~azure.mgmt.containerregistry.models.MetadataSearch
     :ivar auto_generated_domain_name_label_scope: Determines the domain name label reuse scope.
      Known values are: "Unsecure", "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and
      "NoReuse".
@@ -5550,8 +4385,8 @@ class Registry(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "sku": {"required": True},
         "login_server": {"readonly": True},
         "creation_date": {"readonly": True},
@@ -5565,9 +4400,9 @@ class Registry(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "identity": {"key": "identity", "type": "IdentityProperties"},
         "login_server": {"key": "properties.loginServer", "type": "str"},
@@ -5589,7 +4424,6 @@ class Registry(Resource):
         "network_rule_bypass_allowed_for_tasks": {"key": "properties.networkRuleBypassAllowedForTasks", "type": "bool"},
         "zone_redundancy": {"key": "properties.zoneRedundancy", "type": "str"},
         "anonymous_pull_enabled": {"key": "properties.anonymousPullEnabled", "type": "bool"},
-        "metadata_search": {"key": "properties.metadataSearch", "type": "str"},
         "auto_generated_domain_name_label_scope": {
             "key": "properties.autoGeneratedDomainNameLabelScope",
             "type": "str",
@@ -5602,7 +4436,7 @@ class Registry(Resource):
         *,
         location: str,
         sku: "_models.Sku",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.IdentityProperties"] = None,
         admin_user_enabled: bool = False,
         network_rule_set: Optional["_models.NetworkRuleSet"] = None,
@@ -5614,7 +4448,6 @@ class Registry(Resource):
         network_rule_bypass_allowed_for_tasks: bool = False,
         zone_redundancy: Optional[Union[str, "_models.ZoneRedundancy"]] = None,
         anonymous_pull_enabled: bool = False,
-        metadata_search: Optional[Union[str, "_models.MetadataSearch"]] = None,
         auto_generated_domain_name_label_scope: Optional[
             Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
         ] = None,
@@ -5622,11 +4455,10 @@ class Registry(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: The location of the resource. This cannot be changed after the resource is
-         created. Required.
-        :paramtype location: str
-        :keyword tags: The tags of the resource.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: The SKU of the container registry. Required.
         :paramtype sku: ~azure.mgmt.containerregistry.models.Sku
         :keyword identity: The identity of the container registry.
@@ -5657,9 +4489,6 @@ class Registry(Resource):
         :paramtype zone_redundancy: str or ~azure.mgmt.containerregistry.models.ZoneRedundancy
         :keyword anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
         :paramtype anonymous_pull_enabled: bool
-        :keyword metadata_search: Determines whether registry artifacts are indexed for metadata
-         search. Known values are: "Enabled" and "Disabled".
-        :paramtype metadata_search: str or ~azure.mgmt.containerregistry.models.MetadataSearch
         :keyword auto_generated_domain_name_label_scope: Determines the domain name label reuse scope.
          Known values are: "Unsecure", "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and
          "NoReuse".
@@ -5669,7 +4498,7 @@ class Registry(Resource):
          "AbacRepositoryPermissions" and "LegacyRegistryPermissions".
         :paramtype role_assignment_mode: str or ~azure.mgmt.containerregistry.models.RoleAssignmentMode
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.identity = identity
         self.login_server: Optional[str] = None
@@ -5681,14 +4510,13 @@ class Registry(Resource):
         self.policies = policies
         self.encryption = encryption
         self.data_endpoint_enabled = data_endpoint_enabled
-        self.data_endpoint_host_names: Optional[List[str]] = None
-        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
+        self.data_endpoint_host_names: Optional[list[str]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
         self.public_network_access = public_network_access
         self.network_rule_bypass_options = network_rule_bypass_options
         self.network_rule_bypass_allowed_for_tasks = network_rule_bypass_allowed_for_tasks
         self.zone_redundancy = zone_redundancy
         self.anonymous_pull_enabled = anonymous_pull_enabled
-        self.metadata_search = metadata_search
         self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
         self.role_assignment_mode = role_assignment_mode
 
@@ -5711,7 +4539,7 @@ class RegistryListCredentialsResult(_serialization.Model):
         self,
         *,
         username: Optional[str] = None,
-        passwords: Optional[List["_models.RegistryPassword"]] = None,
+        passwords: Optional[list["_models.RegistryPassword"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5741,7 +4569,7 @@ class RegistryListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Registry"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Registry"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of container registries. Since this list may be incomplete, the
@@ -5928,9 +4756,6 @@ class RegistryUpdateParameters(_serialization.Model):
     :vartype network_rule_bypass_allowed_for_tasks: bool
     :ivar anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
     :vartype anonymous_pull_enabled: bool
-    :ivar metadata_search: Determines whether registry artifacts are indexed for metadata search.
-     Known values are: "Enabled" and "Disabled".
-    :vartype metadata_search: str or ~azure.mgmt.containerregistry.models.MetadataSearch
     :ivar role_assignment_mode: Determines registry role assignment mode. Known values are:
      "AbacRepositoryPermissions" and "LegacyRegistryPermissions".
     :vartype role_assignment_mode: str or ~azure.mgmt.containerregistry.models.RoleAssignmentMode
@@ -5949,7 +4774,6 @@ class RegistryUpdateParameters(_serialization.Model):
         "network_rule_bypass_options": {"key": "properties.networkRuleBypassOptions", "type": "str"},
         "network_rule_bypass_allowed_for_tasks": {"key": "properties.networkRuleBypassAllowedForTasks", "type": "bool"},
         "anonymous_pull_enabled": {"key": "properties.anonymousPullEnabled", "type": "bool"},
-        "metadata_search": {"key": "properties.metadataSearch", "type": "str"},
         "role_assignment_mode": {"key": "properties.roleAssignmentMode", "type": "str"},
     }
 
@@ -5957,7 +4781,7 @@ class RegistryUpdateParameters(_serialization.Model):
         self,
         *,
         identity: Optional["_models.IdentityProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.Sku"] = None,
         admin_user_enabled: Optional[bool] = None,
         network_rule_set: Optional["_models.NetworkRuleSet"] = None,
@@ -5968,7 +4792,6 @@ class RegistryUpdateParameters(_serialization.Model):
         network_rule_bypass_options: Optional[Union[str, "_models.NetworkRuleBypassOptions"]] = None,
         network_rule_bypass_allowed_for_tasks: Optional[bool] = None,
         anonymous_pull_enabled: Optional[bool] = None,
-        metadata_search: Optional[Union[str, "_models.MetadataSearch"]] = None,
         role_assignment_mode: Optional[Union[str, "_models.RoleAssignmentMode"]] = None,
         **kwargs: Any
     ) -> None:
@@ -6002,9 +4825,6 @@ class RegistryUpdateParameters(_serialization.Model):
         :paramtype network_rule_bypass_allowed_for_tasks: bool
         :keyword anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
         :paramtype anonymous_pull_enabled: bool
-        :keyword metadata_search: Determines whether registry artifacts are indexed for metadata
-         search. Known values are: "Enabled" and "Disabled".
-        :paramtype metadata_search: str or ~azure.mgmt.containerregistry.models.MetadataSearch
         :keyword role_assignment_mode: Determines registry role assignment mode. Known values are:
          "AbacRepositoryPermissions" and "LegacyRegistryPermissions".
         :paramtype role_assignment_mode: str or ~azure.mgmt.containerregistry.models.RoleAssignmentMode
@@ -6022,7 +4842,6 @@ class RegistryUpdateParameters(_serialization.Model):
         self.network_rule_bypass_options = network_rule_bypass_options
         self.network_rule_bypass_allowed_for_tasks = network_rule_bypass_allowed_for_tasks
         self.anonymous_pull_enabled = anonymous_pull_enabled
-        self.metadata_search = metadata_search
         self.role_assignment_mode = role_assignment_mode
 
 
@@ -6083,7 +4902,7 @@ class RegistryUsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[RegistryUsage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RegistryUsage"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.RegistryUsage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of container registry quota usages.
         :paramtype value: list[~azure.mgmt.containerregistry.models.RegistryUsage]
@@ -6092,26 +4911,28 @@ class RegistryUsageListResult(_serialization.Model):
         self.value = value
 
 
-class Replication(Resource):
+class Replication(TrackedResource):
     """An object that represents a replication for a container registry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The location of the resource. This cannot be changed after the resource is
-     created. Required.
-    :vartype location: str
-    :ivar tags: The tags of the resource.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar provisioning_state: The provisioning state of the replication at the time the operation
      was called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
      "Canceled".
@@ -6131,8 +4952,8 @@ class Replication(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "provisioning_state": {"readonly": True},
         "status": {"readonly": True},
     }
@@ -6141,9 +4962,9 @@ class Replication(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "status": {"key": "properties.status", "type": "Status"},
         "region_endpoint_enabled": {"key": "properties.regionEndpointEnabled", "type": "bool"},
@@ -6154,17 +4975,16 @@ class Replication(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         region_endpoint_enabled: bool = True,
         zone_redundancy: Optional[Union[str, "_models.ZoneRedundancy"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: The location of the resource. This cannot be changed after the resource is
-         created. Required.
-        :paramtype location: str
-        :keyword tags: The tags of the resource.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword region_endpoint_enabled: Specifies whether the replication's regional endpoint is
          enabled. Requests will not be routed to a replication whose regional endpoint is disabled,
          however its data will continue to be synced with other replications.
@@ -6173,7 +4993,7 @@ class Replication(Resource):
          replication. Known values are: "Enabled" and "Disabled".
         :paramtype zone_redundancy: str or ~azure.mgmt.containerregistry.models.ZoneRedundancy
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.status: Optional["_models.Status"] = None
         self.region_endpoint_enabled = region_endpoint_enabled
@@ -6196,7 +5016,7 @@ class ReplicationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Replication"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Replication"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of replications. Since this list may be incomplete, the nextLink field
@@ -6227,7 +5047,7 @@ class ReplicationUpdateParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, region_endpoint_enabled: Optional[bool] = None, **kwargs: Any
+        self, *, tags: Optional[dict[str, str]] = None, region_endpoint_enabled: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """
         :keyword tags: The tags for the replication.
@@ -6344,13 +5164,16 @@ class Run(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar run_id: The unique identifier for the run.
     :vartype run_id: str
@@ -6454,7 +5277,7 @@ class Run(ProxyResource):
         create_time: Optional[datetime.datetime] = None,
         start_time: Optional[datetime.datetime] = None,
         finish_time: Optional[datetime.datetime] = None,
-        output_images: Optional[List["_models.ImageDescriptor"]] = None,
+        output_images: Optional[list["_models.ImageDescriptor"]] = None,
         task: Optional[str] = None,
         image_update_trigger: Optional["_models.ImageUpdateTrigger"] = None,
         source_trigger: Optional["_models.SourceTriggerDescriptor"] = None,
@@ -6462,7 +5285,7 @@ class Run(ProxyResource):
         platform: Optional["_models.PlatformProperties"] = None,
         agent_configuration: Optional["_models.AgentProperties"] = None,
         source_registry_auth: Optional[str] = None,
-        custom_registries: Optional[List[str]] = None,
+        custom_registries: Optional[list[str]] = None,
         update_trigger_token: Optional[str] = None,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         is_archive_enabled: bool = False,
@@ -6541,95 +5364,6 @@ class Run(ProxyResource):
         self.is_archive_enabled = is_archive_enabled
 
 
-class RunFilter(_serialization.Model):
-    """Properties that are enabled for Odata querying on runs.
-
-    :ivar run_id: The unique identifier for the run.
-    :vartype run_id: str
-    :ivar run_type: The type of run. Known values are: "QuickBuild", "QuickRun", "AutoBuild", and
-     "AutoRun".
-    :vartype run_type: str or ~azure.mgmt.containerregistry.models.RunType
-    :ivar status: The current status of the run. Known values are: "Queued", "Started", "Running",
-     "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
-    :vartype status: str or ~azure.mgmt.containerregistry.models.RunStatus
-    :ivar create_time: The create time for a run.
-    :vartype create_time: ~datetime.datetime
-    :ivar finish_time: The time the run finished.
-    :vartype finish_time: ~datetime.datetime
-    :ivar output_image_manifests: The list of comma-separated image manifests that were generated
-     from the run. This is applicable if the run is of
-     build type.
-    :vartype output_image_manifests: str
-    :ivar is_archive_enabled: The value that indicates whether archiving is enabled or not.
-    :vartype is_archive_enabled: bool
-    :ivar task_name: The name of the task that the run corresponds to.
-    :vartype task_name: str
-    :ivar agent_pool_name: The name of the agent pool that the run corresponds to.
-    :vartype agent_pool_name: str
-    """
-
-    _attribute_map = {
-        "run_id": {"key": "runId", "type": "str"},
-        "run_type": {"key": "runType", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "create_time": {"key": "createTime", "type": "iso-8601"},
-        "finish_time": {"key": "finishTime", "type": "iso-8601"},
-        "output_image_manifests": {"key": "outputImageManifests", "type": "str"},
-        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
-        "task_name": {"key": "taskName", "type": "str"},
-        "agent_pool_name": {"key": "agentPoolName", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        run_id: Optional[str] = None,
-        run_type: Optional[Union[str, "_models.RunType"]] = None,
-        status: Optional[Union[str, "_models.RunStatus"]] = None,
-        create_time: Optional[datetime.datetime] = None,
-        finish_time: Optional[datetime.datetime] = None,
-        output_image_manifests: Optional[str] = None,
-        is_archive_enabled: Optional[bool] = None,
-        task_name: Optional[str] = None,
-        agent_pool_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword run_id: The unique identifier for the run.
-        :paramtype run_id: str
-        :keyword run_type: The type of run. Known values are: "QuickBuild", "QuickRun", "AutoBuild",
-         and "AutoRun".
-        :paramtype run_type: str or ~azure.mgmt.containerregistry.models.RunType
-        :keyword status: The current status of the run. Known values are: "Queued", "Started",
-         "Running", "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
-        :paramtype status: str or ~azure.mgmt.containerregistry.models.RunStatus
-        :keyword create_time: The create time for a run.
-        :paramtype create_time: ~datetime.datetime
-        :keyword finish_time: The time the run finished.
-        :paramtype finish_time: ~datetime.datetime
-        :keyword output_image_manifests: The list of comma-separated image manifests that were
-         generated from the run. This is applicable if the run is of
-         build type.
-        :paramtype output_image_manifests: str
-        :keyword is_archive_enabled: The value that indicates whether archiving is enabled or not.
-        :paramtype is_archive_enabled: bool
-        :keyword task_name: The name of the task that the run corresponds to.
-        :paramtype task_name: str
-        :keyword agent_pool_name: The name of the agent pool that the run corresponds to.
-        :paramtype agent_pool_name: str
-        """
-        super().__init__(**kwargs)
-        self.run_id = run_id
-        self.run_type = run_type
-        self.status = status
-        self.create_time = create_time
-        self.finish_time = finish_time
-        self.output_image_manifests = output_image_manifests
-        self.is_archive_enabled = is_archive_enabled
-        self.task_name = task_name
-        self.agent_pool_name = agent_pool_name
-
-
 class RunGetLogResult(_serialization.Model):
     """The result of get log link operation.
 
@@ -6660,7 +5394,7 @@ class RunGetLogResult(_serialization.Model):
 
 
 class RunListResult(_serialization.Model):
-    """Collection of runs.
+    """The collection of runs.
 
     :ivar value: The collection value.
     :vartype value: list[~azure.mgmt.containerregistry.models.Run]
@@ -6674,7 +5408,7 @@ class RunListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Run"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Run"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The collection value.
@@ -6712,13 +5446,16 @@ class ScopeMap(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar description: The user friendly description of the scope map.
     :vartype description: str
@@ -6758,7 +5495,7 @@ class ScopeMap(ProxyResource):
     }
 
     def __init__(
-        self, *, description: Optional[str] = None, actions: Optional[List[str]] = None, **kwargs: Any
+        self, *, description: Optional[str] = None, actions: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword description: The user friendly description of the scope map.
@@ -6792,7 +5529,7 @@ class ScopeMapListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ScopeMap"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ScopeMap"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of scope maps. Since this list may be incomplete, the nextLink field
@@ -6823,7 +5560,7 @@ class ScopeMapUpdateParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, description: Optional[str] = None, actions: Optional[List[str]] = None, **kwargs: Any
+        self, *, description: Optional[str] = None, actions: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword description: The user friendly description of the scope map.
@@ -6951,48 +5688,6 @@ class Sku(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.tier: Optional[Union[str, "_models.SkuTier"]] = None
-
-
-class SoftDeletePolicy(_serialization.Model):
-    """The soft delete policy for a container registry.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar retention_days: The number of days after which a soft-deleted item is permanently
-     deleted.
-    :vartype retention_days: int
-    :ivar last_updated_time: The timestamp when the policy was last updated.
-    :vartype last_updated_time: ~datetime.datetime
-    :ivar status: The value that indicates whether the policy is enabled or not. Known values are:
-     "enabled" and "disabled".
-    :vartype status: str or ~azure.mgmt.containerregistry.models.PolicyStatus
-    """
-
-    _validation = {
-        "last_updated_time": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "retention_days": {"key": "retentionDays", "type": "int"},
-        "last_updated_time": {"key": "lastUpdatedTime", "type": "iso-8601"},
-        "status": {"key": "status", "type": "str"},
-    }
-
-    def __init__(
-        self, *, retention_days: int = 7, status: Optional[Union[str, "_models.PolicyStatus"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword retention_days: The number of days after which a soft-deleted item is permanently
-         deleted.
-        :paramtype retention_days: int
-        :keyword status: The value that indicates whether the policy is enabled or not. Known values
-         are: "enabled" and "disabled".
-        :paramtype status: str or ~azure.mgmt.containerregistry.models.PolicyStatus
-        """
-        super().__init__(**kwargs)
-        self.retention_days = retention_days
-        self.last_updated_time: Optional[datetime.datetime] = None
-        self.status = status
 
 
 class Source(_serialization.Model):
@@ -7160,7 +5855,7 @@ class SourceTrigger(_serialization.Model):
         self,
         *,
         source_repository: "_models.SourceProperties",
-        source_trigger_events: List[Union[str, "_models.SourceTriggerEvent"]],
+        source_trigger_events: list[Union[str, "_models.SourceTriggerEvent"]],
         name: str,
         status: Optional[Union[str, "_models.TriggerStatus"]] = None,
         **kwargs: Any
@@ -7283,7 +5978,7 @@ class SourceTriggerUpdateParameters(_serialization.Model):
         *,
         name: str,
         source_repository: Optional["_models.SourceUpdateParameters"] = None,
-        source_trigger_events: Optional[List[Union[str, "_models.SourceTriggerEvent"]]] = None,
+        source_trigger_events: Optional[list[Union[str, "_models.SourceTriggerEvent"]]] = None,
         status: Optional[Union[str, "_models.TriggerStatus"]] = None,
         **kwargs: Any
     ) -> None:
@@ -7463,32 +6158,6 @@ class StatusDetailProperties(_serialization.Model):
         self.correlation_id: Optional[str] = None
 
 
-class StorageAccountProperties(_serialization.Model):
-    """The properties of a storage account for a container registry. Only applicable to Classic SKU.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The resource ID of the storage account. Required.
-    :vartype id: str
-    """
-
-    _validation = {
-        "id": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-    }
-
-    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
-        """
-        :keyword id: The resource ID of the storage account. Required.
-        :paramtype id: str
-        """
-        super().__init__(**kwargs)
-        self.id = id
-
-
 class SyncProperties(_serialization.Model):
     """The sync properties of the connected registry with its parent.
 
@@ -7625,8 +6294,8 @@ class SystemData(_serialization.Model):
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: str or ~azure.mgmt.containerregistry.models.LastModifiedByType
-    :ivar last_modified_at: The timestamp of resource modification (UTC).
+    :vartype last_modified_by_type: str or ~azure.mgmt.containerregistry.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
@@ -7646,7 +6315,7 @@ class SystemData(_serialization.Model):
         created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "_models.LastModifiedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -7662,9 +6331,8 @@ class SystemData(_serialization.Model):
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
          values are: "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype last_modified_by_type: str or
-         ~azure.mgmt.containerregistry.models.LastModifiedByType
-        :keyword last_modified_at: The timestamp of resource modification (UTC).
+        :paramtype last_modified_by_type: str or ~azure.mgmt.containerregistry.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
         super().__init__(**kwargs)
@@ -7758,7 +6426,7 @@ class Target(_serialization.Model):
         self.version = version
 
 
-class Task(Resource):
+class Task(TrackedResource):
     """The task that has the ARM resource and task properties.
     The task will have all information to schedule a run against it.
 
@@ -7766,19 +6434,21 @@ class Task(Resource):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The location of the resource. This cannot be changed after the resource is
-     created. Required.
-    :vartype location: str
-    :ivar tags: The tags of the resource.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
     :ivar provisioning_state: The provisioning state of the task. Known values are: "Creating",
@@ -7815,8 +6485,8 @@ class Task(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "provisioning_state": {"readonly": True},
         "creation_date": {"readonly": True},
         "timeout": {"maximum": 28800, "minimum": 300},
@@ -7826,9 +6496,9 @@ class Task(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "identity": {"key": "identity", "type": "IdentityProperties"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
@@ -7848,7 +6518,7 @@ class Task(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.IdentityProperties"] = None,
         status: Optional[Union[str, "_models.TaskStatus"]] = None,
         platform: Optional["_models.PlatformProperties"] = None,
@@ -7863,11 +6533,10 @@ class Task(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: The location of the resource. This cannot be changed after the resource is
-         created. Required.
-        :paramtype location: str
-        :keyword tags: The tags of the resource.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword identity: Identity for the resource.
         :paramtype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
         :keyword status: The current status of task. Known values are: "Disabled" and "Enabled".
@@ -7894,7 +6563,7 @@ class Task(Resource):
          system task or not.
         :paramtype is_system_task: bool
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.creation_date: Optional[datetime.datetime] = None
@@ -7925,7 +6594,7 @@ class TaskListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Task"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Task"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The collection value.
@@ -7944,13 +6613,16 @@ class TaskRun(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
@@ -8034,7 +6706,7 @@ class TaskRunListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.TaskRun"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.TaskRun"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The collection value.
@@ -8147,7 +6819,7 @@ class TaskRunUpdateParameters(_serialization.Model):
         *,
         identity: Optional["_models.IdentityProperties"] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         run_request: Optional["_models.RunRequest"] = None,
         force_update_tag: Optional[str] = None,
         **kwargs: Any
@@ -8220,7 +6892,7 @@ class TaskUpdateParameters(_serialization.Model):
         self,
         *,
         identity: Optional["_models.IdentityProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         status: Optional[Union[str, "_models.TaskStatus"]] = None,
         platform: Optional["_models.PlatformUpdateParameters"] = None,
         agent_configuration: Optional["_models.AgentProperties"] = None,
@@ -8448,13 +7120,16 @@ class Token(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar creation_date: The creation date of scope map.
     :vartype creation_date: ~datetime.datetime
@@ -8583,8 +7258,8 @@ class TokenCredentialsProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        certificates: Optional[List["_models.TokenCertificate"]] = None,
-        passwords: Optional[List["_models.TokenPassword"]] = None,
+        certificates: Optional[list["_models.TokenCertificate"]] = None,
+        passwords: Optional[list["_models.TokenPassword"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8614,7 +7289,7 @@ class TokenListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Token"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Token"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of tokens. Since this list may be incomplete, the nextLink field
@@ -8742,8 +7417,8 @@ class TriggerProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        timer_triggers: Optional[List["_models.TimerTrigger"]] = None,
-        source_triggers: Optional[List["_models.SourceTrigger"]] = None,
+        timer_triggers: Optional[list["_models.TimerTrigger"]] = None,
+        source_triggers: Optional[list["_models.SourceTrigger"]] = None,
         base_image_trigger: Optional["_models.BaseImageTrigger"] = None,
         **kwargs: Any
     ) -> None:
@@ -8784,8 +7459,8 @@ class TriggerUpdateParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        timer_triggers: Optional[List["_models.TimerTriggerUpdateParameters"]] = None,
-        source_triggers: Optional[List["_models.SourceTriggerUpdateParameters"]] = None,
+        timer_triggers: Optional[list["_models.TimerTriggerUpdateParameters"]] = None,
+        source_triggers: Optional[list["_models.SourceTriggerUpdateParameters"]] = None,
         base_image_trigger: Optional["_models.BaseImageTriggerUpdateParameters"] = None,
         **kwargs: Any
     ) -> None:
@@ -8868,26 +7543,28 @@ class UserIdentityProperties(_serialization.Model):
         self.client_id: Optional[str] = None
 
 
-class Webhook(Resource):
+class Webhook(TrackedResource):
     """An object that represents a webhook for a container registry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: The resource ID.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The location of the resource. This cannot be changed after the resource is
-     created. Required.
-    :vartype location: str
-    :ivar tags: The tags of the resource.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar status: The status of the webhook at the time the operation was called. Known values are:
      "enabled" and "disabled".
     :vartype status: str or ~azure.mgmt.containerregistry.models.WebhookStatus
@@ -8907,8 +7584,8 @@ class Webhook(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -8916,9 +7593,9 @@ class Webhook(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "status": {"key": "properties.status", "type": "str"},
         "scope": {"key": "properties.scope", "type": "str"},
         "actions": {"key": "properties.actions", "type": "[str]"},
@@ -8929,18 +7606,17 @@ class Webhook(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         status: Optional[Union[str, "_models.WebhookStatus"]] = None,
         scope: Optional[str] = None,
-        actions: Optional[List[Union[str, "_models.WebhookAction"]]] = None,
+        actions: Optional[list[Union[str, "_models.WebhookAction"]]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: The location of the resource. This cannot be changed after the resource is
-         created. Required.
-        :paramtype location: str
-        :keyword tags: The tags of the resource.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword status: The status of the webhook at the time the operation was called. Known values
          are: "enabled" and "disabled".
         :paramtype status: str or ~azure.mgmt.containerregistry.models.WebhookStatus
@@ -8951,7 +7627,7 @@ class Webhook(Resource):
         :keyword actions: The list of actions that trigger the webhook to post notifications.
         :paramtype actions: list[str or ~azure.mgmt.containerregistry.models.WebhookAction]
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.status = status
         self.scope = scope
         self.actions = actions
@@ -9001,12 +7677,12 @@ class WebhookCreateParameters(_serialization.Model):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         service_uri: Optional[str] = None,
-        custom_headers: Optional[Dict[str, str]] = None,
+        custom_headers: Optional[dict[str, str]] = None,
         status: Optional[Union[str, "_models.WebhookStatus"]] = None,
         scope: Optional[str] = None,
-        actions: Optional[List[Union[str, "_models.WebhookAction"]]] = None,
+        actions: Optional[list[Union[str, "_models.WebhookAction"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9055,7 +7731,7 @@ class WebhookListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Webhook"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Webhook"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of webhooks. Since this list may be incomplete, the nextLink field
@@ -9101,12 +7777,12 @@ class WebhookUpdateParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         service_uri: Optional[str] = None,
-        custom_headers: Optional[Dict[str, str]] = None,
+        custom_headers: Optional[dict[str, str]] = None,
         status: Optional[Union[str, "_models.WebhookStatus"]] = None,
         scope: Optional[str] = None,
-        actions: Optional[List[Union[str, "_models.WebhookAction"]]] = None,
+        actions: Optional[list[Union[str, "_models.WebhookAction"]]] = None,
         **kwargs: Any
     ) -> None:
         """

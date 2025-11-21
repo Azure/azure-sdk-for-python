@@ -23,8 +23,23 @@ def await_prepared_test(test_fn):
     @functools.wraps(test_fn)
     def run(test_class_instance, *args, **kwargs):
         trim_kwargs_from_test_function(test_fn, kwargs)
-        loop = asyncio.get_event_loop()
-        return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
+
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            owns_loop = True
+        else:
+            owns_loop = False
+
+        try:
+            return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
+        finally:
+            if owns_loop:
+                loop.run_until_complete(loop.shutdown_asyncgens())
+                loop.close()
+                asyncio.set_event_loop(None)
 
     return run
 
@@ -58,7 +73,9 @@ class TestSearchIndexClient:
 
     def test_get_search_client_inherit_api_version(self):
         credential = AzureKeyCredential(key="old_api_key")
-        client = SearchIndexClient("endpoint", credential, api_version=ApiVersion.V2020_06_30)
+        client = SearchIndexClient(
+            "endpoint", credential, api_version=ApiVersion.V2020_06_30
+        )
         search_client = client.get_search_client("index")
         assert isinstance(search_client, SearchClient)
         assert search_client._api_version == ApiVersion.V2020_06_30

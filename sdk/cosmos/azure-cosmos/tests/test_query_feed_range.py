@@ -52,7 +52,7 @@ def get_container(container_id: str):
     return db.get_container_client(container_id)
 
 @pytest.mark.cosmosQuery
-class TestQueryFeedRange():
+class TestQueryFeedRange:
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_feed_range_for_all_partitions(self, container_id):
         container = get_container(container_id)
@@ -122,6 +122,57 @@ class TestQueryFeedRange():
         ))
         add_all_pk_values_to_set(items, actual_pk_values)
         assert expected_pk_values.issubset(actual_pk_values)
+
+    def test_query_with_static_continuation(self):
+        container = get_container(SINGLE_PARTITION_CONTAINER_ID)
+        query = 'SELECT * from c'
+
+        # verify continuation token does not have any impact
+        for i in range(10):
+            query_by_page = container.query_items(
+                query=query,
+                feed_range={
+                    'Range': {'isMaxInclusive': False, 'isMinInclusive': True,
+                              'max': '1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE',
+                              'min': '0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'}},
+                max_item_count=1,
+                continuation='-RID:~a0NPAOszCpOChB4AAAAAAA==#RT:1#TRC:2#ISV:2#IEO:65567#QCF:8').by_page()
+            for page in query_by_page:
+                items = list(page)
+                assert len(items) > 0
+
+    def test_query_with_continuation(self):
+        container = get_container(SINGLE_PARTITION_CONTAINER_ID)
+        query = 'SELECT * from c'
+
+        # go through all feed ranges using pagination
+        feed_ranges = container.read_feed_ranges()
+        for feed in feed_ranges:
+            query_kwargs = {
+                "query": query,
+                "feed_range": feed,
+                "priority": "Low",
+                "max_item_count": 1
+            }
+            query_results = container.query_items(**query_kwargs)
+            pager = query_results.by_page()
+            first_page = next(pager)
+            items = list(first_page)
+            assert len(items) > 0
+            continuation_token = pager.continuation_token
+            # use that continuation token to restart the query, and drain it from there
+            query_kwargs = {
+                "query": query,
+                "feed_range": feed,
+                "continuation": continuation_token,
+                "priority": "Low",
+                "max_item_count": 2
+            }
+            query_results = container.query_items(**query_kwargs)
+            pager = query_results.by_page(continuation_token=continuation_token)
+            for new_page in pager:
+                items = list(new_page)
+                assert len(items) > 0
 
 if __name__ == "__main__":
     unittest.main()
