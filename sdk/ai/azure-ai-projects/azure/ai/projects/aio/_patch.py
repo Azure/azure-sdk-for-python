@@ -9,18 +9,15 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
-from typing import List, Any, TYPE_CHECKING
+from typing import List, Any
+from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
-from openai import AsyncOpenAI
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .._patch import _patch_user_agent
 from .operations import TelemetryOperations
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
 
