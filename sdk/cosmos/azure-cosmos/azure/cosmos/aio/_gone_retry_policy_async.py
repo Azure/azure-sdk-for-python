@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2021 Microsoft Corporation
+# Copyright (c) 2025 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,18 +19,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for connection reset retry policy implementation in the Azure
+"""Internal class for async connection reset retry policy implementation in the Azure
 Cosmos database service.
 """
 
 from typing import Optional
-
 from azure.cosmos import http_constants
-from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
-# pylint: disable=protected-access
 
 
-class PartitionKeyRangeGoneRetryPolicy(object):
+class PartitionKeyRangeGoneRetryPolicyAsync(object):
+    """Async retry policy for handling partition key range gone errors.
+
+    This policy handles Gone (410) errors caused by partition splits or merges
+    by refreshing the routing map cache asynchronously before allowing retry.
+    """
 
     def __init__(self, client, *args, **kwargs):
         self.retry_after_in_milliseconds = 1000
@@ -40,15 +42,15 @@ class PartitionKeyRangeGoneRetryPolicy(object):
         self.exception = None
         self.kwargs = kwargs
 
-    def ShouldRetry(self, exception):
+    async def ShouldRetry(self, exception):
         """Returns true if the request should retry based on the passed-in exception.
 
         :param (exceptions.CosmosHttpResponseError instance) exception:
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
-
         """
-        self.exception = exception  # needed for pylint
+        self.exception = exception
+
         # Extract collection rid and link from request
         collection_link: Optional[str] = None
 
@@ -60,9 +62,7 @@ class PartitionKeyRangeGoneRetryPolicy(object):
                 if cached_properties:
                     collection_link = cached_properties.get("container_link")
 
-
         if self.refresh_partition_key_range_cache:
-
             previous_routing_map = None
             if collection_link and hasattr(self.client, '_routing_map_provider'):
                 if hasattr(self.client._routing_map_provider, '_collection_routing_map_by_item'):
@@ -71,8 +71,8 @@ class PartitionKeyRangeGoneRetryPolicy(object):
 
             # Only clear the cache if it's not already empty.
             if previous_routing_map is not None:
-                # Refresh routing_map_provider to refresh partition key range cache
-                self.client.refresh_routing_map_provider(collection_link, previous_routing_map)
+                # Asynchronous refresh for async client
+                await self.client.refresh_routing_map_provider(collection_link, previous_routing_map)
 
             self.refresh_partition_key_range_cache = False
 

@@ -90,7 +90,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         :raises StopIteration: If no more result is left.
         """
         if self._orderByPQ.size() > 0:
-
             targetRangeExContext = await self._orderByPQ.pop_async(self._document_producer_comparator)
             res = await targetRangeExContext.__anext__()
 
@@ -98,7 +97,17 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 # TODO: we can also use more_itertools.peekable to be more python friendly
                 await targetRangeExContext.peek()
                 await self._orderByPQ.push_async(targetRangeExContext, self._document_producer_comparator)
-
+            except exceptions.CosmosHttpResponseError as e:
+                # Handle partition split during peek(). The _configure_partition_ranges method
+                # handles Gone errors during initial setup when calling peek() on document producers.
+                # However, partition splits can also occur while iterating through results. When
+                # peek() is called to check if there are more results in a partition range and that
+                # range has been split, it raises a Gone (410) error. We repair the document
+                # producers with refreshed partition ranges and retry the fetch.
+                if exceptions._partition_range_is_gone(e):
+                    await self._repair_document_producer()
+                    return await self.__anext__()  # Retry fetching the next document
+                raise
             except StopAsyncIteration:
                 pass
 
@@ -125,6 +134,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             targetPartitionQueryExecutionContextList.append(
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
             )
+
+        self._orderByPQ = self.PriorityQueue()
 
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
             try:

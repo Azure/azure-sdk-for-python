@@ -37,7 +37,8 @@ class CollectionRoutingMap(object):
     MaximumExclusiveEffectivePartitionKey = "FF"
 
     def __init__(
-        self, range_by_id, range_by_info, ordered_partition_key_ranges, ordered_partition_info, collection_unique_id
+        self, range_by_id, range_by_info, ordered_partition_key_ranges, ordered_partition_info, collection_unique_id,
+            change_feed_next_if_none_match=None
     ):
         self._rangeById = range_by_id
         self._rangeByInfo = range_by_info
@@ -49,9 +50,16 @@ class CollectionRoutingMap(object):
         ]
         self._orderedPartitionInfo = ordered_partition_info
         self._collectionUniqueId = collection_unique_id
+        # Add ETag support for change feed
+        self._changeFeedNextIfNoneMatch = change_feed_next_if_none_match
+
+    @property
+    def change_feed_next_if_none_match(self):
+        """Gets the ETag for change feed continuation."""
+        return self._changeFeedNextIfNoneMatch
 
     @classmethod
-    def CompleteRoutingMap(cls, partition_key_range_info_tuple_list, collection_unique_id):
+    def CompleteRoutingMap(cls, partition_key_range_info_tuple_list, collection_unique_id, change_feed_next_if_none_match=None):
         rangeById = {}
         rangeByInfo = {}
 
@@ -67,7 +75,7 @@ class CollectionRoutingMap(object):
 
         if not CollectionRoutingMap.is_complete_set_of_range(partitionKeyOrderedRange):
             return None
-        return cls(rangeById, rangeByInfo, partitionKeyOrderedRange, orderedPartitionInfo, collection_unique_id)
+        return cls(rangeById, rangeByInfo, partitionKeyOrderedRange, orderedPartitionInfo, collection_unique_id, change_feed_next_if_none_match)
 
     def get_ordered_partition_key_ranges(self):
         """Gets the ordered partition key ranges
@@ -176,3 +184,59 @@ class CollectionRoutingMap(object):
                     break
 
         return isComplete
+
+    def try_combine(self, new_partition_key_range_info_tuples, new_change_feed_etag):
+        """Combines existing routing map with incremental changes from change feed.
+
+        :param list new_partition_key_range_info_tuples: List of new/updated ranges from change feed
+        :param str new_change_feed_etag: New ETag from change feed response
+        :return: New CollectionRoutingMap with combined ranges or None if invalid
+        :rtype: CollectionRoutingMap or None
+        """
+        # Create copies of existing data structures to avoid modifying the original map
+        combined_range_by_id = self._rangeById.copy()
+        combined_range_by_info = self._rangeByInfo.copy()
+
+        gone_range_ids = set()
+
+        # Process new ranges from change feed
+        for range_tuple in new_partition_key_range_info_tuples:
+            range_data, range_info = range_tuple
+            range_id = range_data[PartitionKeyRange.Id]
+
+            # Track parent ranges that should be removed
+            if PartitionKeyRange.Parents in range_data and range_data[PartitionKeyRange.Parents]:
+                gone_range_ids.update(range_data[PartitionKeyRange.Parents])
+
+            # Add/update the range
+            combined_range_by_id[range_id] = range_tuple
+            combined_range_by_info[range_info] = range_data
+
+        # Remove gone (parent) ranges that were split
+        for gone_id in gone_range_ids:
+            if gone_id in combined_range_by_id:
+                gone_range_tuple = combined_range_by_id.pop(gone_id)
+                gone_range_info = gone_range_tuple[1]
+                # Ensure the range_info entry corresponds to the gone_id before deleting
+                if gone_range_info in combined_range_by_info and combined_range_by_info[gone_range_info].get(
+                        PartitionKeyRange.Id) == gone_id:
+                    del combined_range_by_info[gone_range_info]
+
+        # Create sorted list of all ranges
+        sorted_ranges = sorted(combined_range_by_id.values(), key=lambda r: r[0][PartitionKeyRange.MinInclusive])
+
+        partition_key_ordered_range = [r[0] for r in sorted_ranges]
+        ordered_partition_info = [r[1] for r in sorted_ranges]
+
+        # Validate completeness of the new set of ranges
+        if not self.is_complete_set_of_range(partition_key_ordered_range):
+            return None
+
+        return CollectionRoutingMap(
+            combined_range_by_id,
+            combined_range_by_info,
+            partition_key_ordered_range,
+            ordered_partition_info,
+            self._collectionUniqueId,
+            new_change_feed_etag
+        )
