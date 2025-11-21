@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fix `configure_azure_monitor` options being ignored
+  ([#44131](https://github.com/Azure/azure-sdk-for-python/pull/44131))
+
 ### Other Changes
 
 ## 1.8.2 (2025-11-14)
