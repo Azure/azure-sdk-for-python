@@ -22,7 +22,39 @@ from devtools_testutils import (
 )
 
 from test_base import servicePreparer
-from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, MessageCreationMode, CONTENT_TRACING_ENV_VARIABLE
+from test_ai_instrumentor_base import (
+    TestAiAgentsInstrumentorBase,
+    MessageCreationMode,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
+
+from azure.ai.projects.telemetry._utils import (
+    AZ_NAMESPACE,
+    AZ_NAMESPACE_VALUE,
+    GEN_AI_AGENT_ID,
+    GEN_AI_AGENT_NAME,
+    GEN_AI_AGENT_VERSION,
+    GEN_AI_CONVERSATION_ID,
+    GEN_AI_EVENT_CONTENT,
+    GEN_AI_OPERATION_NAME,
+    GEN_AI_PROVIDER_NAME,
+    GEN_AI_REQUEST_MODEL,
+    GEN_AI_RESPONSE_FINISH_REASONS,
+    GEN_AI_RESPONSE_ID,
+    GEN_AI_RESPONSE_MODEL,
+    GEN_AI_SYSTEM,
+    GEN_AI_USAGE_INPUT_TOKENS,
+    GEN_AI_USAGE_OUTPUT_TOKENS,
+    SERVER_ADDRESS,
+    GEN_AI_AGENT_TYPE,
+    GEN_AI_SYSTEM_INSTRUCTION_EVENT,
+    GEN_AI_AGENT_WORKFLOW_EVENT,
+    GEN_AI_CONVERSATION_ITEM_TYPE,
+    AZURE_AI_AGENTS_SYSTEM,
+    AZURE_AI_AGENTS_PROVIDER,
+    AGENT_TYPE_PROMPT,
+    AGENT_TYPE_WORKFLOW,
+)
 
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
@@ -215,30 +247,29 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.provider.name", "azure.ai.agents"),
-            ("gen_ai.operation.name", "create_agent"),
-            ("server.address", ""),
-            ("gen_ai.request.model", model),
+            (GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS_PROVIDER),
+            (GEN_AI_OPERATION_NAME, "create_agent"),
+            (SERVER_ADDRESS, ""),
+            (GEN_AI_REQUEST_MODEL, model),
             # ("gen_ai.request.temperature", "0.7"),
             # ("gen_ai.request.top_p", "0.9"),
             # ("gen_ai.request.response_format", "text"),
             # ("gen_ai.request.reasoning.effort", "medium"),
             # ("gen_ai.request.reasoning.summary", "auto"),
-            ("gen_ai.agent.name", "myagent"),
-            ("gen_ai.agent.id", "myagent:" + str(version)),
-            ("gen_ai.agent.version", str(version)),
-            ("gen_ai.agent.type", "prompt"),
+            (GEN_AI_AGENT_NAME, "myagent"),
+            (GEN_AI_AGENT_ID, "myagent:" + str(version)),
+            (GEN_AI_AGENT_VERSION, str(version)),
+            (GEN_AI_AGENT_TYPE, AGENT_TYPE_PROMPT),
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
         expected_events = [
             {
-                "name": "gen_ai.system.instruction",
+                "name": GEN_AI_SYSTEM_INSTRUCTION_EVENT,
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "You are a helpful AI assistant. Be polite and provide accurate information."}]}',
+                    GEN_AI_PROVIDER_NAME: AZURE_AI_AGENTS_PROVIDER,
+                    GEN_AI_EVENT_CONTENT: '[{"type": "text", "content": "You are a helpful AI assistant. Be polite and provide accurate information."}]',
                 },
             }
         ]
@@ -308,30 +339,29 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.provider.name", "azure.ai.agents"),
-            ("gen_ai.operation.name", "create_agent"),
-            ("server.address", ""),
-            ("gen_ai.request.model", model),
+            (GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS_PROVIDER),
+            (GEN_AI_OPERATION_NAME, "create_agent"),
+            (SERVER_ADDRESS, ""),
+            (GEN_AI_REQUEST_MODEL, model),
             # ("gen_ai.request.temperature", "0.7"),
             # ("gen_ai.request.top_p", "0.9"),
             # ("gen_ai.request.response_format", "text"),
             # ("gen_ai.request.reasoning.effort", "medium"),
             # ("gen_ai.request.reasoning.summary", "auto"),
-            ("gen_ai.agent.name", "myagent"),
-            ("gen_ai.agent.id", "myagent:" + str(version)),
-            ("gen_ai.agent.version", str(version)),
-            ("gen_ai.agent.type", "prompt"),
+            (GEN_AI_AGENT_NAME, "myagent"),
+            (GEN_AI_AGENT_ID, "myagent:" + str(version)),
+            (GEN_AI_AGENT_VERSION, str(version)),
+            (GEN_AI_AGENT_TYPE, AGENT_TYPE_PROMPT),
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
         expected_events = [
             {
-                "name": "gen_ai.system.instruction",
+                "name": GEN_AI_SYSTEM_INSTRUCTION_EVENT,
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.event.content": "{}",
+                    GEN_AI_PROVIDER_NAME: AZURE_AI_AGENTS_PROVIDER,
+                    GEN_AI_EVENT_CONTENT: "[]",
                 },
             }
         ]
@@ -381,14 +411,13 @@ trigger:
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.provider.name", "azure.ai.agents"),
-            ("gen_ai.operation.name", "create_agent"),
-            ("server.address", ""),
-            ("gen_ai.agent.name", "test-workflow-agent"),
-            ("gen_ai.agent.id", "test-workflow-agent:" + str(version)),
-            ("gen_ai.agent.version", str(version)),
-            ("gen_ai.agent.type", "workflow"),
+            (GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS_PROVIDER),
+            (GEN_AI_OPERATION_NAME, "create_agent"),
+            (SERVER_ADDRESS, ""),
+            (GEN_AI_AGENT_NAME, "test-workflow-agent"),
+            (GEN_AI_AGENT_ID, "test-workflow-agent:" + str(version)),
+            (GEN_AI_AGENT_VERSION, str(version)),
+            (GEN_AI_AGENT_TYPE, AGENT_TYPE_WORKFLOW),
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
@@ -397,16 +426,17 @@ trigger:
         events = span.events
         assert len(events) == 1
         workflow_event = events[0]
-        assert workflow_event.name == "gen_ai.agent.workflow"
+        assert workflow_event.name == GEN_AI_AGENT_WORKFLOW_EVENT
 
         import json
 
-        event_content = json.loads(workflow_event.attributes["gen_ai.event.content"])
-        assert "content" in event_content
-        assert len(event_content["content"]) == 1
-        assert event_content["content"][0]["type"] == "workflow"
-        assert "workflow" in event_content["content"][0]
-        assert "kind: workflow" in event_content["content"][0]["workflow"]
+        event_content = json.loads(workflow_event.attributes[GEN_AI_EVENT_CONTENT])
+        # New optimized format: direct array with "content" field for workflow YAML
+        assert isinstance(event_content, list)
+        assert len(event_content) == 1
+        assert event_content[0]["type"] == "workflow"
+        assert "content" in event_content[0]
+        assert "kind: workflow" in event_content[0]["content"]
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
@@ -451,14 +481,13 @@ trigger:
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.provider.name", "azure.ai.agents"),
-            ("gen_ai.operation.name", "create_agent"),
-            ("server.address", ""),
-            ("gen_ai.agent.name", "test-workflow-agent"),
-            ("gen_ai.agent.id", "test-workflow-agent:" + str(version)),
-            ("gen_ai.agent.version", str(version)),
-            ("gen_ai.agent.type", "workflow"),
+            (GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS_PROVIDER),
+            (GEN_AI_OPERATION_NAME, "create_agent"),
+            (SERVER_ADDRESS, ""),
+            (GEN_AI_AGENT_NAME, "test-workflow-agent"),
+            (GEN_AI_AGENT_ID, "test-workflow-agent:" + str(version)),
+            (GEN_AI_AGENT_VERSION, str(version)),
+            (GEN_AI_AGENT_TYPE, AGENT_TYPE_WORKFLOW),
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True

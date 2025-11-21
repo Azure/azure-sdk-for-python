@@ -17,7 +17,10 @@ from openai import OpenAI
 from devtools_testutils import recorded_by_proxy
 
 from test_base import servicePreparer
-from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, CONTENT_TRACING_ENV_VARIABLE
+from test_ai_instrumentor_base import (
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
@@ -71,7 +74,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -86,7 +92,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
         # Make a responses API call
         response = client.responses.create(
-            model=deployment_name, conversation=conversation.id, input="Write a short haiku about testing", stream=False
+            model=deployment_name,
+            conversation=conversation.id,
+            input="Write a short haiku about testing",
+            stream=False,
         )
 
         # Verify the response exists
@@ -113,7 +122,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -164,7 +176,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -199,7 +214,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -214,7 +232,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
         # Make multiple responses API calls
         response1 = client.responses.create(
-            model=deployment_name, conversation=conversation.id, input="First question: What is AI?", stream=False
+            model=deployment_name,
+            conversation=conversation.id,
+            input="First question: What is AI?",
+            stream=False,
         )
 
         response2 = client.responses.create(
@@ -246,7 +267,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "False",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -259,7 +283,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # Create a conversation and make a responses call
         conversation = client.conversations.create()
         response = client.responses.create(
-            model=deployment_name, conversation=conversation.id, input="Test question", stream=False
+            model=deployment_name,
+            conversation=conversation.id,
+            input="Test question",
+            stream=False,
         )
 
         # Verify the response exists
