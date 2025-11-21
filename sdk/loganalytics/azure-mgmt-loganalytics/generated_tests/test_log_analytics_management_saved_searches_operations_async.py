@@ -21,12 +21,12 @@ class TestLogAnalyticsManagementSavedSearchesOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_saved_searches_delete(self, resource_group):
         response = await self.client.saved_searches.delete(
             resource_group_name=resource_group.name,
             workspace_name="str",
             saved_search_id="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestLogAnalyticsManagementSavedSearchesOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_saved_searches_create_or_update(self, resource_group):
         response = await self.client.saved_searches.create_or_update(
             resource_group_name=resource_group.name,
             workspace_name="str",
@@ -52,7 +52,7 @@ class TestLogAnalyticsManagementSavedSearchesOperationsAsync(AzureMgmtRecordedTe
                 "type": "str",
                 "version": 0,
             },
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -60,12 +60,12 @@ class TestLogAnalyticsManagementSavedSearchesOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_saved_searches_get(self, resource_group):
         response = await self.client.saved_searches.get(
             resource_group_name=resource_group.name,
             workspace_name="str",
             saved_search_id="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -73,11 +73,11 @@ class TestLogAnalyticsManagementSavedSearchesOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_workspace(self, resource_group):
+    async def test_saved_searches_list_by_workspace(self, resource_group):
         response = await self.client.saved_searches.list_by_workspace(
             resource_group_name=resource_group.name,
             workspace_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

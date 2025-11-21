@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import LogAnalyticsManagementClientConfiguration
 from .operations import (
     AvailableServiceTiersOperations,
@@ -37,6 +39,7 @@ from .operations import (
     SchemaOperations,
     SharedKeysOperations,
     StorageInsightConfigsOperations,
+    SummaryLogsOperations,
     TablesOperations,
     UsagesOperations,
     WorkspacePurgeOperations,
@@ -44,21 +47,24 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LogAnalyticsManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class LogAnalyticsManagementClient:  # pylint: disable=too-many-instance-attributes
     """Operational Insights Client.
 
-    :ivar query_packs: QueryPacksOperations operations
-    :vartype query_packs: azure.mgmt.loganalytics.aio.operations.QueryPacksOperations
-    :ivar queries: QueriesOperations operations
-    :vartype queries: azure.mgmt.loganalytics.aio.operations.QueriesOperations
+    :ivar available_service_tiers: AvailableServiceTiersOperations operations
+    :vartype available_service_tiers:
+     azure.mgmt.loganalytics.aio.operations.AvailableServiceTiersOperations
+    :ivar clusters: ClustersOperations operations
+    :vartype clusters: azure.mgmt.loganalytics.aio.operations.ClustersOperations
     :ivar data_exports: DataExportsOperations operations
     :vartype data_exports: azure.mgmt.loganalytics.aio.operations.DataExportsOperations
     :ivar data_sources: DataSourcesOperations operations
     :vartype data_sources: azure.mgmt.loganalytics.aio.operations.DataSourcesOperations
+    :ivar gateways: GatewaysOperations operations
+    :vartype gateways: azure.mgmt.loganalytics.aio.operations.GatewaysOperations
     :ivar intelligence_packs: IntelligencePacksOperations operations
     :vartype intelligence_packs: azure.mgmt.loganalytics.aio.operations.IntelligencePacksOperations
     :ivar linked_services: LinkedServicesOperations operations
@@ -68,42 +74,47 @@ class LogAnalyticsManagementClient:  # pylint: disable=client-accepts-api-versio
      azure.mgmt.loganalytics.aio.operations.LinkedStorageAccountsOperations
     :ivar management_groups: ManagementGroupsOperations operations
     :vartype management_groups: azure.mgmt.loganalytics.aio.operations.ManagementGroupsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.loganalytics.aio.operations.Operations
     :ivar operation_statuses: OperationStatusesOperations operations
     :vartype operation_statuses: azure.mgmt.loganalytics.aio.operations.OperationStatusesOperations
+    :ivar queries: QueriesOperations operations
+    :vartype queries: azure.mgmt.loganalytics.aio.operations.QueriesOperations
+    :ivar query_packs: QueryPacksOperations operations
+    :vartype query_packs: azure.mgmt.loganalytics.aio.operations.QueryPacksOperations
+    :ivar saved_searches: SavedSearchesOperations operations
+    :vartype saved_searches: azure.mgmt.loganalytics.aio.operations.SavedSearchesOperations
+    :ivar schema: SchemaOperations operations
+    :vartype schema: azure.mgmt.loganalytics.aio.operations.SchemaOperations
     :ivar shared_keys: SharedKeysOperations operations
     :vartype shared_keys: azure.mgmt.loganalytics.aio.operations.SharedKeysOperations
-    :ivar usages: UsagesOperations operations
-    :vartype usages: azure.mgmt.loganalytics.aio.operations.UsagesOperations
     :ivar storage_insight_configs: StorageInsightConfigsOperations operations
     :vartype storage_insight_configs:
      azure.mgmt.loganalytics.aio.operations.StorageInsightConfigsOperations
-    :ivar saved_searches: SavedSearchesOperations operations
-    :vartype saved_searches: azure.mgmt.loganalytics.aio.operations.SavedSearchesOperations
-    :ivar available_service_tiers: AvailableServiceTiersOperations operations
-    :vartype available_service_tiers:
-     azure.mgmt.loganalytics.aio.operations.AvailableServiceTiersOperations
-    :ivar gateways: GatewaysOperations operations
-    :vartype gateways: azure.mgmt.loganalytics.aio.operations.GatewaysOperations
-    :ivar schema: SchemaOperations operations
-    :vartype schema: azure.mgmt.loganalytics.aio.operations.SchemaOperations
+    :ivar tables: TablesOperations operations
+    :vartype tables: azure.mgmt.loganalytics.aio.operations.TablesOperations
+    :ivar usages: UsagesOperations operations
+    :vartype usages: azure.mgmt.loganalytics.aio.operations.UsagesOperations
     :ivar workspace_purge: WorkspacePurgeOperations operations
     :vartype workspace_purge: azure.mgmt.loganalytics.aio.operations.WorkspacePurgeOperations
-    :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure.mgmt.loganalytics.aio.operations.ClustersOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.loganalytics.aio.operations.Operations
     :ivar workspaces: WorkspacesOperations operations
     :vartype workspaces: azure.mgmt.loganalytics.aio.operations.WorkspacesOperations
     :ivar deleted_workspaces: DeletedWorkspacesOperations operations
     :vartype deleted_workspaces: azure.mgmt.loganalytics.aio.operations.DeletedWorkspacesOperations
-    :ivar tables: TablesOperations operations
-    :vartype tables: azure.mgmt.loganalytics.aio.operations.TablesOperations
+    :ivar summary_logs: SummaryLogsOperations operations
+    :vartype summary_logs: azure.mgmt.loganalytics.aio.operations.SummaryLogsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-07-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -112,12 +123,24 @@ class LogAnalyticsManagementClient:  # pylint: disable=client-accepts-api-versio
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = LogAnalyticsManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -136,16 +159,21 @@ class LogAnalyticsManagementClient:  # pylint: disable=client-accepts-api-versio
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.query_packs = QueryPacksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.queries = QueriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.available_service_tiers = AvailableServiceTiersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_exports = DataExportsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_sources = DataSourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.gateways = GatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
         self.intelligence_packs = IntelligencePacksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -156,28 +184,26 @@ class LogAnalyticsManagementClient:  # pylint: disable=client-accepts-api-versio
         self.management_groups = ManagementGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.operation_statuses = OperationStatusesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.queries = QueriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.query_packs = QueryPacksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.saved_searches = SavedSearchesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.schema = SchemaOperations(self._client, self._config, self._serialize, self._deserialize)
         self.shared_keys = SharedKeysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.storage_insight_configs = StorageInsightConfigsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.saved_searches = SavedSearchesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.available_service_tiers = AvailableServiceTiersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.gateways = GatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.schema = SchemaOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.tables = TablesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_purge = WorkspacePurgeOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deleted_workspaces = DeletedWorkspacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.tables = TablesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.summary_logs = SummaryLogsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
