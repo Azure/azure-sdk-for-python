@@ -3,7 +3,7 @@
 ../../identity/azure-identity
 aiohttp
 python-dotenv
-openai==1.109.1
+openai
 opentelemetry-sdk
 azure-core-tracing-opentelemetry
 azure-monitor-opentelemetry
