@@ -1517,6 +1517,11 @@ class ApplicationGateway(Resource):
      resource.
     :vartype load_distribution_policies:
      list[~azure.mgmt.network.models.ApplicationGatewayLoadDistributionPolicy]
+    :ivar entra_jwt_validation_configs: Entra JWT validation configurations for the application
+     gateway resource. For default limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
+    :vartype entra_jwt_validation_configs:
+     list[~azure.mgmt.network.models.ApplicationGatewayEntraJWTValidationConfig]
     :ivar global_configuration: Global Configuration.
     :vartype global_configuration: ~azure.mgmt.network.models.ApplicationGatewayGlobalConfiguration
     :ivar default_predefined_ssl_policy: The default predefined SSL Policy applied on the
@@ -1629,6 +1634,10 @@ class ApplicationGateway(Resource):
             "key": "properties.loadDistributionPolicies",
             "type": "[ApplicationGatewayLoadDistributionPolicy]",
         },
+        "entra_jwt_validation_configs": {
+            "key": "properties.entraJWTValidationConfigs",
+            "type": "[ApplicationGatewayEntraJWTValidationConfig]",
+        },
         "global_configuration": {
             "key": "properties.globalConfiguration",
             "type": "ApplicationGatewayGlobalConfiguration",
@@ -1676,6 +1685,7 @@ class ApplicationGateway(Resource):
         custom_error_configurations: Optional[list["_models.ApplicationGatewayCustomError"]] = None,
         force_firewall_policy_association: Optional[bool] = None,
         load_distribution_policies: Optional[list["_models.ApplicationGatewayLoadDistributionPolicy"]] = None,
+        entra_jwt_validation_configs: Optional[list["_models.ApplicationGatewayEntraJWTValidationConfig"]] = None,
         global_configuration: Optional["_models.ApplicationGatewayGlobalConfiguration"] = None,
         **kwargs: Any
     ) -> None:
@@ -1798,6 +1808,11 @@ class ApplicationGateway(Resource):
          resource.
         :paramtype load_distribution_policies:
          list[~azure.mgmt.network.models.ApplicationGatewayLoadDistributionPolicy]
+        :keyword entra_jwt_validation_configs: Entra JWT validation configurations for the application
+         gateway resource. For default limits, see `Application Gateway limits
+         <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
+        :paramtype entra_jwt_validation_configs:
+         list[~azure.mgmt.network.models.ApplicationGatewayEntraJWTValidationConfig]
         :keyword global_configuration: Global Configuration.
         :paramtype global_configuration:
          ~azure.mgmt.network.models.ApplicationGatewayGlobalConfiguration
@@ -1840,6 +1855,7 @@ class ApplicationGateway(Resource):
         self.custom_error_configurations = custom_error_configurations
         self.force_firewall_policy_association = force_firewall_policy_association
         self.load_distribution_policies = load_distribution_policies
+        self.entra_jwt_validation_configs = entra_jwt_validation_configs
         self.global_configuration = global_configuration
         self.default_predefined_ssl_policy: Optional[Union[str, "_models.ApplicationGatewaySslPolicyName"]] = None
 
@@ -2609,6 +2625,9 @@ class ApplicationGatewayBackendSettings(SubResource):
     :ivar pick_host_name_from_backend_address: Whether to pick server name indication from the host
      name of the backend server for Tls protocol. Default value is false.
     :vartype pick_host_name_from_backend_address: bool
+    :ivar enable_l4_client_ip_preservation: Whether to send Proxy Protocol header to backend
+     servers over TCP or TLS protocols. Default value is false.
+    :vartype enable_l4_client_ip_preservation: bool
     :ivar provisioning_state: The provisioning state of the backend HTTP settings resource. Known
      values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -2632,6 +2651,7 @@ class ApplicationGatewayBackendSettings(SubResource):
         "trusted_root_certificates": {"key": "properties.trustedRootCertificates", "type": "[SubResource]"},
         "host_name": {"key": "properties.hostName", "type": "str"},
         "pick_host_name_from_backend_address": {"key": "properties.pickHostNameFromBackendAddress", "type": "bool"},
+        "enable_l4_client_ip_preservation": {"key": "properties.enableL4ClientIpPreservation", "type": "bool"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -2647,6 +2667,7 @@ class ApplicationGatewayBackendSettings(SubResource):
         trusted_root_certificates: Optional[list["_models.SubResource"]] = None,
         host_name: Optional[str] = None,
         pick_host_name_from_backend_address: Optional[bool] = None,
+        enable_l4_client_ip_preservation: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2673,6 +2694,9 @@ class ApplicationGatewayBackendSettings(SubResource):
         :keyword pick_host_name_from_backend_address: Whether to pick server name indication from the
          host name of the backend server for Tls protocol. Default value is false.
         :paramtype pick_host_name_from_backend_address: bool
+        :keyword enable_l4_client_ip_preservation: Whether to send Proxy Protocol header to backend
+         servers over TCP or TLS protocols. Default value is false.
+        :paramtype enable_l4_client_ip_preservation: bool
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -2685,6 +2709,7 @@ class ApplicationGatewayBackendSettings(SubResource):
         self.trusted_root_certificates = trusted_root_certificates
         self.host_name = host_name
         self.pick_host_name_from_backend_address = pick_host_name_from_backend_address
+        self.enable_l4_client_ip_preservation = enable_l4_client_ip_preservation
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
@@ -2698,11 +2723,16 @@ class ApplicationGatewayClientAuthConfiguration(_serialization.Model):  # pylint
      "None" and "OCSP".
     :vartype verify_client_revocation: str or
      ~azure.mgmt.network.models.ApplicationGatewayClientRevocationOptions
+    :ivar verify_client_auth_mode: Verify client Authentication mode. Known values are: "Strict"
+     and "Passthrough".
+    :vartype verify_client_auth_mode: str or
+     ~azure.mgmt.network.models.ApplicationGatewayClientAuthVerificationModes
     """
 
     _attribute_map = {
         "verify_client_cert_issuer_dn": {"key": "verifyClientCertIssuerDN", "type": "bool"},
         "verify_client_revocation": {"key": "verifyClientRevocation", "type": "str"},
+        "verify_client_auth_mode": {"key": "verifyClientAuthMode", "type": "str"},
     }
 
     def __init__(
@@ -2710,6 +2740,7 @@ class ApplicationGatewayClientAuthConfiguration(_serialization.Model):  # pylint
         *,
         verify_client_cert_issuer_dn: Optional[bool] = None,
         verify_client_revocation: Optional[Union[str, "_models.ApplicationGatewayClientRevocationOptions"]] = None,
+        verify_client_auth_mode: Optional[Union[str, "_models.ApplicationGatewayClientAuthVerificationModes"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2720,10 +2751,15 @@ class ApplicationGatewayClientAuthConfiguration(_serialization.Model):  # pylint
          are: "None" and "OCSP".
         :paramtype verify_client_revocation: str or
          ~azure.mgmt.network.models.ApplicationGatewayClientRevocationOptions
+        :keyword verify_client_auth_mode: Verify client Authentication mode. Known values are: "Strict"
+         and "Passthrough".
+        :paramtype verify_client_auth_mode: str or
+         ~azure.mgmt.network.models.ApplicationGatewayClientAuthVerificationModes
         """
         super().__init__(**kwargs)
         self.verify_client_cert_issuer_dn = verify_client_cert_issuer_dn
         self.verify_client_revocation = verify_client_revocation
+        self.verify_client_auth_mode = verify_client_auth_mode
 
 
 class ApplicationGatewayConnectionDraining(_serialization.Model):
@@ -2797,6 +2833,92 @@ class ApplicationGatewayCustomError(_serialization.Model):
         super().__init__(**kwargs)
         self.status_code = status_code
         self.custom_error_page_url = custom_error_page_url
+
+
+class ApplicationGatewayEntraJWTValidationConfig(SubResource):  # pylint: disable=name-too-long
+    """Entra JWT Validation Configuration of an application gateway.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Name of the entra jwt validation configuration that is unique within an application
+     gateway.
+    :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar un_authorized_request_action: Unauthorized request action. Known values are: "Deny" and
+     "Allow".
+    :vartype un_authorized_request_action: str or
+     ~azure.mgmt.network.models.ApplicationGatewayUnAuthorizedRequestAction
+    :ivar tenant_id: The Tenant ID of the Microsoft Entra ID application.
+    :vartype tenant_id: str
+    :ivar client_id: The Client ID of the Microsoft Entra ID application.
+    :vartype client_id: str
+    :ivar audiences: List of acceptable audience claims that can be present in the token (aud
+     claim). A maximum of 5 audiences are permitted.
+    :vartype audiences: list[str]
+    :ivar provisioning_state: The provisioning state of the entra jwt validation configuration
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    _validation = {
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "un_authorized_request_action": {"key": "properties.unAuthorizedRequestAction", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "client_id": {"key": "properties.clientId", "type": "str"},
+        "audiences": {"key": "properties.audiences", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        un_authorized_request_action: Optional[
+            Union[str, "_models.ApplicationGatewayUnAuthorizedRequestAction"]
+        ] = None,
+        tenant_id: Optional[str] = None,
+        client_id: Optional[str] = None,
+        audiences: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Resource ID.
+        :paramtype id: str
+        :keyword name: Name of the entra jwt validation configuration that is unique within an
+         application gateway.
+        :paramtype name: str
+        :keyword un_authorized_request_action: Unauthorized request action. Known values are: "Deny"
+         and "Allow".
+        :paramtype un_authorized_request_action: str or
+         ~azure.mgmt.network.models.ApplicationGatewayUnAuthorizedRequestAction
+        :keyword tenant_id: The Tenant ID of the Microsoft Entra ID application.
+        :paramtype tenant_id: str
+        :keyword client_id: The Client ID of the Microsoft Entra ID application.
+        :paramtype client_id: str
+        :keyword audiences: List of acceptable audience claims that can be present in the token (aud
+         claim). A maximum of 5 audiences are permitted.
+        :paramtype audiences: list[str]
+        """
+        super().__init__(id=id, **kwargs)
+        self.name = name
+        self.etag: Optional[str] = None
+        self.un_authorized_request_action = un_authorized_request_action
+        self.tenant_id = tenant_id
+        self.client_id = client_id
+        self.audiences = audiences
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ApplicationGatewayFirewallDisabledRuleGroup(_serialization.Model):  # pylint: disable=name-too-long
@@ -2957,7 +3079,7 @@ class ApplicationGatewayFirewallRule(_serialization.Model):
      values are: "None", "AnomalyScoring", "Allow", "Block", and "Log".
     :vartype action: str or ~azure.mgmt.network.models.ApplicationGatewayWafRuleActionTypes
     :ivar sensitivity: The string representation of the web application firewall rule sensitivity.
-     Known values are: "None", "Low", "Medium", and "High".
+     Known values are: "Low", "Medium", and "High".
     :vartype sensitivity: str or
      ~azure.mgmt.network.models.ApplicationGatewayWafRuleSensitivityTypes
     :ivar description: The description of the web application firewall rule.
@@ -3001,7 +3123,7 @@ class ApplicationGatewayFirewallRule(_serialization.Model):
          values are: "None", "AnomalyScoring", "Allow", "Block", and "Log".
         :paramtype action: str or ~azure.mgmt.network.models.ApplicationGatewayWafRuleActionTypes
         :keyword sensitivity: The string representation of the web application firewall rule
-         sensitivity. Known values are: "None", "Low", "Medium", and "High".
+         sensitivity. Known values are: "Low", "Medium", and "High".
         :paramtype sensitivity: str or
          ~azure.mgmt.network.models.ApplicationGatewayWafRuleSensitivityTypes
         :keyword description: The description of the web application firewall rule.
@@ -3882,6 +4004,9 @@ class ApplicationGatewayOnDemandProbe(_serialization.Model):
     :ivar pick_host_name_from_backend_http_settings: Whether the host header should be picked from
      the backend http settings. Default value is false.
     :vartype pick_host_name_from_backend_http_settings: bool
+    :ivar enable_probe_proxy_protocol_header: Whether to send Proxy Protocol header along with the
+     Health Probe over TCP or TLS protocol. Default value is false.
+    :vartype enable_probe_proxy_protocol_header: bool
     :ivar match: Criterion for classifying a healthy probe response.
     :vartype match: ~azure.mgmt.network.models.ApplicationGatewayProbeHealthResponseMatch
     :ivar backend_address_pool: Reference to backend pool of application gateway to which probe
@@ -3898,6 +4023,7 @@ class ApplicationGatewayOnDemandProbe(_serialization.Model):
         "path": {"key": "path", "type": "str"},
         "timeout": {"key": "timeout", "type": "int"},
         "pick_host_name_from_backend_http_settings": {"key": "pickHostNameFromBackendHttpSettings", "type": "bool"},
+        "enable_probe_proxy_protocol_header": {"key": "enableProbeProxyProtocolHeader", "type": "bool"},
         "match": {"key": "match", "type": "ApplicationGatewayProbeHealthResponseMatch"},
         "backend_address_pool": {"key": "backendAddressPool", "type": "SubResource"},
         "backend_http_settings": {"key": "backendHttpSettings", "type": "SubResource"},
@@ -3911,6 +4037,7 @@ class ApplicationGatewayOnDemandProbe(_serialization.Model):
         path: Optional[str] = None,
         timeout: Optional[int] = None,
         pick_host_name_from_backend_http_settings: Optional[bool] = None,
+        enable_probe_proxy_protocol_header: Optional[bool] = None,
         match: Optional["_models.ApplicationGatewayProbeHealthResponseMatch"] = None,
         backend_address_pool: Optional["_models.SubResource"] = None,
         backend_http_settings: Optional["_models.SubResource"] = None,
@@ -3931,6 +4058,9 @@ class ApplicationGatewayOnDemandProbe(_serialization.Model):
         :keyword pick_host_name_from_backend_http_settings: Whether the host header should be picked
          from the backend http settings. Default value is false.
         :paramtype pick_host_name_from_backend_http_settings: bool
+        :keyword enable_probe_proxy_protocol_header: Whether to send Proxy Protocol header along with
+         the Health Probe over TCP or TLS protocol. Default value is false.
+        :paramtype enable_probe_proxy_protocol_header: bool
         :keyword match: Criterion for classifying a healthy probe response.
         :paramtype match: ~azure.mgmt.network.models.ApplicationGatewayProbeHealthResponseMatch
         :keyword backend_address_pool: Reference to backend pool of application gateway to which probe
@@ -3946,6 +4076,7 @@ class ApplicationGatewayOnDemandProbe(_serialization.Model):
         self.path = path
         self.timeout = timeout
         self.pick_host_name_from_backend_http_settings = pick_host_name_from_backend_http_settings
+        self.enable_probe_proxy_protocol_header = enable_probe_proxy_protocol_header
         self.match = match
         self.backend_address_pool = backend_address_pool
         self.backend_http_settings = backend_http_settings
@@ -4450,6 +4581,9 @@ class ApplicationGatewayProbe(SubResource):
     :vartype min_servers: int
     :ivar match: Criterion for classifying a healthy probe response.
     :vartype match: ~azure.mgmt.network.models.ApplicationGatewayProbeHealthResponseMatch
+    :ivar enable_probe_proxy_protocol_header: Whether to send Proxy Protocol header along with the
+     Health Probe over TCP or TLS protocol. Default value is false.
+    :vartype enable_probe_proxy_protocol_header: bool
     :ivar provisioning_state: The provisioning state of the probe resource. Known values are:
      "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -4484,6 +4618,7 @@ class ApplicationGatewayProbe(SubResource):
         "pick_host_name_from_backend_settings": {"key": "properties.pickHostNameFromBackendSettings", "type": "bool"},
         "min_servers": {"key": "properties.minServers", "type": "int"},
         "match": {"key": "properties.match", "type": "ApplicationGatewayProbeHealthResponseMatch"},
+        "enable_probe_proxy_protocol_header": {"key": "properties.enableProbeProxyProtocolHeader", "type": "bool"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "port": {"key": "properties.port", "type": "int"},
     }
@@ -4503,6 +4638,7 @@ class ApplicationGatewayProbe(SubResource):
         pick_host_name_from_backend_settings: Optional[bool] = None,
         min_servers: Optional[int] = None,
         match: Optional["_models.ApplicationGatewayProbeHealthResponseMatch"] = None,
+        enable_probe_proxy_protocol_header: Optional[bool] = None,
         port: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -4540,6 +4676,9 @@ class ApplicationGatewayProbe(SubResource):
         :paramtype min_servers: int
         :keyword match: Criterion for classifying a healthy probe response.
         :paramtype match: ~azure.mgmt.network.models.ApplicationGatewayProbeHealthResponseMatch
+        :keyword enable_probe_proxy_protocol_header: Whether to send Proxy Protocol header along with
+         the Health Probe over TCP or TLS protocol. Default value is false.
+        :paramtype enable_probe_proxy_protocol_header: bool
         :keyword port: Custom port which will be used for probing the backend servers. The valid value
          ranges from 1 to 65535. In case not set, port from http settings will be used. This property is
          valid for Basic, Standard_v2 and WAF_v2 only.
@@ -4559,6 +4698,7 @@ class ApplicationGatewayProbe(SubResource):
         self.pick_host_name_from_backend_settings = pick_host_name_from_backend_settings
         self.min_servers = min_servers
         self.match = match
+        self.enable_probe_proxy_protocol_header = enable_probe_proxy_protocol_header
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.port = port
 
@@ -4726,6 +4866,9 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :vartype redirect_configuration: ~azure.mgmt.network.models.SubResource
     :ivar load_distribution_policy: Load Distribution Policy resource of the application gateway.
     :vartype load_distribution_policy: ~azure.mgmt.network.models.SubResource
+    :ivar entra_jwt_validation_config: Entra JWT validation configuration resource of the
+     application gateway.
+    :vartype entra_jwt_validation_config: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the request routing rule resource. Known
      values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -4752,6 +4895,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         "rewrite_rule_set": {"key": "properties.rewriteRuleSet", "type": "SubResource"},
         "redirect_configuration": {"key": "properties.redirectConfiguration", "type": "SubResource"},
         "load_distribution_policy": {"key": "properties.loadDistributionPolicy", "type": "SubResource"},
+        "entra_jwt_validation_config": {"key": "properties.entraJWTValidationConfig", "type": "SubResource"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -4769,6 +4913,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         rewrite_rule_set: Optional["_models.SubResource"] = None,
         redirect_configuration: Optional["_models.SubResource"] = None,
         load_distribution_policy: Optional["_models.SubResource"] = None,
+        entra_jwt_validation_config: Optional["_models.SubResource"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4796,6 +4941,9 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         :keyword load_distribution_policy: Load Distribution Policy resource of the application
          gateway.
         :paramtype load_distribution_policy: ~azure.mgmt.network.models.SubResource
+        :keyword entra_jwt_validation_config: Entra JWT validation configuration resource of the
+         application gateway.
+        :paramtype entra_jwt_validation_config: ~azure.mgmt.network.models.SubResource
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -4810,6 +4958,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         self.rewrite_rule_set = rewrite_rule_set
         self.redirect_configuration = redirect_configuration
         self.load_distribution_policy = load_distribution_policy
+        self.entra_jwt_validation_config = entra_jwt_validation_config
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
@@ -9381,6 +9530,46 @@ class BreakOutCategoryPolicies(_serialization.Model):
         self.default = default
 
 
+class CertificateAuthentication(_serialization.Model):
+    """Certificate Authentication information for a certificate based authentication connection.
+
+    :ivar outbound_auth_certificate: Keyvault secret ID for outbound authentication certificate.
+    :vartype outbound_auth_certificate: str
+    :ivar inbound_auth_certificate_subject_name: Inbound authentication certificate subject name.
+    :vartype inbound_auth_certificate_subject_name: str
+    :ivar inbound_auth_certificate_chain: Inbound authentication certificate public keys.
+    :vartype inbound_auth_certificate_chain: list[str]
+    """
+
+    _attribute_map = {
+        "outbound_auth_certificate": {"key": "outboundAuthCertificate", "type": "str"},
+        "inbound_auth_certificate_subject_name": {"key": "inboundAuthCertificateSubjectName", "type": "str"},
+        "inbound_auth_certificate_chain": {"key": "inboundAuthCertificateChain", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        outbound_auth_certificate: Optional[str] = None,
+        inbound_auth_certificate_subject_name: Optional[str] = None,
+        inbound_auth_certificate_chain: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword outbound_auth_certificate: Keyvault secret ID for outbound authentication certificate.
+        :paramtype outbound_auth_certificate: str
+        :keyword inbound_auth_certificate_subject_name: Inbound authentication certificate subject
+         name.
+        :paramtype inbound_auth_certificate_subject_name: str
+        :keyword inbound_auth_certificate_chain: Inbound authentication certificate public keys.
+        :paramtype inbound_auth_certificate_chain: list[str]
+        """
+        super().__init__(**kwargs)
+        self.outbound_auth_certificate = outbound_auth_certificate
+        self.inbound_auth_certificate_subject_name = inbound_auth_certificate_subject_name
+        self.inbound_auth_certificate_chain = inbound_auth_certificate_chain
+
+
 class CheckPrivateLinkServiceVisibilityRequest(_serialization.Model):
     """Request body of the CheckPrivateLinkServiceVisibility API service call.
 
@@ -12338,6 +12527,11 @@ class DdosCustomPolicy(Resource):
     :ivar provisioning_state: The provisioning state of the DDoS custom policy resource. Known
      values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar detection_rules: The list of DDoS detection rules associated with the custom policy.
+    :vartype detection_rules: list[~azure.mgmt.network.models.DdosDetectionRule]
+    :ivar front_end_ip_configuration: The list of frontend IP configurations associated with the
+     custom policy.
+    :vartype front_end_ip_configuration: list[~azure.mgmt.network.models.SubResource]
     """
 
     _validation = {
@@ -12357,6 +12551,8 @@ class DdosCustomPolicy(Resource):
         "etag": {"key": "etag", "type": "str"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "detection_rules": {"key": "properties.detectionRules", "type": "[DdosDetectionRule]"},
+        "front_end_ip_configuration": {"key": "properties.frontEndIpConfiguration", "type": "[SubResource]"},
     }
 
     def __init__(
@@ -12365,6 +12561,8 @@ class DdosCustomPolicy(Resource):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
+        detection_rules: Optional[list["_models.DdosDetectionRule"]] = None,
+        front_end_ip_configuration: Optional[list["_models.SubResource"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12374,11 +12572,84 @@ class DdosCustomPolicy(Resource):
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword detection_rules: The list of DDoS detection rules associated with the custom policy.
+        :paramtype detection_rules: list[~azure.mgmt.network.models.DdosDetectionRule]
+        :keyword front_end_ip_configuration: The list of frontend IP configurations associated with the
+         custom policy.
+        :paramtype front_end_ip_configuration: list[~azure.mgmt.network.models.SubResource]
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag: Optional[str] = None
         self.resource_guid: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.detection_rules = detection_rules
+        self.front_end_ip_configuration = front_end_ip_configuration
+
+
+class DdosDetectionRule(SubResource):
+    """A DDoS detection rule resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: The name of the DDoS detection rule.
+    :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar provisioning_state: The provisioning state of the DDoS detection rule. Known values are:
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar detection_mode: The detection mode for the DDoS detection rule. "TrafficThreshold"
+    :vartype detection_mode: str or ~azure.mgmt.network.models.DdosDetectionMode
+    :ivar traffic_detection_rule: The traffic detection rule details.
+    :vartype traffic_detection_rule: ~azure.mgmt.network.models.TrafficDetectionRule
+    """
+
+    _validation = {
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "detection_mode": {"key": "properties.detectionMode", "type": "str"},
+        "traffic_detection_rule": {"key": "properties.trafficDetectionRule", "type": "TrafficDetectionRule"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        detection_mode: Optional[Union[str, "_models.DdosDetectionMode"]] = None,
+        traffic_detection_rule: Optional["_models.TrafficDetectionRule"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Resource ID.
+        :paramtype id: str
+        :keyword name: The name of the DDoS detection rule.
+        :paramtype name: str
+        :keyword detection_mode: The detection mode for the DDoS detection rule. "TrafficThreshold"
+        :paramtype detection_mode: str or ~azure.mgmt.network.models.DdosDetectionMode
+        :keyword traffic_detection_rule: The traffic detection rule details.
+        :paramtype traffic_detection_rule: ~azure.mgmt.network.models.TrafficDetectionRule
+        """
+        super().__init__(id=id, **kwargs)
+        self.name = name
+        self.etag: Optional[str] = None
+        self.type: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.detection_mode = detection_mode
+        self.traffic_detection_rule = traffic_detection_rule
 
 
 class DdosProtectionPlan(_serialization.Model):
@@ -12835,6 +13106,37 @@ class Dimension(_serialization.Model):
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name
+
+
+class DisassociateCloudServicePublicIpRequest(_serialization.Model):
+    """The request for DisassociateCloudServicePublicIpOperation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar public_ip_arm_id: ARM ID of the Standalone Public IP to associate. This is of the form :
+     /subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}.
+     Required.
+    :vartype public_ip_arm_id: str
+    """
+
+    _validation = {
+        "public_ip_arm_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "public_ip_arm_id": {"key": "publicIpArmId", "type": "str"},
+    }
+
+    def __init__(self, *, public_ip_arm_id: str, **kwargs: Any) -> None:
+        """
+        :keyword public_ip_arm_id: ARM ID of the Standalone Public IP to associate. This is of the form
+         :
+         /subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}.
+         Required.
+        :paramtype public_ip_arm_id: str
+        """
+        super().__init__(**kwargs)
+        self.public_ip_arm_id = public_ip_arm_id
 
 
 class DnsNameAvailabilityResult(_serialization.Model):
@@ -18967,6 +19269,12 @@ class FlowLog(Resource):
      SrcPort, DstIP, DstPort, Protocol, Encryption, Direction and Action. If not specified, all
      network traffic will be logged.
     :vartype enabled_filtering_criteria: str
+    :ivar record_types: Optional field to filter network traffic logs based on flow states. Value
+     of this field could be any comma separated combination string of letters B,C,E or D. B
+     represents Begin, when a flow is created. C represents Continue for an ongoing flow generated
+     at every five-minute interval. E represents End, when a flow is terminated. D represents Deny,
+     when a flow is denied. If not specified, all network traffic will be logged.
+    :vartype record_types: str
     :ivar enabled: Flag to enable/disable flow logging.
     :vartype enabled: bool
     :ivar retention_policy: Parameters that define the retention policy for flow log.
@@ -19001,6 +19309,7 @@ class FlowLog(Resource):
         "target_resource_guid": {"key": "properties.targetResourceGuid", "type": "str"},
         "storage_id": {"key": "properties.storageId", "type": "str"},
         "enabled_filtering_criteria": {"key": "properties.enabledFilteringCriteria", "type": "str"},
+        "record_types": {"key": "properties.recordTypes", "type": "str"},
         "enabled": {"key": "properties.enabled", "type": "bool"},
         "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicyParameters"},
         "format": {"key": "properties.format", "type": "FlowLogFormatParameters"},
@@ -19021,6 +19330,7 @@ class FlowLog(Resource):
         target_resource_id: Optional[str] = None,
         storage_id: Optional[str] = None,
         enabled_filtering_criteria: Optional[str] = None,
+        record_types: Optional[str] = None,
         enabled: Optional[bool] = None,
         retention_policy: Optional["_models.RetentionPolicyParameters"] = None,
         format: Optional["_models.FlowLogFormatParameters"] = None,
@@ -19044,6 +19354,12 @@ class FlowLog(Resource):
          SrcIP, SrcPort, DstIP, DstPort, Protocol, Encryption, Direction and Action. If not specified,
          all network traffic will be logged.
         :paramtype enabled_filtering_criteria: str
+        :keyword record_types: Optional field to filter network traffic logs based on flow states.
+         Value of this field could be any comma separated combination string of letters B,C,E or D. B
+         represents Begin, when a flow is created. C represents Continue for an ongoing flow generated
+         at every five-minute interval. E represents End, when a flow is terminated. D represents Deny,
+         when a flow is denied. If not specified, all network traffic will be logged.
+        :paramtype record_types: str
         :keyword enabled: Flag to enable/disable flow logging.
         :paramtype enabled: bool
         :keyword retention_policy: Parameters that define the retention policy for flow log.
@@ -19061,6 +19377,7 @@ class FlowLog(Resource):
         self.target_resource_guid: Optional[str] = None
         self.storage_id = storage_id
         self.enabled_filtering_criteria = enabled_filtering_criteria
+        self.record_types = record_types
         self.enabled = enabled
         self.retention_policy = retention_policy
         self.format = format
@@ -19115,6 +19432,12 @@ class FlowLogInformation(_serialization.Model):
      SrcPort, DstIP, DstPort, Protocol, Encryption, Direction and Action. If not specified, all
      network traffic will be logged.
     :vartype enabled_filtering_criteria: str
+    :ivar record_types: Optional field to filter network traffic logs based on flow states. Value
+     of this field could be any comma separated combination string of letters B,C,E or D. B
+     represents Begin, when a flow is created. C represents Continue for an ongoing flow generated
+     at every five-minute interval. E represents End, when a flow is terminated. D represents Deny,
+     when a flow is denied. If not specified, all network traffic will be logged.
+    :vartype record_types: str
     :ivar enabled: Flag to enable/disable flow logging. Required.
     :vartype enabled: bool
     :ivar retention_policy: Parameters that define the retention policy for flow log.
@@ -19135,6 +19458,7 @@ class FlowLogInformation(_serialization.Model):
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "storage_id": {"key": "properties.storageId", "type": "str"},
         "enabled_filtering_criteria": {"key": "properties.enabledFilteringCriteria", "type": "str"},
+        "record_types": {"key": "properties.recordTypes", "type": "str"},
         "enabled": {"key": "properties.enabled", "type": "bool"},
         "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicyParameters"},
         "format": {"key": "properties.format", "type": "FlowLogFormatParameters"},
@@ -19149,6 +19473,7 @@ class FlowLogInformation(_serialization.Model):
         flow_analytics_configuration: Optional["_models.TrafficAnalyticsProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         enabled_filtering_criteria: Optional[str] = None,
+        record_types: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicyParameters"] = None,
         format: Optional["_models.FlowLogFormatParameters"] = None,
         **kwargs: Any
@@ -19168,6 +19493,12 @@ class FlowLogInformation(_serialization.Model):
          SrcIP, SrcPort, DstIP, DstPort, Protocol, Encryption, Direction and Action. If not specified,
          all network traffic will be logged.
         :paramtype enabled_filtering_criteria: str
+        :keyword record_types: Optional field to filter network traffic logs based on flow states.
+         Value of this field could be any comma separated combination string of letters B,C,E or D. B
+         represents Begin, when a flow is created. C represents Continue for an ongoing flow generated
+         at every five-minute interval. E represents End, when a flow is terminated. D represents Deny,
+         when a flow is denied. If not specified, all network traffic will be logged.
+        :paramtype record_types: str
         :keyword enabled: Flag to enable/disable flow logging. Required.
         :paramtype enabled: bool
         :keyword retention_policy: Parameters that define the retention policy for flow log.
@@ -19181,6 +19512,7 @@ class FlowLogInformation(_serialization.Model):
         self.identity = identity
         self.storage_id = storage_id
         self.enabled_filtering_criteria = enabled_filtering_criteria
+        self.record_types = record_types
         self.enabled = enabled
         self.retention_policy = retention_policy
         self.format = format
@@ -22895,6 +23227,9 @@ class LoadBalancer(Resource):
     :ivar provisioning_state: The provisioning state of the load balancer resource. Known values
      are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar scope: Indicates the scope of the load balancer: external (Public) or internal (Private).
+     Known values are: "Public" and "Private".
+    :vartype scope: str or ~azure.mgmt.network.models.LoadBalancerScope
     """
 
     _validation = {
@@ -22926,6 +23261,7 @@ class LoadBalancer(Resource):
         "outbound_rules": {"key": "properties.outboundRules", "type": "[OutboundRule]"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "scope": {"key": "properties.scope", "type": "str"},
     }
 
     def __init__(
@@ -22943,6 +23279,7 @@ class LoadBalancer(Resource):
         inbound_nat_rules: Optional[list["_models.InboundNatRule"]] = None,
         inbound_nat_pools: Optional[list["_models.InboundNatPool"]] = None,
         outbound_rules: Optional[list["_models.OutboundRule"]] = None,
+        scope: Optional[Union[str, "_models.LoadBalancerScope"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -22982,6 +23319,9 @@ class LoadBalancer(Resource):
         :paramtype inbound_nat_pools: list[~azure.mgmt.network.models.InboundNatPool]
         :keyword outbound_rules: The outbound rules.
         :paramtype outbound_rules: list[~azure.mgmt.network.models.OutboundRule]
+        :keyword scope: Indicates the scope of the load balancer: external (Public) or internal
+         (Private). Known values are: "Public" and "Private".
+        :paramtype scope: str or ~azure.mgmt.network.models.LoadBalancerScope
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.extended_location = extended_location
@@ -22996,6 +23336,7 @@ class LoadBalancer(Resource):
         self.outbound_rules = outbound_rules
         self.resource_guid: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.scope = scope
 
 
 class LoadBalancerBackendAddress(_serialization.Model):
@@ -23849,7 +24190,7 @@ class ManagedRuleOverride(_serialization.Model):
      "AnomalyScoring", "Allow", "Block", "Log", and "JSChallenge".
     :vartype action: str or ~azure.mgmt.network.models.ActionType
     :ivar sensitivity: Describes the override sensitivity to be applied when rule matches. Known
-     values are: "None", "Low", "Medium", and "High".
+     values are: "Low", "Medium", and "High".
     :vartype sensitivity: str or ~azure.mgmt.network.models.SensitivityType
     """
 
@@ -23883,7 +24224,7 @@ class ManagedRuleOverride(_serialization.Model):
          are: "AnomalyScoring", "Allow", "Block", "Log", and "JSChallenge".
         :paramtype action: str or ~azure.mgmt.network.models.ActionType
         :keyword sensitivity: Describes the override sensitivity to be applied when rule matches. Known
-         values are: "None", "Low", "Medium", and "High".
+         values are: "Low", "Medium", and "High".
         :paramtype sensitivity: str or ~azure.mgmt.network.models.SensitivityType
         """
         super().__init__(**kwargs)
@@ -26336,6 +26677,10 @@ class NetworkManagerRoutingConfiguration(ChildResource):
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
+    :ivar route_table_usage_mode: Route table usage mode defines which route table will be used by
+     the configuration. If not defined, this will default to 'ManagedOnly'. Known values are:
+     "ManagedOnly" and "UseExisting".
+    :vartype route_table_usage_mode: str or ~azure.mgmt.network.models.RouteTableUsageMode
     """
 
     _validation = {
@@ -26357,18 +26702,30 @@ class NetworkManagerRoutingConfiguration(ChildResource):
         "description": {"key": "properties.description", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "route_table_usage_mode": {"key": "properties.routeTableUsageMode", "type": "str"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        route_table_usage_mode: Union[str, "_models.RouteTableUsageMode"] = "ManagedOnly",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: A description of the routing configuration.
         :paramtype description: str
+        :keyword route_table_usage_mode: Route table usage mode defines which route table will be used
+         by the configuration. If not defined, this will default to 'ManagedOnly'. Known values are:
+         "ManagedOnly" and "UseExisting".
+        :paramtype route_table_usage_mode: str or ~azure.mgmt.network.models.RouteTableUsageMode
         """
         super().__init__(**kwargs)
         self.system_data: Optional["_models.SystemData"] = None
         self.description = description
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_guid: Optional[str] = None
+        self.route_table_usage_mode = route_table_usage_mode
 
 
 class NetworkManagerRoutingConfigurationListResult(_serialization.Model):  # pylint: disable=name-too-long
@@ -31492,6 +31849,10 @@ class PrivateEndpoint(Resource):
     :ivar provisioning_state: The provisioning state of the private endpoint resource. Known values
      are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar ip_version_type: Specifies the IP version type for the private IPs of the private
+     endpoint. If not defined, this defaults to IPv4. Known values are: "IPv4", "IPv6", and
+     "DualStack".
+    :vartype ip_version_type: str or ~azure.mgmt.network.models.PrivateEndpointIPVersionType
     :ivar private_link_service_connections: A grouping of information about the connection to the
      remote resource.
     :vartype private_link_service_connections:
@@ -31533,6 +31894,7 @@ class PrivateEndpoint(Resource):
         "subnet": {"key": "properties.subnet", "type": "Subnet"},
         "network_interfaces": {"key": "properties.networkInterfaces", "type": "[NetworkInterface]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "ip_version_type": {"key": "properties.ipVersionType", "type": "str"},
         "private_link_service_connections": {
             "key": "properties.privateLinkServiceConnections",
             "type": "[PrivateLinkServiceConnection]",
@@ -31558,6 +31920,7 @@ class PrivateEndpoint(Resource):
         tags: Optional[dict[str, str]] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
         subnet: Optional["_models.Subnet"] = None,
+        ip_version_type: Union[str, "_models.PrivateEndpointIPVersionType"] = "IPv4",
         private_link_service_connections: Optional[list["_models.PrivateLinkServiceConnection"]] = None,
         manual_private_link_service_connections: Optional[list["_models.PrivateLinkServiceConnection"]] = None,
         custom_dns_configs: Optional[list["_models.CustomDnsConfigPropertiesFormat"]] = None,
@@ -31577,6 +31940,10 @@ class PrivateEndpoint(Resource):
         :paramtype extended_location: ~azure.mgmt.network.models.ExtendedLocation
         :keyword subnet: The ID of the subnet from which the private IP will be allocated.
         :paramtype subnet: ~azure.mgmt.network.models.Subnet
+        :keyword ip_version_type: Specifies the IP version type for the private IPs of the private
+         endpoint. If not defined, this defaults to IPv4. Known values are: "IPv4", "IPv6", and
+         "DualStack".
+        :paramtype ip_version_type: str or ~azure.mgmt.network.models.PrivateEndpointIPVersionType
         :keyword private_link_service_connections: A grouping of information about the connection to
          the remote resource.
         :paramtype private_link_service_connections:
@@ -31605,6 +31972,7 @@ class PrivateEndpoint(Resource):
         self.subnet = subnet
         self.network_interfaces: Optional[list["_models.NetworkInterface"]] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.ip_version_type = ip_version_type
         self.private_link_service_connections = private_link_service_connections
         self.manual_private_link_service_connections = manual_private_link_service_connections
         self.custom_dns_configs = custom_dns_configs
@@ -31849,6 +32217,9 @@ class PrivateLinkService(Resource):
     :vartype ip_configurations: list[~azure.mgmt.network.models.PrivateLinkServiceIpConfiguration]
     :ivar destination_ip_address: The destination IP address of the private link service.
     :vartype destination_ip_address: str
+    :ivar access_mode: The access mode of the private link service. Known values are: "Default" and
+     "Restricted".
+    :vartype access_mode: str or ~azure.mgmt.network.models.AccessMode
     :ivar network_interfaces: An array of references to the network interfaces created for this
      private link service.
     :vartype network_interfaces: list[~azure.mgmt.network.models.NetworkInterface]
@@ -31895,6 +32266,7 @@ class PrivateLinkService(Resource):
         },
         "ip_configurations": {"key": "properties.ipConfigurations", "type": "[PrivateLinkServiceIpConfiguration]"},
         "destination_ip_address": {"key": "properties.destinationIPAddress", "type": "str"},
+        "access_mode": {"key": "properties.accessMode", "type": "str"},
         "network_interfaces": {"key": "properties.networkInterfaces", "type": "[NetworkInterface]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "private_endpoint_connections": {
@@ -31918,6 +32290,7 @@ class PrivateLinkService(Resource):
         load_balancer_frontend_ip_configurations: Optional[list["_models.FrontendIPConfiguration"]] = None,
         ip_configurations: Optional[list["_models.PrivateLinkServiceIpConfiguration"]] = None,
         destination_ip_address: Optional[str] = None,
+        access_mode: Optional[Union[str, "_models.AccessMode"]] = None,
         visibility: Optional["_models.PrivateLinkServicePropertiesVisibility"] = None,
         auto_approval: Optional["_models.PrivateLinkServicePropertiesAutoApproval"] = None,
         fqdns: Optional[list[str]] = None,
@@ -31942,6 +32315,9 @@ class PrivateLinkService(Resource):
          list[~azure.mgmt.network.models.PrivateLinkServiceIpConfiguration]
         :keyword destination_ip_address: The destination IP address of the private link service.
         :paramtype destination_ip_address: str
+        :keyword access_mode: The access mode of the private link service. Known values are: "Default"
+         and "Restricted".
+        :paramtype access_mode: str or ~azure.mgmt.network.models.AccessMode
         :keyword visibility: The visibility list of the private link service.
         :paramtype visibility: ~azure.mgmt.network.models.PrivateLinkServicePropertiesVisibility
         :keyword auto_approval: The auto-approval list of the private link service.
@@ -31958,6 +32334,7 @@ class PrivateLinkService(Resource):
         self.load_balancer_frontend_ip_configurations = load_balancer_frontend_ip_configurations
         self.ip_configurations = ip_configurations
         self.destination_ip_address = destination_ip_address
+        self.access_mode = access_mode
         self.network_interfaces: Optional[list["_models.NetworkInterface"]] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
@@ -33801,6 +34178,34 @@ class ReferencedPublicIpAddress(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.id = id
+
+
+class ReserveCloudServicePublicIpAddressRequest(_serialization.Model):  # pylint: disable=name-too-long
+    """The request for ReserveCloudServicePublicIpAddressOperation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar is_rollback: When true, reverts from Static to Dynamic allocation (undo reservation).
+     Required. Known values are: "true" and "false".
+    :vartype is_rollback: str or ~azure.mgmt.network.models.IsRollback
+    """
+
+    _validation = {
+        "is_rollback": {"required": True},
+    }
+
+    _attribute_map = {
+        "is_rollback": {"key": "isRollback", "type": "str"},
+    }
+
+    def __init__(self, *, is_rollback: Union[str, "_models.IsRollback"], **kwargs: Any) -> None:
+        """
+        :keyword is_rollback: When true, reverts from Static to Dynamic allocation (undo reservation).
+         Required. Known values are: "true" and "false".
+        :paramtype is_rollback: str or ~azure.mgmt.network.models.IsRollback
+        """
+        super().__init__(**kwargs)
+        self.is_rollback = is_rollback
 
 
 class ResiliencyRecommendationComponents(_serialization.Model):
@@ -37451,8 +37856,7 @@ class Subnet(SubResource):
      "DelegatedServices".
     :vartype sharing_scope: str or ~azure.mgmt.network.models.SharingScope
     :ivar default_outbound_access: Set this property to false to disable default outbound
-     connectivity for all VMs in the subnet. This property can only be set at the time of subnet
-     creation and cannot be updated for an existing subnet.
+     connectivity for all VMs in the subnet.
     :vartype default_outbound_access: bool
     :ivar ipam_pool_prefix_allocations: A list of IPAM Pools for allocating IP address prefixes.
     :vartype ipam_pool_prefix_allocations:
@@ -37577,8 +37981,7 @@ class Subnet(SubResource):
          "DelegatedServices".
         :paramtype sharing_scope: str or ~azure.mgmt.network.models.SharingScope
         :keyword default_outbound_access: Set this property to false to disable default outbound
-         connectivity for all VMs in the subnet. This property can only be set at the time of subnet
-         creation and cannot be updated for an existing subnet.
+         connectivity for all VMs in the subnet.
         :paramtype default_outbound_access: bool
         :keyword ipam_pool_prefix_allocations: A list of IPAM Pools for allocating IP address prefixes.
         :paramtype ipam_pool_prefix_allocations:
@@ -38114,6 +38517,40 @@ class TrafficAnalyticsProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.network_watcher_flow_analytics_configuration = network_watcher_flow_analytics_configuration
+
+
+class TrafficDetectionRule(_serialization.Model):
+    """Ddos Custom Policy traffic detection rule.
+
+    :ivar traffic_type: The traffic type (one of Tcp, Udp, TcpSyn) that the detection rule will be
+     applied upon. Known values are: "Tcp", "Udp", and "TcpSyn".
+    :vartype traffic_type: str or ~azure.mgmt.network.models.DdosTrafficType
+    :ivar packets_per_second: The customized packets per second threshold.
+    :vartype packets_per_second: int
+    """
+
+    _attribute_map = {
+        "traffic_type": {"key": "trafficType", "type": "str"},
+        "packets_per_second": {"key": "packetsPerSecond", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        traffic_type: Optional[Union[str, "_models.DdosTrafficType"]] = None,
+        packets_per_second: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword traffic_type: The traffic type (one of Tcp, Udp, TcpSyn) that the detection rule will
+         be applied upon. Known values are: "Tcp", "Udp", and "TcpSyn".
+        :paramtype traffic_type: str or ~azure.mgmt.network.models.DdosTrafficType
+        :keyword packets_per_second: The customized packets per second threshold.
+        :paramtype packets_per_second: int
+        """
+        super().__init__(**kwargs)
+        self.traffic_type = traffic_type
+        self.packets_per_second = packets_per_second
 
 
 class TrafficSelectorPolicy(_serialization.Model):
@@ -40417,6 +40854,12 @@ class VirtualNetworkGatewayConnection(Resource):
     :ivar enable_private_link_fast_path: Bypass the ExpressRoute gateway when accessing
      private-links. ExpressRoute FastPath (expressRouteGatewayBypass) must be enabled.
     :vartype enable_private_link_fast_path: bool
+    :ivar authentication_type: Gateway connection authentication type. Known values are: "PSK" and
+     "Certificate".
+    :vartype authentication_type: str or ~azure.mgmt.network.models.ConnectionAuthenticationType
+    :ivar certificate_authentication: Certificate Authentication information for a certificate
+     based authentication connection.
+    :vartype certificate_authentication: ~azure.mgmt.network.models.CertificateAuthentication
     """
 
     _validation = {
@@ -40474,6 +40917,11 @@ class VirtualNetworkGatewayConnection(Resource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "express_route_gateway_bypass": {"key": "properties.expressRouteGatewayBypass", "type": "bool"},
         "enable_private_link_fast_path": {"key": "properties.enablePrivateLinkFastPath", "type": "bool"},
+        "authentication_type": {"key": "properties.authenticationType", "type": "str"},
+        "certificate_authentication": {
+            "key": "properties.certificateAuthentication",
+            "type": "CertificateAuthentication",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -40504,6 +40952,8 @@ class VirtualNetworkGatewayConnection(Resource):
         traffic_selector_policies: Optional[list["_models.TrafficSelectorPolicy"]] = None,
         express_route_gateway_bypass: Optional[bool] = None,
         enable_private_link_fast_path: Optional[bool] = None,
+        authentication_type: Optional[Union[str, "_models.ConnectionAuthenticationType"]] = None,
+        certificate_authentication: Optional["_models.CertificateAuthentication"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -40568,6 +41018,12 @@ class VirtualNetworkGatewayConnection(Resource):
         :keyword enable_private_link_fast_path: Bypass the ExpressRoute gateway when accessing
          private-links. ExpressRoute FastPath (expressRouteGatewayBypass) must be enabled.
         :paramtype enable_private_link_fast_path: bool
+        :keyword authentication_type: Gateway connection authentication type. Known values are: "PSK"
+         and "Certificate".
+        :paramtype authentication_type: str or ~azure.mgmt.network.models.ConnectionAuthenticationType
+        :keyword certificate_authentication: Certificate Authentication information for a certificate
+         based authentication connection.
+        :paramtype certificate_authentication: ~azure.mgmt.network.models.CertificateAuthentication
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag: Optional[str] = None
@@ -40599,6 +41055,8 @@ class VirtualNetworkGatewayConnection(Resource):
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.express_route_gateway_bypass = express_route_gateway_bypass
         self.enable_private_link_fast_path = enable_private_link_fast_path
+        self.authentication_type = authentication_type
+        self.certificate_authentication = certificate_authentication
 
 
 class VirtualNetworkGatewayConnectionListEntity(Resource):  # pylint: disable=name-too-long

@@ -6,6 +6,10 @@
 
 ### Breaking changes
 
+* Rename class `AgentObject` to `AgentDetails`
+* Rename class `AgentVersionObject` to `AgentVersionDetails`
+* Rename class `MemoryStoreObject` to `MemoryStoreDetails`
+
 ### Bugs Fixed
 
 ### Sample updates
