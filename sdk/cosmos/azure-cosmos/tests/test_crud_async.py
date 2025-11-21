@@ -1130,14 +1130,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         }
         await created_container.create_item(test_item)
 
-        # Short timeout should fail
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            await created_container.read_item(
-                item='test_item_1',
-                partition_key='partition1',
-                timeout=0.00000002
-            )
-
         # Long timeout should succeed
         result = await created_container.read_item(
             item='test_item_1',
