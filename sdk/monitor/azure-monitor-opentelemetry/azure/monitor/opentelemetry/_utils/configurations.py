@@ -164,7 +164,7 @@ def _default_sampling_ratio(configurations):
                 default_value,
                 e,
             )
-            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value
+            configurations.setdefault(SAMPLING_TRACES_PER_SECOND_ARG, default_value)
 
     # Handle fixed percentage sampler
     elif sampler_type == FIXED_PERCENTAGE_SAMPLER:
@@ -183,11 +183,11 @@ def _default_sampling_ratio(configurations):
                 default_value,
                 e,
             )
-            configurations[SAMPLING_RATIO_ARG] = default_value
+            configurations.setdefault(SAMPLING_RATIO_ARG, default_value)
 
     # Handle all other cases (no sampler type specified or unsupported sampler type)
     else:
-        configurations[SAMPLING_RATIO_ARG] = default_value
+        configurations.setdefault(SAMPLING_RATIO_ARG, default_value)
         if sampler_type is not None:
             _logger.error(  # pylint: disable=C
                 "Invalid argument for the sampler to be used for tracing. "
