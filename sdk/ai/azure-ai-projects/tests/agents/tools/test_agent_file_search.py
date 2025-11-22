@@ -6,6 +6,7 @@
 
 import os
 import pytest
+from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
@@ -46,81 +47,81 @@ class TestAgentFileSearch(TestBase):
 
         model = self.test_agents_params["model_deployment_name"]
 
-        # Setup
-        project_client = self.create_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
-
-        # Get the path to the test file
-        asset_file_path = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../../samples/agents/assets/product_info.md")
-        )
-
-        assert os.path.exists(asset_file_path), f"Test file not found at: {asset_file_path}"
-        print(f"Using test file: {asset_file_path}")
-
-        # Create vector store for file search
-        vector_store = openai_client.vector_stores.create(name="ProductInfoStore")
-        print(f"Vector store created (id: {vector_store.id})")
-        assert vector_store.id is not None
-
-        # Upload file to vector store
-        with open(asset_file_path, "rb") as f:
-            file = openai_client.vector_stores.files.upload_and_poll(
-                vector_store_id=vector_store.id,
-                file=f,
+        with (
+            self.create_client(operation_group="agents", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            # Get the path to the test file
+            asset_file_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "../../../samples/agents/assets/product_info.md")
             )
 
-        print(f"File uploaded (id: {file.id}, status: {file.status})")
-        assert file.id is not None
-        assert file.status == "completed", f"Expected file status 'completed', got '{file.status}'"
+            assert os.path.exists(asset_file_path), f"Test file not found at: {asset_file_path}"
+            print(f"Using test file: {asset_file_path}")
 
-        # Create agent with file search tool
-        agent = project_client.agents.create_version(
-            agent_name="file-search-agent",
-            definition=PromptAgentDefinition(
-                model=model,
-                instructions="You are a helpful assistant that can search through uploaded documents to answer questions.",
-                tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
-            ),
-            description="Agent for testing file search capabilities.",
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-        assert agent.id is not None
-        assert agent.name == "file-search-agent"
-        assert agent.version is not None
+            # Create vector store for file search
+            vector_store = openai_client.vector_stores.create(name="ProductInfoStore")
+            print(f"Vector store created (id: {vector_store.id})")
+            assert vector_store.id is not None
 
-        # Ask a question about the uploaded document
-        print("\nAsking agent about the product information...")
+            # Upload file to vector store
+            with open(asset_file_path, "rb") as f:
+                file = openai_client.vector_stores.files.upload_and_poll(
+                    vector_store_id=vector_store.id,
+                    file=f,
+                )
 
-        response = openai_client.responses.create(
-            input="What products are mentioned in the document?",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        )
+            print(f"File uploaded (id: {file.id}, status: {file.status})")
+            assert file.id is not None
+            assert file.status == "completed", f"Expected file status 'completed', got '{file.status}'"
 
-        print(f"Response completed (id: {response.id})")
-        assert response.id is not None
-        assert response.output is not None
-        assert len(response.output) > 0
+            # Create agent with file search tool
+            agent = project_client.agents.create_version(
+                agent_name="file-search-agent",
+                definition=PromptAgentDefinition(
+                    model=model,
+                    instructions="You are a helpful assistant that can search through uploaded documents to answer questions.",
+                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                ),
+                description="Agent for testing file search capabilities.",
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+            assert agent.id is not None
+            assert agent.name == "file-search-agent"
+            assert agent.version is not None
 
-        # Get the response text
-        response_text = response.output_text
-        print(f"\nAgent's response: {response_text[:300]}...")
+            # Ask a question about the uploaded document
+            print("\nAsking agent about the product information...")
 
-        # Verify we got a meaningful response
-        assert len(response_text) > 50, "Expected a substantial response from the agent"
+            response = openai_client.responses.create(
+                input="What products are mentioned in the document?",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
 
-        # The response should mention finding information (indicating file search was used)
-        # We can't assert exact product names without knowing the file content,
-        # but we can verify the agent provided an answer
-        print("\n✓ Agent successfully used file search tool to answer question from uploaded document")
+            print(f"Response completed (id: {response.id})")
+            assert response.id is not None
+            assert response.output is not None
+            assert len(response.output) > 0
 
-        # Teardown
-        print("\nCleaning up...")
-        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+            # Get the response text
+            response_text = response.output_text
+            print(f"\nAgent's response: {response_text[:300]}...")
 
-        openai_client.vector_stores.delete(vector_store.id)
-        print("Vector store deleted")
+            # Verify we got a meaningful response
+            assert len(response_text) > 50, "Expected a substantial response from the agent"
+
+            # The response should mention finding information (indicating file search was used)
+            # We can't assert exact product names without knowing the file content,
+            # but we can verify the agent provided an answer
+            print("\n✓ Agent successfully used file search tool to answer question from uploaded document")
+
+            # Teardown
+            print("\nCleaning up...")
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Agent deleted")
+
+            openai_client.vector_stores.delete(vector_store.id)
+            print("Vector store deleted")
 
     @servicePreparer()
     @pytest.mark.skipif(
@@ -139,63 +140,63 @@ class TestAgentFileSearch(TestBase):
         This ensures good developer experience by providing actionable error messages.
         """
 
-        # Setup
-        project_client = self.create_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
+        with (
+            self.create_client(operation_group="agents", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            # Create vector store
+            vector_store = openai_client.vector_stores.create(name="UnsupportedFileTestStore")
+            print(f"Vector store created (id: {vector_store.id})")
 
-        # Create vector store
-        vector_store = openai_client.vector_stores.create(name="UnsupportedFileTestStore")
-        print(f"Vector store created (id: {vector_store.id})")
-
-        # Create CSV file (unsupported format)
-        csv_content = """product,quarter,revenue
+            # Create CSV file (unsupported format)
+            csv_content = """product,quarter,revenue
 Widget A,Q1,15000
 Widget B,Q1,22000
 Widget A,Q2,18000
 Widget B,Q2,25000"""
 
-        from io import BytesIO
+            csv_file = BytesIO(csv_content.encode("utf-8"))
+            csv_file.name = "sales_data.csv"
 
-        csv_file = BytesIO(csv_content.encode("utf-8"))
-        csv_file.name = "sales_data.csv"
+            # Attempt to upload unsupported file type
+            print("\nAttempting to upload CSV file (unsupported format)...")
+            try:
+                file = openai_client.vector_stores.files.upload_and_poll(
+                    vector_store_id=vector_store.id,
+                    file=csv_file,
+                )
+                # If we get here, the test should fail
+                openai_client.vector_stores.delete(vector_store.id)
+                pytest.fail("Expected BadRequestError for CSV file upload, but upload succeeded")
 
-        # Attempt to upload unsupported file type
-        print("\nAttempting to upload CSV file (unsupported format)...")
-        try:
-            file = openai_client.vector_stores.files.upload_and_poll(
-                vector_store_id=vector_store.id,
-                file=csv_file,
-            )
-            # If we get here, the test should fail
+            except Exception as e:
+                error_message = str(e)
+                print(f"\n✓ Upload correctly rejected with error: {error_message[:200]}...")
+
+                # Verify error message quality
+                assert (
+                    "400" in error_message or "BadRequestError" in type(e).__name__
+                ), "Should be a 400 Bad Request error"
+
+                assert ".csv" in error_message.lower(), "Error message should mention the CSV file extension"
+
+                assert (
+                    "not supported" in error_message.lower() or "unsupported" in error_message.lower()
+                ), "Error message should clearly state the file type is not supported"
+
+                # Check that supported file types are mentioned (helpful for developers)
+                error_lower = error_message.lower()
+                has_supported_list = any(ext in error_lower for ext in [".txt", ".pdf", ".md", ".py"])
+                assert has_supported_list, "Error message should list examples of supported file types"
+
+                print("✓ Error message is clear and actionable")
+                print("  - Mentions unsupported file type (.csv)")
+                print("  - States it's not supported")
+                print("  - Lists supported file types")
+
+            # Cleanup
             openai_client.vector_stores.delete(vector_store.id)
-            pytest.fail("Expected BadRequestError for CSV file upload, but upload succeeded")
-
-        except Exception as e:
-            error_message = str(e)
-            print(f"\n✓ Upload correctly rejected with error: {error_message[:200]}...")
-
-            # Verify error message quality
-            assert "400" in error_message or "BadRequestError" in type(e).__name__, "Should be a 400 Bad Request error"
-
-            assert ".csv" in error_message.lower(), "Error message should mention the CSV file extension"
-
-            assert (
-                "not supported" in error_message.lower() or "unsupported" in error_message.lower()
-            ), "Error message should clearly state the file type is not supported"
-
-            # Check that supported file types are mentioned (helpful for developers)
-            error_lower = error_message.lower()
-            has_supported_list = any(ext in error_lower for ext in [".txt", ".pdf", ".md", ".py"])
-            assert has_supported_list, "Error message should list examples of supported file types"
-
-            print("✓ Error message is clear and actionable")
-            print("  - Mentions unsupported file type (.csv)")
-            print("  - States it's not supported")
-            print("  - Lists supported file types")
-
-        # Cleanup
-        openai_client.vector_stores.delete(vector_store.id)
-        print("\nVector store deleted")
+            print("\nVector store deleted")
 
     @servicePreparer()
     @pytest.mark.skipif(
@@ -212,12 +213,12 @@ Widget B,Q2,25000"""
 
         model = self.test_agents_params["model_deployment_name"]
 
-        # Setup
-        project_client = self.create_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
-
-        # Create a document with information about products
-        product_info = """Product Catalog:
+        with (
+            self.create_client(operation_group="agents", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            # Create a document with information about products
+            product_info = """Product Catalog:
 
 Widget A:
 - Price: $150
@@ -238,92 +239,90 @@ Widget C:
 - Rating: 4.2/5 stars
 """
 
-        # Create vector store and upload document
-        vector_store = openai_client.vector_stores.create(name="ProductCatalog")
-        print(f"Vector store created: {vector_store.id}")
+            # Create vector store and upload document
+            vector_store = openai_client.vector_stores.create(name="ProductCatalog")
+            print(f"Vector store created: {vector_store.id}")
 
-        from io import BytesIO
+            product_file = BytesIO(product_info.encode("utf-8"))
+            product_file.name = "products.txt"
 
-        product_file = BytesIO(product_info.encode("utf-8"))
-        product_file.name = "products.txt"
+            file = openai_client.vector_stores.files.upload_and_poll(
+                vector_store_id=vector_store.id,
+                file=product_file,
+            )
+            print(f"Product catalog uploaded: {file.id}")
 
-        file = openai_client.vector_stores.files.upload_and_poll(
-            vector_store_id=vector_store.id,
-            file=product_file,
-        )
-        print(f"Product catalog uploaded: {file.id}")
+            # Create agent with File Search
+            agent = project_client.agents.create_version(
+                agent_name="product-catalog-agent",
+                definition=PromptAgentDefinition(
+                    model=model,
+                    instructions="You are a product information assistant. Use file search to answer questions about products.",
+                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                ),
+                description="Agent for multi-turn product queries.",
+            )
+            print(f"Agent created: {agent.id}")
 
-        # Create agent with File Search
-        agent = project_client.agents.create_version(
-            agent_name="product-catalog-agent",
-            definition=PromptAgentDefinition(
-                model=model,
-                instructions="You are a product information assistant. Use file search to answer questions about products.",
-                tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
-            ),
-            description="Agent for multi-turn product queries.",
-        )
-        print(f"Agent created: {agent.id}")
+            # Turn 1: Ask about price
+            print("\n--- Turn 1: Initial query ---")
+            response_1 = openai_client.responses.create(
+                input="What is the price of Widget B?",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
 
-        # Turn 1: Ask about price
-        print("\n--- Turn 1: Initial query ---")
-        response_1 = openai_client.responses.create(
-            input="What is the price of Widget B?",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        )
+            response_1_text = response_1.output_text
+            print(f"Response 1: {response_1_text[:200]}...")
+            assert "$220" in response_1_text or "220" in response_1_text, "Response should mention Widget B's price"
 
-        response_1_text = response_1.output_text
-        print(f"Response 1: {response_1_text[:200]}...")
-        assert "$220" in response_1_text or "220" in response_1_text, "Response should mention Widget B's price"
+            # Turn 2: Follow-up question (requires context from turn 1)
+            print("\n--- Turn 2: Follow-up query (testing context retention) ---")
+            response_2 = openai_client.responses.create(
+                input="What about its stock level?",
+                previous_response_id=response_1.id,
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
 
-        # Turn 2: Follow-up question (requires context from turn 1)
-        print("\n--- Turn 2: Follow-up query (testing context retention) ---")
-        response_2 = openai_client.responses.create(
-            input="What about its stock level?",
-            previous_response_id=response_1.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        )
+            response_2_text = response_2.output_text
+            print(f"Response 2: {response_2_text[:200]}...")
+            assert (
+                "30" in response_2_text or "thirty" in response_2_text.lower()
+            ), "Response should mention Widget B's stock (30 units)"
 
-        response_2_text = response_2.output_text
-        print(f"Response 2: {response_2_text[:200]}...")
-        assert (
-            "30" in response_2_text or "thirty" in response_2_text.lower()
-        ), "Response should mention Widget B's stock (30 units)"
+            # Turn 3: Another follow-up (compare with different product)
+            print("\n--- Turn 3: Comparison query ---")
+            response_3 = openai_client.responses.create(
+                input="How does that compare to Widget A's stock?",
+                previous_response_id=response_2.id,
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
 
-        # Turn 3: Another follow-up (compare with different product)
-        print("\n--- Turn 3: Comparison query ---")
-        response_3 = openai_client.responses.create(
-            input="How does that compare to Widget A's stock?",
-            previous_response_id=response_2.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        )
+            response_3_text = response_3.output_text
+            print(f"Response 3: {response_3_text[:200]}...")
+            assert (
+                "50" in response_3_text or "fifty" in response_3_text.lower()
+            ), "Response should mention Widget A's stock (50 units)"
 
-        response_3_text = response_3.output_text
-        print(f"Response 3: {response_3_text[:200]}...")
-        assert (
-            "50" in response_3_text or "fifty" in response_3_text.lower()
-        ), "Response should mention Widget A's stock (50 units)"
+            # Turn 4: New topic (testing topic switching)
+            print("\n--- Turn 4: Topic switch ---")
+            response_4 = openai_client.responses.create(
+                input="Which widget has the highest rating?",
+                previous_response_id=response_3.id,
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
 
-        # Turn 4: New topic (testing topic switching)
-        print("\n--- Turn 4: Topic switch ---")
-        response_4 = openai_client.responses.create(
-            input="Which widget has the highest rating?",
-            previous_response_id=response_3.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        )
+            response_4_text = response_4.output_text
+            print(f"Response 4: {response_4_text[:200]}...")
+            assert (
+                "widget b" in response_4_text.lower() or "4.8" in response_4_text
+            ), "Response should identify Widget B as highest rated (4.8/5)"
 
-        response_4_text = response_4.output_text
-        print(f"Response 4: {response_4_text[:200]}...")
-        assert (
-            "widget b" in response_4_text.lower() or "4.8" in response_4_text
-        ), "Response should identify Widget B as highest rated (4.8/5)"
+            print("\n✓ Multi-turn conversation successful!")
+            print("  - Context maintained across turns")
+            print("  - Follow-up questions handled correctly")
+            print("  - Topic switching works")
 
-        print("\n✓ Multi-turn conversation successful!")
-        print("  - Context maintained across turns")
-        print("  - Follow-up questions handled correctly")
-        print("  - Topic switching works")
-
-        # Cleanup
-        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        openai_client.vector_stores.delete(vector_store.id)
-        print("Cleanup completed")
+            # Cleanup
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            openai_client.vector_stores.delete(vector_store.id)
+            print("Cleanup completed")

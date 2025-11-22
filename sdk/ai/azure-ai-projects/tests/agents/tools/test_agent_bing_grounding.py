@@ -47,10 +47,6 @@ class TestAgentBingGrounding(TestBase):
 
         model = self.test_agents_params["model_deployment_name"]
 
-        # Setup
-        project_client = self.create_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
-
         # Note: This test requires AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable
         # to be set with a valid Bing connection ID from the project
         bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
@@ -60,78 +56,82 @@ class TestAgentBingGrounding(TestBase):
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
-        # Create agent with Bing grounding tool
-        agent = project_client.agents.create_version(
-            agent_name="bing-grounding-agent",
-            definition=PromptAgentDefinition(
-                model=model,
-                instructions="You are a helpful assistant.",
-                tools=[
-                    BingGroundingAgentTool(
-                        bing_grounding=BingGroundingSearchToolParameters(
-                            search_configurations=[
-                                BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
-                            ]
+        with (
+            self.create_client(operation_group="agents", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            # Create agent with Bing grounding tool
+            agent = project_client.agents.create_version(
+                agent_name="bing-grounding-agent",
+                definition=PromptAgentDefinition(
+                    model=model,
+                    instructions="You are a helpful assistant.",
+                    tools=[
+                        BingGroundingAgentTool(
+                            bing_grounding=BingGroundingSearchToolParameters(
+                                search_configurations=[
+                                    BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
+                                ]
+                            )
                         )
-                    )
-                ],
-            ),
-            description="You are a helpful agent.",
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-        assert agent.id is not None
-        assert agent.name == "bing-grounding-agent"
-        assert agent.version is not None
+                    ],
+                ),
+                description="You are a helpful agent.",
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+            assert agent.id is not None
+            assert agent.name == "bing-grounding-agent"
+            assert agent.version is not None
 
-        # Test agent with a query that requires current web information
-        output_text = ""
-        url_citations = []
+            # Test agent with a query that requires current web information
+            output_text = ""
+            url_citations = []
 
-        stream_response = openai_client.responses.create(
-            stream=True,
-            tool_choice="required",
-            input="What is the current weather in Seattle?",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        )
+            stream_response = openai_client.responses.create(
+                stream=True,
+                tool_choice="required",
+                input="What is the current weather in Seattle?",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
 
-        for event in stream_response:
-            if event.type == "response.created":
-                print(f"Follow-up response created with ID: {event.response.id}")
-                assert event.response.id is not None
-            elif event.type == "response.output_text.delta":
-                print(f"Delta: {event.delta}")
-            elif event.type == "response.text.done":
-                print(f"Follow-up response done!")
-            elif event.type == "response.output_item.done":
-                if event.item.type == "message":
-                    item = event.item
-                    if item.content and len(item.content) > 0:
-                        if item.content[-1].type == "output_text":
-                            text_content = item.content[-1]
-                            for annotation in text_content.annotations:
-                                if annotation.type == "url_citation":
-                                    print(f"URL Citation: {annotation.url}")
-                                    url_citations.append(annotation.url)
-            elif event.type == "response.completed":
-                print(f"Follow-up completed!")
-                print(f"Full response: {event.response.output_text}")
-                output_text = event.response.output_text
+            for event in stream_response:
+                if event.type == "response.created":
+                    print(f"Follow-up response created with ID: {event.response.id}")
+                    assert event.response.id is not None
+                elif event.type == "response.output_text.delta":
+                    print(f"Delta: {event.delta}")
+                elif event.type == "response.text.done":
+                    print(f"Follow-up response done!")
+                elif event.type == "response.output_item.done":
+                    if event.item.type == "message":
+                        item = event.item
+                        if item.content and len(item.content) > 0:
+                            if item.content[-1].type == "output_text":
+                                text_content = item.content[-1]
+                                for annotation in text_content.annotations:
+                                    if annotation.type == "url_citation":
+                                        print(f"URL Citation: {annotation.url}")
+                                        url_citations.append(annotation.url)
+                elif event.type == "response.completed":
+                    print(f"Follow-up completed!")
+                    print(f"Full response: {event.response.output_text}")
+                    output_text = event.response.output_text
 
-        # Verify that we got a response
-        assert len(output_text) > 0, "Expected non-empty response text"
+            # Verify that we got a response
+            assert len(output_text) > 0, "Expected non-empty response text"
 
-        # Verify that we got URL citations (Bing grounding should provide sources)
-        assert len(url_citations) > 0, "Expected URL citations from Bing grounding"
+            # Verify that we got URL citations (Bing grounding should provide sources)
+            assert len(url_citations) > 0, "Expected URL citations from Bing grounding"
 
-        # Verify that citations are valid URLs
-        for url in url_citations:
-            assert url.startswith("http://") or url.startswith("https://"), f"Invalid URL citation: {url}"
+            # Verify that citations are valid URLs
+            for url in url_citations:
+                assert url.startswith("http://") or url.startswith("https://"), f"Invalid URL citation: {url}"
 
-        print(f"Test completed successfully with {len(url_citations)} URL citations")
+            print(f"Test completed successfully with {len(url_citations)} URL citations")
 
-        # Teardown
-        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+            # Teardown
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Agent deleted")
 
     @servicePreparer()
     @pytest.mark.skipif(
@@ -148,10 +148,6 @@ class TestAgentBingGrounding(TestBase):
 
         model = self.test_agents_params["model_deployment_name"]
 
-        # Setup
-        project_client = self.create_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
-
         bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
 
         if not bing_connection_id:
@@ -159,62 +155,66 @@ class TestAgentBingGrounding(TestBase):
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
-        # Create agent with Bing grounding tool
-        agent = project_client.agents.create_version(
-            agent_name="bing-grounding-multi-query-agent",
-            definition=PromptAgentDefinition(
-                model=model,
-                instructions="You are a helpful assistant that provides current information.",
-                tools=[
-                    BingGroundingAgentTool(
-                        bing_grounding=BingGroundingSearchToolParameters(
-                            search_configurations=[
-                                BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
-                            ]
+        with (
+            self.create_client(operation_group="agents", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            # Create agent with Bing grounding tool
+            agent = project_client.agents.create_version(
+                agent_name="bing-grounding-multi-query-agent",
+                definition=PromptAgentDefinition(
+                    model=model,
+                    instructions="You are a helpful assistant that provides current information.",
+                    tools=[
+                        BingGroundingAgentTool(
+                            bing_grounding=BingGroundingSearchToolParameters(
+                                search_configurations=[
+                                    BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
+                                ]
+                            )
                         )
-                    )
-                ],
-            ),
-            description="Agent for testing multiple Bing grounding queries.",
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
-        # Test with multiple different queries
-        queries = [
-            "What is today's date?",
-            "What are the latest news about AI?",
-        ]
-
-        for query in queries:
-            print(f"\nTesting query: {query}")
-            output_text = ""
-            url_citations = []
-
-            stream_response = openai_client.responses.create(
-                stream=True,
-                tool_choice="required",
-                input=query,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    ],
+                ),
+                description="Agent for testing multiple Bing grounding queries.",
             )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-            for event in stream_response:
-                if event.type == "response.output_item.done":
-                    if event.item.type == "message":
-                        item = event.item
-                        if item.content and len(item.content) > 0:
-                            if item.content[-1].type == "output_text":
-                                text_content = item.content[-1]
-                                for annotation in text_content.annotations:
-                                    if annotation.type == "url_citation":
-                                        url_citations.append(annotation.url)
-                elif event.type == "response.completed":
-                    output_text = event.response.output_text
+            # Test with multiple different queries
+            queries = [
+                "What is today's date?",
+                "What are the latest news about AI?",
+            ]
 
-            # Verify that we got a response for each query
-            assert len(output_text) > 0, f"Expected non-empty response text for query: {query}"
-            print(f"Response length: {len(output_text)} characters")
-            print(f"URL citations found: {len(url_citations)}")
+            for query in queries:
+                print(f"\nTesting query: {query}")
+                output_text = ""
+                url_citations = []
 
-        # Teardown
-        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+                stream_response = openai_client.responses.create(
+                    stream=True,
+                    tool_choice="required",
+                    input=query,
+                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                )
+
+                for event in stream_response:
+                    if event.type == "response.output_item.done":
+                        if event.item.type == "message":
+                            item = event.item
+                            if item.content and len(item.content) > 0:
+                                if item.content[-1].type == "output_text":
+                                    text_content = item.content[-1]
+                                    for annotation in text_content.annotations:
+                                        if annotation.type == "url_citation":
+                                            url_citations.append(annotation.url)
+                    elif event.type == "response.completed":
+                        output_text = event.response.output_text
+
+                # Verify that we got a response for each query
+                assert len(output_text) > 0, f"Expected non-empty response text for query: {query}"
+                print(f"Response length: {len(output_text)} characters")
+                print(f"URL citations found: {len(url_citations)}")
+
+            # Teardown
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Agent deleted")
