@@ -85,11 +85,11 @@ class Asset(Resource):
         return self._version
 
     @version.setter
-    def version(self, value: str) -> None:
+    def version(self, value: Optional[str]) -> None:
         """Sets the asset version.
 
         :param value: The asset version.
-        :type value: str
+        :type value: Optional[str]
         :raises ValidationException: Raised if value is not a string.
         """
         if value:

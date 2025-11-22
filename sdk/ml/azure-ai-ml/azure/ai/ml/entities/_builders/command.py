@@ -260,13 +260,22 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     @distribution.setter
     def distribution(
         self,
-        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution],
+        value: Optional[
+            Union[
+                Dict,
+                PyTorchDistribution,
+                TensorFlowDistribution,
+                MpiDistribution,
+                RayDistribution,
+                DistributionConfiguration,
+            ]
+        ],
     ) -> None:
         """Sets the configuration for the distributed command component or job.
 
         :param value: The configuration for distributed jobs.
-        :type value: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
-            ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+        :type value: Optional[Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+            ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]]
         """
         if isinstance(value, dict):
             dist_schema = UnionField(
@@ -309,11 +318,11 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         return self._queue_settings
 
     @queue_settings.setter
-    def queue_settings(self, value: Union[Dict, QueueSettings]) -> None:
+    def queue_settings(self, value: Optional[Union[Dict, QueueSettings]]) -> None:
         """Sets the queue settings for the command component or job.
 
         :param value: The queue settings for the command component or job.
-        :type value: Union[dict, ~azure.ai.ml.entities.QueueSettings]
+        :type value: Optional[Union[dict, ~azure.ai.ml.entities.QueueSettings]]
         """
         if isinstance(value, dict):
             value = QueueSettings(**value)
@@ -373,7 +382,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     @services.setter
     def services(
         self,
-        value: Dict,
+        value: Optional[Dict[str, Any]],
     ) -> None:
         """Sets the interactive services for the node.
 
@@ -951,7 +960,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             node.distribution = copy.deepcopy(self.distribution)
             node.resources = copy.deepcopy(self.resources)
             node.queue_settings = copy.deepcopy(self.queue_settings)
-            node.services = copy.deepcopy(self.services)
+            node.services = copy.deepcopy(self.services) if self.services is not None else None
             node.identity = copy.deepcopy(self.identity)
             return node
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."

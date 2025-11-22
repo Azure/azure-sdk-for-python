@@ -284,7 +284,7 @@ class Environment(Asset, LocalizableMixin):
 
         # Setting version to None since if version is not provided it is defaulted to "1".
         # This should go away once container concept is finalized.
-        env.version = None
+        env.version = None  # type: ignore[assignment]
         return env
 
     def _to_arm_resource_param(self, **kwargs: Any) -> Dict:  # pylint: disable=unused-argument
@@ -404,7 +404,7 @@ class Environment(Asset, LocalizableMixin):
         self._creation_context = None
         self._base_path = base_path
         if self._is_anonymous:
-            self.name, self.version = None, None
+            self.name, self.version = None, None  # type: ignore[assignment]
 
 
 # TODO: Remove _DockerBuild and _DockerConfiguration classes once local endpoint moves to using updated env

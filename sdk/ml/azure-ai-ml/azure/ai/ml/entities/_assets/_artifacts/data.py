@@ -120,7 +120,7 @@ class Data(Artifact):
         return self._path
 
     @path.setter
-    def path(self, value: str) -> None:
+    def path(self, value: Optional[Union[str, PathLike]]) -> None:
         # Call the parent setter to resolve the path with base_path if it was a local path
         # TODO: Bug Item number: 2883424
         super(Data, type(self)).path.fset(self, value)  # type: ignore

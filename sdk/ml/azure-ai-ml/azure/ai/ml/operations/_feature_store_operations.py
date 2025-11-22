@@ -491,9 +491,12 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_online_store_role_assignment=update_online_store_role_assignment,
             materialization_identity_id=(
                 materialization_identity.resource_id
-                if update_workspace_role_assignment
-                or update_offline_store_role_assignment
-                or update_online_store_role_assignment
+                if materialization_identity
+                and (
+                    update_workspace_role_assignment
+                    or update_offline_store_role_assignment
+                    or update_online_store_role_assignment
+                )
                 else None
             ),
             offline_store_target=offline_store_target_to_update if update_offline_store_role_assignment else None,
@@ -558,7 +561,9 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         module_logger.info("Provision network request initiated for feature store: %s\n", workspace_name)
         return poller
 
-    def _validate_offline_store(self, offline_store: MaterializationStore) -> None:
+    def _validate_offline_store(self, offline_store: Optional[MaterializationStore]) -> None:
+        if offline_store is None:
+            return
         store_regex = re.compile(STORE_REGEX_PATTERN)
         if offline_store and store_regex.match(offline_store.target) is None:
             raise ValidationError(f"Invalid AzureML offlinestore target ARM Id {offline_store.target}")

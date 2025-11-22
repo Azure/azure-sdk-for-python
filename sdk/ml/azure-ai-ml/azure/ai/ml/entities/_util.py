@@ -258,11 +258,11 @@ def validate_attribute_type(attrs_to_check: Dict[str, Any], attr_type_map: Dict[
             )
 
 
-def is_empty_target(obj: Optional[Dict]) -> bool:
+def is_empty_target(obj: Union[Dict, List, None]) -> bool:
     """Determines if it's empty target
 
     :param obj: The object to check
-    :type obj: Optional[Dict]
+    :type obj: Union[Dict, List, None]
     :return: True if obj is None or an empty Dict
     :rtype: bool
     """
@@ -440,11 +440,11 @@ def from_rest_dict_to_dummy_rest_object(rest_dict: Optional[Dict]) -> _DummyRest
     raise ValueError("Unexpected type {}".format(type(rest_dict)))
 
 
-def extract_label(input_str: str) -> Union[Tuple, List]:
+def extract_label(input_str: Optional[str]) -> Union[Tuple, List]:
     """Extract label from input string.
 
     :param input_str: The input string
-    :type input_str: str
+    :type input_str: Optional[str]
     :return: The rest of the string and the label
     :rtype: Tuple[str, Optional[str]]
     """
