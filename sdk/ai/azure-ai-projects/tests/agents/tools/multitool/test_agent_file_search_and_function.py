@@ -62,8 +62,6 @@ Overall Total Revenue: $129,000
         vector_store = openai_client.vector_stores.create(name="SalesDataStore")
         print(f"Vector store created (id: {vector_store.id})")
 
-        from io import BytesIO
-
         txt_file = BytesIO(txt_content.encode("utf-8"))
         txt_file.name = "sales_data.txt"
 
@@ -268,8 +266,6 @@ print(f"Sum: {result}")
 
         # Create vector store and upload
         vector_store = openai_client.vector_stores.create(name="CodeStore")
-
-        from io import BytesIO
 
         code_file = BytesIO(python_code.encode("utf-8"))
         code_file.name = "sample_code.py"

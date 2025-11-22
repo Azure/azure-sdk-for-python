@@ -51,82 +51,82 @@ class TestAgentImageGeneration(TestBase):
 
         model = self.test_agents_params["model_deployment_name"]
 
-        # Setup
-        project_client = self.create_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
+        with (
+            self.create_client(operation_group="agents", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            # Check if the image model deployment exists in the project
+            try:
+                deployment = project_client.deployments.get(image_model_deployment)
+                print(f"Image model deployment found: {deployment.name}")
+            except ResourceNotFoundError:
+                pytest.skip(f"Image generation model '{image_model_deployment}' not available in this project")
+            except Exception as e:
+                pytest.skip(f"Unable to verify image model deployment: {e}")
 
-        # Check if the image model deployment exists in the project
-        try:
-            deployment = project_client.deployments.get(image_model_deployment)
-            print(f"Image model deployment found: {deployment.name}")
-        except ResourceNotFoundError:
-            pytest.skip(f"Image generation model '{image_model_deployment}' not available in this project")
-        except Exception as e:
-            pytest.skip(f"Unable to verify image model deployment: {e}")
+            # Disable retries for faster failure when service returns 500
+            openai_client.max_retries = 0
 
-        # Disable retries for faster failure when service returns 500
-        openai_client.max_retries = 0
+            # Create agent with image generation tool
+            agent = project_client.agents.create_version(
+                agent_name="image-gen-agent",
+                definition=PromptAgentDefinition(
+                    model=model,
+                    instructions="Generate images based on user prompts",
+                    tools=[ImageGenTool(quality="low", size="1024x1024")],
+                ),
+                description="Agent for testing image generation.",
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+            assert agent.id is not None
+            assert agent.name == "image-gen-agent"
+            assert agent.version is not None
 
-        # Create agent with image generation tool
-        agent = project_client.agents.create_version(
-            agent_name="image-gen-agent",
-            definition=PromptAgentDefinition(
-                model=model,
-                instructions="Generate images based on user prompts",
-                tools=[ImageGenTool(quality="low", size="1024x1024")],
-            ),
-            description="Agent for testing image generation.",
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-        assert agent.id is not None
-        assert agent.name == "image-gen-agent"
-        assert agent.version is not None
+            # Request image generation
+            print("\nAsking agent to generate an image of a simple geometric shape...")
 
-        # Request image generation
-        print("\nAsking agent to generate an image of a simple geometric shape...")
+            response = openai_client.responses.create(
+                input="Generate an image of a blue circle on a white background.",
+                extra_headers={
+                    "x-ms-oai-image-generation-deployment": image_model_deployment
+                },  # Required for image generation
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
 
-        response = openai_client.responses.create(
-            input="Generate an image of a blue circle on a white background.",
-            extra_headers={
-                "x-ms-oai-image-generation-deployment": image_model_deployment
-            },  # Required for image generation
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        )
+            print(f"Response created (id: {response.id})")
+            assert response.id is not None
+            assert response.output is not None
+            assert len(response.output) > 0
 
-        print(f"Response created (id: {response.id})")
-        assert response.id is not None
-        assert response.output is not None
-        assert len(response.output) > 0
+            # Extract image data from response
+            image_data = [output.result for output in response.output if output.type == "image_generation_call"]
 
-        # Extract image data from response
-        image_data = [output.result for output in response.output if output.type == "image_generation_call"]
+            # Verify image was generated
+            assert len(image_data) > 0, "Expected at least one image to be generated"
+            assert image_data[0], "Expected image data to be non-empty"
 
-        # Verify image was generated
-        assert len(image_data) > 0, "Expected at least one image to be generated"
-        assert image_data[0], "Expected image data to be non-empty"
+            print(f"✓ Image data received ({len(image_data[0])} base64 characters)")
 
-        print(f"✓ Image data received ({len(image_data[0])} base64 characters)")
+            # Decode the base64 image
+            image_bytes = b""
+            try:
+                image_bytes = base64.b64decode(image_data[0])
+                assert len(image_bytes) > 0, "Decoded image should have content"
+                print(f"✓ Image decoded successfully ({len(image_bytes)} bytes)")
+            except Exception as e:
+                pytest.fail(f"Failed to decode base64 image data: {e}")
 
-        # Decode the base64 image
-        image_bytes = b""
-        try:
-            image_bytes = base64.b64decode(image_data[0])
-            assert len(image_bytes) > 0, "Decoded image should have content"
-            print(f"✓ Image decoded successfully ({len(image_bytes)} bytes)")
-        except Exception as e:
-            pytest.fail(f"Failed to decode base64 image data: {e}")
+            # Verify it's a PNG image (check magic bytes)
+            # PNG files start with: 89 50 4E 47 (‰PNG)
+            assert image_bytes[:4] == b"\x89PNG", "Image does not appear to be a valid PNG"
+            print("✓ Image is a valid PNG")
 
-        # Verify it's a PNG image (check magic bytes)
-        # PNG files start with: 89 50 4E 47 (‰PNG)
-        assert image_bytes[:4] == b"\x89PNG", "Image does not appear to be a valid PNG"
-        print("✓ Image is a valid PNG")
+            # Verify reasonable image size (should be > 1KB for a 1024x1024 image)
+            assert len(image_bytes) > 1024, f"Image seems too small ({len(image_bytes)} bytes)"
+            print(f"✓ Image size is reasonable ({len(image_bytes):,} bytes)")
 
-        # Verify reasonable image size (should be > 1KB for a 1024x1024 image)
-        assert len(image_bytes) > 1024, f"Image seems too small ({len(image_bytes)} bytes)"
-        print(f"✓ Image size is reasonable ({len(image_bytes):,} bytes)")
+            print("\n✓ Agent successfully generated and returned a valid image")
 
-        print("\n✓ Agent successfully generated and returned a valid image")
-
-        # Teardown
-        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+            # Teardown
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Agent deleted")

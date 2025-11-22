@@ -12,6 +12,7 @@ within the context of conversations, testing conversation state management with 
 
 import json
 import pytest
+from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import (
@@ -57,7 +58,6 @@ Total Revenue: $144,000
 """
 
         vector_store = openai_client.vector_stores.create(name="SalesDataStore")
-        from io import BytesIO
 
         file = BytesIO(doc_content.encode("utf-8"))
         file.name = "sales.txt"

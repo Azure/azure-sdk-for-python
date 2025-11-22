@@ -15,6 +15,7 @@ All tests use the same 3-tool combination but different inputs and workflows.
 import os
 import json
 import pytest
+from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import (
@@ -49,8 +50,6 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         # Create data file
         txt_content = "Sample data for analysis"
         vector_store = openai_client.vector_stores.create(name="ThreeToolStore")
-
-        from io import BytesIO
 
         txt_file = BytesIO(txt_content.encode("utf-8"))
         txt_file.name = "data.txt"
@@ -125,8 +124,6 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         # Create vector store
         txt_content = "Test data"
         vector_store = openai_client.vector_stores.create(name="FourToolStore")
-
-        from io import BytesIO
 
         txt_file = BytesIO(txt_content.encode("utf-8"))
         txt_file.name = "data.txt"
