@@ -513,10 +513,13 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                         self._read_buffer = BytesIO(data[toread:])
                         toread = 0
                 return view
-            except TypeError as te:
-                # aiohttp websocket raises TypeError when a websocket disconnects, as it ends up
-                # reading None over the wire and cant convert to bytes.
-                raise ConnectionError("Websocket disconnected: %r" % te) from None
+            except Exception as e:
+                # Handle both TypeError and WSMessageTypeError
+                # WSMessageTypeError occurs when receiving non-binary messages
+                if isinstance(e, TypeError) or "is not WSMsgType.BINARY" in str(e) or "WSMessageTypeError" in type(e).__name__:
+                    raise ConnectionError(f"Websocket disconnected: {e!r}") from None
+                # Re-raise if it's not a websocket disconnection error
+                raise
         except:
             self._read_buffer = BytesIO(view[:length])
             raise
