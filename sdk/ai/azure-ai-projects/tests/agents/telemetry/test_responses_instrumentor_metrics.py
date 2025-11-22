@@ -13,9 +13,6 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 from opentelemetry import metrics
 from openai import OpenAI
-
-from devtools_testutils import recorded_by_proxy
-
 from test_base import servicePreparer, recorded_by_proxy_httpx
 from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, CONTENT_TRACING_ENV_VARIABLE
 
