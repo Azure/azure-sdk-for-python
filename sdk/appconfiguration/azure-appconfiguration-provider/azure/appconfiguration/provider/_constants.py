@@ -27,3 +27,10 @@ FEATURE_FLAG_REFERENCE_KEY = "FeatureFlagReference"
 # Mime profiles
 APP_CONFIG_AI_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/"
 APP_CONFIG_AICC_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/chat-completion"
+
+# Snapshot reference tracing key
+SNAPSHOT_REFERENCE_TAG = "UsesSnapshotReference"
+
+# Snapshot reference constants
+SNAPSHOT_REF_CONTENT_TYPE = 'application/json; profile="https://azconfig.io/mime-profiles/snapshot-ref"; charset=utf-8'
+SNAPSHOT_NAME_FIELD = "snapshot_name"

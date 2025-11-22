@@ -39,6 +39,7 @@ from ._constants import (
     ALLOCATION_ID_KEY,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
+    SNAPSHOT_REF_CONTENT_TYPE,
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
 )
@@ -471,6 +472,8 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                     self._tracing_context.uses_ai_configuration = True
                 if APP_CONFIG_AICC_MIME_PROFILE in config.content_type:
                     self._tracing_context.uses_aicc_configuration = True
+                if SNAPSHOT_REF_CONTENT_TYPE in config.content_type:
+                    self._tracing_context.uses_snapshot_reference = True
                 return json.loads(config.value)
             except json.JSONDecodeError:
                 try:
