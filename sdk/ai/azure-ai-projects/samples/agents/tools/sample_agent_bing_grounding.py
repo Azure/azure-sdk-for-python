@@ -33,6 +33,7 @@ USAGE:
 """
 
 import os
+from typing import Optional
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -41,65 +42,82 @@ from azure.ai.projects.models import (
     BingGroundingAgentTool,
     BingGroundingSearchToolParameters,
     BingGroundingSearchConfiguration,
+    AgentVersionDetails,
 )
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with (
-    DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
+# Global variables to be asserted after main execution
+output: Optional[str] = None
 
-    # [START tool_declaration]
-    tool = BingGroundingAgentTool(
-        bing_grounding=BingGroundingSearchToolParameters(
-            search_configurations=[
-                BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])
-            ]
-        )
-    )
-    # [END tool_declaration]
 
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="You are a helpful assistant.",
-            tools=[tool],
-        ),
-        description="You are a helpful agent.",
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+def main() -> None:
+    global output
+    agent: Optional[AgentVersionDetails] = None
 
-    stream_response = openai_client.responses.create(
-        stream=True,
-        tool_choice="required",
-        input="What is today's date and whether in Seattle?",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    )
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
+        try:
+            # [START tool_declaration]
+            tool = BingGroundingAgentTool(
+                bing_grounding=BingGroundingSearchToolParameters(
+                    search_configurations=[
+                        BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])
+                    ]
+                )
+            )
+            # [END tool_declaration]
 
-    for event in stream_response:
-        if event.type == "response.created":
-            print(f"Follow-up response created with ID: {event.response.id}")
-        elif event.type == "response.output_text.delta":
-            print(f"Delta: {event.delta}")
-        elif event.type == "response.text.done":
-            print(f"\nFollow-up response done!")
-        elif event.type == "response.output_item.done":
-            if event.item.type == "message":
-                item = event.item
-                if item.content[-1].type == "output_text":
-                    text_content = item.content[-1]
-                    for annotation in text_content.annotations:
-                        if annotation.type == "url_citation":
-                            print(f"URL Citation: {annotation.url}")
-        elif event.type == "response.completed":
-            print(f"\nFollow-up completed!")
-            print(f"Full response: {event.response.output_text}")
+            agent = project_client.agents.create_version(
+                agent_name="MyAgent",
+                definition=PromptAgentDefinition(
+                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                    instructions="You are a helpful assistant.",
+                    tools=[tool],
+                ),
+                description="You are a helpful agent.",
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
+            stream_response = openai_client.responses.create(
+                stream=True,
+                tool_choice="required",
+                input="What is today's date and whether in Seattle?",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
+
+            output = None
+            for event in stream_response:
+                if event.type == "response.created":
+                    print(f"Follow-up response created with ID: {event.response.id}")
+                elif event.type == "response.output_text.delta":
+                    print(f"Delta: {event.delta}")
+                elif event.type == "response.text.done":
+                    print(f"\nFollow-up response done!")
+                elif event.type == "response.output_item.done":
+                    if event.item.type == "message":
+                        item = event.item
+                        if item.content[-1].type == "output_text":
+                            text_content = item.content[-1]
+                            for annotation in text_content.annotations:
+                                if annotation.type == "url_citation":
+                                    print(f"URL Citation: {annotation.url}")
+                elif event.type == "response.completed":
+                    output = event.response.output_text
+                    print(f"\nFollow-up completed!")
+                    print(f"Full response: {output}")
+        finally:
+            if isinstance(agent, AgentVersionDetails):
+                print("\nCleaning up...")
+                project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+                print("Agent deleted")
+
+
+if __name__ == "__main__":
+    main()
+    assert isinstance(output, str) and len(output) > 0, "Output is invalid"

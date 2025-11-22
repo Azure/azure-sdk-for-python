@@ -25,9 +25,10 @@ USAGE:
 
 import os
 import json
+from typing import Optional
 from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, Tool, FunctionTool
+from azure.ai.projects.models import PromptAgentDefinition, Tool, FunctionTool, AgentVersionDetails
 from azure.identity import DefaultAzureCredential
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
@@ -41,73 +42,93 @@ def get_horoscope(sign: str) -> str:
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with (
-    DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
+# Global variables to be asserted after main execution
+output: Optional[str] = None
 
-    # [START tool_declaration]
-    tool = FunctionTool(
-        name="get_horoscope",
-        parameters={
-            "type": "object",
-            "properties": {
-                "sign": {
-                    "type": "string",
-                    "description": "An astrological sign like Taurus or Aquarius",
+
+def main() -> None:
+    global output
+    agent: Optional[AgentVersionDetails] = None
+
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
+        try:
+            # [START tool_declaration]
+            tool = FunctionTool(
+                name="get_horoscope",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "sign": {
+                            "type": "string",
+                            "description": "An astrological sign like Taurus or Aquarius",
+                        },
+                    },
+                    "required": ["sign"],
+                    "additionalProperties": False,
                 },
-            },
-            "required": ["sign"],
-            "additionalProperties": False,
-        },
-        description="Get today's horoscope for an astrological sign.",
-        strict=True,
-    )
-    # [END tool_declaration]
+                description="Get today's horoscope for an astrological sign.",
+                strict=True,
+            )
+            # [END tool_declaration]
 
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="You are a helpful assistant that can use function tools.",
-            tools=[tool],
-        ),
-    )
+            agent = project_client.agents.create_version(
+                agent_name="MyAgent",
+                definition=PromptAgentDefinition(
+                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                    instructions="You are a helpful assistant that can use function tools.",
+                    tools=[tool],
+                ),
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    # Prompt the model with tools defined
-    response = openai_client.responses.create(
-        input="What is my horoscope? I am an Aquarius.",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    )
-    print(f"Response output: {response.output_text}")
+            # Prompt the model with tools defined
+            response = openai_client.responses.create(
+                input="What is my horoscope? I am an Aquarius.",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
+            print(f"Response output: {response.output_text}")
 
-    input_list: ResponseInputParam = []
-    # Process function calls
-    for item in response.output:
-        if item.type == "function_call":
-            if item.name == "get_horoscope":
-                # Execute the function logic for get_horoscope
-                horoscope = get_horoscope(**json.loads(item.arguments))
+            input_list: ResponseInputParam = []
+            # Process function calls
+            for item in response.output:
+                if item.type == "function_call":
+                    if item.name == "get_horoscope":
+                        # Execute the function logic for get_horoscope
+                        horoscope = get_horoscope(**json.loads(item.arguments))
 
-                # Provide function call results to the model
-                input_list.append(
-                    FunctionCallOutput(
-                        type="function_call_output",
-                        call_id=item.call_id,
-                        output=json.dumps({"horoscope": horoscope}),
-                    )
-                )
+                        # Provide function call results to the model
+                        input_list.append(
+                            FunctionCallOutput(
+                                type="function_call_output",
+                                call_id=item.call_id,
+                                output=json.dumps({"horoscope": horoscope}),
+                            )
+                        )
 
-    print("Final input:")
-    print(input_list)
+            print("Final input:")
+            print(input_list)
 
-    response = openai_client.responses.create(
-        input=input_list,
-        previous_response_id=response.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    )
+            response = openai_client.responses.create(
+                input=input_list,
+                previous_response_id=response.id,
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
 
-    # The model should be able to give a response!
-    print("Final output:")
-    print("\n" + response.output_text)
+            # The model should be able to give a response!
+            output = response.output_text
+            print("Final output:")
+            print("\n" + output)
+        finally:
+            if isinstance(agent, AgentVersionDetails):
+                print("\nCleaning up...")
+                project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+                print("Agent deleted")
+
+
+if __name__ == "__main__":
+    main()
+    assert isinstance(output, str) and len(output) > 0, "Output is invalid"

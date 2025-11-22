@@ -144,7 +144,7 @@ def handle_computer_action_and_take_screenshot(action, current_state, screenshot
     return screenshot_info, current_state
 
 
-def print_final_output(response):
+def print_final_output(response) -> str:
     """Print the final output when the agent completes the task.
 
     Args:
@@ -158,5 +158,7 @@ def print_final_output(response):
             for part in contents:
                 final_output += getattr(part, "text", None) or getattr(part, "refusal", None) or "" + "\n"
 
+    final_output = final_output.strip()
     print(f"Final status: {response.status}")
-    print(f"Final output: {final_output.strip()}")
+    print(f"Final output: {final_output}")
+    return final_output

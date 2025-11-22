@@ -25,18 +25,30 @@ USAGE:
 
 import os
 import asyncio
+from typing import Optional
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto
+from azure.ai.projects.models import (
+    PromptAgentDefinition,
+    CodeInterpreterTool,
+    CodeInterpreterToolAuto,
+    AgentVersionDetails,
+)
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
+output: Optional[bytes] = None
+container_id: Optional[str] = None
+
 
 async def main() -> None:
     """Main async function to demonstrate code interpreter with async client and credential management."""
+    global output, container_id
+
+    agent: Optional[AgentVersionDetails] = None
 
     async with (
         DefaultAzureCredential() as credential,
@@ -66,13 +78,8 @@ async def main() -> None:
             )
             print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-            # Create a conversation for the agent interaction
-            conversation = await openai_client.conversations.create()
-            print(f"Created conversation (id: {conversation.id})")
-
             # Send request to create a chart and generate a file
             response = await openai_client.responses.create(
-                conversation=conversation.id,
                 input="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
@@ -104,21 +111,25 @@ async def main() -> None:
                     file_id=file_id, container_id=container_id
                 )
                 with open(filename, "wb") as f:
-                    f.write(file_content.read())
+                    output = file_content.read()
+                    f.write(output)
                     print(f"File {filename} downloaded successfully.")
                 print(f"File ready for download: {filename}")
             else:
                 print("No file generated in response")
 
-            print("\nCleaning up...")
-            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-            print("Agent deleted")
-
-        except Exception as e:
-            print(f"Error occurred: {str(e)}")
-            raise
+        finally:
+            if isinstance(container_id, str):
+                print("\nCleaning up container...")
+                await openai_client.containers.delete(container_id=container_id)
+                print("Container deleted")
+            if isinstance(agent, AgentVersionDetails) and project_client:
+                print("\nCleaning up...")
+                await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+                print("Agent deleted")
 
 
 if __name__ == "__main__":
     # Run the async main function
     asyncio.run(main())
+    assert isinstance(output, bytes) and len(output) > 0, "Output is invalid"

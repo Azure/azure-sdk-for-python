@@ -1,7 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
 # ------------------------------------
 
 """
@@ -39,60 +38,79 @@ USAGE:
 
 import base64
 import os
+from typing import Optional
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
+from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool, AgentVersionDetails
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with (
-    DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
+# Global variables to be asserted after main execution
+output: Optional[bytes] = None
 
-    # [START tool_declaration]
-    tool = ImageGenTool(quality="low", size="1024x1024")
-    # [END tool_declaration]
 
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="Generate images based on user prompts",
-            tools=[tool],
-        ),
-        description="Agent for image generation.",
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+def main() -> None:
+    global output
+    agent: Optional[AgentVersionDetails] = None
 
-    response = openai_client.responses.create(
-        input="Generate an image of Microsoft logo.",
-        extra_headers={
-            "x-ms-oai-image-generation-deployment": "gpt-image-1"
-        },  # this is required at the moment for image generation
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    )
-    print(f"Response created: {response.id}")
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
+        try:
+            # [START tool_declaration]
+            tool = ImageGenTool(quality="low", size="1024x1024")
+            # [END tool_declaration]
 
-    # Save the image to a file
-    # [START download_image]
-    image_data = [output.result for output in response.output if output.type == "image_generation_call"]
+            agent = project_client.agents.create_version(
+                agent_name="MyAgent",
+                definition=PromptAgentDefinition(
+                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                    instructions="Generate images based on user prompts",
+                    tools=[tool],
+                ),
+                description="Agent for image generation.",
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    if image_data and image_data[0]:
-        print("Downloading generated image...")
-        filename = "microsoft.png"
-        file_path = os.path.abspath(filename)
+            response = openai_client.responses.create(
+                input="Generate an image of Microsoft logo.",
+                extra_headers={
+                    "x-ms-oai-image-generation-deployment": "gpt-image-1"
+                },  # this is required at the moment for image generation
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
+            print(f"Response created: {response.id}")
 
-        with open(file_path, "wb") as f:
-            f.write(base64.b64decode(image_data[0]))
-        # [END download_image]
-        print(f"Image downloaded and saved to: {file_path}")
+            # Save the image to a file
+            # [START download_image]
+            image_data = [
+                output_item.result for output_item in response.output if output_item.type == "image_generation_call"
+            ]
 
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
+            if image_data and image_data[0]:
+                print("Downloading generated image...")
+                filename = "microsoft.png"
+                file_path = os.path.abspath(filename)
+
+                with open(file_path, "wb") as f:
+                    output = base64.b64decode(image_data[0])
+                    f.write(output)
+                # [END download_image]
+                print(f"Image downloaded and saved to: {file_path}")
+
+        finally:
+            if isinstance(agent, AgentVersionDetails):
+                print("\nCleaning up...")
+                project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+                print("Agent deleted")
+
+
+if __name__ == "__main__":
+    main()
+    assert isinstance(output, bytes) and len(output) > 0, "Output is invalid"

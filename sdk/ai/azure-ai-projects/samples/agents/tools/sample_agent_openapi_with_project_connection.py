@@ -28,6 +28,7 @@ USAGE:
 
 import os
 import jsonref
+from typing import Optional
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
@@ -40,56 +41,72 @@ from azure.ai.projects.models import (
     OpenApiManagedAuthDetails,
     OpenApiProjectConnectionAuthDetails,
     OpenApiProjectConnectionSecurityScheme,
+    AgentVersionDetails,
 )
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with (
-    DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
+# Global variables to be asserted after main execution
+output: Optional[str] = None
 
-    tripadvisor_asset_file_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "../assets/tripadvisor_openapi.json")
-    )
 
-    # [START tool_declaration]
-    with open(tripadvisor_asset_file_path, "r") as f:
-        openapi_tripadvisor = jsonref.loads(f.read())
+def main() -> None:
+    global output
+    agent: Optional[AgentVersionDetails] = None
 
-    tool = OpenApiAgentTool(
-        openapi=OpenApiFunctionDefinition(
-            name="tripadvisor",
-            spec=openapi_tripadvisor,
-            description="Trip Advisor API to get travel information",
-            auth=OpenApiProjectConnectionAuthDetails(
-                security_scheme=OpenApiProjectConnectionSecurityScheme(
-                    project_connection_id=os.environ["OPENAPI_PROJECT_CONNECTION_ID"]
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
+        try:
+            tripadvisor_asset_file_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "../assets/tripadvisor_openapi.json")
+            )
+
+            # [START tool_declaration]
+            with open(tripadvisor_asset_file_path, "r") as f:
+                openapi_tripadvisor = jsonref.loads(f.read())
+
+            tool = OpenApiAgentTool(
+                openapi=OpenApiFunctionDefinition(
+                    name="tripadvisor",
+                    spec=openapi_tripadvisor,
+                    description="Trip Advisor API to get travel information",
+                    auth=OpenApiProjectConnectionAuthDetails(
+                        security_scheme=OpenApiProjectConnectionSecurityScheme(
+                            project_connection_id=os.environ["OPENAPI_PROJECT_CONNECTION_ID"]
+                        )
+                    ),
                 )
-            ),
-        )
-    )
-    # [END tool_declaration]
+            )
+            # [END tool_declaration]
 
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="You are a helpful assistant.",
-            tools=[tool],
-        ),
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+            agent = project_client.agents.create_version(
+                agent_name="MyAgent",
+                definition=PromptAgentDefinition(
+                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                    instructions="You are a helpful assistant.",
+                    tools=[tool],
+                ),
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    response = openai_client.responses.create(
-        input="Recommend me 5 top hotels in paris, France",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    )
-    print(f"Response created: {response.output_text}")
+            response = openai_client.responses.create(
+                input="Recommend me 5 top hotels in paris, France",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
+            output = response.output_text
+            print(f"Response created: {output}")
+        finally:
+            if isinstance(agent, AgentVersionDetails):
+                print("\nCleaning up...")
+                project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+                print("Agent deleted")
 
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
+
+if __name__ == "__main__":
+    main()
+    assert isinstance(output, str) and len(output) > 0, "Output is invalid"

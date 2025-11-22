@@ -37,59 +37,75 @@ USAGE:
 import asyncio
 import base64
 import os
+from typing import Optional
 from dotenv import load_dotenv
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
+from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool, AgentVersionDetails
 
 load_dotenv()
+
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
+output: Optional[bytes] = None
 
 
 async def main():
+    global output
+
+    project_client: Optional[AIProjectClient] = None
+    agent: Optional[AgentVersionDetails] = None
+
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
-        agent = await project_client.agents.create_version(
-            agent_name="MyAgent",
-            definition=PromptAgentDefinition(
-                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                instructions="Generate images based on user prompts",
-                tools=[ImageGenTool(quality="low", size="1024x1024")],
-            ),
-            description="Agent for image generation.",
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        try:
+            agent = await project_client.agents.create_version(
+                agent_name="MyAgent",
+                definition=PromptAgentDefinition(
+                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                    instructions="Generate images based on user prompts",
+                    tools=[ImageGenTool(quality="low", size="1024x1024")],
+                ),
+                description="Agent for image generation.",
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-        response = await openai_client.responses.create(
-            input="Generate an image of Microsoft logo.",
-            extra_headers={
-                "x-ms-oai-image-generation-deployment": "gpt-image-1"
-            },  # this is required at the moment for image generation
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        )
-        print(f"Response created: {response.id}")
+            response = await openai_client.responses.create(
+                input="Generate an image of Microsoft logo.",
+                extra_headers={
+                    "x-ms-oai-image-generation-deployment": "gpt-image-1"
+                },  # this is required at the moment for image generation
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
+            print(f"Response created: {response.id}")
 
-        # Save the image to a file
-        image_data = [output.result for output in response.output if output.type == "image_generation_call"]
+            # Save the image to a file
+            image_data = [
+                output_item.result for output_item in response.output if output_item.type == "image_generation_call"
+            ]
 
-        if image_data and image_data[0]:
-            print("Downloading generated image...")
-            filename = "microsoft.png"
-            file_path = os.path.abspath(filename)
+            if image_data and image_data[0]:
+                print("Downloading generated image...")
+                filename = "microsoft.png"
+                file_path = os.path.abspath(filename)
 
-            with open(file_path, "wb") as f:
-                f.write(base64.b64decode(image_data[0]))
+                with open(file_path, "wb") as f:
+                    output = base64.b64decode(image_data[0])
+                    f.write(output)
 
-            print(f"Image downloaded and saved to: {file_path}")
+                print(f"Image downloaded and saved to: {file_path}")
 
-        print("\nCleaning up...")
-        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+        finally:
+            if isinstance(agent, AgentVersionDetails) and project_client:
+                print("\nCleaning up...")
+                await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+                print("Agent deleted")
 
 
 if __name__ == "__main__":
     asyncio.run(main())
+    assert isinstance(output, bytes) and len(output) > 0, "Output is invalid"

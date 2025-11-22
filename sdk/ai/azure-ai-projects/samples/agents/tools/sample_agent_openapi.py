@@ -25,6 +25,7 @@ USAGE:
 
 import os
 import jsonref
+from typing import Optional
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
@@ -34,50 +35,68 @@ from azure.ai.projects.models import (
     OpenApiAgentTool,
     OpenApiFunctionDefinition,
     OpenApiAnonymousAuthDetails,
+    AgentVersionDetails,
 )
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-with (
-    DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
+# Global variables to be asserted after main execution
+output: Optional[str] = None
 
-    weather_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/weather_openapi.json"))
 
-    # [START tool_declaration]
-    with open(weather_asset_file_path, "r") as f:
-        openapi_weather = jsonref.loads(f.read())
+def main() -> None:
+    global output
+    agent: Optional[AgentVersionDetails] = None
 
-    tool = OpenApiAgentTool(
-        openapi=OpenApiFunctionDefinition(
-            name="get_weather",
-            spec=openapi_weather,
-            description="Retrieve weather information for a location",
-            auth=OpenApiAnonymousAuthDetails(),
-        )
-    )
-    # [END tool_declaration]
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
+        try:
+            weather_asset_file_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "../assets/weather_openapi.json")
+            )
 
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="You are a helpful assistant.",
-            tools=[tool],
-        ),
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+            # [START tool_declaration]
+            with open(weather_asset_file_path, "r") as f:
+                openapi_weather = jsonref.loads(f.read())
 
-    response = openai_client.responses.create(
-        input="What is the name and population of the country that uses currency with abbreviation THB?",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    )
-    print(f"Response created: {response.output_text}")
+            tool = OpenApiAgentTool(
+                openapi=OpenApiFunctionDefinition(
+                    name="get_weather",
+                    spec=openapi_weather,
+                    description="Retrieve weather information for a location",
+                    auth=OpenApiAnonymousAuthDetails(),
+                )
+            )
+            # [END tool_declaration]
 
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
+            agent = project_client.agents.create_version(
+                agent_name="MyAgent",
+                definition=PromptAgentDefinition(
+                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                    instructions="You are a helpful assistant.",
+                    tools=[tool],
+                ),
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+            response = openai_client.responses.create(
+                input="What is the name and population of the country that uses currency with abbreviation THB?",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
+            output = response.output_text
+            print(f"Response created: {output}")
+        finally:
+            if isinstance(agent, AgentVersionDetails):
+                print("\nCleaning up...")
+                project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+                print("Agent deleted")
+
+
+if __name__ == "__main__":
+    main()
+    assert isinstance(output, str) and len(output) > 0, "Output is invalid"
