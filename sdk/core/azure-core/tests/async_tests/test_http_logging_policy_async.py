@@ -256,6 +256,50 @@ def test_http_logger_with_body(http_request, http_response):
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+def test_http_logger_with_custom_log_level(http_request, http_response):
+    class MockHandler(logging.Handler):
+        def __init__(self):
+            super(MockHandler, self).__init__()
+            self.messages = []
+
+        def reset(self):
+            self.messages = []
+
+        def emit(self, record):
+            self.messages.append(record)
+
+    mock_handler = MockHandler()
+
+    logger = logging.getLogger("testlogger")
+    logger.addHandler(mock_handler)
+    logger.setLevel(logging.DEBUG)
+
+    policy = HttpLoggingPolicy(logger=logger, logging_level=logging.DEBUG)
+
+    universal_request = http_request("GET", "http://localhost/")
+    http_response = create_http_response(http_response, universal_request, None)
+    http_response.status_code = 202
+    request = PipelineRequest(universal_request, PipelineContext(None))
+
+    policy.on_request(request)
+    response = PipelineResponse(request, http_response, request.context)
+    policy.on_response(request, response)
+
+    assert all(m.levelname == "DEBUG" for m in mock_handler.messages)
+    assert len(mock_handler.messages) == 2
+    messages_request = mock_handler.messages[0].message.split("\n")
+    messages_response = mock_handler.messages[1].message.split("\n")
+    assert messages_request[0] == "Request URL: 'http://localhost/'"
+    assert messages_request[1] == "Request method: 'GET'"
+    assert messages_request[2] == "Request headers:"
+    assert messages_request[3] == "No body was attached to the request"
+    assert messages_response[0] == "Response status: 202"
+    assert messages_response[1] == "Response headers:"
+
+    mock_handler.reset()
+
+
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
 @pytest.mark.skipif(sys.version_info < (3, 6), reason="types.AsyncGeneratorType does not exist in 3.5")
 def test_http_logger_with_generator_body(http_request, http_response):
     class MockHandler(logging.Handler):
