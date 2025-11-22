@@ -158,7 +158,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         **kwargs: Any,
     ) -> None:
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
-        self._job_inputs, self._job_outputs = inputs, outputs
+        self._job_inputs: Dict[str, Any] = inputs or {}
+        self._job_outputs: Dict[Any, Any] = outputs or {}
 
         kwargs.pop("type", None)
         BaseNode.__init__(
@@ -216,17 +217,20 @@ class Sweep(ParameterizedSweep, BaseNode):
         return self._search_space
 
     @search_space.setter
-    def search_space(self, values: Dict[str, Dict[str, Union[str, int, float, dict]]]) -> None:
+    def search_space(self, values: Optional[Dict[str, Dict[str, Union[str, int, float, dict]]]]) -> None:
         """Sets the search space for the sweep job.
 
         :param values: The search space to set.
-        :type values: Dict[str, Dict[str, Union[str, int, float, dict]]]
+        :type values: Optional[Dict[str, Dict[str, Union[str, int, float, dict]]]]
         """
-        search_space: Dict = {}
-        for name, value in values.items():
-            # If value is a SearchSpace object, directly pass it to job.search_space[name]
-            search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
-        self._search_space = search_space
+        if values is None:
+            self._search_space = None
+        else:
+            search_space: Dict = {}
+            for name, value in values.items():
+                # If value is a SearchSpace object, directly pass it to job.search_space[name]
+                search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
+            self._search_space = search_space
 
     @classmethod
     def _value_type_to_class(cls, value: Any) -> Dict:

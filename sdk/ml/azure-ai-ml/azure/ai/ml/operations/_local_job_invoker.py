@@ -122,7 +122,7 @@ def invoke_command(project_temp_dir: Path) -> None:
 
 def get_execution_service_response(
     job_definition: JobBaseData, token: str, requests_pipeline: HttpPipeline
-) -> Tuple[Dict[str, str], str]:
+) -> Tuple[Any, Optional[str]]:
     """Get zip file containing local run information from Execution Service.
 
     MFE will send down a mock job contract, with service 'local'.
@@ -137,7 +137,7 @@ def get_execution_service_response(
     :param requests_pipeline: The HttpPipeline to use when sending network requests
     :type requests_pipeline: HttpPipeline
     :return: Execution service response and snapshot ID
-    :rtype: Tuple[Dict[str, str], str]
+    :rtype: Tuple[Any, Optional[str]]
     """
     try:
         local = job_definition.properties.services.get("Local", None)
@@ -392,7 +392,7 @@ def start_run_if_local(
     credential: TokenCredential,
     ws_base_url: str,
     requests_pipeline: HttpPipeline,
-) -> str:
+) -> Optional[str]:
     """Request execution bundle from ES and run job. If Linux or WSL environment, unzip and invoke job using job spec
     and bootstrapper. Otherwise, invoke command locally.
 
@@ -405,7 +405,7 @@ def start_run_if_local(
     :param requests_pipeline: The HttpPipeline to use when sending network requests
     :type requests_pipeline: HttpPipeline
     :return: snapshot ID
-    :rtype: str
+    :rtype: Optional[str]
     """
     token = credential.get_token(ws_base_url + "/.default").token
     (zip_content, snapshot_id) = get_execution_service_response(job_definition, token, requests_pipeline)

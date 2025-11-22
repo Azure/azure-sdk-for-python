@@ -250,7 +250,7 @@ class InputOutputBase(ABC):
     def _get_mode(
         cls,
         original_data: Optional[Union[int, bool, float, str, Input, Output, "PipelineInput"]],
-        data: Optional[Union[int, bool, float, str, Input, Output]],
+        data: Optional[Union[int, bool, float, str, Input, Output, "InputOutputBase"]],
         kwargs: dict,
     ) -> Optional[str]:
         """Get mode of this input/output builder.
@@ -263,7 +263,8 @@ class InputOutputBase(ABC):
         :param data: Built input/output data.
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
-                          azure.ai.ml.Output]
+                          azure.ai.ml.Output,
+                          azure.ai.ml.entities._job.pipeline._io.InputOutputBase]
         :param kwargs: The kwargs
         :type kwargs: Dict
         :return: The mode
