@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
@@ -50,7 +50,7 @@ class AdditionalNetworkInterfaceConfiguration(_Model):
         name="dscpConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the DSCP configuration to apply to the network interface."""
-    ip_configurations: List["_models.IpConfiguration"] = rest_field(
+    ip_configurations: list["_models.IpConfiguration"] = rest_field(
         name="ipConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the IP configurations of the network interface. Required."""
@@ -60,7 +60,7 @@ class AdditionalNetworkInterfaceConfiguration(_Model):
         self,
         *,
         name: str,
-        ip_configurations: List["_models.IpConfiguration"],
+        ip_configurations: list["_models.IpConfiguration"],
         enable_accelerated_networking: Optional[bool] = None,
         dscp_configuration: Optional["_models.SubResource"] = None,
     ) -> None: ...
@@ -88,7 +88,7 @@ class ScalingMechanism(_Model):
      ~azure.mgmt.servicefabricmanagedclusters.models.ServiceScalingMechanismKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"ScalePartitionInstanceCount\" and
      \"AddRemoveIncrementalNamedPartition\"."""
@@ -162,7 +162,83 @@ class AddRemoveIncrementalNamedPartitionScalingMechanism(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=ServiceScalingMechanismKind.ADD_REMOVE_INCREMENTAL_NAMED_PARTITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = ServiceScalingMechanismKind.ADD_REMOVE_INCREMENTAL_NAMED_PARTITION  # type: ignore
+
+
+class ApplicationFetchHealthRequest(_Model):
+    """Parameters for fetching the health of an application.
+
+    :ivar events_health_state_filter: Allows filtering of the health events returned in the
+     response based on health state. Known values are: "Default", "None", "Ok", "Warning", "Error",
+     and "All".
+    :vartype events_health_state_filter: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.HealthFilter
+    :ivar deployed_applications_health_state_filter: Allows filtering of the deployed applications
+     health state objects returned in the result of application health query based on their health
+     state. Known values are: "Default", "None", "Ok", "Warning", "Error", and "All".
+    :vartype deployed_applications_health_state_filter: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.HealthFilter
+    :ivar services_health_state_filter: Allows filtering of the services health state objects
+     returned in the result of services health query based on their health state. Known values are:
+     "Default", "None", "Ok", "Warning", "Error", and "All".
+    :vartype services_health_state_filter: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.HealthFilter
+    :ivar exclude_health_statistics: Indicates whether the health statistics should be returned as
+     part of the query result. False by default. The statistics show the number of children entities
+     in health state Ok, Warning, and Error.
+    :vartype exclude_health_statistics: bool
+    :ivar timeout: Request timeout for the health query in seconds. The default value is 60
+     seconds.
+    :vartype timeout: int
+    """
+
+    events_health_state_filter: Optional[Union[str, "_models.HealthFilter"]] = rest_field(
+        name="eventsHealthStateFilter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allows filtering of the health events returned in the response based on health state. Known
+     values are: \"Default\", \"None\", \"Ok\", \"Warning\", \"Error\", and \"All\"."""
+    deployed_applications_health_state_filter: Optional[Union[str, "_models.HealthFilter"]] = rest_field(
+        name="deployedApplicationsHealthStateFilter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allows filtering of the deployed applications health state objects returned in the result of
+     application health query based on their health state. Known values are: \"Default\", \"None\",
+     \"Ok\", \"Warning\", \"Error\", and \"All\"."""
+    services_health_state_filter: Optional[Union[str, "_models.HealthFilter"]] = rest_field(
+        name="servicesHealthStateFilter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allows filtering of the services health state objects returned in the result of services health
+     query based on their health state. Known values are: \"Default\", \"None\", \"Ok\",
+     \"Warning\", \"Error\", and \"All\"."""
+    exclude_health_statistics: Optional[bool] = rest_field(
+        name="excludeHealthStatistics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the health statistics should be returned as part of the query result. False
+     by default. The statistics show the number of children entities in health state Ok, Warning,
+     and Error."""
+    timeout: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Request timeout for the health query in seconds. The default value is 60 seconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        events_health_state_filter: Optional[Union[str, "_models.HealthFilter"]] = None,
+        deployed_applications_health_state_filter: Optional[Union[str, "_models.HealthFilter"]] = None,
+        services_health_state_filter: Optional[Union[str, "_models.HealthFilter"]] = None,
+        exclude_health_statistics: Optional[bool] = None,
+        timeout: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ApplicationHealthPolicy(_Model):
@@ -210,7 +286,7 @@ class ApplicationHealthPolicy(_Model):
         name="defaultServiceTypeHealthPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The health policy used by default to evaluate the health of a service type."""
-    service_type_health_policy_map: Optional[Dict[str, "_models.ServiceTypeHealthPolicy"]] = rest_field(
+    service_type_health_policy_map: Optional[dict[str, "_models.ServiceTypeHealthPolicy"]] = rest_field(
         name="serviceTypeHealthPolicyMap", visibility=["read", "create", "update", "delete", "query"]
     )
     """The map with service type health policy per service type name. The map is empty by default."""
@@ -222,7 +298,7 @@ class ApplicationHealthPolicy(_Model):
         consider_warning_as_error: bool,
         max_percent_unhealthy_deployed_applications: int,
         default_service_type_health_policy: Optional["_models.ServiceTypeHealthPolicy"] = None,
-        service_type_health_policy_map: Optional[Dict[str, "_models.ServiceTypeHealthPolicy"]] = None,
+        service_type_health_policy_map: Optional[dict[str, "_models.ServiceTypeHealthPolicy"]] = None,
     ) -> None: ...
 
     @overload
@@ -310,7 +386,7 @@ class ApplicationResource(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The application resource properties."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     identity: Optional["_models.ManagedIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -326,7 +402,7 @@ class ApplicationResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.ApplicationResourceProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedIdentity"] = None,
         location: Optional[str] = None,
     ) -> None: ...
@@ -381,7 +457,7 @@ class ApplicationResourceProperties(_Model):
      ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationUpgradePolicy
     """
 
-    managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = rest_field(
+    managed_identities: Optional[list["_models.ApplicationUserAssignedIdentity"]] = rest_field(
         name="managedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of user assigned identities for the application, each mapped to a friendly name."""
@@ -390,7 +466,7 @@ class ApplicationResourceProperties(_Model):
     version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the application type as defined in the application manifest.
      This name must be the full Arm Resource ID for the referenced application type version."""
-    parameters: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    parameters: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of application parameters with overridden values from their default values specified in
      the application manifest."""
     upgrade_policy: Optional["_models.ApplicationUpgradePolicy"] = rest_field(
@@ -402,9 +478,9 @@ class ApplicationResourceProperties(_Model):
     def __init__(
         self,
         *,
-        managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
+        managed_identities: Optional[list["_models.ApplicationUserAssignedIdentity"]] = None,
         version: Optional[str] = None,
-        parameters: Optional[Dict[str, str]] = None,
+        parameters: Optional[dict[str, str]] = None,
         upgrade_policy: Optional["_models.ApplicationUpgradePolicy"] = None,
     ) -> None: ...
 
@@ -446,7 +522,7 @@ class ApplicationTypeResource(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The application type name properties."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives."""
@@ -458,7 +534,7 @@ class ApplicationTypeResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.ApplicationTypeResourceProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
     ) -> None: ...
 
@@ -510,14 +586,14 @@ class ApplicationTypeUpdateParameters(_Model):
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application type update parameters."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -558,7 +634,7 @@ class ApplicationTypeVersionResource(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of the application type version resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives."""
@@ -570,7 +646,7 @@ class ApplicationTypeVersionResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.ApplicationTypeVersionResourceProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
     ) -> None: ...
 
@@ -675,14 +751,14 @@ class ApplicationTypeVersionUpdateParameters(_Model):
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application type version update parameters."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -701,16 +777,54 @@ class ApplicationUpdateParameters(_Model):
 
     :ivar tags: Application update parameters.
     :vartype tags: dict[str, str]
+    :ivar properties: Application update parameters properties.
+    :vartype properties:
+     ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationUpdateParametersProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application update parameters."""
+    properties: Optional["_models.ApplicationUpdateParametersProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Application update parameters properties."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ApplicationUpdateParametersProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationUpdateParametersProperties(_Model):
+    """Properties for application update request.
+
+    :ivar parameters: List of application parameters with overridden values from their default
+     values specified in the application manifest.
+    :vartype parameters: dict[str, str]
+    """
+
+    parameters: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of application parameters with overridden values from their default values specified in
+     the application manifest."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -909,7 +1023,7 @@ class ScalingTrigger(_Model):
     :vartype kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ServiceScalingTriggerKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"AveragePartitionLoadTrigger\" and \"AverageServiceLoadTrigger\"."""
 
@@ -986,7 +1100,8 @@ class AveragePartitionLoadScalingTrigger(ScalingTrigger, discriminator="AverageP
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=ServiceScalingTriggerKind.AVERAGE_PARTITION_LOAD_TRIGGER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = ServiceScalingTriggerKind.AVERAGE_PARTITION_LOAD_TRIGGER  # type: ignore
 
 
 class AverageServiceLoadScalingTrigger(ScalingTrigger, discriminator="AverageServiceLoadTrigger"):
@@ -1057,7 +1172,8 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger, discriminator="AverageSer
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=ServiceScalingTriggerKind.AVERAGE_SERVICE_LOAD_TRIGGER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = ServiceScalingTriggerKind.AVERAGE_SERVICE_LOAD_TRIGGER  # type: ignore
 
 
 class AzureActiveDirectory(_Model):
@@ -1538,9 +1654,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -1714,7 +1830,7 @@ class FaultSimulationContent(_Model):
      ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationConstraints
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     fault_kind: str = rest_discriminator(name="faultKind", visibility=["read", "create", "update", "delete", "query"])
     """The kind of fault to be simulated. Required. \"Zone\""""
     force: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1795,7 +1911,7 @@ class FaultSimulationDetails(_Model):
         name="operationId", visibility=["read", "create", "update", "delete", "query"]
     )
     """unique identifier for the operation associated with the fault simulation."""
-    node_type_fault_simulation: Optional[List["_models.NodeTypeFaultSimulation"]] = rest_field(
+    node_type_fault_simulation: Optional[list["_models.NodeTypeFaultSimulation"]] = rest_field(
         name="nodeTypeFaultSimulation", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of node type simulations associated with the cluster fault simulation."""
@@ -1810,7 +1926,7 @@ class FaultSimulationDetails(_Model):
         *,
         cluster_id: Optional[str] = None,
         operation_id: Optional[str] = None,
-        node_type_fault_simulation: Optional[List["_models.NodeTypeFaultSimulation"]] = None,
+        node_type_fault_simulation: Optional[list["_models.NodeTypeFaultSimulation"]] = None,
         parameters: Optional["_models.FaultSimulationContent"] = None,
     ) -> None: ...
 
@@ -1952,19 +2068,19 @@ class IpConfiguration(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the network interface. Required."""
-    application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = rest_field(
+    application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="applicationGatewayBackendAddressPools", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies an array of references to backend address pools of application gateways. A node type
      can reference backend address pools of multiple application gateways. Multiple node types
      cannot use the same application gateway."""
-    load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = rest_field(
+    load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="loadBalancerBackendAddressPools", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies an array of references to backend address pools of load balancers. A node type can
      reference backend address pools of one public and one internal load balancer. Multiple node
      types cannot use the same basic sku load balancer."""
-    load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = rest_field(
+    load_balancer_inbound_nat_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="loadBalancerInboundNatPools", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies an array of references to inbound Nat pools of the load balancers. A node type can
@@ -1987,9 +2103,9 @@ class IpConfiguration(_Model):
         self,
         *,
         name: str,
-        application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = None,
-        load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
-        load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = None,
+        application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = None,
+        load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = None,
+        load_balancer_inbound_nat_pools: Optional[list["_models.SubResource"]] = None,
         subnet: Optional["_models.SubResource"] = None,
         private_ip_address_version: Optional[Union[str, "_models.PrivateIPAddressVersion"]] = None,
         public_ip_address_configuration: Optional["_models.IPConfigurationPublicIPAddressConfiguration"] = None,
@@ -2021,7 +2137,7 @@ class IPConfigurationPublicIPAddressConfiguration(_Model):  # pylint: disable=na
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the network interface. Required."""
-    ip_tags: Optional[List["_models.IpTag"]] = rest_field(
+    ip_tags: Optional[list["_models.IpTag"]] = rest_field(
         name="ipTags", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the list of IP tags associated with the public IP address."""
@@ -2036,7 +2152,7 @@ class IPConfigurationPublicIPAddressConfiguration(_Model):  # pylint: disable=na
         self,
         *,
         name: str,
-        ip_tags: Optional[List["_models.IpTag"]] = None,
+        ip_tags: Optional[list["_models.IpTag"]] = None,
         public_ip_address_version: Optional[Union[str, "_models.PublicIPAddressVersion"]] = None,
     ) -> None: ...
 
@@ -2227,7 +2343,7 @@ class ManagedAzResiliencyStatus(_Model):
     :vartype is_cluster_zone_resilient: bool
     """
 
-    base_resource_status: Optional[List["_models.ResourceAzStatus"]] = rest_field(
+    base_resource_status: Optional[list["_models.ResourceAzStatus"]] = rest_field(
         name="baseResourceStatus", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of Managed VM Sizes for Service Fabric Managed Clusters."""
@@ -2238,7 +2354,7 @@ class ManagedAzResiliencyStatus(_Model):
     def __init__(
         self,
         *,
-        base_resource_status: Optional[List["_models.ResourceAzStatus"]] = None,
+        base_resource_status: Optional[list["_models.ResourceAzStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -2272,7 +2388,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -2282,7 +2398,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2389,7 +2505,7 @@ class ManagedCluster(TrackedResource):
         *,
         location: str,
         sku: "_models.Sku",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ManagedClusterProperties"] = None,
     ) -> None: ...
 
@@ -2645,7 +2761,7 @@ class ManagedClusterProperties(_Model):
     cluster_state: Optional[Union[str, "_models.ClusterState"]] = rest_field(name="clusterState", visibility=["read"])
     """The current state of the cluster. Known values are: \"WaitingForNodes\", \"Deploying\",
      \"BaselineUpgrade\", \"Upgrading\", \"UpgradeFailed\", and \"Ready\"."""
-    cluster_certificate_thumbprints: Optional[List[str]] = rest_field(
+    cluster_certificate_thumbprints: Optional[list[str]] = rest_field(
         name="clusterCertificateThumbprints", visibility=["read"]
     )
     """List of thumbprints of the cluster certificates."""
@@ -2663,7 +2779,7 @@ class ManagedClusterProperties(_Model):
         name="adminPassword", visibility=["read", "create", "update", "delete", "query"]
     )
     """VM admin user password."""
-    load_balancing_rules: Optional[List["_models.LoadBalancingRule"]] = rest_field(
+    load_balancing_rules: Optional[list["_models.LoadBalancingRule"]] = rest_field(
         name="loadBalancingRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """Load balancing rules that are applied to the public load balancer of the cluster."""
@@ -2673,11 +2789,11 @@ class ManagedClusterProperties(_Model):
     """Setting this to true enables RDP access to the VM. The default NSG rule opens RDP port to
      Internet which can be overridden with custom Network Security Rules. The default value for this
      setting is false."""
-    network_security_rules: Optional[List["_models.NetworkSecurityRule"]] = rest_field(
+    network_security_rules: Optional[list["_models.NetworkSecurityRule"]] = rest_field(
         name="networkSecurityRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """Custom Network Security Rules that are applied to the Virtual Network of the cluster."""
-    clients: Optional[List["_models.ClientCertificate"]] = rest_field(
+    clients: Optional[list["_models.ClientCertificate"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Client certificates that are allowed to manage the cluster."""
@@ -2685,7 +2801,7 @@ class ManagedClusterProperties(_Model):
         name="azureActiveDirectory", visibility=["read", "create", "update", "delete", "query"]
     )
     """The AAD authentication settings of the cluster."""
-    fabric_settings: Optional[List["_models.SettingsSectionDescription"]] = rest_field(
+    fabric_settings: Optional[list["_models.SettingsSectionDescription"]] = rest_field(
         name="fabricSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of custom fabric settings to configure the cluster."""
@@ -2713,7 +2829,7 @@ class ManagedClusterProperties(_Model):
     """Indicates when new cluster runtime version upgrades will be applied after they are released. By
      default is Wave0. Only applies when **clusterUpgradeMode** is set to 'Automatic'. Known values
      are: \"Wave0\", \"Wave1\", and \"Wave2\"."""
-    addon_features: Optional[List[Union[str, "_models.ManagedClusterAddOnFeature"]]] = rest_field(
+    addon_features: Optional[list[Union[str, "_models.ManagedClusterAddOnFeature"]]] = rest_field(
         name="addonFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of add-on features to enable on the cluster."""
@@ -2740,7 +2856,7 @@ class ManagedClusterProperties(_Model):
     """If specified, the node types for the cluster are created in this subnet instead of the default
      VNet. The **networkSecurityRules** specified for the cluster are also applied to this subnet.
      This setting cannot be changed once the cluster is created."""
-    ip_tags: Optional[List["_models.IpTag"]] = rest_field(
+    ip_tags: Optional[list["_models.IpTag"]] = rest_field(
         name="ipTags", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of IP tags associated with the default public IP address of the cluster."""
@@ -2751,11 +2867,11 @@ class ManagedClusterProperties(_Model):
     )
     """Setting this to true will link the IPv4 address as the ServicePublicIP of the IPv6 address. It
      can only be set to True if IPv6 is enabled on the cluster."""
-    auxiliary_subnets: Optional[List["_models.Subnet"]] = rest_field(
+    auxiliary_subnets: Optional[list["_models.Subnet"]] = rest_field(
         name="auxiliarySubnets", visibility=["read", "create", "update", "delete", "query"]
     )
     """Auxiliary subnets for the cluster."""
-    service_endpoints: Optional[List["_models.ServiceEndpoint"]] = rest_field(
+    service_endpoints: Optional[list["_models.ServiceEndpoint"]] = rest_field(
         name="serviceEndpoints", visibility=["read", "create", "update", "delete", "query"]
     )
     """Service endpoints for subnets in the cluster."""
@@ -2832,25 +2948,25 @@ class ManagedClusterProperties(_Model):
         client_connection_port: Optional[int] = None,
         http_gateway_connection_port: Optional[int] = None,
         admin_password: Optional[str] = None,
-        load_balancing_rules: Optional[List["_models.LoadBalancingRule"]] = None,
+        load_balancing_rules: Optional[list["_models.LoadBalancingRule"]] = None,
         allow_rdp_access: Optional[bool] = None,
-        network_security_rules: Optional[List["_models.NetworkSecurityRule"]] = None,
-        clients: Optional[List["_models.ClientCertificate"]] = None,
+        network_security_rules: Optional[list["_models.NetworkSecurityRule"]] = None,
+        clients: Optional[list["_models.ClientCertificate"]] = None,
         azure_active_directory: Optional["_models.AzureActiveDirectory"] = None,
-        fabric_settings: Optional[List["_models.SettingsSectionDescription"]] = None,
+        fabric_settings: Optional[list["_models.SettingsSectionDescription"]] = None,
         cluster_code_version: Optional[str] = None,
         cluster_upgrade_mode: Optional[Union[str, "_models.ClusterUpgradeMode"]] = None,
         cluster_upgrade_cadence: Optional[Union[str, "_models.ClusterUpgradeCadence"]] = None,
-        addon_features: Optional[List[Union[str, "_models.ManagedClusterAddOnFeature"]]] = None,
+        addon_features: Optional[list[Union[str, "_models.ManagedClusterAddOnFeature"]]] = None,
         enable_auto_os_upgrade: Optional[bool] = None,
         zonal_resiliency: Optional[bool] = None,
         application_type_versions_cleanup_policy: Optional["_models.ApplicationTypeVersionsCleanupPolicy"] = None,
         enable_ipv6: Optional[bool] = None,
         subnet_id: Optional[str] = None,
-        ip_tags: Optional[List["_models.IpTag"]] = None,
+        ip_tags: Optional[list["_models.IpTag"]] = None,
         enable_service_public_ip: Optional[bool] = None,
-        auxiliary_subnets: Optional[List["_models.Subnet"]] = None,
-        service_endpoints: Optional[List["_models.ServiceEndpoint"]] = None,
+        auxiliary_subnets: Optional[list["_models.Subnet"]] = None,
+        service_endpoints: Optional[list["_models.ServiceEndpoint"]] = None,
         zonal_update_mode: Optional[Union[str, "_models.ZonalUpdateMode"]] = None,
         use_custom_vnet: Optional[bool] = None,
         public_ip_prefix_id: Optional[str] = None,
@@ -2885,14 +3001,14 @@ class ManagedClusterUpdateParameters(_Model):
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Managed cluster update parameters."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2980,7 +3096,7 @@ class ManagedIdentity(_Model):
     )
     """The type of managed identity for the resource. Known values are: \"None\", \"SystemAssigned\",
      \"UserAssigned\", and \"SystemAssigned, UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of user identities associated with the resource. The user identity dictionary key
@@ -2992,7 +3108,7 @@ class ManagedIdentity(_Model):
         self,
         *,
         type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -3082,7 +3198,7 @@ class Partition(_Model):
      ~azure.mgmt.servicefabricmanagedclusters.models.PartitionScheme
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     partition_scheme: str = rest_discriminator(
         name="partitionScheme", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3116,7 +3232,7 @@ class NamedPartitionScheme(Partition, discriminator="Named"):
     :vartype partition_scheme: str or ~azure.mgmt.servicefabricmanagedclusters.models.NAMED
     """
 
-    names: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    names: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array for the names of the partitions. Required."""
     partition_scheme: Literal[PartitionScheme.NAMED] = rest_discriminator(name="partitionScheme", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Specifies how the service is partitioned. Required. Indicates that the partition is based on
@@ -3126,7 +3242,7 @@ class NamedPartitionScheme(Partition, discriminator="Named"):
     def __init__(
         self,
         *,
-        names: List[str],
+        names: list[str],
     ) -> None: ...
 
     @overload
@@ -3137,7 +3253,8 @@ class NamedPartitionScheme(Partition, discriminator="Named"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, partition_scheme=PartitionScheme.NAMED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.partition_scheme = PartitionScheme.NAMED  # type: ignore
 
 
 class NetworkSecurityRule(_Model):
@@ -3193,19 +3310,19 @@ class NetworkSecurityRule(_Model):
     protocol: Union[str, "_models.NsgProtocol"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Network protocol this rule applies to. Required. Known values are: \"http\", \"https\",
      \"tcp\", \"udp\", \"icmp\", \"ah\", and \"esp\"."""
-    source_address_prefixes: Optional[List[str]] = rest_field(
+    source_address_prefixes: Optional[list[str]] = rest_field(
         name="sourceAddressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The CIDR or source IP ranges."""
-    destination_address_prefixes: Optional[List[str]] = rest_field(
+    destination_address_prefixes: Optional[list[str]] = rest_field(
         name="destinationAddressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The destination address prefixes. CIDR or destination IP ranges."""
-    source_port_ranges: Optional[List[str]] = rest_field(
+    source_port_ranges: Optional[list[str]] = rest_field(
         name="sourcePortRanges", visibility=["read", "create", "update", "delete", "query"]
     )
     """The source port ranges."""
-    destination_port_ranges: Optional[List[str]] = rest_field(
+    destination_port_ranges: Optional[list[str]] = rest_field(
         name="destinationPortRanges", visibility=["read", "create", "update", "delete", "query"]
     )
     """The destination port ranges."""
@@ -3251,10 +3368,10 @@ class NetworkSecurityRule(_Model):
         priority: int,
         direction: Union[str, "_models.Direction"],
         description: Optional[str] = None,
-        source_address_prefixes: Optional[List[str]] = None,
-        destination_address_prefixes: Optional[List[str]] = None,
-        source_port_ranges: Optional[List[str]] = None,
-        destination_port_ranges: Optional[List[str]] = None,
+        source_address_prefixes: Optional[list[str]] = None,
+        destination_address_prefixes: Optional[list[str]] = None,
+        source_port_ranges: Optional[list[str]] = None,
+        destination_port_ranges: Optional[list[str]] = None,
         source_address_prefix: Optional[str] = None,
         destination_address_prefix: Optional[str] = None,
         source_port_range: Optional[str] = None,
@@ -3299,7 +3416,7 @@ class NodeType(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The node type properties."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     sku: Optional["_models.NodeTypeSku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The node type sku."""
@@ -3365,7 +3482,7 @@ class NodeType(ProxyResource):
         self,
         *,
         properties: Optional["_models.NodeTypeProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.NodeTypeSku"] = None,
     ) -> None: ...
 
@@ -3411,7 +3528,7 @@ class NodeTypeActionParameters(_Model):
     :vartype update_type: str or ~azure.mgmt.servicefabricmanagedclusters.models.UpdateType
     """
 
-    nodes: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    nodes: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of node names from the node type."""
     force: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Force the action to go through."""
@@ -3425,7 +3542,7 @@ class NodeTypeActionParameters(_Model):
     def __init__(
         self,
         *,
-        nodes: Optional[List[str]] = None,
+        nodes: Optional[list[str]] = None,
         force: Optional[bool] = None,
         update_type: Optional[Union[str, "_models.UpdateType"]] = None,
     ) -> None: ...
@@ -3776,12 +3893,12 @@ class NodeTypeProperties(_Model):
     )
     """Managed data disk letter. It can not use the reserved letter C or D and it can not change after
      created."""
-    placement_properties: Optional[Dict[str, str]] = rest_field(
+    placement_properties: Optional[dict[str, str]] = rest_field(
         name="placementProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """The placement tags applied to nodes in the node type, which can be used to indicate where
      certain services (workload) should run."""
-    capacities: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    capacities: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The capacity tags applied to the nodes in the node type, the cluster resource manager uses
      these tags to understand how much resource a node has."""
     application_ports: Optional["_models.EndpointRangeDescription"] = rest_field(
@@ -3815,11 +3932,11 @@ class NodeTypeProperties(_Model):
     )
     """The version of the Azure Virtual Machines Marketplace image. A value of 'latest' can be
      specified to select the latest version of an image. If omitted, the default is 'latest'."""
-    vm_secrets: Optional[List["_models.VaultSecretGroup"]] = rest_field(
+    vm_secrets: Optional[list["_models.VaultSecretGroup"]] = rest_field(
         name="vmSecrets", visibility=["read", "create", "update", "delete", "query"]
     )
     """The secrets to install in the virtual machines."""
-    vm_extensions: Optional[List["_models.VMSSExtension"]] = rest_field(
+    vm_extensions: Optional[list["_models.VMSSExtension"]] = rest_field(
         name="vmExtensions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Set of extensions that should be installed onto the virtual machines."""
@@ -3836,18 +3953,18 @@ class NodeTypeProperties(_Model):
     )
     """Indicates if scale set associated with the node type can be composed of multiple placement
      groups."""
-    frontend_configurations: Optional[List["_models.FrontendConfiguration"]] = rest_field(
+    frontend_configurations: Optional[list["_models.FrontendConfiguration"]] = rest_field(
         name="frontendConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """Indicates the node type uses its own frontend configurations instead of the default one for the
      cluster. This setting can only be specified for non-primary node types and can not be added or
      removed after the node type is created."""
-    network_security_rules: Optional[List["_models.NetworkSecurityRule"]] = rest_field(
+    network_security_rules: Optional[list["_models.NetworkSecurityRule"]] = rest_field(
         name="networkSecurityRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Network Security Rules for this node type. This setting can only be specified for node
      types that are configured with frontend configurations."""
-    additional_data_disks: Optional[List["_models.VmssDataDisk"]] = rest_field(
+    additional_data_disks: Optional[list["_models.VmssDataDisk"]] = rest_field(
         name="additionalDataDisks", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional managed data disks."""
@@ -3887,7 +4004,7 @@ class NodeTypeProperties(_Model):
     )
     """Specifies whether the node type should be overprovisioned. It is only allowed for stateless
      node types."""
-    zones: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies the availability zones where the node type would span across. If the cluster is not
      spanning across availability zones, initiates az migration for the cluster."""
     is_spot_vm: Optional[bool] = rest_field(name="isSpotVM", visibility=["read", "create", "update", "delete", "query"])
@@ -3919,7 +4036,7 @@ class NodeTypeProperties(_Model):
     """Indicates the resource id of the vm image. This parameter is used for custom vm image."""
     subnet_id: Optional[str] = rest_field(name="subnetId", visibility=["read", "create", "update", "delete", "query"])
     """Indicates the resource id of the subnet for the node type."""
-    vm_setup_actions: Optional[List[Union[str, "_models.VmSetupAction"]]] = rest_field(
+    vm_setup_actions: Optional[list[Union[str, "_models.VmSetupAction"]]] = rest_field(
         name="vmSetupActions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the actions to be performed on the vms before bootstrapping the service fabric
@@ -3961,7 +4078,7 @@ class NodeTypeProperties(_Model):
     )
     """Specifies the resource id of a NAT Gateway to attach to the subnet of this node type. Node type
      must use custom load balancer."""
-    nat_configurations: Optional[List["_models.NodeTypeNatConfig"]] = rest_field(
+    nat_configurations: Optional[list["_models.NodeTypeNatConfig"]] = rest_field(
         name="natConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the NAT configuration on default public Load Balancer for the node type. This is only
@@ -3984,7 +4101,7 @@ class NodeTypeProperties(_Model):
     )
     """Specifies the resource id of the DSCP configuration to apply to the node type network
      interface."""
-    additional_network_interface_configurations: Optional[List["_models.AdditionalNetworkInterfaceConfiguration"]] = (
+    additional_network_interface_configurations: Optional[list["_models.AdditionalNetworkInterfaceConfiguration"]] = (
         rest_field(
             name="additionalNetworkInterfaceConfigurations", visibility=["read", "create", "update", "delete", "query"]
         )
@@ -3996,7 +4113,7 @@ class NodeTypeProperties(_Model):
     )
     """Specifies the computer name prefix. Limited to 9 characters. If specified, allows for a longer
      name to be specified for the node type name."""
-    vm_applications: Optional[List["_models.VmApplication"]] = rest_field(
+    vm_applications: Optional[list["_models.VmApplication"]] = rest_field(
         name="vmApplications", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the gallery applications that should be made available to the underlying VMSS."""
@@ -4019,8 +4136,8 @@ class NodeTypeProperties(_Model):
         data_disk_size_gb: Optional[int] = None,
         data_disk_type: Optional[Union[str, "_models.DiskType"]] = None,
         data_disk_letter: Optional[str] = None,
-        placement_properties: Optional[Dict[str, str]] = None,
-        capacities: Optional[Dict[str, str]] = None,
+        placement_properties: Optional[dict[str, str]] = None,
+        capacities: Optional[dict[str, str]] = None,
         application_ports: Optional["_models.EndpointRangeDescription"] = None,
         ephemeral_ports: Optional["_models.EndpointRangeDescription"] = None,
         vm_size: Optional[str] = None,
@@ -4028,20 +4145,20 @@ class NodeTypeProperties(_Model):
         vm_image_offer: Optional[str] = None,
         vm_image_sku: Optional[str] = None,
         vm_image_version: Optional[str] = None,
-        vm_secrets: Optional[List["_models.VaultSecretGroup"]] = None,
-        vm_extensions: Optional[List["_models.VMSSExtension"]] = None,
+        vm_secrets: Optional[list["_models.VaultSecretGroup"]] = None,
+        vm_extensions: Optional[list["_models.VMSSExtension"]] = None,
         vm_managed_identity: Optional["_models.VmManagedIdentity"] = None,
         is_stateless: Optional[bool] = None,
         multiple_placement_groups: Optional[bool] = None,
-        frontend_configurations: Optional[List["_models.FrontendConfiguration"]] = None,
-        network_security_rules: Optional[List["_models.NetworkSecurityRule"]] = None,
-        additional_data_disks: Optional[List["_models.VmssDataDisk"]] = None,
+        frontend_configurations: Optional[list["_models.FrontendConfiguration"]] = None,
+        network_security_rules: Optional[list["_models.NetworkSecurityRule"]] = None,
+        additional_data_disks: Optional[list["_models.VmssDataDisk"]] = None,
         enable_encryption_at_host: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
         use_default_public_load_balancer: Optional[bool] = None,
         use_temp_data_disk: Optional[bool] = None,
         enable_over_provisioning: Optional[bool] = None,
-        zones: Optional[List[str]] = None,
+        zones: Optional[list[str]] = None,
         is_spot_vm: Optional[bool] = None,
         host_group_id: Optional[str] = None,
         use_ephemeral_os_disk: Optional[bool] = None,
@@ -4049,7 +4166,7 @@ class NodeTypeProperties(_Model):
         eviction_policy: Optional[Union[str, "_models.EvictionPolicyType"]] = None,
         vm_image_resource_id: Optional[str] = None,
         subnet_id: Optional[str] = None,
-        vm_setup_actions: Optional[List[Union[str, "_models.VmSetupAction"]]] = None,
+        vm_setup_actions: Optional[list[Union[str, "_models.VmSetupAction"]]] = None,
         security_type: Optional[Union[str, "_models.SecurityType"]] = None,
         security_encryption_type: Optional[Union[str, "_models.SecurityEncryptionType"]] = None,
         secure_boot_enabled: Optional[bool] = None,
@@ -4057,15 +4174,15 @@ class NodeTypeProperties(_Model):
         enable_node_public_i_pv6: Optional[bool] = None,
         vm_shared_gallery_image_id: Optional[str] = None,
         nat_gateway_id: Optional[str] = None,
-        nat_configurations: Optional[List["_models.NodeTypeNatConfig"]] = None,
+        nat_configurations: Optional[list["_models.NodeTypeNatConfig"]] = None,
         vm_image_plan: Optional["_models.VmImagePlan"] = None,
         service_artifact_reference_id: Optional[str] = None,
         dscp_configuration_id: Optional[str] = None,
         additional_network_interface_configurations: Optional[
-            List["_models.AdditionalNetworkInterfaceConfiguration"]
+            list["_models.AdditionalNetworkInterfaceConfiguration"]
         ] = None,
         computer_name_prefix: Optional[str] = None,
-        vm_applications: Optional[List["_models.VmApplication"]] = None,
+        vm_applications: Optional[list["_models.VmApplication"]] = None,
         zone_balance: Optional[bool] = None,
         is_outbound_only: Optional[bool] = None,
     ) -> None: ...
@@ -4174,7 +4291,7 @@ class NodeTypeUpdateParameters(_Model):
     :vartype sku: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeSku
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Node type update parameters."""
     sku: Optional["_models.NodeTypeSku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The node type sku."""
@@ -4183,7 +4300,7 @@ class NodeTypeUpdateParameters(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.NodeTypeSku"] = None,
     ) -> None: ...
 
@@ -4298,7 +4415,8 @@ class PartitionInstanceCountScaleMechanism(ScalingMechanism, discriminator="Scal
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=ServiceScalingMechanismKind.SCALE_PARTITION_INSTANCE_COUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = ServiceScalingMechanismKind.SCALE_PARTITION_INSTANCE_COUNT  # type: ignore
 
 
 class ResourceAzStatus(_Model):
@@ -4322,6 +4440,144 @@ class ResourceAzStatus(_Model):
     """VM Size name."""
     details: Optional[str] = rest_field(visibility=["read"])
     """Zone resiliency status details for the resource."""
+
+
+class RestartDeployedCodePackageRequest(_Model):
+    """Parameters for restarting a deployed code package.
+
+    :ivar node_name: The name of the node where the code package needs to be restarted. Use '*' to
+     restart on all nodes where the code package is running. Required.
+    :vartype node_name: str
+    :ivar service_manifest_name: The name of the service manifest as specified in the code package.
+     Required.
+    :vartype service_manifest_name: str
+    :ivar code_package_name: The name of the code package as specified in the service manifest.
+     Required.
+    :vartype code_package_name: str
+    :ivar code_package_instance_id: The instance ID for currently running entry point. For a code
+     package setup entry point (if specified) runs first and after it finishes main entry point is
+     started. Each time entry point executable is run, its instance ID will change. If 0 is passed
+     in as the code package instance ID, the API will restart the code package with whatever
+     instance ID it is currently running. If an instance ID other than 0 is passed in, the API will
+     restart the code package only if the current Instance ID matches the passed in instance ID.
+     Note, passing in the exact instance ID (not 0) in the API is safer, because if ensures at most
+     one restart of the code package. Required.
+    :vartype code_package_instance_id: str
+    :ivar service_package_activation_id: The activation id of a deployed service package. If
+     ServicePackageActivationMode specified at the time of creating the service is 'SharedProcess'
+     (or if it is not specified, in which case it defaults to 'SharedProcess'), then value of
+     ServicePackageActivationId is always an empty string.
+    :vartype service_package_activation_id: str
+    """
+
+    node_name: str = rest_field(name="nodeName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the node where the code package needs to be restarted. Use '*' to restart on all
+     nodes where the code package is running. Required."""
+    service_manifest_name: str = rest_field(
+        name="serviceManifestName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the service manifest as specified in the code package. Required."""
+    code_package_name: str = rest_field(
+        name="codePackageName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the code package as specified in the service manifest. Required."""
+    code_package_instance_id: str = rest_field(
+        name="codePackageInstanceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The instance ID for currently running entry point. For a code package setup entry point (if
+     specified) runs first and after it finishes main entry point is started. Each time entry point
+     executable is run, its instance ID will change. If 0 is passed in as the code package instance
+     ID, the API will restart the code package with whatever instance ID it is currently running. If
+     an instance ID other than 0 is passed in, the API will restart the code package only if the
+     current Instance ID matches the passed in instance ID. Note, passing in the exact instance ID
+     (not 0) in the API is safer, because if ensures at most one restart of the code package.
+     Required."""
+    service_package_activation_id: Optional[str] = rest_field(
+        name="servicePackageActivationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The activation id of a deployed service package. If ServicePackageActivationMode specified at
+     the time of creating the service is 'SharedProcess' (or if it is not specified, in which case
+     it defaults to 'SharedProcess'), then value of ServicePackageActivationId is always an empty
+     string."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        node_name: str,
+        service_manifest_name: str,
+        code_package_name: str,
+        code_package_instance_id: str,
+        service_package_activation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RestartReplicaRequest(_Model):
+    """Request to restart a replica.
+
+    :ivar partition_id: The ID of the partition. Required.
+    :vartype partition_id: str
+    :ivar replica_ids: The IDs of the replicas to be restarted. Required.
+    :vartype replica_ids: list[int]
+    :ivar restart_kind: The kind of restart to perform. Required. "Simultaneous"
+    :vartype restart_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.RestartKind
+    :ivar force_restart: If true, the restart operation will be forced. Use this option with care,
+     as it may cause data loss.
+    :vartype force_restart: bool
+    :ivar timeout: The server timeout for performing the operation in seconds. This timeout
+     specifies the time duration that the client is willing to wait for the requested operation to
+     complete. The default value for this parameter is 60 seconds.
+    :vartype timeout: int
+    """
+
+    partition_id: str = rest_field(name="partitionId", visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the partition. Required."""
+    replica_ids: list[int] = rest_field(name="replicaIds", visibility=["read", "create", "update", "delete", "query"])
+    """The IDs of the replicas to be restarted. Required."""
+    restart_kind: Union[str, "_models.RestartKind"] = rest_field(
+        name="restartKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The kind of restart to perform. Required. \"Simultaneous\""""
+    force_restart: Optional[bool] = rest_field(
+        name="forceRestart", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If true, the restart operation will be forced. Use this option with care, as it may cause data
+     loss."""
+    timeout: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server timeout for performing the operation in seconds. This timeout specifies the time
+     duration that the client is willing to wait for the requested operation to complete. The
+     default value for this parameter is 60 seconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        partition_id: str,
+        replica_ids: list[int],
+        restart_kind: Union[str, "_models.RestartKind"],
+        force_restart: Optional[bool] = None,
+        timeout: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RollingUpgradeMonitoringPolicy(_Model):
@@ -4417,6 +4673,77 @@ class RollingUpgradeMonitoringPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RuntimeApplicationHealthPolicy(_Model):
+    """Cluster level definition for a health policy used to evaluate the health of an application or
+    one of its children entities.
+
+    :ivar consider_warning_as_error: Indicates whether warnings are treated with the same severity
+     as errors. Required.
+    :vartype consider_warning_as_error: bool
+    :ivar max_percent_unhealthy_deployed_applications: The maximum allowed percentage of unhealthy
+     deployed applications. Allowed values are Byte values from zero to 100.
+     The percentage represents the maximum tolerated percentage of deployed applications that can be
+     unhealthy before the application is considered in error.
+     This is calculated by dividing the number of unhealthy deployed applications over the number of
+     nodes where the application is currently deployed on in the cluster.
+     The computation rounds up to tolerate one failure on small numbers of nodes. Default percentage
+     is zero. Required.
+    :vartype max_percent_unhealthy_deployed_applications: int
+    :ivar default_service_type_health_policy: The health policy used by default to evaluate the
+     health of a service type.
+    :vartype default_service_type_health_policy:
+     ~azure.mgmt.servicefabricmanagedclusters.models.RuntimeServiceTypeHealthPolicy
+    :ivar service_type_health_policy_map: The map with service type health policy per service type
+     name. The map is empty by default.
+    :vartype service_type_health_policy_map: dict[str,
+     ~azure.mgmt.servicefabricmanagedclusters.models.RuntimeServiceTypeHealthPolicy]
+    """
+
+    consider_warning_as_error: bool = rest_field(
+        name="considerWarningAsError", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether warnings are treated with the same severity as errors. Required."""
+    max_percent_unhealthy_deployed_applications: int = rest_field(
+        name="maxPercentUnhealthyDeployedApplications", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum allowed percentage of unhealthy deployed applications. Allowed values are Byte
+     values from zero to 100.
+     The percentage represents the maximum tolerated percentage of deployed applications that can be
+     unhealthy before the application is considered in error.
+     This is calculated by dividing the number of unhealthy deployed applications over the number of
+     nodes where the application is currently deployed on in the cluster.
+     The computation rounds up to tolerate one failure on small numbers of nodes. Default percentage
+     is zero. Required."""
+    default_service_type_health_policy: Optional["_models.RuntimeServiceTypeHealthPolicy"] = rest_field(
+        name="defaultServiceTypeHealthPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The health policy used by default to evaluate the health of a service type."""
+    service_type_health_policy_map: Optional[dict[str, "_models.RuntimeServiceTypeHealthPolicy"]] = rest_field(
+        name="serviceTypeHealthPolicyMap", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The map with service type health policy per service type name. The map is empty by default."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        consider_warning_as_error: bool,
+        max_percent_unhealthy_deployed_applications: int,
+        default_service_type_health_policy: Optional["_models.RuntimeServiceTypeHealthPolicy"] = None,
+        service_type_health_policy_map: Optional[dict[str, "_models.RuntimeServiceTypeHealthPolicy"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RuntimeResumeApplicationUpgradeParameters(_Model):  # pylint: disable=name-too-long
     """Parameters for Resume Upgrade action. The upgrade domain name must be specified.
 
@@ -4436,6 +4763,304 @@ class RuntimeResumeApplicationUpgradeParameters(_Model):  # pylint: disable=name
         self,
         *,
         upgrade_domain_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RuntimeRollingUpgradeUpdateMonitoringPolicy(_Model):  # pylint: disable=name-too-long
+    """Describes the parameters for updating a rolling upgrade of application or cluster.
+
+    :ivar rolling_upgrade_mode: The mode used to monitor health during a rolling upgrade. Required.
+     Known values are: "UnmonitoredAuto", "UnmonitoredManual", and "Monitored".
+    :vartype rolling_upgrade_mode: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.RuntimeRollingUpgradeMode
+    :ivar force_restart: If true, then processes are forcefully restarted during upgrade even when
+     the code version has not changed (the upgrade only changes configuration or data).
+    :vartype force_restart: bool
+    :ivar replica_set_check_timeout_in_milliseconds: The maximum amount of time to block processing
+     of an upgrade domain and prevent loss of availability when there are unexpected issues. When
+     this timeout expires, processing of the upgrade domain will proceed regardless of availability
+     loss issues. The timeout is reset at the start of each upgrade domain. Valid values are between
+     0 and 42949672925 inclusive. (unsigned 32-bit integer).
+    :vartype replica_set_check_timeout_in_milliseconds: int
+    :ivar failure_action: The compensating action to perform when a Monitored upgrade encounters
+     monitoring policy or health policy violations. Invalid indicates the failure action is invalid.
+     Rollback specifies that the upgrade will start rolling back automatically. Manual indicates
+     that the upgrade will switch to UnmonitoredManual upgrade mode. Known values are: "Rollback"
+     and "Manual".
+    :vartype failure_action: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.RuntimeFailureAction
+    :ivar health_check_wait_duration_in_milliseconds: The amount of time to wait after completing
+     an upgrade domain before applying health policies. It is first interpreted as a string
+     representing an ISO 8601 duration. If that fails, then it is interpreted as a number
+     representing the total number of milliseconds.
+    :vartype health_check_wait_duration_in_milliseconds: str
+    :ivar health_check_stable_duration_in_milliseconds: The amount of time that the application or
+     cluster must remain healthy before the upgrade proceeds to the next upgrade domain. It is first
+     interpreted as a string representing an ISO 8601 duration. If that fails, then it is
+     interpreted as a number representing the total number of milliseconds.
+    :vartype health_check_stable_duration_in_milliseconds: str
+    :ivar health_check_retry_timeout_in_milliseconds: The amount of time to retry health evaluation
+     when the application or cluster is unhealthy before FailureAction is executed. It is first
+     interpreted as a string representing an ISO 8601 duration. If that fails, then it is
+     interpreted as a number representing the total number of milliseconds.
+    :vartype health_check_retry_timeout_in_milliseconds: str
+    :ivar upgrade_timeout_in_milliseconds: The amount of time the overall upgrade has to complete
+     before FailureAction is executed. It is first interpreted as a string representing an ISO 8601
+     duration. If that fails, then it is interpreted as a number representing the total number of
+     milliseconds.
+    :vartype upgrade_timeout_in_milliseconds: str
+    :ivar upgrade_domain_timeout_in_milliseconds: The amount of time each upgrade domain has to
+     complete before FailureAction is executed. It is first interpreted as a string representing an
+     ISO 8601 duration. If that fails, then it is interpreted as a number representing the total
+     number of milliseconds.
+    :vartype upgrade_domain_timeout_in_milliseconds: str
+    :ivar instance_close_delay_duration_in_seconds: Duration in seconds, to wait before a stateless
+     instance is closed, to allow the active requests to drain gracefully. This would be effective
+     when the instance is closing during the application/cluster upgrade, only for those instances
+     which have a non-zero delay duration configured in the service description.
+    :vartype instance_close_delay_duration_in_seconds: int
+    """
+
+    rolling_upgrade_mode: Union[str, "_models.RuntimeRollingUpgradeMode"] = rest_field(
+        name="rollingUpgradeMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The mode used to monitor health during a rolling upgrade. Required. Known values are:
+     \"UnmonitoredAuto\", \"UnmonitoredManual\", and \"Monitored\"."""
+    force_restart: Optional[bool] = rest_field(
+        name="forceRestart", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If true, then processes are forcefully restarted during upgrade even when the code version has
+     not changed (the upgrade only changes configuration or data)."""
+    replica_set_check_timeout_in_milliseconds: Optional[int] = rest_field(
+        name="replicaSetCheckTimeoutInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum amount of time to block processing of an upgrade domain and prevent loss of
+     availability when there are unexpected issues. When this timeout expires, processing of the
+     upgrade domain will proceed regardless of availability loss issues. The timeout is reset at the
+     start of each upgrade domain. Valid values are between 0 and 42949672925 inclusive. (unsigned
+     32-bit integer)."""
+    failure_action: Optional[Union[str, "_models.RuntimeFailureAction"]] = rest_field(
+        name="failureAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compensating action to perform when a Monitored upgrade encounters monitoring policy or
+     health policy violations. Invalid indicates the failure action is invalid. Rollback specifies
+     that the upgrade will start rolling back automatically. Manual indicates that the upgrade will
+     switch to UnmonitoredManual upgrade mode. Known values are: \"Rollback\" and \"Manual\"."""
+    health_check_wait_duration_in_milliseconds: Optional[str] = rest_field(
+        name="healthCheckWaitDurationInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount of time to wait after completing an upgrade domain before applying health policies.
+     It is first interpreted as a string representing an ISO 8601 duration. If that fails, then it
+     is interpreted as a number representing the total number of milliseconds."""
+    health_check_stable_duration_in_milliseconds: Optional[str] = rest_field(
+        name="healthCheckStableDurationInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount of time that the application or cluster must remain healthy before the upgrade
+     proceeds to the next upgrade domain. It is first interpreted as a string representing an ISO
+     8601 duration. If that fails, then it is interpreted as a number representing the total number
+     of milliseconds."""
+    health_check_retry_timeout_in_milliseconds: Optional[str] = rest_field(
+        name="healthCheckRetryTimeoutInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount of time to retry health evaluation when the application or cluster is unhealthy
+     before FailureAction is executed. It is first interpreted as a string representing an ISO 8601
+     duration. If that fails, then it is interpreted as a number representing the total number of
+     milliseconds."""
+    upgrade_timeout_in_milliseconds: Optional[str] = rest_field(
+        name="upgradeTimeoutInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount of time the overall upgrade has to complete before FailureAction is executed. It is
+     first interpreted as a string representing an ISO 8601 duration. If that fails, then it is
+     interpreted as a number representing the total number of milliseconds."""
+    upgrade_domain_timeout_in_milliseconds: Optional[str] = rest_field(
+        name="upgradeDomainTimeoutInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount of time each upgrade domain has to complete before FailureAction is executed. It is
+     first interpreted as a string representing an ISO 8601 duration. If that fails, then it is
+     interpreted as a number representing the total number of milliseconds."""
+    instance_close_delay_duration_in_seconds: Optional[int] = rest_field(
+        name="instanceCloseDelayDurationInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Duration in seconds, to wait before a stateless instance is closed, to allow the active
+     requests to drain gracefully. This would be effective when the instance is closing during the
+     application/cluster upgrade, only for those instances which have a non-zero delay duration
+     configured in the service description."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rolling_upgrade_mode: Union[str, "_models.RuntimeRollingUpgradeMode"],
+        force_restart: Optional[bool] = None,
+        replica_set_check_timeout_in_milliseconds: Optional[int] = None,
+        failure_action: Optional[Union[str, "_models.RuntimeFailureAction"]] = None,
+        health_check_wait_duration_in_milliseconds: Optional[str] = None,
+        health_check_stable_duration_in_milliseconds: Optional[str] = None,
+        health_check_retry_timeout_in_milliseconds: Optional[str] = None,
+        upgrade_timeout_in_milliseconds: Optional[str] = None,
+        upgrade_domain_timeout_in_milliseconds: Optional[str] = None,
+        instance_close_delay_duration_in_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RuntimeServiceTypeHealthPolicy(_Model):
+    """Cluster level definition that represents the health policy used to evaluate the health of
+    services belonging to a service type.
+
+    :ivar max_percent_unhealthy_services: The maximum allowed percentage of unhealthy services.
+
+     The percentage represents the maximum tolerated percentage of services that can be unhealthy
+     before the application is considered in error.
+     If the percentage is respected but there is at least one unhealthy service, the health is
+     evaluated as Warning.
+     This is calculated by dividing the number of unhealthy services of the specific service type
+     over the total number of services of the specific service type.
+     The computation rounds up to tolerate one failure on small numbers of services. Required.
+    :vartype max_percent_unhealthy_services: int
+    :ivar max_percent_unhealthy_partitions_per_service: The maximum allowed percentage of unhealthy
+     partitions per service.
+
+     The percentage represents the maximum tolerated percentage of partitions that can be unhealthy
+     before the service is considered in error.
+     If the percentage is respected but there is at least one unhealthy partition, the health is
+     evaluated as Warning.
+     The percentage is calculated by dividing the number of unhealthy partitions over the total
+     number of partitions in the service.
+     The computation rounds up to tolerate one failure on small numbers of partitions. Required.
+    :vartype max_percent_unhealthy_partitions_per_service: int
+    :ivar max_percent_unhealthy_replicas_per_partition: The maximum allowed percentage of unhealthy
+     replicas per partition.
+
+     The percentage represents the maximum tolerated percentage of replicas that can be unhealthy
+     before the partition is considered in error.
+     If the percentage is respected but there is at least one unhealthy replica, the health is
+     evaluated as Warning.
+     The percentage is calculated by dividing the number of unhealthy replicas over the total number
+     of replicas in the partition.
+     The computation rounds up to tolerate one failure on small numbers of replicas. Required.
+    :vartype max_percent_unhealthy_replicas_per_partition: int
+    """
+
+    max_percent_unhealthy_services: int = rest_field(
+        name="maxPercentUnhealthyServices", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum allowed percentage of unhealthy services.
+     
+     The percentage represents the maximum tolerated percentage of services that can be unhealthy
+     before the application is considered in error.
+     If the percentage is respected but there is at least one unhealthy service, the health is
+     evaluated as Warning.
+     This is calculated by dividing the number of unhealthy services of the specific service type
+     over the total number of services of the specific service type.
+     The computation rounds up to tolerate one failure on small numbers of services. Required."""
+    max_percent_unhealthy_partitions_per_service: int = rest_field(
+        name="maxPercentUnhealthyPartitionsPerService", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum allowed percentage of unhealthy partitions per service.
+     
+     The percentage represents the maximum tolerated percentage of partitions that can be unhealthy
+     before the service is considered in error.
+     If the percentage is respected but there is at least one unhealthy partition, the health is
+     evaluated as Warning.
+     The percentage is calculated by dividing the number of unhealthy partitions over the total
+     number of partitions in the service.
+     The computation rounds up to tolerate one failure on small numbers of partitions. Required."""
+    max_percent_unhealthy_replicas_per_partition: int = rest_field(
+        name="maxPercentUnhealthyReplicasPerPartition", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum allowed percentage of unhealthy replicas per partition.
+     
+     The percentage represents the maximum tolerated percentage of replicas that can be unhealthy
+     before the partition is considered in error.
+     If the percentage is respected but there is at least one unhealthy replica, the health is
+     evaluated as Warning.
+     The percentage is calculated by dividing the number of unhealthy replicas over the total number
+     of replicas in the partition.
+     The computation rounds up to tolerate one failure on small numbers of replicas. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_percent_unhealthy_services: int,
+        max_percent_unhealthy_partitions_per_service: int,
+        max_percent_unhealthy_replicas_per_partition: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RuntimeUpdateApplicationUpgradeParameters(_Model):  # pylint: disable=name-too-long
+    """Parameters for the Update Upgrade action.
+
+    :ivar name: The name of the application, including the 'fabric:' URI scheme. Required.
+    :vartype name: str
+    :ivar upgrade_kind: The kind of the upgrade. Required. "Rolling"
+    :vartype upgrade_kind: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.RuntimeUpgradeKind
+    :ivar application_health_policy: Defines a health policy used to evaluate the health of an
+     application or one of its children entities.
+    :vartype application_health_policy:
+     ~azure.mgmt.servicefabricmanagedclusters.models.RuntimeApplicationHealthPolicy
+    :ivar update_description: Describes the parameters for updating a rolling upgrade of
+     application or cluster and a monitoring policy.
+    :vartype update_description:
+     ~azure.mgmt.servicefabricmanagedclusters.models.RuntimeRollingUpgradeUpdateMonitoringPolicy
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the application, including the 'fabric:' URI scheme. Required."""
+    upgrade_kind: Union[str, "_models.RuntimeUpgradeKind"] = rest_field(
+        name="upgradeKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The kind of the upgrade. Required. \"Rolling\""""
+    application_health_policy: Optional["_models.RuntimeApplicationHealthPolicy"] = rest_field(
+        name="applicationHealthPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines a health policy used to evaluate the health of an application or one of its children
+     entities."""
+    update_description: Optional["_models.RuntimeRollingUpgradeUpdateMonitoringPolicy"] = rest_field(
+        name="updateDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes the parameters for updating a rolling upgrade of application or cluster and a
+     monitoring policy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        upgrade_kind: Union[str, "_models.RuntimeUpgradeKind"],
+        application_health_policy: Optional["_models.RuntimeApplicationHealthPolicy"] = None,
+        update_description: Optional["_models.RuntimeRollingUpgradeUpdateMonitoringPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -4542,7 +5167,7 @@ class ServiceEndpoint(_Model):
 
     service: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the endpoint service. Required."""
-    locations: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    locations: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of locations."""
     network_identifier: Optional[str] = rest_field(
         name="networkIdentifier", visibility=["read", "create", "update", "delete", "query"]
@@ -4554,7 +5179,7 @@ class ServiceEndpoint(_Model):
         self,
         *,
         service: str,
-        locations: Optional[List[str]] = None,
+        locations: Optional[list[str]] = None,
         network_identifier: Optional[str] = None,
     ) -> None: ...
 
@@ -4651,7 +5276,7 @@ class ServicePlacementPolicy(_Model):
      ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"InvalidDomain\", \"RequiredDomain\", \"PreferredPrimaryDomain\",
      \"RequiredDomainDistribution\", and \"NonPartiallyPlaceService\"."""
@@ -4711,7 +5336,8 @@ class ServicePlacementInvalidDomainPolicy(ServicePlacementPolicy, discriminator=
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServicePlacementPolicyType.INVALID_DOMAIN, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServicePlacementPolicyType.INVALID_DOMAIN  # type: ignore
 
 
 class ServicePlacementNonPartiallyPlaceServicePolicy(
@@ -4744,7 +5370,8 @@ class ServicePlacementNonPartiallyPlaceServicePolicy(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServicePlacementPolicyType.NON_PARTIALLY_PLACE_SERVICE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServicePlacementPolicyType.NON_PARTIALLY_PLACE_SERVICE  # type: ignore
 
 
 class ServicePlacementPreferPrimaryDomainPolicy(
@@ -4797,7 +5424,8 @@ class ServicePlacementPreferPrimaryDomainPolicy(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServicePlacementPolicyType.PREFERRED_PRIMARY_DOMAIN, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServicePlacementPolicyType.PREFERRED_PRIMARY_DOMAIN  # type: ignore
 
 
 class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy, discriminator="RequiredDomain"):
@@ -4837,7 +5465,8 @@ class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServicePlacementPolicyType.REQUIRED_DOMAIN, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServicePlacementPolicyType.REQUIRED_DOMAIN  # type: ignore
 
 
 class ServicePlacementRequireDomainDistributionPolicy(
@@ -4892,7 +5521,8 @@ class ServicePlacementRequireDomainDistributionPolicy(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServicePlacementPolicyType.REQUIRED_DOMAIN_DISTRIBUTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServicePlacementPolicyType.REQUIRED_DOMAIN_DISTRIBUTION  # type: ignore
 
 
 class ServiceResource(ProxyResource):
@@ -4921,7 +5551,7 @@ class ServiceResource(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The service resource properties."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives."""
@@ -4931,7 +5561,7 @@ class ServiceResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.ServiceResourceProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
     ) -> None: ...
 
@@ -4980,15 +5610,15 @@ class ServiceResourcePropertiesBase(_Model):
      properties and allow for restricting a service to particular nodes based on the service
      requirements. For example, to place a service on nodes where NodeType is blue specify the
      following: \"NodeColor == blue)\"."""
-    correlation_scheme: Optional[List["_models.ServiceCorrelation"]] = rest_field(
+    correlation_scheme: Optional[list["_models.ServiceCorrelation"]] = rest_field(
         name="correlationScheme", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list that describes the correlation of the service with other services."""
-    service_load_metrics: Optional[List["_models.ServiceLoadMetric"]] = rest_field(
+    service_load_metrics: Optional[list["_models.ServiceLoadMetric"]] = rest_field(
         name="serviceLoadMetrics", visibility=["read", "create", "update", "delete", "query"]
     )
     """The service load metrics is given as an array of ServiceLoadMetric objects."""
-    service_placement_policies: Optional[List["_models.ServicePlacementPolicy"]] = rest_field(
+    service_placement_policies: Optional[list["_models.ServicePlacementPolicy"]] = rest_field(
         name="servicePlacementPolicies", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list that describes the correlation of the service with other services."""
@@ -4997,7 +5627,7 @@ class ServiceResourcePropertiesBase(_Model):
     )
     """Specifies the move cost for the service. Known values are: \"Zero\", \"Low\", \"Medium\", and
      \"High\"."""
-    scaling_policies: Optional[List["_models.ScalingPolicy"]] = rest_field(
+    scaling_policies: Optional[list["_models.ScalingPolicy"]] = rest_field(
         name="scalingPolicies", visibility=["read", "create", "update", "delete", "query"]
     )
     """Scaling policies for this service."""
@@ -5007,11 +5637,11 @@ class ServiceResourcePropertiesBase(_Model):
         self,
         *,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["_models.ServiceCorrelation"]] = None,
-        service_load_metrics: Optional[List["_models.ServiceLoadMetric"]] = None,
-        service_placement_policies: Optional[List["_models.ServicePlacementPolicy"]] = None,
+        correlation_scheme: Optional[list["_models.ServiceCorrelation"]] = None,
+        service_load_metrics: Optional[list["_models.ServiceLoadMetric"]] = None,
+        service_placement_policies: Optional[list["_models.ServicePlacementPolicy"]] = None,
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
-        scaling_policies: Optional[List["_models.ScalingPolicy"]] = None,
+        scaling_policies: Optional[list["_models.ScalingPolicy"]] = None,
     ) -> None: ...
 
     @overload
@@ -5077,7 +5707,7 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
     :vartype service_dns_name: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
     """The current deployment or provisioning state, which only appears in the response."""
     service_kind: str = rest_discriminator(
@@ -5116,11 +5746,11 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
         service_type_name: str,
         partition_description: "_models.Partition",
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["_models.ServiceCorrelation"]] = None,
-        service_load_metrics: Optional[List["_models.ServiceLoadMetric"]] = None,
-        service_placement_policies: Optional[List["_models.ServicePlacementPolicy"]] = None,
+        correlation_scheme: Optional[list["_models.ServiceCorrelation"]] = None,
+        service_load_metrics: Optional[list["_models.ServiceLoadMetric"]] = None,
+        service_placement_policies: Optional[list["_models.ServicePlacementPolicy"]] = None,
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
-        scaling_policies: Optional[List["_models.ScalingPolicy"]] = None,
+        scaling_policies: Optional[list["_models.ScalingPolicy"]] = None,
         service_package_activation_mode: Optional[Union[str, "_models.ServicePackageActivationMode"]] = None,
         service_dns_name: Optional[str] = None,
     ) -> None: ...
@@ -5238,14 +5868,14 @@ class ServiceUpdateParameters(_Model):
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Service update parameters."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -5304,7 +5934,7 @@ class SettingsSectionDescription(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The section name of the fabric settings. Required."""
-    parameters: List["_models.SettingsParameterDescription"] = rest_field(
+    parameters: list["_models.SettingsParameterDescription"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of parameters in the section. Required."""
@@ -5314,7 +5944,7 @@ class SettingsSectionDescription(_Model):
         self,
         *,
         name: str,
-        parameters: List["_models.SettingsParameterDescription"],
+        parameters: list["_models.SettingsParameterDescription"],
     ) -> None: ...
 
     @overload
@@ -5353,7 +5983,8 @@ class SingletonPartitionScheme(Partition, discriminator="Singleton"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, partition_scheme=PartitionScheme.SINGLETON, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.partition_scheme = PartitionScheme.SINGLETON  # type: ignore
 
 
 class Sku(_Model):
@@ -5496,11 +6127,11 @@ class StatefulServiceProperties(ServiceResourceProperties, discriminator="Statef
         service_type_name: str,
         partition_description: "_models.Partition",
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["_models.ServiceCorrelation"]] = None,
-        service_load_metrics: Optional[List["_models.ServiceLoadMetric"]] = None,
-        service_placement_policies: Optional[List["_models.ServicePlacementPolicy"]] = None,
+        correlation_scheme: Optional[list["_models.ServiceCorrelation"]] = None,
+        service_load_metrics: Optional[list["_models.ServiceLoadMetric"]] = None,
+        service_placement_policies: Optional[list["_models.ServicePlacementPolicy"]] = None,
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
-        scaling_policies: Optional[List["_models.ScalingPolicy"]] = None,
+        scaling_policies: Optional[list["_models.ScalingPolicy"]] = None,
         service_package_activation_mode: Optional[Union[str, "_models.ServicePackageActivationMode"]] = None,
         service_dns_name: Optional[str] = None,
         has_persisted_state: Optional[bool] = None,
@@ -5520,7 +6151,8 @@ class StatefulServiceProperties(ServiceResourceProperties, discriminator="Statef
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, service_kind=ServiceKind.STATEFUL, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.service_kind = ServiceKind.STATEFUL  # type: ignore
 
 
 class StatelessServiceProperties(ServiceResourceProperties, discriminator="Stateless"):
@@ -5620,11 +6252,11 @@ class StatelessServiceProperties(ServiceResourceProperties, discriminator="State
         partition_description: "_models.Partition",
         instance_count: int,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["_models.ServiceCorrelation"]] = None,
-        service_load_metrics: Optional[List["_models.ServiceLoadMetric"]] = None,
-        service_placement_policies: Optional[List["_models.ServicePlacementPolicy"]] = None,
+        correlation_scheme: Optional[list["_models.ServiceCorrelation"]] = None,
+        service_load_metrics: Optional[list["_models.ServiceLoadMetric"]] = None,
+        service_placement_policies: Optional[list["_models.ServicePlacementPolicy"]] = None,
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
-        scaling_policies: Optional[List["_models.ScalingPolicy"]] = None,
+        scaling_policies: Optional[list["_models.ScalingPolicy"]] = None,
         service_package_activation_mode: Optional[Union[str, "_models.ServicePackageActivationMode"]] = None,
         service_dns_name: Optional[str] = None,
         min_instance_count: Optional[int] = None,
@@ -5639,7 +6271,8 @@ class StatelessServiceProperties(ServiceResourceProperties, discriminator="State
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, service_kind=ServiceKind.STATELESS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.service_kind = ServiceKind.STATELESS  # type: ignore
 
 
 class Subnet(_Model):
@@ -5850,7 +6483,8 @@ class UniformInt64RangePartitionScheme(Partition, discriminator="UniformInt64Ran
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, partition_scheme=PartitionScheme.UNIFORM_INT64_RANGE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.partition_scheme = PartitionScheme.UNIFORM_INT64_RANGE  # type: ignore
 
 
 class UserAssignedIdentity(_Model):
@@ -5934,7 +6568,7 @@ class VaultSecretGroup(_Model):
     )
     """The relative URL of the Key Vault containing all of the certificates in VaultCertificates.
      Required."""
-    vault_certificates: List["_models.VaultCertificate"] = rest_field(
+    vault_certificates: list["_models.VaultCertificate"] = rest_field(
         name="vaultCertificates", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of key vault references in SourceVault which contain certificates. Required."""
@@ -5944,7 +6578,7 @@ class VaultSecretGroup(_Model):
         self,
         *,
         source_vault: "_models.SubResource",
-        vault_certificates: List["_models.VaultCertificate"],
+        vault_certificates: list["_models.VaultCertificate"],
     ) -> None: ...
 
     @overload
@@ -6092,7 +6726,7 @@ class VmManagedIdentity(_Model):
     :vartype user_assigned_identities: list[str]
     """
 
-    user_assigned_identities: Optional[List[str]] = rest_field(
+    user_assigned_identities: Optional[list[str]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of user identities associated with the virtual machine scale set under the node type.
@@ -6103,7 +6737,7 @@ class VmManagedIdentity(_Model):
     def __init__(
         self,
         *,
-        user_assigned_identities: Optional[List[str]] = None,
+        user_assigned_identities: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -6311,7 +6945,7 @@ class VMSSExtensionProperties(_Model):
     )
     """If a value is provided and is different from the previous value, the extension handler will be
      forced to update even if the extension configuration has not changed."""
-    provision_after_extensions: Optional[List[str]] = rest_field(
+    provision_after_extensions: Optional[list[str]] = rest_field(
         name="provisionAfterExtensions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Collection of extension names after which this extension needs to be provisioned."""
@@ -6322,7 +6956,7 @@ class VMSSExtensionProperties(_Model):
     )
     """Indicates whether the extension should be automatically upgraded by the platform if there is a
      newer version of the extension available."""
-    setup_order: Optional[List[Union[str, "_models.VmssExtensionSetupOrder"]]] = rest_field(
+    setup_order: Optional[list[Union[str, "_models.VmssExtensionSetupOrder"]]] = rest_field(
         name="setupOrder", visibility=["read", "create", "update", "delete", "query"]
     )
     """Indicates the setup order for the extension."""
@@ -6338,9 +6972,9 @@ class VMSSExtensionProperties(_Model):
         settings: Optional[Any] = None,
         protected_settings: Optional[Any] = None,
         force_update_tag: Optional[str] = None,
-        provision_after_extensions: Optional[List[str]] = None,
+        provision_after_extensions: Optional[list[str]] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        setup_order: Optional[List[Union[str, "_models.VmssExtensionSetupOrder"]]] = None,
+        setup_order: Optional[list[Union[str, "_models.VmssExtensionSetupOrder"]]] = None,
     ) -> None: ...
 
     @overload
@@ -6368,7 +7002,7 @@ class ZoneFaultSimulationContent(FaultSimulationContent, discriminator="Zone"):
     :vartype fault_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ZONE
     """
 
-    zones: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates the zones of the fault simulation."""
     fault_kind: Literal[FaultKind.ZONE] = rest_discriminator(name="faultKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of fault simulation. Required. Simulates an availability zone down."""
@@ -6379,7 +7013,7 @@ class ZoneFaultSimulationContent(FaultSimulationContent, discriminator="Zone"):
         *,
         force: Optional[bool] = None,
         constraints: Optional["_models.FaultSimulationConstraints"] = None,
-        zones: Optional[List[str]] = None,
+        zones: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -6390,4 +7024,5 @@ class ZoneFaultSimulationContent(FaultSimulationContent, discriminator="Zone"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, fault_kind=FaultKind.ZONE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.fault_kind = FaultKind.ZONE  # type: ignore

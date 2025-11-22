@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/ManagedClusterPutOperation_example_min.json
+# x-ms-original-file: 2025-10-01-preview/ManagedClusterPutOperation_example_min.json
 if __name__ == "__main__":
     main()

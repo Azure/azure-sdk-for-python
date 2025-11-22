@@ -102,13 +102,13 @@ class TestServiceFabricManagedClustersManagementApplicationsOperations(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_applications_update(self, resource_group):
-        response = self.client.applications.update(
+    def test_applications_begin_update(self, resource_group):
+        response = self.client.applications.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
             application_name="str",
-            parameters={"tags": {"str": "str"}},
-        )
+            parameters={"properties": {"parameters": {"str": "str"}}, "tags": {"str": "str"}},
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
@@ -168,6 +168,88 @@ class TestServiceFabricManagedClustersManagementApplicationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             cluster_name="str",
             application_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_applications_begin_update_upgrade(self, resource_group):
+        response = self.client.applications.begin_update_upgrade(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            application_name="str",
+            parameters={
+                "name": "str",
+                "upgradeKind": "str",
+                "applicationHealthPolicy": {
+                    "considerWarningAsError": bool,
+                    "maxPercentUnhealthyDeployedApplications": 0,
+                    "defaultServiceTypeHealthPolicy": {
+                        "maxPercentUnhealthyPartitionsPerService": 0,
+                        "maxPercentUnhealthyReplicasPerPartition": 0,
+                        "maxPercentUnhealthyServices": 0,
+                    },
+                    "serviceTypeHealthPolicyMap": {
+                        "str": {
+                            "maxPercentUnhealthyPartitionsPerService": 0,
+                            "maxPercentUnhealthyReplicasPerPartition": 0,
+                            "maxPercentUnhealthyServices": 0,
+                        }
+                    },
+                },
+                "updateDescription": {
+                    "rollingUpgradeMode": "str",
+                    "failureAction": "str",
+                    "forceRestart": bool,
+                    "healthCheckRetryTimeoutInMilliseconds": "str",
+                    "healthCheckStableDurationInMilliseconds": "str",
+                    "healthCheckWaitDurationInMilliseconds": "str",
+                    "instanceCloseDelayDurationInSeconds": 0,
+                    "replicaSetCheckTimeoutInMilliseconds": 0,
+                    "upgradeDomainTimeoutInMilliseconds": "str",
+                    "upgradeTimeoutInMilliseconds": "str",
+                },
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_applications_begin_fetch_health(self, resource_group):
+        response = self.client.applications.begin_fetch_health(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            application_name="str",
+            parameters={
+                "deployedApplicationsHealthStateFilter": "str",
+                "eventsHealthStateFilter": "str",
+                "excludeHealthStatistics": bool,
+                "servicesHealthStateFilter": "str",
+                "timeout": 0,
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_applications_begin_restart_deployed_code_package(self, resource_group):
+        response = self.client.applications.begin_restart_deployed_code_package(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            application_name="str",
+            parameters={
+                "codePackageInstanceId": "str",
+                "codePackageName": "str",
+                "nodeName": "str",
+                "serviceManifestName": "str",
+                "servicePackageActivationId": "str",
+            },
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
