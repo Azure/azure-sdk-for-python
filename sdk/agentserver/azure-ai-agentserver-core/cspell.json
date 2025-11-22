@@ -16,7 +16,10 @@
       "GETFL",
       "DETFL",
       "SETFL",
-      "Planifica"
+      "Planifica",
+      "mcptools",
+      "ainvoke",
+      "oauthreq"
     ],
     "ignorePaths": [
       "*.csv",
