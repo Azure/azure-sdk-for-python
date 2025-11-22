@@ -3,6 +3,8 @@ import os
 import sys
 import shutil
 import glob
+import zipfile
+import tarfile
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
@@ -46,6 +48,39 @@ REPO_ROOT = discover_repo_root()
 ci_doc_dir = os.path.join(REPO_ROOT, "_docs")
 sphinx_conf_dir = os.path.join(REPO_ROOT, "doc/sphinx")
 generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
+
+
+def unzip_sdist_to_directory(containing_folder: str) -> str:
+    zips = glob.glob(os.path.join(containing_folder, "*.zip"))
+
+    if zips:
+        return unzip_file_to_directory(zips[0], containing_folder)
+    else:
+        tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
+        return unzip_file_to_directory(tars[0], containing_folder)
+
+
+def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    if path_to_zip_file.endswith(".zip"):
+        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+            zip_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+            return os.path.join(extract_location, extracted_dir)
+    else:
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+            return os.path.join(extract_location, extracted_dir)
+
+
+def move_and_rename(source_location: str) -> str:
+    new_location = os.path.join(os.path.dirname(source_location), "unzipped")
+
+    if os.path.exists(new_location):
+        shutil.rmtree(new_location)
+
+    os.rename(source_location, new_location)
+    return new_location
 
 
 # env prep helper functions
@@ -220,22 +255,25 @@ class sphinx(Check):
             logger.info(f"Running sphinx against {package_name}")
 
             # prep env for sphinx
-            doc_folder = os.path.join(staging_directory, "docgen")
             site_folder = os.path.join(package_dir, "website")
+            doc_folder = os.path.join(staging_directory, "docgen")
 
             if should_build_docs(package_name):
-                create_index(doc_folder, package_dir, parsed.namespace)
+                source_location = move_and_rename(unzip_sdist_to_directory(staging_directory))
+                doc_folder = os.path.join(source_location, "docgen")
+                create_index(doc_folder, source_location, parsed.namespace)
 
                 write_version(site_folder, parsed.version)
             else:
                 logger.info("Skipping sphinx prep for {}".format(package_name))
 
             # run apidoc
+            output_dir = os.path.join(staging_directory, "unzipped/docgen")
             if should_build_docs(parsed.name):
                 if is_mgmt_package(parsed.name):
-                    results.append(self.mgmt_apidoc(doc_folder, package_dir, executable))
+                    results.append(self.mgmt_apidoc(output_dir, package_dir, executable))
                 else:
-                    results.append(self.sphinx_apidoc(staging_directory, package_dir, parsed.namespace, executable))
+                    results.append(self.sphinx_apidoc(staging_directory, parsed.namespace, executable))
             else:
                 logger.info("Skipping sphinx source generation for {}".format(parsed.name))
 
@@ -282,7 +320,9 @@ class sphinx(Check):
         try:
             logger.info("Sphinx build command: {}".format(command_array))
 
-            self.run_venv_command(executable, command_array, cwd=package_dir, check=True, append_executable=False, immediately_dump=True)
+            self.run_venv_command(
+                executable, command_array, cwd=package_dir, check=True, append_executable=False, immediately_dump=True
+            )
         except CalledProcessError as e:
             logger.error("sphinx-build failed for path {} exited with error {}".format(target_dir, e.returncode))
             if in_analyze_weekly():
@@ -306,33 +346,34 @@ class sphinx(Check):
         try:
             logger.info("Command to generate management sphinx sources: {}".format(command_array))
 
-            self.run_venv_command(executable, command_array, cwd=target_folder, check=True, append_executable=False, immediately_dump=True)
+            self.run_venv_command(
+                executable, command_array, cwd=target_folder, check=True, append_executable=False, immediately_dump=True
+            )
         except CalledProcessError as e:
             logger.error("script failed for path {} exited with error {}".format(output_dir, e.returncode))
             return 1
         return 0
 
-    def sphinx_apidoc(self, output_dir: str, target_dir: str, namespace: str, executable: str) -> int:
-        working_doc_folder = os.path.join(target_dir, "doc")
+    def sphinx_apidoc(self, target_dir: str, namespace: str, executable: str) -> int:
+        working_doc_folder = os.path.join(target_dir, "unzipped/doc")
         command_array = [
             "sphinx-apidoc",
             "--no-toc",
             "--module-first",
             "-o",
-            os.path.join(output_dir, "docgen"),  # This is the output folder
-            os.path.join(target_dir, ""),  # This is the input folder
-            os.path.join(target_dir, "test*"),  # This argument and below are "exclude" directory arguments
-            os.path.join(target_dir, "example*"),
-            os.path.join(target_dir, "sample*"),
-            os.path.join(target_dir, "setup.py"),
-            os.path.join(target_dir, "conftest.py"),
+            os.path.join(target_dir, "unzipped/docgen"),  # This is the output folder
+            os.path.join(target_dir, "unzipped/"),  # This is the input folder
+            os.path.join(target_dir, "unzipped/test*"),  # This argument and below are "exclude" directory arguments
+            os.path.join(target_dir, "unzipped/example*"),
+            os.path.join(target_dir, "unzipped/sample*"),
+            os.path.join(target_dir, "unzipped/setup.py"),
         ]
 
         try:
             # if a `doc` folder exists, just leverage the sphinx sources found therein.
             if os.path.exists(working_doc_folder):
                 logger.info("Copying files into sphinx source folder.")
-                copy_existing_docs(working_doc_folder, os.path.join(output_dir, "docgen"))
+                copy_existing_docs(working_doc_folder, os.path.join(target_dir, "unzipped/docgen"))
 
             # otherwise, we will run sphinx-apidoc to generate the sources
             else:
@@ -340,7 +381,7 @@ class sphinx(Check):
                 self.run_venv_command(executable, command_array, cwd=target_dir, check=True, append_executable=False)
                 # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
                 # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
-                base_path = Path(os.path.join(output_dir, "docgen/"))
+                base_path = Path(os.path.join(target_dir, "unzipped/docgen/"))
                 namespace = namespace.rpartition(".")[0]
                 while namespace:
                     rst_file_to_delete = base_path / f"{namespace}.rst"
@@ -348,6 +389,6 @@ class sphinx(Check):
                     rst_file_to_delete.unlink(missing_ok=True)
                     namespace = namespace.rpartition(".")[0]
         except CalledProcessError as e:
-            logger.error("sphinx-apidoc failed for path {} exited with error {}".format(output_dir, e.returncode))
+            logger.error("sphinx-apidoc failed for path {} exited with error {}".format(target_dir, e.returncode))
             return 1
         return 0
