@@ -23,6 +23,127 @@ This table shows the relationship between SDK versions and supported API service
 python -m pip install azure-ai-contentunderstanding
 ```
 
+### Configure your Azure AI Foundry resource and required model deployments
+
+Before running most samples (especially those that use prebuilt analyzers) you need to:
+
+1. Create (or reuse) an Azure AI Foundry resource
+2. Assign the correct role so you can configure default model deployments
+3. Deploy the required foundation models (GPT and Embeddings) in that resource
+4. Map those deployments to standard model names using the SDK's `update_defaults` API (one-time per resource)
+5. Provide environment variables (via a `.env` file at the repository root for tests, or your shell/session for ad‑hoc runs)
+
+#### 1. Create the Azure AI Foundry resource
+
+Follow the steps in the Azure portal (Create a resource > AI Foundry). The Content Understanding service is hosted within this resource. After creation, locate the endpoint under: Resource Management > Keys and Endpoint. It typically looks like:
+
+```
+https://<your-resource-name>.services.ai.azure.com/
+```
+
+Set this as `AZURE_CONTENT_UNDERSTANDING_ENDPOINT`.
+
+#### 2. Grant required permissions
+
+To configure default model deployments you (or the service principal / managed identity you use) must have the **Cognitive Services User** role on the Azure AI Foundry resource, even if you are already an Owner. In the Azure portal:
+
+1. Go to your resource
+2. Access Control (IAM) > Add > Add role assignment
+3. Choose Cognitive Services User
+4. Assign it to your identity
+
+Without this role, calls to `update_defaults` will fail.
+
+#### 3. Deploy required models
+
+Prebuilt analyzers rely on specific model families:
+
+| Prebuilt analyzers | Required deployments |
+| ------------------ | -------------------- |
+| `prebuilt-documentSearch`, `prebuilt-audioSearch`, `prebuilt-videoSearch` | `gpt-4.1-mini`, `text-embedding-3-large` |
+| `prebuilt-invoice`, `prebuilt-receipt` and similar structured document analyzers | `gpt-4.1`, `text-embedding-3-large` |
+
+In Azure AI Foundry: Deployments > Deploy model > Deploy base model. Deploy each of:
+
+- GPT-4.1 (suggested deployment name: `gpt-4.1`)
+- GPT-4.1-mini (suggested deployment name: `gpt-4.1-mini`)
+- text-embedding-3-large (suggested deployment name: `text-embedding-3-large`)
+
+If you choose different deployment names, record them—you will use them in environment variables and when calling `update_defaults`.
+
+#### 4. Configure environment variables
+
+For local development and tests this repository uses a root-level `.env` file. A template is provided at:
+
+`sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample`
+
+Copy it to the repository root:
+
+```bash
+cp sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample .env
+```
+
+Then edit `.env` and set at minimum:
+
+```env
+AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
+# Optionally provide a key; if omitted DefaultAzureCredential is used.
+AZURE_CONTENT_UNDERSTANDING_KEY=<optional-api-key>
+GPT_4_1_DEPLOYMENT=gpt-4.1
+GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
+TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
+```
+
+Notes:
+- If `AZURE_CONTENT_UNDERSTANDING_KEY` is not set the SDK will fall back to `DefaultAzureCredential`. Ensure you have authenticated (e.g. `az login`).
+- Keep the `.env` file out of version control—do not commit secrets.
+- The model deployment variables are required for configuring defaults and for samples that use prebuilt analyzers.
+
+#### 5. Set default model deployments (one-time)
+
+Content Understanding expects a mapping from standard model names to your deployment names. Run the sample `update_defaults.py` (located in `samples/`) after the environment variables are set and roles assigned.
+
+Short example (async):
+
+```python
+import os, asyncio
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
+
+async def configure():
+    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        await client.update_defaults(
+            model_deployments={
+                "gpt-4.1": os.environ["GPT_4_1_DEPLOYMENT"],
+                "gpt-4.1-mini": os.environ["GPT_4_1_MINI_DEPLOYMENT"],
+                "text-embedding-3-large": os.environ["TEXT_EMBEDDING_3_LARGE_DEPLOYMENT"],
+            }
+        )
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
+
+asyncio.run(configure())
+```
+
+After a successful run you can immediately use prebuilt analyzers such as `prebuilt-invoice` or `prebuilt-documentSearch`. If you encounter errors:
+
+- Recheck deployment names (they must match exactly)
+- Confirm the **Cognitive Services User** role assignment
+- Verify the endpoint points to the correct resource
+
+You only need to perform this configuration again if you change deployment names or create a new Azure AI Foundry resource.
+
+#### Troubleshooting quick tips
+- Missing model variables: ensure all three deployment environment variables are present; samples will warn politely if any are absent.
+- Permission errors calling `update_defaults`: add (or re-add) the Cognitive Services User role.
+- Authentication failures with DefaultAzureCredential: run `az login` (CLI) or configure another supported credential method.
+
+For more detailed setup guidance, see the official service quickstart (linked below) and the inline comments in `env.sample`.
+
 ## Key concepts
 
 Content Understanding provides the following main capability:

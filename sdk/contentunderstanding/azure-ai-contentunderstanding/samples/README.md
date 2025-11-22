@@ -18,6 +18,7 @@ These code samples demonstrate common scenarios with the Azure AI Content Unders
 * Python 3.9 or later is required to use this package
 * You need an [Azure subscription][azure_sub] and an [Azure AI Foundry resource][contentunderstanding_quickstart] to use this package.
 * The Azure AI Foundry resource must be created in a [supported region][contentunderstanding_regions].
+* **Required setup:** GPT-4.1, GPT-4.1-mini, and text-embedding-3-large models must be deployed in your Azure AI Foundry project and configured using `update_defaults.py` before using prebuilt analyzers.
 
 ## Setup
 
@@ -40,7 +41,10 @@ cd samples
 cp ../env.sample .env
 # Edit .env with your credentials
 
-# 5. Run a sample
+# 5. Configure model deployments (required for prebuilt analyzers)
+python update_defaults.py
+
+# 6. Run a sample
 python analyze_url.py
 ```
 
@@ -95,11 +99,17 @@ cp ../env.sample .env
 Set the following in `.env`:
 * `AZURE_CONTENT_UNDERSTANDING_ENDPOINT` (required) - Your Azure AI Foundry resource endpoint
 * `AZURE_CONTENT_UNDERSTANDING_KEY` (optional) - Your API key. If not set, `DefaultAzureCredential` will be used.
+* `GPT_4_1_DEPLOYMENT` (required for update_defaults.py) - Your GPT-4.1 deployment name in Azure AI Foundry
+* `GPT_4_1_MINI_DEPLOYMENT` (required for update_defaults.py) - Your GPT-4.1-mini deployment name in Azure AI Foundry
+* `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` (required for update_defaults.py) - Your text-embedding-3-large deployment name in Azure AI Foundry
 
 **Example `.env` file:**
 ```bash
 AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://your-resource.services.ai.azure.com/
 AZURE_CONTENT_UNDERSTANDING_KEY=your-api-key-here  # Optional
+GPT_4_1_DEPLOYMENT=your-gpt-4.1-deployment-name
+GPT_4_1_MINI_DEPLOYMENT=your-gpt-4.1-mini-deployment-name
+TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=your-text-embedding-3-large-deployment-name
 ```
 
 #### 4. Authenticate (if using DefaultAzureCredential)
@@ -167,6 +177,24 @@ Creates a custom analyzer with content categories for document classification an
 
 **Use case:** Multi-page documents with mixed content types (e.g., PDF with invoices and bank statements)
 
+### Resource Configuration
+
+#### `update_defaults.py` ⭐
+**Required setup!** Configures default model deployments for your Content Understanding resource. Maps model names (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) to your Azure AI Foundry deployments.
+
+**Key concepts:**
+- Setting up model deployment mappings
+- Required before using prebuilt analyzers
+- Configuring GPT-4.1, GPT-4.1-mini, and text-embedding-3-large deployments
+
+#### `get_defaults.py`
+Retrieves and displays current default model deployment settings for your Content Understanding resource. Shows which models are configured and what they're used for.
+
+**Key concepts:**
+- Checking current model deployment configuration
+- Verifying prebuilt analyzer readiness
+- Understanding model usage across different analyzers
+
 ### Custom Analyzer Management
 
 #### `create_analyzer.py`
@@ -184,6 +212,15 @@ Updates an existing analyzer configuration.
 #### `delete_analyzer.py`
 Deletes a custom analyzer.
 
+#### `create_classifier.py`
+Creates a custom classifier for document categorization with content categories. Demonstrates how to define classification categories and enable document segmentation for multi-document files.
+
+**Key concepts:**
+- Creating classifiers with content categories
+- Document categorization (Loan_Application, Invoice, Bank_Statement)
+- Enabling segmentation for multi-document files
+- Using GPT-4o for classification tasks
+
 ### Advanced Features
 
 #### `create_analyzer_with_labels.py`
@@ -194,6 +231,15 @@ Copies an analyzer from one location/region to another.
 
 #### `get_result_file.py`
 Downloads result files from analysis operations (e.g., extracted video keyframes).
+
+#### `delete_result.py`
+Demonstrates the complete workflow of analyzing a document, extracting results, and then deleting the analysis result to free up storage. Shows proper result lifecycle management.
+
+**Key concepts:**
+- Extracting operation IDs from analysis operations
+- Deleting analysis results to manage storage
+- Verifying result deletion with error handling
+- Understanding result retention policies (24-hour auto-deletion)
 
 ### Utility
 
@@ -296,6 +342,17 @@ pip install -r dev_requirements.txt
 source .venv/bin/activate
 pip install -e . --force-reinstall
 ```
+
+### "Model deployments not configured" or "prebuilt analyzers not available"
+
+**Solution:** Run the setup sample to configure model deployments:
+```bash
+source .venv/bin/activate
+cd samples
+python update_defaults.py
+```
+
+This configures the required GPT-4.1, GPT-4.1-mini, and text-embedding-3-large model deployments that prebuilt analyzers depend on.
 
 ## Next Steps
 
