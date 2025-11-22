@@ -1,5 +1,13 @@
 # Release History
 
+
+## 1.0.0b6 (2025-11-26)
+
+### Feature Added
+
+- Support Agent-framework greater than 251112
+
+
 ## 1.0.0b5 (2025-11-16)
 
 ### Feature Added

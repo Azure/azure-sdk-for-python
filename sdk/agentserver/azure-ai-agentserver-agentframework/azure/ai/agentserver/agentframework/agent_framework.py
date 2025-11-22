@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation,no-name-in-module,no-member
+# pylint: disable=logging-fstring-interpolation,no-name-in-module,no-member,do-not-import-asyncio
 from __future__ import annotations
 
 import os
@@ -21,8 +21,6 @@ from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
-from azure.ai.projects import AIProjectClient
-from azure.identity import DefaultAzureCredential
 
 from .models.agent_framework_input_converters import AgentFrameworkInputConverter
 from .models.agent_framework_output_non_streaming_converter import (
