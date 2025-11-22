@@ -190,8 +190,9 @@ def test_comprehensive_query_parameter_normalization():
 
 def test_multiple_tags_parameters():
     """Test that multiple tags parameters are handled correctly."""
-    original_url = "?api-version=2023-11-01&key=*&label=dev&tags=environment%3Ddev&tags=team%3Dfrontend"
-    expected_url = "?api-version=2023-11-01&key=%2A&label=dev&tags=environment%3Ddev&tags=team%3Dfrontend"
+    # cspell thinks the url encoding is part of the word
+    original_url = "?api-version=2023-11-01&key=*&label=dev&tags=environment%3Ddev&tags=team%3Dfrontend" # cspell:ignore
+    expected_url = "?api-version=2023-11-01&key=%2A&label=dev&tags=environment%3Ddev&tags=team%3Dfrontend" # cspell:ignore
 
     run_query_param_policy_test(original_url, expected_url)
 
