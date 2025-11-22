@@ -35,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-09-01/Accounts_ListBySubscription.json
+# x-ms-original-file: 2025-09-01-preview/Accounts_ListBySubscription.json
 if __name__ == "__main__":
     main()
