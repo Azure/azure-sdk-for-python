@@ -1,5 +1,12 @@
 # Release History
 
+## 1.2.0b2 (2025-09-17)
+
+### Features Added
+
+  - Model `ComputeScheduleMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Added model `ScheduledActionsExtensionProperties`
+
 ## 1.2.0b1 (2025-07-24)
 
 ### Features Added
