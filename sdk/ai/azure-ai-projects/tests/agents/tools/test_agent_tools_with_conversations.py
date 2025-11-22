@@ -393,3 +393,76 @@ Widget C:
             project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
             openai_client.conversations.delete(conversation_id=conversation.id)
             print("Cleanup completed")
+
+    @servicePreparer()
+    @pytest.mark.skipif(
+        condition=(not is_live_and_not_recording()),
+        reason="Skipped because we cannot record network calls with OpenAI client",
+    )
+    def test_code_interpreter_with_file_in_conversation(self, **kwargs):
+        """
+        Test using CodeInterpreterTool with file upload within a conversation.
+
+        This test reproduces the 500 error seen in the sample when using
+        code interpreter with uploaded files in conversations.
+
+        This tests:
+        - Uploading a real file (not BytesIO) for code interpreter
+        - Using code interpreter with files in conversation
+        - Server-side code execution with file access and chart generation
+        """
+
+        model = self.test_agents_params["model_deployment_name"]
+        import os
+
+        with (
+            self.create_client(operation_group="agents", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            # Use the same CSV file as the sample
+            asset_file_path = os.path.abspath(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    "../../../samples/agents/assets/synthetic_500_quarterly_results.csv",
+                )
+            )
+
+            # Upload file using open() with rb mode, just like the sample
+            with open(asset_file_path, "rb") as f:
+                uploaded_file = openai_client.files.create(file=f, purpose="assistants")
+            print(f"File uploaded: {uploaded_file.id}")
+
+            # Create agent with code interpreter - matching sample exactly
+            agent = project_client.agents.create_version(
+                agent_name="agent-code-interpreter-with-file-pbatum1",
+                definition=PromptAgentDefinition(
+                    model=model,
+                    instructions="You are a helpful assistant.",
+                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[uploaded_file.id]))],
+                ),
+                description="Code interpreter agent for data analysis and visualization.",
+            )
+            print(f"Agent created: {agent.id}")
+
+            # Create conversation
+            conversation = openai_client.conversations.create()
+            print(f"Conversation created: {conversation.id}")
+
+            # Use the same prompt as the sample - requesting chart generation
+            print("\n--- Turn 1: Create bar chart ---")
+            response_1 = openai_client.responses.create(
+                conversation=conversation.id,
+                input="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
+
+            response_1_text = response_1.output_text
+            print(f"Response 1: {response_1_text[:200]}...")
+
+            print("\n✓ Code interpreter with file in conversation successful!")
+
+            # Cleanup
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            openai_client.conversations.delete(conversation_id=conversation.id)
+            openai_client.files.delete(uploaded_file.id)
+            print("Cleanup completed")
