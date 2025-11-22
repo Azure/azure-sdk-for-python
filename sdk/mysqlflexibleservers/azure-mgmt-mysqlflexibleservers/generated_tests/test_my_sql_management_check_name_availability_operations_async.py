@@ -25,7 +25,7 @@ class TestMySQLManagementCheckNameAvailabilityOperationsAsync(AzureMgmtRecordedT
         response = await self.client.check_name_availability.execute(
             location_name="str",
             name_availability_request={"name": "str", "type": "str"},
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself

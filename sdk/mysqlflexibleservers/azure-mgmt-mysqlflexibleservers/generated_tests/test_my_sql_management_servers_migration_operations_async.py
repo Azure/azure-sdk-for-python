@@ -26,7 +26,7 @@ class TestMySQLManagementServersMigrationOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.servers_migration.begin_cutover_migration(
                 resource_group_name=resource_group.name,
                 server_name="str",
-                api_version="2024-12-30",
+                api_version="2025-06-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
