@@ -21,9 +21,9 @@ provided async iterator). Keep them pure transformation layers so they are testa
 
 from __future__ import annotations
 
-import time
+import datetime
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, AsyncIterator, Dict
+from typing import Any, AsyncGenerator, AsyncIterator, Dict, cast
 
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
@@ -124,15 +124,22 @@ class LanggraphMessageStateConverter(LanggraphStateConverter):
 
         agent_id = context.get_agent_id_object()
         conversation = context.get_conversation_object()
-        response = Response(
-            object="response",
-            id=context.response_id,
-            agent=agent_id,
-            conversation=conversation,
-            metadata=context.request.get("metadata"),
-            created_at=int(time.time()),
-            output=output,
-        )
+        
+        # Create Response with all required fields
+        response: Response = cast(Response, {
+            "object": "response",
+            "id": context.response_id,
+            "agent": agent_id,
+            "conversation": conversation,
+            "metadata": context.request.get("metadata", {}),
+            "created_at": datetime.datetime.now(datetime.timezone.utc),
+            "output": output,
+            "temperature": context.request.get("temperature", 1.0),
+            "top_p": context.request.get("top_p", 1.0),
+            "user": context.request.get("user", ""),
+            "instructions": context.request.get("instructions", ""),
+            "parallel_tool_calls": context.request.get("parallel_tool_calls", True),
+        })
         return response
 
     async def state_to_response_stream(

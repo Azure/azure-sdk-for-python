@@ -4,7 +4,7 @@
 # pylint: disable=logging-fstring-interpolation
 # mypy: ignore-errors
 import json
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict, List
 
 from langchain_core.messages import (
     AIMessage,
@@ -16,7 +16,10 @@ from langchain_core.messages import (
 from langchain_core.messages.tool import ToolCall
 
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.models import CreateResponse, openai as openai_models, projects as project_models
+from azure.ai.agentserver.core.models import CreateResponse, projects as project_models
+
+if TYPE_CHECKING:
+    from azure.ai.agentserver.core.models import openai as openai_models
 
 logger = get_logger()
 
@@ -60,7 +63,7 @@ class LangGraphRequestConverter:
             raise ValueError(f"Unsupported input type: {type(input)}, {input}")
         return langgraph_input
 
-    def convert_input(self, item: openai_models.ResponseInputItemParam) -> AnyMessage:
+    def convert_input(self, item: "openai_models.ResponseInputItemParam") -> AnyMessage:
         """
         Convert ResponseInputItemParam to a LangGraph message
 
@@ -101,27 +104,33 @@ class LangGraphRequestConverter:
         raise ValueError(f"Unsupported ResponseMessagesItemParam content type: {type(content)}, {content}")
 
     def convert_function_call(self, item: dict) -> AnyMessage:
+        # Function call items should have: call_id, name, and arguments
+        call_id = item.get("call_id")
+        name = item.get("name")
+        argument = item.get("arguments", None)
+        
+        if not call_id or not name:
+            raise ValueError(f"Invalid function call item missing call_id or name: {item}")
+        
         try:
-            item = openai_models.ResponseFunctionToolCallParam(**item)
-            argument = item.get("arguments", None)
             args = json.loads(argument) if argument else {}
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON in function call arguments: {item}") from e
-        except Exception as e:
-            raise ValueError(f"Invalid function call item: {item}") from e
-        return AIMessage(tool_calls=[ToolCall(id=item.get("call_id"), name=item.get("name"), args=args)], content="")
+        
+        return AIMessage(tool_calls=[ToolCall(id=call_id, name=name, args=args)], content="")
 
     def convert_function_call_output(self, item: dict) -> ToolMessage:
-        try:
-            item = openai_models.response_input_item_param.FunctionCallOutput(**item)  # pylint: disable=no-member
-        except Exception as e:
-            raise ValueError(f"Invalid function call output item: {item}") from e
-
+        # Function call output should have: call_id and output
+        call_id = item.get("call_id")
         output = item.get("output", None)
+        
+        if not call_id:
+            raise ValueError(f"Invalid function call output item missing call_id: {item}")
+
         if isinstance(output, str):
-            return ToolMessage(content=output, tool_call_id=item.get("call_id"))
+            return ToolMessage(content=output, tool_call_id=call_id)
         if isinstance(output, list):
-            return ToolMessage(content=self.convert_OpenAIItemContentList(output), tool_call_id=item.get("call_id"))
+            return ToolMessage(content=self.convert_OpenAIItemContentList(output), tool_call_id=call_id)
         raise ValueError(f"Unsupported function call output type: {type(output)}, {output}")
 
     def convert_OpenAIItemContentList(self, content: List[Dict]) -> List[Dict]:

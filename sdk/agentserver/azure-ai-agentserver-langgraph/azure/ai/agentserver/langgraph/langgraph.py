@@ -5,10 +5,13 @@
 # mypy: disable-error-code="assignment,arg-type"
 import os
 import re
-from typing import Optional
+from typing import Optional, List, TYPE_CHECKING, cast
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph.state import CompiledStateGraph
+
+if TYPE_CHECKING:
+    from langchain_core.callbacks import BaseCallbackHandler
 
 from azure.ai.agentserver.core.constants import Constants
 from azure.ai.agentserver.core.logger import get_logger
@@ -141,11 +144,19 @@ class LangGraphAdapter(FoundryCBAgent):
         :return: The RunnableConfig for the agent run.
         :rtype: RunnableConfig
         """
+        if TYPE_CHECKING:
+            callbacks_list: List[BaseCallbackHandler] = []
+        else:
+            callbacks_list = []
+        
+        if self.azure_ai_tracer:
+            callbacks_list = [self.azure_ai_tracer]  # type: ignore[list-item]
+            
         config = RunnableConfig(
             configurable={
                 "thread_id": context.conversation_id,
             },
-            callbacks=[self.azure_ai_tracer] if self.azure_ai_tracer else None,
+            callbacks=callbacks_list if callbacks_list else None,
         )
         return config
 
