@@ -124,9 +124,7 @@ class whl(Check):
                     logger.error(coverage_result.stderr)
                 results.append(coverage_result.returncode)
 
-            results.append(0)
-
-        return max(results)
+        return max(results) if results else 0
 
     def _install_common_requirements(self, executable: str, package_dir: str) -> None:
         install_into_venv(executable, PACKAGING_REQUIREMENTS, package_dir)
