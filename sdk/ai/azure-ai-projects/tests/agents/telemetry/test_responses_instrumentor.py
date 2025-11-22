@@ -3058,10 +3058,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     # responses.stream() Method Tests
     # ========================================
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_responses_stream_method_with_content_recording(self, **kwargs):
         """Test sync responses.stream() method with content recording enabled."""
         os.environ["AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API"] = "True"
@@ -3130,10 +3129,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_responses_stream_method_without_content_recording(self, **kwargs):
         """Test sync responses.stream() method without content recording."""
         os.environ["AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API"] = "True"
@@ -3202,10 +3200,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_responses_stream_method_with_tools_with_content_recording(self, **kwargs):
         """Test sync responses.stream() method with function tools and content recording enabled."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -3347,10 +3344,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_responses_stream_method_with_tools_without_content_recording(self, **kwargs):
         """Test sync responses.stream() method with function tools without content recording."""
         from openai.types.responses.response_input_param import FunctionCallOutput
