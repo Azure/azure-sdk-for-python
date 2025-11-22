@@ -175,6 +175,7 @@ async def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
 
         print("\n📋 Note: Deleting a result marks it for deletion.")
         print("   The result data will be permanently removed and cannot be recovered.")
+        print("   If not deleted manually, results are automatically deleted after 24 hours.")
 
     except Exception as e:
         print(f"\n❌ Error during analysis or deletion: {e}")
