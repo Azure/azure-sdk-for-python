@@ -98,7 +98,7 @@ async def main() -> None:
                 enable_segment=True,  # Enable automatic page segmentation by category
             ),
             description=f"Custom analyzer for financial document categorization with automatic segmentation",
-            models={"completion": "gpt-4o"},
+            models={"completion": "gpt-4.1"},
             tags={"demo_type": "category_classification_with_segmentation"},
         )
 

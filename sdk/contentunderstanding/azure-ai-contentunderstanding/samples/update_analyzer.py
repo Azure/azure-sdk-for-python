@@ -93,7 +93,7 @@ async def main():
                 description="Schema for update demo",
                 name="update_demo_schema",
             ),
-            models={"completion": "gpt-4o"},  # Required when using field_schema
+            models={"completion": "gpt-4.1"},  # Required when using field_schema
             processing_location=ProcessingLocation.GLOBAL,
             tags={"tag1": "tag1_initial_value", "tag2": "tag2_initial_value"},
         )

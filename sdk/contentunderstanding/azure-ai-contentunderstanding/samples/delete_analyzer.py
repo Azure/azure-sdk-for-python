@@ -78,7 +78,7 @@ async def main() -> None:
                     ),
                 },
             ),
-            models={"completion": "gpt-4o"},  # Required when using field_schema
+            models={"completion": "gpt-4.1"},  # Required when using field_schema
         )
 
         poller = await client.begin_create_analyzer(

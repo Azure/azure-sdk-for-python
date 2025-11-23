@@ -128,7 +128,7 @@ async def create_document_classifier(client: ContentUnderstandingClient) -> None
                 enable_segment=True,  # Automatically split and classify multi-document files
                 content_categories=categories,
             ),
-            models={"completion": "gpt-4o"},  # Model used for classification
+            models={"completion": "gpt-4.1"},  # Model used for classification
             tags={"sample_type": "classifier_demo", "document_type": "financial"},
         )
 

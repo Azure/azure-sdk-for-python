@@ -202,7 +202,7 @@ async def main() -> None:
             ),
             field_schema=field_schema,
             knowledge_sources=cast(list[KnowledgeSource] | None, knowledge_sources) if knowledge_sources else None,
-            models={"completion": "gpt-4o", "embedding": "text-embedding-ada-002"},  # Required when using field_schema
+            models={"completion": "gpt-4.1", "embedding": "text-embedding-ada-002"},  # Required when using field_schema
         )
 
         poller = await client.begin_create_analyzer(

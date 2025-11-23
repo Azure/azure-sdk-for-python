@@ -97,7 +97,7 @@ async def main() -> None:
                 enable_segment=False,  # Disable automatic page segmentation by category
             ),
             description=f"Custom analyzer for financial document categorization without segmentation",
-            models={"completion": "gpt-4o"},
+            models={"completion": "gpt-4.1"},
             tags={"demo_type": "category_classification_without_segmentation"},
         )
 

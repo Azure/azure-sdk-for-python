@@ -219,7 +219,7 @@ Creates a custom classifier for document categorization with content categories.
 - Creating classifiers with content categories
 - Document categorization (Loan_Application, Invoice, Bank_Statement)
 - Enabling segmentation for multi-document files
-- Using GPT-4o for classification tasks
+- Using GPT-4.1 for classification tasks
 
 ### Advanced Features
 

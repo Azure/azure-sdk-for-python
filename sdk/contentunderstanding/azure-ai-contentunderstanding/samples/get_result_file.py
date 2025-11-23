@@ -137,7 +137,7 @@ async def main():
             config=ContentAnalyzerConfig(
                 return_details=True,
             ),
-            models={"completion": "gpt-4o"},  # Required when using field_schema
+            models={"completion": "gpt-4.1"},  # Required when using field_schema
             description="Marketing video analyzer for result file demo",
             tags={"demo_type": "video_analysis"},
         )
