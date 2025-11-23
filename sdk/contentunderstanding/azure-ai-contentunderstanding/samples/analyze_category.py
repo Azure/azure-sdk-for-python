@@ -109,7 +109,7 @@ async def main() -> None:
 
         print("Waiting for analyzer creation to complete...")
         result = await poller.result()
-        print(f"✅ Analyzer '{analyzer_id}' created successfully!\n")
+        print(f"Analyzer '{analyzer_id}' created successfully!\n")
 
         if result.warnings:
             print("⚠️  Warnings encountered while building the analyzer:")
@@ -140,7 +140,7 @@ async def main() -> None:
                 continue
 
             print(f"{'=' * 60}")
-            print(f"📄 Analyzing: {test_file}")
+            print(f"Analyzing: {test_file}")
             print(f"{'=' * 60}")
 
             # Read and analyze the document
@@ -154,10 +154,10 @@ async def main() -> None:
             )
             
             analyze_result: AnalyzeResult = await analyze_poller.result()
-            print("✅ Classification completed!\n")
+            print("Classification completed!\n")
 
             # Display classification results
-            print("📊 Classification Results:")
+            print("Classification Results:")
             print("-" * 60)
             
             for content in analyze_result.contents:
@@ -187,13 +187,13 @@ async def main() -> None:
             with open(result_file, "w") as f:
                 json.dump(analyze_result.as_dict(), f, indent=2, default=str)
             
-            print(f"💾 Results saved to: {result_file}\n")
+            print(f"Results saved to: {result_file}\n")
 
         # Cleanup
         print(f"{'=' * 60}")
-        print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
+        print(f"Deleting analyzer '{analyzer_id}' (demo cleanup)...")
         await client.delete_analyzer(analyzer_id=analyzer_id)
-        print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
+        print(f"Analyzer '{analyzer_id}' deleted successfully!")
         print(f"{'=' * 60}")
 
     # Close DefaultAzureCredential if used

@@ -64,13 +64,13 @@ async def main() -> None:
 async def get_deployment_settings(client: ContentUnderstandingClient) -> None:
     """Retrieve and display default model deployment settings."""
 
-    print("\n📋 Retrieving default model deployment settings...")
+    print("\nRetrieving default model deployment settings...")
 
     try:
         # Get the current default settings
         defaults = await client.get_defaults()
 
-        print("\n✅ Successfully retrieved default settings")
+        print("\nSuccessfully retrieved default settings")
         print("\nModel Deployment Mappings:")
         print("=" * 60)
 
@@ -83,7 +83,7 @@ async def get_deployment_settings(client: ContentUnderstandingClient) -> None:
             print("=" * 60)
 
             # Provide context about what these models are used for
-            print("\n💡 Model Usage:")
+            print("\nModel Usage:")
             if "gpt-4.1" in defaults.model_deployments:
                 print("   • GPT-4.1: Used by most prebuilt analyzers")
                 print("     (prebuilt-invoice, prebuilt-receipt, prebuilt-idDocument, etc.)")
@@ -95,7 +95,7 @@ async def get_deployment_settings(client: ContentUnderstandingClient) -> None:
             if "text-embedding-3-large" in defaults.model_deployments:
                 print("   • text-embedding-3-large: Used for semantic search and embeddings")
 
-            print("\n✨ Your Content Understanding resource is configured!")
+            print("\nYour Content Understanding resource is configured!")
             print("   You can now use prebuilt analyzers that depend on these models.")
 
         else:

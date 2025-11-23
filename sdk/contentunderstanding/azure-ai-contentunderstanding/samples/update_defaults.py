@@ -95,7 +95,7 @@ async def update_model_deployments(client: ContentUnderstandingClient) -> None:
         print("3. Run this sample again")
         return
 
-    print("\n📋 Configuring default model deployments...")
+    print("\nConfiguring default model deployments...")
     print(f"   GPT-4.1 deployment: {gpt_4_1_deployment}")
     print(f"   GPT-4.1-mini deployment: {gpt_4_1_mini_deployment}")
     print(f"   text-embedding-3-large deployment: {text_embedding_3_large_deployment}")
@@ -112,7 +112,7 @@ async def update_model_deployments(client: ContentUnderstandingClient) -> None:
             }
         )
 
-        print("\n✅ Default model deployments configured successfully!")
+        print("\nDefault model deployments configured successfully!")
         print("\nModel Mappings:")
         print("=" * 60)
 
@@ -124,7 +124,7 @@ async def update_model_deployments(client: ContentUnderstandingClient) -> None:
             print("   No model deployments returned in response")
 
         print("=" * 60)
-        print("\n💡 These mappings are now configured for your Content Understanding resource.")
+        print("\nThese mappings are now configured for your Content Understanding resource.")
         print("   You can now use prebuilt analyzers like 'prebuilt-invoice' and 'prebuilt-receipt'.")
 
     except Exception as e:

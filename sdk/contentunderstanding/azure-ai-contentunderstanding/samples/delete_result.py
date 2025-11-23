@@ -73,7 +73,7 @@ async def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
         "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
     )
 
-    print("\n📄 Document Analysis Workflow")
+    print("\nDocument Analysis Workflow")
     print("=" * 60)
     print(f"   Document URL: {file_url}")
     print(f"   Analyzer: prebuilt-invoice")
@@ -81,7 +81,7 @@ async def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
 
     try:
         # Step 1: Start the analysis operation
-        print(f"\n🔍 Step 1: Starting document analysis...")
+        print(f"\nStep 1: Starting document analysis...")
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice",
             inputs=[AnalyzeInput(url=file_url)],
@@ -95,24 +95,24 @@ async def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
             print("❌ Error: Could not extract operation ID from response")
             return
 
-        print(f"✅ Analysis operation started")
+        print(f"Analysis operation started")
         print(f"   Operation ID: {operation_id}")
 
         # Step 2: Wait for analysis to complete
-        print(f"\n⏳ Step 2: Waiting for analysis to complete...")
+        print(f"\nStep 2: Waiting for analysis to complete...")
         result = await poller.result()
-        print(f"✅ Analysis completed successfully!")
+        print(f"Analysis completed successfully!")
 
         # Verify we can access the result before deletion (this is for demonstration only)
-        print(f"\n🔍 Step 2.5: Verifying result accessibility before deletion...")
+        print(f"\nStep 2.5: Verifying result accessibility before deletion...")
         try:
             status_before = await client._get_result(operation_id=operation_id)  # type: ignore[attr-defined]
-            print(f"✅ Result accessible before deletion (status: {status_before.status})")
+            print(f"Result accessible before deletion (status: {status_before.status})")
         except Exception as e:
             print(f"⚠️  Unexpected error accessing result before deletion: {e}")
 
         # Step 3: Display sample results from the analysis
-        print(f"\n📊 Step 3: Analysis Results Summary")
+        print(f"\nStep 3: Analysis Results Summary")
         print("=" * 60)
 
         if result.contents and len(result.contents) > 0:
@@ -141,14 +141,14 @@ async def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
         print("=" * 60)
 
         # Step 4: Delete the analysis result
-        print(f"\n🗑️  Step 4: Deleting analysis result...")
+        print(f"\nStep 4: Deleting analysis result...")
         print(f"   Operation ID: {operation_id}")
 
         await client.delete_result(operation_id=operation_id)
-        print(f"✅ Analysis result deleted successfully!")
+        print(f"Analysis result deleted successfully!")
 
         # Step 5: Verify deletion by attempting to get the result again
-        print(f"\n🔍 Step 5: Verifying deletion...")
+        print(f"\nStep 5: Verifying deletion...")
         print(f"   Attempting to access the deleted result...")
         try:
             # Try to get the operation status after deletion (this is for demonstration only)
@@ -156,7 +156,7 @@ async def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
             print("❌ Unexpected: Result still exists after deletion!")
         except Exception as delete_error:
             if isinstance(delete_error, ResourceNotFoundError):
-                print(f"✅ Verification successful: Result properly deleted")
+                print(f"Verification successful: Result properly deleted")
                 print(f"   Error type: {type(delete_error).__name__}")
                 if hasattr(delete_error, 'error') and delete_error.error:
                     print(f"   Code: {delete_error.error.code}")
@@ -167,13 +167,13 @@ async def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
                 print(f"   Error details: {delete_error}")
                 print(f"   Expected ResourceNotFoundError for deleted result")
 
-        print("\n💡 Why delete results?")
+        print("\nWhy delete results?")
         print("   • Free up storage space in your Content Understanding resource")
         print("   • Remove temporary or sensitive analysis results")
         print("   • Manage resource quotas and limits")
         print("   • Clean up test or development analysis operations")
 
-        print("\n📋 Note: Deleting a result marks it for deletion.")
+        print("\nNote: Deleting a result marks it for deletion.")
         print("   The result data will be permanently removed and cannot be recovered.")
         print("   If not deleted manually, results are automatically deleted after 24 hours.")
 

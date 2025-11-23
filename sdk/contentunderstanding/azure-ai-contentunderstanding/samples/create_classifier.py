@@ -75,7 +75,7 @@ async def create_document_classifier(client: ContentUnderstandingClient) -> None
     # Generate a unique classifier ID
     analyzer_id = f"sdk_sample_classifier_{int(asyncio.get_event_loop().time())}"
 
-    print(f"\n🔧 Creating classifier '{analyzer_id}'...")
+    print(f"\nCreating classifier '{analyzer_id}'...")
     print("\nClassifier Configuration:")
     print("=" * 60)
 
@@ -133,16 +133,16 @@ async def create_document_classifier(client: ContentUnderstandingClient) -> None
         )
 
         # Start the classifier creation operation
-        print(f"\n⏳ Starting classifier creation operation...")
+        print(f"\nStarting classifier creation operation...")
         poller = await client.begin_create_analyzer(
             analyzer_id=analyzer_id,
             resource=classifier,
         )
 
         # Wait for the operation to complete
-        print(f"⏳ Waiting for classifier creation to complete...")
+        print(f"Waiting for classifier creation to complete...")
         result = await poller.result()
-        print(f"\n✅ Classifier '{analyzer_id}' created successfully!")
+        print(f"\nClassifier '{analyzer_id}' created successfully!")
 
         # Display any warnings from the creation process
         if result.warnings:
@@ -151,7 +151,7 @@ async def create_document_classifier(client: ContentUnderstandingClient) -> None
                 print(f"   - {warning}")
 
         # Retrieve the full analyzer details using get_analyzer
-        print(f"\n📋 Retrieving classifier details...")
+        print(f"\nRetrieving classifier details...")
         analyzer_details = await client.get_analyzer(analyzer_id=analyzer_id)
 
         print("\nClassifier Properties:")
@@ -177,16 +177,16 @@ async def create_document_classifier(client: ContentUnderstandingClient) -> None
 
         print("=" * 60)
 
-        print("\n💡 Usage Tips:")
+        print("\nUsage Tips:")
         print("   • Use this classifier with begin_analyze() or begin_analyze_binary()")
         print("   • Set enable_segment=True to classify different document types in a single file")
         print("   • Each segment in the result will have a 'category' field with the classification")
         print("   • You can add up to 200 content categories per classifier")
 
         # Clean up: Delete the classifier
-        print(f"\n🗑️  Cleaning up: Deleting classifier '{analyzer_id}'...")
+        print(f"\nCleaning up: Deleting classifier '{analyzer_id}'...")
         await client.delete_analyzer(analyzer_id=analyzer_id)
-        print(f"✅ Classifier '{analyzer_id}' deleted successfully!")
+        print(f"Classifier '{analyzer_id}' deleted successfully!")
 
     except Exception as e:
         print(f"\n❌ Error creating classifier: {e}")
