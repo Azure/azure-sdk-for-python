@@ -158,8 +158,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         **kwargs: Any,
     ) -> None:
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
-        self._job_inputs: Dict[str, Any] = inputs or {}
-        self._job_outputs: Dict[Any, Any] = outputs or {}
+        self._job_inputs, self._job_outputs = inputs, outputs  # type: ignore[assignment]
 
         kwargs.pop("type", None)
         BaseNode.__init__(

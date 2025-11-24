@@ -72,7 +72,7 @@ class Database(DictMixin, RestTranslatableMixin):
     ) -> None:
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
-        self.name: Optional[str] = None
+        self.name = None
         self.type = ExternalDataType.DATABASE
         self.connection = connection
         self.query = query
@@ -110,7 +110,7 @@ class Database(DictMixin, RestTranslatableMixin):
         return result
 
     def _update_name(self, name: str) -> None:
-        self.name = name
+        self.name = name  # type: ignore[assignment]
 
     @classmethod
     def _from_rest_object(cls, obj: Dict) -> "Database":
