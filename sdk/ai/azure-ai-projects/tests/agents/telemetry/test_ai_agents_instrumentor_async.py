@@ -370,6 +370,15 @@ trigger:
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        # Verify no workflow event when content recording is disabled
+        # Verify workflow event is present but content is empty when content recording is disabled
         events = span.events
-        assert len(events) == 0
+        assert len(events) == 1
+        workflow_event = events[0]
+        assert workflow_event.name == GEN_AI_AGENT_WORKFLOW_EVENT
+
+        import json
+
+        event_content = json.loads(workflow_event.attributes[GEN_AI_EVENT_CONTENT])
+        # When content recording is disabled, event should be an empty array
+        assert isinstance(event_content, list)
+        assert len(event_content) == 0

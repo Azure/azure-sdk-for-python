@@ -539,10 +539,15 @@ class _AIAgentsInstrumentorPreview:
             # Add instructions event (if instructions exist)
             self._add_instructions_event(span, instructions, None)
 
-            # Add workflow YAML as event if content recording is enabled and workflow exists
-            if _trace_agents_content and workflow_yaml:
-                # Use optimized format with direct array and consistent "content" field
-                event_body: List[Dict[str, Any]] = [{"type": "workflow", "content": workflow_yaml}]
+            # Add workflow event if workflow type agent (always add event, but only include YAML content if content recording enabled)
+            if workflow_yaml is not None:
+                # Always create event with empty array or workflow content based on recording setting
+                if _trace_agents_content:
+                    # Include actual workflow YAML when content recording is enabled
+                    event_body: List[Dict[str, Any]] = [{"type": "workflow", "content": workflow_yaml}]
+                else:
+                    # Empty array when content recording is disabled (agent type already indicates it's a workflow)
+                    event_body = []
                 attributes = self._create_event_attributes()
                 attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
                 span.span_instance.add_event(name="gen_ai.agent.workflow", attributes=attributes)
