@@ -57,7 +57,7 @@ NON_TRANSIENT_STATUS_CODES = [
     (404, 0)
 ]
 
-def create_doc():
+def _create_doc():
     return {
         'id': str(uuid.uuid4()),
         'pk': 'test_pk',
@@ -65,7 +65,7 @@ def create_doc():
         'key': 'value'
     }
 
-def perform_read_operation(
+def _perform_read_operation(
         operation,
         container,
         created_doc,
@@ -118,13 +118,13 @@ def perform_read_operation(
                 **kwargs))
         any(item['id'] == created_doc['id'] for item in response)
 
-    validate_response_uris(
+    _validate_response_uris(
         expected_uris,
         excluded_uris,
-        operation_type=get_operation_type(operation),
+        operation_type=_get_operation_type(operation),
         resource_type=ResourceType.Document)
 
-def perform_write_operation(
+def _perform_write_operation(
         operation,
         container,
         created_doc,
@@ -141,7 +141,7 @@ def perform_write_operation(
         kwargs['availability_strategy_config'] = availability_strategy_config
 
     if operation == CREATE:
-        doc = create_doc()
+        doc = _create_doc()
         container.create_item(
             body=doc,
             retry_write=retry_write,
@@ -149,7 +149,7 @@ def perform_write_operation(
             **kwargs)
 
     elif operation == UPSERT:
-        doc = create_doc()
+        doc = _create_doc()
         container.upsert_item(
             body=doc,
             retry_write=retry_write,
@@ -184,7 +184,7 @@ def perform_write_operation(
             **kwargs)
 
     elif operation == BATCH:
-        doc = create_doc()
+        doc = _create_doc()
         batch_ops = [
             ("upsert", (doc,))
         ]
@@ -195,13 +195,13 @@ def perform_write_operation(
             excluded_locations=excluded_locations,
             **kwargs)
 
-    validate_response_uris(
+    _validate_response_uris(
         expected_uris,
         excluded_uris,
-        operation_type=get_operation_type(operation),
+        operation_type=_get_operation_type(operation),
         resource_type=ResourceType.Document)
 
-def validate_response_uris(expected_location_uris, excluded_location_uris, operation_type=None, resource_type=None):
+def _validate_response_uris(expected_location_uris, excluded_location_uris, operation_type=None, resource_type=None):
     """Validate that response came from expected region and not from excluded regions"""
     # Get Request URLs from mock handler messages
     req_urls = []
@@ -227,12 +227,12 @@ def validate_response_uris(expected_location_uris, excluded_location_uris, opera
     assert set(req_urls) == set(expected_location_uris), "No matching request URLs found in mock handler messages"
     assert all(location not in excluded_location_uris for location in req_urls), "Found request being routed to excluded regions unexpected"
 
-def validate_error_uri(exc_info, expected_uri):
+def _validate_error_uri(exc_info, expected_uri):
     """Validate that error response came from expected region"""
     request = exc_info.value.response.get_response_headers()["_request"]
     assert request.url.startswith(expected_uri)
 
-def get_operation_type(test_operation_type: str) -> str:
+def _get_operation_type(test_operation_type: str) -> str:
     if test_operation_type == READ:
         return OperationType.Read
     if test_operation_type == CREATE:
@@ -277,8 +277,8 @@ class TestAvailabilityStrategy:
         logger.addHandler(cls.MOCK_HANDLER)
         logger.setLevel(logging.DEBUG)
 
-        client = CosmosClient(cls.host, cls.master_key)
-        database_account = client.get_database_account()
+        cls.client_without_fault = CosmosClient(cls.host, cls.master_key)
+        database_account = cls.client_without_fault.get_database_account()
         cls.write_locations = [loc["name"] for loc in database_account._WritableLocations]
         cls.read_locations = [loc["name"] for loc in database_account._ReadableLocations]
         # Use first writable location as primary region and second as failover
@@ -289,7 +289,7 @@ class TestAvailabilityStrategy:
         """Reset mock handler before each test"""
         self.MOCK_HANDLER.reset()
 
-    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=None, retry_write=False, **kwargs):
+    def _setup_method_with_custom_transport(self, custom_transport, default_endpoint=None, retry_write=False, **kwargs):
         """Initialize test client with optional custom transport and endpoint"""
         if default_endpoint is None:
             default_endpoint = self.host
@@ -313,7 +313,7 @@ class TestAvailabilityStrategy:
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
 
-    def get_custom_transport_with_fault_injection(
+    def _get_custom_transport_with_fault_injection(
             self,
             predicate,
             error_lambda):
@@ -321,6 +321,15 @@ class TestAvailabilityStrategy:
         custom_transport = FaultInjectionTransport()
         custom_transport.add_fault(predicate, error_lambda)
         return custom_transport
+
+    def _clean_up_container(self, database_id: str, container_id: str):
+        container = self.client_without_fault.get_database_client(database_id).get_container_client(container_id)
+        all_items = list(container.read_all_items())
+        for item in all_items:
+            try:
+                container.delete_item(item['id'], item['pk'])
+            except Exception:
+                pass
 
     @pytest.mark.parametrize("threshold_ms,threshold_steps_ms, error_message", [
         (-1, 100, "threshold_ms must be positive"),
@@ -346,11 +355,11 @@ class TestAvailabilityStrategy:
             client_availability_strategy,
             request_availability_strategy):
         """Test for steady state, operations go to first preferred location even with availability strategy enabled"""
-        setup = self.setup_method_with_custom_transport(
+        setup = self._setup_method_with_custom_transport(
             None,
             availability_strategy_config=client_availability_strategy)
 
-        doc = create_doc()
+        doc = _create_doc()
         setup['col'].create_item(body=doc)
 
         expected_uris = [_location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)]
@@ -358,7 +367,7 @@ class TestAvailabilityStrategy:
 
         # Test operation
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            perform_read_operation(
+            _perform_read_operation(
                 operation,
                 setup['col'],
                 doc,
@@ -366,13 +375,14 @@ class TestAvailabilityStrategy:
                 excluded_uris,
                 availability_strategy_config=request_availability_strategy)
         else:
-            perform_write_operation(
+            _perform_write_operation(
                 operation,
                 setup['col'],
                 doc,
                 expected_uris,
                 excluded_uris,
                 availability_strategy_config=request_availability_strategy)
+        self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
@@ -390,29 +400,29 @@ class TestAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
 
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
                                FaultInjectionTransport.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             1000,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-        setup = self.setup_method_with_custom_transport(
+        setup = self._setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True,
             availability_strategy_config=client_availability_strategy)
 
-        setup_without_fault = self.setup_method_with_custom_transport(None)
-        doc = create_doc()
+        setup_without_fault = self._setup_method_with_custom_transport(None)
+        doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
         expected_uris = [uri_down, failed_over_uri]
         # Test operation with fault injection
 
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            perform_read_operation(
+            _perform_read_operation(
                 operation,
                 setup['col'],
                 doc,
@@ -420,7 +430,7 @@ class TestAvailabilityStrategy:
                 [],
                 availability_strategy_config=request_availability_strategy)
         else:
-            perform_write_operation(
+            _perform_write_operation(
                 operation,
                 setup['col'],
                 doc,
@@ -428,6 +438,7 @@ class TestAvailabilityStrategy:
                 [],
                 retry_write=True,
                 availability_strategy_config=request_availability_strategy)
+        self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("status_code, sub_status_code", NON_TRANSIENT_STATUS_CODES)
@@ -438,19 +449,19 @@ class TestAvailabilityStrategy:
 
         # fault injection in second preferred region
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
                                FaultInjectionTransport.predicate_targets_region(r, failed_over_uri))
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             CosmosHttpResponseError(status_code=status_code, message=f"Injected {status_code} Error", sub_status=sub_status_code)
         )
 
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         # setup fault injection in first preferred region
         predicate_first_region = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
-                               FaultInjectionTransport.predicate_targets_region(r, uri_down))
+                                            FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                                            FaultInjectionTransport.predicate_targets_region(r, uri_down))
         error_lambda_first_region = lambda r: FaultInjectionTransport.error_after_delay(
             500,
             CosmosHttpResponseError(status_code=503, message="Injected Error")
@@ -458,11 +469,11 @@ class TestAvailabilityStrategy:
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
         strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
-        setup = self.setup_method_with_custom_transport(
+        setup = self._setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True)
-        setup_without_fault = self.setup_method_with_custom_transport(None)
-        doc = create_doc()
+        setup_without_fault = self._setup_method_with_custom_transport(None)
+        doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
         expected_uris = [uri_down, failed_over_uri]
@@ -470,12 +481,13 @@ class TestAvailabilityStrategy:
         # Test should fail with original error without failover
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy_config=strategy)
+                _perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy_config=strategy)
             else:
-                perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=strategy)
+                _perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=strategy)
                 
         # Verify error code
         assert exc_info.value.status_code == status_code
+        self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_transient_error_from_failed_over_region(self, operation):
@@ -487,19 +499,19 @@ class TestAvailabilityStrategy:
 
         # fault injection in second preferred region
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
                                FaultInjectionTransport.predicate_targets_region(r, failed_over_uri))
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             ServiceResponseError(message="Generic Service Error")
         )
 
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         # setup fault injection in first preferred region
         predicate_first_region = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
-                               FaultInjectionTransport.predicate_targets_region(r, uri_down))
+                                            FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                                            FaultInjectionTransport.predicate_targets_region(r, uri_down))
         error_lambda_first_region = lambda r: FaultInjectionTransport.error_after_delay(
             500,
             CosmosHttpResponseError(status_code=400, message="Injected Error") # using a non retryable exceptions here
@@ -507,12 +519,12 @@ class TestAvailabilityStrategy:
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
         strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
-        setup = self.setup_method_with_custom_transport(
+        setup = self._setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True)
 
-        setup_without_fault = self.setup_method_with_custom_transport(None)
-        doc = create_doc()
+        setup_without_fault = self._setup_method_with_custom_transport(None)
+        doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
         expected_uris = [uri_down, failed_over_uri]
@@ -520,12 +532,13 @@ class TestAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy_config=strategy)
+                _perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy_config=strategy)
             else:
-                perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=strategy)
+                _perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == 400
+        self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_request_level_disable_override_client_strategy(self, operation):
@@ -537,17 +550,17 @@ class TestAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
 
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
                                FaultInjectionTransport.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             500,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error") # using non retryable errors to verify the request will only go to the first region
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
-        setup = self.setup_method_with_custom_transport(custom_transport, availability_strategy_config=client_strategy)
-        setup_without_fault = self.setup_method_with_custom_transport(None)
-        doc = create_doc()
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        setup = self._setup_method_with_custom_transport(custom_transport, availability_strategy_config=client_strategy)
+        setup_without_fault = self._setup_method_with_custom_transport(None)
+        doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
         expected_uris = [uri_down]
@@ -556,12 +569,13 @@ class TestAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                perform_read_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy_config=None)
+                _perform_read_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy_config=None)
             else:
-                perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy_config=None)
+                _perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy_config=None)
 
         # Verify error code
         assert exc_info.value.status_code == 400
+        self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_request_level_enable_override_client_disable(self, operation):
@@ -570,7 +584,7 @@ class TestAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
 
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
                                FaultInjectionTransport.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
@@ -578,13 +592,13 @@ class TestAvailabilityStrategy:
             CosmosHttpResponseError(status_code=400, message="Injected Error")
             # using non retryable errors to verify the request will only go to the first region
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
-        setup = self.setup_method_with_custom_transport(
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        setup = self._setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True)
-        setup_without_fault = self.setup_method_with_custom_transport(None)
+        setup_without_fault = self._setup_method_with_custom_transport(None)
 
-        doc = create_doc()
+        doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
         # Create request-level policy to enable hedging
@@ -594,9 +608,11 @@ class TestAvailabilityStrategy:
         # Test operation with fault injection
 
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy_config=request_strategy)
+            _perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy_config=request_strategy)
         else:
-            perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=request_strategy)
+            _perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=request_strategy)
+
+        self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_no_cross_region_request_with_exclude_regions(self, operation):
@@ -605,7 +621,7 @@ class TestAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
 
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
                                FaultInjectionTransport.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
@@ -613,13 +629,13 @@ class TestAvailabilityStrategy:
             CosmosHttpResponseError(status_code=400, message="Injected Error")
             # using non retryable errors to verify the request will only go to the first region
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
-        setup = self.setup_method_with_custom_transport(
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        setup = self._setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True)
 
-        setup_without_fault = self.setup_method_with_custom_transport(None)
-        doc = create_doc()
+        setup_without_fault = self._setup_method_with_custom_transport(None)
+        doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
         expected_uris = [uri_down]
@@ -629,7 +645,7 @@ class TestAvailabilityStrategy:
         strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                perform_read_operation(
+                _perform_read_operation(
                     operation,
                     setup['col'],
                     doc,
@@ -638,7 +654,7 @@ class TestAvailabilityStrategy:
                     excluded_locations=[self.REGION_2],
                     availability_strategy_config=strategy)
             else:
-                perform_write_operation(
+                _perform_write_operation(
                     operation,
                     setup['col'],
                     doc,
@@ -650,6 +666,7 @@ class TestAvailabilityStrategy:
 
         # Verify error code
         assert exc_info.value.status_code == 400
+        self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_no_cross_region_request_with_retry_write_disabled(self, operation):
@@ -658,7 +675,7 @@ class TestAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
 
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
                                FaultInjectionTransport.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
@@ -666,12 +683,12 @@ class TestAvailabilityStrategy:
             CosmosHttpResponseError(status_code=400, message="Injected Error")
             # using non retryable errors to verify the request will only go to the first region
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
-        setup = self.setup_method_with_custom_transport(
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        setup = self._setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True)
-        setup_without_fault = self.setup_method_with_custom_transport(None)
-        doc = create_doc()
+        setup_without_fault = self._setup_method_with_custom_transport(None)
+        doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
         expected_uris = [uri_down]
@@ -681,10 +698,11 @@ class TestAvailabilityStrategy:
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
-            perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy_config=strategy)
+            _perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy_config=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == 400
+        self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [READ, QUERY_PK, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_per_partition_circular_breaker_with_cancelled_first_future(self, operation):
@@ -702,7 +720,7 @@ class TestAvailabilityStrategy:
             failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
 
             predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                                   FaultInjectionTransport.predicate_is_operation_type(r, get_operation_type(operation)) and
+                                   FaultInjectionTransport.predicate_is_operation_type(r, _get_operation_type(operation)) and
                                    FaultInjectionTransport.predicate_targets_region(r, uri_down))
 
             error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
@@ -710,25 +728,25 @@ class TestAvailabilityStrategy:
                 CosmosHttpResponseError(status_code=503, message="Injected Error")
             )
 
-            custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+            custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
             strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
 
-            setup_with_fault_injection = self.setup_method_with_custom_transport(
+            setup_with_fault_injection = self._setup_method_with_custom_transport(
                 custom_transport,
                 multiple_write_locations=True,
                 container_id=self.TEST_SINGLE_PARTITION_CONTAINER_ID
             )
-            setup_without_fault = self.setup_method_with_custom_transport(None, container_id = self.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            setup_without_fault = self._setup_method_with_custom_transport(None, container_id = self.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
             # First operation will attempt first region, fail, and then succeed in second region
             expected_uris = [uri_down, failed_over_uri]
 
             for _ in range(5):
-                doc = create_doc()
+                doc = _create_doc()
                 setup_without_fault['col'].create_item(body=doc)
                 if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                    perform_read_operation(
+                    _perform_read_operation(
                         operation,
                         setup_with_fault_injection['col'],
                         doc,
@@ -736,7 +754,7 @@ class TestAvailabilityStrategy:
                         [],
                         availability_strategy_config=strategy)
                 else:
-                    perform_write_operation(
+                    _perform_write_operation(
                         operation,
                         setup_with_fault_injection['col'],
                         doc,
@@ -748,13 +766,13 @@ class TestAvailabilityStrategy:
             # Subsequent operations should go directly to second region due to per partition circular breaker
             expected_uris = [failed_over_uri]
             excluded_uris = [uri_down]
-            doc = create_doc()
+            doc = _create_doc()
             setup_without_fault['col'].create_item(body=doc)
             self.MOCK_HANDLER.reset()
 
             time.sleep(2)
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                perform_read_operation(
+                _perform_read_operation(
                     operation,
                     setup_with_fault_injection['col'],
                     doc,
@@ -762,7 +780,7 @@ class TestAvailabilityStrategy:
                     excluded_uris,
                     availability_strategy_config=strategy)
             else:
-                perform_write_operation(
+                _perform_write_operation(
                     operation,
                     setup_with_fault_injection['col'],
                     doc,
@@ -775,6 +793,8 @@ class TestAvailabilityStrategy:
             del os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"]
             del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"]
             del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"]
+
+        self._clean_up_container(setup_with_fault_injection['db'].id, setup_with_fault_injection['col'].id)
 
     def test_custom_thread_pool_executor(self):
         """Test a customized thread pool executor can be configured on client"""
@@ -791,19 +811,19 @@ class TestAvailabilityStrategy:
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
 
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
-        setup_with_transport = self.setup_method_with_custom_transport(
+        setup_with_transport = self._setup_method_with_custom_transport(
             custom_transport,
             availability_strategy_executor=ThreadPoolExecutor(max_workers=1))
 
-        doc = create_doc()
+        doc = _create_doc()
         setup_with_transport['col'].create_item(doc)
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
-            perform_read_operation(
+            _perform_read_operation(
                 READ,
                 setup_with_transport['col'],
                 doc,
@@ -813,6 +833,7 @@ class TestAvailabilityStrategy:
 
         # Verify error code matches first region's error
         assert exc_info.value.status_code == 400
+        self._clean_up_container(setup_with_transport['db'].id, setup_with_transport['col'].id)
 
 if __name__ == '__main__':
     unittest.main()

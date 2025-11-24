@@ -213,7 +213,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
                 if args:
                     # record the failure for circuit breaker tracking
-                    await _record_ppcb_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
+                    await _record_ppcb_failure_if_request_not_cancelled(
+                        args[0],
+                        global_endpoint_manager,
+                        pk_range_wrapper)
                 retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:
@@ -266,12 +269,18 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                         _handle_service_request_retries(client, service_request_retry_policy, e, *args)
                     else:
                         if args:
-                            await _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
+                            await _record_failure_if_request_not_cancelled(
+                                args[0],
+                                global_endpoint_manager,
+                                pk_range_wrapper)
                         _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
                 # in case customer is not using aiohttp
                 except ImportError:
                     if args:
-                        await _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
+                        await _record_failure_if_request_not_cancelled(
+                            args[0],
+                            global_endpoint_manager,
+                            pk_range_wrapper)
                     _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 async def _record_success_if_request_not_cancelled(
@@ -377,7 +386,10 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                         if retry_settings['read'] > 0:
                             # record the failure for circuit breaker tracking for retries in connection retry policy
                             # retries in the execute function will mark those failures
-                            await _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager, None)
+                            await _record_failure_if_request_not_cancelled(
+                                request_params,
+                                global_endpoint_manager,
+                                None)
                             retry_active = self.increment(retry_settings, response=request, error=err)
                             if retry_active:
                                 await self.sleep(retry_settings, request.context.transport)

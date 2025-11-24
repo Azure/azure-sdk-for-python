@@ -52,14 +52,15 @@ async def setup():
     read_locations = [loc["name"] for loc in database_account._ReadableLocations]
 
     # Use first writable location as primary region and second as failover
-    account_location = {
+    account_location_with_client = {
         "write_locations": write_locations,
         "read_locations": read_locations,
         "region_1": write_locations[0],
-        "region_2": write_locations[1] if len(write_locations) > 1 else read_locations[0]
+        "region_2": write_locations[1] if len(write_locations) > 1 else read_locations[0],
+        "client_without_fault": test_client
     }
 
-    yield account_location
+    yield account_location_with_client
     await test_client.close()
     logger.removeHandler(TestAsyncAvailabilityStrategy.MOCK_HANDLER)
 
@@ -87,7 +88,7 @@ NON_TRANSIENT_STATUS_CODES = [
     (404, 0)
 ]
 
-def create_doc():
+def _create_doc():
     return {
         'id': str(uuid.uuid4()),
         'pk': 'test_pk',
@@ -95,7 +96,7 @@ def create_doc():
         'key': 'value'
     }
 
-async def perform_read_operation(
+async def _perform_read_operation(
         operation,
         container,
         created_doc,
@@ -145,13 +146,13 @@ async def perform_read_operation(
             **kwargs)]
         any(item['id'] == created_doc['id'] for item in response)
 
-    validate_response_uris(
+    _validate_response_uris(
         expected_uris,
         excluded_uris,
-        operation_type=get_operation_type(operation),
+        operation_type=_get_operation_type(operation),
         resource_type=ResourceType.Document)
 
-async def perform_write_operation(
+async def _perform_write_operation(
         operation,
         container,
         created_doc,
@@ -167,14 +168,14 @@ async def perform_write_operation(
         kwargs['availability_strategy_config'] = availability_strategy_config
 
     if operation == CREATE:
-        doc = create_doc()
+        doc = _create_doc()
         await container.create_item(
             body=doc,
             retry_write=retry_write,
             excluded_locations=excluded_locations,
             **kwargs)
     elif operation == UPSERT:
-        doc = create_doc()
+        doc = _create_doc()
         await container.upsert_item(
             body=doc,
             retry_write=retry_write,
@@ -205,7 +206,7 @@ async def perform_write_operation(
             excluded_locations=excluded_locations,
             **kwargs)
     elif operation == BATCH:
-        doc = create_doc()
+        doc = _create_doc()
         batch_ops = [
             ("create", (doc,))
         ]
@@ -216,13 +217,13 @@ async def perform_write_operation(
             excluded_locations=excluded_locations,
             **kwargs)
 
-    validate_response_uris(
+    _validate_response_uris(
         expected_uris,
         excluded_uris,
-        operation_type=get_operation_type(operation),
+        operation_type=_get_operation_type(operation),
         resource_type=ResourceType.Document)
 
-def validate_response_uris(expected_location_uris, excluded_location_uris, operation_type=None, resource_type=None):
+def _validate_response_uris(expected_location_uris, excluded_location_uris, operation_type=None, resource_type=None):
     """Validate that response came from expected region and not from excluded regions"""
     # Get Request URLs from mock handler messages
     req_urls = []
@@ -248,12 +249,12 @@ def validate_response_uris(expected_location_uris, excluded_location_uris, opera
     assert set(req_urls) == set(expected_location_uris), "No matching request URLs found in mock handler messages"
     assert all(location not in excluded_location_uris for location in req_urls), "Found request being routed to excluded regions unexpected"
 
-def validate_error_uri(exc_info, expected_uri):
+def _validate_error_uri(exc_info, expected_uri):
     """Validate that error response came from expected region"""
     request = exc_info.value.response.get_response_headers()["_request"]
     assert request.url.startswith(expected_uri)
 
-def get_operation_type(test_operation_type: str) -> str:
+def _get_operation_type(test_operation_type: str) -> str:
     if test_operation_type == READ:
         return OperationType.Read
     if test_operation_type == CREATE:
@@ -298,7 +299,7 @@ class TestAsyncAvailabilityStrategy:
         """Reset mock handler before each test"""
         self.MOCK_HANDLER.reset()
 
-    async def setup_method_with_custom_transport(
+    async def _setup_method_with_custom_transport(
             self,
             write_locations,
             read_locations,
@@ -329,7 +330,7 @@ class TestAsyncAvailabilityStrategy:
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
 
-    def get_custom_transport_with_fault_injection(
+    def _get_custom_transport_with_fault_injection(
             self,
             predicate,
             error_lambda):
@@ -337,6 +338,15 @@ class TestAsyncAvailabilityStrategy:
         custom_transport = FaultInjectionTransportAsync()
         custom_transport.add_fault(predicate, error_lambda)
         return custom_transport
+
+    async def _clean_up_container(self, client: CosmosClient, database_id:str, container_id:str):
+        container = client.get_database_client(database_id).get_container_client(container_id)
+        all_items = [item async for item in container.read_all_items()]
+        for item in all_items:
+            try:
+                await container.delete_item(item['id'], item['pk'])
+            except Exception:
+                pass
 
     @pytest.mark.parametrize("threshold_ms,threshold_steps_ms, error_message", [
         (-1, 100, "threshold_ms must be positive"),
@@ -367,12 +377,12 @@ class TestAsyncAvailabilityStrategy:
             setup):
         """Test for steady state, operations go to first preferred location even with availability strategy enabled"""
         # Setup client with availability strategy
-        setup_with_transport = await self.setup_method_with_custom_transport(
+        setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             None,
             availability_strategy_config=client_availability_strategy)
-        doc = create_doc()
+        doc = _create_doc()
         await setup_with_transport['col'].create_item(doc)
         await asyncio.sleep(0.5)
 
@@ -382,7 +392,7 @@ class TestAsyncAvailabilityStrategy:
 
         # Test operation
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            await perform_read_operation(
+            await _perform_read_operation(
                 operation,
                 container,
                 doc,
@@ -390,7 +400,7 @@ class TestAsyncAvailabilityStrategy:
                 excluded_uris,
                 availability_strategy_config=request_availability_strategy)
         else:
-            await perform_write_operation(
+            await _perform_write_operation(
                 operation,
                 container,
                 doc,
@@ -398,6 +408,7 @@ class TestAsyncAvailabilityStrategy:
                 excluded_uris,
                 availability_strategy_config=request_availability_strategy)
         await setup_with_transport['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation",[READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -417,32 +428,32 @@ class TestAsyncAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
 
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                            FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                            FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             1000,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-        setup_with_transport = await self.setup_method_with_custom_transport(
+        setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
             multiple_write_locations=True,
             availability_strategy_config=client_availability_strategy)
-        setup_without_fault = await self.setup_method_with_custom_transport(
+        setup_without_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             None)
 
-        doc = create_doc()
+        doc = _create_doc()
         await setup_without_fault['col'].create_item(doc)
 
         # Test operation with fault injection
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            await perform_read_operation(
+            await _perform_read_operation(
                 operation,
                 setup_with_transport['col'],
                 doc,
@@ -450,7 +461,7 @@ class TestAsyncAvailabilityStrategy:
                 [],
                 availability_strategy_config=request_availability_strategy)
         else:
-            await perform_write_operation(
+            await _perform_write_operation(
                 operation,
                 setup_with_transport['col'],
                 doc,
@@ -460,6 +471,7 @@ class TestAsyncAvailabilityStrategy:
                 availability_strategy_config=request_availability_strategy)
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -471,37 +483,37 @@ class TestAsyncAvailabilityStrategy:
 
         # fault injection in second preferred region
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                            FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                            FaultInjectionTransportAsync.predicate_targets_region(r, failed_over_uri))
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, failed_over_uri))
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             0,
             CosmosHttpResponseError(status_code=status_code, message=f"Injected {status_code} Error", sub_status=sub_status_code)
         )
 
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         # setup fault injection in first preferred region
         predicate_first_region = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                                FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+                                            FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                                            FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
         error_lambda_first_region = lambda r: FaultInjectionTransportAsync.error_after_delay(
             500,
             CosmosHttpResponseError(status_code=503, message="Injected Error")
         )
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
-        setup_with_fault = await self.setup_method_with_custom_transport(
+        setup_with_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
             multiple_write_locations=True)
 
-        setup_without_fault = await self.setup_method_with_custom_transport(
+        setup_without_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             None)
 
-        doc = create_doc()
+        doc = _create_doc()
         await setup_without_fault['col'].create_item(doc)
 
         expected_uris = [uri_down, failed_over_uri]
@@ -510,7 +522,7 @@ class TestAsyncAvailabilityStrategy:
         strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await perform_read_operation(
+                await _perform_read_operation(
                     operation,
                     setup_with_fault['col'],
                     doc,
@@ -518,7 +530,7 @@ class TestAsyncAvailabilityStrategy:
                     [],
                     availability_strategy_config=strategy)
             else:
-                await perform_write_operation(
+                await _perform_write_operation(
                     operation,
                     setup_with_fault['col'],
                     doc,
@@ -531,6 +543,7 @@ class TestAsyncAvailabilityStrategy:
         assert exc_info.value.status_code == status_code
         await setup_with_fault['client'].close()
         await setup_without_fault['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_fault['db'].id, setup_with_fault['col'].id)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -543,19 +556,19 @@ class TestAsyncAvailabilityStrategy:
 
         # fault injection in second preferred region
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                            FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                            FaultInjectionTransportAsync.predicate_targets_region(r, failed_over_uri))
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, failed_over_uri))
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             0,
             ServiceResponseError(message="Generic Service Error")
         )
 
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         # setup fault injection in first preferred region
         predicate_first_region = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                                FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+                                            FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                                            FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
         error_lambda_first_region = lambda r: FaultInjectionTransportAsync.error_after_delay(
             500,
             CosmosHttpResponseError(status_code=400, message="Injected Error") # using a non retryable exception here
@@ -563,18 +576,18 @@ class TestAsyncAvailabilityStrategy:
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
         strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
-        setup_with_transport = await self.setup_method_with_custom_transport(
+        setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
             multiple_write_locations=True)
 
-        setup_without_fault = await self.setup_method_with_custom_transport(
+        setup_without_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             None)
 
-        doc = create_doc()
+        doc = _create_doc()
         await setup_without_fault['col'].create_item(doc)
 
         expected_uris = [uri_down, failed_over_uri]
@@ -582,7 +595,7 @@ class TestAsyncAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await perform_read_operation(
+                await _perform_read_operation(
                     operation,
                     setup_with_transport['col'],
                     doc,
@@ -590,7 +603,7 @@ class TestAsyncAvailabilityStrategy:
                     [],
                     availability_strategy_config=strategy)
             else:
-                await perform_write_operation(
+                await _perform_write_operation(
                     operation,
                     setup_with_transport['col'],
                     doc,
@@ -603,6 +616,7 @@ class TestAsyncAvailabilityStrategy:
         assert exc_info.value.status_code == 400
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -615,27 +629,27 @@ class TestAsyncAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
 
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                            FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                            FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             500,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
             # using none retryable errors to verify the request will only go to the first region
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
-        setup_with_transport = await self.setup_method_with_custom_transport(
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
             availability_strategy_config=client_strategy)
 
-        setup_without_fault = await self.setup_method_with_custom_transport(
+        setup_without_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             None)
 
-        doc = create_doc()
+        doc = _create_doc()
         await setup_without_fault['col'].create_item(doc)
 
         expected_uris = [uri_down]
@@ -644,14 +658,15 @@ class TestAsyncAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, availability_strategy_config=None)
+                await _perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, availability_strategy_config=None)
             else:
-                await perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy_config=None)
+                await _perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy_config=None)
 
         # Verify error code
         assert exc_info.value.status_code == 400
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -661,26 +676,26 @@ class TestAsyncAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
 
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                            FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                            FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             1000,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
-        setup_with_transport = await self.setup_method_with_custom_transport(
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
             multiple_write_locations=True)
 
-        setup_without_fault = await self.setup_method_with_custom_transport(
+        setup_without_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             None)
 
-        doc = create_doc()
+        doc = _create_doc()
         await setup_without_fault['col'].create_item(doc)
 
         # Create request-level enabled policy
@@ -690,12 +705,13 @@ class TestAsyncAvailabilityStrategy:
         # Test operation with fault injection
 
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            await perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, [], availability_strategy_config=request_strategy)
+            await _perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, [], availability_strategy_config=request_strategy)
         else:
-            await perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=request_strategy)
+            await _perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=request_strategy)
 
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -706,26 +722,26 @@ class TestAsyncAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
 
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                            FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                            FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             500,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
-        setup_with_transport = await self.setup_method_with_custom_transport(
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
             multiple_write_locations=True)
 
-        setup_without_fault = await self.setup_method_with_custom_transport(
+        setup_without_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             None)
 
-        doc = create_doc()
+        doc = _create_doc()
         await setup_without_fault['col'].create_item(doc)
 
         expected_uris = [uri_down]
@@ -734,7 +750,7 @@ class TestAsyncAvailabilityStrategy:
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
-            await perform_write_operation(
+            await _perform_write_operation(
                 operation,
                 setup_with_transport['col'],
                 doc,
@@ -747,6 +763,7 @@ class TestAsyncAvailabilityStrategy:
         assert exc_info.value.status_code == 400
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -757,26 +774,26 @@ class TestAsyncAvailabilityStrategy:
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
 
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                            FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                            FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             500,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
-        setup_with_transport = await self.setup_method_with_custom_transport(
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
             multiple_write_locations=True)
 
-        setup_without_fault = await self.setup_method_with_custom_transport(
+        setup_without_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             None)
 
-        doc = create_doc()
+        doc = _create_doc()
         await setup_without_fault['col'].create_item(doc)
 
         expected_uris = [uri_down]
@@ -787,7 +804,7 @@ class TestAsyncAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await perform_read_operation(
+                await _perform_read_operation(
                     operation,
                     setup_with_transport['col'],
                     doc,
@@ -796,7 +813,7 @@ class TestAsyncAvailabilityStrategy:
                     excluded_locations=[setup['region_2']],
                     availability_strategy_config=strategy)
             else:
-                await perform_write_operation(
+                await _perform_write_operation(
                     operation,
                     setup_with_transport['col'],
                     doc,
@@ -810,6 +827,7 @@ class TestAsyncAvailabilityStrategy:
         assert exc_info.value.status_code == 400
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY_PK, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -828,26 +846,26 @@ class TestAsyncAvailabilityStrategy:
             failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
 
             predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                                FaultInjectionTransportAsync.predicate_is_operation_type(r, get_operation_type(operation)) and
-                                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+                                   FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(operation)) and
+                                   FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
             error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
                 1000,  # Add delay to trigger hedging
                 CosmosHttpResponseError(status_code=503, message="Injected Error")
             )
 
-            custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+            custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
             strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
 
-            setup_with_fault_injection = await self.setup_method_with_custom_transport(
+            setup_with_fault_injection = await self._setup_method_with_custom_transport(
                 setup['write_locations'],
                 setup['read_locations'],
                 custom_transport,
                 multiple_write_locations=True,
                 container_id=self.TEST_SINGLE_PARTITION_CONTAINER_ID
             )
-            setup_without_fault = await self.setup_method_with_custom_transport(
+            setup_without_fault = await self._setup_method_with_custom_transport(
                 setup['write_locations'],
                 setup['read_locations'],
                 None,
@@ -857,10 +875,10 @@ class TestAsyncAvailabilityStrategy:
             expected_uris = [uri_down, failed_over_uri]
 
             for _ in range(5):
-                doc = create_doc()
+                doc = _create_doc()
                 await setup_without_fault['col'].create_item(body=doc)
                 if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                    await perform_read_operation(
+                    await _perform_read_operation(
                         operation,
                         setup_with_fault_injection['col'],
                         doc,
@@ -868,7 +886,7 @@ class TestAsyncAvailabilityStrategy:
                         [],
                         availability_strategy_config=strategy)
                 else:
-                    await perform_write_operation(
+                    await _perform_write_operation(
                         operation,
                         setup_with_fault_injection['col'],
                         doc,
@@ -880,13 +898,13 @@ class TestAsyncAvailabilityStrategy:
             # Subsequent operations should go directly to second region due to per partition circular breaker
             expected_uris = [failed_over_uri]
             excluded_uris = [uri_down]
-            doc = create_doc()
+            doc = _create_doc()
             await setup_without_fault['col'].create_item(body=doc)
             self.MOCK_HANDLER.reset()
 
             await asyncio.sleep(2)
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await perform_read_operation(
+                await _perform_read_operation(
                     operation,
                     setup_with_fault_injection['col'],
                     doc,
@@ -894,7 +912,7 @@ class TestAsyncAvailabilityStrategy:
                     excluded_uris,
                     availability_strategy_config=strategy)
             else:
-                await perform_write_operation(
+                await _perform_write_operation(
                     operation,
                     setup_with_fault_injection['col'],
                     doc,
@@ -909,6 +927,7 @@ class TestAsyncAvailabilityStrategy:
             del os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"]
             del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"]
             del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"]
+        await self._clean_up_container(setup['client_without_fault'], setup_with_fault_injection['db'].id, setup_with_fault_injection['col'].id)
 
     @pytest.mark.asyncio
     async def test_max_concurrency(self, setup):
@@ -926,22 +945,22 @@ class TestAsyncAvailabilityStrategy:
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
 
-        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
-        setup_with_transport = await self.setup_method_with_custom_transport(
+        setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
             multiple_write_locations=True,
             availability_strategy_max_concurrency=1)
 
-        doc = create_doc()
+        doc = _create_doc()
         await setup_with_transport['col'].create_item(doc)
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
-            await perform_read_operation(
+            await _perform_read_operation(
                 READ,
                 setup_with_transport['col'],
                 doc,
@@ -952,6 +971,7 @@ class TestAsyncAvailabilityStrategy:
         # Verify error code matches first region's error
         assert exc_info.value.status_code == 400
         await setup_with_transport['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
 if __name__ == '__main__':
     unittest.main()
