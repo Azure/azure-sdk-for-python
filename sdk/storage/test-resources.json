@@ -62,7 +62,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "[variables('authorizationApiVersion')]",
-            "name": "[guid(concat('dataContributorRoleId', variables('primaryAccountName')))]",
+            "name": "[guid(concat('queueDataContributorRoleId', variables('primaryAccountName')))]",
             "dependsOn": [
                 "[variables('primaryAccountName')]"
             ],
