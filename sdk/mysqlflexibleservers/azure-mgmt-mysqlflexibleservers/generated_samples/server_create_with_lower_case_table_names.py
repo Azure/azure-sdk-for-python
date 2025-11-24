@@ -16,7 +16,7 @@ from azure.mgmt.mysqlflexibleservers import MySQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-mysqlflexibleservers
 # USAGE
-    python server_get_with_vnet.py
+    python server_create_with_lower_case_table_names.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,13 +31,39 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.servers.get(
+    response = client.servers.begin_create(
         resource_group_name="testrg",
         server_name="mysqltestserver",
-    )
+        parameters={
+            "location": "southeastasia",
+            "properties": {
+                "administratorLogin": "cloudsa",
+                "administratorLoginPassword": "your_password",
+                "availabilityZone": "1",
+                "backup": {"backupIntervalHours": 24, "backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
+                "createMode": "Default",
+                "databasePort": 8888,
+                "highAvailability": {
+                    "mode": "ZoneRedundant",
+                    "replicationMode": "BinaryLog",
+                    "standbyAvailabilityZone": "3",
+                },
+                "lowerCaseTableNames": 1,
+                "storage": {
+                    "autoGrow": "Disabled",
+                    "iops": 600,
+                    "storageRedundancy": "LocalRedundancy",
+                    "storageSizeGB": 100,
+                },
+                "version": "8.0.21",
+            },
+            "sku": {"name": "Standard_D2ds_v4", "tier": "GeneralPurpose"},
+            "tags": {"num": "1"},
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2025-06-01-preview/examples/ServerGetWithVnet.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2025-06-01-preview/examples/ServerCreateWithLowerCaseTableNames.json
 if __name__ == "__main__":
     main()
