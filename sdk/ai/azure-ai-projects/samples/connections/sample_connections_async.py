@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp 
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
