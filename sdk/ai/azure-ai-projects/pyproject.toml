@@ -35,8 +35,7 @@ dependencies = [
     "isodate>=0.6.1",
     "azure-core>=1.35.0",
     "azure-identity>=1.25.0",
-    "openai>=2.0.0",
-    "typing-extensions>=4.12.2",  # Required for Pydantic v2 discriminated unions in openai>=2.0.0
+    "openai>=2.6.0",  # Requires >=2.6.0 for Pydantic v2 support
     "azure-storage-blob>=12.15.0",
 ]
 dynamic = [
