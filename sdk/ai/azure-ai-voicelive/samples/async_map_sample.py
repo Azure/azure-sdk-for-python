@@ -631,7 +631,7 @@ class AsyncMCPCallClient:
             if mcp_arguments_done.item_id != mcp_call_item.id:
                 logger.warning(f"Item ID mismatch: expected {mcp_call_item.id}, got {mcp_arguments_done.item_id}")
                 return
-            arguments = mcp_arguments_done.arguments
+            arguments = mcp_arguments_done.arguments or "{}"
             logger.info(f"MCP Call arguments received: {arguments}")
 
             # Wait for response to be done before proceeding
@@ -657,11 +657,12 @@ async def main():
         sys.exit(1)
 
     # Option 1: API key authentication (simple, recommended for quick start)
-    credential = AzureKeyCredential(api_key)
+    credential: Union[AzureKeyCredential, AsyncTokenCredential] = AzureKeyCredential(api_key)
 
     # Option 2: Async AAD authentication (requires azure-identity)
-    from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
-    credential = AzureCliCredential()
+    # Uncomment the lines below to use AAD authentication instead:
+    # from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
+    # credential = AzureCliCredential()
 
     # Create and run the client
     client = AsyncMCPCallClient(
