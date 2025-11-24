@@ -9,6 +9,14 @@
 * Rename class `AgentObject` to `AgentDetails`
 * Rename class `AgentVersionObject` to `AgentVersionDetails`
 * Rename class `MemoryStoreObject` to `MemoryStoreDetails`
+* Tracing: removed outer "content" from event content format wrapper and unified type-specific keys (e.g., "text", "image_url") to generic "content" key.
+* Tracing: replaced "gen_ai.request.assistant_name" attribute with gen_ai.agent.name.
+* Tracing: removed "gen_ai.system" - the "gen_ai.provider.name" provides same information.
+* Tracing: changed "gen_ai.user.message" and "gen_ai.tool.message" to "gen_ai.input.messages". Changed "gen_ai.assistant.message" to "gen_ai.output.messages".
+* Tracing: changed "gen_ai.system.instruction" to "gen_ai.system.instructions".
+* Tracing: added the "parts" array to "gen_ai.input.messages" and "gen_ai.output.messages".
+* Tracing: removed "role" as a separate attribute and added "role" to "gen_ai.input.messages" and "gen_ai.output.messages" content.
+* Tracing: added "finish_reason" as part of "gen_ai.output.messages" content.
 
 ### Bugs Fixed
 
