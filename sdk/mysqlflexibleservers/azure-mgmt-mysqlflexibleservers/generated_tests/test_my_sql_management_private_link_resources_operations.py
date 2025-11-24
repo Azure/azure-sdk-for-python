@@ -24,7 +24,7 @@ class TestMySQLManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTestCas
         response = self.client.private_link_resources.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestMySQLManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             server_name="str",
             group_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself

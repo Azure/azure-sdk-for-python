@@ -24,7 +24,7 @@ class TestNetworkManagementApplicationGatewayWafDynamicManifestsOperationsAsync(
     async def test_application_gateway_waf_dynamic_manifests_get(self, resource_group):
         response = self.client.application_gateway_waf_dynamic_manifests.get(
             location="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
