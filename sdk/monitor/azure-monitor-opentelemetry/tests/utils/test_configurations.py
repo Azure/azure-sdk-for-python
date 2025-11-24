@@ -86,7 +86,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_MERGED_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
         resource_create_mock.assert_called_once_with(TEST_CUSTOM_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_ratio"], 1.0)
+        self.assertEqual(configurations["sampling_ratio"], 0.5)
         self.assertEqual(configurations["credential"], "test_credential")
         self.assertEqual(
             configurations["instrumentation_options"],
