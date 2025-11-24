@@ -21,16 +21,11 @@ from . import models as _models
 from ._configuration import WebSiteManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
-    AppServiceCertificateOrdersOperations,
     AppServiceEnvironmentsOperations,
     AppServicePlansOperations,
-    CertificateOrdersDiagnosticsOperations,
-    CertificateRegistrationProviderOperations,
     CertificatesOperations,
     DeletedWebAppsOperations,
     DiagnosticsOperations,
-    DomainRegistrationProviderOperations,
-    DomainsOperations,
     GetUsagesInLocationOperations,
     GlobalOperations,
     KubeEnvironmentsOperations,
@@ -39,7 +34,6 @@ from .operations import (
     ResourceHealthMetadataOperations,
     SiteCertificatesOperations,
     StaticSitesOperations,
-    TopLevelDomainsOperations,
     WebAppsOperations,
     WorkflowRunActionRepetitionsOperations,
     WorkflowRunActionRepetitionsRequestHistoriesOperations,
@@ -58,9 +52,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class WebSiteManagementClient(
-    _WebSiteManagementClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """AppService Management Client.
 
     :ivar app_service_environments: AppServiceEnvironmentsOperations operations
@@ -115,22 +107,6 @@ class WebSiteManagementClient(
      azure.mgmt.web.operations.WorkflowTriggerHistoriesOperations
     :ivar workflow_versions: WorkflowVersionsOperations operations
     :vartype workflow_versions: azure.mgmt.web.operations.WorkflowVersionsOperations
-    :ivar app_service_certificate_orders: AppServiceCertificateOrdersOperations operations
-    :vartype app_service_certificate_orders:
-     azure.mgmt.web.operations.AppServiceCertificateOrdersOperations
-    :ivar certificate_orders_diagnostics: CertificateOrdersDiagnosticsOperations operations
-    :vartype certificate_orders_diagnostics:
-     azure.mgmt.web.operations.CertificateOrdersDiagnosticsOperations
-    :ivar certificate_registration_provider: CertificateRegistrationProviderOperations operations
-    :vartype certificate_registration_provider:
-     azure.mgmt.web.operations.CertificateRegistrationProviderOperations
-    :ivar domain_registration_provider: DomainRegistrationProviderOperations operations
-    :vartype domain_registration_provider:
-     azure.mgmt.web.operations.DomainRegistrationProviderOperations
-    :ivar domains: DomainsOperations operations
-    :vartype domains: azure.mgmt.web.operations.DomainsOperations
-    :ivar top_level_domains: TopLevelDomainsOperations operations
-    :vartype top_level_domains: azure.mgmt.web.operations.TopLevelDomainsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Your Azure subscription ID. This is a GUID-formatted string (e.g.
@@ -141,6 +117,9 @@ class WebSiteManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-03-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -238,22 +217,6 @@ class WebSiteManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.workflow_versions = WorkflowVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.app_service_certificate_orders = AppServiceCertificateOrdersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.certificate_orders_diagnostics = CertificateOrdersDiagnosticsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.certificate_registration_provider = CertificateRegistrationProviderOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.domain_registration_provider = DomainRegistrationProviderOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.top_level_domains = TopLevelDomainsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
