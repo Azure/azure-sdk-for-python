@@ -3,12 +3,15 @@
 ### 4.14.3 (Unreleased)
 
 #### Features Added
+* Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug when passing in None for some option in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
 
 #### Other Changes
+* Added cross-regional retries for 503 (Service Unavailable) errors. See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 
 ### 4.14.2 (2025-11-14)
 
