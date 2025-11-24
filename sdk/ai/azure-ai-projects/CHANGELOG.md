@@ -4,6 +4,8 @@
 
 ### Features Added
 
+* The package now takes dependency on openai and azure-identity packages. No need to install them separately.
+
 ### Breaking changes
 
 * Rename class `AgentObject` to `AgentDetails`
@@ -17,6 +19,7 @@
 * Added OpenAPI tool sample. See `sample_agent_openapi.py`.
 * Added OpenAPI with Project Connection sample. See `sample_agent_openapi_with_project_connection.py`.
 * Added SharePoint grounding tool sample. See `sample_agent_sharepoint.py`.
+* Improved MCP client sample showing direct MCP tool invocation. See `samples/mcp_client/sample_mcp_tool_async.py`.
 
 ## 2.0.0b2 (2025-11-14)
 
