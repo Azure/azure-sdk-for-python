@@ -434,7 +434,7 @@ Widget C:
 
             # Create agent with code interpreter - matching sample exactly
             agent = project_client.agents.create_version(
-                agent_name="agent-code-interpreter-with-file-pbatum1",
+                agent_name="agent-code-interpreter-with-file",
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant.",
