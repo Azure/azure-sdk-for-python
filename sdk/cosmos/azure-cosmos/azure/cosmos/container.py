@@ -328,6 +328,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
+            The returned items have no guaranteed ordering.
         :rtype: ~azure.cosmos.CosmosList
         """
 

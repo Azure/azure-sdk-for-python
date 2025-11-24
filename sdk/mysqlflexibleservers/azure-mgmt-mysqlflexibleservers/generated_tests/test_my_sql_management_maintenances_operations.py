@@ -24,7 +24,7 @@ class TestMySQLManagementMaintenancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.maintenances.list(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestMySQLManagementMaintenancesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             maintenance_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestMySQLManagementMaintenancesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             maintenance_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

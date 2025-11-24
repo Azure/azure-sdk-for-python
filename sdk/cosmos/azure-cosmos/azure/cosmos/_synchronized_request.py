@@ -27,11 +27,9 @@ import time
 
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
-
-from . import exceptions
-from . import http_constants
-from . import _retry_utility
 from ._constants import _Constants
+from . import exceptions, http_constants, _retry_utility
+from ._utils import get_user_agent_features
 
 
 def _is_readable_stream(obj):
@@ -81,7 +79,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     :rtype: tuple of (dict, dict)
 
     """
-    # pylint: disable=protected-access
+    # pylint: disable=protected-access, too-many-branches
     kwargs.pop(_Constants.OperationStartTime, None)
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
@@ -112,14 +110,24 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         base_url = request_params.endpoint_override
     else:
         pk_range_wrapper = None
-        if global_endpoint_manager.is_circuit_breaker_applicable(request_params):
-            # Circuit breaker is applicable, so we need to use the endpoint from the request
+        if (global_endpoint_manager.is_circuit_breaker_applicable(request_params) or
+                global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)):
+            # Circuit breaker or per-partition failover are applicable, so we need to use the endpoint from the request
             pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
     if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
 
     parse_result = urlparse(request.url)
+
+    # Add relevant enabled features to user agent for debugging
+    if request.headers[http_constants.HttpHeaders.ThinClientProxyResourceType] == http_constants.ResourceType.Document:
+        user_agent_features = get_user_agent_features(global_endpoint_manager)
+        if len(user_agent_features) > 0:
+            user_agent = kwargs.pop("user_agent", global_endpoint_manager.client._user_agent)
+            user_agent = "{} {}".format(user_agent, user_agent_features)
+            kwargs.update({"user_agent": user_agent})
+            kwargs.update({"user_agent_overwrite": True})
 
     # The requests library now expects header values to be strings only starting 2.11,
     # and will raise an error on validation if they are not, so casting all header values to strings.

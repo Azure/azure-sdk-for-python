@@ -47,9 +47,13 @@ from .partition_key import _Empty, _Undefined
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
+    from ._global_partition_endpoint_manager_per_partition_automatic_failover import (
+        _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover)
     from ._request_object import RequestObject
+    from ._routing.routing_range import PartitionKeyRangeWrapper
 
 # pylint: disable=protected-access
+#cspell:ignore PPAF, ppaf
 
 _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
