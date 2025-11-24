@@ -54,7 +54,8 @@ class TestConversationCrud(TestBase):
 
             # Create a conversation with a short-form text message, strongly typed.
             # TODO: OpenAI accepts `items: Iterable[ResponseInputItemParam] | Omit | None = omit,` but our emitted
-            # code does not have any clss named ResponseInputItemParam.
+            # code does not have any class named ResponseInputItemParam. This causes typing errors. Make sure this is fixed when
+            # we emit from TypeSpec that uses the new OpenAI TypeSpec package.
             # NOTE: The assert below will fail if you just use the auto-emitted source code as-is. You need to apply
             # the fixes in file post-emitter-fixes.cmd to fix the emitted code and make the assert below pass.
             # conversation3 = client.conversations.create(
