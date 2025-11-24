@@ -360,18 +360,29 @@ class AudioNoiseReduction(_Model):
 class AvatarConfig(_Model):
     """Configuration for avatar streaming and behavior during the session.
 
+    :ivar type: Type of avatar to use. Known values are: "video-avatar" and "photo-avatar".
+    :vartype type: str or ~azure.ai.voicelive.models.AvatarConfigTypes
     :ivar ice_servers: Optional list of ICE servers to use for WebRTC connection establishment.
     :vartype ice_servers: list[~azure.ai.voicelive.models.IceServer]
     :ivar character: The character name or ID used for the avatar. Required.
     :vartype character: str
     :ivar style: Optional avatar style, such as emotional tone or speaking style.
     :vartype style: str
+    :ivar model: Base model to use for the avatar. Required for photo avatar. "vasa-1"
+    :vartype model: str or ~azure.ai.voicelive.models.PhotoAvatarBaseModes
     :ivar customized: Indicates whether the avatar is customized or not. Required.
     :vartype customized: bool
     :ivar video: Optional video configuration including resolution, bitrate, and codec.
     :vartype video: ~azure.ai.voicelive.models.VideoParams
+    :ivar output_protocol: Output protocol for avatar streaming. Default is 'webrtc'. Known values
+     are: "webrtc" and "websocket".
+    :vartype output_protocol: str or ~azure.ai.voicelive.models.AvatarOutputProtocol
     """
 
+    type: Optional[Union[str, "_models.AvatarConfigTypes"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of avatar to use. Known values are: \"video-avatar\" and \"photo-avatar\"."""
     ice_servers: Optional[list["_models.IceServer"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -380,10 +391,19 @@ class AvatarConfig(_Model):
     """The character name or ID used for the avatar. Required."""
     style: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional avatar style, such as emotional tone or speaking style."""
+    model: Optional[Union[str, "_models.PhotoAvatarBaseModes"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Base model to use for the avatar. Required for photo avatar. \"vasa-1\""""
     customized: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether the avatar is customized or not. Required."""
     video: Optional["_models.VideoParams"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional video configuration including resolution, bitrate, and codec."""
+    output_protocol: Optional[Union[str, "_models.AvatarOutputProtocol"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Output protocol for avatar streaming. Default is 'webrtc'. Known values are: \"webrtc\" and
+     \"websocket\"."""
 
     @overload
     def __init__(
@@ -391,9 +411,12 @@ class AvatarConfig(_Model):
         *,
         character: str,
         customized: bool,
+        type: Optional[Union[str, "_models.AvatarConfigTypes"]] = None,
         ice_servers: Optional[list["_models.IceServer"]] = None,
         style: Optional[str] = None,
+        model: Optional[Union[str, "_models.PhotoAvatarBaseModes"]] = None,
         video: Optional["_models.VideoParams"] = None,
+        output_protocol: Optional[Union[str, "_models.AvatarOutputProtocol"]] = None,
     ) -> None: ...
 
     @overload
@@ -524,6 +547,20 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
     :ivar model: Underlying neural model to use for personal voice. Required. Known values are:
      "DragonLatestNeural", "PhoenixLatestNeural", and "PhoenixV2Neural".
     :vartype model: str or ~azure.ai.voicelive.models.PersonalVoiceModels
+    :ivar custom_lexicon_url:
+    :vartype custom_lexicon_url: str
+    :ivar prefer_locales:
+    :vartype prefer_locales: list[str]
+    :ivar locale:
+    :vartype locale: str
+    :ivar style:
+    :vartype style: str
+    :ivar pitch:
+    :vartype pitch: str
+    :ivar rate:
+    :vartype rate: str
+    :ivar volume:
+    :vartype volume: str
     """
 
     type: Literal[AzureVoiceType.AZURE_PERSONAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -537,6 +574,13 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
     )
     """Underlying neural model to use for personal voice. Required. Known values are:
      \"DragonLatestNeural\", \"PhoenixLatestNeural\", and \"PhoenixV2Neural\"."""
+    custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefer_locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    style: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    pitch: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    rate: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    volume: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
@@ -545,6 +589,13 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
         name: str,
         model: Union[str, "_models.PersonalVoiceModels"],
         temperature: Optional[float] = None,
+        custom_lexicon_url: Optional[str] = None,
+        prefer_locales: Optional[list[str]] = None,
+        locale: Optional[str] = None,
+        style: Optional[str] = None,
+        pitch: Optional[str] = None,
+        rate: Optional[str] = None,
+        volume: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -567,7 +618,7 @@ class EouDetection(_Model):
 
     :ivar model: Required. Is one of the following types: Literal["semantic_detection_v1"],
      Literal["semantic_detection_v1_en"], Literal["semantic_detection_v1_multilingual"], str
-    :vartype model: str
+    :vartype model: str or str or str or str
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -1070,12 +1121,16 @@ class CachedTokenDetails(_Model):
     :vartype text_tokens: int
     :ivar audio_tokens: Number of cached audio tokens. Required.
     :vartype audio_tokens: int
+    :ivar image_tokens: Number of cached image tokens. Required.
+    :vartype image_tokens: int
     """
 
     text_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of cached text tokens. Required."""
     audio_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of cached audio tokens. Required."""
+    image_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of cached image tokens. Required."""
 
     @overload
     def __init__(
@@ -1083,6 +1138,7 @@ class CachedTokenDetails(_Model):
         *,
         text_tokens: int,
         audio_tokens: int,
+        image_tokens: int,
     ) -> None: ...
 
     @overload
@@ -1823,16 +1879,18 @@ class ContentPart(_Model):
     """Base for any content part; discriminated by ``type``.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ResponseAudioContentPart, RequestAudioContentPart, RequestTextContentPart,
-    ResponseTextContentPart
+    ResponseAudioContentPart, RequestAudioContentPart, RequestImageContentPart,
+    RequestTextContentPart, ResponseTextContentPart
 
-    :ivar type: Required. Known values are: "input_text", "input_audio", "text", and "audio".
+    :ivar type: Required. Known values are: "input_text", "input_audio", "input_image", "text", and
+     "audio".
     :vartype type: str or ~azure.ai.voicelive.models.ContentPartType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"input_text\", \"input_audio\", \"text\", and \"audio\"."""
+    """Required. Known values are: \"input_text\", \"input_audio\", \"input_image\", \"text\", and
+     \"audio\"."""
 
     @overload
     def __init__(
@@ -2103,14 +2161,14 @@ class MessageContentPart(_Model):
     InputAudioContentPart, InputTextContentPart, OutputTextContentPart
 
     :ivar type: The type of the content part. Required. Known values are: "input_text",
-     "input_audio", "text", and "audio".
+     "input_audio", "input_image", "text", and "audio".
     :vartype type: str or ~azure.ai.voicelive.models.ContentPartType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the content part. Required. Known values are: \"input_text\", \"input_audio\",
-     \"text\", and \"audio\"."""
+     \"input_image\", \"text\", and \"audio\"."""
 
     @overload
     def __init__(
@@ -2209,6 +2267,8 @@ class InputTokenDetails(_Model):
     :vartype text_tokens: int
     :ivar audio_tokens: Number of audio tokens used in the input. Required.
     :vartype audio_tokens: int
+    :ivar image_tokens: Number of image tokens used in the input. Required.
+    :vartype image_tokens: int
     :ivar cached_tokens_details: Details of cached token usage. Required.
     :vartype cached_tokens_details: ~azure.ai.voicelive.models.CachedTokenDetails
     """
@@ -2219,6 +2279,8 @@ class InputTokenDetails(_Model):
     """Number of text tokens used in the input. Required."""
     audio_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of audio tokens used in the input. Required."""
+    image_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of image tokens used in the input. Required."""
     cached_tokens_details: "_models.CachedTokenDetails" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2231,6 +2293,7 @@ class InputTokenDetails(_Model):
         cached_tokens: int,
         text_tokens: int,
         audio_tokens: int,
+        image_tokens: int,
         cached_tokens_details: "_models.CachedTokenDetails",
     ) -> None: ...
 
@@ -2435,7 +2498,7 @@ class OpenAIVoice(_Model):
     :ivar type: The type of the voice. Required. Default value is "openai".
     :vartype type: str
     :ivar name: The name of the OpenAI voice. Required. Known values are: "alloy", "ash", "ballad",
-     "coral", "echo", "sage", "shimmer", and "verse".
+     "coral", "echo", "sage", "shimmer", "verse", "marin", and "cedar".
     :vartype name: str or ~azure.ai.voicelive.models.OpenAIVoiceName
     """
 
@@ -2443,7 +2506,7 @@ class OpenAIVoice(_Model):
     """The type of the voice. Required. Default value is \"openai\"."""
     name: Union[str, "_models.OpenAIVoiceName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the OpenAI voice. Required. Known values are: \"alloy\", \"ash\", \"ballad\",
-     \"coral\", \"echo\", \"sage\", \"shimmer\", and \"verse\"."""
+     \"coral\", \"echo\", \"sage\", \"shimmer\", \"verse\", \"marin\", and \"cedar\"."""
 
     @overload
     def __init__(
@@ -2560,6 +2623,45 @@ class RequestAudioContentPart(ContentPart, discriminator="input_audio"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ContentPartType.INPUT_AUDIO  # type: ignore
+
+
+class RequestImageContentPart(ContentPart, discriminator="input_image"):
+    """Input image content part.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.INPUT_IMAGE
+    :ivar url:
+    :vartype url: str
+    :ivar detail: Known values are: "auto", "low", and "high".
+    :vartype detail: str or ~azure.ai.voicelive.models.RequestImageContentPartDetail
+    """
+
+    type: Literal[ContentPartType.INPUT_IMAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    detail: Optional[Union[str, "_models.RequestImageContentPartDetail"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"auto\", \"low\", and \"high\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: Optional[str] = None,
+        detail: Optional[Union[str, "_models.RequestImageContentPartDetail"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ContentPartType.INPUT_IMAGE  # type: ignore
 
 
 class RequestSession(_Model):
@@ -3044,6 +3146,11 @@ class ResponseCreateParams(_Model):
      limit output tokens, or ``inf`` for the maximum available tokens for a
      given model. Defaults to ``inf``. Is either a int type or a Literal["inf"] type.
     :vartype max_output_tokens: int or str
+    :ivar pre_generated_assistant_message: Create the response with pre-generated assistant
+     message. The message item would be
+     added into the conversation history and returned with synthesized audio output in the created
+     response.
+    :vartype pre_generated_assistant_message: ~azure.ai.voicelive.models.AssistantMessageItem
     """
 
     commit: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3100,6 +3207,12 @@ class ResponseCreateParams(_Model):
      inclusive of tool calls. Provide an integer between 1 and 4096 to
      limit output tokens, or ``inf`` for the maximum available tokens for a
      given model. Defaults to ``inf``. Is either a int type or a Literal[\"inf\"] type."""
+    pre_generated_assistant_message: Optional["_models.AssistantMessageItem"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Create the response with pre-generated assistant message. The message item would be
+     added into the conversation history and returned with synthesized audio output in the created
+     response."""
 
     @overload
     def __init__(
@@ -3117,6 +3230,7 @@ class ResponseCreateParams(_Model):
         tool_choice: Optional[str] = None,
         temperature: Optional[float] = None,
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
+        pre_generated_assistant_message: Optional["_models.AssistantMessageItem"] = None,
     ) -> None: ...
 
     @overload
@@ -3822,10 +3936,11 @@ class ServerEvent(_Model):
     ServerEventResponseContentPartAdded, ServerEventResponseContentPartDone,
     ServerEventResponseCreated, ServerEventResponseDone,
     ServerEventResponseFunctionCallArgumentsDelta, ServerEventResponseFunctionCallArgumentsDone,
-    ServerEventResponseMcpCallArgumentsDelta, ServerEventResponseMcpCallArgumentsDone,
-    ServerEventResponseOutputItemAdded, ServerEventResponseOutputItemDone,
-    ServerEventResponseTextDelta, ServerEventResponseTextDone, ServerEventSessionAvatarConnecting,
-    ServerEventSessionCreated, ServerEventSessionUpdated
+    ServerEventResponseMcpCallCompleted, ServerEventResponseMcpCallFailed,
+    ServerEventResponseMcpCallInProgress, ServerEventResponseMcpCallArgumentsDelta,
+    ServerEventResponseMcpCallArgumentsDone, ServerEventResponseOutputItemAdded,
+    ServerEventResponseOutputItemDone, ServerEventResponseTextDelta, ServerEventResponseTextDone,
+    ServerEventSessionAvatarConnecting, ServerEventSessionCreated, ServerEventSessionUpdated
 
     :ivar type: The type of event. Required. Known values are: "error",
      "session.avatar.connecting", "session.created", "session.updated",
@@ -5603,6 +5718,129 @@ class ServerEventResponseMcpCallArgumentsDone(ServerEvent, discriminator="respon
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE  # type: ignore
+
+
+class ServerEventResponseMcpCallCompleted(ServerEvent, discriminator="response.mcp_call.completed"):
+    """Indicates the MCP call has completed.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_COMPLETED
+    :ivar item_id: The ID of the item associated with the event. Required.
+    :vartype item_id: str
+    :ivar output_index: The index of the output associated with the event. Required.
+    :vartype output_index: int
+    """
+
+    type: Literal[ServerEventType.RESPONSE_MCP_CALL_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the item associated with the event. Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the output associated with the event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item_id: str,
+        output_index: int,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_MCP_CALL_COMPLETED  # type: ignore
+
+
+class ServerEventResponseMcpCallFailed(ServerEvent, discriminator="response.mcp_call.failed"):
+    """Indicates the MCP call has failed.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_FAILED
+    :ivar item_id: The ID of the item associated with the event. Required.
+    :vartype item_id: str
+    :ivar output_index: The index of the output associated with the event. Required.
+    :vartype output_index: int
+    """
+
+    type: Literal[ServerEventType.RESPONSE_MCP_CALL_FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the item associated with the event. Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the output associated with the event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item_id: str,
+        output_index: int,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_MCP_CALL_FAILED  # type: ignore
+
+
+class ServerEventResponseMcpCallInProgress(ServerEvent, discriminator="response.mcp_call.in_progress"):
+    """Indicates the MCP call running.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_IN_PROGRESS
+    :ivar item_id: The ID of the item associated with the event. Required.
+    :vartype item_id: str
+    :ivar output_index: The index of the output associated with the event. Required.
+    :vartype output_index: int
+    """
+
+    type: Literal[ServerEventType.RESPONSE_MCP_CALL_IN_PROGRESS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the item associated with the event. Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the output associated with the event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item_id: str,
+        output_index: int,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_MCP_CALL_IN_PROGRESS  # type: ignore
 
 
 class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.output_item.added"):
