@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fix default value overriding user-configured sampling ratio in distro
+  ([#44162](https://github.com/Azure/azure-sdk-for-python/pull/44162))
+
 ### Other Changes
 
 ## 1.8.2 (2025-11-14)
