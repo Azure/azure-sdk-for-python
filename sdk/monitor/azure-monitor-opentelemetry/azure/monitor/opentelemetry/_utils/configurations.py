@@ -187,7 +187,7 @@ def _default_sampling_ratio(configurations):
 
     # Handle all other cases (no sampler type specified or unsupported sampler type)
     else:
-        if SAMPLING_RATIO_ARG not in configurations or (SAMPLING_RATIO_ARG in configurations and configurations[SAMPLING_RATIO_ARG] is None): # pylint: disable=line-too-long
+        if configurations.get(SAMPLING_RATIO_ARG) is None:
             configurations[SAMPLING_RATIO_ARG] = default_value
         if sampler_type is not None:
             _logger.error(  # pylint: disable=C
