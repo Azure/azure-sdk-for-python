@@ -5,7 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
 from test_base import TestBase, servicePreparer, recorded_by_proxy_async_httpx
 from azure.ai.projects.models import (
     #    ResponsesUserMessageItemParam,

@@ -6,7 +6,8 @@
 # cSpell:disable
 
 from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
-from azure.ai.projects.models import ResponsesUserMessageItemParam, ItemContentInputText
+
+# from azure.ai.projects.models import ResponsesUserMessageItemParam, ItemContentInputText
 
 
 # TODO: Emitter did not produce the output class OpenAI.ConversationResource. Validating service response as Dict for now.
