@@ -1,3 +1,4 @@
+# cspell:ignore pyproject kashifkhan annatisch johanste
 name: Check for Strict Version Pins
 
 on:

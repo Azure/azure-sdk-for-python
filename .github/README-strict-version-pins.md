@@ -1,3 +1,4 @@
+<!-- cspell:ignore pyproject kashifkhan annatisch johanste -->
 # Strict Version Pin Check Workflow
 
 ## Overview
