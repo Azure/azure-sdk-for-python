@@ -334,7 +334,6 @@ class sphinx(Check):
 
     def mgmt_apidoc(self, output_dir: str, target_folder: str, executable: str) -> int:
         command_array = [
-            executable,
             generate_mgmt_script,
             "-p",
             target_folder,
@@ -347,7 +346,7 @@ class sphinx(Check):
             logger.info("Command to generate management sphinx sources: {}".format(command_array))
 
             self.run_venv_command(
-                executable, command_array, cwd=target_folder, check=True, append_executable=False, immediately_dump=True
+                executable, command_array, cwd=target_folder, check=True, append_executable=True, immediately_dump=True
             )
         except CalledProcessError as e:
             logger.error("script failed for path {} exited with error {}".format(output_dir, e.returncode))
