@@ -382,7 +382,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     @services.setter
     def services(
         self,
-        value: Optional[Dict[str, Any]],
+        value: Optional[Dict],
     ) -> None:
         """Sets the interactive services for the node.
 
@@ -960,7 +960,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             node.distribution = copy.deepcopy(self.distribution)
             node.resources = copy.deepcopy(self.resources)
             node.queue_settings = copy.deepcopy(self.queue_settings)
-            node.services = copy.deepcopy(self.services) if self.services is not None else None
+            node.services = copy.deepcopy(self.services)
             node.identity = copy.deepcopy(self.identity)
             return node
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."

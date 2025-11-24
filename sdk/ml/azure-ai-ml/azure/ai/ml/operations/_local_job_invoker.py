@@ -122,7 +122,7 @@ def invoke_command(project_temp_dir: Path) -> None:
 
 def get_execution_service_response(
     job_definition: JobBaseData, token: str, requests_pipeline: HttpPipeline
-) -> Tuple[Any, Optional[str]]:
+) -> Tuple[Dict[str, str], str]:
     """Get zip file containing local run information from Execution Service.
 
     MFE will send down a mock job contract, with service 'local'.
@@ -137,7 +137,7 @@ def get_execution_service_response(
     :param requests_pipeline: The HttpPipeline to use when sending network requests
     :type requests_pipeline: HttpPipeline
     :return: Execution service response and snapshot ID
-    :rtype: Tuple[Any, Optional[str]]
+    :rtype: Tuple[Dict[str, str], str]
     """
     try:
         local = job_definition.properties.services.get("Local", None)
@@ -147,7 +147,7 @@ def get_execution_service_response(
         body_dict: Dict = json.loads(body)
         response = requests_pipeline.post(url, json=body_dict, headers={"Authorization": "Bearer " + token})
         response.raise_for_status()
-        return (response.content, body_dict.get("SnapshotId", None))
+        return (response.content, body_dict.get("SnapshotId", None))  # type: ignore[return-value]
     except AzureError as err:
         raise SystemExit(err) from err
     except Exception as e:
@@ -392,7 +392,7 @@ def start_run_if_local(
     credential: TokenCredential,
     ws_base_url: str,
     requests_pipeline: HttpPipeline,
-) -> Optional[str]:
+) -> str:
     """Request execution bundle from ES and run job. If Linux or WSL environment, unzip and invoke job using job spec
     and bootstrapper. Otherwise, invoke command locally.
 
@@ -405,7 +405,7 @@ def start_run_if_local(
     :param requests_pipeline: The HttpPipeline to use when sending network requests
     :type requests_pipeline: HttpPipeline
     :return: snapshot ID
-    :rtype: Optional[str]
+    :rtype: str
     """
     token = credential.get_token(ws_base_url + "/.default").token
     (zip_content, snapshot_id) = get_execution_service_response(job_definition, token, requests_pipeline)
@@ -417,7 +417,7 @@ def start_run_if_local(
         msg = LOCAL_JOB_FAILURE_MSG.format(e)
         raise MlException(message=msg, no_personal_data_message=msg) from e
 
-    return snapshot_id
+    return snapshot_id  # type: ignore[return-value]
 
 
 def _log_subprocess(output_io: Any, file: Any, show_in_console: bool = False) -> None:

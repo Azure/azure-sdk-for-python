@@ -165,6 +165,8 @@ class LoopNode(ControlFlowNode, ABC):
     def _from_rest_object(cls, obj: dict, pipeline_jobs: dict) -> "LoopNode":
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
-        node_type = cast(str, obj.get(CommonYamlFields.TYPE, None))
-        load_from_rest_obj_func = pipeline_node_factory.get_load_from_rest_object_func(_type=node_type)
+        node_type = obj.get(CommonYamlFields.TYPE, None)
+        load_from_rest_obj_func = pipeline_node_factory.get_load_from_rest_object_func(
+            _type=node_type
+        )  # type: ignore[arg-type]
         return load_from_rest_obj_func(obj, pipeline_jobs)  # type: ignore
