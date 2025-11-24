@@ -15,6 +15,7 @@ All tests use the same tool combination but different inputs and workflows.
 import os
 import json
 import pytest
+from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, FunctionTool
@@ -383,7 +384,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
         vector_store = openai_client.vector_stores.create(name="ResearchStore")
         print(f"Vector store created: {vector_store.id}")
 
-        from io import BytesIO
+        
 
         file1 = BytesIO(doc1_content.encode("utf-8"))
         file1.name = "ml_healthcare.txt"

@@ -144,7 +144,7 @@ print(f"Fibonacci(10) = {result}")
         print(f"Response: {response_text[:300]}...")
 
         assert len(response_text) > 50
-        response_lower = response_lower = response_text.lower()
+        response_lower = response_text.lower()
         assert any(
             keyword in response_lower for keyword in ["fibonacci", "recursive", "complexity", "exponential"]
         ), "Expected analysis of fibonacci algorithm"

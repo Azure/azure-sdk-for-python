@@ -1,7 +1,8 @@
 # pylint: disable=too-many-lines,line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
-# Licensed-----------------------------------------------------------------------------------------
+# Licensed under the MIT License.
+# ------------------------------------
 # cSpell:disable
 
 import os
