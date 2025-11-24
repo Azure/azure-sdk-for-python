@@ -149,11 +149,11 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         return self._properties
 
     @properties.setter
-    def properties(self, properties: Optional[Union[Properties, Dict[str, Any]]]) -> None:
+    def properties(self, properties: Optional[Dict[str, Any]]) -> None:
         """Sets the properties of the job.
 
         :param properties: A dictionary of properties for the job.
-        :type properties: Optional[Union[Properties, Dict[str, Any]]]
+        :type properties: Optional[Dict[str, Any]]
         :raises TypeError: Raised if properties is not a dictionary type.
         """
         if properties is None:
