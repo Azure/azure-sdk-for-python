@@ -13,8 +13,9 @@ stages:
           MatrixReplace:
             - TestSamples=.*/true
       EnvVars:
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        COGNITIVE_SERVICES_ENDPOINT: $(python-ai-transcription-test-endpoint)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_TEST_RUN_LIVE: 'true'
+        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
