@@ -1,6 +1,6 @@
 # Release History
 
-## 14.1.0b1 (2025-11-19)
+## 14.1.0b1 (2025-11-24)
 
 ### Features Added
 
@@ -150,19 +150,19 @@
   - Added model `SuspectFile`
   - Added enum `VolumeLanguage`
   - Added enum `VolumeSize`
-  - Model `VolumesOperations` added method `begin_list_quota_report`
-  - Added model `ActiveDirectoryConfigsOperations`
-  - Added model `BucketsOperations`
-  - Added model `CachesOperations`
-  - Added model `ElasticAccountsOperations`
-  - Added model `ElasticBackupPoliciesOperations`
-  - Added model `ElasticBackupVaultsOperations`
-  - Added model `ElasticBackupsOperations`
-  - Added model `ElasticCapacityPoolsOperations`
-  - Added model `ElasticSnapshotPoliciesOperations`
-  - Added model `ElasticSnapshotsOperations`
-  - Added model `ElasticVolumesOperations`
-  - Added model `RansomwareReportsOperations`
+  - Operation group `VolumesOperations` added method `begin_list_quota_report`
+  - Added operation group `ActiveDirectoryConfigsOperations`
+  - Added operation group `BucketsOperations`
+  - Added operation group `CachesOperations`
+  - Added operation group `ElasticAccountsOperations`
+  - Added operation group `ElasticBackupPoliciesOperations`
+  - Added operation group `ElasticBackupVaultsOperations`
+  - Added operation group `ElasticBackupsOperations`
+  - Added operation group `ElasticCapacityPoolsOperations`
+  - Added operation group `ElasticSnapshotPoliciesOperations`
+  - Added operation group `ElasticSnapshotsOperations`
+  - Added operation group `ElasticVolumesOperations`
+  - Added operation group `RansomwareReportsOperations`
 
 ## 14.0.1 (2025-11-17)
 
