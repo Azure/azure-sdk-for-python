@@ -16,7 +16,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python operation_status_result_get_by_agent_pool.py
+    python agent_pools_create_crg.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,15 +31,23 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.operation_status_result.get_by_agent_pool(
+    response = client.agent_pools.begin_create_or_update(
         resource_group_name="rg1",
         resource_name="clustername1",
         agent_pool_name="agentpool1",
-        operation_id="00000000-0000-0000-0000-000000000001",
-    )
+        parameters={
+            "properties": {
+                "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Compute/CapacityReservationGroups/crg1",
+                "count": 3,
+                "orchestratorVersion": "",
+                "osType": "Linux",
+                "vmSize": "Standard_DS2_v2",
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/preview/2025-09-02-preview/examples/OperationStatusResultGetByAgentPool.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-10-01/examples/AgentPoolsCreate_CRG.json
 if __name__ == "__main__":
     main()
