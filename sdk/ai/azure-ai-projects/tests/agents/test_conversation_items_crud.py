@@ -6,8 +6,7 @@
 # cSpell:disable
 
 import pytest
-from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
 from azure.ai.projects.models import (
     #    ResponsesUserMessageItemParam,
     #    ResponsesSystemMessageItemParam,
@@ -22,10 +21,7 @@ from azure.ai.projects.models import (
 class TestConversationItemsCrud(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy_httpx
     def test_conversation_items_crud(self, **kwargs):
         """
         Test CRUD operations for Conversation Items.
