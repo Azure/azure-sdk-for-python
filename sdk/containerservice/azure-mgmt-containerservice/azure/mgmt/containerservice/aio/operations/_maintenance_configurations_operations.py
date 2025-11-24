@@ -165,7 +165,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :return: MaintenanceConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.models.MaintenanceConfiguration
@@ -238,7 +239,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :param parameters: The maintenance configuration to create or update. Required.
         :type parameters: ~azure.mgmt.containerservice.models.MaintenanceConfiguration
@@ -270,7 +272,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :param parameters: The maintenance configuration to create or update. Required.
         :type parameters: IO[bytes]
@@ -300,7 +303,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :param parameters: The maintenance configuration to create or update. Is either a
          MaintenanceConfiguration type or a IO[bytes] type. Required.
@@ -379,7 +383,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :return: None or the result of cls(response)
         :rtype: None

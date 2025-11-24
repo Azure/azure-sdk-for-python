@@ -505,6 +505,7 @@ def recorded_by_proxy_httpx(test_func):
         raise ImportError("httpx is required to use recorded_by_proxy_httpx. Install it with: pip install httpx")
 
     def record_wrap(*args, **kwargs):
+
         def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
             """Transform an httpx.Request to route through the test proxy."""
             parsed_result = url_parse.urlparse(str(request.url))
@@ -609,6 +610,7 @@ def recorded_by_proxy_async_httpx(test_func):
         raise ImportError("httpx is required to use recorded_by_proxy_async_httpx. Install it with: pip install httpx")
 
     async def record_wrap(*args, **kwargs):
+
         def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
             """Transform an httpx.Request to route through the test proxy."""
             parsed_result = url_parse.urlparse(str(request.url))
