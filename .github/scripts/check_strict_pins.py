@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# cspell:ignore pyproject
 """
 Script to detect strict version pins (==) in Python package dependencies.
 
@@ -12,14 +13,14 @@ It ignores:
 - Changes outside of main dependency sections
 """
 
+import json
 import os
 import re
 import subprocess
 import sys
-from typing import Dict, List, Set, Tuple
-import json
 import urllib.request
 import urllib.parse
+from typing import Dict, List, Optional
 
 
 def run_git_command(cmd: List[str]) -> str:
@@ -47,9 +48,8 @@ def get_changed_files(base_ref: str, head_ref: str) -> List[str]:
     
     files = []
     for line in diff_output.strip().split('\n'):
-        if line:
-            if (line.startswith('sdk/') and 
-                (line.endswith('/setup.py') or line.endswith('/pyproject.toml'))):
+        if line and line.startswith('sdk/'):
+            if line.endswith('/setup.py') or line.endswith('/pyproject.toml'):
                 files.append(line)
     
     return files
@@ -65,12 +65,19 @@ def extract_strict_pins_from_setup_py_diff(diff_content: str) -> List[str]:
     bracket_depth = 0
     
     for line in diff_content.split('\n'):
-        # Skip the +++ file marker
+        # Skip the +++ and --- file markers
         if line.startswith('+++') or line.startswith('---'):
             continue
         
         # Process all lines to track context, but only extract from added lines
-        actual_line = line[1:].strip() if (line.startswith('+') or line.startswith('-') or line.startswith(' ')) else line.strip()
+        is_added = line.startswith('+')
+        is_removed = line.startswith('-')
+        is_context = line.startswith(' ')
+        
+        if is_added or is_removed or is_context:
+            actual_line = line[1:].strip()
+        else:
+            actual_line = line.strip()
         
         # Detect start of install_requires in any line
         if 'install_requires' in actual_line and '=' in actual_line:
@@ -92,18 +99,18 @@ def extract_strict_pins_from_setup_py_diff(diff_content: str) -> List[str]:
             # If we close all brackets, we're done with install_requires
             if bracket_depth <= 0 and (']' in actual_line or '),' in actual_line):
                 # Check current line before exiting if it's an added line
-                if line.startswith('+') and '==' in actual_line and not actual_line.strip().startswith('#'):
-                    match = re.search(r'["\']([^"\']+==[\d\.]+[^"\']*)["\']', actual_line)
+                if is_added and '==' in actual_line and not actual_line.startswith('#'):
+                    match = re.search(r'["\']([^"\']+==[\d.]+[^"\']*)["\']', actual_line)
                     if match:
                         strict_pins.append(match.group(1))
                 in_install_requires = False
                 continue
         
         # Look for strict pins in added lines within install_requires
-        if in_install_requires and line.startswith('+'):
-            if '==' in actual_line and not actual_line.strip().startswith('#'):
+        if in_install_requires and is_added:
+            if '==' in actual_line and not actual_line.startswith('#'):
                 # Match package==version pattern
-                match = re.search(r'["\']([^"\']+==[\d\.]+[^"\']*)["\']', actual_line)
+                match = re.search(r'["\']([^"\']+==[\d.]+[^"\']*)["\']', actual_line)
                 if match:
                     strict_pins.append(match.group(1))
     
@@ -125,13 +132,20 @@ def extract_strict_pins_from_pyproject_diff(diff_content: str) -> List[str]:
             continue
         
         # Process all lines to track context
-        actual_line = line[1:].strip() if (line.startswith('+') or line.startswith('-') or line.startswith(' ')) else line.strip()
+        is_added = line.startswith('+')
+        is_removed = line.startswith('-')
+        is_context = line.startswith(' ')
+        
+        if is_added or is_removed or is_context:
+            actual_line = line[1:].strip()
+        else:
+            actual_line = line.strip()
         
         # Detect [project] section markers in any line (context or changes)
         if actual_line.startswith('['):
             if actual_line.startswith('[project]'):
                 in_other_section = False
-            elif actual_line.startswith('['):
+            else:
                 in_other_section = True
                 in_project_dependencies = False
         
@@ -148,10 +162,10 @@ def extract_strict_pins_from_pyproject_diff(diff_content: str) -> List[str]:
             continue
         
         # Look for strict pins in added lines within [project] dependencies
-        if in_project_dependencies and line.startswith('+'):
-            if '==' in actual_line and not actual_line.strip().startswith('#'):
+        if in_project_dependencies and is_added:
+            if '==' in actual_line and not actual_line.startswith('#'):
                 # Match package==version pattern  
-                match = re.search(r'["\']([^"\']+==[\d\.]+[^"\']*)["\']', actual_line)
+                match = re.search(r'["\']([^"\']+==[\d.]+[^"\']*)["\']', actual_line)
                 if match:
                     strict_pins.append(match.group(1))
     
@@ -213,7 +227,7 @@ def check_architect_approval(pr_number: str, repo: str, github_token: str) -> bo
         return False
 
 
-def set_output(name: str, value: str):
+def set_output(name: str, value: str) -> None:
     """Set GitHub Actions output."""
     github_output = os.getenv('GITHUB_OUTPUT')
     if github_output:
@@ -225,14 +239,15 @@ def set_output(name: str, value: str):
         print(f"::set-output name={name}::{value}")
 
 
-def main():
+def main() -> int:
+    """Main function to check for strict version pins."""
     base_ref = os.getenv('BASE_REF', 'origin/main')
     head_ref = os.getenv('HEAD_REF', 'HEAD')
     pr_number = os.getenv('PR_NUMBER')
     repo = os.getenv('REPO')
     github_token = os.getenv('GITHUB_TOKEN')
     
-    print(f"Checking for strict version pins...")
+    print("Checking for strict version pins...")
     print(f"Base: {base_ref}, Head: {head_ref}")
     
     # Get changed files
@@ -246,11 +261,11 @@ def main():
         return 0
     
     print(f"Checking {len(changed_files)} file(s):")
-    for f in changed_files:
-        print(f"  - {f}")
+    for file_path in changed_files:
+        print(f"  - {file_path}")
     
     # Check each file for strict pins
-    all_strict_pins = {}
+    all_strict_pins: Dict[str, List[str]] = {}
     for filepath in changed_files:
         strict_pins = check_file_for_strict_pins(filepath, base_ref, head_ref)
         if strict_pins:
