@@ -23,7 +23,6 @@ from urllib.parse import urlparse
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.tracing import AbstractSpan
 from ._utils import (
-    AZ_NAMESPACE,
     ERROR_TYPE,
     GEN_AI_AGENT_NAME,
     GEN_AI_ASSISTANT_MESSAGE_EVENT,
@@ -32,9 +31,7 @@ from ._utils import (
     GEN_AI_CONVERSATION_ID,
     GEN_AI_CONVERSATION_ITEM_EVENT,
     GEN_AI_CONVERSATION_ITEM_ID,
-    GEN_AI_CONVERSATION_ITEM_ROLE,
     GEN_AI_EVENT_CONTENT,
-    GEN_AI_MESSAGE_ROLE,
     GEN_AI_OPENAI_RESPONSE_SERVICE_TIER,
     GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT,
     GEN_AI_OPERATION_NAME,
@@ -44,12 +41,10 @@ from ._utils import (
     GEN_AI_RESPONSE_FINISH_REASONS,
     GEN_AI_RESPONSE_ID,
     GEN_AI_RESPONSE_MODEL,
-    GEN_AI_RESPONSE_OBJECT,
     GEN_AI_TOKEN_TYPE,
     GEN_AI_TOOL_MESSAGE_EVENT,
     GEN_AI_USAGE_INPUT_TOKENS,
     GEN_AI_USAGE_OUTPUT_TOKENS,
-    GEN_AI_USAGE_TOTAL_TOKENS,
     GEN_AI_USER_MESSAGE_EVENT,
     GEN_AI_WORKFLOW_ACTION_EVENT,
     OperationName,
@@ -852,7 +847,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 else:
                                     parts.append({"type": "text"})
                             elif content_type == "input_image":
-                                image_part = {"type": "image"}
+                                image_part: Dict[str, Any] = {"type": "image"}
                                 # Include image data if binary data tracing is enabled
                                 if _trace_responses_content and _trace_binary_data:
                                     image_url = content_item.get("image_url")
@@ -860,7 +855,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                         image_part["content"] = image_url
                                 parts.append(image_part)
                             elif content_type == "input_file":
-                                file_part = {"type": "file"}
+                                file_part: Dict[str, Any] = {"type": "file"}
                                 if _trace_responses_content:
                                     file_content: Dict[str, Any] = {}
                                     # Only include filename and file_id if content recording is enabled
@@ -3371,7 +3366,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         role = getattr(item, "role", None)
 
         # Create event body - format depends on item type
-        event_body: Dict[str, Any] = {}
+        event_body: List[Dict[str, Any]] = []
 
         # Declare tool_call variable with type for use across branches
         tool_call: Dict[str, Any]
@@ -3783,7 +3778,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     workflow_details["previous_action_id"] = previous_action_id
 
             # Wrap in parts array for semantic convention compliance
-            parts = [{"type": "workflow_action", "content": workflow_details}]
+            parts: List[Dict[str, Any]] = [{"type": "workflow_action", "content": workflow_details}]
             event_body = [{"role": role, "parts": parts}]
 
             # Use generic event name for workflow actions
@@ -3819,21 +3814,21 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         parts.append(image_part)
                     elif content_type == "input_file":
                         # Handle file content
-                        file_part = {"type": "file"}
-                        file_content = {}
+                        file_part: Dict[str, Any] = {"type": "file"}
+                        file_content_dict: Dict[str, Any] = {}
                         filename = getattr(content_item, "filename", None)
                         if filename:
-                            file_content["filename"] = filename
+                            file_content_dict["filename"] = filename
                         file_id = getattr(content_item, "file_id", None)
                         if file_id:
-                            file_content["file_id"] = file_id
+                            file_content_dict["file_id"] = file_id
                         # Include file data if binary data tracing is enabled
                         if _trace_binary_data:
                             file_data = getattr(content_item, "file_data", None)
                             if file_data:
-                                file_content["file_data"] = file_data
-                        if file_content:
-                            file_part["content"] = file_content
+                                file_content_dict["file_data"] = file_data
+                        if file_content_dict:
+                            file_part["content"] = file_content_dict
                         parts.append(file_part)
 
             # Always create event_body with role and parts
@@ -3856,18 +3851,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 mcp_role = "assistant"
 
             # Create structured event body
-            tool_call: Dict[str, Any] = {
+            mcp_tool_call: Dict[str, Any] = {
                 "type": item_type,
             }
 
             # Always include ID if available
             if hasattr(item, "id"):
-                tool_call["id"] = item.id
+                mcp_tool_call["id"] = item.id
             elif hasattr(item, "call_id"):
-                tool_call["id"] = item.call_id
+                mcp_tool_call["id"] = item.call_id
             elif hasattr(item, "approval_request_id"):
                 # For approval responses, use the request ID
-                tool_call["id"] = item.approval_request_id
+                mcp_tool_call["id"] = item.approval_request_id
 
             # Only include additional details if content recording is enabled
             if _trace_responses_content:
@@ -3883,18 +3878,18 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     if hasattr(item, field):
                         value = getattr(item, field)
                         if value is not None:
-                            tool_call[field] = value
+                            mcp_tool_call[field] = value
 
             # Wrap in parts array with appropriate role
-            event_body = [{"role": mcp_role, "parts": [{"type": "mcp", "content": tool_call}]}]
+            event_body = [{"role": mcp_role, "parts": [{"type": "mcp", "content": mcp_tool_call}]}]
             event_name = GEN_AI_CONVERSATION_ITEM_EVENT
         else:
             # Unknown item type - create minimal event body with role if available
             # This handles MCP tools and other future item types
-            role_obj: Dict[str, Any] = {}
+            else_role_obj: Dict[str, Any] = {}
             if role:
-                role_obj["role"] = role
-            event_body = [role_obj] if role_obj else []
+                else_role_obj["role"] = role
+            event_body = [else_role_obj] if else_role_obj else []
 
             event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 

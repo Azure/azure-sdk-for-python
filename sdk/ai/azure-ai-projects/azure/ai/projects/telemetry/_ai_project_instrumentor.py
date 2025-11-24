@@ -22,7 +22,6 @@ from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
 from ._utils import (
     AZURE_AI_AGENTS_PROVIDER,
-    AZ_AI_AGENT_SYSTEM,
     ERROR_TYPE,
     GEN_AI_AGENT_DESCRIPTION,
     GEN_AI_AGENT_ID,
@@ -32,7 +31,6 @@ from ._utils import (
     GEN_AI_MESSAGE_STATUS,
     GEN_AI_OPERATION_NAME,
     GEN_AI_PROVIDER_NAME,
-    GEN_AI_SYSTEM,
     GEN_AI_SYSTEM_MESSAGE,
     GEN_AI_THREAD_ID,
     GEN_AI_THREAD_RUN_ID,
@@ -390,14 +388,13 @@ class _AIAgentsInstrumentorPreview:
             if attachments:
                 # Add attachments as separate content items
                 for attachment in attachments:
-                    attachment_body = {
+                    attachment_body: Dict[str, Any] = {
                         "type": "attachment",
                         "content": {"id": attachment.file_id},
                     }
                     if attachment.tools:
-                        attachment_body["content"]["tools"] = [
-                            self._get_field(tool, "type") for tool in attachment.tools
-                        ]
+                        content_dict: Dict[str, Any] = attachment_body["content"]  # type: ignore[assignment]
+                        content_dict["tools"] = [self._get_field(tool, "type") for tool in attachment.tools]
                     content_array.append(attachment_body)
 
         # Add metadata fields if present
@@ -406,7 +403,7 @@ class _AIAgentsInstrumentorPreview:
             metadata["incomplete_details"] = incomplete_details
 
         # Combine content array with metadata if needed
-        event_data: Dict[str, Any] = {}
+        event_data: Union[Dict[str, Any], List[Dict[str, Any]]] = {}
         if metadata:
             # When we have metadata, we need to wrap it differently
             event_data = metadata
