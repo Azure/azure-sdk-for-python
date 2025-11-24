@@ -17,7 +17,6 @@ omitted_paths:
   - sdk/ai/azure-ai-agents/tests/*
   - sdk/ai/azure-ai-inference/tests/*
   - sdk/ai/azure-ai-projects/tests/*
-  - sdk/cognitiveservices/azure-ai-transcription/tests/*
   - sdk/storage/azure-storage-extensions/*
 
 language: python
