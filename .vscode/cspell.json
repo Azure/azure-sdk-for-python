@@ -2187,7 +2187,7 @@
     },
     {
       "filename": "sdk/ai/azure-ai-voicelive/**",
-      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound"]
+      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
     }
   ],
   "allowCompoundWords": true

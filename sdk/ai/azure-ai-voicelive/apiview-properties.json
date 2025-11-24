@@ -61,6 +61,7 @@
         "azure.ai.voicelive.models.OutputTextContentPart": "VoiceLive.OutputTextContentPart",
         "azure.ai.voicelive.models.OutputTokenDetails": "VoiceLive.OutputTokenDetails",
         "azure.ai.voicelive.models.RequestAudioContentPart": "VoiceLive.RequestAudioContentPart",
+        "azure.ai.voicelive.models.RequestImageContentPart": "VoiceLive.RequestImageContentPart",
         "azure.ai.voicelive.models.RequestSession": "VoiceLive.RequestSession",
         "azure.ai.voicelive.models.RequestTextContentPart": "VoiceLive.RequestTextContentPart",
         "azure.ai.voicelive.models.Response": "VoiceLive.Response",
@@ -115,6 +116,9 @@
         "azure.ai.voicelive.models.ServerEventResponseFunctionCallArgumentsDone": "VoiceLive.ServerEventResponseFunctionCallArgumentsDone",
         "azure.ai.voicelive.models.ServerEventResponseMcpCallArgumentsDelta": "VoiceLive.ServerEventResponseMcpCallArgumentsDelta",
         "azure.ai.voicelive.models.ServerEventResponseMcpCallArgumentsDone": "VoiceLive.ServerEventResponseMcpCallArgumentsDone",
+        "azure.ai.voicelive.models.ServerEventResponseMcpCallCompleted": "VoiceLive.ServerEventResponseMcpCallCompleted",
+        "azure.ai.voicelive.models.ServerEventResponseMcpCallFailed": "VoiceLive.ServerEventResponseMcpCallFailed",
+        "azure.ai.voicelive.models.ServerEventResponseMcpCallInProgress": "VoiceLive.ServerEventResponseMcpCallInProgress",
         "azure.ai.voicelive.models.ServerEventResponseOutputItemAdded": "VoiceLive.ServerEventResponseOutputItemAdded",
         "azure.ai.voicelive.models.ServerEventResponseOutputItemDone": "VoiceLive.ServerEventResponseOutputItemDone",
         "azure.ai.voicelive.models.ServerEventResponseTextDelta": "VoiceLive.ServerEventResponseTextDelta",
@@ -149,10 +153,14 @@
         "azure.ai.voicelive.models.InputAudioFormat": "VoiceLive.InputAudioFormat",
         "azure.ai.voicelive.models.TurnDetectionType": "VoiceLive.TurnDetectionType",
         "azure.ai.voicelive.models.EouThresholdLevel": "VoiceLive.EouThresholdLevel",
+        "azure.ai.voicelive.models.AvatarConfigTypes": "VoiceLive.AvatarConfigTypes",
+        "azure.ai.voicelive.models.PhotoAvatarBaseModes": "VoiceLive.PhotoAvatarBaseModes",
+        "azure.ai.voicelive.models.AvatarOutputProtocol": "VoiceLive.AvatarOutputProtocol",
         "azure.ai.voicelive.models.AudioTimestampType": "VoiceLive.AudioTimestampType",
         "azure.ai.voicelive.models.ToolChoiceLiteral": "VoiceLive.ToolChoiceLiteral",
         "azure.ai.voicelive.models.ResponseStatus": "VoiceLive.ResponseStatus",
         "azure.ai.voicelive.models.ResponseItemStatus": "VoiceLive.ResponseItemStatus",
+        "azure.ai.voicelive.models.RequestImageContentPartDetail": "VoiceLive.RequestImageContentPartDetail",
         "azure.ai.voicelive.models.ServerEventType": "VoiceLive.ServerEventType"
     }
 }

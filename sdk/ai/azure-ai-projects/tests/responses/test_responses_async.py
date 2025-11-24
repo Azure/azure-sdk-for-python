@@ -10,10 +10,6 @@ from devtools_testutils import is_live_and_not_recording
 from test_base import TestBase, recorded_by_proxy_async_httpx, servicePreparer
 
 
-@pytest.mark.skipif(
-    condition=(not is_live_and_not_recording()),
-    reason="Skipped because we cannot record network calls with OpenAI client",
-)
 class TestResponsesAsync(TestBase):
 
     # To run this test:
@@ -24,7 +20,7 @@ class TestResponsesAsync(TestBase):
 
         model = self.test_agents_params["model_deployment_name"]
 
-        client = await self.create_async_client(operation_group="agents", **kwargs).get_openai_client()
+        client = self.create_async_client(operation_group="agents", **kwargs).get_openai_client()
 
         async with client:
 

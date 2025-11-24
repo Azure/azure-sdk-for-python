@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv azure-mgmt-authorization azure-mgmt-resource
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv azure-mgmt-authorization azure-mgmt-resource
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -40,7 +40,7 @@ from azure.mgmt.authorization import AuthorizationManagementClient
 from azure.mgmt.resource import ResourceManagementClient
 import uuid
 from azure.ai.projects.models import (
-    AgentVersionObject,
+    AgentVersionDetails,
     EvaluationTaxonomy,
     AzureAIAgentTarget,
     AgentTaxonomyInput,
@@ -429,7 +429,7 @@ def schedule_redteam_evaluation() -> None:
         print("Evaluation deleted")
 
 
-def _get_tool_descriptions(agent: AgentVersionObject):
+def _get_tool_descriptions(agent: AgentVersionDetails):
     tools = agent.definition.get("tools", [])
     tool_descriptions = []
     for tool in tools:
