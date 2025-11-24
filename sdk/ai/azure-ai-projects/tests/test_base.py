@@ -122,10 +122,6 @@ class TestBase(AzureRecordedTestCase):
         "sft": {
             "openai": {
                 "model_name": "gpt-4.1",
-                "deployment": {
-                    "deployment_name": "gpt-4-1-fine-tuned-test",
-                    "pre_finetuned_model": "ft:gpt-4.1:azure-ai-test::ABCD1234",
-                },
             },
             "oss": {"model_name": "Ministral-3B"},
             "training_file_name": "sft_training_set.jsonl",

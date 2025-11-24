@@ -28,7 +28,7 @@ class TestFineTuningAsync(TestBase):
     GLOBAL_STANDARD_TRAINING_TYPE = "GlobalStandard"
 
     async def _create_sft_finetuning_job_async(
-        self, openai_client, train_file_id, validation_file_id, training_type, model_type="openai"
+        self, openai_client, train_file_id, validation_file_id, training_type, model_type
     ):
         return await openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
@@ -48,7 +48,7 @@ class TestFineTuningAsync(TestBase):
         )
 
     async def _create_dpo_finetuning_job_async(
-        self, openai_client, train_file_id, validation_file_id, training_type, model_type="openai"
+        self, openai_client, train_file_id, validation_file_id, training_type, model_type
     ):
         return await openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
@@ -68,7 +68,7 @@ class TestFineTuningAsync(TestBase):
         )
 
     async def _create_rft_finetuning_job_async(
-        self, openai_client, train_file_id, validation_file_id, training_type, model_type="openai"
+        self, openai_client, train_file_id, validation_file_id, training_type, model_type
     ):
         grader = {
             "name": "Response Quality Grader",
@@ -104,7 +104,7 @@ class TestFineTuningAsync(TestBase):
             extra_body={"trainingType": training_type},
         )
 
-    async def _upload_test_files_async(self, openai_client, job_type="sft"):
+    async def _upload_test_files_async(self, openai_client, job_type):
         test_data_dir = Path(__file__).parent.parent / "test_data" / "finetuning"
         training_file_path = test_data_dir / self.test_finetuning_params[job_type]["training_file_name"]
         validation_file_path = test_data_dir / self.test_finetuning_params[job_type]["validation_file_name"]
@@ -115,7 +115,7 @@ class TestFineTuningAsync(TestBase):
         assert train_processed_file is not None
         assert train_processed_file.id is not None
         TestBase.assert_equal_or_not_none(train_processed_file.status, "processed")
-        print(f"[test_finetuning] Uploaded training file: {train_processed_file.id}")
+        print(f"[_upload_test_files_async] Uploaded training file: {train_processed_file.id}")
 
         with open(validation_file_path, "rb") as f:
             validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
@@ -123,13 +123,13 @@ class TestFineTuningAsync(TestBase):
         assert validation_processed_file is not None
         assert validation_processed_file.id is not None
         TestBase.assert_equal_or_not_none(validation_processed_file.status, "processed")
-        print(f"[test_finetuning] Uploaded validation file: {validation_processed_file.id}")
+        print(f"[_upload_test_files_async] Uploaded validation file: {validation_processed_file.id}")
 
         return train_processed_file, validation_processed_file
 
     async def _cleanup_test_file_async(self, openai_client, file_id):
         await openai_client.files.delete(file_id)
-        print(f"[test_finetuning] Deleted file: {file_id}")
+        print(f"[_cleanup_test_file_async] Deleted file: {file_id}")
 
     async def _test_cancel_job_helper_async(self, job_type, model_type, training_type, expected_method_type, **kwargs):
 
@@ -406,7 +406,7 @@ class TestFineTuningAsync(TestBase):
             train_file, validation_file = await self._upload_test_files_async(openai_client, self.SFT_JOB_TYPE)
 
             fine_tuning_job = await self._create_sft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE
+                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE, "openai"
             )
             print(f"[test_finetuning_retrieve_sft] Created job: {fine_tuning_job.id}")
 
@@ -440,7 +440,7 @@ class TestFineTuningAsync(TestBase):
             train_file, validation_file = await self._upload_test_files_async(openai_client, self.DPO_JOB_TYPE)
 
             fine_tuning_job = await self._create_dpo_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE
+                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE, "openai"
             )
             print(f"[test_finetuning_retrieve_dpo] Created job: {fine_tuning_job.id}")
 
@@ -474,7 +474,7 @@ class TestFineTuningAsync(TestBase):
             train_file, validation_file = await self._upload_test_files_async(openai_client, self.RFT_JOB_TYPE)
 
             fine_tuning_job = await self._create_rft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE
+                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE, "openai"
             )
             print(f"[test_finetuning_retrieve_rft] Created job: {fine_tuning_job.id}")
 
@@ -601,7 +601,7 @@ class TestFineTuningAsync(TestBase):
             train_file, validation_file = await self._upload_test_files_async(openai_client, self.SFT_JOB_TYPE)
 
             fine_tuning_job = await self._create_sft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE
+                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE, "openai"
             )
             print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
 
