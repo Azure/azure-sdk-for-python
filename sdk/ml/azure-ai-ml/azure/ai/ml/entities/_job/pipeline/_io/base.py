@@ -116,7 +116,7 @@ class InputOutputBase(ABC):
         self._data: Any = self._build_data(data)
         self._default_data = default_data
         self._type: str = meta.type if meta is not None else kwargs.pop("type", None)
-        self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
+        self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)  # type: ignore[arg-type]
         self._description = (
             self._data.description
             if self._data is not None and hasattr(self._data, "description") and self._data.description
@@ -250,7 +250,7 @@ class InputOutputBase(ABC):
     def _get_mode(
         cls,
         original_data: Optional[Union[int, bool, float, str, Input, Output, "PipelineInput"]],
-        data: Optional[Union[int, bool, float, str, Input, Output, "InputOutputBase"]],
+        data: Optional[Union[int, bool, float, str, Input, Output]],
         kwargs: dict,
     ) -> Optional[str]:
         """Get mode of this input/output builder.
@@ -263,8 +263,7 @@ class InputOutputBase(ABC):
         :param data: Built input/output data.
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
-                          azure.ai.ml.Output,
-                          azure.ai.ml.entities._job.pipeline._io.InputOutputBase]
+                          azure.ai.ml.Output]
         :param kwargs: The kwargs
         :type kwargs: Dict
         :return: The mode

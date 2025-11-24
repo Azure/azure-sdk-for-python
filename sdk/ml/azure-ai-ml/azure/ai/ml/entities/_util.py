@@ -258,11 +258,11 @@ def validate_attribute_type(attrs_to_check: Dict[str, Any], attr_type_map: Dict[
             )
 
 
-def is_empty_target(obj: Union[Dict, List, None]) -> bool:
+def is_empty_target(obj: Optional[Dict]) -> bool:
     """Determines if it's empty target
 
     :param obj: The object to check
-    :type obj: Union[Dict, List, None]
+    :type obj: Optional[Dict]
     :return: True if obj is None or an empty Dict
     :rtype: bool
     """
@@ -290,14 +290,14 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty:
         new_list = []
         for item in target_object:
             item = convert_ordered_dict_to_dict(item)
-            if not is_empty_target(item) or not remove_empty:
+            if not is_empty_target(item) or not remove_empty:  # type: ignore[arg-type]
                 new_list.append(item)
         return new_list
     if isinstance(target_object, dict):
         new_dict = {}
         for key, value in target_object.items():
             value = convert_ordered_dict_to_dict(value)
-            if not is_empty_target(value) or not remove_empty:
+            if not is_empty_target(value) or not remove_empty:  # type: ignore[arg-type]
                 new_dict[key] = value
         return new_dict
     return target_object
@@ -440,11 +440,11 @@ def from_rest_dict_to_dummy_rest_object(rest_dict: Optional[Dict]) -> _DummyRest
     raise ValueError("Unexpected type {}".format(type(rest_dict)))
 
 
-def extract_label(input_str: Optional[str]) -> Union[Tuple, List]:
+def extract_label(input_str: str) -> Union[Tuple, List]:
     """Extract label from input string.
 
     :param input_str: The input string
-    :type input_str: Optional[str]
+    :type input_str: str
     :return: The rest of the string and the label
     :rtype: Tuple[str, Optional[str]]
     """
@@ -598,7 +598,7 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     :return: The type of the node or component
     :rtype: str
     """
-    _type, _ = extract_label(data.get(CommonYamlFields.TYPE, None))
+    _type, _ = extract_label(data.get(CommonYamlFields.TYPE, None))  # type: ignore[arg-type]
 
     # Normalize type to lowercase for case-insensitive comparison for sdk v2 component types
     if _type and any(_type.lower() == getattr(NodeType, attr) for attr in dir(NodeType)):
