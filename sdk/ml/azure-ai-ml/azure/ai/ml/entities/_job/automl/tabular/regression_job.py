@@ -16,7 +16,7 @@ from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.tabular import AutoMLTabular, TabularFeaturizationSettings, TabularLimitSettings
-from azure.ai.ml.entities._job.automl.training_settings import RegressionTrainingSettings, TrainingSettings
+from azure.ai.ml.entities._job.automl.training_settings import RegressionTrainingSettings
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -73,8 +73,8 @@ class RegressionJob(AutoMLTabular):
     def training(self) -> RegressionTrainingSettings:
         return self._training or RegressionTrainingSettings()
 
-    @training.setter
-    def training(self, value: Union[Dict, TrainingSettings]) -> None:  # pylint: disable=unused-argument
+    @training.setter  # type: ignore[override]
+    def training(self, value: Union[Dict, RegressionTrainingSettings]) -> None:  # pylint: disable=unused-argument
         ...
 
     def _to_rest_object(self) -> JobBase:

@@ -123,8 +123,8 @@ class ClassificationJob(AutoMLTabular):
         """
         return self._training or ClassificationTrainingSettings()
 
-    @training.setter
-    def training(self, value: Union[Dict, TrainingSettings]) -> None:  # pylint: disable=unused-argument
+    @training.setter  # type: ignore[override]
+    def training(self, value: Union[Dict, ClassificationTrainingSettings]) -> None:  # pylint: disable=unused-argument
         ...
 
     def _to_rest_object(self) -> JobBase:

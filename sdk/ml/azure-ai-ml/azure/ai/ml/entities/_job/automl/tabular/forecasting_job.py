@@ -20,7 +20,7 @@ from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabula
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
-from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings, TrainingSettings
+from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -100,8 +100,8 @@ class ForecastingJob(AutoMLTabular):
         """
         return self._training or ForecastingTrainingSettings()
 
-    @training.setter
-    def training(self, value: Union[Dict, TrainingSettings]) -> None:  # pylint: disable=unused-argument
+    @training.setter  # type: ignore[override]
+    def training(self, value: Union[Dict, ForecastingTrainingSettings]) -> None:  # pylint: disable=unused-argument
         ...
 
     @property
