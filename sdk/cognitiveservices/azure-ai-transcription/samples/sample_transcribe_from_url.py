@@ -38,7 +38,6 @@ def sample_transcribe_from_url():
 
     # URL to your audio file (must be publicly accessible)
     audio_url = "https://example.com/path/to/audio.wav"
-
     # Configure transcription options
     options = TranscriptionOptions(locales=["en-US"])
 
