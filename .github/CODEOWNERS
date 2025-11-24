@@ -871,8 +871,3 @@
 
 /pylintrc                                                            @l0lawrence @scbedd @mccoyp
 /sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd
-
-# Require architect approval for dependency changes (setup.py and pyproject.toml)
-# to prevent strict version pins without proper review
-/sdk/**/setup.py                                                     @kashifkhan @annatisch @johanste
-/sdk/**/pyproject.toml                                               @kashifkhan @annatisch @johanste
