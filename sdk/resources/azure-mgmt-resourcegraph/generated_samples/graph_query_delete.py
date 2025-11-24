@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.resourcegraph import ResourceGraphClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.resourcegraph import ResourceGraphClient
     pip install azure-identity
     pip install azure-mgmt-resourcegraph
 # USAGE
-    python resources_history_get.py
+    python graph_query_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +30,13 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.resources_history(
-        request={
-            "options": {"interval": {"end": "2020-11-12T01:25:00.0000000Z", "start": "2020-11-12T01:00:00.0000000Z"}},
-            "query": "where name =~ 'cpu-utilization' | project id, name, properties",
-            "subscriptions": ["a7f33fdb-e646-4f15-89aa-3a360210861e"],
-        },
+    client.graph_query.delete(
+        subscription_id="024e2271-06fa-46b6-9079-f1ed3c7b070e",
+        resource_group_name="my-resource-group",
+        resource_name="MyDockerVM",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/resourcegraph/resource-manager/Microsoft.ResourceGraph/preview/2021-06-01-preview/examples/ResourcesHistoryGet.json
+# x-ms-original-file: specification/resourcegraph/resource-manager/Microsoft.ResourceGraph/stable/2021-03-01/examples/GraphQueryDelete.json
 if __name__ == "__main__":
     main()

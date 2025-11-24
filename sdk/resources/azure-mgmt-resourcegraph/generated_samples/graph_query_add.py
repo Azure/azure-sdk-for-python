@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.resourcegraph import ResourceGraphClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.resourcegraph import ResourceGraphClient
     pip install azure-identity
     pip install azure-mgmt-resourcegraph
 # USAGE
-    python resource_changes.py
+    python graph_query_add.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,17 +30,21 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.resource_changes(
-        parameters={
-            "interval": {"end": "2018-10-31T12:09:03.141Z", "start": "2018-10-30T12:09:03.141Z"},
-            "resourceIds": [
-                "/subscriptions/4d962866-1e3f-47f2-bd18-450c08f914c1/resourceGroups/MyResourceGroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount"
-            ],
+    response = client.graph_query.create_or_update(
+        subscription_id="024e2271-06fa-46b6-9079-f1ed3c7b070e",
+        resource_group_name="my-resource-group",
+        resource_name="MyDockerVMs",
+        properties={
+            "properties": {
+                "description": "Docker VMs in PROD",
+                "query": "where isnotnull(tags['Prod']) and properties.extensions[0].Name == 'docker'",
+            },
+            "tags": {},
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/resourcegraph/resource-manager/Microsoft.ResourceGraph/preview/2020-09-01-preview/examples/ResourceChanges.json
+# x-ms-original-file: specification/resourcegraph/resource-manager/Microsoft.ResourceGraph/stable/2021-03-01/examples/GraphQueryAdd.json
 if __name__ == "__main__":
     main()
