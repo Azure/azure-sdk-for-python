@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# cspell:ignore pyproject
+# cspell:ignore pyproject kashifkhan annatisch johanste
 """
 Script to detect strict version pins (==) in Python package dependencies.
 
