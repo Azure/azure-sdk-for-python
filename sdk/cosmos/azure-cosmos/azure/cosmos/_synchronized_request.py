@@ -23,6 +23,7 @@
 """
 import copy
 import json
+import logging
 import time
 from concurrent.futures import CancelledError
 from urllib.parse import urlparse
@@ -35,6 +36,8 @@ from ._request_object import RequestObject
 from ._utils import get_user_agent_features
 from .documents import _OperationType
 from .http_constants import ResourceType
+
+logger = logging.getLogger("azure.cosmos._synchronized_request")
 
 # cspell:ignore ppaf
 def _is_readable_stream(obj):
@@ -271,6 +274,7 @@ def SynchronizedRequest(
     if request_params.availability_strategy_config is None:
         # if ppaf is enabled, then hedging is enabled by default
         if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
+            logger.info("PPAF is enabled, availability strategy will be enabled")
             request_params.availability_strategy_config = CrossRegionHedgingStrategyConfig()
 
     # Handle hedging if availability strategy is applicable
