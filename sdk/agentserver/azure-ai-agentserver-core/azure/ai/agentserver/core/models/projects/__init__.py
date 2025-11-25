@@ -39,6 +39,8 @@ from ._models import (  # type: ignore
     ResponseTextDoneEvent,
     ResponsesMessageItemResource,
     ResponsesAssistantMessageItemResource,
+    ResponsesUserMessageItemResource,
+    ResponsesSystemMessageItemResource,
     ResponseConversation1,
 )
 from ._enums import ResponsesMessageRole, ItemContentType, ItemType
@@ -78,5 +80,7 @@ __all__ = [
     "ResponseConversation1",
     "ItemContentType",
     "ItemType",
+    "ResponsesUserMessageItemResource",
+    "ResponsesSystemMessageItemResource",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
