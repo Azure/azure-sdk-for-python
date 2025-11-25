@@ -7,7 +7,15 @@ import pytest
 import os
 import asyncio
 from pathlib import Path
-from test_base import TestBase, servicePreparer
+from test_base import (
+    TestBase, 
+    servicePreparer, 
+    SFT_JOB_TYPE, 
+    DPO_JOB_TYPE, 
+    RFT_JOB_TYPE, 
+    STANDARD_TRAINING_TYPE, 
+    GLOBAL_STANDARD_TRAINING_TYPE
+)
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live_and_not_recording
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient as CognitiveServicesManagementClientAsync
@@ -19,13 +27,6 @@ from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties
     reason="Skipped because we cannot record network calls with AOAI client",
 )
 class TestFineTuningAsync(TestBase):
-
-    SFT_JOB_TYPE = "sft"
-    DPO_JOB_TYPE = "dpo"
-    RFT_JOB_TYPE = "rft"
-
-    STANDARD_TRAINING_TYPE = "Standard"
-    GLOBAL_STANDARD_TRAINING_TYPE = "GlobalStandard"
 
     async def _create_sft_finetuning_job_async(
         self, openai_client, train_file_id, validation_file_id, training_type, model_type
@@ -140,15 +141,15 @@ class TestFineTuningAsync(TestBase):
 
             train_file, validation_file = await self._upload_test_files_async(openai_client, job_type)
 
-            if job_type == self.SFT_JOB_TYPE:
+            if job_type == SFT_JOB_TYPE:
                 fine_tuning_job = await self._create_sft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id, training_type, model_type
                 )
-            elif job_type == self.DPO_JOB_TYPE:
+            elif job_type == DPO_JOB_TYPE:
                 fine_tuning_job = await self._create_dpo_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id, training_type, model_type
                 )
-            elif job_type == self.RFT_JOB_TYPE:
+            elif job_type == RFT_JOB_TYPE:
                 fine_tuning_job = await self._create_rft_finetuning_job_async(
                     openai_client, train_file.id, validation_file.id, training_type, model_type
                 )
@@ -192,7 +193,7 @@ class TestFineTuningAsync(TestBase):
 
         async with project_client:
 
-            train_file, validation_file = await self._upload_test_files_async(openai_client, self.SFT_JOB_TYPE)
+            train_file, validation_file = await self._upload_test_files_async(openai_client, SFT_JOB_TYPE)
 
             fine_tuning_job = await self._create_sft_finetuning_job_async(
                 openai_client, train_file.id, validation_file.id, training_type, model_type
@@ -228,7 +229,7 @@ class TestFineTuningAsync(TestBase):
 
         async with project_client:
 
-            train_file, validation_file = await self._upload_test_files_async(openai_client, self.DPO_JOB_TYPE)
+            train_file, validation_file = await self._upload_test_files_async(openai_client, DPO_JOB_TYPE)
 
             fine_tuning_job = await self._create_dpo_finetuning_job_async(
                 openai_client, train_file.id, validation_file.id, training_type, model_type
@@ -262,7 +263,7 @@ class TestFineTuningAsync(TestBase):
 
         async with project_client:
 
-            train_file, validation_file = await self._upload_test_files_async(openai_client, self.RFT_JOB_TYPE)
+            train_file, validation_file = await self._upload_test_files_async(openai_client, RFT_JOB_TYPE)
 
             fine_tuning_job = await self._create_rft_finetuning_job_async(
                 openai_client, train_file.id, validation_file.id, training_type, model_type
@@ -383,17 +384,17 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_sft_finetuning_create_job_openai_standard_async(self, **kwargs):
-        await self._test_sft_create_job_helper_async("openai", self.STANDARD_TRAINING_TYPE, **kwargs)
+        await self._test_sft_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_sft_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_sft_create_job_helper_async("openai", self.GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+        await self._test_sft_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_sft_finetuning_create_job_oss_globalstandard_async(self, **kwargs):
-        await self._test_sft_create_job_helper_async("oss", self.GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+        await self._test_sft_create_job_helper_async("oss", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -403,10 +404,10 @@ class TestFineTuningAsync(TestBase):
 
         async with project_client:
 
-            train_file, validation_file = await self._upload_test_files_async(openai_client, self.SFT_JOB_TYPE)
+            train_file, validation_file = await self._upload_test_files_async(openai_client, SFT_JOB_TYPE)
 
             fine_tuning_job = await self._create_sft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE, "openai"
+                openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, "openai"
             )
             print(f"[test_finetuning_retrieve_sft] Created job: {fine_tuning_job.id}")
 
@@ -416,7 +417,7 @@ class TestFineTuningAsync(TestBase):
             TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
             TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
             TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
-            TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), self.STANDARD_TRAINING_TYPE.lower())
+            TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
             assert retrieved_job.method is not None, "Method should not be None for SFT job"
             TestBase.assert_equal_or_not_none(retrieved_job.method.type, "supervised")
             assert (
@@ -437,10 +438,10 @@ class TestFineTuningAsync(TestBase):
 
         async with project_client:
 
-            train_file, validation_file = await self._upload_test_files_async(openai_client, self.DPO_JOB_TYPE)
+            train_file, validation_file = await self._upload_test_files_async(openai_client, DPO_JOB_TYPE)
 
             fine_tuning_job = await self._create_dpo_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE, "openai"
+                openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, "openai"
             )
             print(f"[test_finetuning_retrieve_dpo] Created job: {fine_tuning_job.id}")
 
@@ -450,7 +451,7 @@ class TestFineTuningAsync(TestBase):
             TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
             TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
             TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
-            TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), self.STANDARD_TRAINING_TYPE.lower())
+            TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
             assert retrieved_job.method is not None, "Method should not be None for DPO job"
             TestBase.assert_equal_or_not_none(retrieved_job.method.type, "dpo")
             assert (
@@ -471,10 +472,10 @@ class TestFineTuningAsync(TestBase):
 
         async with project_client:
 
-            train_file, validation_file = await self._upload_test_files_async(openai_client, self.RFT_JOB_TYPE)
+            train_file, validation_file = await self._upload_test_files_async(openai_client, RFT_JOB_TYPE)
 
             fine_tuning_job = await self._create_rft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE, "openai"
+                openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, "openai"
             )
             print(f"[test_finetuning_retrieve_rft] Created job: {fine_tuning_job.id}")
 
@@ -484,7 +485,7 @@ class TestFineTuningAsync(TestBase):
             TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
             TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
             TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
-            TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), self.STANDARD_TRAINING_TYPE.lower())
+            TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
             assert retrieved_job.method is not None, "Method should not be None for RFT job"
             TestBase.assert_equal_or_not_none(retrieved_job.method.type, "reinforcement")
             assert (
@@ -524,70 +525,70 @@ class TestFineTuningAsync(TestBase):
     @recorded_by_proxy_async
     async def test_sft_cancel_job_openai_standard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(
-            self.SFT_JOB_TYPE, "openai", self.STANDARD_TRAINING_TYPE, "supervised", **kwargs
+            SFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "supervised", **kwargs
         )
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_sft_cancel_job_openai_globalstandard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(
-            self.SFT_JOB_TYPE, "openai", self.GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs
+            SFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs
         )
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_sft_cancel_job_oss_globalstandard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(
-            self.SFT_JOB_TYPE, "oss", self.GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs
+            SFT_JOB_TYPE, "oss", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs
         )
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_dpo_cancel_job_openai_standard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(
-            self.DPO_JOB_TYPE, "openai", self.STANDARD_TRAINING_TYPE, "dpo", **kwargs
+            DPO_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "dpo", **kwargs
         )
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_dpo_cancel_job_openai_globalstandard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(
-            self.DPO_JOB_TYPE, "openai", self.GLOBAL_STANDARD_TRAINING_TYPE, "dpo", **kwargs
+            DPO_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "dpo", **kwargs
         )
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_rft_cancel_job_openai_standard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(
-            self.RFT_JOB_TYPE, "openai", self.STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
+            RFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
         )
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_rft_cancel_job_openai_globalstandard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(
-            self.RFT_JOB_TYPE, "openai", self.GLOBAL_STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
+            RFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
         )
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_dpo_finetuning_create_job_openai_standard_async(self, **kwargs):
-        await self._test_dpo_create_job_helper_async("openai", self.STANDARD_TRAINING_TYPE, **kwargs)
+        await self._test_dpo_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_dpo_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_dpo_create_job_helper_async("openai", self.GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+        await self._test_dpo_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_rft_finetuning_create_job_openai_standard_async(self, **kwargs):
-        await self._test_rft_create_job_helper_async("openai", self.STANDARD_TRAINING_TYPE, **kwargs)
+        await self._test_rft_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_rft_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_rft_create_job_helper_async("openai", self.GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+        await self._test_rft_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -598,10 +599,10 @@ class TestFineTuningAsync(TestBase):
 
         async with project_client:
 
-            train_file, validation_file = await self._upload_test_files_async(openai_client, self.SFT_JOB_TYPE)
+            train_file, validation_file = await self._upload_test_files_async(openai_client, SFT_JOB_TYPE)
 
             fine_tuning_job = await self._create_sft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, self.STANDARD_TRAINING_TYPE, "openai"
+                openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, "openai"
             )
             print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
 

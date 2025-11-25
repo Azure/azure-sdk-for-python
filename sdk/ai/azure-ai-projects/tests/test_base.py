@@ -7,7 +7,7 @@ import random
 import re
 import functools
 import json
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, Final
 from azure.ai.projects.models import (
     Connection,
     ConnectionType,
@@ -63,6 +63,15 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
 )
+
+# Fine-tuning job type constants
+SFT_JOB_TYPE: Final[str] = "sft"
+DPO_JOB_TYPE: Final[str] = "dpo"
+RFT_JOB_TYPE: Final[str] = "rft"
+
+# Training type constants
+STANDARD_TRAINING_TYPE: Final[str] = "Standard"
+GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
 
 
 class TestBase(AzureRecordedTestCase):
