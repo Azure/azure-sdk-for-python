@@ -436,3 +436,13 @@ class ResponsesAssistantMessageItemResource(ResponsesMessageItemResource):
     """Assistant message item resource with role='assistant'."""
     content: List[ItemContent]
     """The content of the message. Required."""
+
+class ResponsesUserMessageItemResource(ResponsesMessageItemResource):
+    """User message item resource with role='user'."""
+    content: List[ItemContent]
+    """The content of the message. Required."""
+
+class ResponsesSystemMessageItemResource(ResponsesMessageItemResource):
+    """System message item resource with role='system'."""
+    content: List[ItemContent]
+    """The content of the message. Required."""
