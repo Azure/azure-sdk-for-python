@@ -495,6 +495,7 @@ class DeletePoolPollingMethodAsync(AsyncPollingMethod):
             self._status = "Failed"
             self._finished = True
 
+
 class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node deallocate operation.
 

@@ -38,6 +38,8 @@ class AccountPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         batch_environment=None,  # Set to "pilotprod1" or "pilotprod2" if testing in PPE
         client_kwargs=None,
+        existing_account_name=None,
+        existing_resource_group=None,
     ):
         super(AccountPreparer, self).__init__(
             name_prefix,
@@ -53,6 +55,8 @@ class AccountPreparer(AzureMgmtPreparer):
         self.parameter_name_for_location = "location"
         self.resource_moniker = name_prefix
         self.batch_environment = batch_environment
+        self.existing_account_name = existing_account_name
+        self.existing_resource_group = existing_resource_group
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -86,6 +90,18 @@ class AccountPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(azure.mgmt.batch.BatchManagementClient, base_url=AZURE_ARM_ENDPOINT)
+
+            if self.existing_account_name:
+                self.resource = self.client.batch_account.get(
+                    self.existing_resource_group, self.existing_account_name
+                )
+                #keys = self.client.batch_account.get_keys(
+                #    self.existing_resource_group, self.existing_account_name
+                #)
+                # credentials = AzureNamedKeyCredential(keys.account_name, keys.primary)
+
+                return {self.parameter_name: self.resource}
+
             group = self._get_resource_group(**kwargs)
             batch_account = models.BatchAccountCreateParameters(
                 location=self.location,

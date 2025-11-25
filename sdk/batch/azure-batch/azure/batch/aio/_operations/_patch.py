@@ -51,11 +51,11 @@ MAX_TASKS_PER_REQUEST = 100
 _LOGGER = logging.getLogger(__name__)
 
 __all__: List[str] = [
-    "BatchClientOperationsMixin",
+    "_BatchClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
 
 
-class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
+class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
     @distributed_trace
@@ -1449,7 +1449,7 @@ class _TaskWorkflowManager:
 
     def __init__(
         self,
-        batch_client: BatchClientOperationsMixin,
+        batch_client: _BatchClientOperationsMixin,
         job_id: str,
         task_collection: Iterable[_models.BatchTaskCreateOptions],
         **kwargs

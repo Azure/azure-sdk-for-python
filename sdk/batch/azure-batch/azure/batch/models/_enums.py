@@ -583,9 +583,9 @@ class IpAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class IPFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The IP families used to specify IP versions available to the pool."""
 
-    I_PV4 = "IPv4"
+    IPV4 = "IPv4"
     """IPv4 is available to the pool."""
-    I_PV6 = "IPv6"
+    IPV6 = "IPv6"
     """IPv6 is available to the pool."""
 
 
@@ -663,7 +663,7 @@ class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUSTED_LAUNCH = "trustedLaunch"
     """Trusted launch protects against advanced and persistent attack techniques."""
-    CONFIDENTIAL_VM = "confidentialVM"
+    CONFIDENTIAL_VM = "confidentialvm"
     """Azure confidential computing offers confidential VMs are for tenants with high security and
     confidentiality requirements. These VMs provide a strong, hardware-enforced boundary to help
     meet your security needs. You can use confidential VMs for migrations without making changes to

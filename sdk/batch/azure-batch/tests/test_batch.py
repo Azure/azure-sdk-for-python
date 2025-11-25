@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 import datetime
 import io
+import os
 import hashlib
 import time
 import binascii
@@ -184,7 +185,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
                 node_agent_sku_id="batch.node.ubuntu 22.04",
                 data_disks=[data_disk],
-            )
+            ),
         )
         response = await wrap_result(client.create_pool(test_disk_pool))
         assert response is None
@@ -256,7 +257,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 node_agent_sku_id="batch.node.windows amd64",
                 windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True),
             ),
-            task_scheduling_policy=models.BatchTaskSchedulingPolicy(node_fill_type=models.BatchNodeFillType.PACK),
+            task_scheduling_policy=models.BatchTaskSchedulingPolicy(
+                node_fill_type=models.BatchNodeFillType.PACK,
+                job_default_order=models.BatchJobDefaultOrder.CREATION_TIME,
+            ),
             mount_configuration=[
                 models.MountConfiguration(
                     azure_blob_file_system_configuration=models.AzureBlobFileSystemConfiguration(
@@ -276,6 +280,146 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(mount_pool.mount_configuration) == 1
         assert mount_pool.mount_configuration[0].azure_blob_file_system_configuration is not None
         assert mount_pool.mount_configuration[0].nfs_mount_configuration is None
+        assert mount_pool.task_scheduling_policy.job_default_order is models.BatchJobDefaultOrder.CREATION_TIME
+
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
+    @client_setup
+    @recorded_by_proxy_async
+    async def test_batch_create_pool_with_osdisksecurityprofile(self, client: BatchClient, **kwargs):
+        # Test Create Iaas Pool
+        test_iaas_pool = models.BatchPoolCreateOptions(
+            id=self.get_resource_name("batch_iaas_"),
+            vm_size=DEFAULT_VM_SIZE,
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                security_profile=models.SecurityProfile(
+                    security_type=models.SecurityTypes.CONFIDENTIAL_VM,
+                    encryption_at_host=False,
+                    proxy_agent_settings=models.ProxyAgentSettings(
+                        enabled=False, imds=models.HostEndpointSettings(mode=models.HostEndpointSettingsModeTypes.AUDIT)
+                    ),
+                    uefi_settings=models.BatchUefiSettings(
+                        secure_boot_enabled=True,
+                        v_tpm_enabled=True,
+                    ),
+                ),
+                image_reference=models.BatchVmImageReference(
+                    publisher="microsoftwindowsserver",
+                    offer="windowsserver",
+                    sku="2022-datacenter-g2",
+                    version="latest",
+                ),
+                os_disk=models.BatchOsDisk(
+                    caching=models.CachingType.READ_WRITE,
+                    managed_disk=models.ManagedDisk(
+                        security_profile=models.BatchVmDiskSecurityProfile(
+                            security_encryption_type=models.SecurityEncryptionTypes.VM_GUEST_STATE_ONLY
+                        )
+                    ),
+                ),
+                node_agent_sku_id="batch.node.windows amd64",
+                windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True),
+            ),
+        )
+
+        response = await wrap_result(client.create_pool(test_iaas_pool))
+        assert response is None
+
+        pool = await wrap_result(client.get_pool(test_iaas_pool.id))
+        assert pool.virtual_machine_configuration.security_profile.security_type is models.SecurityTypes.CONFIDENTIAL_VM
+        assert pool.virtual_machine_configuration.security_profile.proxy_agent_settings.enabled is False
+        assert (
+            pool.virtual_machine_configuration.security_profile.proxy_agent_settings.imds.mode
+            is models.HostEndpointSettingsModeTypes.AUDIT
+        )
+        assert (
+            pool.virtual_machine_configuration.os_disk.managed_disk.security_profile.security_encryption_type
+            is models.SecurityEncryptionTypes.VM_GUEST_STATE_ONLY
+        )
+
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT, existing_account_name=os.environ.get("BATCH_USERSUB_ACCOUNT_NAME"), existing_resource_group=os.environ.get("BATCH_RESOURCE_GROUP"))
+    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
+    @client_setup
+    @recorded_by_proxy_async
+    async def test_batch_create_pool_with_osdiskdiskencryption(self, client: BatchClient, **kwargs):
+
+        diskEncriptionID = os.environ.get("DISKENCRYPTIONSET_ID")
+        
+        test_iaas_pool = models.BatchPoolCreateOptions(
+            id=self.get_resource_name("batch_iaas_"),
+            vm_size=DEFAULT_VM_SIZE,
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                security_profile=models.SecurityProfile(
+                    security_type=models.SecurityTypes.CONFIDENTIAL_VM,
+                    encryption_at_host=False,
+                    proxy_agent_settings=models.ProxyAgentSettings(
+                        enabled=False, imds=models.HostEndpointSettings(mode=models.HostEndpointSettingsModeTypes.AUDIT)
+                    ),
+                    uefi_settings=models.BatchUefiSettings(
+                        secure_boot_enabled=True,
+                        v_tpm_enabled=True,
+                    ),
+                ),
+                image_reference=models.BatchVmImageReference(
+                    publisher="microsoftwindowsserver",
+                    offer="windowsserver",
+                    sku="2022-datacenter-g2",
+                    version="latest",
+                ),
+                os_disk=models.BatchOsDisk(
+                    caching=models.CachingType.READ_WRITE,
+                    managed_disk=models.ManagedDisk(
+                        security_profile=models.BatchVmDiskSecurityProfile(
+                            security_encryption_type=models.SecurityEncryptionTypes.VM_GUEST_STATE_ONLY
+                        ),
+                        disk_encryption_set=models.DiskEncryptionSetParameters(id=diskEncriptionID)
+                    ),
+                ),
+                data_disks=[
+                    models.DataDisk(
+                        logical_unit_number=0,
+                        disk_size_gb=50,
+                        managed_disk=models.ManagedDisk(
+                            disk_encryption_set=models.DiskEncryptionSetParameters(id=diskEncriptionID),
+                            storage_account_type=models.StorageAccountType.STANDARD_LRS,
+                        ),
+                    )
+                ],
+                node_agent_sku_id="batch.node.windows amd64",
+                windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True),
+            ),
+        )
+
+        response = await wrap_result(client.create_pool(test_iaas_pool))
+        assert response is None
+
+        pool = await wrap_result(client.get_pool(test_iaas_pool.id))   
+
+        assert pool.virtual_machine_configuration.security_profile.security_type is models.SecurityTypes.CONFIDENTIAL_VM
+        assert pool.virtual_machine_configuration.security_profile.proxy_agent_settings.enabled is False
+        assert (
+            pool.virtual_machine_configuration.security_profile.proxy_agent_settings.imds.mode
+            is models.HostEndpointSettingsModeTypes.AUDIT
+        )
+        assert (
+            pool.virtual_machine_configuration.os_disk.managed_disk.disk_encryption_set.id == diskEncriptionID
+        )
+        assert (
+            pool.virtual_machine_configuration.data_disks[0].managed_disk.disk_encryption_set.id == diskEncriptionID
+        )
+
+        poller = await wrap_result(client.begin_delete_pool(pool_id=pool.id, polling_interval=5))
+        assert poller is not None
+
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -511,15 +655,16 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_batch_network_configuration(self, client: BatchClient, **kwargs):
         # Test Create Pool with Network Config
+
         network_config = models.NetworkConfiguration(
             endpoint_configuration=models.BatchPoolEndpointConfiguration(
                 inbound_nat_pools=[
                     models.BatchInboundNatPool(
                         name="TestEndpointConfig",
-                        protocol=models.InboundEndpointProtocol.UDP,
-                        backend_port=64444,
-                        frontend_port_range_start=60000,
-                        frontend_port_range_end=61000,
+                        protocol=models.InboundEndpointProtocol.Tcp,
+                        backend_port=3389,
+                        frontend_port_range_start=15000,
+                        frontend_port_range_end=15100,
                         network_security_group_rules=[
                             models.NetworkSecurityGroupRule(
                                 priority=150,
@@ -529,7 +674,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
                         ],
                     )
                 ]
-            )
+            ),
+            public_ip_address_configuration=models.BatchPublicIpAddressConfiguration(
+                ip_families=[models.IPFamily.IPV4, models.IPFamily.IPV6],
+            ),
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
             node_agent_sku_id="batch.node.ubuntu 22.04",
@@ -556,9 +704,17 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(nodes) == 1
         assert isinstance(nodes[0], models.BatchNode)
         assert nodes[0].endpoint_configuration is not None
-        assert len(nodes[0].endpoint_configuration.inbound_endpoints) == 1
+        assert len(nodes[0].endpoint_configuration.inbound_endpoints) == 2
         assert nodes[0].endpoint_configuration.inbound_endpoints[0].name == "TestEndpointConfig.0"
-        assert nodes[0].endpoint_configuration.inbound_endpoints[0].protocol == "udp"
+        assert nodes[0].endpoint_configuration.inbound_endpoints[0].protocol == "tcp"
+        assert nodes[0].ipv6_address is not None
+
+        remote_login_settings = await wrap_result(client.get_node_remote_login_settings(pool.id, nodes[0].id))
+        assert isinstance(remote_login_settings, models.BatchNodeRemoteLoginSettings)
+        assert remote_login_settings.remote_login_ip_address is not None
+        assert remote_login_settings.remote_login_port is not None
+        assert remote_login_settings.ipv6_remote_login_ip_address is not None
+        assert remote_login_settings.ipv6_remote_login_port is not None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)

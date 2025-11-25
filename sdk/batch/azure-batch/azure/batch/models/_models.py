@@ -3716,9 +3716,7 @@ class BatchNode(_Model):
     :vartype id: str
     :ivar url: The URL of the Compute Node. Required.
     :vartype url: str
-    :ivar state: The current state of the Compute Node. The Spot/Low-priority Compute Node has been
-     preempted. Tasks which were running on the Compute Node when it was preempted will be
-     rescheduled when another Compute Node becomes available. Required. Known values are: "idle",
+    :ivar state: The current state of the Compute Node. Required. Known values are: "idle",
      "rebooting", "reimaging", "running", "unusable", "creating", "starting", "waitingforstarttask",
      "starttaskfailed", "unknown", "leavingpool", "offline", "preempted", "upgradingos",
      "deallocated", and "deallocating".
@@ -3802,9 +3800,7 @@ class BatchNode(_Model):
     url: str = rest_field(visibility=["read"])
     """The URL of the Compute Node. Required."""
     state: Union[str, "_models.BatchNodeState"] = rest_field(visibility=["read"])
-    """The current state of the Compute Node. The Spot/Low-priority Compute Node has been preempted.
-     Tasks which were running on the Compute Node when it was preempted will be rescheduled when
-     another Compute Node becomes available. Required. Known values are: \"idle\", \"rebooting\",
+    """The current state of the Compute Node. Required. Known values are: \"idle\", \"rebooting\",
      \"reimaging\", \"running\", \"unusable\", \"creating\", \"starting\", \"waitingforstarttask\",
      \"starttaskfailed\", \"unknown\", \"leavingpool\", \"offline\", \"preempted\", \"upgradingos\",
      \"deallocated\", and \"deallocating\"."""
@@ -10556,7 +10552,7 @@ class SecurityProfile(_Model):
     :ivar proxy_agent_settings: Specifies ProxyAgent settings while creating the virtual machine.
     :vartype proxy_agent_settings: ~azure.batch.models.ProxyAgentSettings
     :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
-     specified value to enable UefiSettings. Known values are: "trustedLaunch" and "confidentialVM".
+     specified value to enable UefiSettings. Known values are: "trustedLaunch" and "confidentialvm".
     :vartype security_type: str or ~azure.batch.models.SecurityTypes
     :ivar uefi_settings: Specifies the security settings like secure boot and vTPM used while
      creating the virtual machine. Specifies the security settings like secure boot and vTPM used
@@ -10581,7 +10577,7 @@ class SecurityProfile(_Model):
         name="securityType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
-     enable UefiSettings. Known values are: \"trustedLaunch\" and \"confidentialVM\"."""
+     enable UefiSettings. Known values are: \"trustedLaunch\" and \"confidentialvm\"."""
     uefi_settings: Optional["_models.BatchUefiSettings"] = rest_field(
         name="uefiSettings", visibility=["read", "create", "update", "delete", "query"]
     )

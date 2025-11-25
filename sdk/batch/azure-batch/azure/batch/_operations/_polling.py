@@ -379,6 +379,7 @@ class DeletePoolPollingMethod(PollingMethod):
             self._status = "Failed"
             self._finished = True
 
+
 class DeallocateNodePollingMethod(PollingMethod):
     """Polling method for node deallocate operation.
 
