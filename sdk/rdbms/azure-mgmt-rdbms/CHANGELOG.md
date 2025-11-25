@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-  - Fix import error for last stable version `10.1.0` after upgrade to latest `azure-core`
+  - Fixed import error for last stable version `10.1.0` after upgrade to latest `azure-core`
 
 ## 10.2.0b18 (2024-10-11)
 
