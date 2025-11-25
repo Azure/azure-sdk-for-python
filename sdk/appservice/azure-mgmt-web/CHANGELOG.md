@@ -4,12 +4,41 @@
 
 ### Breaking Changes
 
-  - Removed operation group AppServiceCertificateOrdersOperations
-  - Removed operation group CertificateOrdersDiagnosticsOperations
-  - Removed operation group CertificateRegistrationProviderOperations
-  - Removed operation group DomainRegistrationProviderOperations
-  - Removed operation group DomainsOperations
-  - Removed operation group TopLevelDomainsOperations
+To improve the user experience, some APIs formerly in `azure-mgmt-web` have been moved to two new, more focused packages:
+- [`azure-mgmt-certificateregistration`](https://pypi.org/project/azure-mgmt-certificateregistration/)
+- [`azure-mgmt-domainregistration`](https://pypi.org/project/azure-mgmt-domainregistration/)
+
+Most APIs are still available in `azure-mgmt-web`. Only a small subset of operations and models related to certificate and domain registration have been relocated.
+
+For detailed instructions on how to migrate your code, please refer to our [migration guide](https://aka.ms/azsdk/python/migrate/azure-mgmt-web).
+
+**Operation Migration Example:**
+
+*Before:*
+```python
+from azure.mgmt.web import WebSiteManagementClient
+client = WebSiteManagementClient(...)
+client.app_service_certificate_orders.list(...)
+```
+
+*After:*
+```python
+from azure.mgmt.certificateregistration import CertificateRegistrationMgmtClient
+certificate_client = CertificateRegistrationMgmtClient(...)
+certificate_client.app_service_certificate_orders.list(...)
+```
+
+**Model Imports Migration Example:**
+
+*Before:*
+```python
+from azure.mgmt.web.models import Domain
+```
+
+*After:*
+```python
+from azure.mgmt.domainregistration.models import Domain
+```
 
 ## 10.1.0 (2025-11-17)
 
