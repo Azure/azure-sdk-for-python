@@ -48,7 +48,8 @@ REPO_ROOT = discover_repo_root()
 ci_doc_dir = os.path.join(REPO_ROOT, "_docs")
 sphinx_conf_dir = os.path.join(REPO_ROOT, "doc/sphinx")
 generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
-
+UNZIPPPED_DIR_NAME = "unzipped"
+DOCGEN_DIR_NAME = "docgen"
 
 def unzip_sdist_to_directory(containing_folder: str) -> str:
     zips = glob.glob(os.path.join(containing_folder, "*.zip"))
@@ -57,7 +58,11 @@ def unzip_sdist_to_directory(containing_folder: str) -> str:
         return unzip_file_to_directory(zips[0], containing_folder)
     else:
         tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
-        return unzip_file_to_directory(tars[0], containing_folder)
+
+        if tars:
+            return unzip_file_to_directory(tars[0], containing_folder)
+        else:
+            raise FileNotFoundError("No .zip or .tar.gz files found in {}".format(containing_folder))
 
 
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
@@ -74,7 +79,7 @@ def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str
 
 
 def move_and_rename(source_location: str) -> str:
-    new_location = os.path.join(os.path.dirname(source_location), "unzipped")
+    new_location = os.path.join(os.path.dirname(source_location), UNZIPPPED_DIR_NAME)
 
     if os.path.exists(new_location):
         shutil.rmtree(new_location)
@@ -256,11 +261,11 @@ class sphinx(Check):
 
             # prep env for sphinx
             site_folder = os.path.join(package_dir, "website")
-            doc_folder = os.path.join(staging_directory, "docgen")
+            doc_folder = os.path.join(staging_directory, DOCGEN_DIR_NAME)
 
             if should_build_docs(package_name):
                 source_location = move_and_rename(unzip_sdist_to_directory(staging_directory))
-                doc_folder = os.path.join(source_location, "docgen")
+                doc_folder = os.path.join(source_location, DOCGEN_DIR_NAME)
                 create_index(doc_folder, source_location, parsed.namespace)
 
                 write_version(site_folder, parsed.version)
@@ -268,7 +273,7 @@ class sphinx(Check):
                 logger.info("Skipping sphinx prep for {}".format(package_name))
 
             # run apidoc
-            output_dir = os.path.join(staging_directory, "unzipped/docgen")
+            output_dir = os.path.join(staging_directory, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}")
             if should_build_docs(parsed.name):
                 if is_mgmt_package(parsed.name):
                     results.append(self.mgmt_apidoc(output_dir, package_dir, executable))
@@ -354,25 +359,25 @@ class sphinx(Check):
         return 0
 
     def sphinx_apidoc(self, target_dir: str, namespace: str, executable: str) -> int:
-        working_doc_folder = os.path.join(target_dir, "unzipped/doc")
+        working_doc_folder = os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/doc")
         command_array = [
             "sphinx-apidoc",
             "--no-toc",
             "--module-first",
             "-o",
-            os.path.join(target_dir, "unzipped/docgen"),  # This is the output folder
-            os.path.join(target_dir, "unzipped/"),  # This is the input folder
-            os.path.join(target_dir, "unzipped/test*"),  # This argument and below are "exclude" directory arguments
-            os.path.join(target_dir, "unzipped/example*"),
-            os.path.join(target_dir, "unzipped/sample*"),
-            os.path.join(target_dir, "unzipped/setup.py"),
+            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}"),  # This is the output folder
+            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/"),  # This is the input folder
+            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/test*"),  # This argument and below are "exclude" directory arguments
+            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/example*"),
+            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/sample*"),
+            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/setup.py"),
         ]
 
         try:
             # if a `doc` folder exists, just leverage the sphinx sources found therein.
             if os.path.exists(working_doc_folder):
                 logger.info("Copying files into sphinx source folder.")
-                copy_existing_docs(working_doc_folder, os.path.join(target_dir, "unzipped/docgen"))
+                copy_existing_docs(working_doc_folder, os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}"))
 
             # otherwise, we will run sphinx-apidoc to generate the sources
             else:
@@ -380,7 +385,7 @@ class sphinx(Check):
                 self.run_venv_command(executable, command_array, cwd=target_dir, check=True, append_executable=False)
                 # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
                 # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
-                base_path = Path(os.path.join(target_dir, "unzipped/docgen/"))
+                base_path = Path(os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}/"))
                 namespace = namespace.rpartition(".")[0]
                 while namespace:
                     rst_file_to_delete = base_path / f"{namespace}.rst"
