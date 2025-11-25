@@ -171,7 +171,6 @@ class BaseExporter:
         self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
-
         # TODO: Uncomment configuration changes once testing is completed
         """if self._configuration_manager:
             self._configuration_manager.initialize(
