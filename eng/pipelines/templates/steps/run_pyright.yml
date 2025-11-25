@@ -16,6 +16,7 @@ steps:
         "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"
         --check="pyright"
+        --disable-compatibility-filter
         ${{ parameters.AdditionalTestArgs }}
     env:
       TOX_PIP_IMPL: "uv"
@@ -31,6 +32,7 @@ steps:
         "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"
         --check="verifytypes"
+        --disable-compatibility-filter
         ${{ parameters.AdditionalTestArgs }}
     env:
       TOX_PIP_IMPL: "uv"

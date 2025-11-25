@@ -49,7 +49,7 @@ from azure.core.pipeline.transport import HttpRequest, \
     HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 
 from . import _base as base
-from ._global_partition_endpoint_manager_circuit_breaker import _GlobalPartitionEndpointManagerForCircuitBreaker
+from ._global_partition_endpoint_manager_per_partition_automatic_failover import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover # pylint: disable=line-too-long
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
 from . import _session
@@ -132,6 +132,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
             The default consistency policy for client operations.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for the
+            client. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
@@ -165,11 +168,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
+        priority = kwargs.pop('priority', None)
+        if priority:
+            self.default_headers[http_constants.HttpHeaders.PriorityLevel] = priority
+
         # Keeps the latest response headers from the server.
         self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
 
         self.UseMultipleWriteLocations = False
-        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForCircuitBreaker(self)
+        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(self)
 
         retry_policy = None
         if isinstance(self.connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
@@ -2681,12 +2688,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             database_account._ReadableLocations = result[Constants.ReadableLocations]
         if Constants.EnableMultipleWritableLocations in result:
             database_account._EnableMultipleWritableLocations = result[
-                Constants.EnableMultipleWritableLocations
-            ]
+                Constants.EnableMultipleWritableLocations]
 
         self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
+
+        if Constants.EnablePerPartitionFailoverBehavior in result:
+            database_account._EnablePerPartitionFailoverBehavior = result[Constants.EnablePerPartitionFailoverBehavior]
+
         if response_hook:
             response_hook(last_response_headers, result)
         return database_account
@@ -3162,6 +3172,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if options is None:
             options = {}
+        read_timeout = options.get("read_timeout")
+        if read_timeout is not None:
+            # we currently have a gap where kwargs are not getting passed correctly down the pipeline. In order to make
+            # absolute time out work, we are passing read_timeout via kwargs as a temporary fix
+            kwargs.setdefault("read_timeout", read_timeout)
+
+        operation_start_time = options.get(Constants.OperationStartTime)
+        if operation_start_time is not None:
+            kwargs.setdefault(Constants.OperationStartTime, operation_start_time)
+        timeout = options.get("timeout")
+        if timeout is not None:
+            kwargs.setdefault("timeout", timeout)
 
         if query:
             __GetBodiesFromQueryResult = result_fn

@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Tuple, Dict, Any
 
 # Connection string component prefixes
@@ -40,7 +40,7 @@ def parse_connection_string(connection_string: str) -> Tuple[str, str, str]:
 
 
 def get_current_utc_time() -> str:
-    return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S.%f ")) + "GMT"
+    return str(datetime.now(timezone.utc).strftime("%b, %d %Y %H:%M:%S.%f ")) + "GMT"
 
 
 def get_key_filter(*args: Optional[str], **kwargs: Any) -> Tuple[Optional[str], Dict[str, Any]]:

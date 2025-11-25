@@ -130,9 +130,9 @@ def sample_conversation_pii_with_no_mask_policy():
                                 ent_text = entity.text or ""
                                 detected_entities.append(ent_text)
                                 if ent_text not in returned_text:
-                                    print(
-                                        f"WARNING: Expected entity '{ent_text}' in returned text but not found."
-                                    )
+                                    print(f"WARNING: Expected entity '{ent_text}' in returned text but not found.")
+
+
 # [END conversation_pii_with_no_mask_policy]
 
 

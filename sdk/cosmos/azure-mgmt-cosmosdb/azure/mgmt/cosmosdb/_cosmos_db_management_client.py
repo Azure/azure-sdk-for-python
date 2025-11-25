@@ -31,6 +31,9 @@ from .operations import (
     DatabaseAccountRegionOperations,
     DatabaseAccountsOperations,
     DatabaseOperations,
+    FleetOperations,
+    FleetspaceAccountOperations,
+    FleetspaceOperations,
     GremlinResourcesOperations,
     LocationsOperations,
     MongoDBResourcesOperations,
@@ -61,6 +64,7 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
@@ -157,13 +161,22 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.cosmosdb.operations.RestorableTableResourcesOperations
     :ivar service: ServiceOperations operations
     :vartype service: azure.mgmt.cosmosdb.operations.ServiceOperations
+    :ivar fleet: FleetOperations operations
+    :vartype fleet: azure.mgmt.cosmosdb.operations.FleetOperations
+    :ivar fleetspace: FleetspaceOperations operations
+    :vartype fleetspace: azure.mgmt.cosmosdb.operations.FleetspaceOperations
+    :ivar fleetspace_account: FleetspaceAccountOperations operations
+    :vartype fleetspace_account: azure.mgmt.cosmosdb.operations.FleetspaceAccountOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2025-04-15". Note that overriding this
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-10-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -171,15 +184,25 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = CosmosDBManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -301,6 +324,11 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fleet = FleetOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fleetspace = FleetspaceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fleetspace_account = FleetspaceAccountOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

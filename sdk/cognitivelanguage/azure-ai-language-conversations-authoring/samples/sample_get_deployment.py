@@ -66,6 +66,7 @@ def sample_get_deployment():
                 print(f"AOAI Resource ID: {aoai.resource_id}")
                 print(f"AOAI Deployment Name: {aoai.deployment_name}")
 
+
 # [END conversation_authoring_get_deployment]
 
 

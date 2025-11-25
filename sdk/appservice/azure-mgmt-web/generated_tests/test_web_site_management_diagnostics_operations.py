@@ -24,7 +24,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
         response = self.client.diagnostics.list_hosting_environment_detector_responses(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             detector_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
         response = self.client.diagnostics.list_site_detector_responses(
             resource_group_name=resource_group.name,
             site_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             site_name="str",
             detector_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
         response = self.client.diagnostics.list_site_diagnostic_categories(
             resource_group_name=resource_group.name,
             site_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             site_name="str",
             diagnostic_category="str",
             analysis_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -128,7 +128,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             site_name="str",
             diagnostic_category="str",
             analysis_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -141,7 +141,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             site_name="str",
             diagnostic_category="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -155,7 +155,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             site_name="str",
             diagnostic_category="str",
             detector_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -169,7 +169,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             site_name="str",
             detector_name="str",
             diagnostic_category="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -182,7 +182,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             site_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -196,7 +196,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             site_name="str",
             detector_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -209,7 +209,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             site_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -223,7 +223,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             site_name="str",
             diagnostic_category="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -237,7 +237,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             site_name="str",
             diagnostic_category="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -252,7 +252,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             diagnostic_category="str",
             analysis_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -267,7 +267,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             diagnostic_category="str",
             analysis_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -281,7 +281,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             site_name="str",
             diagnostic_category="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -296,7 +296,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             diagnostic_category="str",
             detector_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -311,7 +311,7 @@ class TestWebSiteManagementDiagnosticsOperations(AzureMgmtRecordedTestCase):
             detector_name="str",
             diagnostic_category="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
