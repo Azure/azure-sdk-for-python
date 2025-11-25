@@ -1,8 +1,15 @@
 # Release History
 
-## 0.0.0 (2025-11-24)
+## 11.0.0 (2025-11-24)
 
-change log generation was timeout!!! You need to write it manually!!!
+### Breaking Changes
+
+  - Removed operation group AppServiceCertificateOrdersOperations
+  - Removed operation group CertificateOrdersDiagnosticsOperations
+  - Removed operation group CertificateRegistrationProviderOperations
+  - Removed operation group DomainRegistrationProviderOperations
+  - Removed operation group DomainsOperations
+  - Removed operation group TopLevelDomainsOperations
 
 ## 10.1.0 (2025-11-17)
 
