@@ -100,10 +100,12 @@ class TestBrowserSDKIntegration(unittest.TestCase):
         }
         
         # Simulate the conversion logic
-        config = BrowserSDKConfig(
-            enabled=config_dict.get("enabled", True),
-            connection_string=config_dict.get("connection_string", "")
-        )
+        kwargs = {}
+        if "enabled" in config_dict:
+            kwargs["enabled"] = config_dict["enabled"]
+        if "connection_string" in config_dict:
+            kwargs["connection_string"] = config_dict["connection_string"]
+        config = BrowserSDKConfig(**kwargs)
         
         self.assertFalse(config.enabled)
         self.assertEqual(config.connection_string, "test_connection_string")
@@ -114,7 +116,7 @@ class TestBrowserSDKIntegration(unittest.TestCase):
         config = BrowserSDKConfig()
         
         self.assertTrue(config.enabled)
-        self.assertEqual(config.connection_string, "")
+        self.assertIsNone(config.connection_string)
 
     @patch('azure.monitor.opentelemetry._configure._logger')
     def test_invalid_browser_sdk_config_type(self, mock_logger):

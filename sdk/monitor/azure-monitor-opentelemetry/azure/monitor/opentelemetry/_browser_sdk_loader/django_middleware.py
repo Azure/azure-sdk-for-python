@@ -116,16 +116,15 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
                 snippet_config = config
             elif isinstance(config, dict):
                 # Create BrowserSDKConfig from dictionary
-                snippet_config = BrowserSDKConfig(
-                    enabled=config.get('enabled', True),
-                    connection_string=config.get('connection_string', '')
-                )
+                snippet_kwargs = {}
+                if 'enabled' in config:
+                    snippet_kwargs['enabled'] = config['enabled']
+                if 'connection_string' in config:
+                    snippet_kwargs['connection_string'] = config['connection_string']
+                snippet_config = BrowserSDKConfig(**snippet_kwargs)
             elif isinstance(config, str):
                 # Legacy mode: config is connection string
-                snippet_config = BrowserSDKConfig(
-                    enabled=True,
-                    connection_string=config
-                )
+                snippet_config = BrowserSDKConfig(connection_string=config)
             else:
                 _logger.error("Invalid config type provided to configure(): %s", type(config))
                 return

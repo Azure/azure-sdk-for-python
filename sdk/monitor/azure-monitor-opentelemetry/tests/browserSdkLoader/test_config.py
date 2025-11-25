@@ -18,7 +18,7 @@ class TestBrowserSDKConfig(unittest.TestCase):
         config = BrowserSDKConfig()
         
         self.assertTrue(config.enabled)
-        self.assertEqual(config.connection_string, "")
+        self.assertIsNone(config.connection_string)
 
     def test_browser_sdk_config_custom_values(self):
         """Test BrowserSDKConfig initialization with custom values."""
@@ -40,7 +40,7 @@ class TestBrowserSDKConfig(unittest.TestCase):
         )
         
         self.assertTrue(config.enabled)
-        self.assertEqual(config.connection_string, "")
+        self.assertIsNone(config.connection_string)
 
     def test_browser_sdk_config_empty_connection_string(self):
         """Test BrowserSDKConfig with empty connection string."""
