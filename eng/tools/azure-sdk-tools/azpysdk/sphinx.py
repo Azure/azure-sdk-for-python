@@ -51,6 +51,7 @@ generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
 UNZIPPPED_DIR_NAME = "unzipped"
 DOCGEN_DIR_NAME = "docgen"
 
+
 def unzip_sdist_to_directory(containing_folder: str) -> str:
     zips = glob.glob(os.path.join(containing_folder, "*.zip"))
 
@@ -214,6 +215,10 @@ class sphinx(Check):
                 logger.error("This tool requires Python 3.11 or newer. Please upgrade your Python interpreter.")
                 return 1
 
+            if not should_build_docs(package_name):
+                logger.info("Skipping sphinx for {}".format(package_name))
+                continue
+
             self.install_dev_reqs(executable, args, package_dir)
 
             create_package_and_install(
@@ -263,44 +268,33 @@ class sphinx(Check):
             site_folder = os.path.join(package_dir, "website")
             doc_folder = os.path.join(staging_directory, DOCGEN_DIR_NAME)
 
-            if should_build_docs(package_name):
-                source_location = move_and_rename(unzip_sdist_to_directory(staging_directory))
-                doc_folder = os.path.join(source_location, DOCGEN_DIR_NAME)
-                create_index(doc_folder, source_location, parsed.namespace)
-
-                write_version(site_folder, parsed.version)
-            else:
-                logger.info("Skipping sphinx prep for {}".format(package_name))
+            source_location = move_and_rename(unzip_sdist_to_directory(staging_directory))
+            doc_folder = os.path.join(source_location, DOCGEN_DIR_NAME)
+            create_index(doc_folder, source_location, parsed.namespace)
+            write_version(site_folder, parsed.version)
 
             # run apidoc
             output_dir = os.path.join(staging_directory, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}")
-            if should_build_docs(parsed.name):
-                if is_mgmt_package(parsed.name):
-                    results.append(self.mgmt_apidoc(output_dir, package_dir, executable))
-                else:
-                    results.append(self.sphinx_apidoc(staging_directory, parsed.namespace, executable))
+            if is_mgmt_package(package_name):
+                results.append(self.mgmt_apidoc(output_dir, package_dir, executable))
             else:
-                logger.info("Skipping sphinx source generation for {}".format(parsed.name))
+                results.append(self.sphinx_apidoc(staging_directory, parsed.namespace, executable))
 
             # build
-            if should_build_docs(package_name):
-                # Only data-plane libraries run strict sphinx at the moment
-                fail_on_warning = not is_mgmt_package(package_name)
-                results.append(
-                    # doc_folder = source
-                    # site_folder  = output
-                    self.sphinx_build(package_dir, doc_folder, site_folder, fail_on_warning, executable)
-                )
+            # Only data-plane libraries run strict sphinx at the moment
+            fail_on_warning = not is_mgmt_package(package_name)
+            results.append(
+                # doc_folder = source
+                # site_folder  = output
+                self.sphinx_build(package_dir, doc_folder, site_folder, fail_on_warning, executable)
+            )
 
-                if in_ci() or args.in_ci:
-                    move_output_and_compress(site_folder, package_dir, package_name)
-                    if in_analyze_weekly():
-                        from gh_tools.vnext_issue_creator import close_vnext_issue
+            if in_ci() or args.in_ci:
+                move_output_and_compress(site_folder, package_dir, package_name)
+                if in_analyze_weekly():
+                    from gh_tools.vnext_issue_creator import close_vnext_issue
 
-                        close_vnext_issue(package_name, "sphinx")
-
-            else:
-                logger.info("Skipping sphinx build for {}".format(package_name))
+                    close_vnext_issue(package_name, "sphinx")
 
         return max(results) if results else 0
 
@@ -367,7 +361,9 @@ class sphinx(Check):
             "-o",
             os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}"),  # This is the output folder
             os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/"),  # This is the input folder
-            os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/test*"),  # This argument and below are "exclude" directory arguments
+            os.path.join(
+                target_dir, f"{UNZIPPPED_DIR_NAME}/test*"
+            ),  # This argument and below are "exclude" directory arguments
             os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/example*"),
             os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/sample*"),
             os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/setup.py"),
@@ -377,7 +373,9 @@ class sphinx(Check):
             # if a `doc` folder exists, just leverage the sphinx sources found therein.
             if os.path.exists(working_doc_folder):
                 logger.info("Copying files into sphinx source folder.")
-                copy_existing_docs(working_doc_folder, os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}"))
+                copy_existing_docs(
+                    working_doc_folder, os.path.join(target_dir, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}")
+                )
 
             # otherwise, we will run sphinx-apidoc to generate the sources
             else:
