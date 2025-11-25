@@ -15,7 +15,7 @@ from azure.mgmt.servicefabricmanagedclusters import ServiceFabricManagedClusters
     pip install azure-identity
     pip install azure-mgmt-servicefabricmanagedclusters
 # USAGE
-    python application_delete_operation_example.py
+    python service_action_restart_replica_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,21 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.applications.begin_delete(
+    client.services.begin_restart_replica(
         resource_group_name="resRg",
         cluster_name="myCluster",
         application_name="myApp",
+        service_name="myService",
+        parameters={
+            "forceRestart": False,
+            "partitionId": "00000000-0000-0000-0000-000000000000",
+            "replicaIds": [123456789012345680],
+            "restartKind": "Simultaneous",
+            "timeout": 60,
+        },
     ).result()
 
 
-# x-ms-original-file: 2025-10-01-preview/ApplicationDeleteOperation_example.json
+# x-ms-original-file: 2025-10-01-preview/ServiceActionRestartReplica_example.json
 if __name__ == "__main__":
     main()
