@@ -8,13 +8,13 @@ import os
 import asyncio
 from pathlib import Path
 from test_base import (
-    TestBase, 
-    servicePreparer, 
-    SFT_JOB_TYPE, 
-    DPO_JOB_TYPE, 
-    RFT_JOB_TYPE, 
-    STANDARD_TRAINING_TYPE, 
-    GLOBAL_STANDARD_TRAINING_TYPE
+    TestBase,
+    servicePreparer,
+    SFT_JOB_TYPE,
+    DPO_JOB_TYPE,
+    RFT_JOB_TYPE,
+    STANDARD_TRAINING_TYPE,
+    GLOBAL_STANDARD_TRAINING_TYPE,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live_and_not_recording
@@ -398,6 +398,26 @@ class TestFineTuningAsync(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy_async
+    async def test_dpo_finetuning_create_job_openai_standard_async(self, **kwargs):
+        await self._test_dpo_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_dpo_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
+        await self._test_dpo_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_rft_finetuning_create_job_openai_standard_async(self, **kwargs):
+        await self._test_rft_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_rft_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
+        await self._test_rft_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
     async def test_finetuning_retrieve_sft_job_async(self, **kwargs):
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
@@ -524,9 +544,7 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_sft_cancel_job_openai_standard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(
-            SFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "supervised", **kwargs
-        )
+        await self._test_cancel_job_helper_async(SFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "supervised", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -545,16 +563,12 @@ class TestFineTuningAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_dpo_cancel_job_openai_standard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(
-            DPO_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "dpo", **kwargs
-        )
+        await self._test_cancel_job_helper_async(DPO_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "dpo", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_dpo_cancel_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(
-            DPO_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "dpo", **kwargs
-        )
+        await self._test_cancel_job_helper_async(DPO_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "dpo", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -569,26 +583,6 @@ class TestFineTuningAsync(TestBase):
         await self._test_cancel_job_helper_async(
             RFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
         )
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_dpo_finetuning_create_job_openai_standard_async(self, **kwargs):
-        await self._test_dpo_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_dpo_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_dpo_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_rft_finetuning_create_job_openai_standard_async(self, **kwargs):
-        await self._test_rft_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_rft_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_rft_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async

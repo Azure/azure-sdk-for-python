@@ -8,13 +8,13 @@ import os
 import time
 from pathlib import Path
 from test_base import (
-    TestBase, 
-    servicePreparer, 
-    SFT_JOB_TYPE, 
-    DPO_JOB_TYPE, 
-    RFT_JOB_TYPE, 
-    STANDARD_TRAINING_TYPE, 
-    GLOBAL_STANDARD_TRAINING_TYPE
+    TestBase,
+    servicePreparer,
+    SFT_JOB_TYPE,
+    DPO_JOB_TYPE,
+    RFT_JOB_TYPE,
+    STANDARD_TRAINING_TYPE,
+    GLOBAL_STANDARD_TRAINING_TYPE,
 )
 from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
@@ -389,6 +389,26 @@ class TestFineTuning(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy
+    def test_dpo_finetuning_create_job_openai_standard(self, **kwargs):
+        self._test_dpo_create_job_helper("openai", STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_dpo_finetuning_create_job_openai_globalstandard(self, **kwargs):
+        self._test_dpo_create_job_helper("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_rft_finetuning_create_job_openai_standard(self, **kwargs):
+        self._test_rft_create_job_helper("openai", STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_rft_finetuning_create_job_openai_globalstandard(self, **kwargs):
+        self._test_rft_create_job_helper("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
     def test_finetuning_retrieve_sft_job(self, **kwargs):
         with self.create_client(**kwargs) as project_client:
             with project_client.get_openai_client() as openai_client:
@@ -406,9 +426,7 @@ class TestFineTuning(TestBase):
                 TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
                 TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
                 TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
-                TestBase.assert_equal_or_not_none(
-                    retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower()
-                )
+                TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
                 assert retrieved_job.method is not None, "Method should not be None for SFT job"
                 TestBase.assert_equal_or_not_none(retrieved_job.method.type, "supervised")
                 assert (
@@ -440,9 +458,7 @@ class TestFineTuning(TestBase):
                 TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
                 TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
                 TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
-                TestBase.assert_equal_or_not_none(
-                    retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower()
-                )
+                TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
                 assert retrieved_job.method is not None, "Method should not be None for DPO job"
                 TestBase.assert_equal_or_not_none(retrieved_job.method.type, "dpo")
                 assert (
@@ -474,9 +490,7 @@ class TestFineTuning(TestBase):
                 TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
                 TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
                 TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
-                TestBase.assert_equal_or_not_none(
-                    retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower()
-                )
+                TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
                 assert retrieved_job.method is not None, "Method should not be None for RFT job"
                 TestBase.assert_equal_or_not_none(retrieved_job.method.type, "reinforcement")
                 assert (
@@ -515,16 +529,12 @@ class TestFineTuning(TestBase):
     @servicePreparer()
     @recorded_by_proxy
     def test_sft_cancel_job_openai_globalstandard(self, **kwargs):
-        self._test_cancel_job_helper(
-            SFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs
-        )
+        self._test_cancel_job_helper(SFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy
     def test_sft_cancel_job_oss_globalstandard(self, **kwargs):
-        self._test_cancel_job_helper(
-            SFT_JOB_TYPE, "oss", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs
-        )
+        self._test_cancel_job_helper(SFT_JOB_TYPE, "oss", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy
@@ -539,36 +549,12 @@ class TestFineTuning(TestBase):
     @servicePreparer()
     @recorded_by_proxy
     def test_rft_cancel_job_openai_standard(self, **kwargs):
-        self._test_cancel_job_helper(
-            RFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
-        )
+        self._test_cancel_job_helper(RFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "reinforcement", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy
     def test_rft_cancel_job_openai_globalstandard(self, **kwargs):
-        self._test_cancel_job_helper(
-            RFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
-        )
-
-    @servicePreparer()
-    @recorded_by_proxy
-    def test_dpo_finetuning_create_job_openai_standard(self, **kwargs):
-        self._test_dpo_create_job_helper("openai", STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy
-    def test_dpo_finetuning_create_job_openai_globalstandard(self, **kwargs):
-        self._test_dpo_create_job_helper("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy
-    def test_rft_finetuning_create_job_openai_standard(self, **kwargs):
-        self._test_rft_create_job_helper("openai", STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy
-    def test_rft_finetuning_create_job_openai_globalstandard(self, **kwargs):
-        self._test_rft_create_job_helper("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+        self._test_cancel_job_helper(RFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "reinforcement", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy
