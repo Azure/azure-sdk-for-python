@@ -39,8 +39,9 @@ from .. import _utils as utils
 from .._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput,
                      build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
-from .._constants import _Constants as Constants
+
 from .._cosmos_responses import CosmosDict, CosmosList
+from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..exceptions import CosmosHttpResponseError
@@ -96,8 +97,14 @@ class ContainerProxy:
 
     async def _get_properties_with_options(self, options: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         kwargs = {}
-        if options and "excludedLocations" in options:
-            kwargs['excluded_locations'] = options['excludedLocations']
+        if options:
+            if "excludedLocations" in options:
+                kwargs['excluded_locations'] = options['excludedLocations']
+            if Constants.OperationStartTime in options:
+                kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
+            if "timeout" in options:
+                kwargs['timeout'] = options['timeout']
+
         return await self._get_properties(**kwargs)
 
     async def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
@@ -483,6 +490,7 @@ class ContainerProxy:
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
+        query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
 
         item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
         return await self.client_connection.read_items(

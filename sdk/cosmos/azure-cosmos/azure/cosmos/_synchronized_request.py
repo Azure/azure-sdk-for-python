@@ -27,10 +27,8 @@ import time
 
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
-
-from . import exceptions
-from . import http_constants
-from . import _retry_utility
+from ._constants import _Constants
+from . import exceptions, http_constants, _retry_utility
 
 
 def _is_readable_stream(obj):
@@ -80,8 +78,8 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     :rtype: tuple of (dict, dict)
 
     """
-    # pylint: disable=protected-access
-
+    # pylint: disable=protected-access, too-many-branches
+    kwargs.pop(_Constants.OperationStartTime, None)
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
     read_timeout = connection_policy.ReadTimeout

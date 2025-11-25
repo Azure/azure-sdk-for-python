@@ -3169,6 +3169,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if options is None:
             options = {}
+        read_timeout = options.get("read_timeout")
+        if read_timeout is not None:
+            # we currently have a gap where kwargs are not getting passed correctly down the pipeline. In order to make
+            # absolute time out work, we are passing read_timeout via kwargs as a temporary fix
+            kwargs.setdefault("read_timeout", read_timeout)
+
+        operation_start_time = options.get(Constants.OperationStartTime)
+        if operation_start_time is not None:
+            kwargs.setdefault(Constants.OperationStartTime, operation_start_time)
+        timeout = options.get("timeout")
+        if timeout is not None:
+            kwargs.setdefault("timeout", timeout)
 
         if query:
             __GetBodiesFromQueryResult = result_fn
