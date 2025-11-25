@@ -11,7 +11,7 @@ from subprocess import CalledProcessError, check_call
 from pathlib import Path
 
 from .Check import Check
-from ci_tools.functions import install_into_venv
+from ci_tools.functions import install_into_venv, unzip_file_to_directory
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.variables import discover_repo_root
@@ -53,6 +53,12 @@ DOCGEN_DIR_NAME = "docgen"
 
 
 def unzip_sdist_to_directory(containing_folder: str) -> str:
+    """
+    Unzips the first .zip or .tar.gz file found in the containing_folder to that same folder.
+
+    :param containing_folder: The folder to search for .zip or .tar.gz files.
+    :return: The path to the directory where the archive was extracted.
+    """
     zips = glob.glob(os.path.join(containing_folder, "*.zip"))
 
     if zips:
@@ -66,20 +72,13 @@ def unzip_sdist_to_directory(containing_folder: str) -> str:
             raise FileNotFoundError("No .zip or .tar.gz files found in {}".format(containing_folder))
 
 
-def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
-    if path_to_zip_file.endswith(".zip"):
-        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
-            zip_ref.extractall(extract_location)
-            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
-            return os.path.join(extract_location, extracted_dir)
-    else:
-        with tarfile.open(path_to_zip_file) as tar_ref:
-            tar_ref.extractall(extract_location)
-            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
-            return os.path.join(extract_location, extracted_dir)
-
-
 def move_and_rename(source_location: str) -> str:
+    """
+    Moves and renames the extracted sdist folder to a known name.
+
+    :param source_location: The path to the extracted sdist folder.
+    :return: The new path after moving and renaming.
+    """
     new_location = os.path.join(os.path.dirname(source_location), UNZIPPPED_DIR_NAME)
 
     if os.path.exists(new_location):
@@ -91,6 +90,13 @@ def move_and_rename(source_location: str) -> str:
 
 # env prep helper functions
 def create_index_file(readme_location: str, package_rst: str) -> str:
+    """
+    Create the index file content by combining the readme and package rst reference.
+
+    :param readme_location: The path to the README file.
+    :param package_rst: The package rst reference.
+    :return: The combined index file content.
+    """
     readme_ext = os.path.splitext(readme_location)[1]
 
     output = ""
@@ -106,6 +112,13 @@ def create_index_file(readme_location: str, package_rst: str) -> str:
 
 
 def create_index(doc_folder: str, source_location: str, namespace: str) -> None:
+    """
+    Create the index.md file in the documentation folder.
+
+    :param doc_folder: The path to the documentation folder.
+    :param source_location: The path to the source location.
+    :param namespace: The namespace for the documentation.
+    """
     index_content = ""
 
     package_rst = "{}.rst".format(namespace)
