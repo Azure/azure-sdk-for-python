@@ -13,7 +13,8 @@
   ([#44053](https://github.com/Azure/azure-sdk-for-python/pull/44053))
 
 ### Other Changes
-- Removed OneSettings configuration manager temporarily to avoid user impact during feature testing. 
+- Removed OneSettings configuration manager temporarily to avoid user impact during feature testing.
+  ([#44179](https://github.com/Azure/azure-sdk-for-python/pull/44179))
 
 ## 1.0.0b45 (2025-11-14)
 
