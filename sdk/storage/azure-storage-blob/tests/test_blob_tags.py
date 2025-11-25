@@ -558,7 +558,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         blob.upload_blob(b"def456", overwrite=True)
 
         if self.is_live:
-            sleep(10)
+            sleep(15)
 
         with pytest.raises(ResourceModifiedError):
             blob.set_blob_tags(first_tags, if_unmodified_since=early)
