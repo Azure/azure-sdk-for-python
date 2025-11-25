@@ -22,6 +22,7 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
+import threading
 from typing import Dict, Any, Optional, List
 
 from .. import _base, http_constants
@@ -53,8 +54,17 @@ class PartitionKeyRangeCache(object):
 
         # keeps the cached collection routing map by collection id
         self._collection_routing_map_by_item = {}
+        # A lock to control access to the locks dictionary itself
+        self._locks_lock = threading.Lock()
+        # A dictionary to hold a lock for each collection ID
+        self._collection_locks: Dict[str, threading.Lock] = {}
 
-
+    def _get_lock_for_collection(self, collection_id: str) -> threading.Lock:
+        """Safely gets or creates a lock for a given collection ID."""
+        with self._locks_lock:
+            if collection_id not in self._collection_locks:
+                self._collection_locks[collection_id] = threading.Lock()
+            return self._collection_locks[collection_id]
 
     def get_or_refresh_routing_map_for_collection(
             self,
@@ -73,29 +83,33 @@ class PartitionKeyRangeCache(object):
         """
 
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        existing_routing_map = self._collection_routing_map_by_item.get(collection_id)
+        # Acquire a lock specific to this collection ID. This prevents race
+        # conditions where multiple threads try to refresh the same map.
+        collection_lock = self._get_lock_for_collection(collection_id)
+        with collection_lock:
+            existing_routing_map = self._collection_routing_map_by_item.get(collection_id)
 
-        # Determine if a refresh or initial load is needed.
-        is_initial_load = not existing_routing_map
-        needs_refresh = force_refresh or self.should_force_refresh(collection_id, previous_routing_map)
+            # Determine if a refresh or initial load is needed.
+            is_initial_load = not existing_routing_map
+            needs_refresh = force_refresh or self.should_force_refresh(collection_id, previous_routing_map)
 
-        if is_initial_load or needs_refresh:
-            # If refresh is forced by a stale 'previous_routing_map', use it as the base for the incremental update.
-            # Otherwise, use the map currently in the cache.
-            base_routing_map = previous_routing_map if needs_refresh and previous_routing_map else existing_routing_map
+            if is_initial_load or needs_refresh:
+                # If refresh is forced by a stale 'previous_routing_map', use it as the base for the incremental update.
+                # Otherwise, use the map currently in the cache.
+                base_routing_map = previous_routing_map if needs_refresh and previous_routing_map else existing_routing_map
 
-            new_routing_map = self._get_routing_map_with_change_feed(
-                collection_link,
-                collection_id,
-                base_routing_map,
-                feed_options,
-                **kwargs
-            )
+                new_routing_map = self._get_routing_map_with_change_feed(
+                    collection_link,
+                    collection_id,
+                    base_routing_map,
+                    feed_options,
+                    **kwargs
+                )
 
-            if new_routing_map:
-                self._collection_routing_map_by_item[collection_id] = new_routing_map
-                return new_routing_map
-        return self._collection_routing_map_by_item.get(collection_id)
+                if new_routing_map:
+                    self._collection_routing_map_by_item[collection_id] = new_routing_map
+
+            return self._collection_routing_map_by_item.get(collection_id)
 
     def should_force_refresh(
             self,
@@ -135,10 +149,8 @@ class PartitionKeyRangeCache(object):
             nonlocal response_headers
             response_headers = headers
 
-        # The 'accessCondition' is not valid for reading the partition key range feed.
-        # It may be passed down from public API calls, so we remove it from a copy of the options.
-        change_feed_options = feed_options.copy() if feed_options else {}
-        change_feed_options.pop('accessCondition', None)
+        # Sanitize options to only include those relevant for a PKRange read.
+        change_feed_options = _base.format_pk_range_options(feed_options)
 
         # Prepare headers for change feed
         headers = kwargs.get('headers', {}).copy()
@@ -160,8 +172,6 @@ class PartitionKeyRangeCache(object):
             ranges.extend(list(pk_range_generator))
 
         except CosmosHttpResponseError as e:
-            if e.status_code == 304:  # Not Modified
-                return previous_routing_map
             raise
 
         new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
@@ -204,13 +214,20 @@ class PartitionKeyRangeCache(object):
                         return self._get_routing_map_with_change_feed(collection_link, collection_id, None,
                                                                       feed_options, **kwargs)
                 else:  # This is an existing partition, unaffected by the split
+                    # The change feed may return ranges that were not split but are adjacent
+                    # to a split. This block handles such cases. Since the range itself hasn't
+                    # changed, we expect to find it in our previous routing map.
                     range_id = r[PartitionKeyRange.Id]
                     if range_id in previous_routing_map._rangeById:
+                        # We retrieve the existing range_info from the old map
+                        # because the incremental feed response for existing ranges does not include it.
                         existing_range_tuple = previous_routing_map._rangeById[range_id]
                         range_info = existing_range_tuple[1]
                         range_tuples.append((r, range_info))
                     else:
-                        # This would be an inconsistent state. Force a full refresh by clearing the cache for the collection and retrying.
+                        # If an existing range returned by the change feed is not in our previous map,
+                        # it signifies an inconsistent state. This is unexpected and indicates a problem,
+                        # so we trigger a full refresh of the routing map to recover.
                         logger.warning(
                             f"Incremental update failed: Existing range '{range_id}' not found in routing map "
                             f"for collection '{collection_link}'. Falling back to full refresh."
@@ -234,14 +251,14 @@ class PartitionKeyRangeCache(object):
 
     def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options, **kwargs):
         """Given a partition key range and a collection, return the list of
-        overlapping partition key ranges and the routing map used.
+        overlapping partition key ranges.
         """
+        if not partition_key_ranges:
+            return []  # Avoid unnecessary network call if there are no ranges to check
+
         routing_map = self.get_or_refresh_routing_map_for_collection(collection_link, feed_options, **kwargs)
         if not routing_map:
             raise RuntimeError(f"Routing map for collection {collection_link} not found.")
-
-        if not partition_key_ranges:
-            return []  # Return empty list instead of all ranges
 
         ranges = routing_map.get_overlapping_ranges(partition_key_ranges)
         return ranges

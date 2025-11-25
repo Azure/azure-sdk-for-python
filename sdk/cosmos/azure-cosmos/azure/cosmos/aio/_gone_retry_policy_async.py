@@ -23,58 +23,18 @@
 Cosmos database service.
 """
 
-from typing import Optional
-from azure.cosmos import http_constants
+from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
 
-
-class PartitionKeyRangeGoneRetryPolicyAsync(object):
-    """Async retry policy for handling partition key range gone errors.
-
-    This policy handles Gone (410) errors caused by partition splits or merges
-    by refreshing the routing map cache asynchronously before allowing retry.
-    """
-
-    def __init__(self, client, *args, **kwargs):
-        self.retry_after_in_milliseconds = 1000
-        self.refresh_partition_key_range_cache = True
-        self.args = args
-        self.client = client
-        self.exception = None
-        self.kwargs = kwargs
+class PartitionKeyRangeGoneRetryPolicyAsync(_PartitionKeyRangeGoneRetryPolicyBase):
 
     async def ShouldRetry(self, exception):
-        """Returns true if the request should retry based on the passed-in exception.
-
-        :param (exceptions.CosmosHttpResponseError instance) exception:
-        :returns: a boolean stating whether the request should be retried
-        :rtype: bool
-        """
         self.exception = exception
-
-        # Extract collection rid and link from request
-        collection_link: Optional[str] = None
-
-        if len(self.args) > 3:
-            request = self.args[3]  # request object
-            if hasattr(request, 'headers'):
-                collection_rid = request.headers.get(http_constants.HttpHeaders.IntendedCollectionRID)
-                cached_properties = self.client._container_properties_cache.get(collection_rid)
-                if cached_properties:
-                    collection_link = cached_properties.get("container_link")
+        collection_link = self._extract_collection_info()
 
         if self.refresh_partition_key_range_cache:
-            previous_routing_map = None
-            if collection_link and hasattr(self.client, '_routing_map_provider'):
-                if hasattr(self.client._routing_map_provider, '_collection_routing_map_by_item'):
-                    previous_routing_map = self.client._routing_map_provider._collection_routing_map_by_item.get(
-                        collection_link)
-
-            # Only clear the cache if it's not already empty.
+            previous_routing_map = self._get_previous_routing_map(collection_link)
             if previous_routing_map is not None:
-                # Asynchronous refresh for async client
                 await self.client.refresh_routing_map_provider(collection_link, previous_routing_map)
-
             self.refresh_partition_key_range_cache = False
 
-        # return False to raise error to multi_execution_aggregator and repair document producer context
         return False

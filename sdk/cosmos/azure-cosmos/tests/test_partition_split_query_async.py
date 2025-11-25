@@ -460,7 +460,6 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             # Verify queries still work after fallback
             query_results = [item async for item in container.query_items(
                 query='SELECT * FROM c',
-                enable_cross_partition_query=True
             )]
 
             assert len(query_results) == 20, \
@@ -611,7 +610,6 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 # Verify queries work after fallback
                 results = [item async for item in container.query_items(
                     query='SELECT * FROM c',
-                    enable_cross_partition_query=True
                 )]
                 assert len(results) == 30
 

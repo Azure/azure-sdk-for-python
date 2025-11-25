@@ -185,7 +185,7 @@ class CollectionRoutingMap(object):
 
         return isComplete
 
-    def try_combine(self, new_partition_key_range_info_tuples, new_change_feed_etag):
+    def try_combine(self, new_partition_key_range_info_tuples: list, new_change_feed_etag: str) -> 'CollectionRoutingMap':
         """Combines existing routing map with incremental changes from change feed.
 
         :param list new_partition_key_range_info_tuples: List of new/updated ranges from change feed
