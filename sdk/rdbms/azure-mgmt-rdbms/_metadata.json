@@ -6,6 +6,6 @@
     "@autorest/python@6.42.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/mariadb/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/s/azure-sdk-for-python/sdk --use=@autorest/python@6.42.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/mariadb/resource-manager/readme.md"
+  "autorest_command": "autorest specification/mysql/resource-manager/Microsoft.DBforMySQL/legacy/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/s/azure-sdk-for-python/sdk --use=@autorest/python@6.42.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/mysql/resource-manager/Microsoft.DBforMySQL/legacy/readme.md"
 }
