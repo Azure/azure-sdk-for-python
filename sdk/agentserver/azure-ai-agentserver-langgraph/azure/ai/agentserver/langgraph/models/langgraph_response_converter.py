@@ -44,6 +44,8 @@ class LangGraphResponseConverter:
         # Implement the conversion logic for inner inputs
         if isinstance(output_message, messages.HumanMessage):
             return project_models.ResponsesUserMessageItemResource(
+                type="message",
+                role="user",
                 content=self.convert_MessageContent(
                     output_message.content, role=ResponsesMessageRole.USER
                 ),
@@ -52,6 +54,8 @@ class LangGraphResponseConverter:
             )
         if isinstance(output_message, messages.SystemMessage):
             return project_models.ResponsesSystemMessageItemResource(
+                type="message",
+                role="system",
                 content=self.convert_MessageContent(
                     output_message.content, role=ResponsesMessageRole.SYSTEM
                 ),
