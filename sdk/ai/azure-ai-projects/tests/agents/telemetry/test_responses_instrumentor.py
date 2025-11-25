@@ -2219,14 +2219,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
 
-        # Content recording OFF: event content should have role and finish_reason but no parts
+        # Content recording OFF: event content should have role, parts with type only, and finish_reason
         expected_events = [
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user"}]',
+                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
             },
             {
@@ -2288,14 +2288,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
 
-        # Content recording OFF: event content should have role and finish_reason but no parts (binary flag doesn't matter)
+        # Content recording OFF: event content should have role, parts with type only, and finish_reason (binary flag doesn't matter)
         expected_events = [
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user"}]',
+                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
             },
             {
@@ -2364,7 +2364,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '{"content":[{"type":"image"}]}',
+                    "gen_ai.event.content": '[{"role":"user","parts":[{"type":"image"}]}]',
                 },
             },
             {
@@ -2372,7 +2372,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": "*",
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
             },
         ]
@@ -2433,7 +2433,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": f'{{"content":[{{"type":"image","image_url":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}',
+                    "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
             },
             {
@@ -2441,7 +2441,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": "*",
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
             },
         ]
@@ -2504,14 +2504,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
 
-        # Content recording OFF: event content should have role and finish_reason but no parts
+        # Content recording OFF: event content should have role, parts with type only, and finish_reason
         expected_events = [
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user"}]',
+                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
             },
             {
@@ -2577,14 +2577,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
 
-        # Content recording OFF: event content should have role and finish_reason but no parts (binary flag doesn't matter)
+        # Content recording OFF: event content should have role, parts with type only, and finish_reason (binary flag doesn't matter)
         expected_events = [
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user"}]',
+                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
             },
             {
@@ -2657,7 +2657,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '{"content":[{"type":"text","text":"What is shown in this image?"},{"type":"image"}]}',
+                    "gen_ai.event.content": '[{"role":"user","parts":[{"type":"text","content":"What is shown in this image?"},{"type":"image"}]}]',
                 },
             },
             {
@@ -2665,7 +2665,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": "*",
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
             },
         ]
@@ -2730,7 +2730,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": f'{{"content":[{{"type":"text","text":"What is shown in this image?"}},{{"type":"image","image_url":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}',
+                    "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"text","content":"What is shown in this image?"}},{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
             },
             {
@@ -2738,7 +2738,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": "*",
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
             },
         ]
@@ -2805,14 +2805,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
 
-        # Content recording OFF: event content should have role and finish_reason but no parts
+        # Content recording OFF: event content should have role, parts with type only, and finish_reason
         expected_events = [
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user"}]',
+                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
             },
             {
@@ -2882,14 +2882,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
 
-        # Content recording OFF: event content should have role and finish_reason but no parts
+        # Content recording OFF: event content should have role, parts with type only, and finish_reason
         expected_events = [
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user"}]',
+                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
             },
             {
@@ -2966,7 +2966,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '{"content":[{"type":"image"}]}',
+                    "gen_ai.event.content": '[{"role":"user","parts":[{"type":"image"}]}]',
                 },
             },
             {
@@ -2974,7 +2974,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": "*",
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
             },
         ]
@@ -3043,7 +3043,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": f'{{"content":[{{"type":"image","image_url":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}',
+                    "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
             },
             {
@@ -3051,7 +3051,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": "*",
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
             },
         ]
@@ -3121,14 +3121,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
 
-        # Content recording OFF: event content should have role and finish_reason but no parts
+        # Content recording OFF: event content should have role, parts with type only, and finish_reason
         expected_events = [
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user"}]',
+                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
             },
             {
@@ -3202,14 +3202,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
 
-        # Content recording OFF: event content should have role and finish_reason but no parts
+        # Content recording OFF: event content should have role, parts with type only, and finish_reason
         expected_events = [
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user"}]',
+                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
             },
             {
@@ -3290,7 +3290,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '{"content":[{"type":"text","text":"What is shown in this image?"},{"type":"image"}]}',
+                    "gen_ai.event.content": '[{"role":"user","parts":[{"type":"text","content":"What is shown in this image?"},{"type":"image"}]}]',
                 },
             },
             {
@@ -3298,7 +3298,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": "*",
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
             },
         ]
@@ -3371,7 +3371,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": f'{{"content":[{{"type":"text","text":"What is shown in this image?"}},{{"type":"image","image_url":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}',
+                    "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"text","content":"What is shown in this image?"}},{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
             },
             {
@@ -3379,7 +3379,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": "*",
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
             },
         ]
