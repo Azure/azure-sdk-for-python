@@ -692,8 +692,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         feed_options["changeFeedStateContext"] = change_feed_state_context
         feed_options["containerRID"] = container_properties["_rid"]
-        if utils.valid_key_value_exist(feed_options, Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG, _Unset):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] = \
+
+        # populate availability_strategy_config
+        if (Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG in feed_options
+                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] is not _Unset):
+            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] =\
                 _validate_hedging_config(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG))
 
         response_hook = kwargs.pop("response_hook", None)
@@ -982,7 +985,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
-        if utils.valid_key_value_exist(feed_options, Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG, _Unset):
+
+        # populate availability_strategy_config
+        if (Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG in feed_options
+                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] is not _Unset):
             feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] =\
                 _validate_hedging_config(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG))
 
