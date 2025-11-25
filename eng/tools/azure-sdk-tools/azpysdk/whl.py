@@ -101,8 +101,8 @@ class whl(Check):
                     )
                     # Align with tox: skip coverage when tests are skipped entirely
                     continue
-
                 logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
+                overall_result = max(overall_result, pytest_result.returncode or 1)
                 continue
 
             coverage_command = [
