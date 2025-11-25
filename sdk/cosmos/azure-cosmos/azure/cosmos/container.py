@@ -37,7 +37,7 @@ from ._availability_strategy_config import _validate_hedging_config
 from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
                     GenerateGuidId, validate_cache_staleness_value)
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
-from ._constants import _Constants as Constants
+from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
@@ -101,8 +101,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _get_properties_with_options(self, options: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         kwargs = {}
-        if options and "excludedLocations" in options:
-            kwargs['excluded_locations'] = options['excludedLocations']
+        if options:
+            if "excludedLocations" in options:
+                kwargs['excluded_locations'] = options['excludedLocations']
+            if Constants.OperationStartTime in options:
+                kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
+            if "timeout" in options:
+                kwargs['timeout'] = options['timeout']
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
@@ -335,6 +340,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
+            The returned items have no guaranteed ordering.
         :rtype: ~azure.cosmos.CosmosList
         """
 
@@ -357,6 +363,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
+        query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
 
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 

@@ -58,7 +58,7 @@ def sample_transcribe_with_phrase_list():
         options = TranscriptionOptions(locales=["en-US"], phrase_list=phrase_list)
 
         # Create the request content
-        request_content = TranscriptionContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(definition=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)

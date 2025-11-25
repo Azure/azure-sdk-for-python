@@ -31,6 +31,7 @@ from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import exceptions, http_constants, _retry_utility, _availability_strategy_handler
 from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
+from ._constants import _Constants
 from ._request_object import RequestObject
 from ._utils import get_user_agent_features
 from .documents import _OperationType
@@ -85,7 +86,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
 
     """
     # pylint: disable=protected-access, too-many-branches
-
+    kwargs.pop(_Constants.OperationStartTime, None)
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
     read_timeout = connection_policy.ReadTimeout

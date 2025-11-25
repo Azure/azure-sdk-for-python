@@ -18,8 +18,7 @@ class TestTranscription(TranscriptionClientTestBase):
         client = self.create_client(endpoint=transcription_endpoint)
         response = client.transcribe(
             body={
-                "audio": "filetype",
-                "options": {
+                "definition": {
                     "audioUrl": "str",
                     "channels": [0],
                     "diarization": {"enabled": bool, "maxSpeakers": 0},
@@ -29,6 +28,7 @@ class TestTranscription(TranscriptionClientTestBase):
                     "phraseList": {"biasingWeight": 0.0, "phrases": ["str"]},
                     "profanityFilterMode": "str",
                 },
+                "audio": "filetype",
             },
         )
 
