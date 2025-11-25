@@ -73,7 +73,11 @@ steps:
           --service="${{ parameters.ServiceDirectory }}"
           --checks="sphinx"
           --wheel_dir="$(Build.ArtifactStagingDirectory)"
-
+      env:
+        TOX_PIP_IMPL: "uv"
+        VIRTUAL_ENV: ""
+        PYTHONHOME: ""
+        
   - ${{ if eq(parameters.RunApiStubGen, 'true') }}:
     - template: /eng/pipelines/templates/steps/run_apistub.yml
       parameters:
