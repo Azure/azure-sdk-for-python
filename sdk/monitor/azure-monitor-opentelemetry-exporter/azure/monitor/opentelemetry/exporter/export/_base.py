@@ -53,7 +53,7 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import Conne
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
-    _get_sha256_hash
+    _get_sha256_hash,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
@@ -106,6 +106,10 @@ class BaseExporter:
         :rtype: None
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
+
+        # TODO: Uncomment configuration changes once testing is completed
+        # Get the configuration manager
+        # self._configuration_manager = get_configuration_manager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         # We do not need to use entra Id if this is a sdkStats exporter
@@ -167,6 +171,18 @@ class BaseExporter:
         self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
+
+        # TODO: Uncomment configuration changes once testing is completed
+        """if self._configuration_manager:
+            self._configuration_manager.initialize(
+                os=_get_os(),
+                rp=_get_rp(),
+                attach=_get_attach_type(),
+                component="ext",
+                version=ext_version,
+                region=self._region,
+            )
+        """
 
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
