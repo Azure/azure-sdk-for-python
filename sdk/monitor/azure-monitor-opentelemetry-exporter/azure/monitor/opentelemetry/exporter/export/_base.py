@@ -183,6 +183,18 @@ class BaseExporter:
             )
         """
 
+        # TODO: Uncomment configuration changes once testing is completed
+        """if self._configuration_manager:
+            self._configuration_manager.initialize(
+                os=_get_os(),
+                rp=_get_rp(),
+                attach=_get_attach_type(),
+                component="ext",
+                version=ext_version,
+                region=self._region,
+            )
+        """
+
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
             self.storage = LocalFileStorage(  # pyright: ignore
