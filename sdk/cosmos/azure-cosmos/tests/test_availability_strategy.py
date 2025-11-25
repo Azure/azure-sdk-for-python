@@ -21,6 +21,8 @@ from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
 
+#cspell:ignore PPAF, ppaf
+
 _Unset: Any = object()
 class MockHandler(logging.Handler):
     def __init__(self):

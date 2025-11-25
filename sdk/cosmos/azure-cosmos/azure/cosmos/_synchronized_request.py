@@ -29,8 +29,9 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import DecodeError  # type: ignore
 
-from . import exceptions, http_constants, _retry_utility, _availability_strategy_handler
+from . import exceptions, http_constants, _retry_utility
 from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
+from ._availability_strategy_handler import execute_with_hedging
 from ._constants import _Constants
 from ._request_object import RequestObject
 from ._utils import get_user_agent_features
@@ -276,7 +277,7 @@ def SynchronizedRequest(
 
     # Handle hedging if availability strategy is applicable
     if _is_availability_strategy_applicable(request_params):
-        return _availability_strategy_handler.execute_with_hedging(
+        return execute_with_hedging(
             request_params,
             global_endpoint_manager,
             request,

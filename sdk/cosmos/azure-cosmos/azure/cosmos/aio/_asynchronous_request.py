@@ -29,6 +29,7 @@ from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import _retry_utility_async
+from ._asynchronous_availability_strategy_handler import execute_with_availability_strategy
 from .. import exceptions
 from .. import http_constants
 from .._availability_strategy_config import CrossRegionHedgingStrategyConfig
@@ -229,7 +230,6 @@ async def AsynchronousRequest(
 
     # Handle hedging if strategy is configured
     if _is_availability_strategy_applicable(request_params):
-        from ._asynchronous_availability_strategy_handler import execute_with_availability_strategy
         return await execute_with_availability_strategy(
             request_params,
             global_endpoint_manager,
