@@ -1,5 +1,11 @@
 # Release History
 
+## 10.1.1 (2025-11-25)
+
+### Bugs Fixed
+
+  - Fix import error for last stable version `10.1.0` after upgrade to latest `azure-core`
+
 ## 10.2.0b18 (2024-10-11)
 
 ### Other Changes
