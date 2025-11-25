@@ -31,6 +31,7 @@ from azure.core.exceptions import DecodeError  # type: ignore
 from .. import exceptions
 from .. import http_constants
 from . import _retry_utility_async
+from .._constants import _Constants
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 from .._utils import get_user_agent_features
 
@@ -51,7 +52,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
 
     """
     # pylint: disable=protected-access, too-many-branches
-
+    kwargs.pop(_Constants.OperationStartTime, None)
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)

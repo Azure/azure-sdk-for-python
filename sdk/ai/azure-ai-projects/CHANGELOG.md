@@ -4,6 +4,8 @@
 
 ### Features Added
 
+* The package now takes dependency on openai and azure-identity packages. No need to install them separately.
+
 ### Breaking changes
 
 * Rename class `AgentObject` to `AgentDetails`

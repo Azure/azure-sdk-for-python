@@ -13,10 +13,7 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 from opentelemetry import metrics
 from openai import OpenAI
-
-from devtools_testutils import recorded_by_proxy
-
-from test_base import servicePreparer
+from test_base import servicePreparer, recorded_by_proxy_httpx
 from test_ai_instrumentor_base import (
     TestAiAgentsInstrumentorBase,
     CONTENT_TRACING_ENV_VARIABLE,
@@ -65,10 +62,9 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
         return operation_duration_metrics, token_usage_metrics
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_non_streaming_responses(self, **kwargs):
         """Test that metrics are collected for non-streaming responses API calls."""
         self.cleanup()
@@ -113,10 +109,9 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # The test passes if we got here without errors and the API calls worked
         assert True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_streaming_responses(self, **kwargs):
         """Test that metrics are collected for streaming responses API calls."""
         self.cleanup()
@@ -167,10 +162,9 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # The test passes if we got here without errors and streaming worked
         assert True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_conversation_create(self, **kwargs):
         """Test that metrics are collected for conversation creation calls."""
         self.cleanup()
@@ -205,10 +199,9 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # The test passes if we got here without errors and the conversation was created
         assert True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_multiple_operations(self, **kwargs):
         """Test that metrics are collected correctly for multiple operations."""
         self.cleanup()
@@ -258,10 +251,9 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # The test passes if we got here without errors and multiple calls worked
         assert True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_without_content_recording(self, **kwargs):
         """Test that metrics are still collected when content recording is disabled."""
         self.cleanup()

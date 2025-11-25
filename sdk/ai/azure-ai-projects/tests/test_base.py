@@ -62,6 +62,11 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
+    azure_ai_projects_tests_bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
+    azure_ai_projects_tests_ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    azure_ai_projects_tests_ai_search_index_name="sanitized-index-name",
+    azure_ai_projects_tests_mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
+    azure_ai_projects_tests_image_model_deployment_name="gpt-image-1-mini",
 )
 
 
@@ -505,6 +510,7 @@ def recorded_by_proxy_httpx(test_func):
         raise ImportError("httpx is required to use recorded_by_proxy_httpx. Install it with: pip install httpx")
 
     def record_wrap(*args, **kwargs):
+
         def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
             """Transform an httpx.Request to route through the test proxy."""
             parsed_result = url_parse.urlparse(str(request.url))
@@ -609,6 +615,7 @@ def recorded_by_proxy_async_httpx(test_func):
         raise ImportError("httpx is required to use recorded_by_proxy_async_httpx. Install it with: pip install httpx")
 
     async def record_wrap(*args, **kwargs):
+
         def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
             """Transform an httpx.Request to route through the test proxy."""
             parsed_result = url_parse.urlparse(str(request.url))
