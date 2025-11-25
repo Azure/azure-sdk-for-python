@@ -26,7 +26,8 @@ import json
 import time
 import logging
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import (AzureError, ClientAuthenticationError, ServiceRequestError,
+                                   ServiceResponseError)
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import _default_retry_policy, _health_check_retry_policy, _service_unavailable_retry_policy
@@ -37,6 +38,7 @@ from .. import _service_response_retry_policy, _service_request_retry_policy
 from .. import _session_retry_policy
 from .. import _timeout_failover_retry_policy
 from .. import exceptions
+from .._constants import _Constants
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,
@@ -66,6 +68,12 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     :returns: the result of running the passed in function as a (result, headers) tuple
     :rtype: tuple of (dict, dict)
     """
+    timeout = kwargs.get('timeout')
+    operation_start_time = kwargs.get(_Constants.OperationStartTime, time.time())
+
+    # Track the last error for chaining
+    last_error = None
+
     pk_range_wrapper = None
     if args and (global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]) or
                  global_endpoint_manager.is_circuit_breaker_applicable(args[0])):
@@ -115,14 +123,23 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             client, client._container_properties_cache, None, *args)
 
     while True:
-        client_timeout = kwargs.get('timeout')
         start_time = time.time()
+        # Check timeout before executing function
+        if timeout:
+            elapsed = time.time() - operation_start_time
+            if elapsed >= timeout:
+                raise exceptions.CosmosClientTimeoutError(error=last_error)
         try:
             if args:
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
                 await global_endpoint_manager.record_success(args[0], pk_range_wrapper)
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
+                # Check timeout after successful execution
+                if timeout:
+                    elapsed = time.time() - operation_start_time
+                    if elapsed >= timeout:
+                        raise exceptions.CosmosClientTimeoutError(error=last_error)
             if not client.last_response_headers:
                 client.last_response_headers = {}
 
@@ -163,6 +180,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
             return result
         except exceptions.CosmosHttpResponseError as e:
+            last_error = e
             if request:
                 # update session token for relevant operations
                 client._UpdateSessionIfRequired(request.headers, {}, e.headers)
@@ -234,12 +252,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     client.session.clear_session_token(client.last_response_headers)
                 raise
 
+            # Check timeout only before retrying
+            if timeout:
+                elapsed = time.time() - operation_start_time
+                if elapsed >= timeout:
+                    raise exceptions.CosmosClientTimeoutError(error=last_error)
             # Wait for retry_after_in_milliseconds time before the next retry
             await asyncio.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
-            if client_timeout:
-                kwargs['timeout'] = client_timeout - (time.time() - start_time)
-                if kwargs['timeout'] <= 0:
-                    raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):
@@ -354,6 +373,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                             if retry_active:
                                 await self.sleep(retry_settings, request.context.transport)
                                 continue
+
                 except ImportError:
                     raise err # pylint: disable=raise-missing-from
                 raise err
