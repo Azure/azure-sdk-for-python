@@ -220,7 +220,11 @@ class FoundryCBAgent:
     @abstractmethod
     async def agent_run(
         self, context: "AgentRunContext"
-    ) -> Union["OpenAIResponse", Generator["ResponseStreamEvent", Any, Any], AsyncGenerator["ResponseStreamEvent", Any]]:
+    ) -> Union[
+        "OpenAIResponse",
+        Generator["ResponseStreamEvent", Any, Any],
+        AsyncGenerator["ResponseStreamEvent", Any],
+    ]:
         raise NotImplementedError
 
     async def agent_liveness(self, request) -> Union[Response, dict]:

@@ -10,34 +10,32 @@ Based on OpenAI SDK types from openai.types.responses.response_create_params
 from __future__ import annotations
 
 from typing import Any, Dict, Iterable, List, Optional, Union, Protocol, runtime_checkable
-from typing_extensions import Literal, Required, TypeAlias, TypedDict
+from typing_extensions import Literal, TypeAlias, TypedDict
 
 
 @runtime_checkable
 class ResponseCreateParamsBase(Protocol):
-    """
-    Protocol for base parameters for creating a response.
-    
+    """Protocol for base parameters for creating a response.
     This protocol is based on the OpenAI SDK's ResponseCreateParamsBase.
     All fields are optional and can be accessed via dictionary-style or attribute access.
     """
-    
+
     conversation: Optional[Union[str, Dict[str, Any]]]
     """
     The ID of a stored conversation, or a conversation object. The conversation
     object contains input items and output items from previous responses.
 
     Use this to provide a previous response's data to the model, enabling it to
-    reference previous content in this request. Input items and output items from 
-    this response are automatically added to this conversation after this response 
+    reference previous content in this request. Input items and output items from
+    this response are automatically added to this conversation after this response
     completes.
     """
 
     include: Optional[List[str]]
     """
     Specify additional output data to include in the model response.
-    Currently supported values include web_search_call sources, code_interpreter 
-    outputs, computer call output images, file_search_call results, message images, 
+    Currently supported values include web_search_call sources, code_interpreter
+    outputs, computer call output images, file_search_call results, message images,
     message logprobs, and encrypted reasoning content.
     """
 
@@ -177,7 +175,7 @@ class ResponseCreateParamsBase(Protocol):
 
 class StreamOptions(TypedDict, total=False):
     """Options for streaming responses."""
-    
+
     include_obfuscation: bool
     """
     When true, stream obfuscation will be enabled.
@@ -192,7 +190,7 @@ Conversation: TypeAlias = Union[str, Dict[str, Any]]
 
 class ResponseCreateParamsNonStreaming(TypedDict, total=False):
     """Parameters for non-streaming response creation."""
-    
+
     stream: Optional[Literal[False]]
     """
     If set to true, the model response data will be streamed to the client.
@@ -202,7 +200,7 @@ class ResponseCreateParamsNonStreaming(TypedDict, total=False):
 
 class ResponseCreateParamsStreaming(TypedDict, total=False):
     """Parameters for streaming response creation."""
-    
+
     stream: Literal[True]
     """
     If set to true, the model response data will be streamed to the client.
@@ -215,7 +213,7 @@ ResponseCreateParams: TypeAlias = Union[ResponseCreateParamsNonStreaming, Respon
 
 __all__ = [
     "ResponseCreateParamsBase",
-    "ResponseCreateParamsNonStreaming", 
+    "ResponseCreateParamsNonStreaming",
     "ResponseCreateParamsStreaming",
     "ResponseCreateParams",
     "StreamOptions",

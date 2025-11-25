@@ -44,7 +44,11 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
     def _new_assistant_message_item(self, message_text: str) -> ResponsesAssistantMessageItemResource:
         item_content = self._build_item_content_output_text(message_text)
         return ResponsesAssistantMessageItemResource(
-            role="assistant", type="message", id=self._context.id_generator.generate_message_id(), status="completed", content=[item_content]
+            role="assistant",
+            type="message",
+            id=self._context.id_generator.generate_message_id(),
+            status="completed",
+            content=[item_content]
         )
 
     def transform_output_for_response(self, response: AgentRunResponse) -> OpenAIResponse:
@@ -213,7 +217,8 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         agent_id = AgentIdGenerator.generate(self._context)
 
         # Ensure _response_created_at is set (should have been set by _ensure_response_started)
-        created_timestamp = self._response_created_at if self._response_created_at is not None else int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        created_timestamp = self._response_created_at if self._response_created_at is not None \
+         else int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
         response_data: OpenAIResponse = {
             "metadata": {},

@@ -17,18 +17,14 @@ from typing import Any, Protocol, runtime_checkable
 
 @runtime_checkable
 class ResponseInputItemParam(Protocol):
-    """
-    Protocol for response input item parameters.
-    
+    """Protocol for response input item parameters.
     This protocol describes the interface for any item that can be used as input
     to a response, such as messages, function calls, and function call outputs.
     It acts as a dict-like interface allowing .get() access to item properties.
     """
-    
+
     def get(self, key: str, default: Any = None) -> Any:
-        """
-        Get a value from the item by key.
-        
+        """Get a value from the item by key.
         :param key: The key to retrieve.
         :type key: str
         :param default: The default value if key is not found.

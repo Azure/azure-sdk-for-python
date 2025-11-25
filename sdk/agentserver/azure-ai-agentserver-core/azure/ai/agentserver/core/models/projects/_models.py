@@ -8,10 +8,12 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Literal, Union, Dict, Optional, List, Any
-from typing_extensions import NotRequired, TypedDict, TypeAlias, ReadOnly
-from ._enums import  ServiceTier, ToolChoiceOptions, ResponseTextFormatConfigurationType, ToolType, ResponseErrorCode, ResponseStreamEventType
 import datetime
+
+from typing import Any, Dict, List, Literal, Union
+from typing_extensions import NotRequired, ReadOnly, TypeAlias, TypedDict
+
+from ._enums import ResponseErrorCode, ResponseTextFormatConfigurationType, ServiceTier, ToolChoiceOptions, ToolType
 
 
 class CustomCredential(TypedDict):
@@ -26,7 +28,7 @@ class AgentId(TypedDict):
     name: str
     """The name of the agent. Required."""
     version: str
-    """The version identifier of the agent. Required.""" 
+    """The version identifier of the agent. Required."""
 
 class AgentReference(TypedDict):
     type: str  # TODO: should this be a Literal?
@@ -34,7 +36,7 @@ class AgentReference(TypedDict):
     name: str
     """The name of the agent. Required."""
     version: NotRequired[str]
-    """The version identifier of the agent."""    
+    """The version identifier of the agent."""
 
 class CreatedBy(TypedDict):
     agent: NotRequired[AgentId]
@@ -44,12 +46,12 @@ class CreatedBy(TypedDict):
 
 class ItemResource(TypedDict):
     type: ReadOnly[Union[str, Literal[
-        "message", "file_search_call", "function_call", "function_call_output", 
-        "computer_call", "computer_call_output", "web_search_call", "reasoning", 
+        "message", "file_search_call", "function_call", "function_call_output",
+        "computer_call", "computer_call_output", "web_search_call", "reasoning",
         "item_reference", "image_generation_call", "code_interpreter_call",
-        "local_shell_call", "local_shell_call_output", "mcp_list_tools", 
-        "mcp_approval_request", "mcp_approval_response", "mcp_call", 
-        "structured_outputs", "workflow_action", "memory_search_call", 
+        "local_shell_call", "local_shell_call_output", "mcp_list_tools",
+        "mcp_approval_request", "mcp_approval_response", "mcp_call",
+        "structured_outputs", "workflow_action", "memory_search_call",
         "oauth_consent_request"
     ]]]
     id: str
@@ -77,7 +79,7 @@ class FunctionToolCallOutputItemResource(ItemResource):
 
 class ItemContent(TypedDict):
     type: ReadOnly[Union[str,Literal[
-        "input_text", "input_audio", "input_image", "input_file", 
+        "input_text", "input_audio", "input_image", "input_file",
         "output_text", "output_audio", "refusal"
     ]]]
 
@@ -106,12 +108,12 @@ class ItemContentOutputText(ItemContent):
 
 class ItemParam(TypedDict):
     type: Union[str, Literal[
-        "message", "file_search_call", "function_call", "function_call_output", 
-        "computer_call", "computer_call_output", "web_search_call", "reasoning", 
+        "message", "file_search_call", "function_call", "function_call_output",
+        "computer_call", "computer_call_output", "web_search_call", "reasoning",
         "item_reference", "image_generation_call", "code_interpreter_call",
-        "local_shell_call", "local_shell_call_output", "mcp_list_tools", 
-        "mcp_approval_request", "mcp_approval_response", "mcp_call", 
-        "structured_outputs", "workflow_action", "memory_search_call", 
+        "local_shell_call", "local_shell_call_output", "mcp_list_tools",
+        "mcp_approval_request", "mcp_approval_response", "mcp_call",
+        "structured_outputs", "workflow_action", "memory_search_call",
         "oauth_consent_request"
     ]]
 
@@ -122,8 +124,8 @@ class Reasoning(TypedDict):
     """**o-series models only**
     Configuration options for
     `reasoning models <https://platform.openai.com/docs/guides/reasoning>`_.
+
     """
-    
     effort: NotRequired[Union[str, Literal["low", "medium", "high"]]]
     """Known values are: \"low\", \"medium\", and \"high\"."""
     summary: NotRequired[Literal["auto", "concise", "detailed"]]
@@ -159,11 +161,11 @@ class ResponseError(TypedDict):
 class ResponseIncompleteDetails1(TypedDict):
     reason: Literal["max_output_tokens", "content_filter"]
 
-class MemoryStoreOperationUsageInputTokenDetails(TypedDict):
+class MemoryStoreOperationUsageInputTokenDetails(TypedDict):  # pylint: disable=name-too-long
     cached_tokens: int
     """Number of input tokens retrieved from cache."""
 
-class MemoryStoreOperationUsageOutputTokenDetails(TypedDict):
+class MemoryStoreOperationUsageOutputTokenDetails(TypedDict):  # pylint: disable=name-too-long
     cached_tokens: int
     """Number of output tokens retrieved from cache."""
 
@@ -215,7 +217,7 @@ class Response(TypedDict):
     """A system (or developer) message inserted into the model's context. Required."""
     parallel_tool_calls: bool
     """Whether to allow the model to run tool calls in parallel. Required."""
-    
+
     # Optional fields
     service_tier: NotRequired[Union[str, Literal["auto", "default", "flex", "scale", "priority"], ServiceTier]]
     """Note: service_tier is not applicable to Azure OpenAI. Known values are:
@@ -434,5 +436,3 @@ class ResponsesAssistantMessageItemResource(ResponsesMessageItemResource):
     """Assistant message item resource with role='assistant'."""
     content: List[ItemContent]
     """The content of the message. Required."""
-
-
