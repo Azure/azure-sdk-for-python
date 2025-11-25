@@ -6,6 +6,8 @@
 import logging
 import os
 from typing import TYPE_CHECKING, Optional
+from contextlib import ExitStack
+from functools import wraps
 import urllib.parse as url_parse
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -159,91 +161,123 @@ def transform_request(request: "HttpRequest", recording_id: str) -> None:
     request.url = updated_target
 
 
-def recorded_by_proxy(test_func: "Callable") -> None:
-    """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
+# helper: turn decorator args into a normalized list of (owner, attr_name)
+def _normalize_transport_specs(specs):
+    norm = []
+    for spec in specs:
+        if isinstance(spec, tuple) and len(spec) == 2:
+            owner, attr = spec
+            norm.append((owner, attr))
+        else:
+            # If a class was provided, assume attribute name "send"
+            # (Safer than accepting a bare function object like RequestsTransport.send,
+            # because assignment requires knowing the owner and attribute name.)
+            norm.append((spec, "send"))
+    return norm
 
-    For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
+
+def recorded_by_proxy(*maybe_specs):
+    """
+    Usages:
+      @recorded_by_proxy
+      def test(...): ...
+
+      @recorded_by_proxy((RequestsTransport, "send"), (HttpxTransport, "send"))
+      def test(...): ...
     """
 
-    def record_wrap(*args, **kwargs):
-        def transform_args(*args, **kwargs):
-            copied_positional_args = list(args)
-            request = copied_positional_args[1]
+    # Bare decorator usage: @recorded_by_proxy
+    if len(maybe_specs) == 1 and callable(maybe_specs[0]):
+        test_func = maybe_specs[0]
+        transports = _normalize_transport_specs([(RequestsTransport, "send")])
+        return _make_proxy_decorator(transports)(test_func)
 
-            transform_request(request, recording_id)
+    # Parameterized decorator usage: @recorded_by_proxy(...)
+    transports = _normalize_transport_specs(maybe_specs or [(RequestsTransport, "send")])
+    return _make_proxy_decorator(transports)
 
-            return tuple(copied_positional_args), kwargs
 
-        trimmed_kwargs = {k: v for k, v in kwargs.items()}
-        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+def _make_proxy_decorator(transports):
+    def _decorator(test_func: "Callable"):
+        @wraps(test_func)
+        def record_wrap(*args, **kwargs):
+            # ---- your existing trimming/early-exit logic ----
+            trimmed_kwargs = {k: v for k, v in kwargs.items()}
+            trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
-        if is_live_and_not_recording():
-            return test_func(*args, **trimmed_kwargs)
+            if is_live_and_not_recording():
+                return test_func(*args, **trimmed_kwargs)
 
-        test_id = get_test_id()
-        recording_id, variables = start_record_or_playback(test_id)
-        original_transport_func = RequestsTransport.send
+            test_id = get_test_id()
+            recording_id, variables = start_record_or_playback(test_id)
 
-        def combined_call(*args, **kwargs):
-            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+            def transform_args_inner(*call_args, **call_kwargs):
+                copied_positional_args = list(call_args)
+                request = copied_positional_args[1]
+                transform_request(request, recording_id)
+                return tuple(copied_positional_args), call_kwargs
 
-            # make the x-recording-upstream-base-uri the URL of the request
-            # this makes the request look like it was made to the original endpoint instead of to the proxy
-            # without this, things like LROPollers can get broken by polling the wrong endpoint
-            parsed_result = url_parse.urlparse(result.request.url)
-            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
-            upstream_uri_dict = {
-                "scheme": upstream_uri.scheme,
-                "netloc": upstream_uri.netloc,
-            }
-            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+            # Build a wrapper factory so each patched method closes over its own original
+            def make_combined_call(original_transport_func):
+                def combined_call(*call_args, **call_kwargs):
+                    adjusted_args, adjusted_kwargs = transform_args_inner(*call_args, **call_kwargs)
+                    result = original_transport_func(*adjusted_args, **adjusted_kwargs)
 
-            result.request.url = original_target
-            return result
+                    # rewrite request.url to the original upstream for LROs, etc.
+                    parsed_result = url_parse.urlparse(result.request.url)
+                    upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+                    upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+                    original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+                    result.request.url = original_target
+                    return result
+                return combined_call
 
-        RequestsTransport.send = combined_call
+            # Patch multiple transports and ensure restoration
+            test_variables = None
+            test_run = False
+            with ExitStack() as stack:
+                originals = []
+                # monkeypatch all requested transports
+                for owner, name in transports:
+                    original = getattr(owner, name)
+                    setattr(owner, name, make_combined_call(original))
+                    originals.append((owner, name, original))
 
-        # call the modified function
-        # we define test_variables before invoking the test so the variable is defined in case of an exception
-        test_variables = None
-        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
-        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
-        test_run = False
-        try:
-            try:
-                test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
-                test_run = True
-            except TypeError as error:
-                if "unexpected keyword argument" in str(error) and "variables" in str(error):
-                    logger = logging.getLogger()
-                    logger.info(
-                        "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
-                        "`variables` parameter to make use of recorded test variables."
+                try:
+                    try:
+                        test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+                        test_run = True
+                    except TypeError as error:
+                        if "unexpected keyword argument" in str(error) and "variables" in str(error):
+                            logger = logging.getLogger()
+                            logger.info(
+                                "This test can't accept variables as input. "
+                                "Accept `**kwargs` and/or a `variables` parameter to use recorded variables."
+                            )
+                        else:
+                            raise
+
+                    if not test_run:
+                        test_variables = test_func(*args, **trimmed_kwargs)
+
+                except ResourceNotFoundError as error:
+                    error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+                    troubleshoot = (
+                        "Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot."
                     )
-                else:
-                    raise error
-            # if the test couldn't accept `variables`, run the test without passing them
-            if not test_run:
-                test_variables = test_func(*args, **trimmed_kwargs)
+                    message = error_body.get("message") or error_body.get("Message")
+                    error_with_message = ResourceNotFoundError(
+                        message=f"{troubleshoot} Error details:\n{message}",
+                        response=error.response,
+                    )
+                    raise error_with_message from error
 
-        except ResourceNotFoundError as error:
-            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-            troubleshoot = (
-                "Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot."
-            )
-            message = error_body.get("message") or error_body.get("Message")
-            error_with_message = ResourceNotFoundError(
-                message=f"{troubleshoot} Error details:\n{message}",
-                response=error.response,
-            )
-            raise error_with_message from error
+                finally:
+                    # restore in reverse order
+                    for owner, name, original in reversed(originals):
+                        setattr(owner, name, original)
+                    stop_record_or_playback(test_id, recording_id, test_variables)
 
-        finally:
-            RequestsTransport.send = original_transport_func
-            stop_record_or_playback(test_id, recording_id, test_variables)
-
-        return test_variables
-
-    return record_wrap
+            return test_variables
+        return record_wrap
+    return _decorator
