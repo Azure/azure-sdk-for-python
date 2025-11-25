@@ -15,6 +15,7 @@ from test_base import (
     RFT_JOB_TYPE,
     STANDARD_TRAINING_TYPE,
     GLOBAL_STANDARD_TRAINING_TYPE,
+    DEVELOPER_TIER_TRAINING_TYPE,
 )
 from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
@@ -379,6 +380,11 @@ class TestFineTuning(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy
+    def test_sft_finetuning_create_job_openai_developer(self, **kwargs):
+        self._test_sft_create_job_helper("openai", DEVELOPER_TIER_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
     def test_sft_finetuning_create_job_openai_globalstandard(self, **kwargs):
         self._test_sft_create_job_helper("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
@@ -394,6 +400,11 @@ class TestFineTuning(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy
+    def test_dpo_finetuning_create_job_openai__developer(self, **kwargs):
+        self._test_dpo_create_job_helper("openai", DEVELOPER_TIER_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
     def test_dpo_finetuning_create_job_openai_globalstandard(self, **kwargs):
         self._test_dpo_create_job_helper("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
@@ -406,6 +417,11 @@ class TestFineTuning(TestBase):
     @recorded_by_proxy
     def test_rft_finetuning_create_job_openai_globalstandard(self, **kwargs):
         self._test_rft_create_job_helper("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_rft_finetuning_create_job_openai_developer(self, **kwargs):
+        self._test_rft_create_job_helper("openai", DEVELOPER_TIER_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy
@@ -533,6 +549,11 @@ class TestFineTuning(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy
+    def test_sft_cancel_job_openai_developer(self, **kwargs):
+        self._test_cancel_job_helper(SFT_JOB_TYPE, "openai", DEVELOPER_TIER_TRAINING_TYPE, "supervised", **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
     def test_sft_cancel_job_oss_globalstandard(self, **kwargs):
         self._test_cancel_job_helper(SFT_JOB_TYPE, "oss", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs)
 
@@ -548,6 +569,11 @@ class TestFineTuning(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy
+    def test_dpo_cancel_job_openai_developer(self, **kwargs):
+        self._test_cancel_job_helper(DPO_JOB_TYPE, "openai", DEVELOPER_TIER_TRAINING_TYPE, "dpo", **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
     def test_rft_cancel_job_openai_standard(self, **kwargs):
         self._test_cancel_job_helper(RFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "reinforcement", **kwargs)
 
@@ -555,6 +581,11 @@ class TestFineTuning(TestBase):
     @recorded_by_proxy
     def test_rft_cancel_job_openai_globalstandard(self, **kwargs):
         self._test_cancel_job_helper(RFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "reinforcement", **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_rft_cancel_job_openai_developer(self, **kwargs):
+        self._test_cancel_job_helper(RFT_JOB_TYPE, "openai", DEVELOPER_TIER_TRAINING_TYPE, "reinforcement", **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy

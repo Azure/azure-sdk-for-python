@@ -77,6 +77,7 @@ RFT_JOB_TYPE: Final[str] = "rft"
 # Training type constants
 STANDARD_TRAINING_TYPE: Final[str] = "Standard"
 GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
+DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
 
 
 class TestBase(AzureRecordedTestCase):

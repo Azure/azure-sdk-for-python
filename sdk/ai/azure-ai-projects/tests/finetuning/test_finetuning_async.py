@@ -15,6 +15,7 @@ from test_base import (
     RFT_JOB_TYPE,
     STANDARD_TRAINING_TYPE,
     GLOBAL_STANDARD_TRAINING_TYPE,
+    DEVELOPER_TIER_TRAINING_TYPE,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live_and_not_recording
@@ -393,6 +394,11 @@ class TestFineTuningAsync(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy_async
+    async def test_sft_finetuning_create_job_openai_developer_async(self, **kwargs):
+        await self._test_sft_create_job_helper_async("openai", DEVELOPER_TIER_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
     async def test_sft_finetuning_create_job_oss_globalstandard_async(self, **kwargs):
         await self._test_sft_create_job_helper_async("oss", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
 
@@ -408,6 +414,11 @@ class TestFineTuningAsync(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy_async
+    async def test_dpo_finetuning_create_job_openai_developer_async(self, **kwargs):
+        await self._test_dpo_create_job_helper_async("openai", DEVELOPER_TIER_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
     async def test_rft_finetuning_create_job_openai_standard_async(self, **kwargs):
         await self._test_rft_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
 
@@ -415,6 +426,11 @@ class TestFineTuningAsync(TestBase):
     @recorded_by_proxy_async
     async def test_rft_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
         await self._test_rft_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_rft_finetuning_create_job_openai_developer_async(self, **kwargs):
+        await self._test_rft_create_job_helper_async("openai", DEVELOPER_TIER_TRAINING_TYPE, **kwargs)
 
     @servicePreparer()
     @recorded_by_proxy_async
@@ -548,6 +564,13 @@ class TestFineTuningAsync(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy_async
+    async def test_sft_cancel_job_openai_developer_async(self, **kwargs):
+        await self._test_cancel_job_helper_async(
+            SFT_JOB_TYPE, "openai", DEVELOPER_TIER_TRAINING_TYPE, "supervised", **kwargs
+        )
+
+    @servicePreparer()
+    @recorded_by_proxy_async
     async def test_sft_cancel_job_openai_globalstandard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(
             SFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs
@@ -567,6 +590,11 @@ class TestFineTuningAsync(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy_async
+    async def test_dpo_cancel_job_openai_developer_async(self, **kwargs):
+        await self._test_cancel_job_helper_async(DPO_JOB_TYPE, "openai", DEVELOPER_TIER_TRAINING_TYPE, "dpo", **kwargs)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
     async def test_dpo_cancel_job_openai_globalstandard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(DPO_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "dpo", **kwargs)
 
@@ -575,6 +603,13 @@ class TestFineTuningAsync(TestBase):
     async def test_rft_cancel_job_openai_standard_async(self, **kwargs):
         await self._test_cancel_job_helper_async(
             RFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
+        )
+
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_rft_cancel_job_openai_developer_async(self, **kwargs):
+        await self._test_cancel_job_helper_async(
+            RFT_JOB_TYPE, "openai", DEVELOPER_TIER_TRAINING_TYPE, "reinforcement", **kwargs
         )
 
     @servicePreparer()
