@@ -21,65 +21,64 @@ from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import PostgreSQLManagementClientConfiguration
 from .operations import (
-    AdministratorsOperations,
-    BackupsOperations,
-    CheckNameAvailabilityOperations,
-    CheckNameAvailabilityWithLocationOperations,
+    AdministratorsMicrosoftEntraOperations,
+    AdvancedThreatProtectionSettingsOperations,
+    BackupsAutomaticAndOnDemandOperations,
+    BackupsLongTermRetentionOperations,
+    CapabilitiesByLocationOperations,
+    CapabilitiesByServerOperations,
+    CapturedLogsOperations,
     ConfigurationsOperations,
     DatabasesOperations,
     FirewallRulesOperations,
-    FlexibleServerOperations,
-    GetPrivateDnsZoneSuffixOperations,
-    LocationBasedCapabilitiesOperations,
-    LogFilesOperations,
-    LtrBackupOperationsOperations,
     MigrationsOperations,
+    NameAvailabilityOperations,
     Operations,
-    PostgreSQLManagementClientOperationsMixin,
-    PrivateEndpointConnectionOperations,
+    PrivateDnsZoneSuffixOperations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     QuotaUsagesOperations,
     ReplicasOperations,
-    ServerCapabilitiesOperations,
     ServerThreatProtectionSettingsOperations,
     ServersOperations,
-    TuningConfigurationOperations,
-    TuningIndexOperations,
     TuningOptionsOperations,
     VirtualEndpointsOperations,
     VirtualNetworkSubnetUsageOperations,
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PostgreSQLManagementClient(
-    PostgreSQLManagementClientOperationsMixin
-):  # pylint: disable=too-many-instance-attributes
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for
-    Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, security
-    alert policies, log files and configurations with new business model.
+class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attributes
+    """The Azure Database for PostgreSQL management API provides create, read, update, and delete
+    functionality for Azure PostgreSQL resources including servers, databases, firewall rules,
+    network configuration, security alert policies, log files and configurations with new business
+    model.
 
-    :ivar administrators: AdministratorsOperations operations
-    :vartype administrators:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.AdministratorsOperations
-    :ivar backups: BackupsOperations operations
-    :vartype backups: azure.mgmt.postgresqlflexibleservers.aio.operations.BackupsOperations
-    :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
-    :vartype location_based_capabilities:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.LocationBasedCapabilitiesOperations
-    :ivar server_capabilities: ServerCapabilitiesOperations operations
-    :vartype server_capabilities:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.ServerCapabilitiesOperations
-    :ivar check_name_availability: CheckNameAvailabilityOperations operations
-    :vartype check_name_availability:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.CheckNameAvailabilityOperations
-    :ivar check_name_availability_with_location: CheckNameAvailabilityWithLocationOperations
+    :ivar administrators_microsoft_entra: AdministratorsMicrosoftEntraOperations operations
+    :vartype administrators_microsoft_entra:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.AdministratorsMicrosoftEntraOperations
+    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
      operations
-    :vartype check_name_availability_with_location:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.CheckNameAvailabilityWithLocationOperations
+    :vartype advanced_threat_protection_settings:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.AdvancedThreatProtectionSettingsOperations
+    :ivar server_threat_protection_settings: ServerThreatProtectionSettingsOperations operations
+    :vartype server_threat_protection_settings:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.ServerThreatProtectionSettingsOperations
+    :ivar backups_automatic_and_on_demand: BackupsAutomaticAndOnDemandOperations operations
+    :vartype backups_automatic_and_on_demand:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.BackupsAutomaticAndOnDemandOperations
+    :ivar capabilities_by_location: CapabilitiesByLocationOperations operations
+    :vartype capabilities_by_location:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.CapabilitiesByLocationOperations
+    :ivar capabilities_by_server: CapabilitiesByServerOperations operations
+    :vartype capabilities_by_server:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.CapabilitiesByServerOperations
+    :ivar captured_logs: CapturedLogsOperations operations
+    :vartype captured_logs:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.CapturedLogsOperations
     :ivar configurations: ConfigurationsOperations operations
     :vartype configurations:
      azure.mgmt.postgresqlflexibleservers.aio.operations.ConfigurationsOperations
@@ -88,27 +87,22 @@ class PostgreSQLManagementClient(
     :ivar firewall_rules: FirewallRulesOperations operations
     :vartype firewall_rules:
      azure.mgmt.postgresqlflexibleservers.aio.operations.FirewallRulesOperations
-    :ivar servers: ServersOperations operations
-    :vartype servers: azure.mgmt.postgresqlflexibleservers.aio.operations.ServersOperations
-    :ivar flexible_server: FlexibleServerOperations operations
-    :vartype flexible_server:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.FlexibleServerOperations
-    :ivar ltr_backup_operations: LtrBackupOperationsOperations operations
-    :vartype ltr_backup_operations:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.LtrBackupOperationsOperations
+    :ivar backups_long_term_retention: BackupsLongTermRetentionOperations operations
+    :vartype backups_long_term_retention:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.BackupsLongTermRetentionOperations
     :ivar migrations: MigrationsOperations operations
     :vartype migrations: azure.mgmt.postgresqlflexibleservers.aio.operations.MigrationsOperations
+    :ivar name_availability: NameAvailabilityOperations operations
+    :vartype name_availability:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.NameAvailabilityOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.postgresqlflexibleservers.aio.operations.Operations
-    :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
-    :vartype get_private_dns_zone_suffix:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
+    :ivar private_dns_zone_suffix: PrivateDnsZoneSuffixOperations operations
+    :vartype private_dns_zone_suffix:
+     azure.mgmt.postgresqlflexibleservers.aio.operations.PrivateDnsZoneSuffixOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.postgresqlflexibleservers.aio.operations.PrivateEndpointConnectionsOperations
-    :ivar private_endpoint_connection: PrivateEndpointConnectionOperations operations
-    :vartype private_endpoint_connection:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.PrivateEndpointConnectionOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.postgresqlflexibleservers.aio.operations.PrivateLinkResourcesOperations
@@ -117,20 +111,11 @@ class PostgreSQLManagementClient(
      azure.mgmt.postgresqlflexibleservers.aio.operations.QuotaUsagesOperations
     :ivar replicas: ReplicasOperations operations
     :vartype replicas: azure.mgmt.postgresqlflexibleservers.aio.operations.ReplicasOperations
-    :ivar log_files: LogFilesOperations operations
-    :vartype log_files: azure.mgmt.postgresqlflexibleservers.aio.operations.LogFilesOperations
-    :ivar server_threat_protection_settings: ServerThreatProtectionSettingsOperations operations
-    :vartype server_threat_protection_settings:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.ServerThreatProtectionSettingsOperations
+    :ivar servers: ServersOperations operations
+    :vartype servers: azure.mgmt.postgresqlflexibleservers.aio.operations.ServersOperations
     :ivar tuning_options: TuningOptionsOperations operations
     :vartype tuning_options:
      azure.mgmt.postgresqlflexibleservers.aio.operations.TuningOptionsOperations
-    :ivar tuning_index: TuningIndexOperations operations
-    :vartype tuning_index:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.TuningIndexOperations
-    :ivar tuning_configuration: TuningConfigurationOperations operations
-    :vartype tuning_configuration:
-     azure.mgmt.postgresqlflexibleservers.aio.operations.TuningConfigurationOperations
     :ivar virtual_endpoints: VirtualEndpointsOperations operations
     :vartype virtual_endpoints:
      azure.mgmt.postgresqlflexibleservers.aio.operations.VirtualEndpointsOperations
@@ -143,23 +128,36 @@ class PostgreSQLManagementClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2025-01-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-08-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = PostgreSQLManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -188,37 +186,40 @@ class PostgreSQLManagementClient(
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.administrators = AdministratorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.location_based_capabilities = LocationBasedCapabilitiesOperations(
+        self.administrators_microsoft_entra = AdministratorsMicrosoftEntraOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.server_capabilities = ServerCapabilitiesOperations(
+        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.check_name_availability = CheckNameAvailabilityOperations(
+        self.server_threat_protection_settings = ServerThreatProtectionSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.check_name_availability_with_location = CheckNameAvailabilityWithLocationOperations(
+        self.backups_automatic_and_on_demand = BackupsAutomaticAndOnDemandOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.capabilities_by_location = CapabilitiesByLocationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.capabilities_by_server = CapabilitiesByServerOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.captured_logs = CapturedLogsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.flexible_server = FlexibleServerOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.ltr_backup_operations = LtrBackupOperationsOperations(
+        self.backups_long_term_retention = BackupsLongTermRetentionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.migrations = MigrationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.name_availability = NameAvailabilityOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
+        self.private_dns_zone_suffix = PrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
@@ -226,15 +227,8 @@ class PostgreSQLManagementClient(
         )
         self.quota_usages = QuotaUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.server_threat_protection_settings = ServerThreatProtectionSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tuning_options = TuningOptionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tuning_index = TuningIndexOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tuning_configuration = TuningConfigurationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.virtual_endpoints = VirtualEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
