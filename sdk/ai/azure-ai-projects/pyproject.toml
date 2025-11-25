@@ -64,6 +64,5 @@ exclude = [
 pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
-black = true
 verifytypes = false
 
