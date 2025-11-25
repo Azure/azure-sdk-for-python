@@ -13,6 +13,7 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
     add_uri_regex_sanitizer,
+    set_custom_default_matcher,
 )
 
 load_dotenv()
@@ -28,6 +29,13 @@ def start_proxy(test_proxy):
 # For security, please avoid recording sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
+    # Configure matcher to ignore authentication header differences
+    # This allows recordings made with API key auth to work with AAD auth in CI
+    set_custom_default_matcher(
+        excluded_headers="Authorization,Ocp-Apim-Subscription-Key",
+        ignored_headers="Authorization,Ocp-Apim-Subscription-Key"
+    )
+    
     # Sanitize subscription and tenant IDs if they exist
     # Only sanitize if the values are actually set (not default fake values)
     transcription_subscription_id = os.environ.get("TRANSCRIPTION_SUBSCRIPTION_ID", "")
