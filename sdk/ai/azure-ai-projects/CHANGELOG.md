@@ -19,6 +19,7 @@
 * Tracing: added "finish_reason" as part of "gen_ai.output.messages" content.
 
 ### Bugs Fixed
+* Tracing: fixed a bug with computer use tool call output including screenshot binary data even when binary data tracing is off.
 
 ### Sample updates
 

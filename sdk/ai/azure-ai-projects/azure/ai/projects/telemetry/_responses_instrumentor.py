@@ -582,7 +582,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
         span.span_instance.add_event(name=event_name, attributes=attributes)
 
-    def _add_tool_message_events(
+    def _add_tool_message_events(  # pylint: disable=too-many-branches
         self,
         span: "AbstractSpan",
         tool_outputs: List[Any],
@@ -633,11 +633,27 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             # Try to parse JSON string into object
                             if isinstance(output_value, str):
                                 try:
-                                    tool_output["output"] = json.loads(output_value)
+                                    parsed_output = json.loads(output_value)
+                                    # For computer_call_output, strip binary data if binary tracing is disabled
+                                    if item_type == "computer_call_output" and not _trace_binary_data:
+                                        if isinstance(parsed_output, dict):
+                                            output_type = parsed_output.get("type")
+                                            # Remove image_url from computer_screenshot if binary data tracing is off
+                                            if output_type == "computer_screenshot" and "image_url" in parsed_output:
+                                                parsed_output = {
+                                                    k: v for k, v in parsed_output.items() if k != "image_url"
+                                                }
+                                    tool_output["output"] = parsed_output
                                 except (json.JSONDecodeError, TypeError):
                                     # If parsing fails, keep as string
                                     tool_output["output"] = output_value
                             else:
+                                # For non-string output, also check for binary data in computer outputs
+                                if item_type == "computer_call_output" and not _trace_binary_data:
+                                    if isinstance(output_value, dict):
+                                        output_type = output_value.get("type")
+                                        if output_type == "computer_screenshot" and "image_url" in output_value:
+                                            output_value = {k: v for k, v in output_value.items() if k != "image_url"}
                                 tool_output["output"] = output_value
 
                     # Add to parts array (type "tool_call_output" wraps the tool output)
