@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 # mypy: disable-error-code="assignment"
 # from azure.ai.agentserver.core.models import projects as project_models
+from typing import Optional, Union, Any, cast
 from azure.ai.agentserver.core.models.projects import (
-    ItemResource,
     ItemContent,
     FunctionToolCallItemResource,
     FunctionToolCallOutputItemResource,
@@ -12,7 +12,7 @@ from azure.ai.agentserver.core.models.projects import (
 )
 from azure.ai.agentserver.core.models.projects._enums import ResponsesMessageRole
 from ..utils import extract_function_call
-from typing import Optional, Union, Any, cast
+
 
 class ItemResourceHelper:
     def __init__(self, item_type: str, item_id: Optional[str] = None):
@@ -105,7 +105,7 @@ class MessageItemResourceHelper(ItemResourceHelper):
         # Ensure item_id is not None
         if self.item_id is None:
             raise ValueError("item_id cannot be None for MessageItemResourceHelper")
-            
+
         content: ResponsesMessageItemResource = {  # type: ignore[typeddict-item]
             "id": self.item_id,
             "type": "message",
@@ -114,12 +114,12 @@ class MessageItemResourceHelper(ItemResourceHelper):
         }
         return content
 
-    def add_aggregate_content(self, content_item: Union[dict, ItemContent]) -> None:
-        if isinstance(content_item, dict):
-            typed_item: ItemContent = cast(ItemContent, content_item)
+    def add_aggregate_content(self, item: Union[dict, ItemContent]) -> None:
+        if isinstance(item, dict):
+            typed_item: ItemContent = cast(ItemContent, item)
             self.content.append(typed_item)
         else:
-            self.content.append(content_item)
+            self.content.append(item)
 
     def get_aggregated_content(self):
         return self.create_item_resource(is_done=True)

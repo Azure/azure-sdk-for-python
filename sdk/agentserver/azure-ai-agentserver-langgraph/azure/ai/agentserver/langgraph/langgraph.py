@@ -5,13 +5,10 @@
 # mypy: disable-error-code="assignment,arg-type"
 import os
 import re
-from typing import Optional, List, TYPE_CHECKING, cast
+from typing import Optional, List, TYPE_CHECKING
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph.state import CompiledStateGraph
-
-if TYPE_CHECKING:
-    from langchain_core.callbacks import BaseCallbackHandler
 
 from azure.ai.agentserver.core.constants import Constants
 from azure.ai.agentserver.core.logger import get_logger
@@ -24,8 +21,10 @@ from .models import (
 )
 from .models.utils import is_state_schema_valid
 
-logger = get_logger()
+if TYPE_CHECKING:
+    from langchain_core.callbacks import BaseCallbackHandler
 
+logger = get_logger()
 
 class LangGraphAdapter(FoundryCBAgent):
     """
@@ -148,10 +147,10 @@ class LangGraphAdapter(FoundryCBAgent):
             callbacks_list: List[BaseCallbackHandler] = []
         else:
             callbacks_list = []
-        
+
         if self.azure_ai_tracer:
             callbacks_list = [self.azure_ai_tracer]  # type: ignore[list-item]
-            
+
         config = RunnableConfig(
             configurable={
                 "thread_id": context.conversation_id,

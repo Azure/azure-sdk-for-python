@@ -1,9 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import cast
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.models.projects._enums import ItemContentType
-from typing import cast
 
 
 class ItemContentHelper:

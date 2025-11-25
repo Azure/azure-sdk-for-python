@@ -108,22 +108,22 @@ class LangGraphRequestConverter:
         call_id = item.get("call_id")
         name = item.get("name")
         argument = item.get("arguments", None)
-        
+
         if not call_id or not name:
             raise ValueError(f"Invalid function call item missing call_id or name: {item}")
-        
+
         try:
             args = json.loads(argument) if argument else {}
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON in function call arguments: {item}") from e
-        
+
         return AIMessage(tool_calls=[ToolCall(id=call_id, name=name, args=args)], content="")
 
     def convert_function_call_output(self, item: dict) -> ToolMessage:
         # Function call output should have: call_id and output
         call_id = item.get("call_id")
         output = item.get("output", None)
-        
+
         if not call_id:
             raise ValueError(f"Invalid function call output item missing call_id: {item}")
 

@@ -124,7 +124,7 @@ class LanggraphMessageStateConverter(LanggraphStateConverter):
 
         agent_id = context.get_agent_id_object()
         conversation = context.get_conversation_object()
-        
+
         # Create Response with all required fields
         response: Response = cast(Response, {
             "object": "response",

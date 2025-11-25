@@ -99,7 +99,7 @@ class LangGraphResponseConverter:
                 output_str = str(output_content)
             else:
                 output_str = str(output_content) if output_content else ""
-            
+
             return project_models.FunctionToolCallOutputItemResource(
                 type="function_call_output",
                 status="completed",
