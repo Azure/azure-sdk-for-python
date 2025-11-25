@@ -973,5 +973,68 @@ class TestAsyncAvailabilityStrategy:
         await setup_with_transport['client'].close()
         await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("operation",[READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
+    async def test_default_availability_strategy_with_ppaf_enabled(
+            self,
+            operation,
+            setup):
+        """Test availability strategy is enabled when ppaf is enabled, operations failover to second preferred location on errors"""
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
+        failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
+
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, _get_operation_type(
+                                   operation)) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+
+        error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
+            1000,  # Add delay to trigger hedging
+            CosmosHttpResponseError(status_code=400, message="Injected Error")
+        )
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        #enable ppaf
+        is_get_account_predicate = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
+        # Set the database account response to have PPAF enabled
+        ppaf_enabled_database_account = \
+            lambda r, inner: FaultInjectionTransportAsync.transform_topology_ppaf_enabled(inner=inner)
+        custom_transport.add_response_transformation(
+            is_get_account_predicate,
+            ppaf_enabled_database_account)
+
+        setup_with_transport = await self._setup_method_with_custom_transport(
+            setup['write_locations'],
+            setup['read_locations'],
+            custom_transport,
+            multiple_write_locations=True)
+        setup_without_fault = await self._setup_method_with_custom_transport(
+            setup['write_locations'],
+            setup['read_locations'],
+            None)
+
+        doc = _create_doc()
+        await setup_without_fault['col'].create_item(doc)
+
+        # Test operation with fault injection
+        if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
+            await _perform_read_operation(
+                operation,
+                setup_with_transport['col'],
+                doc,
+                [uri_down, failed_over_uri],
+                [])
+        else:
+            await _perform_write_operation(
+                operation,
+                setup_with_transport['col'],
+                doc,
+                [uri_down, failed_over_uri],
+                [],
+                retry_write=True)
+        await setup_with_transport['client'].close()
+        await setup_without_fault['client'].close()
+        await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id,
+                                       setup_with_transport['col'].id)
+
 if __name__ == '__main__':
     unittest.main()

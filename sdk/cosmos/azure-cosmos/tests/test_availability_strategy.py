@@ -835,5 +835,56 @@ class TestAvailabilityStrategy:
         assert exc_info.value.status_code == 400
         self._clean_up_container(setup_with_transport['db'].id, setup_with_transport['col'].id)
 
+    @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
+    def test_default_availability_strategy_with_ppaf_enabled(self, operation):
+        """Test availability strategy is enabled when ppaf is enabled, operations failover to second preferred location on errors"""
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
+        failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
+
+        predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
+                               FaultInjectionTransport.predicate_is_operation_type(r,
+                                                                                   _get_operation_type(operation)) and
+                               FaultInjectionTransport.predicate_targets_region(r, uri_down))
+
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
+            1000,  # Add delay to trigger hedging
+            CosmosHttpResponseError(status_code=400, message="Injected Error")
+        )
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+        # enable ppaf
+        is_get_account_predicate = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        # Set the database account response to have PPAF enabled
+        ppaf_enabled_database_account = \
+            lambda r, inner: FaultInjectionTransport.transform_topology_ppaf_enabled(inner=inner)
+        custom_transport.add_response_transformation(
+            is_get_account_predicate,
+            ppaf_enabled_database_account)
+
+        setup = self._setup_method_with_custom_transport(custom_transport,multiple_write_locations=True)
+
+        setup_without_fault = self._setup_method_with_custom_transport(None)
+        doc = _create_doc()
+        setup_without_fault['col'].create_item(body=doc)
+
+        expected_uris = [uri_down, failed_over_uri]
+        # Test operation with fault injection
+
+        if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
+            _perform_read_operation(
+                operation,
+                setup['col'],
+                doc,
+                expected_uris,
+                [])
+        else:
+            _perform_write_operation(
+                operation,
+                setup['col'],
+                doc,
+                expected_uris,
+                [],
+                retry_write=True)
+        self._clean_up_container(setup['db'].id, setup['col'].id)
+
 if __name__ == '__main__':
     unittest.main()
