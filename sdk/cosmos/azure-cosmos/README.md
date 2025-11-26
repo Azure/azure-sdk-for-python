@@ -995,6 +995,7 @@ container.read_item(
 #### Customized executor for hedging for sync client
 
 ```python
+# Pass in your own custom TheadPoolExecutor to use with the sync client
 from concurrent.futures import ThreadPoolExecutor
 from azure.cosmos import CosmosClient
 
