@@ -10,7 +10,14 @@ from azure.core.pipeline.policies._universal import HTTPRequestType
 
 from azure.cosmos._utils import get_user_agent_features
 
+
 class CosmosUserAgentPolicy(UserAgentPolicy):
+    """Custom user agent policy for Cosmos DB that appends feature flags to the user agent string.
+
+    This policy extends the standard UserAgentPolicy to include Cosmos-specific feature flags
+    (e.g., circuit breaker, per-partition automatic failover) in the user agent header for
+    debugging and telemetry purposes.
+    """
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Modifies the User-Agent header before the request is sent.

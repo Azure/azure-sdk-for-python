@@ -38,7 +38,6 @@ from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
     ContentDecodePolicy,
     HeadersPolicy,
-    UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     DistributedTracingPolicy,
