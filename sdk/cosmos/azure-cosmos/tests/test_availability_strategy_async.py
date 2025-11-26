@@ -359,17 +359,17 @@ class TestAsyncAvailabilityStrategy:
     def test_invalid_thresholds(self, threshold_ms, threshold_steps_ms, error_message):
         """Test that creating strategy with non-positive thresholds raises ValueError when enabled"""
         with pytest.raises(ValueError, match=error_message):
-            config = {'type': 'CrossRegionHedging', 'threshold_ms': threshold_ms,
+            config = {'threshold_ms': threshold_ms,
                       'threshold_steps_ms': threshold_steps_ms}
             _validate_hedging_config(config)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
-        (None, {'type':'CrossRegionHedging', 'threshold_ms':150, 'threshold_steps_ms':50}),
-        ({'type':'CrossRegionHedging', 'threshold_ms':150, 'threshold_steps_ms':50}, _Unset),
-        ({'type':'CrossRegionHedging', 'threshold_ms':150, 'threshold_steps_ms':50},
-         {'type':'CrossRegionHedging', 'threshold_ms':150, 'threshold_steps_ms':50})
+        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),
+        ({'threshold_ms':150, 'threshold_steps_ms':50}, _Unset),
+        ({'threshold_ms':150, 'threshold_steps_ms':50},
+         {'threshold_ms':150, 'threshold_steps_ms':50})
     ])
     async def test_availability_strategy_in_steady_state(
             self,
@@ -415,9 +415,9 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation",[READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
-        (None, {'type':'CrossRegionHedging', 'threshold_ms':150, 'threshold_steps_ms':50}),
-        ({'type':'CrossRegionHedging', 'threshold_ms':150, 'threshold_steps_ms':50}, _Unset),
-        ({'type':'CrossRegionHedging', 'threshold_ms':700, 'threshold_steps_ms':50}, {'type':'CrossRegionHedging', 'threshold_ms':150, 'threshold_steps_ms':50})
+        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),
+        ({'threshold_ms':150, 'threshold_steps_ms':50}, _Unset),
+        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'type':'CrossRegionHedging', 'threshold_ms':150, 'threshold_steps_ms':50})
     ])
     async def test_client_availability_strategy_failover(
             self,
@@ -521,7 +521,7 @@ class TestAsyncAvailabilityStrategy:
         expected_uris = [uri_down, failed_over_uri]
 
         # Test should fail with original error without failover
-        strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
+        strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
                 await _perform_read_operation(
@@ -577,7 +577,7 @@ class TestAsyncAvailabilityStrategy:
         )
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
-        strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
+        strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
         setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
@@ -625,7 +625,7 @@ class TestAsyncAvailabilityStrategy:
     async def test_request_level_disabled_override_client_policy(self, operation, setup):
         """Test that request-level disabled policy overrides client-level enabled policy"""
         # Setup client with enabled hedging policy
-        client_strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
+        client_strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
@@ -701,7 +701,7 @@ class TestAsyncAvailabilityStrategy:
         await setup_without_fault['col'].create_item(doc)
 
         # Create request-level enabled policy
-        request_strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
+        request_strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
         expected_uris = [uri_down, failed_over_uri]
         # Test operation with fault injection
@@ -748,7 +748,7 @@ class TestAsyncAvailabilityStrategy:
 
         expected_uris = [uri_down]
         excluded_uris = [failed_over_uri]
-        strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
+        strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
@@ -801,7 +801,7 @@ class TestAsyncAvailabilityStrategy:
         expected_uris = [uri_down]
         excluded_uris = [failed_over_uri]
 
-        strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
+        strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
@@ -858,7 +858,7 @@ class TestAsyncAvailabilityStrategy:
 
             custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-            strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
+            strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
             setup_with_fault_injection = await self._setup_method_with_custom_transport(
                 setup['write_locations'],
@@ -949,7 +949,7 @@ class TestAsyncAvailabilityStrategy:
 
         custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-        strategy = {'type':'CrossRegionHedging', 'threshold_ms':100, 'threshold_steps_ms':50}
+        strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
         setup_with_transport = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],

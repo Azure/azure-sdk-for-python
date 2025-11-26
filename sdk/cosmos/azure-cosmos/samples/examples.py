@@ -363,7 +363,7 @@ for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0],
 
 # configure availability strategy config on request level
 # [START read_item_with_availability_strategy_config]
-strategy = {'type': 'CrossRegionHedging', 'threshold_ms':500, 'threshold_steps_ms':100}
+strategy = {'threshold_ms':500, 'threshold_steps_ms':100}
 container.read_item(
     item="id1",
     partition_key="pk1",
