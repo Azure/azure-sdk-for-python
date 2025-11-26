@@ -11,16 +11,17 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import (
-    _MapsGeolocationClientOperationsMixin as _MapsGeolocationClientOperationsMixinGenerated
+    _MapsGeolocationClientOperationsMixin as _MapsGeolocationClientOperationsMixinGenerated,
 )
 from ..models._patch import CountryRegionResult
 
-class _MapsGeolocationClientOperationsMixin(_MapsGeolocationClientOperationsMixinGenerated):
+
+class _MapsGeolocationClientOperationsMixin(
+    _MapsGeolocationClientOperationsMixinGenerated
+):
     @distributed_trace
     def get_country_code(  # type: ignore[override]
-        self,
-        ip_address: str,
-        **kwargs: Any
+        self, ip_address: str, **kwargs: Any
     ) -> CountryRegionResult:
         """Use to get the ISO country/region code for a given IP address.
 
@@ -43,12 +44,15 @@ class _MapsGeolocationClientOperationsMixin(_MapsGeolocationClientOperationsMixi
             ip_address=geolocation_result.ip_address,
             iso_code=(
                 geolocation_result.country_region.iso_code
-                if geolocation_result.country_region else None
-            )
+                if geolocation_result.country_region
+                else None
+            ),
         )
 
 
-__all__: list[str] = ["_MapsGeolocationClientOperationsMixin"]  # Add all objects you want publicly available to users
+__all__: list[str] = [
+    "_MapsGeolocationClientOperationsMixin"
+]  # Add all objects you want publicly available to users
 
 
 def patch_sdk():

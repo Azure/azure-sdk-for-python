@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Optional
 
+
 class CountryRegionResult(object):
     """Represents coordinate latitude and longitude
 
@@ -22,12 +23,16 @@ class CountryRegionResult(object):
     :type iso_code: Optional[str]
     """
 
-    def __init__(self, ip_address: Optional[str] = None, iso_code: Optional[str] = None):
+    def __init__(
+        self, ip_address: Optional[str] = None, iso_code: Optional[str] = None
+    ):
         self.ip_address = ip_address
         self.iso_code = iso_code
 
 
-__all__: list[str] = ["CountryRegionResult"]  # Add all objects you want publicly available to users at this package level
+__all__: list[str] = [
+    "CountryRegionResult"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

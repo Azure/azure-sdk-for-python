@@ -8,12 +8,17 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from ._operations import _MapsGeolocationClientOperationsMixin as _MapsGeolocationClientOperationsMixinGenerated
+from ._operations import (
+    _MapsGeolocationClientOperationsMixin as _MapsGeolocationClientOperationsMixinGenerated,
+)
 from azure.core.tracing.decorator_async import distributed_trace_async
 from typing import Any
 from ...models._patch import CountryRegionResult
 
-class _MapsGeolocationClientOperationsMixin(_MapsGeolocationClientOperationsMixinGenerated):
+
+class _MapsGeolocationClientOperationsMixin(
+    _MapsGeolocationClientOperationsMixinGenerated
+):
     @distributed_trace_async
     async def get_country_code(self, ip_address: str, **kwargs: Any) -> CountryRegionResult:  # type: ignore[override]
         """
@@ -47,12 +52,15 @@ class _MapsGeolocationClientOperationsMixin(_MapsGeolocationClientOperationsMixi
             ip_address=geolocation_result.ip_address,
             iso_code=(
                 geolocation_result.country_region.iso_code
-                if geolocation_result.country_region else None
-            )
+                if geolocation_result.country_region
+                else None
+            ),
         )
 
 
-__all__: list[str] = ["_MapsGeolocationClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+__all__: list[str] = [
+    "_MapsGeolocationClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
