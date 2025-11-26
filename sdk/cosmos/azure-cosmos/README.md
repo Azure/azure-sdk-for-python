@@ -1010,6 +1010,7 @@ client = CosmosClient(
 #### Customized max concurrency for hedging for async client
 
 ```python
+# Customize the max concurrency on the default ThreadPoolExecutor for the sync client
 from azure.cosmos import CosmosClient
 
 client = CosmosClient(
