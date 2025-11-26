@@ -25,6 +25,9 @@
   },
   "packageOptions": {
     "breakingChangeLabel": "CI-BreakingChange-Python",
-    "breakingChangesLabel": "BreakingChange-Python-Sdk"
+    "breakingChangesLabel": "BreakingChange-Python-Sdk",
+      "updateChangelogContentScript": {
+      "path": "./scripts/automation_sdk_update_changelog_content.ps1"
+    }
   }
 }

@@ -79,6 +79,10 @@ def change_log_generate(
     last_stable_release: Optional[str] = None,
     prefolder: Optional[str] = None,
 ):
+    """
+    For first release, will return a default changelog content "### Other Changes\n\n  - Initial version".
+    """
+
     if not last_version:
         return "### Other Changes\n\n  - Initial version"
 
@@ -115,7 +119,6 @@ def extract_breaking_change(changelog):
     return sorted([x.replace("  - ", "") for x in breaking_change])
 
 
-
 def modify_file(file_path: str, func: Any):
     with open(file_path, "r") as file_in:
         content = file_in.readlines()
@@ -134,7 +137,6 @@ class CheckFile:
     @property
     def pprint_name(self) -> str:
         return " ".join([word.capitalize() for word in self.package_name_last_part.split("-")])
-
 
     @property
     def extract_client_title_from_init(self) -> str:
@@ -163,13 +165,13 @@ class CheckFile:
             _LOGGER.info(f"Failed to extract title from {init_file}: {e}")
 
         return ""
-    
+
     def version_from_changelog(self) -> str:
         changelog_file = self.package_path / "CHANGELOG.md"
         if not changelog_file.exists():
             _LOGGER.info(f"{changelog_file} does not exist.")
             return ""
-        
+
         try:
             with open(changelog_file, "r") as f:
                 for line in f:
@@ -180,7 +182,7 @@ class CheckFile:
                         return match.group(1)
         except Exception as e:
             _LOGGER.info(f"Failed to extract version from {changelog_file}: {e}")
-        
+
         return ""
 
     # Use the template to update readme and setup by packaging_tools
@@ -195,11 +197,11 @@ class CheckFile:
 
         # add `title` and update `is_stable` in pyproject.toml
         pyproject_toml = Path(self.package_name) / "pyproject.toml"
-        
+
         version = self.version_from_changelog()
         if not version:
             _LOGGER.info(f"Can not find the version from CHANGELOG.md for {self.package_name}")
-        
+
         is_stable = "b" not in version
         if pyproject_toml.exists():
             with open(pyproject_toml, "rb") as fd:
@@ -240,7 +242,6 @@ class CheckFile:
 
             modify_file(str(pyproject_toml), edit_file)
             _LOGGER.info(f"Check {pyproject_toml} for classifiers successfully")
-
 
     def check_pprint_name(self):
 

@@ -9,7 +9,7 @@ from datetime import datetime
 from .package_utils import (
     modify_file,
 )
-from .sdk_changelog import get_changelog_content
+from .sdk_changelog import get_changelog_content, is_valid_changelog_content, is_arm_sdk, log_failed_message
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -132,6 +132,15 @@ def main(
         # calculate version if needed
         changelog_content, last_version = get_changelog_content(package_path, package_result, enable_changelog=True)
         tag_is_stable = release_type == "stable"
+
+    if version is None and not is_valid_changelog_content(changelog_content) and is_arm_sdk(package_path.name):
+        # When package_result is provided, it means this function is called in pipeline and we should not log error
+        enable_log_error = not bool(package_result)
+        log_failed_message(
+            f"Changelog content for {package_name} seems invalid and we cannot calculate the next version based on it. "
+            f"But we will stil update _version.py and CHANGELOG.md so that you could know where to update manually.",
+            enable_log_error,
+        )
 
     if version is None:
         version = calculate_next_version_proc(changelog_content, last_version, tag_is_stable)

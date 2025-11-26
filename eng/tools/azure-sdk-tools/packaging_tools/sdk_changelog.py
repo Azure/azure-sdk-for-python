@@ -22,17 +22,44 @@ logging.basicConfig(stream=sys.stdout, format="[%(levelname)s] %(message)s")
 _LOGGER = logging.getLogger(__name__)
 
 
+def is_first_release(last_version: str) -> bool:
+    # if last_version is empty, it means this is the first release
+    return not bool(last_version)
+
+
+def is_valid_changelog_content(content: str) -> bool:
+    for changelog_kind in ["Features Added", "Breaking Changes", "Bugs Fixed", "Other Changes"]:
+        if f"### {changelog_kind}" in content:
+            return True
+    return False
+
+
+def is_arm_sdk(package_name: str) -> bool:
+    return package_name.startswith("azure-mgmt-")
+
+
 def execute_func_with_timeout(func, timeout: int = 900) -> Any:
     """Execute function with timeout"""
     return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
 def get_changelog_content(package_path: Path, package_result: dict, enable_changelog: bool) -> tuple[str, str]:
+    """Generate changelog content for the given package path.
+    Args:
+        package_path (Path): The path to the package directory.
+        package_result (dict): The package result dictionary to store changelog info.
+        enable_changelog (bool): Flag to enable or disable changelog generation.
+    Returns:
+        tuple[str, str]: A tuple containing the generated markdown content and the last version.
+    NOTE:
+    1. for data-plane packages, changelog generation is skipped and a placeholder message is returned.
+    2. for management-plane packages, changelog is always "### Other Changes\n\n  - Initial version" if it's the first release.
+    """
 
     package_name = package_path.name
     folder_name = package_path.parent.name
 
-    if not package_name.startswith("azure-mgmt-"):
+    if not is_arm_sdk(package_name):
         _LOGGER.info(f"Skip changelog generation for data-plane package: {package_name}")
         md_output = "skip changelog generation for data-plane package and please add changelog manually."
         last_version, _ = get_version_info(package_name)
@@ -70,9 +97,18 @@ def get_changelog_content(package_path: Path, package_result: dict, enable_chang
     return md_output, last_version
 
 
+def log_failed_message(message: str, enable_log_error: bool):
+    if enable_log_error:
+        _LOGGER.error(message)
+    else:
+        _LOGGER.warning(message)
+
+
 def main(package_path: Path, *, enable_changelog: bool = True, package_result: dict = {}):
 
     package_name = package_path.name
+    # When package_result is provided, it means this function is called in pipeline and we should not log error
+    enable_log_error = not bool(package_result)
 
     # Changelog generation
     try:
@@ -122,9 +158,14 @@ def main(package_path: Path, *, enable_changelog: bool = True, package_result: d
         modify_file(str(package_path / "CHANGELOG.md"), edit_changelog_proc)
 
     except Exception as e:
-        # When package_result is provided, it means this function is called in pipeline and we should not raise error
-        log_func = _LOGGER.warning if package_result else _LOGGER.error
-        log_func(f"Fail to generate changelog for {package_name}: {str(e)}")
+        log_failed_message(f"Fail to generate changelog for {package_name}: {str(e)}", enable_log_error)
+    else:
+        if is_arm_sdk(package_name) and not is_valid_changelog_content(md_output):
+            log_failed_message(
+                f"Generated changelog content for {package_name} seems invalid. "
+                f"And we still update CHANGELOG.md so that you could know where need to update manually.",
+                enable_log_error,
+            )
 
 
 def generate_main():
