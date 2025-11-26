@@ -25,7 +25,7 @@ class TestCosmosDBManagementFleetspaceOperationsAsync(AzureMgmtRecordedTestCase)
         response = self.client.fleetspace.list(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementFleetspaceOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             fleet_name="str",
             fleetspace_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,10 +67,15 @@ class TestCosmosDBManagementFleetspaceOperationsAsync(AzureMgmtRecordedTestCase)
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
-                    "throughputPoolConfiguration": {"maxThroughput": 0, "minThroughput": 0},
+                    "throughputPoolConfiguration": {
+                        "dedicatedRUs": 0,
+                        "maxConsumableRUs": 0,
+                        "maxThroughput": 0,
+                        "minThroughput": 0,
+                    },
                     "type": "str",
                 },
-                api_version="2025-10-15",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -85,7 +90,7 @@ class TestCosmosDBManagementFleetspaceOperationsAsync(AzureMgmtRecordedTestCase)
                 resource_group_name=resource_group.name,
                 fleet_name="str",
                 fleetspace_name="str",
-                api_version="2025-10-15",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +105,7 @@ class TestCosmosDBManagementFleetspaceOperationsAsync(AzureMgmtRecordedTestCase)
                 resource_group_name=resource_group.name,
                 fleet_name="str",
                 fleetspace_name="str",
-                api_version="2025-10-15",
+                api_version="2025-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
