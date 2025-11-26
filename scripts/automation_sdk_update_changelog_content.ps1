@@ -29,11 +29,15 @@ Write-Host "absolutePackagePath: $absolutePackagePath"
 $command = "python -m packaging_tools.sdk_changelog --package-path $absolutePackagePath"
 Write-Host "running command: $command"
 
+# Capture output first
 $output = Invoke-Expression $command 2>&1
+
+# Display the output
 $output | ForEach-Object { Write-Host $_ }
 
-# Check if output contains [ERROR] and exit accordingly
+# Convert to string and check for [ERROR]
 $outputString = $output | Out-String
+
 if ($outputString -match "\[ERROR\]") {
     exit 1
 } else {
