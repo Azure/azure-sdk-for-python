@@ -1,5 +1,58 @@
 # Release History
 
+## 10.0.0b2 (2025-10-31)
+
+### Features Added
+
+  - Model `ServiceBusManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ServiceBusManagementClient` added method `send_request`
+  - Client `ServiceBusManagementClient` added operation group `network_security_perimeter_configurations`
+  - Client `ServiceBusManagementClient` added operation group `network_security_perimeter_configuration`
+  - Enum `MigrationConfigurationName` added member `DEFAULT`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceNamespacePatch` added property `system_data`
+  - Model `Rule` added property `properties`
+  - Model `SBNamespaceUpdateParameters` added property `properties`
+  - Model `SBNamespaceUpdateParameters` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `ConfidentialCompute`
+  - Added model `FailOver`
+  - Added model `FailOverProperties`
+  - Added model `FailoverPropertiesProperties`
+  - Added enum `GeoDRRoleType`
+  - Added model `GeoDataReplicationProperties`
+  - Added enum `Mode`
+  - Added model `NamespaceReplicaLocation`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `NetworkSecurityPerimeterConfigurationPropertiesProfile`
+  - Added model `NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation`
+  - Added enum `NetworkSecurityPerimeterConfigurationProvisioningState`
+  - Added model `NspAccessRule`
+  - Added enum `NspAccessRuleDirection`
+  - Added model `NspAccessRuleProperties`
+  - Added model `NspAccessRulePropertiesSubscriptionsItem`
+  - Added model `PlatformCapabilities`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added enum `ResourceAssociationAccessMode`
+  - Added model `Ruleproperties`
+  - Added model `SBNamespaceUpdateProperties`
+  - Operation group `NamespacesOperations` added method `begin_failover`
+  - Added operation group `NetworkSecurityPerimeterConfigurationOperations`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `FailoverProperties` deleted or renamed its instance variable `is_safe_failover`
+  - Model `ProxyResource` deleted or renamed its instance variable `location`
+  - Model `Rule` instance variables `action`, `filter_type`, `sql_filter`, and `correlation_filter` have been moved under property `properties`
+  - Model `SBNamespaceUpdateParameters` instance variables `provisioning_state`, `status`, `created_at`, `updated_at`, `service_bus_endpoint`, `metric_id`, `encryption`, `private_endpoint_connections`, `disable_local_auth`, and `alternate_name` have been moved under property `properties`
+  - Deleted or renamed model `SqlRuleAction`
+
 ## 10.0.0b1 (2025-07-15)
 
 ### Breaking Changes
