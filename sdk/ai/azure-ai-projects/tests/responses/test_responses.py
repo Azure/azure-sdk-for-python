@@ -10,6 +10,7 @@ from httpx import HTTPTransport as HTTPXTransport
 from devtools_testutils import recorded_by_proxy
 from test_base import TestBase, servicePreparer
 
+
 class TestResponses(TestBase):
 
     # To run this test:
