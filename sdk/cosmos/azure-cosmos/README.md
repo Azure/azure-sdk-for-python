@@ -1010,15 +1010,13 @@ client = CosmosClient(
 #### Customized max concurrency for hedging for async client
 
 ```python
-from concurrent.futures import ThreadPoolExecutor
 from azure.cosmos import CosmosClient
 
-executor = ThreadPoolExecutor(max_workers=2)
 client = CosmosClient(
     "<account-uri>",
     "<account-key>",
     availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50},
-    availability_strategy_max_concurrency=executor
+    availability_strategy_max_concurrency=2
 )
 ```
 
