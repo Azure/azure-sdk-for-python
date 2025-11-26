@@ -36,7 +36,6 @@ from .._availability_strategy_config import CrossRegionHedgingStrategyConfig
 from .._constants import _Constants
 from .._request_object import RequestObject
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
-from .._utils import get_user_agent_features
 from ..documents import _OperationType
 
 # cspell:ignore ppaf
