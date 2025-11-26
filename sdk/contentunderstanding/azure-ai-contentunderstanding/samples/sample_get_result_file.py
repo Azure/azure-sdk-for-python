@@ -54,16 +54,9 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Analyze video and get result files
-    analyze_video_and_get_result_files(client)
-
-
-# [START ContentUnderstandingAnalyzeVideoForResultFiles]
-def analyze_video_and_get_result_files(client: ContentUnderstandingClient) -> None:
-    """Analyze a video and retrieve result files (keyframe images)."""
-
+    # [START analyze_video_for_result_files]
     # Use a sample video URL
-    video_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/sample_video.mp4"
+    video_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/videos/sdk_samples/FlightSimulator.mp4"
 
     print(f"Analyzing video with prebuilt-videoSearch...")
     print(f"  URL: {video_url}")
@@ -81,16 +74,9 @@ def analyze_video_and_get_result_files(client: ContentUnderstandingClient) -> No
     # Wait for completion
     print("  Waiting for analysis to complete...")
     result: AnalyzeResult = poller.result()
+    # [END analyze_video_for_result_files]
 
-    # Get result files
-    get_result_files(client, operation_id, result)
-# [END ContentUnderstandingAnalyzeVideoForResultFiles]
-
-
-# [START ContentUnderstandingGetResultFile]
-def get_result_files(client: ContentUnderstandingClient, operation_id: str, result: AnalyzeResult) -> None:
-    """Retrieve result files (keyframe images) using the operation ID and file path."""
-
+    # [START get_result_file]
     if not result.contents or len(result.contents) == 0:
         print("No content found in the analysis result.")
         return
@@ -98,7 +84,7 @@ def get_result_files(client: ContentUnderstandingClient, operation_id: str, resu
     content = result.contents[0]
 
     # For video analysis, keyframes would be found in AudioVisualContent.KeyFrameTimesMs
-    if content.kind in [MediaContentKind.VIDEO, MediaContentKind.AUDIO]:
+    if content.kind == MediaContentKind.AUDIO_VISUAL:
         video_content: AudioVisualContent = content  # type: ignore
 
         if video_content.key_frame_times_ms and len(video_content.key_frame_times_ms) > 0:
@@ -116,10 +102,10 @@ def get_result_files(client: ContentUnderstandingClient, operation_id: str, resu
             # Get the result file (keyframe image)
             file_response = client.get_result_file(
                 operation_id=operation_id,
-                file_path=frame_path,
+                path=frame_path,
             )
 
-            image_bytes = file_response
+            image_bytes = b"".join(file_response)
             print(f"Retrieved keyframe image ({len(image_bytes):,} bytes)")
 
             # Save the keyframe image to sample_output directory
@@ -140,11 +126,11 @@ def get_result_files(client: ContentUnderstandingClient, operation_id: str, resu
             print(f"Example usage with operation ID '{operation_id}':")
             print("  file_response = client.get_result_file(")
             print("      operation_id=operation_id,")
-            print('      file_path="keyframes/1000")')
+            print('      path="keyframes/1000")')
     else:
         print("\nNote: This sample is designed for video analysis.")
         print("      The analyzed content is not a video.")
-# [END ContentUnderstandingGetResultFile]
+    # [END get_result_file]
 
 
 if __name__ == "__main__":

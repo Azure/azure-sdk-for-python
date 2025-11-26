@@ -45,14 +45,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # List all analyzers
-    list_all_analyzers(client)
-
-
-# [START ContentUnderstandingListAnalyzers]
-def list_all_analyzers(client: ContentUnderstandingClient) -> None:
-    """List all available analyzers."""
-
+    # [START list_analyzers]
     print("Listing all available analyzers...")
 
     # List all analyzers
@@ -85,7 +78,7 @@ def list_all_analyzers(client: ContentUnderstandingClient) -> None:
 
         print()
     print("=" * 60)
-# [END ContentUnderstandingListAnalyzers]
+    # [END list_analyzers]
 
 
 if __name__ == "__main__":

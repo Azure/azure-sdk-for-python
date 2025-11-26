@@ -54,23 +54,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Create a classifier
-    analyzer_id = create_classifier(client)
-
-    # Analyze with the classifier (demonstrates both with and without segmentation)
-    if analyzer_id:
-        analyze_with_classifier(client, analyzer_id)
-
-        # Clean up - delete the classifier
-        print(f"\nCleaning up: deleting classifier '{analyzer_id}'...")
-        client.delete_analyzer(analyzer_id=analyzer_id)
-        print(f"Classifier '{analyzer_id}' deleted successfully.")
-
-
-# [START ContentUnderstandingCreateClassifier]
-def create_classifier(client: ContentUnderstandingClient) -> str:
-    """Create a classifier analyzer with content categories."""
-
+    # [START create_classifier]
     # Generate a unique analyzer ID
     analyzer_id = f"my_classifier_{int(time.time())}"
 
@@ -118,15 +102,9 @@ def create_classifier(client: ContentUnderstandingClient) -> str:
 
     print(f"Classifier '{analyzer_id}' created successfully!")
     print(f"  Status: {result.status}")
+    # [END create_classifier]
 
-    return analyzer_id
-# [END ContentUnderstandingCreateClassifier]
-
-
-# [START ContentUnderstandingAnalyzeCategory]
-def analyze_with_classifier(client: ContentUnderstandingClient, analyzer_id: str) -> None:
-    """Analyze a document with the classifier."""
-
+    # [START analyze_with_classifier]
     file_path = "sample_files/sample_invoice.pdf"
 
     with open(file_path, "rb") as f:
@@ -138,39 +116,33 @@ def analyze_with_classifier(client: ContentUnderstandingClient, analyzer_id: str
         analyzer_id=analyzer_id,
         binary_input=file_bytes,
     )
-    result: AnalyzeResult = poller.result()
+    analyze_result: AnalyzeResult = poller.result()
 
     # Display classification results
-    display_classification_results(result)
-# [END ContentUnderstandingAnalyzeCategory]
+    if analyze_result.contents and len(analyze_result.contents) > 0:
+        content = analyze_result.contents[0]
 
+        if content.kind == MediaContentKind.DOCUMENT:
+            document_content: DocumentContent = content  # type: ignore
+            print(f"Pages: {document_content.start_page_number}-{document_content.end_page_number}")
 
-# [START ContentUnderstandingAnalyzeCategoryWithSegments]
-def display_classification_results(result: AnalyzeResult) -> None:
-    """Display classification results including segments if available."""
-
-    if not result.contents or len(result.contents) == 0:
+            # Display segments (classification results)
+            if document_content.segments and len(document_content.segments) > 0:
+                print(f"\nFound {len(document_content.segments)} segment(s):")
+                for segment in document_content.segments:
+                    print(f"  Category: {segment.category or '(unknown)'}")
+                    print(f"  Pages: {segment.start_page_number}-{segment.end_page_number}")
+                    print()
+            else:
+                print("No segments found (document classified as a single unit).")
+    else:
         print("No content found in the analysis result.")
-        return
+    # [END analyze_with_classifier]
 
-    content = result.contents[0]
-
-    if content.kind == MediaContentKind.DOCUMENT:
-        document_content: DocumentContent = content  # type: ignore
-        print(f"Pages: {document_content.start_page_number}-{document_content.end_page_number}")
-
-        # Display segments (classification results)
-        if document_content.segments and len(document_content.segments) > 0:
-            print(f"\nFound {len(document_content.segments)} segment(s):")
-            for segment in document_content.segments:
-                print(f"  Category: {segment.category or '(unknown)'}")
-                print(f"  Pages: {segment.start_page_number}-{segment.end_page_number}")
-                if segment.confidence:
-                    print(f"  Confidence: {segment.confidence:.2f}")
-                print()
-        else:
-            print("No segments found (document classified as a single unit).")
-# [END ContentUnderstandingAnalyzeCategoryWithSegments]
+    # Clean up - delete the classifier
+    print(f"\nCleaning up: deleting classifier '{analyzer_id}'...")
+    client.delete_analyzer(analyzer_id=analyzer_id)
+    print(f"Classifier '{analyzer_id}' deleted successfully.")
 
 
 if __name__ == "__main__":

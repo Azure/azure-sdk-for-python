@@ -54,14 +54,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Analyze invoice from URL
-    analyze_invoice(client)
-
-
-# [START ContentUnderstandingAnalyzeInvoice]
-def analyze_invoice(client: ContentUnderstandingClient) -> None:
-    """Analyze an invoice using prebuilt-invoice analyzer."""
-
+    # [START analyze_invoice]
     invoice_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
 
     print(f"Analyzing invoice with prebuilt-invoice analyzer...")
@@ -72,16 +65,9 @@ def analyze_invoice(client: ContentUnderstandingClient) -> None:
         inputs=[AnalyzeInput(url=invoice_url)],
     )
     result: AnalyzeResult = poller.result()
+    # [END analyze_invoice]
 
-    # Extract invoice fields
-    extract_invoice_fields(result)
-# [END ContentUnderstandingAnalyzeInvoice]
-
-
-# [START ContentUnderstandingExtractInvoiceFields]
-def extract_invoice_fields(result: AnalyzeResult) -> None:
-    """Extract and display invoice fields from the analysis result."""
-
+    # [START extract_invoice_fields]
     if not result.contents or len(result.contents) == 0:
         print("No content found in the analysis result.")
         return
@@ -129,10 +115,10 @@ def extract_invoice_fields(result: AnalyzeResult) -> None:
             total_amount_obj: dict[str, ContentField] = total_amount_field.value  # type: ignore
             amount_field = total_amount_obj.get("Amount")
             currency_field = total_amount_obj.get("CurrencyCode")
-            
+
             amount = amount_field.value if amount_field else None
             currency = currency_field.value if currency_field else None
-            
+
             print(f"\nTotal Amount: {amount} {currency}")
             if total_amount_field.confidence:
                 print(f"  Confidence: {total_amount_field.confidence:.2f}")
@@ -147,14 +133,14 @@ def extract_invoice_fields(result: AnalyzeResult) -> None:
                     description_field = item.get("Description")
                     quantity_field = item.get("Quantity")
                     amount_field = item.get("Amount")
-                    
+
                     description = description_field.value if description_field else "(no description)"
                     quantity = quantity_field.value if quantity_field else "N/A"
                     amount = amount_field.value if amount_field else "N/A"
-                    
+
                     print(f"  {i}. {description}")
                     print(f"     Quantity: {quantity}, Amount: {amount}")
-# [END ContentUnderstandingExtractInvoiceFields]
+    # [END extract_invoice_fields]
 
 
 if __name__ == "__main__":

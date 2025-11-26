@@ -58,14 +58,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Analyze and return raw JSON
-    analyze_return_raw_json(client)
-
-
-# [START ContentUnderstandingAnalyzeReturnRawJson]
-def analyze_return_raw_json(client: ContentUnderstandingClient) -> None:
-    """Use the protocol method to get raw JSON response."""
-
+    # [START analyze_return_raw_json]
     file_path = "sample_files/sample_invoice.pdf"
 
     with open(file_path, "rb") as f:
@@ -83,14 +76,9 @@ def analyze_return_raw_json(client: ContentUnderstandingClient) -> None:
 
     # Convert to dictionary and then to JSON
     result_dict = result.as_dict()
-    parse_and_save_json(result_dict)
-# [END ContentUnderstandingAnalyzeReturnRawJson]
+    # [END analyze_return_raw_json]
 
-
-# [START ContentUnderstandingParseRawJson]
-def parse_and_save_json(result_dict: dict) -> None:
-    """Parse and format the raw JSON response."""
-
+    # [START parse_raw_json]
     # Pretty-print the JSON
     pretty_json = json.dumps(result_dict, indent=2, ensure_ascii=False, default=str)
 
@@ -115,7 +103,7 @@ def parse_and_save_json(result_dict: dict) -> None:
     preview = pretty_json[:2000] + "..." if len(pretty_json) > 2000 else pretty_json
     print(preview)
     print("=" * 50)
-# [END ContentUnderstandingParseRawJson]
+    # [END parse_raw_json]
 
 
 if __name__ == "__main__":

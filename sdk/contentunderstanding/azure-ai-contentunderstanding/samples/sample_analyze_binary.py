@@ -51,14 +51,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Analyze document from binary data
-    analyze_document_binary(client)
-
-
-# [START ContentUnderstandingAnalyzeBinaryAsync]
-def analyze_document_binary(client: ContentUnderstandingClient) -> None:
-    """Analyze a document from binary data using prebuilt-documentSearch analyzer."""
-
+    # [START analyze_document_from_binary]
     file_path = "sample_files/sample_invoice.pdf"
 
     with open(file_path, "rb") as f:
@@ -70,19 +63,9 @@ def analyze_document_binary(client: ContentUnderstandingClient) -> None:
         binary_input=pdf_bytes,
     )
     result: AnalyzeResult = poller.result()
+    # [END analyze_document_from_binary]
 
-    # Extract markdown content
-    extract_markdown_content(result)
-
-    # Extract document properties
-    extract_document_properties(result)
-# [END ContentUnderstandingAnalyzeBinaryAsync]
-
-
-# [START ContentUnderstandingExtractMarkdown]
-def extract_markdown_content(result: AnalyzeResult) -> None:
-    """Extract and display markdown content from the analysis result."""
-
+    # [START extract_markdown]
     print("\nMarkdown Content:")
     print("=" * 50)
 
@@ -97,36 +80,30 @@ def extract_markdown_content(result: AnalyzeResult) -> None:
         print("No content found in the analysis result.")
 
     print("=" * 50)
-# [END ContentUnderstandingExtractMarkdown]
+    # [END extract_markdown]
 
+    # Extract document properties
+    if result.contents and len(result.contents) > 0:
+        content = result.contents[0]
 
-def extract_document_properties(result: AnalyzeResult) -> None:
-    """Extract and display document properties from the analysis result."""
+        # Check if this is document content to access document-specific properties
+        if content.kind == MediaContentKind.DOCUMENT:
+            # Type assertion: we know this is DocumentContent for PDF files
+            document_content: DocumentContent = content  # type: ignore
+            print(f"\nDocument Information:")
+            print(f"  Start page: {document_content.start_page_number}")
+            print(f"  End page: {document_content.end_page_number}")
 
-    if not result.contents or len(result.contents) == 0:
-        print("No content found in the analysis result.")
-        return
+            if document_content.start_page_number and document_content.end_page_number:
+                total_pages = document_content.end_page_number - document_content.start_page_number + 1
+                print(f"  Total pages: {total_pages}")
 
-    content = result.contents[0]
-
-    # Check if this is document content to access document-specific properties
-    if content.kind == MediaContentKind.DOCUMENT:
-        # Type assertion: we know this is DocumentContent for PDF files
-        document_content: DocumentContent = content  # type: ignore
-        print(f"\nDocument Information:")
-        print(f"  Start page: {document_content.start_page_number}")
-        print(f"  End page: {document_content.end_page_number}")
-
-        if document_content.start_page_number and document_content.end_page_number:
-            total_pages = document_content.end_page_number - document_content.start_page_number + 1
-            print(f"  Total pages: {total_pages}")
-
-        # Check for pages
-        if document_content.pages:
-            print(f"\nPages ({len(document_content.pages)}):")
-            for page in document_content.pages:
-                unit = document_content.unit or "units"
-                print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
+            # Check for pages
+            if document_content.pages:
+                print(f"\nPages ({len(document_content.pages)}):")
+                for page in document_content.pages:
+                    unit = document_content.unit or "units"
+                    print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
 
 
 if __name__ == "__main__":

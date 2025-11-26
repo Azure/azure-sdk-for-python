@@ -119,7 +119,7 @@ async def update_model_deployments(client: ContentUnderstandingClient) -> None:
         # Display the configured mappings
         if hasattr(result, "model_deployments") and result.model_deployments:
             for model, deployment in result.model_deployments.items():
-                print(f"   {model:<30} → {deployment}")
+                print(f"   {model:<30} -> {deployment}")
         else:
             print("   No model deployments returned in response")
 
@@ -128,7 +128,7 @@ async def update_model_deployments(client: ContentUnderstandingClient) -> None:
         print("   You can now use prebuilt analyzers like 'prebuilt-invoice' and 'prebuilt-receipt'.")
 
     except Exception as e:
-        print(f"\n❌ Failed to configure defaults: {e}")
+        print(f"\n[FAILED] Failed to configure defaults: {e}")
         print("\nThis error may occur if:")
         print("   - One or more deployment names don't exist in your Azure AI Foundry project")
         print("   - The deployments exist but use different names than specified")

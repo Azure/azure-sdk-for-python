@@ -48,14 +48,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Create and delete an analyzer
-    create_and_delete_analyzer(client)
-
-
-# [START ContentUnderstandingCreateSimpleAnalyzer]
-def create_simple_analyzer(client: ContentUnderstandingClient) -> str:
-    """Create a simple analyzer for deletion demo."""
-
+    # [START create_simple_analyzer]
     # Generate a unique analyzer ID
     analyzer_id = f"my_analyzer_{int(time.time())}"
 
@@ -75,29 +68,13 @@ def create_simple_analyzer(client: ContentUnderstandingClient) -> str:
     )
     poller.result()
     print(f"Analyzer '{analyzer_id}' created successfully.")
+    # [END create_simple_analyzer]
 
-    return analyzer_id
-# [END ContentUnderstandingCreateSimpleAnalyzer]
-
-
-# [START ContentUnderstandingDeleteAnalyzer]
-def delete_analyzer(client: ContentUnderstandingClient, analyzer_id: str) -> None:
-    """Delete a custom analyzer."""
-
+    # [START delete_analyzer]
     print(f"Deleting analyzer '{analyzer_id}'...")
     client.delete_analyzer(analyzer_id=analyzer_id)
     print(f"Analyzer '{analyzer_id}' deleted successfully.")
-# [END ContentUnderstandingDeleteAnalyzer]
-
-
-def create_and_delete_analyzer(client: ContentUnderstandingClient) -> None:
-    """Create a simple analyzer and then delete it."""
-
-    # First create an analyzer to delete
-    analyzer_id = create_simple_analyzer(client)
-
-    # Now delete the analyzer
-    delete_analyzer(client, analyzer_id)
+    # [END delete_analyzer]
 
 
 if __name__ == "__main__":

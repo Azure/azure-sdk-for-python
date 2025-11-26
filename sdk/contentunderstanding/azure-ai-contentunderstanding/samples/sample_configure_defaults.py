@@ -45,17 +45,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Update model deployments
-    update_model_deployments(client)
-
-    # Get current defaults
-    get_model_deployments(client)
-
-
-# [START ContentUnderstandingUpdateDefaults]
-def update_model_deployments(client: ContentUnderstandingClient) -> None:
-    """Configure default model deployment mappings for the Content Understanding resource."""
-
+    # [START update_defaults]
     # Get deployment names from environment variables
     gpt_4_1_deployment = os.getenv("GPT_4_1_DEPLOYMENT")
     gpt_4_1_mini_deployment = os.getenv("GPT_4_1_MINI_DEPLOYMENT")
@@ -90,24 +80,20 @@ def update_model_deployments(client: ContentUnderstandingClient) -> None:
     print("Model deployments configured successfully!")
     if updated_defaults.model_deployments:
         for model_name, deployment_name in updated_defaults.model_deployments.items():
-            print(f"  {model_name} → {deployment_name}")
-# [END ContentUnderstandingUpdateDefaults]
+            print(f"  {model_name} -> {deployment_name}")
+    # [END update_defaults]
 
-
-# [START ContentUnderstandingGetDefaults]
-def get_model_deployments(client: ContentUnderstandingClient) -> None:
-    """Retrieve and display default model deployment settings."""
-
+    # [START get_defaults]
     print("\nRetrieving current model deployment settings...")
     defaults = client.get_defaults()
 
     print("\nCurrent model deployment mappings:")
     if defaults.model_deployments and len(defaults.model_deployments) > 0:
         for model_name, deployment_name in defaults.model_deployments.items():
-            print(f"  {model_name} → {deployment_name}")
+            print(f"  {model_name} -> {deployment_name}")
     else:
         print("  No model deployments configured yet.")
-# [END ContentUnderstandingGetDefaults]
+    # [END get_defaults]
 
 
 if __name__ == "__main__":

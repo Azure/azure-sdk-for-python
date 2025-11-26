@@ -55,14 +55,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Analyze and delete result
-    analyze_and_delete_result(client)
-
-
-# [START ContentUnderstandingAnalyzeAndDeleteResult]
-def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
-    """Analyze a document and then delete the result."""
-
+    # [START analyze_and_delete_result]
     document_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
 
     print("Document Analysis Workflow")
@@ -112,13 +105,13 @@ def analyze_and_delete_result(client: ContentUnderstandingClient) -> None:
     print("\nStep 3: Verifying deletion...")
     try:
         # Try to get the result - this should fail after deletion
-        client.get_result(operation_id=operation_id)
+        client._get_result(operation_id=operation_id)  # type: ignore[attr-defined]
         print("  Warning: Result still accessible (may take time to propagate)")
     except ResourceNotFoundError:
         print("  Verified: Result is no longer accessible (404 Not Found)")
     except Exception as e:
         print(f"  Result access check: {type(e).__name__}: {e}")
-# [END ContentUnderstandingAnalyzeAndDeleteResult]
+    # [END analyze_and_delete_result]
 
 
 if __name__ == "__main__":

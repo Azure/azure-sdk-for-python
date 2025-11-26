@@ -57,14 +57,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Analyze with configs
-    analyze_with_configs(client)
-
-
-# [START ContentUnderstandingAnalyzeWithConfigs]
-def analyze_with_configs(client: ContentUnderstandingClient) -> None:
-    """Analyze a document using prebuilt-documentSearch with formulas, layout, and OCR enabled."""
-
+    # [START analyze_with_configs]
     file_path = "sample_files/sample_invoice.pdf"
 
     with open(file_path, "rb") as f:
@@ -79,126 +72,89 @@ def analyze_with_configs(client: ContentUnderstandingClient) -> None:
         binary_input=pdf_bytes,
     )
     result: AnalyzeResult = poller.result()
+    # [END analyze_with_configs]
 
-    # Extract various features
-    extract_charts(result)
-    extract_hyperlinks(result)
-    extract_formulas(result)
-    extract_annotations(result)
-# [END ContentUnderstandingAnalyzeWithConfigs]
+    # [START extract_charts]
+    if result.contents and len(result.contents) > 0:
+        content = result.contents[0]
 
+        if content.kind == MediaContentKind.DOCUMENT:
+            document_content: DocumentContent = content  # type: ignore
 
-# [START ContentUnderstandingExtractCharts]
-def extract_charts(result: AnalyzeResult) -> None:
-    """Extract chart figures from the document."""
+            if document_content.figures and len(document_content.figures) > 0:
+                # Filter for chart figures
+                chart_figures = [
+                    f for f in document_content.figures
+                    if isinstance(f, DocumentChartFigure) or (hasattr(f, 'kind') and f.kind == DocumentFigureKind.CHART)
+                ]
 
-    if not result.contents or len(result.contents) == 0:
+                print(f"\nFound {len(chart_figures)} chart(s)")
+                for chart in chart_figures:
+                    print(f"  Chart ID: {chart.id}")
+                    if hasattr(chart, 'description') and chart.description:
+                        print(f"    Description: {chart.description}")
+                    if hasattr(chart, 'caption') and chart.caption and chart.caption.content:
+                        print(f"    Caption: {chart.caption.content}")
+            else:
+                print("\nNo figures found in the document.")
+    else:
         print("\nNo content found in the analysis result.")
-        return
+    # [END extract_charts]
 
-    content = result.contents[0]
+    # [START extract_hyperlinks]
+    if result.contents and len(result.contents) > 0:
+        content = result.contents[0]
 
-    if content.kind != MediaContentKind.DOCUMENT:
-        print("\nContent is not a document.")
-        return
+        if content.kind == MediaContentKind.DOCUMENT:
+            document_content: DocumentContent = content  # type: ignore
 
-    document_content: DocumentContent = content  # type: ignore
+            if document_content.hyperlinks and len(document_content.hyperlinks) > 0:
+                print(f"\nFound {len(document_content.hyperlinks)} hyperlink(s)")
+                for hyperlink in document_content.hyperlinks:
+                    print(f"  URL: {hyperlink.url or '(not available)'}")
+                    print(f"    Content: {hyperlink.content or '(not available)'}")
+            else:
+                print("\nNo hyperlinks found in the document.")
+    # [END extract_hyperlinks]
 
-    if document_content.figures and len(document_content.figures) > 0:
-        # Filter for chart figures
-        chart_figures = [
-            f for f in document_content.figures
-            if isinstance(f, DocumentChartFigure) or (hasattr(f, 'kind') and f.kind == DocumentFigureKind.CHART)
-        ]
+    # [START extract_formulas]
+    if result.contents and len(result.contents) > 0:
+        content = result.contents[0]
 
-        print(f"\nFound {len(chart_figures)} chart(s)")
-        for chart in chart_figures:
-            print(f"  Chart ID: {chart.id}")
-            if hasattr(chart, 'description') and chart.description:
-                print(f"    Description: {chart.description}")
-            if hasattr(chart, 'caption') and chart.caption and chart.caption.content:
-                print(f"    Caption: {chart.caption.content}")
-    else:
-        print("\nNo figures found in the document.")
-# [END ContentUnderstandingExtractCharts]
+        if content.kind == MediaContentKind.DOCUMENT:
+            document_content: DocumentContent = content  # type: ignore
 
+            all_formulas = []
+            if document_content.pages:
+                for page in document_content.pages:
+                    if hasattr(page, 'formulas') and page.formulas:
+                        all_formulas.extend(page.formulas)
 
-# [START ContentUnderstandingExtractHyperlinks]
-def extract_hyperlinks(result: AnalyzeResult) -> None:
-    """Extract hyperlinks from the document."""
+            if len(all_formulas) > 0:
+                print(f"\nFound {len(all_formulas)} formula(s)")
+                for formula in all_formulas:
+                    print(f"  Formula: {formula.value or '(no value)'}")
+                    if hasattr(formula, 'kind') and formula.kind:
+                        print(f"    Kind: {formula.kind}")
+            else:
+                print("\nNo formulas found in the document.")
+    # [END extract_formulas]
 
-    if not result.contents or len(result.contents) == 0:
-        return
+    # Extract annotations
+    if result.contents and len(result.contents) > 0:
+        content = result.contents[0]
 
-    content = result.contents[0]
+        if content.kind == MediaContentKind.DOCUMENT:
+            document_content: DocumentContent = content  # type: ignore
 
-    if content.kind != MediaContentKind.DOCUMENT:
-        return
-
-    document_content: DocumentContent = content  # type: ignore
-
-    if document_content.hyperlinks and len(document_content.hyperlinks) > 0:
-        print(f"\nFound {len(document_content.hyperlinks)} hyperlink(s)")
-        for hyperlink in document_content.hyperlinks:
-            print(f"  URL: {hyperlink.url or '(not available)'}")
-            print(f"    Content: {hyperlink.content or '(not available)'}")
-    else:
-        print("\nNo hyperlinks found in the document.")
-# [END ContentUnderstandingExtractHyperlinks]
-
-
-# [START ContentUnderstandingExtractFormulas]
-def extract_formulas(result: AnalyzeResult) -> None:
-    """Extract mathematical formulas from document pages."""
-
-    if not result.contents or len(result.contents) == 0:
-        return
-
-    content = result.contents[0]
-
-    if content.kind != MediaContentKind.DOCUMENT:
-        return
-
-    document_content: DocumentContent = content  # type: ignore
-
-    all_formulas = []
-    if document_content.pages:
-        for page in document_content.pages:
-            if hasattr(page, 'formulas') and page.formulas:
-                all_formulas.extend(page.formulas)
-
-    if len(all_formulas) > 0:
-        print(f"\nFound {len(all_formulas)} formula(s)")
-        for formula in all_formulas:
-            print(f"  Formula: {formula.value or '(no value)'}")
-            if hasattr(formula, 'kind') and formula.kind:
-                print(f"    Kind: {formula.kind}")
-    else:
-        print("\nNo formulas found in the document.")
-# [END ContentUnderstandingExtractFormulas]
-
-
-def extract_annotations(result: AnalyzeResult) -> None:
-    """Extract annotations from the document."""
-
-    if not result.contents or len(result.contents) == 0:
-        return
-
-    content = result.contents[0]
-
-    if content.kind != MediaContentKind.DOCUMENT:
-        return
-
-    document_content: DocumentContent = content  # type: ignore
-
-    if hasattr(document_content, 'annotations') and document_content.annotations and len(document_content.annotations) > 0:
-        print(f"\nFound {len(document_content.annotations)} annotation(s)")
-        for annotation in document_content.annotations:
-            print(f"  Kind: {annotation.kind or '(unknown)'}")
-            if hasattr(annotation, 'content') and annotation.content:
-                print(f"    Content: {annotation.content}")
-    else:
-        print("\nNo annotations found in the document.")
+            if hasattr(document_content, 'annotations') and document_content.annotations and len(document_content.annotations) > 0:
+                print(f"\nFound {len(document_content.annotations)} annotation(s)")
+                for annotation in document_content.annotations:
+                    print(f"  Kind: {annotation.kind or '(unknown)'}")
+                    if hasattr(annotation, 'content') and annotation.content:
+                        print(f"    Content: {annotation.content}")
+            else:
+                print("\nNo annotations found in the document.")
 
 
 if __name__ == "__main__":

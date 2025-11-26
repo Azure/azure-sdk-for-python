@@ -58,20 +58,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Create a custom analyzer
-    analyzer_id = create_custom_analyzer(client)
-
-    # Clean up - delete the analyzer
-    if analyzer_id:
-        print(f"\nCleaning up: deleting analyzer '{analyzer_id}'...")
-        client.delete_analyzer(analyzer_id=analyzer_id)
-        print(f"Analyzer '{analyzer_id}' deleted successfully.")
-
-
-# [START ContentUnderstandingCreateAnalyzer]
-def create_custom_analyzer(client: ContentUnderstandingClient) -> str:
-    """Create a custom analyzer with field schema."""
-
+    # [START create_analyzer]
     # Generate a unique analyzer ID
     analyzer_id = f"my_custom_analyzer_{int(time.time())}"
 
@@ -144,9 +131,12 @@ def create_custom_analyzer(client: ContentUnderstandingClient) -> str:
         for field_name, field_def in result.field_schema.fields.items():
             method = field_def.method.value if field_def.method else "auto"
             print(f"    - {field_name}: {field_def.type.value if field_def.type else 'unknown'} ({method})")
+    # [END create_analyzer]
 
-    return analyzer_id
-# [END ContentUnderstandingCreateAnalyzer]
+    # Clean up - delete the analyzer
+    print(f"\nCleaning up: deleting analyzer '{analyzer_id}'...")
+    client.delete_analyzer(analyzer_id=analyzer_id)
+    print(f"Analyzer '{analyzer_id}' deleted successfully.")
 
 
 if __name__ == "__main__":

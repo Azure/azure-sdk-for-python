@@ -55,17 +55,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Get prebuilt analyzer information
-    get_prebuilt_analyzer(client)
-
-    # Get custom analyzer information
-    get_custom_analyzer(client)
-
-
-# [START ContentUnderstandingGetPrebuiltAnalyzer]
-def get_prebuilt_analyzer(client: ContentUnderstandingClient) -> None:
-    """Retrieve information about a prebuilt analyzer."""
-
+    # [START get_prebuilt_analyzer]
     print("Retrieving prebuilt-documentSearch analyzer...")
     analyzer = client.get_analyzer(analyzer_id="prebuilt-documentSearch")
 
@@ -76,30 +66,9 @@ def get_prebuilt_analyzer(client: ContentUnderstandingClient) -> None:
     analyzer_json = json.dumps(analyzer.as_dict(), indent=2, default=str)
     print(analyzer_json)
     print("=" * 80)
-# [END ContentUnderstandingGetPrebuiltAnalyzer]
+    # [END get_prebuilt_analyzer]
 
-
-# [START ContentUnderstandingGetPrebuiltInvoice]
-def get_prebuilt_invoice_analyzer(client: ContentUnderstandingClient) -> None:
-    """Retrieve information about the prebuilt-invoice analyzer."""
-
-    print("Retrieving prebuilt-invoice analyzer...")
-    analyzer = client.get_analyzer(analyzer_id="prebuilt-invoice")
-
-    # Display full analyzer JSON
-    print("\n" + "=" * 80)
-    print("Prebuilt-invoice Analyzer:")
-    print("=" * 80)
-    analyzer_json = json.dumps(analyzer.as_dict(), indent=2, default=str)
-    print(analyzer_json)
-    print("=" * 80)
-# [END ContentUnderstandingGetPrebuiltInvoice]
-
-
-# [START ContentUnderstandingGetCustomAnalyzer]
-def get_custom_analyzer(client: ContentUnderstandingClient) -> None:
-    """Create a custom analyzer, retrieve its information, and display the full JSON."""
-
+    # [START get_custom_analyzer]
     # First, create a custom analyzer
     analyzer_id = f"my_custom_analyzer_{int(time.time())}"
 
@@ -122,7 +91,7 @@ def get_custom_analyzer(client: ContentUnderstandingClient) -> None:
         },
     )
 
-    analyzer = ContentAnalyzer(
+    custom_analyzer = ContentAnalyzer(
         base_analyzer_id="prebuilt-document",
         description="Custom analyzer for extracting company information",
         config=ContentAnalyzerConfig(return_details=True),
@@ -132,7 +101,7 @@ def get_custom_analyzer(client: ContentUnderstandingClient) -> None:
 
     poller = client.begin_create_analyzer(
         analyzer_id=analyzer_id,
-        resource=analyzer,
+        resource=custom_analyzer,
     )
     poller.result()
     print(f"Custom analyzer '{analyzer_id}' created successfully!")
@@ -145,15 +114,15 @@ def get_custom_analyzer(client: ContentUnderstandingClient) -> None:
     print("\n" + "=" * 80)
     print(f"Custom Analyzer '{analyzer_id}':")
     print("=" * 80)
-    analyzer_json = json.dumps(retrieved_analyzer.as_dict(), indent=2, default=str)
-    print(analyzer_json)
+    retrieved_json = json.dumps(retrieved_analyzer.as_dict(), indent=2, default=str)
+    print(retrieved_json)
     print("=" * 80)
 
     # Clean up - delete the analyzer
     print(f"\nCleaning up: deleting analyzer '{analyzer_id}'...")
     client.delete_analyzer(analyzer_id=analyzer_id)
     print(f"Analyzer '{analyzer_id}' deleted successfully.")
-# [END ContentUnderstandingGetCustomAnalyzer]
+    # [END get_custom_analyzer]
 
 
 if __name__ == "__main__":

@@ -80,14 +80,7 @@ def main() -> None:
         print("  /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{name}")
         return
 
-    # Grant copy authorization and copy analyzer
-    grant_copy_auth_and_copy()
-
-
-# [START ContentUnderstandingGrantCopyAuth]
-def grant_copy_auth_and_copy() -> None:
-    """Grant copy authorization and copy an analyzer from source to target resource."""
-
+    # [START grant_copy_auth]
     # Get source configuration
     source_endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
     source_key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
@@ -206,7 +199,7 @@ def grant_copy_auth_and_copy() -> None:
             print(f"  Target analyzer '{target_analyzer_id}' deleted.")
         except Exception:
             pass
-# [END ContentUnderstandingGrantCopyAuth]
+    # [END grant_copy_auth]
 
 
 if __name__ == "__main__":

@@ -54,21 +54,6 @@ def main() -> None:
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
     # Create initial analyzer
-    analyzer_id = create_initial_analyzer(client)
-
-    if analyzer_id:
-        # Update the analyzer
-        update_analyzer(client, analyzer_id)
-
-        # Clean up - delete the analyzer
-        print(f"\nCleaning up: deleting analyzer '{analyzer_id}'...")
-        client.delete_analyzer(analyzer_id=analyzer_id)
-        print(f"Analyzer '{analyzer_id}' deleted successfully.")
-
-
-def create_initial_analyzer(client: ContentUnderstandingClient) -> str:
-    """Create an initial analyzer to update."""
-
     analyzer_id = f"my_analyzer_for_update_{int(time.time())}"
 
     print(f"Creating initial analyzer '{analyzer_id}'...")
@@ -99,13 +84,7 @@ def create_initial_analyzer(client: ContentUnderstandingClient) -> str:
     poller.result()
     print(f"Analyzer '{analyzer_id}' created successfully!")
 
-    return analyzer_id
-
-
-# [START ContentUnderstandingUpdateAnalyzer]
-def update_analyzer(client: ContentUnderstandingClient, analyzer_id: str) -> None:
-    """Update an analyzer's description and tags."""
-
+    # [START update_analyzer]
     # First, get the current analyzer to preserve base analyzer ID
     current_analyzer = client.get_analyzer(analyzer_id=analyzer_id)
 
@@ -138,7 +117,12 @@ def update_analyzer(client: ContentUnderstandingClient, analyzer_id: str) -> Non
     if updated.tags:
         tags_str = ", ".join(f"{k}={v}" for k, v in updated.tags.items())
         print(f"  Tags: {tags_str}")
-# [END ContentUnderstandingUpdateAnalyzer]
+    # [END update_analyzer]
+
+    # Clean up - delete the analyzer
+    print(f"\nCleaning up: deleting analyzer '{analyzer_id}'...")
+    client.delete_analyzer(analyzer_id=analyzer_id)
+    print(f"Analyzer '{analyzer_id}' deleted successfully.")
 
 
 if __name__ == "__main__":

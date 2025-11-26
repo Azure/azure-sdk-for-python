@@ -48,14 +48,7 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Analyze document from URL
-    analyze_document_url(client)
-
-
-# [START ContentUnderstandingAnalyzeUrlAsync]
-def analyze_document_url(client: ContentUnderstandingClient) -> None:
-    """Analyze a document from a URL using prebuilt-documentSearch analyzer."""
-
+    # [START analyze_document_from_url]
     document_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
 
     print(f"Analyzing document from URL with prebuilt-documentSearch...")
@@ -90,7 +83,7 @@ def analyze_document_url(client: ContentUnderstandingClient) -> None:
             print(f"\nDocument Information:")
             print(f"  Start page: {document_content.start_page_number}")
             print(f"  End page: {document_content.end_page_number}")
-# [END ContentUnderstandingAnalyzeUrlAsync]
+    # [END analyze_document_from_url]
 
 
 if __name__ == "__main__":

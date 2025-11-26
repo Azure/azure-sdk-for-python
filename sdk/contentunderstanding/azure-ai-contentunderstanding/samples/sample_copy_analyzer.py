@@ -54,34 +54,12 @@ def main() -> None:
 
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
-    # Copy analyzer from source to target
-    copy_analyzer_demo(client)
-
-
-def copy_analyzer_demo(client: ContentUnderstandingClient) -> None:
-    """Demonstrate copying an analyzer from source to target."""
-
     base_id = f"my_analyzer_{int(time.time())}"
     source_analyzer_id = f"{base_id}_source"
     target_analyzer_id = f"{base_id}_target"
 
     # Step 1: Create the source analyzer
-    create_source_analyzer(client, source_analyzer_id)
-
-    # Step 2: Copy the analyzer
-    copy_analyzer(client, source_analyzer_id, target_analyzer_id)
-
-    # Step 3: Update and verify the target analyzer
-    update_and_verify_analyzer(client, target_analyzer_id)
-
-    # Step 4: Clean up
-    cleanup_analyzers(client, source_analyzer_id, target_analyzer_id)
-
-
-def create_source_analyzer(client: ContentUnderstandingClient, analyzer_id: str) -> None:
-    """Create the source analyzer."""
-
-    print(f"Creating source analyzer '{analyzer_id}'...")
+    print(f"Creating source analyzer '{source_analyzer_id}'...")
 
     analyzer = ContentAnalyzer(
         base_analyzer_id="prebuilt-document",
@@ -113,36 +91,28 @@ def create_source_analyzer(client: ContentUnderstandingClient, analyzer_id: str)
     )
 
     poller = client.begin_create_analyzer(
-        analyzer_id=analyzer_id,
+        analyzer_id=source_analyzer_id,
         resource=analyzer,
     )
     poller.result()
-    print(f"Source analyzer '{analyzer_id}' created successfully!")
+    print(f"Source analyzer '{source_analyzer_id}' created successfully!")
 
-
-# [START ContentUnderstandingCopyAnalyzer]
-def copy_analyzer(client: ContentUnderstandingClient, source_analyzer_id: str, target_analyzer_id: str) -> None:
-    """Copy an analyzer from source to target."""
-
+    # [START copy_analyzer]
     print(f"\nCopying analyzer from '{source_analyzer_id}' to '{target_analyzer_id}'...")
 
     poller = client.begin_copy_analyzer(
-        target_analyzer_id=target_analyzer_id,
+        analyzer_id=target_analyzer_id,
         source_analyzer_id=source_analyzer_id,
     )
     poller.result()
 
     print(f"Analyzer copied successfully!")
-# [END ContentUnderstandingCopyAnalyzer]
+    # [END copy_analyzer]
 
-
-# [START ContentUnderstandingUpdateAndVerifyAnalyzer]
-def update_and_verify_analyzer(client: ContentUnderstandingClient, analyzer_id: str) -> None:
-    """Update the target analyzer with a production tag and verify."""
-
+    # [START update_and_verify_analyzer]
     # Get the target analyzer first to get its BaseAnalyzerId
-    print(f"\nGetting target analyzer '{analyzer_id}'...")
-    target_analyzer = client.get_analyzer(analyzer_id=analyzer_id)
+    print(f"\nGetting target analyzer '{target_analyzer_id}'...")
+    target_analyzer = client.get_analyzer(analyzer_id=target_analyzer_id)
 
     # Update the target analyzer with a production tag
     updated_analyzer = ContentAnalyzer(
@@ -151,20 +121,16 @@ def update_and_verify_analyzer(client: ContentUnderstandingClient, analyzer_id: 
     )
 
     print(f"Updating target analyzer with production tag...")
-    client.update_analyzer(analyzer_id=analyzer_id, resource=updated_analyzer)
+    client.update_analyzer(analyzer_id=target_analyzer_id, resource=updated_analyzer)
 
     # Verify the update
-    updated_target = client.get_analyzer(analyzer_id=analyzer_id)
+    updated_target = client.get_analyzer(analyzer_id=target_analyzer_id)
     print(f"  Description: {updated_target.description}")
     if updated_target.tags:
         print(f"  Tag 'modelType': {updated_target.tags.get('modelType', 'N/A')}")
-# [END ContentUnderstandingUpdateAndVerifyAnalyzer]
+    # [END update_and_verify_analyzer]
 
-
-# [START ContentUnderstandingDeleteCopiedAnalyzers]
-def cleanup_analyzers(client: ContentUnderstandingClient, source_analyzer_id: str, target_analyzer_id: str) -> None:
-    """Clean up by deleting both source and target analyzers."""
-
+    # [START delete_copied_analyzers]
     print(f"\nCleaning up analyzers...")
 
     try:
@@ -178,6 +144,11 @@ def cleanup_analyzers(client: ContentUnderstandingClient, source_analyzer_id: st
         print(f"  Target analyzer '{target_analyzer_id}' deleted successfully.")
     except Exception:
         pass  # Ignore cleanup errors
+    # [END delete_copied_analyzers]
+
+
+if __name__ == "__main__":
+    main()
 # [END ContentUnderstandingDeleteCopiedAnalyzers]
 
 
