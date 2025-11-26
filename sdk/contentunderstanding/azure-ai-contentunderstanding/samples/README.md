@@ -135,7 +135,7 @@ python samples/sample_analyze_url.py
 
 ### Sample 00: Configure Defaults
 
-#### `sample_configure_defaults.py` ⭐
+#### `sample_configure_defaults.py`
 **Required setup!** Configures and retrieves default model deployment settings for your Content Understanding resource. This is a one-time setup before using prebuilt analyzers.
 
 **Key concepts:**
@@ -156,7 +156,7 @@ Analyzes a PDF document from local binary data using `prebuilt-documentSearch`. 
 
 ### Sample 02: Analyze URL
 
-#### `sample_analyze_url.py` ⭐
+#### `sample_analyze_url.py`
 **Start here!** Analyzes a document from a remote URL using `prebuilt-documentSearch`. Shows basic document analysis and content extraction.
 
 **Key concepts:**
@@ -385,6 +385,14 @@ pip install -r dev_requirements.txt
 ### "Could not load credentials from the environment"
 
 **Solution:** Either set `AZURE_CONTENT_UNDERSTANDING_KEY` in `.env` or run `az login`.
+
+### Import errors or type checking issues
+
+**Solution:** Reinstall the SDK in the virtual environment:
+```bash
+source .venv/bin/activate
+pip install -e . --force-reinstall
+```
 
 ### "Model deployments not configured" or "prebuilt analyzers not available"
 
