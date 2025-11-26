@@ -22,10 +22,10 @@
 """Internal Helper functions in the Azure Cosmos database service.
 """
 
-import platform
-import re
 import base64
 import json
+import platform
+import re
 import time
 import os
 from typing import Any, Optional, Tuple
