@@ -23,9 +23,9 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONTENT_UNDERSTANDING_ENDPOINT - the endpoint to your Content Understanding resource.
     2) AZURE_CONTENT_UNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
-    3) GPT_4_1_DEPLOYMENT - your GPT-4.1 deployment name in Azure AI Foundry.
-    4) GPT_4_1_MINI_DEPLOYMENT - your GPT-4.1-mini deployment name in Azure AI Foundry.
-    5) TEXT_EMBEDDING_3_LARGE_DEPLOYMENT - your text-embedding-3-large deployment name in Azure AI Foundry.
+    3) GPT_4_1_DEPLOYMENT - your GPT-4.1 deployment name in Microsoft Foundry.
+    4) GPT_4_1_MINI_DEPLOYMENT - your GPT-4.1-mini deployment name in Microsoft Foundry.
+    5) TEXT_EMBEDDING_3_LARGE_DEPLOYMENT - your text-embedding-3-large deployment name in Microsoft Foundry.
 """
 
 import os

@@ -14,7 +14,7 @@ This table shows the relationship between SDK versions and supported API service
 
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- Once you have your Azure subscription, create an [Azure AI Foundry resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) in the Azure portal. Be sure to create it in a [supported region](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support).
+- Once you have your Azure subscription, create an [Microsoft Foundry resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) in the Azure portal. Be sure to create it in a [supported region](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support).
 - For more information, see: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api?tabs=document
 
 ### Install the package
@@ -23,17 +23,17 @@ This table shows the relationship between SDK versions and supported API service
 python -m pip install azure-ai-contentunderstanding
 ```
 
-### Configure your Azure AI Foundry resource and required model deployments
+### Configure your Microsoft Foundry resource and required model deployments
 
 Before running most samples (especially those that use prebuilt analyzers) you need to:
 
-1. Create (or reuse) an Azure AI Foundry resource
+1. Create (or reuse) an Microsoft Foundry resource
 2. Assign the correct role so you can configure default model deployments
 3. Deploy the required foundation models (GPT and Embeddings) in that resource
 4. Map those deployments to standard model names using the SDK's `update_defaults` API (one-time per resource)
 5. Provide environment variables (via a `.env` file at the repository root for tests, or your shell/session for ad‑hoc runs)
 
-#### 1. Create the Azure AI Foundry resource
+#### 1. Create the Microsoft Foundry resource
 
 Follow the steps in the Azure portal (Create a resource > AI Foundry). The Content Understanding service is hosted within this resource. After creation, locate the endpoint under: Resource Management > Keys and Endpoint. It typically looks like:
 
@@ -45,7 +45,7 @@ Set this as `AZURE_CONTENT_UNDERSTANDING_ENDPOINT`.
 
 #### 2. Grant required permissions
 
-To configure default model deployments you (or the service principal / managed identity you use) must have the **Cognitive Services User** role on the Azure AI Foundry resource, even if you are already an Owner. In the Azure portal:
+To configure default model deployments you (or the service principal / managed identity you use) must have the **Cognitive Services User** role on the Microsoft Foundry resource, even if you are already an Owner. In the Azure portal:
 
 1. Go to your resource
 2. Access Control (IAM) > Add > Add role assignment
@@ -63,7 +63,7 @@ Prebuilt analyzers rely on specific model families:
 | `prebuilt-documentSearch`, `prebuilt-audioSearch`, `prebuilt-videoSearch` | `gpt-4.1-mini`, `text-embedding-3-large` |
 | `prebuilt-invoice`, `prebuilt-receipt` and similar structured document analyzers | `gpt-4.1`, `text-embedding-3-large` |
 
-In Azure AI Foundry: Deployments > Deploy model > Deploy base model. Deploy each of:
+In Microsoft Foundry: Deployments > Deploy model > Deploy base model. Deploy each of:
 
 - GPT-4.1 (suggested deployment name: `gpt-4.1`)
 - GPT-4.1-mini (suggested deployment name: `gpt-4.1-mini`)
@@ -135,7 +135,7 @@ After a successful run you can immediately use prebuilt analyzers such as `prebu
 - Confirm the **Cognitive Services User** role assignment
 - Verify the endpoint points to the correct resource
 
-You only need to perform this configuration again if you change deployment names or create a new Azure AI Foundry resource.
+You only need to perform this configuration again if you change deployment names or create a new Microsoft Foundry resource.
 
 #### Troubleshooting quick tips
 - Missing model variables: ensure all three deployment environment variables are present; samples will warn politely if any are absent.
@@ -272,11 +272,11 @@ asyncio.run(analyze_invoice())
 
 ## Troubleshooting
 
-### Azure AI Foundry Resource and Regional Support
+### Microsoft Foundry Resource and Regional Support
 
-Azure AI Content Understanding requires an [Azure AI Foundry resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) and is only available in certain [supported regions](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support). Make sure to:
+Azure AI Content Understanding requires an [Microsoft Foundry resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) and is only available in certain [supported regions](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support). Make sure to:
 
-- Create an Azure AI Foundry resource in the Azure portal under **AI Foundry** > **AI Foundry**
+- Create an Microsoft Foundry resource in the Azure portal under **AI Foundry** > **AI Foundry**
 - Select a supported region when creating the resource
 
 For detailed setup instructions and current supported regions, see: **[Azure AI Content Understanding Quickstart Guide](https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api)**
@@ -311,7 +311,7 @@ To run the tests for this package, you need to set up a `.env` file with your te
    ```
 
 4. Edit the `.env` file at the repo root and fill in your actual values:
-   - `CONTENTUNDERSTANDING_ENDPOINT`: Your Azure AI Foundry resource endpoint
+   - `CONTENTUNDERSTANDING_ENDPOINT`: Your Microsoft Foundry resource endpoint
    - `AZURE_CONTENT_UNDERSTANDING_KEY`: Your API key (optional if using DefaultAzureCredential)
    - `AZURE_TEST_RUN_LIVE`: Set to `true` to run tests against real Azure resources
    - `AZURE_SKIP_LIVE_RECORDING`: Set to `true` to skip recording when running live tests
