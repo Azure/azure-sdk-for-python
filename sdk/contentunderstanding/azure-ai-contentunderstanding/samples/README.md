@@ -11,7 +11,7 @@ urlFragment: azure-ai-contentunderstanding-samples
 
 These code samples demonstrate common scenarios with the Azure AI Content Understanding client library.
 
-**Note:** All samples in this folder use synchronous operations. For async samples, see the [`async_samples`](../async_samples) directory.
+**Note:** All samples in this folder use synchronous operations. For async samples, see the [`async_samples`](async_samples) directory.
 
 ## Prerequisites
 
@@ -135,7 +135,7 @@ python samples/sample_analyze_url.py
 
 ### Sample 00: Configure Defaults
 
-#### `sample_configure_defaults.py`
+#### `sample_configure_defaults.py` / `sample_configure_defaults_async.py`
 **Required setup!** Configures and retrieves default model deployment settings for your Content Understanding resource. This is a one-time setup before using prebuilt analyzers.
 
 **Key concepts:**
@@ -145,7 +145,7 @@ python samples/sample_analyze_url.py
 
 ### Sample 01: Analyze Binary
 
-#### `sample_analyze_binary.py`
+#### `sample_analyze_binary.py` / `sample_analyze_binary_async.py`
 Analyzes a PDF document from local binary data using `prebuilt-documentSearch`. Demonstrates how to read local files and extract markdown content.
 
 **Key concepts:**
@@ -156,7 +156,7 @@ Analyzes a PDF document from local binary data using `prebuilt-documentSearch`. 
 
 ### Sample 02: Analyze URL
 
-#### `sample_analyze_url.py`
+#### `sample_analyze_url.py` / `sample_analyze_url_async.py`
 **Start here!** Analyzes a document from a remote URL using `prebuilt-documentSearch`. Shows basic document analysis and content extraction.
 
 **Key concepts:**
@@ -166,7 +166,7 @@ Analyzes a PDF document from local binary data using `prebuilt-documentSearch`. 
 
 ### Sample 03: Analyze Invoice
 
-#### `sample_analyze_invoice.py`
+#### `sample_analyze_invoice.py` / `sample_analyze_invoice_async.py`
 Extracts structured fields from invoices using `prebuilt-invoice` analyzer. Shows how to work with structured field extraction.
 
 **Key concepts:**
@@ -177,7 +177,7 @@ Extracts structured fields from invoices using `prebuilt-invoice` analyzer. Show
 
 ### Sample 04: Create Analyzer
 
-#### `sample_create_analyzer.py`
+#### `sample_create_analyzer.py` / `sample_create_analyzer_async.py`
 Creates a custom analyzer with field schema to extract structured data from documents.
 
 **Key concepts:**
@@ -188,7 +188,7 @@ Creates a custom analyzer with field schema to extract structured data from docu
 
 ### Sample 05: Create Classifier
 
-#### `sample_create_classifier.py`
+#### `sample_create_classifier.py` / `sample_create_classifier_async.py`
 Creates a classifier analyzer to categorize documents and demonstrates automatic segmentation.
 
 **Key concepts:**
@@ -199,7 +199,7 @@ Creates a classifier analyzer to categorize documents and demonstrates automatic
 
 ### Sample 06: Get Analyzer
 
-#### `sample_get_analyzer.py`
+#### `sample_get_analyzer.py` / `sample_get_analyzer_async.py`
 Retrieves information about analyzers, including prebuilt and custom analyzers.
 
 **Key concepts:**
@@ -209,7 +209,7 @@ Retrieves information about analyzers, including prebuilt and custom analyzers.
 
 ### Sample 07: List Analyzers
 
-#### `sample_list_analyzers.py`
+#### `sample_list_analyzers.py` / `sample_list_analyzers_async.py`
 Lists all available analyzers in your Microsoft Foundry resource.
 
 **Key concepts:**
@@ -219,7 +219,7 @@ Lists all available analyzers in your Microsoft Foundry resource.
 
 ### Sample 08: Update Analyzer
 
-#### `sample_update_analyzer.py`
+#### `sample_update_analyzer.py` / `sample_update_analyzer_async.py`
 Updates an existing custom analyzer's description and tags.
 
 **Key concepts:**
@@ -229,7 +229,7 @@ Updates an existing custom analyzer's description and tags.
 
 ### Sample 09: Delete Analyzer
 
-#### `sample_delete_analyzer.py`
+#### `sample_delete_analyzer.py` / `sample_delete_analyzer_async.py`
 Deletes a custom analyzer from your resource.
 
 **Key concepts:**
@@ -239,7 +239,7 @@ Deletes a custom analyzer from your resource.
 
 ### Sample 10: Analyze Configs
 
-#### `sample_analyze_configs.py`
+#### `sample_analyze_configs.py` / `sample_analyze_configs_async.py`
 Extracts additional features from documents such as charts, hyperlinks, formulas, and annotations.
 
 **Key concepts:**
@@ -251,7 +251,7 @@ Extracts additional features from documents such as charts, hyperlinks, formulas
 
 ### Sample 11: Analyze Return Raw JSON
 
-#### `sample_analyze_return_raw_json.py`
+#### `sample_analyze_return_raw_json.py` / `sample_analyze_return_raw_json_async.py`
 Accesses the raw JSON response from analysis operations for custom processing.
 
 **Key concepts:**
@@ -261,7 +261,7 @@ Accesses the raw JSON response from analysis operations for custom processing.
 
 ### Sample 12: Get Result File
 
-#### `sample_get_result_file.py`
+#### `sample_get_result_file.py` / `sample_get_result_file_async.py`
 Retrieves result files (such as keyframe images) from video analysis operations.
 
 **Key concepts:**
@@ -272,7 +272,7 @@ Retrieves result files (such as keyframe images) from video analysis operations.
 
 ### Sample 13: Delete Result
 
-#### `sample_delete_result.py`
+#### `sample_delete_result.py` / `sample_delete_result_async.py`
 Demonstrates analyzing a document and then deleting the analysis result.
 
 **Key concepts:**
@@ -283,7 +283,7 @@ Demonstrates analyzing a document and then deleting the analysis result.
 
 ### Sample 14: Copy Analyzer
 
-#### `sample_copy_analyzer.py`
+#### `sample_copy_analyzer.py` / `sample_copy_analyzer_async.py`
 Copies an analyzer from source to target within the same resource.
 
 **Key concepts:**
@@ -294,7 +294,7 @@ Copies an analyzer from source to target within the same resource.
 
 ### Sample 15: Grant Copy Auth
 
-#### `sample_grant_copy_auth.py`
+#### `sample_grant_copy_auth.py` / `sample_grant_copy_auth_async.py`
 Grants copy authorization and copies an analyzer from a source resource to a target resource (cross-resource copying).
 
 **Key concepts:**
