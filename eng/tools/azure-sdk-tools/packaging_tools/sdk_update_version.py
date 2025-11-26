@@ -132,8 +132,9 @@ def main(
         # calculate version if needed
         changelog_content, last_version = get_changelog_content(package_path, package_result, enable_changelog=True)
         tag_is_stable = release_type == "stable"
+    
 
-    if version is None and not is_valid_changelog_content(changelog_content) and is_arm_sdk(package_path.name):
+    if version is None and not is_valid_changelog_content(changelog_content) and is_arm_sdk(package_name):
         # When package_result is provided, it means this function is called in pipeline and we should not log error
         enable_log_error = not bool(package_result)
         log_failed_message(
