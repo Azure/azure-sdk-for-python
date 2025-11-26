@@ -21,6 +21,7 @@ except:
 
 try:
     import httpx
+
     HTTPXTransport = httpx.HTTPTransport
     AsyncHTTPXTransport = httpx.AsyncHTTPTransport
 except ImportError:
@@ -300,6 +301,7 @@ def _make_proxy_decorator(transports):
                         original_target = parsed_result._replace(**upstream_uri_dict).geturl()
                         result.request.url = original_target
                     return result
+
                 return combined_call
 
             # Patch multiple transports and ensure restoration
@@ -312,9 +314,9 @@ def _make_proxy_decorator(transports):
                     original = getattr(owner, name)
                     # Check if this is an httpx transport by comparing with httpx transport classes
                     is_httpx_transport = (
-                        (HTTPXTransport is not None and owner is HTTPXTransport) or
-                        (AsyncHTTPXTransport is not None and owner is AsyncHTTPXTransport) or
-                        (httpx is not None and owner.__module__.startswith('httpx'))
+                        (HTTPXTransport is not None and owner is HTTPXTransport)
+                        or (AsyncHTTPXTransport is not None and owner is AsyncHTTPXTransport)
+                        or (httpx is not None and owner.__module__.startswith("httpx"))
                     )
                     setattr(owner, name, make_combined_call(original, is_httpx=is_httpx_transport))
                     originals.append((owner, name, original))
@@ -338,9 +340,7 @@ def _make_proxy_decorator(transports):
 
                 except ResourceNotFoundError as error:
                     error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-                    troubleshoot = (
-                        "Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot."
-                    )
+                    troubleshoot = "Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot."
                     message = error_body.get("message") or error_body.get("Message")
                     error_with_message = ResourceNotFoundError(
                         message=f"{troubleshoot} Error details:\n{message}",
@@ -355,5 +355,7 @@ def _make_proxy_decorator(transports):
                     stop_record_or_playback(test_id, recording_id, test_variables)
 
             return test_variables
+
         return record_wrap
+
     return _decorator
