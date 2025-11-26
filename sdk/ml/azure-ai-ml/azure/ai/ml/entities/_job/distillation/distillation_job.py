@@ -522,6 +522,8 @@ class DistillationJob(Job, JobIOMixin):
         if parent_eq is NotImplemented:
             # Parent doesn't implement comparison, we'll continue comparison on our end
             pass
+        # Adding this case for future
+        # currently the parent doesn't implement __eq__ so we will always get NotImplemented only
         elif not parent_eq:
             # Parent says objects are not equal
             return False
