@@ -22,7 +22,7 @@ def setup_snippet_injection(config: BrowserSDKConfig) -> None:
         # Try to setup Django middleware if Django is available
         _setup_django_injection(config)
         # Future: Add support for other frameworks like Flask, FastAPI, etc.
-    except Exception as ex:  # pylint: disable=broad-except
+    except Exception as ex:  # pylint: disable=broad-exception-caught
         _logger.debug("Failed to setup snippet injection: %s", ex, exc_info=True)
 
 def _setup_django_injection(config: BrowserSDKConfig) -> None:
@@ -48,12 +48,12 @@ def _setup_django_injection(config: BrowserSDKConfig) -> None:
             if not settings.configured:
                 _logger.debug("Django not configured - skipping middleware registration")
                 return
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             _logger.debug("Cannot access Django settings - skipping middleware registration")
             return
         # Try to dynamically register our middleware
         _register_django_middleware(config)
-    except Exception as ex:  # pylint: disable=broad-except
+    except Exception as ex:  # pylint: disable=broad-exception-caught
         _logger.debug("Failed to setup Django middleware: %s", ex, exc_info=True)
 
 def _register_django_middleware(config: BrowserSDKConfig) -> None:
@@ -83,7 +83,7 @@ def _register_django_middleware(config: BrowserSDKConfig) -> None:
                 _logger.debug("Added Application Insights middleware to Django MIDDLEWARE_CLASSES")
         # Store configuration globally for the middleware to access
         _store_django_config(config)
-    except Exception as ex:
+    except Exception as ex:  # pylint: disable=broad-exception-caught
         _logger.warning("Failed to register Django middleware: %s", ex, exc_info=True)
 
 def _store_django_config(config: BrowserSDKConfig) -> None:
@@ -100,5 +100,5 @@ def _store_django_config(config: BrowserSDKConfig) -> None:
         if not hasattr(settings, 'AZURE_MONITOR_WEB_SNIPPET_CONFIG'):
             settings.AZURE_MONITOR_WEB_SNIPPET_CONFIG = config
             _logger.debug("Stored Application Insights configuration in Django settings")
-    except Exception as ex:
+    except Exception as ex:  # pylint: disable=broad-exception-caught
         _logger.debug("Failed to store Django configuration: %s", ex, exc_info=True)

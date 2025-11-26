@@ -6,23 +6,27 @@
 # -------------------------------------------------------------------------
 
 import gzip
+import importlib
 import re
 from typing import Optional, Dict, Any, Tuple
 from logging import getLogger
 
 # Optional compression libraries
+_BROTLI_MODULE: Optional[Any]
 try:
-    import brotli
+    _BROTLI_MODULE = importlib.import_module("brotli")
     HAS_BROTLI = True
 except ImportError:
-    brotli = None
+    _BROTLI_MODULE = None
     HAS_BROTLI = False
 
+_ZLIB_MODULE: Optional[Any]
 try:
-    import zlib
+    import zlib as _imported_zlib
+    _ZLIB_MODULE = _imported_zlib
     HAS_ZLIB = True
 except ImportError:
-    zlib = None
+    _ZLIB_MODULE = None
     HAS_ZLIB = False
 
 from ._config import BrowserSDKConfig
@@ -134,7 +138,7 @@ class WebSnippetInjector:
                 html_content[insertion_point:]
             )
             return modified_html.encode(encoding)
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.warning("Failed to inject web snippet: %s", ex, exc_info=True)
             return content
 
@@ -169,7 +173,7 @@ class WebSnippetInjector:
                         if test_compressed == content:
                             detected_encoding = enc
                             break
-                    except Exception:
+                    except Exception:  # pylint: disable=broad-exception-caught
                         continue
             # Check for existing SDK using cached decompressed content
             if self._has_existing_web_sdk_from_decompressed(decompressed_content):
@@ -182,7 +186,7 @@ class WebSnippetInjector:
                 compressed_content = self._compress_content(modified_content, detected_encoding)
                 return compressed_content, detected_encoding
             return modified_content, None
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.warning("Failed to inject snippet with compression handling: %s", ex, exc_info=True)
             return content, content_encoding
 
@@ -231,7 +235,7 @@ class WebSnippetInjector:
                     if test_decompressed != content:  # Successfully decompressed
                         decompressed_content = test_decompressed
                         break
-                except Exception:
+                except Exception:  # pylint: disable=broad-exception-caught
                     continue
         # Cache the result only if we actually did decompression work
         if content_encoding or decompressed_content != content:
@@ -289,11 +293,11 @@ class WebSnippetInjector:
                         if test_decompressed != content:  # Successfully decompressed
                             decompressed_content = test_decompressed
                             break
-                    except Exception:
+                    except Exception:  # pylint: disable=broad-exception-caught
                         continue
             return self._has_existing_web_sdk_from_decompressed(decompressed_content)
 
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             return False
 
     def _has_existing_web_sdk_from_decompressed(self, decompressed_content: bytes) -> bool:
@@ -308,7 +312,7 @@ class WebSnippetInjector:
             # Convert decompressed content to string and check for patterns
             content_str = decompressed_content.decode("utf-8", errors="ignore")
             return any(pattern.search(content_str) for pattern in self._existing_sdk_patterns)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             return False
 
     def _find_insertion_point(self, html_content: str) -> int:
@@ -333,7 +337,7 @@ class WebSnippetInjector:
             return html_start
         return -1
 
-    def _decompress_content(self, content: bytes, encoding: Optional[str]) -> bytes:
+    def _decompress_content(self, content: bytes, encoding: Optional[str]) -> bytes:  # pylint: disable=too-many-return-statements
         """Decompress content based on encoding.
 
         :param content: Compressed content bytes to decompress.
@@ -349,21 +353,21 @@ class WebSnippetInjector:
             if encoding.lower() == "gzip":
                 return gzip.decompress(content)
             if encoding.lower() == "br":
-                if not HAS_BROTLI or brotli is None:
+                if not HAS_BROTLI or _BROTLI_MODULE is None:
                     _logger.warning("brotli library not available for decompression")
                     return content
-                return brotli.decompress(content)
+                return _BROTLI_MODULE.decompress(content)
             if encoding.lower() == "deflate":
-                if not HAS_ZLIB or zlib is None:
+                if not HAS_ZLIB or _ZLIB_MODULE is None:
                     _logger.warning("zlib library not available for decompression")
                     return content
-                return zlib.decompress(content)
+                return _ZLIB_MODULE.decompress(content)
             return content
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.warning("Failed to decompress content with encoding %s: %s", encoding, ex)
             return content
 
-    def _compress_content(self, content: bytes, encoding: str) -> bytes:
+    def _compress_content(self, content: bytes, encoding: str) -> bytes:  # pylint: disable=too-many-return-statements
         """Compress content using specified encoding.
 
         :param content: Uncompressed content bytes to compress.
@@ -377,17 +381,17 @@ class WebSnippetInjector:
             if encoding.lower() == "gzip":
                 return gzip.compress(content)
             if encoding.lower() == "br":
-                if not HAS_BROTLI or brotli is None:
+                if not HAS_BROTLI or _BROTLI_MODULE is None:
                     _logger.warning("brotli library not available for compression")
                     return content
-                return brotli.compress(content)
+                return _BROTLI_MODULE.compress(content)
             if encoding.lower() == "deflate":
-                if not HAS_ZLIB or zlib is None:
+                if not HAS_ZLIB or _ZLIB_MODULE is None:
                     _logger.warning("zlib library not available for compression")
                     return content
-                return zlib.compress(content)
+                return _ZLIB_MODULE.compress(content)
             return content
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.warning("Failed to compress content with encoding %s: %s", encoding, ex)
             return content
 

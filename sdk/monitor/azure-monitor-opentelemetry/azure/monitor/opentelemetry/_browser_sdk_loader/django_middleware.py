@@ -97,7 +97,7 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
                 response['Content-Encoding'] = new_encoding
             # Update content length if it changed
             response['Content-Length'] = str(len(modified_content))
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.warning("Failed to inject Application Insights snippet: %s", ex, exc_info=True)
         return response
 
@@ -130,7 +130,7 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
                 return
 
             self._injector = WebSnippetInjector(snippet_config)
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.error("Failed to configure middleware: %s", ex, exc_info=True)
 
     def _auto_configure_from_settings(self) -> None:
@@ -154,5 +154,5 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
             else:
                 _logger.debug("No AZURE_MONITOR_WEB_SNIPPET_CONFIG found in Django settings")
 
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.debug("Failed to auto-configure from Django settings: %s", ex, exc_info=True)
