@@ -953,6 +953,7 @@ Cross region hedging availability strategy improves availability and reduces lat
 
 - **Hedged Requests**: The SDK sends a parallel request to another region if the primary region does not respond within a configured delay.
 - **Configurable**: Hedging can be enabled or disabled, and the delay before sending a hedged request is tunable.
+- **ThreadPoolExecutor**: The sync CosmosClient instance will use a ThreadPoolExecutor under the hood for parallelizing requests. Users can choose whether to use the default ThreadPoolExecutor the SDK uses, or to pass in their own instance. *The async client does not need the executor since it uses asynchronous logic to parallelize requests.*
 
 #### Enabling Cross Region Hedging
 
