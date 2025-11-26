@@ -32,15 +32,14 @@ def main():
     )
 
     response = client.migrations.update(
-        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
-        resource_group_name="testrg",
-        target_db_server_name="testtarget",
-        migration_name="testmigration",
+        resource_group_name="exampleresourcegroup",
+        server_name="exampleserver",
+        migration_name="examplemigration",
         parameters={"properties": {"setupLogicalReplicationOnSourceDbIfNeeded": "True"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/Migrations_Update.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2025-08-01/examples/MigrationsUpdate.json
 if __name__ == "__main__":
     main()
