@@ -130,7 +130,11 @@ def main(
             release_type = "beta"
 
         # calculate version if needed
-        changelog_content, last_version = get_changelog_content(package_path, package_result, enable_changelog=True)
+        if version is None:
+            changelog_content, last_version = get_changelog_content(package_path, package_result, enable_changelog=True)
+        else:
+            changelog_content = ""
+            last_version = ""
         tag_is_stable = release_type == "stable"
     
 
