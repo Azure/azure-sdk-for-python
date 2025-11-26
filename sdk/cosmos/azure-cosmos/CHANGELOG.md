@@ -1,12 +1,10 @@
 ## Release History
 
-### 4.14.3 (Unreleased)
+### 4.15.0b1 (2025-11-26)
 
 #### Features Added
 * Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 * Added support for AvailabilityStrategy to help improve request latency and availability in multi-region deployments. See [PR 42584](https://github.com/Azure/azure-sdk-for-python/pull/42584)
-
-#### Breaking Changes
 
 #### Bugs Fixed
 * Fixed bug where client timeout/read_timeout values were not properly enforced[PR 42652](https://github.com/Azure/azure-sdk-for-python/pull/42652).
