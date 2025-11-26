@@ -30,6 +30,19 @@ class TestWebSnippetInjector(unittest.TestCase):
         self.assertIsNone(self.injector._decompressed_content_cache)
         self.assertIsNone(self.injector._cache_key)
 
+    @patch('azure.monitor.opentelemetry._browser_sdk_loader.snippet_injector._mark_browser_loader_feature')
+    def test_statsbeat_helper_called_when_enabled(self, mock_mark_feature):
+        """Ensure statsbeat helper is invoked when the feature is enabled."""
+        WebSnippetInjector(self.config)
+        mock_mark_feature.assert_called_with(True)
+
+    @patch('azure.monitor.opentelemetry._browser_sdk_loader.snippet_injector._mark_browser_loader_feature')
+    def test_statsbeat_helper_called_when_disabled(self, mock_mark_feature):
+        """Ensure statsbeat helper receives False for disabled configs."""
+        disabled_config = BrowserSDKConfig(enabled=False)
+        WebSnippetInjector(disabled_config)
+        mock_mark_feature.assert_called_with(False)
+
     def test_should_inject_disabled_config(self):
         """Test should_inject returns False when config is disabled."""
         disabled_config = BrowserSDKConfig(enabled=False)

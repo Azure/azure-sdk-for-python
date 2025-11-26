@@ -8,8 +8,10 @@
 import gzip
 import importlib
 import re
-from typing import Optional, Dict, Any, Tuple
 from logging import getLogger
+from typing import Any, Dict, Optional, Tuple
+
+from ._config import BrowserSDKConfig
 
 # Optional compression libraries
 _BROTLI_MODULE: Optional[Any]
@@ -29,9 +31,36 @@ except ImportError:
     _ZLIB_MODULE = None
     HAS_ZLIB = False
 
-from ._config import BrowserSDKConfig
-
 _logger = getLogger(__name__)
+
+
+def _mark_browser_loader_feature(is_enabled: bool) -> None:
+    """Record browser SDK loader usage in statsbeat when available.
+
+    :param is_enabled: Indicates whether the browser loader is enabled.
+    :type is_enabled: bool
+    """
+    if not is_enabled:
+        return
+    try:
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+            get_statsbeat_browser_sdk_loader_feature_set,
+            get_statsbeat_shutdown,
+            is_statsbeat_enabled,
+            set_statsbeat_browser_sdk_loader_feature_set,
+        )
+    except ImportError:
+        return
+
+    try:
+        if (
+            is_statsbeat_enabled()
+            and not get_statsbeat_shutdown()
+            and not get_statsbeat_browser_sdk_loader_feature_set()
+        ):
+            set_statsbeat_browser_sdk_loader_feature_set()
+    except Exception:  # pylint: disable=broad-exception-caught
+        _logger.debug("Failed to record browser loader statsbeat usage", exc_info=True)
 
 # Web SDK snippet template
 _WEB_SDK_SNIPPET_TEMPLATE = '''<script type="text/javascript">
@@ -74,6 +103,7 @@ class WebSnippetInjector:
                 re.IGNORECASE
             ),
         ]
+        _mark_browser_loader_feature(self.config.enabled)
 
     def should_inject(
         self,
