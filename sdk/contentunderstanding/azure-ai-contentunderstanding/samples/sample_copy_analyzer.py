@@ -63,7 +63,7 @@ def main() -> None:
 
     analyzer = ContentAnalyzer(
         base_analyzer_id="prebuilt-document",
-        description="Source analyzer for copy example",
+        description="Source analyzer for copying",
         config=ContentAnalyzerConfig(
             enable_formula=False,
             enable_layout=True,
@@ -88,14 +88,20 @@ def main() -> None:
             },
         ),
         models={"completion": "gpt-4.1"},
+        tags={"modelType": "in_development"},
     )
-
     poller = client.begin_create_analyzer(
         analyzer_id=source_analyzer_id,
         resource=analyzer,
     )
     poller.result()
     print(f"Source analyzer '{source_analyzer_id}' created successfully!")
+
+    # Get the source analyzer to see its description and tags before copying
+    source_analyzer_info = client.get_analyzer(analyzer_id=source_analyzer_id)
+    print(f"Source analyzer description: {source_analyzer_info.description}")
+    if source_analyzer_info.tags:
+        print(f"Source analyzer tags: {', '.join(f'{k}={v}' for k, v in source_analyzer_info.tags.items())}")
 
     # [START copy_analyzer]
     print(f"\nCopying analyzer from '{source_analyzer_id}' to '{target_analyzer_id}'...")
@@ -125,9 +131,9 @@ def main() -> None:
 
     # Verify the update
     updated_target = client.get_analyzer(analyzer_id=target_analyzer_id)
-    print(f"  Description: {updated_target.description}")
+    print(f"Updated target analyzer description: {updated_target.description}")
     if updated_target.tags:
-        print(f"  Tag 'modelType': {updated_target.tags.get('modelType', 'N/A')}")
+        print(f"Updated target analyzer tag: {updated_target.tags.get('modelType', 'N/A')}")
     # [END update_and_verify_analyzer]
 
     # [START delete_copied_analyzers]

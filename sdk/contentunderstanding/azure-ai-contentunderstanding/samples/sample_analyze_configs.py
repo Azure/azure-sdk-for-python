@@ -150,9 +150,14 @@ def main() -> None:
             if hasattr(document_content, 'annotations') and document_content.annotations and len(document_content.annotations) > 0:
                 print(f"\nFound {len(document_content.annotations)} annotation(s)")
                 for annotation in document_content.annotations:
-                    print(f"  Kind: {annotation.kind or '(unknown)'}")
-                    if hasattr(annotation, 'content') and annotation.content:
-                        print(f"    Content: {annotation.content}")
+                    print(f"  Annotation ID: {annotation.id}")
+                    print(f"    Kind: {annotation.kind}")
+                    if hasattr(annotation, 'author') and annotation.author:
+                        print(f"    Author: {annotation.author}")
+                    if hasattr(annotation, 'comments') and annotation.comments and len(annotation.comments) > 0:
+                        print(f"    Comments: {len(annotation.comments)}")
+                        for comment in annotation.comments:
+                            print(f"      - {comment.message}")
             else:
                 print("\nNo annotations found in the document.")
 
