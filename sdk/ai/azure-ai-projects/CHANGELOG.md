@@ -5,6 +5,7 @@
 ### Features Added
 
 * The package now takes dependency on openai and azure-identity packages. No need to install them separately.
+* Tracing: support for tracing the schema when agent with structured output is created.
 
 ### Breaking changes
 
