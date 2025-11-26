@@ -16,21 +16,27 @@ from azure.core.pipeline import policies
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
+
 # To check the credential is AzureKeyCredential or AzureSasCredential or TokenCredential
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
-        authentication_policy = policies.AzureKeyCredentialPolicy(name="subscription-key", credential=credential)
+        authentication_policy = policies.AzureKeyCredentialPolicy(
+            name="subscription-key", credential=credential
+        )
     elif isinstance(credential, AzureSasCredential):
         authentication_policy = policies.AzureSasCredentialPolicy(credential)
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of AzureKeyCredential "
-            "or AzureSasCredential or a token credential from azure.identity".format(type(credential))
+            "or AzureSasCredential or a token credential from azure.identity".format(
+                type(credential)
+            )
         )
     return authentication_policy
+
 
 class MapsGeolocationClient(MapsGeolocationClientGenerated):
     """Azure Maps Geolocation REST APIs.
@@ -52,18 +58,26 @@ class MapsGeolocationClient(MapsGeolocationClientGenerated):
     """
 
     def __init__(
-        self, credential: Union["TokenCredential", AzureKeyCredential, AzureSasCredential], client_id: Optional[str] = None, **kwargs: Any
+        self,
+        credential: Union["TokenCredential", AzureKeyCredential, AzureSasCredential],
+        client_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         super().__init__(
-            credential=credential,
+            credential=credential,  # type: ignore[arg-type]
             client_id=client_id,
             endpoint=kwargs.pop("endpoint", "https://atlas.microsoft.com"),
             api_version=kwargs.pop("api_version", "1.0"),
-            authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            authentication_policy=kwargs.pop(
+                "authentication_policy", _authentication_policy(credential)
+            ),
             **kwargs
         )
 
-__all__: list[str] = ["MapsGeolocationClient"]  # Add all objects you want publicly available to users at this package level
+
+__all__: list[str] = [
+    "MapsGeolocationClient"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
