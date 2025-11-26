@@ -2,8 +2,8 @@ import re
 import sys
 import os
 import ast
-import time
 import shutil
+from importlib.util import find_spec
 
 try:
     # py 311 adds this library natively
@@ -99,6 +99,14 @@ def change_log_generate(
 
     # fallback to old changelog tool
     _LOGGER.info("Fallback to old changelog tool")
+    module_name = package_name.replace("-", ".")
+    if find_spec(module_name) is None and prefolder:
+        _LOGGER.info(f"Module {module_name} not found, try to install it first.")
+        try:
+            check_call([sys.executable, "-m", "pip", "install", "-e", "."], cwd=Path(prefolder) / package_name)
+        except CalledProcessError as e:
+            _LOGGER.warning(f"Failed to install {package_name}: {e}")
+    
     return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
 
 

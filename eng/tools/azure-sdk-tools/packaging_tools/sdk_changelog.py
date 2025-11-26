@@ -57,7 +57,6 @@ def get_changelog_content(package_path: Path, package_result: dict, enable_chang
     """
 
     package_name = package_path.name
-    folder_name = package_path.parent.name
 
     if not is_arm_sdk(package_name):
         _LOGGER.info(f"Skip changelog generation for data-plane package: {package_name}")
@@ -75,7 +74,7 @@ def get_changelog_content(package_path: Path, package_result: dict, enable_chang
             last_version,
             tag_is_stable,
             last_stable_release=last_stable_release,
-            prefolder=folder_name,
+            prefolder=str(package_path.parent),
         )
 
         try:
@@ -85,8 +84,9 @@ def get_changelog_content(package_path: Path, package_result: dict, enable_chang
                 md_output = "skip changelog generation"
         except multiprocessing.TimeoutError:
             md_output = "change log generation was timeout!!! You need to write it manually!!!"
-        except:
+        except Exception as e:
             md_output = "change log generation failed!!! You need to write it manually!!!"
+            _LOGGER.warning(f"Exception occurred during changelog generation for {package_name}: {str(e)}")
         finally:
             for file in ["stable.json", "current.json"]:
                 file_path = package_path / file
