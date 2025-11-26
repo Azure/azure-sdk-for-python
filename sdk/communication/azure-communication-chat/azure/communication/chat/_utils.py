@@ -3,6 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import TYPE_CHECKING, Dict, List, Tuple
+
+from ._generated.models import ChatError
+from ._models import ChatParticipant
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    pass
 
 
 def _to_utc_datetime(value):
@@ -23,8 +31,7 @@ class CommunicationErrorResponseConverter(object):
     """
 
     @classmethod
-    def convert(cls, participants, chat_errors):
-        # type: (...) -> list[(ChatThreadParticipant, ChatError)]
+    def convert(cls, participants, chat_errors) -> List[Tuple[ChatParticipant, ChatError]]:
         """
         Util function to convert AddChatParticipantsResult.
 
@@ -40,8 +47,7 @@ class CommunicationErrorResponseConverter(object):
         :rtype: list[(~azure.communication.chat.ChatParticipant, ~azure.communication.chat.ChatError)]
         """
 
-        def create_dict(participants):
-            # type: (...) -> Dict(str, ChatThreadParticipant)
+        def create_dict(participants) -> Dict[str, ChatParticipant]:
             """
             Create dictionary of id -> ChatParticipant
 
@@ -61,6 +67,6 @@ class CommunicationErrorResponseConverter(object):
         if chat_errors is not None:
             for chat_error in chat_errors:
                 _thread_participant = _thread_participants_dict.get(chat_error.target)
-                failed_chat_thread_participants.append((_thread_participant, chat_error))
+                failed_chat_thread_participants.append((_thread_participant, chat_error))  # type: ignore[arg-type]
 
-        return failed_chat_thread_participants
+        return failed_chat_thread_participants  # type: ignore[return-value]
