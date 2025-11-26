@@ -7,7 +7,7 @@ import random
 import re
 import functools
 import json
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, Final
 from azure.ai.projects.models import (
     Connection,
     ConnectionType,
@@ -69,6 +69,16 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_image_model_deployment_name="gpt-image-1-mini",
 )
 
+# Fine-tuning job type constants
+SFT_JOB_TYPE: Final[str] = "sft"
+DPO_JOB_TYPE: Final[str] = "dpo"
+RFT_JOB_TYPE: Final[str] = "rft"
+
+# Training type constants
+STANDARD_TRAINING_TYPE: Final[str] = "Standard"
+GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
+DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
+
 
 class TestBase(AzureRecordedTestCase):
 
@@ -127,10 +137,6 @@ class TestBase(AzureRecordedTestCase):
         "sft": {
             "openai": {
                 "model_name": "gpt-4.1",
-                "deployment": {
-                    "deployment_name": "gpt-4-1-fine-tuned-test",
-                    "pre_finetuned_model": "ft:gpt-4.1:azure-ai-test::ABCD1234",
-                },
             },
             "oss": {"model_name": "Ministral-3B"},
             "training_file_name": "sft_training_set.jsonl",
