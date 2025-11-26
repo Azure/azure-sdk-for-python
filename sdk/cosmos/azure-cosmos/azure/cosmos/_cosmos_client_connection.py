@@ -38,7 +38,6 @@ from azure.core.pipeline.policies import (
     HTTPPolicy,
     ContentDecodePolicy,
     HeadersPolicy,
-    UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     DistributedTracingPolicy,
@@ -49,6 +48,7 @@ from azure.core.pipeline.transport import HttpRequest, \
 from azure.core.utils import CaseInsensitiveDict
 
 from . import _base as base
+from .user_agent_policy import CosmosUserAgentPolicy
 from ._global_partition_endpoint_manager_per_partition_automatic_failover import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover # pylint: disable=line-too-long
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
@@ -231,7 +231,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
+            CosmosUserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
             credentials_policy,
@@ -245,6 +245,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 **kwargs
             ),
         ]
+        # after passing in the user_agent into the user agent policy the user_agent is no longer needed
+        kwargs.pop("user_agent", None)
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(

@@ -36,9 +36,7 @@ from .._availability_strategy_config import CrossRegionHedgingStrategyConfig
 from .._constants import _Constants
 from .._request_object import RequestObject
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
-from .._utils import get_user_agent_features
 from ..documents import _OperationType
-from ..http_constants import ResourceType
 
 # cspell:ignore ppaf
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
@@ -96,15 +94,6 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         request.url = _replace_url_prefix(request.url, base_url)
 
     parse_result = urlparse(request.url)
-
-    # Add relevant enabled features to user agent for debugging
-    if request.headers[http_constants.HttpHeaders.ThinClientProxyResourceType] == http_constants.ResourceType.Document:
-        user_agent_features = get_user_agent_features(global_endpoint_manager)
-        if len(user_agent_features) > 0:
-            user_agent = kwargs.pop("user_agent", global_endpoint_manager.client._user_agent)
-            user_agent = "{} {}".format(user_agent, user_agent_features)
-            kwargs.update({"user_agent": user_agent})
-            kwargs.update({"user_agent_overwrite": True})
 
     # The requests library now expects header values to be strings only starting 2.11,
     # and will raise an error on validation if they are not, so casting all header values to strings.
@@ -190,7 +179,7 @@ def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
     """
     return (request_params.availability_strategy_config is not None and
             not request_params.is_hedging_request and
-            request_params.resource_type == ResourceType.Document and
+            request_params.resource_type == http_constants.ResourceType.Document and
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
              request_params.retry_write > 0))
 
