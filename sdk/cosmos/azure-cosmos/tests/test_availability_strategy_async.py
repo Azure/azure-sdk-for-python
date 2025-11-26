@@ -417,7 +417,7 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
         (None, {'threshold_ms':150, 'threshold_steps_ms':50}),
         ({'threshold_ms':150, 'threshold_steps_ms':50}, _Unset),
-        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'type':'CrossRegionHedging', 'threshold_ms':150, 'threshold_steps_ms':50})
+        ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})
     ])
     async def test_client_availability_strategy_failover(
             self,
