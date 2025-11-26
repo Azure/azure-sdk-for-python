@@ -6,7 +6,7 @@
             "defaultValue": "eastus2",
             "type": "string"
         },
-		"vaults_keyvalut_name": {
+		"vaults_keyvault_name": {
             "defaultValue": "[concat('netsdkkeyv', uniquestring(resourceGroup().id, deployment().name))]",
             "type": "string"
         },
@@ -34,7 +34,7 @@
         {
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2023-07-01",
-            "name": "[parameters('vaults_keyvalut_name')]",
+            "name": "[parameters('vaults_keyvault_name')]",
             "location": "[parameters('location')]",
             "properties": {
                 "sku": {
@@ -86,10 +86,10 @@
         {
             "type": "Microsoft.KeyVault/vaults/keys",
             "apiVersion": "2023-07-01",
-            "name": "[concat(parameters('vaults_keyvalut_name'), '/cmk')]",
+            "name": "[concat(parameters('vaults_keyvault_name'), '/cmk')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvalut_name'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvault_name'))]"
             ],
             "properties": {
                 "kty": "RSA",
@@ -110,7 +110,7 @@
             "name": "[parameters('diskEncryptionSets_name')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvalut_name'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvault_name'))]"
             ],
             "identity": {
                 "type": "SystemAssigned"
@@ -118,9 +118,9 @@
             "properties": {
                 "activeKey": {
                     "sourceVault": {
-                        "id": "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvalut_name'))]"
+                        "id": "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvault_name'))]"
                     },
-                    "keyUrl": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', parameters('vaults_keyvalut_name'), 'cmk'), '2019-09-01', 'Full').properties.keyUriWithVersion]"
+                    "keyUrl": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', parameters('vaults_keyvault_name'), 'cmk'), '2019-09-01', 'Full').properties.keyUriWithVersion]"
                 },
                 "encryptionType": "EncryptionAtRestWithCustomerKey"
             }
@@ -288,7 +288,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_name'))]",
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvalut_name'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvault_name'))]"
             ],
             "identity": {
                 "type": "SystemAssigned"
@@ -300,8 +300,8 @@
                 },
                 "poolAllocationMode": "UserSubscription",
                 "keyVaultReference": {
-                    "id": "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvalut_name'))]",
-                    "url": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvalut_name'))).vaultUri]"
+                    "id": "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvault_name'))]",
+                    "url": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('vaults_keyvault_name'))).vaultUri]"
                 },
                 "publicNetworkAccess": "Enabled",
                 "networkProfile": {
@@ -348,9 +348,9 @@
       "type": "string",
       "value": "[resourceId('Microsoft.Compute/diskEncryptionSets', parameters('diskEncryptionSets_name'))]"
     },
-    "cmk_keyvalut_keyUriWithVersion": {
+    "cmk_keyvault_keyUriWithVersion": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', parameters('vaults_keyvalut_name'), 'cmk'), '2019-09-01', 'Full').properties.keyUriWithVersion]"
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', parameters('vaults_keyvault_name'), 'cmk'), '2019-09-01', 'Full').properties.keyUriWithVersion]"
     },
     "batch_resource_group":{
       "type": "string",

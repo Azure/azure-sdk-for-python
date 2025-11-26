@@ -102,7 +102,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ),
         ]
         test_iaas_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_iaas_"),
+            id="batch_iaas",
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.BatchVmImageReference(
@@ -140,7 +140,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             "/subnets/subnet1"
         )
         test_network_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_network_"),
+            id="batch_network_",
             vm_size=DEFAULT_VM_SIZE,
             network_configuration=network_config,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
@@ -158,7 +158,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
 
         test_image_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_image_"),
+            id="batch_image_",
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.BatchVmImageReference(
@@ -177,7 +177,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Create Pool with Data Disk
         data_disk = models.DataDisk(logical_unit_number=1, disk_size_gb=50)
         test_disk_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_disk_"),
+            id="batch_disk_",
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.BatchVmImageReference(
@@ -197,7 +197,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Create Pool with Azure Disk Encryption
         test_ade_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_ade_"),
+            id="batch_ade_",
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.BatchVmImageReference(
@@ -246,7 +246,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_create_pool_with_blobfuse_mount(self, client: BatchClient, **kwargs):
         # Test Create Iaas Pool
         test_iaas_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_iaas_"),
+            id="batch_iass_",
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.BatchVmImageReference(
@@ -290,7 +290,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_create_pool_with_osdisksecurityprofile(self, client: BatchClient, **kwargs):
         # Test Create Iaas Pool
         test_iaas_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_iaas_"),
+            id="batch_iass_",
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 security_profile=models.SecurityProfile(
@@ -348,7 +348,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         diskEncriptionID = os.environ.get("DISKENCRYPTIONSET_ID")
         
         test_iaas_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_iaas_"),
+            id="batch_iass_",
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 security_profile=models.SecurityProfile(
@@ -428,7 +428,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_batch_update_pools(self, client: BatchClient, **kwargs):
         test_paas_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_paas_"),
+            id="batch_paas_",
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 node_agent_sku_id="batch.node.ubuntu 22.04",
@@ -571,7 +571,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_batch_job_schedules(self, client: BatchClient, **kwargs):
         # Test Create Job Schedule
-        schedule_id = self.get_resource_name("batch_schedule_")
+        schedule_id = "batch_schedule_"
         job_spec = models.BatchJobSpecification(
             pool_info=models.BatchPoolInfo(pool_id="pool_id"),
             constraints=models.BatchJobConstraints(max_task_retry_count=2),
@@ -686,7 +686,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ),
         )
         pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_network_"),
+            id="batch_network_",
             target_dedicated_nodes=1,
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=virtual_machine_config,
@@ -855,7 +855,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ),
         )
         batch_pool = models.BatchPoolCreateOptions(
-            id=self.get_resource_name("batch_network_"),
+            id="batch_network_",
             target_dedicated_nodes=1,
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=virtual_machine_config,
@@ -1054,7 +1054,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             default=models.ExitOptions(job_action=models.BatchJobActionKind.NONE),
         )
         task_param = models.BatchTaskCreateOptions(
-            id=self.get_resource_name("batch_task1_"),
+            id="batch_task1_",
             command_line='cmd /c "echo hello world"',
             exit_conditions=exit_conditions,
         )
@@ -1101,7 +1101,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ),
         ]
         task_param = models.BatchTaskCreateOptions(
-            id=self.get_resource_name("batch_task2_"),
+            id="batch_task2_",
             command_line='cmd /c "echo hello world"',
             output_files=outputs,
         )
@@ -1115,7 +1115,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             scope=models.AutoUserScope.TASK, elevation_level=models.ElevationLevel.ADMIN
         )
         task_param = models.BatchTaskCreateOptions(
-            id=self.get_resource_name("batch_task3_"),
+            id="batch_task3_",
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(auto_user=auto_user),
         )
@@ -1127,7 +1127,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Create Task with Container Settings
         task_param = models.BatchTaskCreateOptions(
-            id=self.get_resource_name("batch_task5_"),
+            id="batch_task5_",
             command_line='cmd /c "echo hello world"',
             container_settings=models.BatchTaskContainerSettings(
                 image_name="windows_container:latest",
@@ -1142,7 +1142,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Create Task with Run-As-User
         task_param = models.BatchTaskCreateOptions(
-            id=self.get_resource_name("batch_task6_"),
+            id="batch_task6_",
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(username="task-user"),
         )
@@ -1156,7 +1156,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         for i in range(7, 10):
             tasks.append(
                 models.BatchTaskCreateOptions(
-                    id=self.get_resource_name("batch_task{}_".format(i)),
+                    id="batch_task{}_".format(i),
                     command_line='cmd /c "echo hello world"',
                 )
             )
@@ -1282,7 +1282,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         job_prep = models.BatchJobPreparationTask(command_line='cmd /c "echo hello world"')
         job_release = models.BatchJobReleaseTask(command_line='cmd /c "echo goodbye world"')
         job_param = models.BatchJobCreateOptions(
-            id=self.get_resource_name("batch_job1_"),
+            id="batch_job1_",
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
             job_preparation_task=job_prep,
             job_release_task=job_release,
@@ -1316,7 +1316,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Create Job with Auto Complete
         job_auto_param = models.BatchJobCreateOptions(
-            id=self.get_resource_name("batch_job2_"),
+            id="batch_job2_",
             all_tasks_complete_mode=models.BatchAllTasksCompleteMode.TERMINATE_JOB,
             task_failure_mode=models.BatchTaskFailureMode.PERFORM_EXIT_OPTIONS_JOB_ACTION,
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
@@ -1419,7 +1419,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 assert e.error.code in ["PoolNotFound"]
 
         # Test Resource Exists Error (409)
-        job_id = self.get_resource_name("batch_test_job_")
+        job_id = "batch_test_job_"
         auto_pool = models.BatchAutoPoolSpecification(
             pool_lifetime_option=models.BatchPoolLifetimeOption.JOB,
             pool=models.BatchPoolSpecification(
