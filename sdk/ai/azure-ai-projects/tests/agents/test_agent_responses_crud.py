@@ -5,10 +5,11 @@
 # ------------------------------------
 # cSpell:disable
 
+from httpx import HTTPTransport as HTTPXTransport
 from pydantic import BaseModel, Field
-import pytest
+from azure.core.pipeline.transport import RequestsTransport
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     ResponseTextFormatConfigurationJsonSchema,
@@ -19,10 +20,7 @@ from azure.ai.projects.models import (
 class TestAgentResponsesCrud(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy((RequestsTransport, "send"), (HTTPXTransport, "handle_request"))
     def test_agent_responses_crud(self, **kwargs):
         """
         Test two-turn Responses with Agent reference and Conversation.
@@ -62,7 +60,7 @@ class TestAgentResponsesCrud(TestBase):
                 instructions="You are a helpful assistant that answers general questions",
             ),
         )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        print(f"\nAgent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
         conversation = openai_client.conversations.create(
             items=[{"type": "message", "role": "user", "content": "How many feet in a mile?"}]
@@ -159,10 +157,7 @@ class TestAgentResponsesCrud(TestBase):
     # To run this tes:
     # pytest tests\agents\test_agent_responses_crud.py::TestAgentResponsesCrud::test_agent_responses_with_structured_output -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy((RequestsTransport, "send"), (HTTPXTransport, "handle_request"))
     def test_agent_responses_with_structured_output(self, **kwargs):
         model = self.test_agents_params["model_deployment_name"]
 

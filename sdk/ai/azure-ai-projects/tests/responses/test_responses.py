@@ -6,17 +6,16 @@
 # cSpell:disable
 
 # import os
-import pytest
-from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
-from devtools_testutils import is_live_and_not_recording
-
+from httpx import HTTPTransport as HTTPXTransport
+from devtools_testutils import recorded_by_proxy
+from test_base import TestBase, servicePreparer
 
 class TestResponses(TestBase):
 
     # To run this test:
     # pytest tests\responses\test_responses.py::TestResponses::test_responses -s
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy((HTTPXTransport, "handle_request"))
     def test_responses(self, **kwargs):
         """
         Test creating a responses call (no Agents, no Conversation).
@@ -35,7 +34,7 @@ class TestResponses(TestBase):
             model=model,
             input="How many feet in a mile?",
         )
-        print(f"Response id: {response1.id}, output text: {response1.output_text}")
+        print(f"\nResponse id: {response1.id}, output text: {response1.output_text}")
         assert "5280" in response1.output_text or "5,280" in response1.output_text
 
         response2 = client.responses.create(

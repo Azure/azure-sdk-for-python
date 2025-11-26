@@ -19,6 +19,15 @@ try:
 except:
     pass
 
+try:
+    import httpx
+    HTTPXTransport = httpx.HTTPTransport
+    AsyncHTTPXTransport = httpx.AsyncHTTPTransport
+except ImportError:
+    httpx = None
+    HTTPXTransport = None
+    AsyncHTTPXTransport = None
+
 from .config import PROXY_URL
 from .helpers import (
     get_http_client,
@@ -161,6 +170,45 @@ def transform_request(request: "HttpRequest", recording_id: str) -> None:
     request.url = updated_target
 
 
+def transform_httpx_request(request, recording_id: str) -> None:
+    """Transform an httpx.Request to route through the test proxy."""
+    parsed_result = url_parse.urlparse(str(request.url))
+
+    # Store original upstream URI
+    if "x-recording-upstream-base-uri" not in request.headers:
+        request.headers["x-recording-upstream-base-uri"] = f"{parsed_result.scheme}://{parsed_result.netloc}"
+
+    # Set recording headers
+    request.headers["x-recording-id"] = recording_id
+    request.headers["x-recording-mode"] = "record" if is_live() else "playback"
+
+    # Remove all request headers that start with `x-stainless`, since they contain CPU info, OS info, etc.
+    # Those change depending on which machine the tests are run on, so we cannot have a single test recording with those.
+    headers_to_remove = [key for key in request.headers.keys() if key.lower().startswith("x-stainless")]
+    for header in headers_to_remove:
+        del request.headers[header]
+
+    # Rewrite URL to proxy
+    updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
+    request.url = httpx.URL(updated_target)
+
+
+def restore_httpx_response_url(response) -> None:
+    """Restore the response's request URL to the original upstream target."""
+    try:
+        parsed_resp = url_parse.urlparse(str(response.request.url))
+        upstream_uri_str = response.request.headers.get("x-recording-upstream-base-uri", "")
+        if upstream_uri_str:
+            upstream_uri = url_parse.urlparse(upstream_uri_str)
+            original_target = parsed_resp._replace(
+                scheme=upstream_uri.scheme or parsed_resp.scheme, netloc=upstream_uri.netloc
+            ).geturl()
+            response.request.url = httpx.URL(original_target)
+    except Exception:
+        # Best-effort restore; don't fail the call if something goes wrong
+        pass
+
+
 # helper: turn decorator args into a normalized list of (owner, attr_name)
 def _normalize_transport_specs(specs):
     norm = []
@@ -179,11 +227,23 @@ def _normalize_transport_specs(specs):
 def recorded_by_proxy(*maybe_specs):
     """
     Usages:
+      # This is how you decorate your sync test functions
+
+      # If your test uses azure.core only network calls
       @recorded_by_proxy
       def test(...): ...
 
-      @recorded_by_proxy((RequestsTransport, "send"), (HttpxTransport, "send"))
+      # If your test uses httpx only for network calls
+      from httpx import HTTPTransport as HTTPXTransport
+      @recorded_by_proxy((HTTPXTransport, "handle_request"))
       def test(...): ...
+
+      # If your test uses both azure.core and httpx for network calls
+      from httpx import HTTPTransport as HTTPXTransport
+      @recorded_by_proxy((RequestsTransport, "send"), (HTTPXTransport, "handle_request"))
+      def test(...): ...
+
+      # TODO: This is how you decorate your async test functions
     """
 
     # Bare decorator usage: @recorded_by_proxy
@@ -217,18 +277,28 @@ def _make_proxy_decorator(transports):
                 transform_request(request, recording_id)
                 return tuple(copied_positional_args), call_kwargs
 
-            # Build a wrapper factory so each patched method closes over its own original
-            def make_combined_call(original_transport_func):
-                def combined_call(*call_args, **call_kwargs):
-                    adjusted_args, adjusted_kwargs = transform_args_inner(*call_args, **call_kwargs)
-                    result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+            def transform_httpx_args_inner(*call_args, **call_kwargs):
+                copied_positional_args = list(call_args)
+                request = copied_positional_args[1]
+                transform_httpx_request(request, recording_id)
+                return tuple(copied_positional_args), call_kwargs
 
-                    # rewrite request.url to the original upstream for LROs, etc.
-                    parsed_result = url_parse.urlparse(result.request.url)
-                    upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
-                    upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
-                    original_target = parsed_result._replace(**upstream_uri_dict).geturl()
-                    result.request.url = original_target
+            # Build a wrapper factory so each patched method closes over its own original
+            def make_combined_call(original_transport_func, is_httpx=False):
+                def combined_call(*call_args, **call_kwargs):
+                    if is_httpx:
+                        adjusted_args, adjusted_kwargs = transform_httpx_args_inner(*call_args, **call_kwargs)
+                        result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+                        restore_httpx_response_url(result)
+                    else:
+                        adjusted_args, adjusted_kwargs = transform_args_inner(*call_args, **call_kwargs)
+                        result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+                        # rewrite request.url to the original upstream for LROs, etc.
+                        parsed_result = url_parse.urlparse(result.request.url)
+                        upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+                        upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+                        original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+                        result.request.url = original_target
                     return result
                 return combined_call
 
@@ -240,7 +310,13 @@ def _make_proxy_decorator(transports):
                 # monkeypatch all requested transports
                 for owner, name in transports:
                     original = getattr(owner, name)
-                    setattr(owner, name, make_combined_call(original))
+                    # Check if this is an httpx transport by comparing with httpx transport classes
+                    is_httpx_transport = (
+                        (HTTPXTransport is not None and owner is HTTPXTransport) or
+                        (AsyncHTTPXTransport is not None and owner is AsyncHTTPXTransport) or
+                        (httpx is not None and owner.__module__.startswith('httpx'))
+                    )
+                    setattr(owner, name, make_combined_call(original, is_httpx=is_httpx_transport))
                     originals.append((owner, name, original))
 
                 try:
