@@ -105,7 +105,7 @@ def main() -> None:
     # [END create_classifier]
 
     # [START analyze_with_classifier]
-    file_path = "sample_files/sample_invoice.pdf"
+    file_path = "sample_files/mixed_financial_docs.pdf"
 
     with open(file_path, "rb") as f:
         file_bytes = f.read()
@@ -114,6 +114,7 @@ def main() -> None:
 
     poller = client.begin_analyze_binary(
         analyzer_id=analyzer_id,
+        content_type="application/pdf",
         binary_input=file_bytes,
     )
     analyze_result: AnalyzeResult = poller.result()

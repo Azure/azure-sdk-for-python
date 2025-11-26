@@ -106,7 +106,7 @@ def main() -> None:
     try:
         # Try to get the result - this should fail after deletion
         client._get_result(operation_id=operation_id)  # type: ignore[attr-defined]
-        print("  Warning: Result still accessible (may take time to propagate)")
+        print("  Warning: Result still accessible")
     except ResourceNotFoundError:
         print("  Verified: Result is no longer accessible (404 Not Found)")
     except Exception as e:

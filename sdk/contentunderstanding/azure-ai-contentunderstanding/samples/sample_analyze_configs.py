@@ -58,7 +58,7 @@ def main() -> None:
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
     # [START analyze_with_configs]
-    file_path = "sample_files/sample_invoice.pdf"
+    file_path = "sample_files/sample_document_features.pdf"
 
     with open(file_path, "rb") as f:
         pdf_bytes = f.read()
