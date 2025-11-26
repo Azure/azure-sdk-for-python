@@ -1,5 +1,169 @@
 # Release History
 
+## 14.1.0b1 (2025-11-26)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added operation group `ransomware_reports`
+  - Client `NetAppManagementClient` added operation group `buckets`
+  - Client `NetAppManagementClient` added operation group `caches`
+  - Client `NetAppManagementClient` added operation group `elastic_accounts`
+  - Client `NetAppManagementClient` added operation group `elastic_capacity_pools`
+  - Client `NetAppManagementClient` added operation group `elastic_volumes`
+  - Client `NetAppManagementClient` added operation group `elastic_snapshots`
+  - Client `NetAppManagementClient` added operation group `elastic_snapshot_policies`
+  - Client `NetAppManagementClient` added operation group `elastic_backup_vaults`
+  - Client `NetAppManagementClient` added operation group `elastic_backup_policies`
+  - Client `NetAppManagementClient` added operation group `elastic_backups`
+  - Client `NetAppManagementClient` added operation group `active_directory_configs`
+  - Model `AccountProperties` added property `ldap_configuration`
+  - Model `ReplicationObject` added property `external_replication_setup_status`
+  - Model `ReplicationObject` added property `external_replication_setup_info`
+  - Model `ReplicationObject` added property `mirror_state`
+  - Model `ReplicationObject` added property `relationship_status`
+  - Model `VolumePatchPropertiesDataProtection` added property `ransomware_protection`
+  - Model `VolumeProperties` added property `ldap_server_type`
+  - Model `VolumeProperties` added property `large_volume_type`
+  - Model `VolumeProperties` added property `language`
+  - Model `VolumeProperties` added property `breakthrough_mode`
+  - Model `VolumePropertiesDataProtection` added property `ransomware_protection`
+  - Added model `ActiveDirectoryConfig`
+  - Added model `ActiveDirectoryConfigProperties`
+  - Added model `ActiveDirectoryConfigUpdate`
+  - Added model `ActiveDirectoryConfigUpdateProperties`
+  - Added enum `ActualRansomwareProtectionState`
+  - Added enum `BreakthroughMode`
+  - Added model `Bucket`
+  - Added model `BucketCredentialsExpiry`
+  - Added model `BucketGenerateCredentials`
+  - Added model `BucketPatch`
+  - Added enum `BucketPatchPermissions`
+  - Added model `BucketPatchProperties`
+  - Added enum `BucketPermissions`
+  - Added model `BucketProperties`
+  - Added model `BucketServerPatchProperties`
+  - Added model `BucketServerProperties`
+  - Added model `Cache`
+  - Added enum `CacheLifeCycleState`
+  - Added model `CacheMountTargetProperties`
+  - Added model `CacheProperties`
+  - Added enum `CacheProvisioningState`
+  - Added model `CacheUpdate`
+  - Added model `CacheUpdateProperties`
+  - Added model `ChangeZoneRequest`
+  - Added enum `CheckElasticResourceAvailabilityReason`
+  - Added model `CheckElasticResourceAvailabilityResponse`
+  - Added enum `CheckElasticResourceAvailabilityStatus`
+  - Added model `CheckElasticVolumeFilePathAvailabilityRequest`
+  - Added enum `CifsChangeNotifyState`
+  - Added model `CifsUser`
+  - Added enum `CredentialsStatus`
+  - Added enum `DayOfWeek`
+  - Added enum `DesiredRansomwareProtectionState`
+  - Added model `ElasticAccount`
+  - Added model `ElasticAccountProperties`
+  - Added model `ElasticAccountUpdate`
+  - Added model `ElasticAccountUpdateProperties`
+  - Added model `ElasticBackup`
+  - Added model `ElasticBackupPolicy`
+  - Added model `ElasticBackupPolicyProperties`
+  - Added enum `ElasticBackupPolicyState`
+  - Added model `ElasticBackupProperties`
+  - Added enum `ElasticBackupType`
+  - Added model `ElasticBackupVault`
+  - Added model `ElasticBackupVaultProperties`
+  - Added model `ElasticCapacityPool`
+  - Added model `ElasticCapacityPoolProperties`
+  - Added model `ElasticCapacityPoolUpdate`
+  - Added model `ElasticCapacityPoolUpdateProperties`
+  - Added model `ElasticEncryption`
+  - Added model `ElasticEncryptionConfiguration`
+  - Added model `ElasticEncryptionIdentity`
+  - Added model `ElasticExportPolicy`
+  - Added model `ElasticExportPolicyRule`
+  - Added model `ElasticKeyVaultProperties`
+  - Added enum `ElasticKeyVaultStatus`
+  - Added model `ElasticMountTargetProperties`
+  - Added enum `ElasticNfsv3Access`
+  - Added enum `ElasticNfsv4Access`
+  - Added enum `ElasticPoolEncryptionKeySource`
+  - Added enum `ElasticProtocolType`
+  - Added enum `ElasticResourceAvailabilityStatus`
+  - Added enum `ElasticRootAccess`
+  - Added enum `ElasticServiceLevel`
+  - Added enum `ElasticSmbEncryption`
+  - Added model `ElasticSmbPatchProperties`
+  - Added model `ElasticSmbProperties`
+  - Added model `ElasticSnapshot`
+  - Added model `ElasticSnapshotPolicy`
+  - Added model `ElasticSnapshotPolicyDailySchedule`
+  - Added model `ElasticSnapshotPolicyHourlySchedule`
+  - Added model `ElasticSnapshotPolicyMonthlySchedule`
+  - Added model `ElasticSnapshotPolicyProperties`
+  - Added model `ElasticSnapshotPolicyWeeklySchedule`
+  - Added model `ElasticSnapshotProperties`
+  - Added enum `ElasticUnixAccessRule`
+  - Added model `ElasticVolume`
+  - Added model `ElasticVolumeBackupProperties`
+  - Added model `ElasticVolumeDataProtectionPatchProperties`
+  - Added model `ElasticVolumeDataProtectionProperties`
+  - Added enum `ElasticVolumePolicyEnforcement`
+  - Added model `ElasticVolumeProperties`
+  - Added enum `ElasticVolumeRestorationState`
+  - Added model `ElasticVolumeRevert`
+  - Added model `ElasticVolumeSnapshotProperties`
+  - Added model `ElasticVolumeUpdate`
+  - Added model `ElasticVolumeUpdateProperties`
+  - Added enum `EnableWriteBackState`
+  - Added enum `EncryptionState`
+  - Added enum `ExternalReplicationSetupStatus`
+  - Added model `FileSystemUser`
+  - Added enum `GlobalFileLockingState`
+  - Added enum `KerberosState`
+  - Added enum `LargeVolumeType`
+  - Added model `LdapConfiguration`
+  - Added enum `LdapServerType`
+  - Added enum `LdapState`
+  - Added model `ListQuotaReportResponse`
+  - Added model `NfsUser`
+  - Added model `OriginClusterInformation`
+  - Added model `PeeringPassphrases`
+  - Added enum `PolicyStatus`
+  - Added enum `ProtocolTypes`
+  - Added model `QuotaReport`
+  - Added model `RansomwareProtectionPatchSettings`
+  - Added model `RansomwareProtectionSettings`
+  - Added model `RansomwareReport`
+  - Added model `RansomwareReportProperties`
+  - Added enum `RansomwareReportSeverity`
+  - Added enum `RansomwareReportState`
+  - Added enum `RansomwareSuspectResolution`
+  - Added model `RansomwareSuspects`
+  - Added model `RansomwareSuspectsClearRequest`
+  - Added model `SecretPassword`
+  - Added model `SecretPasswordIdentity`
+  - Added model `SecretPasswordKeyVaultProperties`
+  - Added enum `SmbEncryptionState`
+  - Added model `SmbSettings`
+  - Added enum `SnapshotDirectoryVisibility`
+  - Added enum `SnapshotUsage`
+  - Added model `SuspectFile`
+  - Added enum `VolumeLanguage`
+  - Added enum `VolumeSize`
+  - Model `VolumesOperations` added method `begin_list_quota_report`
+  - Added model `ActiveDirectoryConfigsOperations`
+  - Added model `BucketsOperations`
+  - Added model `CachesOperations`
+  - Added model `ElasticAccountsOperations`
+  - Added model `ElasticBackupPoliciesOperations`
+  - Added model `ElasticBackupVaultsOperations`
+  - Added model `ElasticBackupsOperations`
+  - Added model `ElasticCapacityPoolsOperations`
+  - Added model `ElasticSnapshotPoliciesOperations`
+  - Added model `ElasticSnapshotsOperations`
+  - Added model `ElasticVolumesOperations`
+  - Added model `RansomwareReportsOperations`
+
 ## 14.0.1 (2025-11-17)
 
 ### Bugs Fixed
