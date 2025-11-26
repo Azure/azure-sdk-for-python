@@ -11,14 +11,14 @@ urlFragment: azure-ai-contentunderstanding-samples
 
 These code samples demonstrate common scenarios with the Azure AI Content Understanding client library.
 
-**Note:** All samples use async operations for better performance and modern Python best practices.
+**Note:** All samples in this folder use synchronous operations. For async samples, see the [`async_samples`](../async_samples) directory.
 
 ## Prerequisites
 
 * Python 3.9 or later is required to use this package
-* You need an [Azure subscription][azure_sub] and an [Azure AI Foundry resource][contentunderstanding_quickstart] to use this package.
-* The Azure AI Foundry resource must be created in a [supported region][contentunderstanding_regions].
-* **Required setup:** GPT-4.1, GPT-4.1-mini, and text-embedding-3-large models must be deployed in your Azure AI Foundry project and configured using `update_defaults.py` before using prebuilt analyzers.
+* You need an [Azure subscription][azure_sub] and a [Microsoft Foundry resource][contentunderstanding_quickstart] to use this package.
+* The Microsoft Foundry resource must be created in a [supported region][contentunderstanding_regions].
+* **Required setup:** GPT-4.1, GPT-4.1-mini, and text-embedding-3-large models must be deployed in your Microsoft Foundry project and configured using `sample_configure_defaults.py` before using prebuilt analyzers.
 
 ## Setup
 
@@ -42,10 +42,10 @@ cp ../env.sample .env
 # Edit .env with your credentials
 
 # 5. Configure model deployments (required for prebuilt analyzers)
-python update_defaults.py
+python sample_configure_defaults.py
 
 # 6. Run a sample
-python analyze_url.py
+python sample_analyze_url.py
 ```
 
 ### Detailed Setup Instructions
@@ -97,11 +97,11 @@ cp ../env.sample .env
 ```
 
 Set the following in `.env`:
-* `AZURE_CONTENT_UNDERSTANDING_ENDPOINT` (required) - Your Azure AI Foundry resource endpoint
+* `AZURE_CONTENT_UNDERSTANDING_ENDPOINT` (required) - Your Microsoft Foundry resource endpoint
 * `AZURE_CONTENT_UNDERSTANDING_KEY` (optional) - Your API key. If not set, `DefaultAzureCredential` will be used.
-* `GPT_4_1_DEPLOYMENT` (required for update_defaults.py) - Your GPT-4.1 deployment name in Azure AI Foundry
-* `GPT_4_1_MINI_DEPLOYMENT` (required for update_defaults.py) - Your GPT-4.1-mini deployment name in Azure AI Foundry
-* `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` (required for update_defaults.py) - Your text-embedding-3-large deployment name in Azure AI Foundry
+* `GPT_4_1_DEPLOYMENT` (required for sample_configure_defaults.py) - Your GPT-4.1 deployment name in Microsoft Foundry
+* `GPT_4_1_MINI_DEPLOYMENT` (required for sample_configure_defaults.py) - Your GPT-4.1-mini deployment name in Microsoft Foundry
+* `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` (required for sample_configure_defaults.py) - Your text-embedding-3-large deployment name in Microsoft Foundry
 
 **Example `.env` file:**
 ```bash
@@ -128,126 +128,180 @@ az login
 source .venv/bin/activate
 
 # Run a sample
-python samples/analyze_url.py
+python samples/sample_analyze_url.py
 ```
 
 ## Sample Files
 
-### Getting Started Samples
+### Sample 00: Configure Defaults
 
-#### `analyze_url.py` ⭐
-**Start here!** Analyzes a document from a remote URL using `prebuilt-documentSearch`. Shows basic document analysis, content extraction, and object model navigation.
+#### `sample_configure_defaults.py` ⭐
+**Required setup!** Configures and retrieves default model deployment settings for your Content Understanding resource. This is a one-time setup before using prebuilt analyzers.
 
 **Key concepts:**
-- Using `begin_analyze` with URL input
-- Extracting markdown content
-- Accessing document pages and tables
-- Working with the analysis result object model
+- Setting up model deployment mappings (GPT-4.1, GPT-4.1-mini, text-embedding-3-large)
+- Required before using prebuilt analyzers
+- Retrieving current default settings
 
-#### `analyze_binary.py`
-Analyzes a PDF document from local binary data using `prebuilt-documentSearch`. Demonstrates how to read local files and analyze them.
+### Sample 01: Analyze Binary
+
+#### `sample_analyze_binary.py`
+Analyzes a PDF document from local binary data using `prebuilt-documentSearch`. Demonstrates how to read local files and extract markdown content.
 
 **Key concepts:**
 - Using `begin_analyze_binary` with binary input
 - Reading local PDF files
-- Same content extraction as `analyze_url.py`
+- Extracting markdown content
+- Accessing document properties (pages, dimensions)
 
-#### `analyze_url_prebuilt_invoice.py`
+### Sample 02: Analyze URL
+
+#### `sample_analyze_url.py` ⭐
+**Start here!** Analyzes a document from a remote URL using `prebuilt-documentSearch`. Shows basic document analysis and content extraction.
+
+**Key concepts:**
+- Using `begin_analyze` with URL input
+- Extracting markdown content
+- Working with the analysis result object model
+
+### Sample 03: Analyze Invoice
+
+#### `sample_analyze_invoice.py`
 Extracts structured fields from invoices using `prebuilt-invoice` analyzer. Shows how to work with structured field extraction.
 
 **Key concepts:**
 - Using specialized prebuilt analyzers
 - Extracting structured fields (customer name, totals, dates, line items)
-- Working with field types (StringField, NumberField, ArrayField)
-- Using the convenience `.value` property
+- Working with field confidence scores and source locations
+- Accessing object fields and array fields
 
-### Advanced Analysis Samples
+### Sample 04: Create Analyzer
 
-#### `analyze_binary_raw_json.py`
-Shows how to access the raw JSON response before deserialization for debugging or custom processing.
-
-#### `analyze_binary_features.py`
-Demonstrates advanced features like figure analysis, chart extraction, and custom output options.
-
-#### `compare_prebuilt_analyzers.py`
-Compares results from different prebuilt analyzers (`prebuilt-document` vs `prebuilt-documentSearch`) to show differences.
-
-#### `analyze_category_enable_segments.py`
-Creates a custom analyzer with content categories for document classification and automatic page segmentation.
-
-**Use case:** Multi-page documents with mixed content types (e.g., PDF with invoices and bank statements)
-
-### Resource Configuration
-
-#### `update_defaults.py` ⭐
-**Required setup!** Configures default model deployments for your Content Understanding resource. Maps model names (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) to your Azure AI Foundry deployments.
+#### `sample_create_analyzer.py`
+Creates a custom analyzer with field schema to extract structured data from documents.
 
 **Key concepts:**
-- Setting up model deployment mappings
-- Required before using prebuilt analyzers
-- Configuring GPT-4.1, GPT-4.1-mini, and text-embedding-3-large deployments
+- Defining custom field schemas (string, number, date, object, array)
+- Using extraction methods: `extract`, `generate`, `classify`
+- Configuring analysis options (OCR, layout, formulas)
+- Enabling source and confidence tracking
 
-#### `get_defaults.py`
-Retrieves and displays current default model deployment settings for your Content Understanding resource. Shows which models are configured and what they're used for.
+### Sample 05: Create Classifier
 
-**Key concepts:**
-- Checking current model deployment configuration
-- Verifying prebuilt analyzer readiness
-- Understanding model usage across different analyzers
-
-### Custom Analyzer Management
-
-#### `create_analyzer.py`
-Creates or replaces a custom analyzer with field schemas and analysis configuration.
-
-#### `get_analyzer.py`
-Retrieves analyzer configuration and details.
-
-#### `list_analyzers.py`
-Lists all available analyzers (prebuilt and custom).
-
-#### `update_analyzer.py`
-Updates an existing analyzer configuration.
-
-#### `delete_analyzer.py`
-Deletes a custom analyzer.
-
-#### `create_classifier.py`
-Creates a custom classifier for document categorization with content categories. Demonstrates how to define classification categories and enable document segmentation for multi-document files.
+#### `sample_create_classifier.py`
+Creates a classifier analyzer to categorize documents and demonstrates automatic segmentation.
 
 **Key concepts:**
 - Creating classifiers with content categories
 - Document categorization (Loan_Application, Invoice, Bank_Statement)
 - Enabling segmentation for multi-document files
-- Using GPT-4.1 for classification tasks
+- Processing classification results
 
-### Advanced Features
+### Sample 06: Get Analyzer
 
-#### `create_analyzer_with_labels.py`
-Builds a custom analyzer using training data from Azure Blob Storage. Requires additional configuration (see `env.sample`).
+#### `sample_get_analyzer.py`
+Retrieves information about analyzers, including prebuilt and custom analyzers.
 
-#### `copy_analyzer.py`
-Copies an analyzer from one location/region to another.
+**Key concepts:**
+- Getting prebuilt analyzer details
+- Getting custom analyzer details
+- Dumping analyzer configuration as JSON
 
-#### `get_result_file.py`
-Downloads result files from analysis operations (e.g., extracted video keyframes).
+### Sample 07: List Analyzers
 
-#### `delete_result.py`
-Demonstrates the complete workflow of analyzing a document, extracting results, and then deleting the analysis result to free up storage. Shows proper result lifecycle management.
+#### `sample_list_analyzers.py`
+Lists all available analyzers in your Microsoft Foundry resource.
+
+**Key concepts:**
+- Listing prebuilt and custom analyzers
+- Displaying analyzer summary and details
+- Identifying analyzer types
+
+### Sample 08: Update Analyzer
+
+#### `sample_update_analyzer.py`
+Updates an existing custom analyzer's description and tags.
+
+**Key concepts:**
+- Updating analyzer description
+- Adding, updating, and removing tags
+- Verifying analyzer updates
+
+### Sample 09: Delete Analyzer
+
+#### `sample_delete_analyzer.py`
+Deletes a custom analyzer from your resource.
+
+**Key concepts:**
+- Creating a simple analyzer for deletion demo
+- Deleting custom analyzers
+- Understanding deletion limitations (prebuilt analyzers cannot be deleted)
+
+### Sample 10: Analyze Configs
+
+#### `sample_analyze_configs.py`
+Extracts additional features from documents such as charts, hyperlinks, formulas, and annotations.
+
+**Key concepts:**
+- Using prebuilt-documentSearch with enhanced features
+- Extracting chart figures
+- Extracting hyperlinks
+- Extracting mathematical formulas
+- Extracting PDF annotations
+
+### Sample 11: Analyze Return Raw JSON
+
+#### `sample_analyze_return_raw_json.py`
+Accesses the raw JSON response from analysis operations for custom processing.
+
+**Key concepts:**
+- Getting raw JSON response
+- Saving analysis results to file
+- Custom JSON processing
+
+### Sample 12: Get Result File
+
+#### `sample_get_result_file.py`
+Retrieves result files (such as keyframe images) from video analysis operations.
+
+**Key concepts:**
+- Analyzing video content
+- Extracting operation IDs
+- Retrieving keyframe images
+- Saving result files to disk
+
+### Sample 13: Delete Result
+
+#### `sample_delete_result.py`
+Demonstrates analyzing a document and then deleting the analysis result.
 
 **Key concepts:**
 - Extracting operation IDs from analysis operations
 - Deleting analysis results to manage storage
-- Verifying result deletion with error handling
+- Verifying result deletion
 - Understanding result retention policies (24-hour auto-deletion)
 
-### Utility
+### Sample 14: Copy Analyzer
 
-#### `sample_helper.py`
-Helper functions for saving results and working with sample files.
+#### `sample_copy_analyzer.py`
+Copies an analyzer from source to target within the same resource.
 
-#### `run_all_samples.py`
-Runs all samples sequentially for testing. Stops on first error.
+**Key concepts:**
+- Creating source analyzers
+- Copying analyzers within the same resource
+- Updating copied analyzers with new tags
+- Use cases: testing, staging, production deployment
+
+### Sample 15: Grant Copy Auth
+
+#### `sample_grant_copy_auth.py`
+Grants copy authorization and copies an analyzer from a source resource to a target resource (cross-resource copying).
+
+**Key concepts:**
+- Cross-resource copying between different Azure resources
+- Granting copy authorization
+- Resource migration and multi-region deployment
+- Required environment variables for cross-resource operations
 
 ## Common Patterns
 
@@ -263,41 +317,38 @@ credential = AzureKeyCredential(api_key)
 
 **Option 2: DefaultAzureCredential (recommended)**
 ```python
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 credential = DefaultAzureCredential()
 # Requires: az login
 ```
 
-### Async Context Managers
-
-All samples use async context managers for proper resource cleanup:
+### Working with the Client
 
 ```python
-async with ContentUnderstandingClient(endpoint, credential) as client:
-    # Client automatically closed when exiting context
-    poller = await client.begin_analyze(...)
-    result = await poller.result()
+from azure.ai.contentunderstanding import ContentUnderstandingClient
 
-# Clean up credential if using DefaultAzureCredential
-if isinstance(credential, DefaultAzureCredential):
-    await credential.close()
+client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
+
+# Analyze a document
+poller = client.begin_analyze(analyzer_id="prebuilt-documentSearch", inputs=[...])
+result = poller.result()
 ```
 
 ### Working with Results
 
 **Access markdown content:**
 ```python
-result: AnalyzeResult = await poller.result()
-content: MediaContent = result.contents[0]
+result: AnalyzeResult = poller.result()
+content = result.contents[0]
 print(content.markdown)
 ```
 
 **Access structured fields:**
 ```python
 # For prebuilt-invoice
-content: MediaContent = result.contents[0]
-customer_name = content.fields["CustomerName"].value  # Using .value property
-invoice_total = content.fields["InvoiceTotal"].value
+content = result.contents[0]
+customer_name = content.fields["CustomerName"].value
+invoice_total = content.fields["TotalAmount"].value
 ```
 
 **Access document properties:**
@@ -335,21 +386,13 @@ pip install -r dev_requirements.txt
 
 **Solution:** Either set `AZURE_CONTENT_UNDERSTANDING_KEY` in `.env` or run `az login`.
 
-### Import errors or type checking issues
-
-**Solution:** Reinstall the SDK in the virtual environment:
-```bash
-source .venv/bin/activate
-pip install -e . --force-reinstall
-```
-
 ### "Model deployments not configured" or "prebuilt analyzers not available"
 
 **Solution:** Run the setup sample to configure model deployments:
 ```bash
 source .venv/bin/activate
 cd samples
-python update_defaults.py
+python sample_configure_defaults.py
 ```
 
 This configures the required GPT-4.1, GPT-4.1-mini, and text-embedding-3-large model deployments that prebuilt analyzers depend on.
