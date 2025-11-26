@@ -28,7 +28,7 @@ class CosmosUserAgentPolicy(UserAgentPolicy):
         options_dict = request.context.options
         # Add relevant enabled features to user agent for debugging
         if "global_endpoint_manager" in options_dict:
-            global_endpoint_manager = options_dict.pop("global_endpoint_manager")
+            global_endpoint_manager = options_dict["global_endpoint_manager"]
             user_agent_features = get_user_agent_features(global_endpoint_manager)
             if len(user_agent_features) > 0:
                 user_agent = "{} {}".format(self._user_agent, user_agent_features)
