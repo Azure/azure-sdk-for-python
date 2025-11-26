@@ -29,8 +29,6 @@ from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 from ._constants import _Constants
 from . import exceptions, http_constants, _retry_utility
-from ._utils import get_user_agent_features
-
 
 def _is_readable_stream(obj):
     """Checks whether obj is a file-like readable stream.
@@ -119,15 +117,6 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         request.url = _replace_url_prefix(request.url, base_url)
 
     parse_result = urlparse(request.url)
-
-    # Add relevant enabled features to user agent for debugging
-    if request.headers[http_constants.HttpHeaders.ThinClientProxyResourceType] == http_constants.ResourceType.Document:
-        user_agent_features = get_user_agent_features(global_endpoint_manager)
-        if len(user_agent_features) > 0:
-            user_agent = kwargs.pop("user_agent", global_endpoint_manager.client._user_agent)
-            user_agent = "{} {}".format(user_agent, user_agent_features)
-            kwargs.update({"user_agent": user_agent})
-            kwargs.update({"user_agent_overwrite": True})
 
     # The requests library now expects header values to be strings only starting 2.11,
     # and will raise an error on validation if they are not, so casting all header values to strings.

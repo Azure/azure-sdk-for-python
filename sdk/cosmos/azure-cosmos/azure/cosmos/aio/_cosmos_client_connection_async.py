@@ -78,8 +78,7 @@ from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper_async import ReadItemsHelperAsync
-
-
+from ..user_agent_policy import CosmosUserAgentPolicy
 
 
 class CredentialDict(TypedDict, total=False):
@@ -224,7 +223,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
+            CosmosUserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
             credentials_policy,
@@ -238,6 +237,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 **kwargs
             ),
         ]
+        # after passing in the user_agent into the user agent policy the user_agent is no longer needed
+        kwargs.pop("user_agent", None)
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient(
