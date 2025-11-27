@@ -22,6 +22,8 @@ from typing import Optional
 
 from azure.cosmos import http_constants
 
+# pylint: disable=protected-access
+
 class _PartitionKeyRangeGoneRetryPolicyBase:
     """Base class with shared logic for partition key range gone retry policies."""
 
@@ -46,7 +48,17 @@ class _PartitionKeyRangeGoneRetryPolicyBase:
         return collection_link
 
     def _get_previous_routing_map(self, collection_link):
-        """Get the previous routing map for the collection."""
+        """Gets the cached routing map for a specific collection.
+
+        This method safely navigates the client's internal structure to retrieve
+        the last known routing map for a given collection link. It is designed to
+        be resilient to missing attributes, returning None if the routing map
+        provider or the specific map for the collection is not found.
+
+        :param str collection_link: The link to the collection for which to retrieve the routing map.
+        :return: The cached CollectionRoutingMap if it exists, otherwise None.
+        :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
+        """
         if collection_link and hasattr(self.client, '_routing_map_provider'):
             if hasattr(self.client._routing_map_provider, '_collection_routing_map_by_item'):
                 return self.client._routing_map_provider._collection_routing_map_by_item.get(collection_link)

@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for async connection reset retry policy implementation in the Azure
-Cosmos database service.
+"""Internal class for Internal class for partition key range splits and merges retry policy.
 """
 
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase

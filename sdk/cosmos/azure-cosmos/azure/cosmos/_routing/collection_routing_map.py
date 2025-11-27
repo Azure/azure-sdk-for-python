@@ -24,6 +24,8 @@ database service.
 """
 
 import bisect
+from typing import Optional
+
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.routing_range import PartitionKeyRange
 
@@ -185,7 +187,7 @@ class CollectionRoutingMap(object):
 
         return isComplete
 
-    def try_combine(self, new_partition_key_range_info_tuples: list, new_change_feed_etag: str) -> 'CollectionRoutingMap':
+    def try_combine(self, new_partition_key_range_info_tuples: list, new_change_feed_etag: str) -> Optional['CollectionRoutingMap']:
         """Combines existing routing map with incremental changes from change feed.
 
         :param list new_partition_key_range_info_tuples: List of new/updated ranges from change feed
