@@ -106,7 +106,7 @@ def change_log_generate(
             check_call([sys.executable, "-m", "pip", "install", "-e", "."], cwd=Path(prefolder) / package_name)
         except CalledProcessError as e:
             _LOGGER.warning(f"Failed to install {package_name}: {e}")
-    
+
     return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
 
 

@@ -11,19 +11,20 @@ from packaging_tools.sdk_update_version import main as update_version_main
 def temp_package():
     temp_dir = tempfile.mkdtemp()
     package_path = Path(temp_dir)
-    
+
     yield package_path
-    
+
     shutil.rmtree(temp_dir)
+
 
 @pytest.fixture
 def temp_arm_package():
     temp_dir = tempfile.mkdtemp()
     package_path = Path(temp_dir) / "azure-mgmt-test"
     package_path.mkdir(parents=True, exist_ok=True)
-    
+
     yield package_path
-    
+
     shutil.rmtree(temp_dir)
 
 
@@ -163,96 +164,104 @@ def test_invalid_release_date_uses_current_date(temp_package):
     assert first_line.startswith("## 1.0.0b1 ("), "Expected computed version line"
     assert today in first_line, f"Expected fallback date {today} in changelog line"
 
+
 def test_invalid_changelog_warning_log_for_arm_sdk(monkeypatch, temp_arm_package):
     package_path = temp_arm_package
     log_level = None
-    
+
     def mock_log_failed_message(message: str, enable_log_error: bool):
         nonlocal log_level
         log_level = enable_log_error
-    
+
     package_result = {
         "changelog": {
             "content": "",
         }
     }
-    
+
     monkeypatch.setattr("packaging_tools.sdk_update_version.log_failed_message", mock_log_failed_message)
     update_version_main(package_path, package_result=package_result)
-    
-    assert log_level is False, "Expected warning log to be enabled for invalid changelog content in ARM SDK if in pipeline"
-    
+
+    assert (
+        log_level is False
+    ), "Expected warning log to be enabled for invalid changelog content in ARM SDK if in pipeline"
+
+
 def test_invalid_changelog_error_log_for_arm_sdk(monkeypatch, temp_arm_package):
     package_path = temp_arm_package
     log_level = None
-    
+
     def mock_get_changelog_content(*args, **kwargs):
         return ("", "")
-    
+
     def mock_log_failed_message(message: str, enable_log_error: bool):
         nonlocal log_level
         log_level = enable_log_error
-    
+
     monkeypatch.setattr("packaging_tools.sdk_update_version.get_changelog_content", mock_get_changelog_content)
     monkeypatch.setattr("packaging_tools.sdk_update_version.log_failed_message", mock_log_failed_message)
     update_version_main(package_path)
-    
-    assert log_level is True, "Expected error log to be enabled for invalid changelog content in ARM SDK if not in pipeline"
-    
+
+    assert (
+        log_level is True
+    ), "Expected error log to be enabled for invalid changelog content in ARM SDK if not in pipeline"
+
 
 def test_valid_changelog_no_log_for_arm_sdk(monkeypatch, temp_arm_package):
     package_path = temp_arm_package
     log_level = None
-    
+
     def mock_log_failed_message(message: str, enable_log_error: bool):
         nonlocal log_level
         log_level = enable_log_error
-    
+
     package_result = {
         "changelog": {
             "content": "### Features Added\n- New feature",
         }
     }
-    
+
     monkeypatch.setattr("packaging_tools.sdk_update_version.log_failed_message", mock_log_failed_message)
     update_version_main(package_path, package_result=package_result)
-    
+
     assert log_level is None, "Expected no error log for valid changelog content in ARM SDK"
-   
+
+
 def test_invalid_changelog_no_log_for_non_arm_sdk(monkeypatch, temp_package):
     package_path = temp_package
     log_level = None
-    
+
     def mock_log_failed_message(message: str, enable_log_error: bool):
         nonlocal log_level
         log_level = enable_log_error
-    
+
     package_result = {
         "changelog": {
             "content": "### Features Added\n- New feature",
         }
     }
-    
+
     monkeypatch.setattr("packaging_tools.sdk_update_version.log_failed_message", mock_log_failed_message)
     update_version_main(package_path, package_result=package_result)
-    
+
     assert log_level is None, "Expected no error log for valid changelog content in non-ARM SDK"
-   
+
 
 def test_invalid_changelog_no_log_for_arm_sdk_with_version(monkeypatch, temp_arm_package):
     package_path = temp_arm_package
     log_level = None
-    
+
     def mock_get_changelog_content(*args, **kwargs):
         return ("", "")
-    
+
     def mock_log_failed_message(message: str, enable_log_error: bool):
         nonlocal log_level
         log_level = enable_log_error
-    
+
     monkeypatch.setattr("packaging_tools.sdk_update_version.get_changelog_content", mock_get_changelog_content)
     monkeypatch.setattr("packaging_tools.sdk_update_version.log_failed_message", mock_log_failed_message)
     update_version_main(package_path, version="1.0.0")
-    
-    assert log_level is None, "Expected no error log for invalid changelog content in ARM SDK when version is explicitly provided"
-    
+
+    assert (
+        log_level is None
+    ), "Expected no error log for invalid changelog content in ARM SDK when version is explicitly provided"

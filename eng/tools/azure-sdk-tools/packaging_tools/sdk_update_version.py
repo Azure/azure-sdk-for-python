@@ -136,7 +136,6 @@ def main(
             changelog_content = ""
             last_version = ""
         tag_is_stable = release_type == "stable"
-    
 
     if version is None and not is_valid_changelog_content(changelog_content) and is_arm_sdk(package_name):
         # When package_result is provided, it means this function is called in pipeline and we should not log error
