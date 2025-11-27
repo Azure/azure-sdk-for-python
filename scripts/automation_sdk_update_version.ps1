@@ -13,6 +13,8 @@
     Version string to set.
 .PARAMETER ReleaseDate
     Release date in YYYY-MM-DD format.
+.PARAMETER SdkRepoPath
+    Absolute path string where SDK code is. Optional.
 #>
 param(
     [Parameter(Mandatory=$true, HelpMessage="Path to the package")]
@@ -31,12 +33,26 @@ param(
     [Parameter(Mandatory=$false, HelpMessage="Release date in YYYY-MM-DD format")]
     [ValidatePattern('^\d{4}-\d{2}-\d{2}$')]
     [string]
-    $ReleaseDate
+    $ReleaseDate,
+
+    [Parameter(Mandatory=$false, HelpMessage="Absolute path string where SDK code is")]
+    [string]
+    $SdkRepoPath
 )
 
 $scriptPath = $MyInvocation.MyCommand.Path
 $scriptParent = Split-Path $scriptPath -Parent
 $repoRoot = (Get-Location).Path
+
+# Change to SDK repo path if provided
+if ($SdkRepoPath) {
+    if (-not (Test-Path $SdkRepoPath)) {
+        Write-Error "SdkRepoPath: $SdkRepoPath does not exist"
+        exit 1
+    }
+    Write-Host "Changing directory to: $SdkRepoPath"
+    Set-Location -Path $SdkRepoPath
+}
 
 if (-not (Test-Path $PackagePath)) {
     Write-Error "PackagePath: $PackagePath does not exist"

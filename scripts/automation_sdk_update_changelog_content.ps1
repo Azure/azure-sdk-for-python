@@ -7,16 +7,32 @@
     It calls `python -m packaging_tools.sdk_changelog` to update changelog.
 .PARAMETER PackagePath
     Path to the package.
+.PARAMETER SdkRepoPath
+    Absolute path string where SDK code is. Optional.
 #>
 param(
     [Parameter(Mandatory=$true, HelpMessage="Path to the package")]
     [string]
-    $PackagePath
+    $PackagePath,
+
+    [Parameter(Mandatory=$false, HelpMessage="Absolute path string where SDK code is")]
+    [string]
+    $SdkRepoPath
 )
 
 $scriptPath = $MyInvocation.MyCommand.Path
 $scriptParent = Split-Path $scriptPath -Parent
 $repoRoot = (Get-Location).Path
+
+# Change to SDK repo path if provided
+if ($SdkRepoPath) {
+    if (-not (Test-Path $SdkRepoPath)) {
+        Write-Error "SdkRepoPath: $SdkRepoPath does not exist"
+        exit 1
+    }
+    Write-Host "Changing directory to: $SdkRepoPath"
+    Set-Location -Path $SdkRepoPath
+}
 
 if (-not (Test-Path $PackagePath)) {
     Write-Error "PackagePath: $PackagePath does not exist"
