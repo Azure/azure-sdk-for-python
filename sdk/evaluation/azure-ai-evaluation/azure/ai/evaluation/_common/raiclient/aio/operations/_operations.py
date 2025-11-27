@@ -328,13 +328,17 @@ class RAISvcOperations:
     async def get_attack_objectives(
         self,
         *,
+        risk_category: str,
         risk_types: Optional[List[str]] = None,
         lang: Optional[str] = None,
         strategy: Optional[str] = None,
+        target_type: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.AttackObjective]:
         """Get the attack objectives.
 
+        :keyword risk_category: Risk category for the attack objectives. Required.
+        :paramtype risk_category: str
         :keyword risk_types: Risk types for the attack objectives dataset. Default value is None.
         :paramtype risk_types: list[str]
         :keyword lang: The language for the attack objectives dataset, defaults to 'en'. Default value
@@ -342,6 +346,8 @@ class RAISvcOperations:
         :paramtype lang: str
         :keyword strategy: The strategy. Default value is None.
         :paramtype strategy: str
+        :keyword target_type: The target, model/agent. Default value is None.
+        :paramtype target_type: str
         :return: list of AttackObjective
         :rtype: list[~raiclient.models.AttackObjective]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -360,12 +366,14 @@ class RAISvcOperations:
         cls: ClsType[List[_models.AttackObjective]] = kwargs.pop("cls", None)
 
         _request = build_rai_svc_get_attack_objectives_request(
+            risk_categories=[risk_category],
             risk_types=risk_types,
             lang=lang,
             strategy=strategy,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
+            target_type=target_type,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),

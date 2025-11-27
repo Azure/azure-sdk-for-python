@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, TypeVar, Union, Optional
+from typing import Any, Dict, TypeVar, Union, Optional
 
 from typing_extensions import override
 
@@ -11,7 +11,10 @@ from azure.ai.evaluation._common.constants import (
     Tasks,
     _InternalAnnotationTasks,
 )
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_multimodal
+from azure.ai.evaluation._common.rai_service import (
+    evaluate_with_rai_service_sync,
+    evaluate_with_rai_service_sync_multimodal,
+)
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
@@ -129,13 +132,15 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         validate_conversation(conversation)
         messages = conversation["messages"]
         # Run score computation based on supplied metric.
-        result = await evaluate_with_rai_service_multimodal(
+        # Convert enum to string value for the multimodal endpoint
+        metric_value = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
+        result = await evaluate_with_rai_service_sync_multimodal(
             messages=messages,
-            metric_name=self._eval_metric,
+            metric_name=metric_value,
             project_scope=self._azure_ai_project,
             credential=self._credential,
         )
-        return result
+        return self._parse_eval_result(result)
 
     async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
         query = eval_input.get("query", None)
@@ -165,7 +170,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 )
             input_data["context"] = context
 
-        return await evaluate_with_rai_service(  # type: ignore
+        eval_result = await evaluate_with_rai_service_sync(  # type: ignore
             metric_name=self._eval_metric,
             data=input_data,
             project_scope=self._azure_ai_project,
@@ -173,6 +178,98 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             annotation_task=self._get_task(),
             evaluator_name=self.__class__.__name__,
         )
+
+        # Parse the EvalRunOutputItem format to the expected dict format
+        return self._parse_eval_result(eval_result)
+
+    def _parse_eval_result(self, eval_result) -> Dict[str, T]:
+        """Parse the EvalRunOutputItem format into the expected dict format.
+
+        :param eval_result: The result from evaluate_with_rai_service_sync (EvalRunOutputItem).
+        :return: The parsed result in the expected format.
+        :rtype: Dict[str, T]
+        """
+        # Handle EvalRunOutputItem structure
+        if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
+            results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
+
+            # Find the result matching our metric
+            for result_item in results:
+                result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
+                # Compare against both the enum and its string value
+                metric_name = result_dict.get("name") or result_dict.get("metric")
+                if metric_name == self._eval_metric or metric_name == self._eval_metric.value:
+                    # Extract values from EvalRunOutputItem result format
+                    score = result_dict.get("score", 0)
+                    reason = result_dict.get("reason", "")
+
+                    # Special handling for evaluators that use _label format
+                    if self._eval_metric in [
+                        EvaluationMetrics.CODE_VULNERABILITY,
+                        EvaluationMetrics.PROTECTED_MATERIAL,
+                        EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
+                        EvaluationMetrics.XPIA,
+                        _InternalEvaluationMetrics.ECI,
+                    ]:
+                        # These evaluators use _label instead of severity labels
+                        # Ensure label is not None - default to False for boolean evaluators
+                        label = result_dict.get("label")
+                        if label is None:
+                            label = False
+                        parsed_result = {
+                            f"{self._eval_metric.value}_label": label,
+                            f"{self._eval_metric.value}_reason": reason,
+                        }
+
+                        details_source = result_dict.get("details")
+                        if not details_source:
+                            properties = result_dict.get("properties", {})
+                            if isinstance(properties, dict):
+                                details_source = properties.get("scoreProperties")
+
+                        if details_source and isinstance(details_source, dict):
+                            parsed_result[f"{self._eval_metric.value}_details"] = _prepare_details(details_source)
+
+                        return parsed_result
+
+                    # Standard handling for harm severity evaluators
+                    # Convert score to severity label if needed
+                    severity_label = result_dict.get("label")
+                    if severity_label is None:
+                        # Calculate severity from score
+                        from azure.ai.evaluation._common.utils import get_harm_severity_level
+
+                        severity_label = get_harm_severity_level(score)
+
+                    # Return in the expected format matching parse_response output
+                    return {
+                        self._eval_metric.value: severity_label,
+                        f"{self._eval_metric.value}_score": score,
+                        f"{self._eval_metric.value}_reason": reason,
+                    }
+
+        # If we can't parse as EvalRunOutputItem or no matching result found,
+        # check if it's already in the correct format (might be legacy response)
+        if isinstance(eval_result, dict):
+            # Check if it already has the expected keys
+            expected_key = (
+                f"{self._eval_metric.value}_label"
+                if self._eval_metric
+                in [
+                    EvaluationMetrics.CODE_VULNERABILITY,
+                    EvaluationMetrics.PROTECTED_MATERIAL,
+                    EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
+                    EvaluationMetrics.XPIA,
+                    _InternalEvaluationMetrics.ECI,
+                ]
+                else self._eval_metric.value
+            )
+
+            if expected_key in eval_result:
+                return eval_result
+
+        # Return empty dict if we can't parse
+        return {}
 
     def _get_task(self):
         """Get the annotation task for the current evaluation metric.
@@ -196,3 +293,33 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         if self._eval_metric == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
             return Tasks.UNGROUNDED_ATTRIBUTES
         return Tasks.CONTENT_HARM
+
+
+def _coerce_string_boolean(value: Any) -> Any:
+    """Convert common string boolean values to their bool equivalents."""
+
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered == "true":
+            return True
+        if lowered == "false":
+            return False
+    return value
+
+
+def _prepare_details(details: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize detail keys and coerce string booleans recursively."""
+
+    normalized: Dict[str, Any] = {}
+    for key, value in details.items():
+        normalized_key = key.replace("-", "_") if isinstance(key, str) else key
+        normalized[normalized_key] = _prepare_detail_value(value)
+    return normalized
+
+
+def _prepare_detail_value(value: Any) -> Any:
+    if isinstance(value, dict):
+        return _prepare_details(value)
+    if isinstance(value, list):
+        return [_prepare_detail_value(item) for item in value]
+    return _coerce_string_boolean(value)
