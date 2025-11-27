@@ -25,6 +25,7 @@ from .operations import (
     MachinesOperations,
     MaintenanceConfigurationsOperations,
     ManagedClustersOperations,
+    ManagedNamespacesOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
@@ -49,6 +50,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
     :ivar maintenance_configurations: MaintenanceConfigurationsOperations operations
     :vartype maintenance_configurations:
      azure.mgmt.containerservice.aio.operations.MaintenanceConfigurationsOperations
+    :ivar managed_namespaces: ManagedNamespacesOperations operations
+    :vartype managed_namespaces:
+     azure.mgmt.containerservice.aio.operations.ManagedNamespacesOperations
     :ivar agent_pools: AgentPoolsOperations operations
     :vartype agent_pools: azure.mgmt.containerservice.aio.operations.AgentPoolsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
@@ -79,7 +83,7 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2025-08-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -139,6 +143,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.maintenance_configurations = MaintenanceConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_namespaces = ManagedNamespacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.agent_pools = AgentPoolsOperations(self._client, self._config, self._serialize, self._deserialize)

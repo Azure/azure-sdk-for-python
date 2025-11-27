@@ -40,9 +40,11 @@ class ConversationAuthoringClient(_ConversationAuthoringClientOperationsMixin):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     "2025-11-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -137,7 +139,7 @@ class ConversationAuthoringProjectClient:
     :param project_name: Required.
     :type project_name: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     "2025-11-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -178,10 +180,10 @@ class ConversationAuthoringProjectClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.deployment = DeploymentOperations(self._client, self._config, self._serialize, self._deserialize)  # type: ignore # pylint: disable=line-too-long
-        self.project = ProjectOperations(self._client, self._config, self._serialize, self._deserialize)  # type: ignore # pylint: disable=line-too-long
-        self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize)  # type: ignore # pylint: disable=line-too-long
-        self.trained_model = TrainedModelOperations(self._client, self._config, self._serialize, self._deserialize)  # type: ignore # pylint: disable=line-too-long
+        self.deployment = DeploymentOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.project = ProjectOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.trained_model = TrainedModelOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

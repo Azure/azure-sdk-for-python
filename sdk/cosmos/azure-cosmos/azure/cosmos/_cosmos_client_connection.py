@@ -38,18 +38,18 @@ from azure.core.pipeline.policies import (
     HTTPPolicy,
     ContentDecodePolicy,
     HeadersPolicy,
-    UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     DistributedTracingPolicy,
     ProxyPolicy
 )
-from azure.core.utils import CaseInsensitiveDict
 from azure.core.pipeline.transport import HttpRequest, \
     HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
+from azure.core.utils import CaseInsensitiveDict
 
 from . import _base as base
-from ._global_partition_endpoint_manager_circuit_breaker import _GlobalPartitionEndpointManagerForCircuitBreaker
+from .user_agent_policy import CosmosUserAgentPolicy
+from ._global_partition_endpoint_manager_per_partition_automatic_failover import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover # pylint: disable=line-too-long
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
 from . import _session
@@ -58,6 +58,7 @@ from . import _utils
 from . import documents
 from . import http_constants, exceptions
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
+from ._availability_strategy_config import _validate_hedging_config, CrossRegionHedgingStrategyConfig
 from ._base import _build_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
@@ -118,6 +119,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         auth: CredentialDict,
         connection_policy: Optional[ConnectionPolicy] = None,
         consistency_level: Optional[str] = None,
+        availability_strategy_config: Optional[dict[str, Any]] = None,
+        availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -132,9 +135,19 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
             The default consistency policy for client operations.
+        :param documents.'CrossRegionHedgingStrategyConfig' availability_strategy_config:
+            The availability strategy configuration for routing requests across regions.
+        :param concurrent.futures.ThreadPoolExecutor availability_strategy_executor:
+            The thread pool executor for handling availability strategy requests.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for the
+            client. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
+        self.availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] =\
+            _validate_hedging_config(availability_strategy_config)
+        self.availability_strategy_executor: Optional[ThreadPoolExecutor] = availability_strategy_executor
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[TokenCredential] = None
@@ -165,11 +178,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
+        priority = kwargs.pop('priority', None)
+        if priority:
+            self.default_headers[http_constants.HttpHeaders.PriorityLevel] = priority
+
         # Keeps the latest response headers from the server.
         self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
 
         self.UseMultipleWriteLocations = False
-        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForCircuitBreaker(self)
+        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(self)
 
         retry_policy = None
         if isinstance(self.connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
@@ -214,7 +231,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
+            CosmosUserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
             credentials_policy,
@@ -228,6 +245,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 **kwargs
             ),
         ]
+        # after passing in the user_agent into the user agent policy the user_agent is no longer needed
+        kwargs.pop("user_agent", None)
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(
@@ -248,7 +267,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
+        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh_on_startup(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
@@ -2137,6 +2156,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_executor = self.availability_strategy_executor
         base.set_session_token_header(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         request_data = {}
@@ -2232,6 +2253,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_executor = self.availability_strategy_executor
+
         base.set_session_token_header(self, headers, path, request_params, options)
         return cast(
             Tuple[list[dict[str, Any]], CaseInsensitiveDict],
@@ -2294,6 +2319,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_executor = self.availability_strategy_executor
         _, last_response_headers = self.__Post(
             path=path,
             request_params=request_params,
@@ -2681,32 +2708,34 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             database_account._ReadableLocations = result[Constants.ReadableLocations]
         if Constants.EnableMultipleWritableLocations in result:
             database_account._EnableMultipleWritableLocations = result[
-                Constants.EnableMultipleWritableLocations
-            ]
+                Constants.EnableMultipleWritableLocations]
 
         self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
+
+        if Constants.EnablePerPartitionFailoverBehavior in result:
+            database_account._EnablePerPartitionFailoverBehavior = result[Constants.EnablePerPartitionFailoverBehavior]
+
         if response_hook:
             response_hook(last_response_headers, result)
         return database_account
 
-    def _GetDatabaseAccountCheck(
+    def health_check(
             self,
             url_connection: Optional[str] = None,
             **kwargs: Any
     ):
-        """Gets database account info.
+        """ Send a request to check the health of region.
 
-        :param str url_connection: the endpoint used to get the database account
-        :return: The Database Account.
-        :rtype: documents.DatabaseAccount
+        :param str url_connection: the endpoint for the region being checked
         """
         if url_connection is None:
             url_connection = self.url_connection
 
         headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
-                                  documents._OperationType.Read,{}, client_id=self.client_id)
+                                  documents._OperationType.Read, {},
+                                  client_id=self.client_id)
         request_params = RequestObject(http_constants.ResourceType.DatabaseAccount,
                                        documents._OperationType.Read,
                                        headers,
@@ -2753,6 +2782,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_executor = self.availability_strategy_executor
         base.set_session_token_header(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
@@ -2804,6 +2835,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_executor = self.availability_strategy_executor
         base.set_session_token_header(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
@@ -2853,6 +2886,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_executor = self.availability_strategy_executor
         base.set_session_token_header(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
@@ -2901,6 +2936,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_executor = self.availability_strategy_executor
         base.set_session_token_header(self, headers, path, request_params, options)
         result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
         # update session for request mutates data on server side
@@ -2948,6 +2985,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         base.set_session_token_header(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_executor = self.availability_strategy_executor
         result, last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -3163,6 +3202,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if options is None:
             options = {}
+        read_timeout = options.get("read_timeout")
+        if read_timeout is not None:
+            # we currently have a gap where kwargs are not getting passed correctly down the pipeline. In order to make
+            # absolute time out work, we are passing read_timeout via kwargs as a temporary fix
+            kwargs.setdefault("read_timeout", read_timeout)
+
+        operation_start_time = options.get(Constants.OperationStartTime)
+        if operation_start_time is not None:
+            kwargs.setdefault(Constants.OperationStartTime, operation_start_time)
+        timeout = options.get("timeout")
+        if timeout is not None:
+            kwargs.setdefault("timeout", timeout)
 
         if query:
             __GetBodiesFromQueryResult = result_fn
@@ -3199,6 +3250,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options.get("partitionKey", None)
             )
             request_params.set_excluded_location_from_options(options)
+            request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+            request_params.availability_strategy_executor = self.availability_strategy_executor
+
             base.set_session_token_header(self, headers, path, request_params, options, partition_key_range_id)
 
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
@@ -3242,6 +3296,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        req_headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_executor = self.availability_strategy_executor
+
         if not is_query_plan:
             req_headers[http_constants.HttpHeaders.IsQuery] = "true"
             base.set_session_token_header(self, req_headers, path, request_params, options, partition_key_range_id)
@@ -3259,7 +3316,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # If feed_range_epk exist, query with the range
         if feed_range_epk is not None:
-            last_response_headers = CaseInsensitiveDict()
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(resource_id, [feed_range_epk],
                                                                                     options)
             # It is possible to get more than one over lapping range. We need to get the query results for each one

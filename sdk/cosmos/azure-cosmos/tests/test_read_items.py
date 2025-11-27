@@ -8,12 +8,11 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import PartitionKey, CosmosDict
+from azure.cosmos import PartitionKey
 from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.documents import _OperationType
-from azure.core.utils import CaseInsensitiveDict
 
 @pytest.mark.cosmosEmulator
 class TestReadItems(unittest.TestCase):
@@ -482,10 +481,14 @@ class TestReadItems(unittest.TestCase):
 
             self.assertEqual(mock_query.call_count, 3)
             call_args = mock_query.call_args_list
+            # Extract the number of parameters from each call.
+            chunk_sizes = [len(call[0][1]['parameters']) for call in call_args]
+            # Sort the chunk sizes to make the assertion deterministic.
+            chunk_sizes.sort(reverse=True)
+            self.assertEqual(chunk_sizes[0], 1000)
+            self.assertEqual(chunk_sizes[1], 1000)
+            self.assertEqual(chunk_sizes[2], 500)
 
-            self.assertEqual(len(call_args[0][0][1]['parameters']), 1000)
-            self.assertEqual(len(call_args[1][0][1]['parameters']), 1000)
-            self.assertEqual(len(call_args[2][0][1]['parameters']), 500)
 
     def test_read_items_multiple_physical_partitions_and_hook(self):
         """Tests read_items on a container with multiple physical partitions and verifies response_hook."""

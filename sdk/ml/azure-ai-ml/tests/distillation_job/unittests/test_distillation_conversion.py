@@ -1,3 +1,6 @@
+import sys
+from unittest.mock import patch
+
 import pytest
 
 from azure.ai.ml._restclient.v2024_01_01_preview.models import MLFlowModelJobInput, UriFileJobInput
@@ -8,12 +11,31 @@ from azure.ai.ml.entities._job.distillation.distillation_job import Distillation
 from azure.ai.ml.entities._job.distillation.endpoint_request_settings import EndpointRequestSettings
 from azure.ai.ml.entities._job.distillation.prompt_settings import PromptSettings
 from azure.ai.ml.entities._job.distillation.teacher_model_settings import TeacherModelSettings
+from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._workspace.connections.connection_subtypes import ServerlessConnection
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 
 
 class TestDistillationJobConversion:
+
+    def test_distillation_job_eq_type_check_and_parent_false(self):
+        """Test __eq__ edge cases for Python 3.14 compatibility."""
+        distillation_job = DistillationJob(
+            data_generation_type=DataGenerationType.DATA_GENERATION,
+            data_generation_task_type=DataGenerationTaskType.NLI,
+            teacher_model_endpoint_connection=ServerlessConnection(
+                name="llama-teacher", endpoint="http://bar.com", api_key="TESTKEY"
+            ),
+            student_model=Input(type=AssetTypes.MLFLOW_MODEL, path="azureml://foo/bar"),
+            name="test-job",
+        )
+
+        # mock parent __eq__ returning False
+        # As parent doesn't currently implement __eq__ and defaults to NotImplemented which gives error in boolean context
+        with patch.object(Job, "__eq__", return_value=False):
+            assert distillation_job != distillation_job
+
     @pytest.mark.parametrize(
         "data_generation_task_type",
         [

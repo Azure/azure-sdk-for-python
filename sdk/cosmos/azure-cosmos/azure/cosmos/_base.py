@@ -23,6 +23,7 @@
 """
 
 import base64
+import time
 from email.utils import formatdate
 import json
 import uuid
@@ -46,9 +47,13 @@ from .partition_key import _Empty, _Undefined
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
+    from ._global_partition_endpoint_manager_per_partition_automatic_failover import (
+        _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover)
     from ._request_object import RequestObject
+    from ._routing.routing_range import PartitionKeyRangeWrapper
 
 # pylint: disable=protected-access
+#cspell:ignore PPAF, ppaf
 
 _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
@@ -69,7 +74,8 @@ _COMMON_OPTIONS = {
     'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
-    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS
+    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
+    "availability_strategy_config": Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -109,6 +115,13 @@ def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
+    if 'read_timeout' in kwargs:
+        options['read_timeout'] = kwargs['read_timeout']
+    if 'timeout' in kwargs:
+        options['timeout'] = kwargs['timeout']
+
+
+    options[Constants.OperationStartTime] = time.time()
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
@@ -945,3 +958,17 @@ def _build_properties_cache(properties: dict[str, Any], container_link: str) -> 
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
+
+def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
+    """Formats the partition key range options to be used internally from the query ones.
+    :param dict query_options: The query options being used.
+    :return: The relevant partition key range options.
+    :rtype: dict
+    """
+    pk_range_options: dict[str, Any] = {}
+    if query_options is not None:
+        if "containerRID" in query_options:
+            pk_range_options["containerRID"] = query_options["containerRID"]
+        if "excludedLocations" in query_options:
+            pk_range_options["excludedLocations"] = query_options["excludedLocations"]
+    return pk_range_options

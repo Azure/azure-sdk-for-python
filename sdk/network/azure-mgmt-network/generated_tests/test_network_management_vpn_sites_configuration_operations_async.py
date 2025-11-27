@@ -27,7 +27,7 @@ class TestNetworkManagementVpnSitesConfigurationOperationsAsync(AzureMgmtRecorde
                 resource_group_name=resource_group.name,
                 virtual_wan_name="str",
                 request={"outputBlobSasUrl": "str", "vpnSites": ["str"]},
-                api_version="2024-07-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

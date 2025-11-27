@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 from ._operations import Operations  # type: ignore
 from ._managed_clusters_operations import ManagedClustersOperations  # type: ignore
 from ._maintenance_configurations_operations import MaintenanceConfigurationsOperations  # type: ignore
+from ._managed_namespaces_operations import ManagedNamespacesOperations  # type: ignore
 from ._agent_pools_operations import AgentPoolsOperations  # type: ignore
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
@@ -32,6 +33,7 @@ __all__ = [
     "Operations",
     "ManagedClustersOperations",
     "MaintenanceConfigurationsOperations",
+    "ManagedNamespacesOperations",
     "AgentPoolsOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",

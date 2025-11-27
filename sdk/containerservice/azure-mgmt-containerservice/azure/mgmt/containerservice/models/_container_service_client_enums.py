@@ -11,6 +11,18 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AdoptionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action if Kubernetes namespace with same name already exists."""
+
+    NEVER = "Never"
+    """If the namespace already exists in Kubernetes, attempts to create that same namespace in ARM
+    will fail."""
+    IF_IDENTICAL = "IfIdentical"
+    """Take over the existing namespace to be managed by ARM, if there is no difference."""
+    ALWAYS = "Always"
+    """Always take over the existing namespace to be managed by ARM, some fields might be overwritten."""
+
+
 class AdvancedNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enable advanced network policies. This allows users to configure Layer 7 network policies
     (FQDN, HTTP, Kafka). Policies themselves must be configured via the Cilium Network Policy
@@ -110,6 +122,16 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Delete options of a namespace."""
+
+    KEEP = "Keep"
+    """Only delete the ARM resource, keep the Kubernetes namespace. Also delete the ManagedByARM
+    label."""
+    DELETE = "Delete"
+    """Delete both the ARM resource and the Kubernetes namespace together."""
 
 
 class Expander(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -247,6 +269,89 @@ class LoadBalancerSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use a basic Load Balancer with limited functionality."""
 
 
+class LocalDNSForwardDestination(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Destination server for DNS queries to be forwarded from localDNS."""
+
+    CLUSTER_CORE_DNS = "ClusterCoreDNS"
+    """Forward DNS queries from localDNS to cluster CoreDNS."""
+    VNET_DNS = "VnetDNS"
+    """Forward DNS queries from localDNS to DNS server configured in the VNET. A VNET can have
+    multiple DNS servers configured."""
+
+
+class LocalDNSForwardPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Forward policy for selecting upstream DNS server. See `forward plugin
+    <https://coredns.io/plugins/forward>`_ for more information.
+    """
+
+    SEQUENTIAL = "Sequential"
+    """Implements sequential upstream DNS server selection. See `forward plugin
+    <https://coredns.io/plugins/forward>`_ for more information."""
+    ROUND_ROBIN = "RoundRobin"
+    """Implements round robin upstream DNS server selection. See `forward plugin
+    <https://coredns.io/plugins/forward>`_ for more information."""
+    RANDOM = "Random"
+    """Implements random upstream DNS server selection. See `forward plugin
+    <https://coredns.io/plugins/forward>`_ for more information."""
+
+
+class LocalDNSMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mode of enablement for localDNS."""
+
+    PREFERRED = "Preferred"
+    """If the current orchestrator version supports this feature, prefer enabling localDNS."""
+    REQUIRED = "Required"
+    """Enable localDNS."""
+    DISABLED = "Disabled"
+    """Disable localDNS."""
+
+
+class LocalDNSProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enforce TCP or prefer UDP protocol for connections from localDNS to upstream DNS server."""
+
+    PREFER_UDP = "PreferUDP"
+    """Prefer UDP protocol for connections from localDNS to upstream DNS server."""
+    FORCE_TCP = "ForceTCP"
+    """Enforce TCP protocol for connections from localDNS to upstream DNS server."""
+
+
+class LocalDNSQueryLogging(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Log level for DNS queries in localDNS."""
+
+    ERROR = "Error"
+    """Enables error logging in localDNS. See `errors plugin <https://coredns.io/plugins/errors>`_ for
+    more information."""
+    LOG = "Log"
+    """Enables query logging in localDNS. See `log plugin <https://coredns.io/plugins/log>`_ for more
+    information."""
+
+
+class LocalDNSServeStale(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Policy for serving stale data. See `cache plugin <https://coredns.io/plugins/cache>`_ for more
+    information.
+    """
+
+    VERIFY = "Verify"
+    """Serve stale data with verification. First verify that an entry is still unavailable from the
+    source before sending the expired entry to the client. See `cache plugin
+    <https://coredns.io/plugins/cache>`_ for more information."""
+    IMMEDIATE = "Immediate"
+    """Serve stale data immediately. Send the expired entry to the client before checking to see if
+    the entry is available from the source. See `cache plugin <https://coredns.io/plugins/cache>`_
+    for more information."""
+    DISABLE = "Disable"
+    """Disable serving stale data."""
+
+
+class LocalDNSState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """System-generated state of localDNS."""
+
+    ENABLED = "Enabled"
+    """localDNS is enabled."""
+    DISABLED = "Disabled"
+    """localDNS is disabled."""
+
+
 class ManagedClusterPodIdentityProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state of the pod identity."""
 
@@ -286,6 +391,17 @@ class ManagedClusterSKUTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The cluster management is free, but charged for VM, storage, and networking usage. Best for
     experimenting, learning, simple testing, or workloads with fewer than 10 nodes. Not recommended
     for production use cases."""
+
+
+class NamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of the namespace."""
+
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    CREATING = "Creating"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
 
 
 class NetworkDataplane(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -475,6 +591,10 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use Ubuntu2204 as the OS for node images, however, Ubuntu 22.04 may not be supported for all
     nodepools. For limitations and supported kubernetes versions, see
     https://aka.ms/aks/supported-ubuntu-versions"""
+    UBUNTU2404 = "Ubuntu2404"
+    """Use Ubuntu2404 as the OS for node images, however, Ubuntu 24.04 may not be supported for all
+    nodepools. For limitations and supported kubernetes versions, see
+    https://aka.ms/aks/supported-ubuntu-versions"""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -528,6 +648,17 @@ class PodIPAllocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     counts against the Azure Vnet Private IP limit of 65K. Therefore block mode is suitable for
     running larger workloads with more than the current limit of 65K pods in a cluster. This mode
     is better suited to scale with larger subnets of /15 or bigger"""
+
+
+class PolicyRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum representing different network policy rules."""
+
+    DENY_ALL = "DenyAll"
+    """Deny all network traffic."""
+    ALLOW_ALL = "AllowAll"
+    """Allow all network traffic."""
+    ALLOW_SAME_NAMESPACE = "AllowSameNamespace"
+    """Allow traffic within the same namespace."""
 
 
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -732,3 +863,7 @@ class WorkloadRuntime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Nodes will use Kubelet to run standard OCI container workloads."""
     WASM_WASI = "WasmWasi"
     """Nodes will use Krustlet to run WASM workloads using the WASI provider (Preview)."""
+    KATA_VM_ISOLATION = "KataVmIsolation"
+    """Nodes can use (Kata + Cloud Hypervisor + Hyper-V) to enable Nested VM-based pods. Due to the
+    use Hyper-V, AKS node OS itself is a nested VM (the root OS) of Hyper-V. Thus it can only be
+    used with VM series that support Nested Virtualization such as Dv3 series."""

@@ -39,6 +39,12 @@ def main():
                 "name": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterExtendedLocationName",
                 "type": "CustomLocation",
             },
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userIdentity1": {}
+                },
+            },
             "location": "location",
             "properties": {
                 "adminUsername": "username",
@@ -59,7 +65,7 @@ def main():
                         "networkAttachmentName": "netAttachName01",
                     }
                 ],
-                "networkData": "bmV0d29ya0RhdGVTYW1wbGU=",
+                "networkDataContent": "bmV0d29ya0RhdGVTYW1wbGU=",
                 "placementHints": [
                     {
                         "hintType": "Affinity",
@@ -79,7 +85,7 @@ def main():
                         "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/volumes/volumeName"
                     ],
                 },
-                "userData": "dXNlckRhdGVTYW1wbGU=",
+                "userDataContent": "dXNlckRhdGVTYW1wbGU=",
                 "vmDeviceModel": "T2",
                 "vmImage": "myacr.azurecr.io/foobar:latest",
                 "vmImageRepositoryCredentials": {
@@ -94,6 +100,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/VirtualMachines_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2025-07-01-preview/examples/VirtualMachines_Create.json
 if __name__ == "__main__":
     main()

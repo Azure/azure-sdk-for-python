@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from azure.core.exceptions import ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError
@@ -110,7 +110,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
         directory_client = share_client.get_directory_client('dir1')
         file_attributes = NTFSAttributes(read_only=True, directory=True)
-        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000)
+        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc)
 
         # Act
         directory_client.create_directory(
@@ -944,7 +944,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory.create_subdirectory("subdir1")
         directory.create_subdirectory("subdir2")
         directory.upload_file("file1", "data1")
-        
+
         snapshot = share_client.create_snapshot()
         directory.create_subdirectory("subdir3")
         directory.upload_file("file2", "data2")
@@ -1262,9 +1262,9 @@ class TestStorageDirectory(StorageRecordedTestCase):
         source_directory = share_client.create_directory('dir1')
 
         file_attributes = NTFSAttributes(read_only=True, directory=True)
-        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
-        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
-        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000)
+        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000, tzinfo=timezone.utc)
+        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000, tzinfo=timezone.utc)
+        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000, tzinfo=timezone.utc)
 
         # Act
         new_directory = source_directory.rename_directory(

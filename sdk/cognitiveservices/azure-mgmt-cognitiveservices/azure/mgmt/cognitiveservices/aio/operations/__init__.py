@@ -31,6 +31,7 @@ from ._encryption_scopes_operations import EncryptionScopesOperations  # type: i
 from ._rai_policies_operations import RaiPoliciesOperations  # type: ignore
 from ._rai_blocklists_operations import RaiBlocklistsOperations  # type: ignore
 from ._rai_blocklist_items_operations import RaiBlocklistItemsOperations  # type: ignore
+from ._rai_topics_operations import RaiTopicsOperations  # type: ignore
 from ._rai_content_filters_operations import RaiContentFiltersOperations  # type: ignore
 from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._defender_for_ai_settings_operations import DefenderForAISettingsOperations  # type: ignore
@@ -39,6 +40,7 @@ from ._account_connections_operations import AccountConnectionsOperations  # typ
 from ._project_connections_operations import ProjectConnectionsOperations  # type: ignore
 from ._account_capability_hosts_operations import AccountCapabilityHostsOperations  # type: ignore
 from ._project_capability_hosts_operations import ProjectCapabilityHostsOperations  # type: ignore
+from ._quota_tiers_operations import QuotaTiersOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -62,6 +64,7 @@ __all__ = [
     "RaiPoliciesOperations",
     "RaiBlocklistsOperations",
     "RaiBlocklistItemsOperations",
+    "RaiTopicsOperations",
     "RaiContentFiltersOperations",
     "NetworkSecurityPerimeterConfigurationsOperations",
     "DefenderForAISettingsOperations",
@@ -70,6 +73,7 @@ __all__ = [
     "ProjectConnectionsOperations",
     "AccountCapabilityHostsOperations",
     "ProjectCapabilityHostsOperations",
+    "QuotaTiersOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

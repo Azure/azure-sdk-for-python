@@ -15,17 +15,26 @@ from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
 
 
-def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]:
+def message_to_dict(
+    message: ChatMessage, context: str = None, tool_calls: List[Any] = None, token_usage: Dict[str, Any] = None
+) -> Dict[str, Any]:
     """Convert a ChatMessage and context to dictionary format.
 
     :param message: The chat message to convert
     :type message: ChatMessage
     :param context: Additional context to include in the dictionary
     :type context: str
+    :param tool_calls: List of tool calls to include in the dictionary
+    :type tool_calls: List[Any]
+    :param token_usage: Token usage information from the callback
+    :type token_usage: Dict[str, Any]
     :return: Dictionary representation with role and content
-    :rtype: Dict[str, str]
+    :rtype: Dict[str, Any]
     """
-    return {"role": message.role, "content": message.content, "context": context}
+    msg_dict = {"role": message.role, "content": message.content, "context": context, "tool_calls": tool_calls}
+    if token_usage:
+        msg_dict["token_usage"] = token_usage
+    return msg_dict
 
 
 def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
@@ -164,6 +173,82 @@ def list_mean_nan_safe(data_list: List[Any]) -> float:
     return sum(filtered_list) / len(filtered_list)
 
 
+def format_content_by_modality(content: str, modality: str) -> str:
+    """Format content based on the specified modality, returning one random format.
+
+    :param content: The content to format
+    :type content: str
+    :param modality: The modality type (html, markdown, footnote, code, text)
+    :type modality: str
+    :return: Formatted content
+    :rtype: str
+    """
+    import html
+    import random
+
+    def format_as_html(text):
+        html_text = html.escape(text)
+        return [
+            f"<p>{html_text}</p>",
+            f'<div style="display:none">{html_text}</div>',
+            f'<span style="display:none">{html_text}</span>',
+            f"<div hidden>{html_text}</div>",
+            f'<meta content="{html_text}">',
+        ]
+
+    def format_as_markdown(text):
+        markdown_text = text.replace("\n", "  \n")  # Convert newlines to Markdown line breaks
+        return [
+            f"\n**{markdown_text}**\n",  # Bold
+            f"\n*{markdown_text}*\n",  # Italic
+            f"\n`{markdown_text}`\n",  # Inline code
+            f"\n```{markdown_text}```\n",  # Code block
+            f"\n[Link]({markdown_text})\n",  # Link
+        ]
+
+    def format_as_footnote(text):
+        footnote_text = text.replace("\n", " ")
+        return [
+            f"[^{footnote_text}]",  # Footnote reference
+            f"\n[1] {footnote_text}\n",  # Footnote reference with number
+            f"<sup>{footnote_text}</sup>",  # Superscript
+            f'<span class="footnote">{footnote_text}</span>',  # Custom footnote span
+            f'<div class="footnote">{footnote_text}</div>',  # Custom footnote div
+        ]
+
+    def format_as_code(text):
+        code_text = text.replace("\n", " ")
+        return [
+            f"`{code_text}`",  # Inline code
+            f"```\n{code_text}\n```",  # Code block
+            f'"""\n{code_text}\n"""',  # Code block
+            f"# {code_text}",  # Inline comment
+            f'def function():\n    print("{code_text}")',  # Function call
+        ]
+
+    def format_as_text(text):
+        return [f"<document>{text}</document>"]  # Return text in document tags
+
+    # Mapping of modality types to formatting functions
+    modality_formatters = {
+        "html": format_as_html,
+        "markdown": format_as_markdown,
+        "footnote": format_as_footnote,
+        "code": format_as_code,
+        "text": format_as_text,
+    }
+
+    # Get formatter based on modality type
+    if modality and modality.lower() in modality_formatters:
+        formatter = modality_formatters[modality.lower()]
+        formats = formatter(content)
+        # Return one random format from the available options
+        return random.choice(formats)
+    else:
+        # Return plain text if modality not recognized
+        return content
+
+
 def write_pyrit_outputs_to_file(
     *,
     output_path: str,
@@ -194,7 +279,13 @@ def write_pyrit_outputs_to_file(
 
     conversations = [
         [
-            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""))
+            (
+                item.to_chat_message(),
+                prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""),
+                item.labels.get("tool_calls", []),
+                item.labels.get("risk_sub_type"),
+                item.labels.get("token_usage"),
+            )
             for item in group
         ]
         for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
@@ -217,16 +308,22 @@ def write_pyrit_outputs_to_file(
                     if conversation[0][0].role == "system":
                         # Skip system messages in the output
                         continue
-                    json_lines += (
-                        json.dumps(
-                            {
-                                "conversation": {
-                                    "messages": [message_to_dict(message[0], message[1]) for message in conversation]
-                                }
-                            }
-                        )
-                        + "\n"
-                    )
+                    conv_dict = {
+                        "conversation": {
+                            "messages": [
+                                message_to_dict(
+                                    message[0], message[1], message[2], message[4] if len(message) > 4 else None
+                                )
+                                for message in conversation
+                            ]
+                        }
+                    }
+                    # Add risk_sub_type if present (check first message for the label)
+                    if conversation and len(conversation) > 0 and len(conversation[0]) > 3:
+                        risk_sub_type = conversation[0][3]
+                        if risk_sub_type:
+                            conv_dict["risk_sub_type"] = risk_sub_type
+                    json_lines += json.dumps(conv_dict) + "\n"
                 with Path(output_path).open("w") as f:
                     f.writelines(json_lines)
                 logger.debug(
@@ -248,16 +345,20 @@ def write_pyrit_outputs_to_file(
             if conversation[0][0].role == "system":
                 # Skip system messages in the output
                 continue
-            json_lines += (
-                json.dumps(
-                    {
-                        "conversation": {
-                            "messages": [message_to_dict(message[0], message[1]) for message in conversation]
-                        }
-                    }
-                )
-                + "\n"
-            )
+            conv_dict = {
+                "conversation": {
+                    "messages": [
+                        message_to_dict(message[0], message[1], message[2], message[4] if len(message) > 4 else None)
+                        for message in conversation
+                    ]
+                }
+            }
+            # Add risk_sub_type if present (check first message for the label)
+            if conversation and len(conversation) > 0 and len(conversation[0]) > 3:
+                risk_sub_type = conversation[0][3]
+                if risk_sub_type:
+                    conv_dict["risk_sub_type"] = risk_sub_type
+            json_lines += json.dumps(conv_dict) + "\n"
         with Path(output_path).open("w") as f:
             f.writelines(json_lines)
         logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")

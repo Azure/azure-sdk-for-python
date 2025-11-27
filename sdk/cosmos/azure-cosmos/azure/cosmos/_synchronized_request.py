@@ -24,15 +24,19 @@
 import copy
 import json
 import time
-
+from concurrent.futures import CancelledError
 from urllib.parse import urlparse
+
 from azure.core.exceptions import DecodeError  # type: ignore
 
-from . import exceptions
-from . import http_constants
-from . import _retry_utility
+from . import exceptions, http_constants, _retry_utility
+from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
+from ._availability_strategy_handler import execute_with_hedging
+from ._constants import _Constants
+from ._request_object import RequestObject
+from .documents import _OperationType
 
-
+# cspell:ignore ppaf
 def _is_readable_stream(obj):
     """Checks whether obj is a file-like readable stream.
 
@@ -80,8 +84,8 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     :rtype: tuple of (dict, dict)
 
     """
-    # pylint: disable=protected-access
-
+    # pylint: disable=protected-access, too-many-branches
+    kwargs.pop(_Constants.OperationStartTime, None)
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
     read_timeout = connection_policy.ReadTimeout
@@ -98,6 +102,10 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         # always override database account call timeouts
         read_timeout = connection_policy.DBAReadTimeout
         connection_timeout = connection_policy.DBAConnectionTimeout
+
+    if request_params.read_timeout_override:
+        read_timeout = request_params.read_timeout_override
+
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)
         if kwargs['timeout'] <= 0:
@@ -107,10 +115,17 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         base_url = request_params.endpoint_override
     else:
         pk_range_wrapper = None
-        if global_endpoint_manager.is_circuit_breaker_applicable(request_params):
-            # Circuit breaker is applicable, so we need to use the endpoint from the request
+        if (global_endpoint_manager.is_circuit_breaker_applicable(request_params) or
+                global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)):
+            # Circuit breaker or per-partition failover are applicable, so we need to use the endpoint from the request
             pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
+
+    # For each retry, check if request should be cancelled due to sibling requests already completed
+    # - used for when hedging enabled
+    if request_params.should_cancel_request():
+        raise CancelledError("The request has been cancelled")
+
     if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
 
@@ -184,6 +199,21 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     return result, headers
 
 
+def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
+    """Determine if availability strategy should be applied to the request.
+    
+    :param request_params: Request parameters containing operation details
+    :type request_params: ~azure.cosmos._request_object.RequestObject
+    :returns: True if availability strategy should be applied, False otherwise
+    :rtype: bool
+    """
+    return (request_params.availability_strategy_config is not None and
+            not request_params.is_hedging_request and
+            request_params.resource_type == http_constants.ResourceType.Document and
+            (not _OperationType.IsWriteOperation(request_params.operation_type) or
+             request_params.retry_write > 0))
+
+
 def _replace_url_prefix(original_url, new_prefix):
     parts = original_url.split('/', 3)
 
@@ -213,7 +243,8 @@ def SynchronizedRequest(
     """Performs one synchronized http request according to the parameters.
 
     :param object client: Document client instance
-    :param dict request_params:
+    :param request_params: Request parameters containing operation details
+    :type request_params: ~azure.cosmos._request_object.RequestObject
     :param _GlobalEndpointManager global_endpoint_manager:
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client: PipelineClient to process the request.
@@ -227,6 +258,29 @@ def SynchronizedRequest(
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
+
+    if request_params.availability_strategy_config is None:
+        # if ppaf is enabled, then hedging is enabled by default
+        if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
+            request_params.availability_strategy_config = CrossRegionHedgingStrategyConfig()
+
+    # Handle hedging if availability strategy is applicable
+    if _is_availability_strategy_applicable(request_params):
+        return execute_with_hedging(
+            request_params,
+            global_endpoint_manager,
+            request,
+            lambda req_param, r: _retry_utility.Execute(
+                client,
+                global_endpoint_manager,
+                _Request,
+                req_param,
+                connection_policy,
+                pipeline_client,
+                r,
+                **kwargs
+            )
+        )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return _retry_utility.Execute(

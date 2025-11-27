@@ -217,7 +217,7 @@ class AgentPool(SubResource):
     :vartype type: str
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
      will change when the resource is updated. Specify an if-match or if-none-match header with the
-     eTag value for a subsequent request to enable optimistic concurrency per the normal etag
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
      convention.
     :vartype e_tag: str
     :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
@@ -243,7 +243,7 @@ class AgentPool(SubResource):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer" and "WasmWasi".
+     "OCIContainer", "WasmWasi", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -273,7 +273,7 @@ class AgentPool(SubResource):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -405,6 +405,10 @@ class AgentPool(SubResource):
      list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
     :ivar status: Contains read-only information about the Agent Pool.
     :vartype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+    :ivar local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS overrides.
+     LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
+     more details see aka.ms/aks/localdns.
+    :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
     """
 
     _validation = {
@@ -478,6 +482,7 @@ class AgentPool(SubResource):
             "type": "[VirtualMachineNodes]",
         },
         "status": {"key": "properties.status", "type": "AgentPoolStatus"},
+        "local_dns_profile": {"key": "properties.localDNSProfile", "type": "LocalDNSProfile"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -532,6 +537,7 @@ class AgentPool(SubResource):
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
+        local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -559,7 +565,7 @@ class AgentPool(SubResource):
          data root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
         :paramtype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer" and "WasmWasi".
+         "OCIContainer", "WasmWasi", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
          base64-encoded string which will be written to /etc/motd after decoding. This allows
@@ -590,7 +596,7 @@ class AgentPool(SubResource):
         :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType
          is Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
          1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-         "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+         "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
         :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -716,6 +722,10 @@ class AgentPool(SubResource):
          list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
         :keyword status: Contains read-only information about the Agent Pool.
         :paramtype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+        :keyword local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS
+         overrides. LocalDNS helps improve performance and reliability of DNS resolution in an AKS
+         cluster. For more details see aka.ms/aks/localdns.
+        :paramtype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
         """
         super().__init__(**kwargs)
         self.e_tag: Optional[str] = None
@@ -771,6 +781,7 @@ class AgentPool(SubResource):
         self.virtual_machines_profile = virtual_machines_profile
         self.virtual_machine_nodes_status = virtual_machine_nodes_status
         self.status = status
+        self.local_dns_profile = local_dns_profile
 
 
 class AgentPoolAvailableVersions(_serialization.Model):
@@ -2182,23 +2193,56 @@ class IstioEgressGateway(_serialization.Model):
 
     :ivar enabled: Whether to enable the egress gateway. Required.
     :vartype enabled: bool
+    :ivar name: Name of the Istio add-on egress gateway. Required.
+    :vartype name: str
+    :ivar namespace: Namespace that the Istio add-on egress gateway should be deployed in. If
+     unspecified, the default is aks-istio-egress.
+    :vartype namespace: str
+    :ivar gateway_configuration_name: Name of the gateway configuration custom resource for the
+     Istio add-on egress gateway. Must be specified when enabling the Istio egress gateway. Must be
+     deployed in the same namespace that the Istio egress gateway will be deployed in.
+    :vartype gateway_configuration_name: str
     """
 
     _validation = {
         "enabled": {"required": True},
+        "name": {"required": True, "pattern": r"[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"},
     }
 
     _attribute_map = {
         "enabled": {"key": "enabled", "type": "bool"},
+        "name": {"key": "name", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "gateway_configuration_name": {"key": "gatewayConfigurationName", "type": "str"},
     }
 
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        name: str,
+        namespace: Optional[str] = None,
+        gateway_configuration_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Whether to enable the egress gateway. Required.
         :paramtype enabled: bool
+        :keyword name: Name of the Istio add-on egress gateway. Required.
+        :paramtype name: str
+        :keyword namespace: Namespace that the Istio add-on egress gateway should be deployed in. If
+         unspecified, the default is aks-istio-egress.
+        :paramtype namespace: str
+        :keyword gateway_configuration_name: Name of the gateway configuration custom resource for the
+         Istio add-on egress gateway. Must be specified when enabling the Istio egress gateway. Must be
+         deployed in the same namespace that the Istio egress gateway will be deployed in.
+        :paramtype gateway_configuration_name: str
         """
         super().__init__(**kwargs)
         self.enabled = enabled
+        self.name = name
+        self.namespace = namespace
+        self.gateway_configuration_name = gateway_configuration_name
 
 
 class IstioIngressGateway(_serialization.Model):
@@ -2647,6 +2691,159 @@ class LinuxOSConfig(_serialization.Model):
         self.transparent_huge_page_enabled = transparent_huge_page_enabled
         self.transparent_huge_page_defrag = transparent_huge_page_defrag
         self.swap_file_size_mb = swap_file_size_mb
+
+
+class LocalDNSOverride(_serialization.Model):
+    """Overrides for localDNS profile.
+
+    :ivar query_logging: Log level for DNS queries in localDNS. Known values are: "Error" and
+     "Log".
+    :vartype query_logging: str or ~azure.mgmt.containerservice.models.LocalDNSQueryLogging
+    :ivar protocol: Enforce TCP or prefer UDP protocol for connections from localDNS to upstream
+     DNS server. Known values are: "PreferUDP" and "ForceTCP".
+    :vartype protocol: str or ~azure.mgmt.containerservice.models.LocalDNSProtocol
+    :ivar forward_destination: Destination server for DNS queries to be forwarded from localDNS.
+     Known values are: "ClusterCoreDNS" and "VnetDNS".
+    :vartype forward_destination: str or
+     ~azure.mgmt.containerservice.models.LocalDNSForwardDestination
+    :ivar forward_policy: Forward policy for selecting upstream DNS server. See `forward plugin
+     <https://coredns.io/plugins/forward>`_ for more information. Known values are: "Sequential",
+     "RoundRobin", and "Random".
+    :vartype forward_policy: str or ~azure.mgmt.containerservice.models.LocalDNSForwardPolicy
+    :ivar max_concurrent: Maximum number of concurrent queries. See `forward plugin
+     <https://coredns.io/plugins/forward>`_ for more information.
+    :vartype max_concurrent: int
+    :ivar cache_duration_in_seconds: Cache max TTL in seconds. See `cache plugin
+     <https://coredns.io/plugins/cache>`_ for more information.
+    :vartype cache_duration_in_seconds: int
+    :ivar serve_stale_duration_in_seconds: Serve stale duration in seconds. See `cache plugin
+     <https://coredns.io/plugins/cache>`_ for more information.
+    :vartype serve_stale_duration_in_seconds: int
+    :ivar serve_stale: Policy for serving stale data. See `cache plugin
+     <https://coredns.io/plugins/cache>`_ for more information. Known values are: "Verify",
+     "Immediate", and "Disable".
+    :vartype serve_stale: str or ~azure.mgmt.containerservice.models.LocalDNSServeStale
+    """
+
+    _attribute_map = {
+        "query_logging": {"key": "queryLogging", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "forward_destination": {"key": "forwardDestination", "type": "str"},
+        "forward_policy": {"key": "forwardPolicy", "type": "str"},
+        "max_concurrent": {"key": "maxConcurrent", "type": "int"},
+        "cache_duration_in_seconds": {"key": "cacheDurationInSeconds", "type": "int"},
+        "serve_stale_duration_in_seconds": {"key": "serveStaleDurationInSeconds", "type": "int"},
+        "serve_stale": {"key": "serveStale", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        query_logging: Union[str, "_models.LocalDNSQueryLogging"] = "Error",
+        protocol: Union[str, "_models.LocalDNSProtocol"] = "PreferUDP",
+        forward_destination: Union[str, "_models.LocalDNSForwardDestination"] = "ClusterCoreDNS",
+        forward_policy: Union[str, "_models.LocalDNSForwardPolicy"] = "Sequential",
+        max_concurrent: int = 1000,
+        cache_duration_in_seconds: int = 3600,
+        serve_stale_duration_in_seconds: int = 3600,
+        serve_stale: Union[str, "_models.LocalDNSServeStale"] = "Immediate",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword query_logging: Log level for DNS queries in localDNS. Known values are: "Error" and
+         "Log".
+        :paramtype query_logging: str or ~azure.mgmt.containerservice.models.LocalDNSQueryLogging
+        :keyword protocol: Enforce TCP or prefer UDP protocol for connections from localDNS to upstream
+         DNS server. Known values are: "PreferUDP" and "ForceTCP".
+        :paramtype protocol: str or ~azure.mgmt.containerservice.models.LocalDNSProtocol
+        :keyword forward_destination: Destination server for DNS queries to be forwarded from localDNS.
+         Known values are: "ClusterCoreDNS" and "VnetDNS".
+        :paramtype forward_destination: str or
+         ~azure.mgmt.containerservice.models.LocalDNSForwardDestination
+        :keyword forward_policy: Forward policy for selecting upstream DNS server. See `forward plugin
+         <https://coredns.io/plugins/forward>`_ for more information. Known values are: "Sequential",
+         "RoundRobin", and "Random".
+        :paramtype forward_policy: str or ~azure.mgmt.containerservice.models.LocalDNSForwardPolicy
+        :keyword max_concurrent: Maximum number of concurrent queries. See `forward plugin
+         <https://coredns.io/plugins/forward>`_ for more information.
+        :paramtype max_concurrent: int
+        :keyword cache_duration_in_seconds: Cache max TTL in seconds. See `cache plugin
+         <https://coredns.io/plugins/cache>`_ for more information.
+        :paramtype cache_duration_in_seconds: int
+        :keyword serve_stale_duration_in_seconds: Serve stale duration in seconds. See `cache plugin
+         <https://coredns.io/plugins/cache>`_ for more information.
+        :paramtype serve_stale_duration_in_seconds: int
+        :keyword serve_stale: Policy for serving stale data. See `cache plugin
+         <https://coredns.io/plugins/cache>`_ for more information. Known values are: "Verify",
+         "Immediate", and "Disable".
+        :paramtype serve_stale: str or ~azure.mgmt.containerservice.models.LocalDNSServeStale
+        """
+        super().__init__(**kwargs)
+        self.query_logging = query_logging
+        self.protocol = protocol
+        self.forward_destination = forward_destination
+        self.forward_policy = forward_policy
+        self.max_concurrent = max_concurrent
+        self.cache_duration_in_seconds = cache_duration_in_seconds
+        self.serve_stale_duration_in_seconds = serve_stale_duration_in_seconds
+        self.serve_stale = serve_stale
+
+
+class LocalDNSProfile(_serialization.Model):
+    """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
+    performance and reliability of DNS resolution in an AKS cluster. For more details see
+    aka.ms/aks/localdns.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar mode: Mode of enablement for localDNS. Known values are: "Preferred", "Required", and
+     "Disabled".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.LocalDNSMode
+    :ivar state: System-generated state of localDNS. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.containerservice.models.LocalDNSState
+    :ivar vnet_dns_overrides: VnetDNS overrides apply to DNS traffic from pods with
+     dnsPolicy:default or kubelet (referred to as VnetDNS traffic).
+    :vartype vnet_dns_overrides: dict[str, ~azure.mgmt.containerservice.models.LocalDNSOverride]
+    :ivar kube_dns_overrides: KubeDNS overrides apply to DNS traffic from pods with
+     dnsPolicy:ClusterFirst (referred to as KubeDNS traffic).
+    :vartype kube_dns_overrides: dict[str, ~azure.mgmt.containerservice.models.LocalDNSOverride]
+    """
+
+    _validation = {
+        "state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "vnet_dns_overrides": {"key": "vnetDNSOverrides", "type": "{LocalDNSOverride}"},
+        "kube_dns_overrides": {"key": "kubeDNSOverrides", "type": "{LocalDNSOverride}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Union[str, "_models.LocalDNSMode"] = "Preferred",
+        vnet_dns_overrides: Optional[dict[str, "_models.LocalDNSOverride"]] = None,
+        kube_dns_overrides: Optional[dict[str, "_models.LocalDNSOverride"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: Mode of enablement for localDNS. Known values are: "Preferred", "Required", and
+         "Disabled".
+        :paramtype mode: str or ~azure.mgmt.containerservice.models.LocalDNSMode
+        :keyword vnet_dns_overrides: VnetDNS overrides apply to DNS traffic from pods with
+         dnsPolicy:default or kubelet (referred to as VnetDNS traffic).
+        :paramtype vnet_dns_overrides: dict[str, ~azure.mgmt.containerservice.models.LocalDNSOverride]
+        :keyword kube_dns_overrides: KubeDNS overrides apply to DNS traffic from pods with
+         dnsPolicy:ClusterFirst (referred to as KubeDNS traffic).
+        :paramtype kube_dns_overrides: dict[str, ~azure.mgmt.containerservice.models.LocalDNSOverride]
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.state: Optional[Union[str, "_models.LocalDNSState"]] = None
+        self.vnet_dns_overrides = vnet_dns_overrides
+        self.kube_dns_overrides = kube_dns_overrides
 
 
 class Machine(SubResource):
@@ -3105,7 +3302,7 @@ class ManagedCluster(TrackedResource):
     :vartype location: str
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
      will change when the resource is updated. Specify an if-match or if-none-match header with the
-     eTag value for a subsequent request to enable optimistic concurrency per the normal etag
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
      convention.
     :vartype e_tag: str
     :ivar sku: The managed cluster SKU.
@@ -3823,7 +4020,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
      will change when the resource is updated. Specify an if-match or if-none-match header with the
-     eTag value for a subsequent request to enable optimistic concurrency per the normal etag
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
      convention.
     :vartype e_tag: str
     :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
@@ -3849,7 +4046,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer" and "WasmWasi".
+     "OCIContainer", "WasmWasi", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -3879,7 +4076,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4011,6 +4208,10 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
      list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
     :ivar status: Contains read-only information about the Agent Pool.
     :vartype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+    :ivar local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS overrides.
+     LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
+     more details see aka.ms/aks/localdns.
+    :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
     """
 
     _validation = {
@@ -4075,6 +4276,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         "virtual_machines_profile": {"key": "virtualMachinesProfile", "type": "VirtualMachinesProfile"},
         "virtual_machine_nodes_status": {"key": "virtualMachineNodesStatus", "type": "[VirtualMachineNodes]"},
         "status": {"key": "status", "type": "AgentPoolStatus"},
+        "local_dns_profile": {"key": "localDNSProfile", "type": "LocalDNSProfile"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -4129,6 +4331,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
+        local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4156,7 +4359,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
          data root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
         :paramtype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer" and "WasmWasi".
+         "OCIContainer", "WasmWasi", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
          base64-encoded string which will be written to /etc/motd after decoding. This allows
@@ -4187,7 +4390,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType
          is Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
          1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-         "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+         "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
         :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -4313,6 +4516,10 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
          list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
         :keyword status: Contains read-only information about the Agent Pool.
         :paramtype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+        :keyword local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS
+         overrides. LocalDNS helps improve performance and reliability of DNS resolution in an AKS
+         cluster. For more details see aka.ms/aks/localdns.
+        :paramtype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
         """
         super().__init__(**kwargs)
         self.e_tag: Optional[str] = None
@@ -4368,6 +4575,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         self.virtual_machines_profile = virtual_machines_profile
         self.virtual_machine_nodes_status = virtual_machine_nodes_status
         self.status = status
+        self.local_dns_profile = local_dns_profile
 
 
 class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
@@ -4379,7 +4587,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
      will change when the resource is updated. Specify an if-match or if-none-match header with the
-     eTag value for a subsequent request to enable optimistic concurrency per the normal etag
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
      convention.
     :vartype e_tag: str
     :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
@@ -4405,7 +4613,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer" and "WasmWasi".
+     "OCIContainer", "WasmWasi", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -4435,7 +4643,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4567,6 +4775,10 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
     :ivar status: Contains read-only information about the Agent Pool.
     :vartype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+    :ivar local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS overrides.
+     LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
+     more details see aka.ms/aks/localdns.
+    :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
     :ivar name: Unique name of the agent pool profile in the context of the subscription and
      resource group. Windows agent pool names must be 6 characters or less. Required.
     :vartype name: str
@@ -4635,6 +4847,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         "virtual_machines_profile": {"key": "virtualMachinesProfile", "type": "VirtualMachinesProfile"},
         "virtual_machine_nodes_status": {"key": "virtualMachineNodesStatus", "type": "[VirtualMachineNodes]"},
         "status": {"key": "status", "type": "AgentPoolStatus"},
+        "local_dns_profile": {"key": "localDNSProfile", "type": "LocalDNSProfile"},
         "name": {"key": "name", "type": "str"},
     }
 
@@ -4691,6 +4904,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
+        local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4718,7 +4932,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
          data root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
         :paramtype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer" and "WasmWasi".
+         "OCIContainer", "WasmWasi", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
          base64-encoded string which will be written to /etc/motd after decoding. This allows
@@ -4749,7 +4963,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType
          is Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
          1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-         "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+         "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
         :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -4875,6 +5089,10 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
          list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
         :keyword status: Contains read-only information about the Agent Pool.
         :paramtype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+        :keyword local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS
+         overrides. LocalDNS helps improve performance and reliability of DNS resolution in an AKS
+         cluster. For more details see aka.ms/aks/localdns.
+        :paramtype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
         :keyword name: Unique name of the agent pool profile in the context of the subscription and
          resource group. Windows agent pool names must be 6 characters or less. Required.
         :paramtype name: str
@@ -4929,6 +5147,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
             virtual_machines_profile=virtual_machines_profile,
             virtual_machine_nodes_status=virtual_machine_nodes_status,
             status=status,
+            local_dns_profile=local_dns_profile,
             **kwargs
         )
         self.name = name
@@ -7226,6 +7445,108 @@ class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(
         self.enabled = enabled
 
 
+class ManagedNamespace(SubResource):
+    """Namespace managed by ARM.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource that is unique within a resource group. This name can be
+     used to access the resource.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar tags: The tags to be persisted on the managed cluster namespace.
+    :vartype tags: dict[str, str]
+    :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
+     will change when the resource is updated. Specify an if-match or if-none-match header with the
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
+     convention.
+    :vartype e_tag: str
+    :ivar location: The location of the namespace.
+    :vartype location: str
+    :ivar properties: Properties of a namespace.
+    :vartype properties: ~azure.mgmt.containerservice.models.NamespaceProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "e_tag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "NamespaceProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        location: Optional[str] = None,
+        properties: Optional["_models.NamespaceProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: The tags to be persisted on the managed cluster namespace.
+        :paramtype tags: dict[str, str]
+        :keyword location: The location of the namespace.
+        :paramtype location: str
+        :keyword properties: Properties of a namespace.
+        :paramtype properties: ~azure.mgmt.containerservice.models.NamespaceProperties
+        """
+        super().__init__(**kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.tags = tags
+        self.e_tag: Optional[str] = None
+        self.location = location
+        self.properties = properties
+
+
+class ManagedNamespaceListResult(_serialization.Model):
+    """The result of a request to list managed namespaces in a managed cluster.
+
+    :ivar value: The list of managed namespaces.
+    :vartype value: list[~azure.mgmt.containerservice.models.ManagedNamespace]
+    :ivar next_link: The URI to fetch the next page of results, if any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ManagedNamespace]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.ManagedNamespace"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of managed namespaces.
+        :paramtype value: list[~azure.mgmt.containerservice.models.ManagedNamespace]
+        :keyword next_link: The URI to fetch the next page of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class ManagedServiceIdentityUserAssignedIdentitiesValue(_serialization.Model):  # pylint: disable=name-too-long
     """ManagedServiceIdentityUserAssignedIdentitiesValue.
 
@@ -7522,6 +7843,138 @@ class MeshUpgradeProfileProperties(MeshRevision):
      their associated versions.
     :vartype compatible_with: list[~azure.mgmt.containerservice.models.CompatibleVersions]
     """
+
+
+class NamespaceProperties(_serialization.Model):
+    """Properties of a namespace managed by ARM.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: The current provisioning state of the namespace. Known values are:
+     "Updating", "Deleting", "Creating", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.NamespaceProvisioningState
+    :ivar labels: The labels of managed namespace.
+    :vartype labels: dict[str, str]
+    :ivar annotations: The annotations of managed namespace.
+    :vartype annotations: dict[str, str]
+    :ivar portal_fqdn: The special FQDN used by the Azure Portal to access the Managed Cluster.
+     This FQDN is for use only by the Azure Portal and should not be used by other clients. The
+     Azure Portal requires certain Cross-Origin Resource Sharing (CORS) headers to be sent in some
+     responses, which Kubernetes APIServer doesn't handle by default. This special FQDN supports
+     CORS, allowing the Azure Portal to function properly.
+    :vartype portal_fqdn: str
+    :ivar default_resource_quota: The default resource quota enforced upon the namespace. Customers
+     can have other Kubernetes resource quota objects under the namespace. Resource quotas are
+     additive; if multiple resource quotas are applied to a given namespace, then the effective
+     limit will be one such that all quotas on the namespace can be satisfied.
+    :vartype default_resource_quota: ~azure.mgmt.containerservice.models.ResourceQuota
+    :ivar default_network_policy: The default network policy enforced upon the namespace. Customers
+     can have other Kubernetes network policy objects under the namespace. Network policies are
+     additive; if a policy or policies apply to a given pod for a given direction, the connections
+     allowed in that direction for the pod is the union of what all applicable policies allow.
+    :vartype default_network_policy: ~azure.mgmt.containerservice.models.NetworkPolicies
+    :ivar adoption_policy: Action if Kubernetes namespace with same name already exists. Known
+     values are: "Never", "IfIdentical", and "Always".
+    :vartype adoption_policy: str or ~azure.mgmt.containerservice.models.AdoptionPolicy
+    :ivar delete_policy: Delete options of a namespace. Known values are: "Keep" and "Delete".
+    :vartype delete_policy: str or ~azure.mgmt.containerservice.models.DeletePolicy
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "portal_fqdn": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "labels": {"key": "labels", "type": "{str}"},
+        "annotations": {"key": "annotations", "type": "{str}"},
+        "portal_fqdn": {"key": "portalFqdn", "type": "str"},
+        "default_resource_quota": {"key": "defaultResourceQuota", "type": "ResourceQuota"},
+        "default_network_policy": {"key": "defaultNetworkPolicy", "type": "NetworkPolicies"},
+        "adoption_policy": {"key": "adoptionPolicy", "type": "str"},
+        "delete_policy": {"key": "deletePolicy", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        labels: Optional[dict[str, str]] = None,
+        annotations: Optional[dict[str, str]] = None,
+        default_resource_quota: Optional["_models.ResourceQuota"] = None,
+        default_network_policy: Optional["_models.NetworkPolicies"] = None,
+        adoption_policy: Optional[Union[str, "_models.AdoptionPolicy"]] = None,
+        delete_policy: Optional[Union[str, "_models.DeletePolicy"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword labels: The labels of managed namespace.
+        :paramtype labels: dict[str, str]
+        :keyword annotations: The annotations of managed namespace.
+        :paramtype annotations: dict[str, str]
+        :keyword default_resource_quota: The default resource quota enforced upon the namespace.
+         Customers can have other Kubernetes resource quota objects under the namespace. Resource quotas
+         are additive; if multiple resource quotas are applied to a given namespace, then the effective
+         limit will be one such that all quotas on the namespace can be satisfied.
+        :paramtype default_resource_quota: ~azure.mgmt.containerservice.models.ResourceQuota
+        :keyword default_network_policy: The default network policy enforced upon the namespace.
+         Customers can have other Kubernetes network policy objects under the namespace. Network
+         policies are additive; if a policy or policies apply to a given pod for a given direction, the
+         connections allowed in that direction for the pod is the union of what all applicable policies
+         allow.
+        :paramtype default_network_policy: ~azure.mgmt.containerservice.models.NetworkPolicies
+        :keyword adoption_policy: Action if Kubernetes namespace with same name already exists. Known
+         values are: "Never", "IfIdentical", and "Always".
+        :paramtype adoption_policy: str or ~azure.mgmt.containerservice.models.AdoptionPolicy
+        :keyword delete_policy: Delete options of a namespace. Known values are: "Keep" and "Delete".
+        :paramtype delete_policy: str or ~azure.mgmt.containerservice.models.DeletePolicy
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state: Optional[Union[str, "_models.NamespaceProvisioningState"]] = None
+        self.labels = labels
+        self.annotations = annotations
+        self.portal_fqdn: Optional[str] = None
+        self.default_resource_quota = default_resource_quota
+        self.default_network_policy = default_network_policy
+        self.adoption_policy = adoption_policy
+        self.delete_policy = delete_policy
+
+
+class NetworkPolicies(_serialization.Model):
+    """Default network policy of the namespace, specifying ingress and egress rules.
+
+    :ivar ingress: Ingress policy for the network. Known values are: "DenyAll", "AllowAll", and
+     "AllowSameNamespace".
+    :vartype ingress: str or ~azure.mgmt.containerservice.models.PolicyRule
+    :ivar egress: Egress policy for the network. Known values are: "DenyAll", "AllowAll", and
+     "AllowSameNamespace".
+    :vartype egress: str or ~azure.mgmt.containerservice.models.PolicyRule
+    """
+
+    _attribute_map = {
+        "ingress": {"key": "ingress", "type": "str"},
+        "egress": {"key": "egress", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ingress: Optional[Union[str, "_models.PolicyRule"]] = None,
+        egress: Optional[Union[str, "_models.PolicyRule"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ingress: Ingress policy for the network. Known values are: "DenyAll", "AllowAll", and
+         "AllowSameNamespace".
+        :paramtype ingress: str or ~azure.mgmt.containerservice.models.PolicyRule
+        :keyword egress: Egress policy for the network. Known values are: "DenyAll", "AllowAll", and
+         "AllowSameNamespace".
+        :paramtype egress: str or ~azure.mgmt.containerservice.models.PolicyRule
+        """
+        super().__init__(**kwargs)
+        self.ingress = ingress
+        self.egress = egress
 
 
 class OperationListResult(_serialization.Model):
@@ -8011,6 +8464,75 @@ class RelativeMonthlySchedule(_serialization.Model):
         self.day_of_week = day_of_week
 
 
+class ResourceQuota(_serialization.Model):
+    """Resource quota for the namespace.
+
+    :ivar cpu_request: CPU request of the namespace in one-thousandth CPU form. See `CPU resource
+     units
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_
+     for more details.
+    :vartype cpu_request: str
+    :ivar cpu_limit: CPU limit of the namespace in one-thousandth CPU form. See `CPU resource units
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_
+     for more details.
+    :vartype cpu_limit: str
+    :ivar memory_request: Memory request of the namespace in the power-of-two equivalents form: Ei,
+     Pi, Ti, Gi, Mi, Ki. See `Memory resource units
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_
+     for more details.
+    :vartype memory_request: str
+    :ivar memory_limit: Memory limit of the namespace in the power-of-two equivalents form: Ei, Pi,
+     Ti, Gi, Mi, Ki. See `Memory resource units
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_
+     for more details.
+    :vartype memory_limit: str
+    """
+
+    _attribute_map = {
+        "cpu_request": {"key": "cpuRequest", "type": "str"},
+        "cpu_limit": {"key": "cpuLimit", "type": "str"},
+        "memory_request": {"key": "memoryRequest", "type": "str"},
+        "memory_limit": {"key": "memoryLimit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        cpu_request: Optional[str] = None,
+        cpu_limit: Optional[str] = None,
+        memory_request: Optional[str] = None,
+        memory_limit: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword cpu_request: CPU request of the namespace in one-thousandth CPU form. See `CPU
+         resource units
+         <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_
+         for more details.
+        :paramtype cpu_request: str
+        :keyword cpu_limit: CPU limit of the namespace in one-thousandth CPU form. See `CPU resource
+         units
+         <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_
+         for more details.
+        :paramtype cpu_limit: str
+        :keyword memory_request: Memory request of the namespace in the power-of-two equivalents form:
+         Ei, Pi, Ti, Gi, Mi, Ki. See `Memory resource units
+         <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_
+         for more details.
+        :paramtype memory_request: str
+        :keyword memory_limit: Memory limit of the namespace in the power-of-two equivalents form: Ei,
+         Pi, Ti, Gi, Mi, Ki. See `Memory resource units
+         <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_
+         for more details.
+        :paramtype memory_limit: str
+        """
+        super().__init__(**kwargs)
+        self.cpu_request = cpu_request
+        self.cpu_limit = cpu_limit
+        self.memory_request = memory_request
+        self.memory_limit = memory_limit
+
+
 class ResourceReference(_serialization.Model):
     """A reference to an Azure resource.
 
@@ -8271,7 +8793,7 @@ class Snapshot(TrackedResource):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar vm_size: The size of the VM.
     :vartype vm_size: str

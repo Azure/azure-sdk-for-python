@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Netapp Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -29,7 +29,7 @@ keywords = [
     "azure sdk",
 ]
 dependencies = [
-    "msrest>=0.7.1",
+    "isodate>=0.6.1",
     "azure-mgmt-core>=1.6.0",
     "typing-extensions>=4.6.0",
 ]
@@ -54,8 +54,8 @@ content-type = "text/markdown"
 [tool.setuptools.packages.find]
 exclude = [
     "tests*",
-    "samples*",
     "generated_tests*",
+    "samples*",
     "generated_samples*",
     "doc*",
     "azure",
@@ -78,7 +78,7 @@ verifytypes = false
 package_name = "azure-mgmt-netapp"
 package_pprint_name = "NetApp Files Management"
 package_doc_id = ""
-is_stable = false
+is_stable = true
 is_arm = true
 title = "NetAppManagementClient"
 package_nspkg = "azure-mgmt-nspkg"

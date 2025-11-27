@@ -1617,7 +1617,7 @@ class _AIAgentsInstrumentorPreview:
         async def inner(*args, **kwargs):  # pylint: disable=R0911
             span_impl_type = settings.tracing_implementation()  # pylint: disable=E1102
             if span_impl_type is None:
-                return function(*args, **kwargs)
+                return await function(*args, **kwargs)
 
             class_function_name = function.__qualname__
 

@@ -24,7 +24,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
     async def test_storage_accounts_check_name_availability(self, resource_group):
         response = await self.client.storage_accounts.check_name_availability(
             account_name={"name": "str", "type": "Microsoft.Storage/storageAccounts"},
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -86,6 +86,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                         },
                     },
                     "extendedLocation": {"name": "str", "type": "str"},
+                    "geoPriorityReplicationStatus": {"isBlobEnabled": bool},
                     "identity": {
                         "type": "str",
                         "principalId": "str",
@@ -127,7 +128,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                     "tags": {"str": "str"},
                     "zones": ["str"],
                 },
-                api_version="2025-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -140,7 +141,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.storage_accounts.delete(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -152,7 +153,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.storage_accounts.get_properties(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -209,6 +210,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                         "table": {"enabled": bool, "keyType": "str", "lastEnabledTime": "2020-02-20 00:00:00"},
                     },
                 },
+                "geoPriorityReplicationStatus": {"isBlobEnabled": bool},
                 "identity": {
                     "type": "str",
                     "principalId": "str",
@@ -250,7 +252,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "zones": ["str"],
             },
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -260,7 +262,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
     @recorded_by_proxy_async
     async def test_storage_accounts_list(self, resource_group):
         response = self.client.storage_accounts.list(
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -271,7 +273,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
     async def test_storage_accounts_list_by_resource_group(self, resource_group):
         response = self.client.storage_accounts.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -283,7 +285,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.storage_accounts.list_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -296,7 +298,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             account_name="str",
             regenerate_key={"keyName": "str"},
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -318,7 +320,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                 "signedProtocol": "str",
                 "signedStart": "2020-02-20 00:00:00",
             },
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -350,7 +352,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                 "startPk": "str",
                 "startRk": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -363,7 +365,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
             await self.client.storage_accounts.begin_failover(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -378,7 +380,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 account_name="str",
                 request_type="str",
-                api_version="2025-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -392,7 +394,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
             await self.client.storage_accounts.begin_abort_hierarchical_namespace_migration(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -415,7 +417,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                     "name": "str",
                     "type": "str",
                 },
-                api_version="2025-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -429,7 +431,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             account_name="str",
             migration_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -446,7 +448,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                     "blobRanges": [{"endRange": "str", "startRange": "str"}],
                     "timeToRestore": "2020-02-20 00:00:00",
                 },
-                api_version="2025-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -459,7 +461,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.storage_accounts.revoke_user_delegation_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself

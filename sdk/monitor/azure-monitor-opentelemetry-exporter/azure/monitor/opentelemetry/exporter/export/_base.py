@@ -1,12 +1,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import getpass
 import logging
 import os
 import tempfile
 import time
+import sys
+from pathlib import Path
 from enum import Enum
 from typing import List, Optional, Any
 from urllib.parse import urlparse
+import psutil
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import (
@@ -45,15 +49,11 @@ from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     _exception_categories,
 )
-from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
-    _get_os,
-    _get_attach_type,
-    _get_rp,
-    ext_version,
+    _get_sha256_hash,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
@@ -78,7 +78,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
 
 logger = logging.getLogger(__name__)
 
-_AZURE_TEMPDIR_PREFIX = "Microsoft/AzureMonitor"
+_AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
 
@@ -107,8 +107,9 @@ class BaseExporter:
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
+        # TODO: Uncomment configuration changes once testing is completed
         # Get the configuration manager
-        self._configuration_manager = get_configuration_manager()
+        # self._configuration_manager = get_configuration_manager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         # We do not need to use entra Id if this is a sdkStats exporter
@@ -133,13 +134,10 @@ class BaseExporter:
         self._storage_min_retry_interval = kwargs.get(
             "storage_min_retry_interval", 60
         )  # minimum retry interval in seconds
-        temp_suffix = self._instrumentation_key or ""
         if "storage_directory" in kwargs:
             self._storage_directory = kwargs.get("storage_directory")
         elif not self._disable_offline_storage:
-            self._storage_directory = os.path.join(
-                tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
-            )
+            self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
         else:
             self._storage_directory = None
         self._storage_retention_period = kwargs.get(
@@ -173,15 +171,16 @@ class BaseExporter:
         self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
-        if self._configuration_manager:
-            self._configuration_manager.initialize(
-                os=_get_os(),
-                rp=_get_rp(),
-                attach=_get_attach_type(),
-                component="ext",
-                version=ext_version,
-                region=self._region,
-            )
+        # TODO: Uncomment configuration changes once testing is completed
+        # if self._configuration_manager:
+        #    self._configuration_manager.initialize(
+        #        os=_get_os(),
+        #        rp=_get_rp(),
+        #        attach=_get_attach_type(),
+        #        component="ext",
+        #        version=ext_version,
+        #        region=self._region,
+        #    )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
             self.storage = LocalFileStorage(  # pyright: ignore
@@ -265,6 +264,7 @@ class BaseExporter:
             # Currently only used for statsbeat exporter to detect shutdown cases
             reach_ingestion = False
             start_time = time.time()
+            final_result = None
             try:
                 track_response = self.client.track(envelopes)
                 if not track_response.errors:  # 200
@@ -465,11 +465,11 @@ class BaseExporter:
                             )
 
                             shutdown_statsbeat_metrics()
+                            final_result = ExportResult.FAILED_NOT_RETRYABLE
 
-                            # pylint: disable=lost-exception
-                            return ExportResult.FAILED_NOT_RETRYABLE  # pylint: disable=W0134
-                # pylint: disable=lost-exception
-                return result  # pylint: disable=W0134
+                if final_result is None:
+                    final_result = result
+            return final_result
 
         # No spans to export
         self._consecutive_redirects = 0
@@ -604,3 +604,61 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
     except Exception as e:
         logger.error("Failed to get authentication credential and enable AAD: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
     return None
+
+def _get_storage_directory(instrumentation_key: str) -> str:
+    """Return the deterministic local storage path for a given instrumentation key.
+
+    On shared Linux hosts the first user to create ``/tmp/Microsoft/AzureMonitor`` can
+    block others because the directory inherits that user's ``umask``. This is avoided by
+    inserting a hash of the instrumentation key, user name, process name, and
+    application directory, giving each user their own subdirectory, e.g.
+    ``/tmp/Microsoft-AzureMonitor-1234...../opentelemetry-python-<ikey>``.
+
+    :param str instrumentation_key: Application Insights instrumentation key.
+    :return: Absolute path to the storage directory.
+    :rtype: str
+    """
+
+    def _safe_psutil_call(func, default=""):
+        try:
+            return func() or default
+        except psutil.Error:
+            return default
+
+    shared_root = tempfile.gettempdir()
+
+    process = None
+    try:
+        process = psutil.Process()
+    except psutil.Error:
+        pass
+
+    process_name = _safe_psutil_call(process.name) if process else ""
+    candidate_path = _safe_psutil_call(process.cwd) if process else ""
+
+    if not candidate_path:
+        candidate_path = sys.argv[0] if sys.argv else ""
+
+    try:
+        application_directory = Path(candidate_path or ".").resolve()
+    except Exception:
+        application_directory = Path(shared_root)
+
+    try:
+        user_segment = getpass.getuser()
+    except Exception:
+        user_segment = ""
+
+    hash_input = ";".join(
+        [
+            instrumentation_key,
+            user_segment,
+            process_name,
+            os.fspath(application_directory), # cspell:disable-line
+        ]
+    )
+    subdirectory = _get_sha256_hash(hash_input)
+    storage_directory = os.path.join(
+        shared_root, _AZURE_TEMPDIR_PREFIX + subdirectory, _TEMPDIR_PREFIX + instrumentation_key
+    )
+    return storage_directory
