@@ -880,6 +880,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the size of the blob or None if the size is unknown.
         :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
+        :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
+            decompressed automatically before being returned. Default value is True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.

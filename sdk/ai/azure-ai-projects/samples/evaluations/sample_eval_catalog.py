@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -28,7 +28,6 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorVersion,
     EvaluatorCategory,
-    EvaluatorDefinitionType,
     PromptBasedEvaluatorDefinition,
     CodeBasedEvaluatorDefinition,
     EvaluatorType,
@@ -37,17 +36,12 @@ from azure.ai.projects.models import (
     EvaluatorMetricType,
 )
 
-from azure.core.paging import ItemPaged
 from pprint import pprint
-import time
-
 from dotenv import load_dotenv
 
 load_dotenv()
 
-endpoint = os.environ[
-    "AZURE_AI_PROJECT_ENDPOINT"
-]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -147,14 +141,14 @@ with (
     print("Get code based evaluator version")
     code_evaluator_latest = project_client.evaluators.get_version(
         name=code_evaluator.name,
-        version="latest",
+        version=code_evaluator.version,
     )
     pprint(code_evaluator_latest)
 
     print("Get prompt based evaluator version")
     prompt_evaluator_latest = project_client.evaluators.get_version(
         name=prompt_evaluator.name,
-        version="latest",
+        version=prompt_evaluator.version,
     )
     pprint(prompt_evaluator_latest)
 

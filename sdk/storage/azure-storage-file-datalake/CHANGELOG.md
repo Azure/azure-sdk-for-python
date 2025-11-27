@@ -9,6 +9,7 @@
 - Added support for the keyword `user_delegation_oid` to `generate_file_system_sas`, `generate_directory_sas`, and
 `generate_file_sas`, which specifies the Entra ID of the user that is authorized to use the generated SAS URL.
 - Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
+- Added the ability to skip auto decompression on `DataLakeFileClient.download_file` via the `decompress` keyword.
 
 ### Other Changes
 - Migrated any previously documented `kwarg` arguments to be named keywords. 

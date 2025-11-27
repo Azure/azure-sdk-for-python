@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.CertificateRegistration/stable/2024-11-01/examples/UpdateAppServiceCertificate.json
+# x-ms-original-file: specification/certificateregistration/resource-manager/Microsoft.CertificateRegistration/CertificateRegistration/stable/2024-11-01/examples/UpdateAppServiceCertificate.json
 if __name__ == "__main__":
     main()

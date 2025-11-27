@@ -38,7 +38,7 @@ extends:
               Inline: |
                 echo "azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true"
                 azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true
-                $copiedFiles = (dir '$(Artifacts)' -r | % { $_.FullName })
+                $copiedFiles = (dir -LiteralPath '$(Artifacts)' -r | % { $_.FullName })
                 echo "Copied files: $copiedFiles"
                 if (!$copiedFiles) {
                   echo "Failed to copy any files from 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' please double check they exist"

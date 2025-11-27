@@ -179,11 +179,11 @@ class ParallelComponent(
         return self.resources.instance_count if self.resources and not isinstance(self.resources, dict) else None
 
     @instance_count.setter
-    def instance_count(self, value: int) -> None:
+    def instance_count(self, value: Optional[int]) -> None:
         """Set the value of the promoted property resources.instance_count.
 
         :param value: The value to set for resources.instance_count.
-        :type value: int
+        :type value: Optional[int]
         """
         if not value:
             return
@@ -204,11 +204,11 @@ class ParallelComponent(
         return self.task.code if self.task else None
 
     @code.setter
-    def code(self, value: str) -> None:
+    def code(self, value: Optional[str]) -> None:
         """Set the value of the promoted property task.code.
 
         :param value: The value to set for task.code.
-        :type value: str
+        :type value: Optional[str]
         """
         if not value:
             return
