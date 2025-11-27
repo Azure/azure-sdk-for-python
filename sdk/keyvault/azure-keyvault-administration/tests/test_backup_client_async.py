@@ -20,9 +20,10 @@ only_default = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 
 class TestBackupClientTests(KeyVaultTestCase):
     def create_key_client(self, vault_uri, **kwargs):
-         from azure.keyvault.keys.aio import KeyClient
-         credential = self.get_credential(KeyClient, is_async=True)
-         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
+        from azure.keyvault.keys.aio import KeyClient
+
+        credential = self.get_credential(KeyClient, is_async=True)
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_default)
@@ -139,7 +140,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         if self.is_live:
             assert backup_poller.status() == "InProgress"
         assert not backup_poller.done() or backup_poller.polling_method().finished()
-        #assert rehydrated.status() == "InProgress"
+        # assert rehydrated.status() == "InProgress"
         assert not rehydrated.done() or rehydrated.polling_method().finished()
 
         backup_operation = await backup_poller.result()
@@ -169,7 +170,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         if self.is_live:
             assert restore_poller.status() == "InProgress"
         assert not restore_poller.done() or restore_poller.polling_method().finished()
-        #assert rehydrated.status() == "InProgress"
+        # assert rehydrated.status() == "InProgress"
         assert not rehydrated.done() or rehydrated.polling_method().finished()
 
         await rehydrated.wait()
@@ -190,7 +191,9 @@ class TestBackupClientTests(KeyVaultTestCase):
         sas_token = kwargs.pop("sas_token")
 
         if self.is_live and not sas_token:
-            pytest.skip("SAS token is required for live tests. Please set the BLOB_STORAGE_SAS_TOKEN environment variable.")
+            pytest.skip(
+                "SAS token is required for live tests. Please set the BLOB_STORAGE_SAS_TOKEN environment variable."
+            )
 
         check_poller = await client.begin_pre_backup(container_uri, sas_token=sas_token)
         await check_poller.wait()

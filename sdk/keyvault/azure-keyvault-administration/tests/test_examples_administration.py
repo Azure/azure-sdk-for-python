@@ -18,8 +18,9 @@ only_default = get_decorator(api_versions=[DEFAULT_VERSION])
 class TestExamplesTests(KeyVaultTestCase):
     def create_key_client(self, vault_uri, **kwargs):
         from azure.keyvault.keys import KeyClient
+
         credential = self.get_credential(KeyClient)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
     @pytest.mark.parametrize("api_version", only_default)
     @KeyVaultBackupClientPreparer()
@@ -63,7 +64,7 @@ class TestExamplesTests(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", only_default)
     @KeyVaultBackupClientPreparer()
     @recorded_by_proxy
-    def test_example_selective_key_restore(self, client,**kwargs):
+    def test_example_selective_key_restore(self, client, **kwargs):
         set_bodiless_matcher()
         # create a key to selectively restore
         managed_hsm_url = kwargs.pop("managed_hsm_url")
