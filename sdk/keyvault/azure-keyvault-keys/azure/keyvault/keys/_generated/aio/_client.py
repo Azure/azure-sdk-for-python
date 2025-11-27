@@ -16,13 +16,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import KeyVaultClientConfiguration
-from ._operations import KeyVaultClientOperationsMixin
+from ._operations import _KeyVaultClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class KeyVaultClient(KeyVaultClientOperationsMixin):
+class KeyVaultClient(_KeyVaultClientOperationsMixin):
     """The key vault client performs cryptographic key operations and vault operations against the Key
     Vault service.
 
@@ -30,8 +30,8 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "7.6". Note
-     that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2025-07-01".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

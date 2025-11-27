@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -57,7 +57,7 @@ class DeletedKeyBundle(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The key management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     managed: Optional[bool] = rest_field(visibility=["read"])
     """True if the key's lifetime is managed by key vault. If this is a key backing a certificate,
@@ -85,7 +85,7 @@ class DeletedKeyBundle(_Model):
         *,
         key: Optional["_models.JsonWebKey"] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
         recovery_id: Optional[str] = None,
     ) -> None: ...
@@ -128,7 +128,7 @@ class DeletedKeyItem(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The key management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     managed: Optional[bool] = rest_field(visibility=["read"])
     """True if the key's lifetime is managed by key vault. If this is a key backing a certificate,
@@ -152,7 +152,7 @@ class DeletedKeyItem(_Model):
         *,
         kid: Optional[str] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         recovery_id: Optional[str] = None,
     ) -> None: ...
 
@@ -247,7 +247,7 @@ class JsonWebKey(_Model):
      `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
      <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are:
      \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
-    key_ops: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    key_ops: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation."""
     n: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
@@ -288,7 +288,7 @@ class JsonWebKey(_Model):
         *,
         kid: Optional[str] = None,
         kty: Optional[Union[str, "_models.JsonWebKeyType"]] = None,
-        key_ops: Optional[List[str]] = None,
+        key_ops: Optional[list[str]] = None,
         n: Optional[bytes] = None,
         e: Optional[bytes] = None,
         d: Optional[bytes] = None,
@@ -478,7 +478,7 @@ class KeyBundle(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The key management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     managed: Optional[bool] = rest_field(visibility=["read"])
     """True if the key's lifetime is managed by key vault. If this is a key backing a certificate,
@@ -494,7 +494,7 @@ class KeyBundle(_Model):
         *,
         key: Optional["_models.JsonWebKey"] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
     ) -> None: ...
 
@@ -540,7 +540,7 @@ class KeyCreateParameters(_Model):
     """The key size in bits. For example: 2048, 3072, or 4096 for RSA."""
     public_exponent: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The public exponent for a RSA key."""
-    key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = rest_field(
+    key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Json web key operations. For more information on possible key operations, see
@@ -549,7 +549,7 @@ class KeyCreateParameters(_Model):
         name="attributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The attributes of a key managed by the key vault service."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = rest_field(
         name="crv", visibility=["read", "create", "update", "delete", "query"]
@@ -568,9 +568,9 @@ class KeyCreateParameters(_Model):
         kty: Union[str, "_models.JsonWebKeyType"],
         key_size: Optional[int] = None,
         public_exponent: Optional[int] = None,
-        key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
+        key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_attributes: Optional["_models.KeyAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
     ) -> None: ...
@@ -609,7 +609,7 @@ class KeyImportParameters(_Model):
         name="attributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The key management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     release_policy: Optional["_models.KeyReleasePolicy"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -623,7 +623,7 @@ class KeyImportParameters(_Model):
         key: "_models.JsonWebKey",
         hsm: Optional[bool] = None,
         key_attributes: Optional["_models.KeyAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
     ) -> None: ...
 
@@ -658,7 +658,7 @@ class KeyItem(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The key management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     managed: Optional[bool] = rest_field(visibility=["read"])
     """True if the key's lifetime is managed by key vault. If this is a key backing a certificate,
@@ -670,7 +670,7 @@ class KeyItem(_Model):
         *,
         kid: Optional[str] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -921,7 +921,7 @@ class KeyRotationPolicy(_Model):
 
     id: Optional[str] = rest_field(visibility=["read"])
     """The key policy id."""
-    lifetime_actions: Optional[List["_models.LifetimeActions"]] = rest_field(
+    lifetime_actions: Optional[list["_models.LifetimeActions"]] = rest_field(
         name="lifetimeActions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Actions that will be performed by Key Vault over the lifetime of a key. For preview,
@@ -936,7 +936,7 @@ class KeyRotationPolicy(_Model):
     def __init__(
         self,
         *,
-        lifetime_actions: Optional[List["_models.LifetimeActions"]] = None,
+        lifetime_actions: Optional[list["_models.LifetimeActions"]] = None,
         attributes: Optional["_models.KeyRotationPolicyAttributes"] = None,
     ) -> None: ...
 
@@ -1048,7 +1048,7 @@ class KeyUpdateParameters(_Model):
     :vartype release_policy: ~azure.keyvault.keys._generated.models.KeyReleasePolicy
     """
 
-    key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = rest_field(
+    key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Json web key operations. For more information on possible key operations, see
@@ -1057,7 +1057,7 @@ class KeyUpdateParameters(_Model):
         name="attributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The attributes of a key managed by the key vault service."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     release_policy: Optional["_models.KeyReleasePolicy"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1068,9 +1068,9 @@ class KeyUpdateParameters(_Model):
     def __init__(
         self,
         *,
-        key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
+        key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_attributes: Optional["_models.KeyAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
     ) -> None: ...
 
