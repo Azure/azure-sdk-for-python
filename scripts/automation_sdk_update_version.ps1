@@ -5,61 +5,61 @@
 .DESCRIPTION
     This script is a wrapper of python script `packaging_tools.sdk_update_version`.
     It calls `python -m packaging_tools.sdk_update_version` to update version.
-.PARAMETER packagePath
+.PARAMETER PackagePath
     Path to the package.
-.PARAMETER releaseType
+.PARAMETER ReleaseType
     Release type. Must be either "stable" or "beta".
-.PARAMETER version
+.PARAMETER Version
     Version string to set.
-.PARAMETER releaseDate
+.PARAMETER ReleaseDate
     Release date in YYYY-MM-DD format.
 #>
 param(
     [Parameter(Mandatory=$true, HelpMessage="Path to the package")]
     [string]
-    $packagePath,
+    $PackagePath,
 
     [Parameter(Mandatory=$false, HelpMessage="Release type (stable or beta)")]
     [ValidateSet("stable", "beta")]
     [string]
-    $releaseType,
+    $ReleaseType,
 
     [Parameter(Mandatory=$false, HelpMessage="Version string")]
     [string]
-    $version,
+    $Version,
 
     [Parameter(Mandatory=$false, HelpMessage="Release date in YYYY-MM-DD format")]
     [ValidatePattern('^\d{4}-\d{2}-\d{2}$')]
     [string]
-    $releaseDate
+    $ReleaseDate
 )
 
 $scriptPath = $MyInvocation.MyCommand.Path
 $scriptParent = Split-Path $scriptPath -Parent
 $repoRoot = (Get-Location).Path
 
-if (-not (Test-Path $packagePath)) {
-    Write-Error "packagePath: $packagePath does not exist"
+if (-not (Test-Path $PackagePath)) {
+    Write-Error "PackagePath: $PackagePath does not exist"
     exit 1
 }
 
-$absolutePackagePath = Resolve-Path -Path $packagePath
+$absolutePackagePath = Resolve-Path -Path $PackagePath
 Write-Host "absolutePackagePath: $absolutePackagePath"
 
 # Build the command with required parameter
 $command = "python -m packaging_tools.sdk_update_version --package-path $absolutePackagePath"
 
 # Add optional parameters if provided
-if ($releaseType) {
-    $command += " --release-type $releaseType"
+if ($ReleaseType) {
+    $command += " --release-type $ReleaseType"
 }
 
-if ($version) {
-    $command += " --version $version"
+if ($Version) {
+    $command += " --version $Version"
 }
 
-if ($releaseDate) {
-    $command += " --release-date $releaseDate"
+if ($ReleaseDate) {
+    $command += " --release-date $ReleaseDate"
 }
 
 Write-Host "running command: $command"
