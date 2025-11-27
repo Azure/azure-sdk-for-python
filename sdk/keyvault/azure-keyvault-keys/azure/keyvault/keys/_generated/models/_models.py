@@ -167,6 +167,36 @@ class DeletedKeyItem(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ExternalKey(_Model):
+    """External Key parameters.
+
+    :ivar id: The external key identifier. The valid id can only contain characters in the set
+     [a-zA-Z0-9-]. Maximum length is 64 characters. Required.
+    :vartype id: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The external key identifier. The valid id can only contain characters in the set [a-zA-Z0-9-].
+     Maximum length is 64 characters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class GetRandomBytesRequest(_Model):
     """The get random bytes request object.
 
@@ -399,6 +429,11 @@ class KeyAttributes(_Model):
     :vartype hsm_platform: str
     :ivar attestation: The key or key version attestation information.
     :vartype attestation: ~azure.keyvault.keys._generated.models.KeyAttestation
+    :ivar external_key: The external key information.
+    :vartype external_key: ~azure.keyvault.keys._generated.models.ExternalKey
+    :ivar key_size: The optional key size in bits for symmetric keys. For example: 128, 192, or 256
+     for AES keys.
+    :vartype key_size: int
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -434,6 +469,12 @@ class KeyAttributes(_Model):
     """The underlying HSM Platform."""
     attestation: Optional["_models.KeyAttestation"] = rest_field(visibility=["read"])
     """The key or key version attestation information."""
+    external_key: Optional["_models.ExternalKey"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The external key information."""
+    key_size: Optional[int] = rest_field(visibility=["read"])
+    """The optional key size in bits for symmetric keys. For example: 128, 192, or 256 for AES keys."""
 
     @overload
     def __init__(
@@ -443,6 +484,7 @@ class KeyAttributes(_Model):
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
         exportable: Optional[bool] = None,
+        external_key: Optional["_models.ExternalKey"] = None,
     ) -> None: ...
 
     @overload
@@ -1299,6 +1341,131 @@ class RandomBytes(_Model):
         self,
         *,
         value: bytes,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SecureKeyOperationResult(_Model):
+    """The secure key wrap operation result.
+
+    :ivar kid: Key identifier. Required.
+    :vartype kid: str
+    :ivar algorithm: The algorithm used for the operation. Required. Known values are:
+     "RSA-OAEP-256", "A128KW", "A192KW", "A256KW", "A256KWPAD", "A128KWPAD", "A192KWPAD",
+     "CKM_AES_KEY_WRAP", and "CKM_AES_KEY_WRAP_PAD".
+    :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeyWrapAlgorithm
+    :ivar value: The result of the operation. Required.
+    :vartype value: bytes
+    """
+
+    kid: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Key identifier. Required."""
+    algorithm: Union[str, "_models.JsonWebKeyWrapAlgorithm"] = rest_field(
+        name="alg", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The algorithm used for the operation. Required. Known values are: \"RSA-OAEP-256\", \"A128KW\",
+     \"A192KW\", \"A256KW\", \"A256KWPAD\", \"A128KWPAD\", \"A192KWPAD\", \"CKM_AES_KEY_WRAP\", and
+     \"CKM_AES_KEY_WRAP_PAD\"."""
+    value: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
+    """The result of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kid: str,
+        algorithm: Union[str, "_models.JsonWebKeyWrapAlgorithm"],
+        value: bytes,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SecureKeyUnWrapOperationParameters(_Model):
+    """The Secure Key unwrap attributes.
+
+    :ivar algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP-256", "A128KW",
+     "A192KW", "A256KW", "A256KWPAD", "A128KWPAD", "A192KWPAD", "CKM_AES_KEY_WRAP", and
+     "CKM_AES_KEY_WRAP_PAD".
+    :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeyWrapAlgorithm
+    :ivar value: The value to operate on. Required.
+    :vartype value: bytes
+    :ivar target_attestation_token: The attestation assertion for the target of the key release.
+     Required.
+    :vartype target_attestation_token: str
+    """
+
+    algorithm: Union[str, "_models.JsonWebKeyWrapAlgorithm"] = rest_field(
+        name="alg", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """algorithm identifier. Required. Known values are: \"RSA-OAEP-256\", \"A128KW\", \"A192KW\",
+     \"A256KW\", \"A256KWPAD\", \"A128KWPAD\", \"A192KWPAD\", \"CKM_AES_KEY_WRAP\", and
+     \"CKM_AES_KEY_WRAP_PAD\"."""
+    value: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
+    """The value to operate on. Required."""
+    target_attestation_token: str = rest_field(
+        name="target", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The attestation assertion for the target of the key release. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        algorithm: Union[str, "_models.JsonWebKeyWrapAlgorithm"],
+        value: bytes,
+        target_attestation_token: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SecureKeyWrapOperationParameters(_Model):
+    """The Secure Key wrap attributes.
+
+    :ivar algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP-256", "A128KW",
+     "A192KW", "A256KW", "A256KWPAD", "A128KWPAD", "A192KWPAD", "CKM_AES_KEY_WRAP", and
+     "CKM_AES_KEY_WRAP_PAD".
+    :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeyWrapAlgorithm
+    """
+
+    algorithm: Union[str, "_models.JsonWebKeyWrapAlgorithm"] = rest_field(
+        name="alg", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """algorithm identifier. Required. Known values are: \"RSA-OAEP-256\", \"A128KW\", \"A192KW\",
+     \"A256KW\", \"A256KWPAD\", \"A128KWPAD\", \"A192KWPAD\", \"CKM_AES_KEY_WRAP\", and
+     \"CKM_AES_KEY_WRAP_PAD\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        algorithm: Union[str, "_models.JsonWebKeyWrapAlgorithm"],
     ) -> None: ...
 
     @overload

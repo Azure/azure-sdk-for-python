@@ -17,6 +17,7 @@ from ._models import (  # type: ignore
     BackupKeyResult,
     DeletedKeyBundle,
     DeletedKeyItem,
+    ExternalKey,
     GetRandomBytesRequest,
     JsonWebKey,
     KeyAttestation,
@@ -43,6 +44,9 @@ from ._models import (  # type: ignore
     LifetimeActionsTrigger,
     LifetimeActionsType,
     RandomBytes,
+    SecureKeyOperationResult,
+    SecureKeyUnWrapOperationParameters,
+    SecureKeyWrapOperationParameters,
 )
 
 from ._enums import (  # type: ignore
@@ -52,6 +56,7 @@ from ._enums import (  # type: ignore
     JsonWebKeyOperation,
     JsonWebKeySignatureAlgorithm,
     JsonWebKeyType,
+    JsonWebKeyWrapAlgorithm,
     KeyEncryptionAlgorithm,
     KeyRotationPolicyAction,
 )
@@ -63,6 +68,7 @@ __all__ = [
     "BackupKeyResult",
     "DeletedKeyBundle",
     "DeletedKeyItem",
+    "ExternalKey",
     "GetRandomBytesRequest",
     "JsonWebKey",
     "KeyAttestation",
@@ -89,12 +95,16 @@ __all__ = [
     "LifetimeActionsTrigger",
     "LifetimeActionsType",
     "RandomBytes",
+    "SecureKeyOperationResult",
+    "SecureKeyUnWrapOperationParameters",
+    "SecureKeyWrapOperationParameters",
     "DeletionRecoveryLevel",
     "JsonWebKeyCurveName",
     "JsonWebKeyEncryptionAlgorithm",
     "JsonWebKeyOperation",
     "JsonWebKeySignatureAlgorithm",
     "JsonWebKeyType",
+    "JsonWebKeyWrapAlgorithm",
     "KeyEncryptionAlgorithm",
     "KeyRotationPolicyAction",
 ]

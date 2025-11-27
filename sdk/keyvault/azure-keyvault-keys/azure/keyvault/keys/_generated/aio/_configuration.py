@@ -26,13 +26,14 @@ class KeyVaultClientConfiguration:  # pylint: disable=too-many-instance-attribut
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2025-07-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2026-01-01-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, vault_base_url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-07-01")
+        api_version: str = kwargs.pop("api_version", "2026-01-01-preview")
 
         if vault_base_url is None:
             raise ValueError("Parameter 'vault_base_url' must not be None.")
