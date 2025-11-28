@@ -213,7 +213,7 @@ def main(generate_input, generate_output):
                 package_result=result[package_name],
             )
 
-            # update version in _verison.py and CHANGELOG.md
+            # update version in _version.py and CHANGELOG.md
             sdk_update_version(Path(sdk_code_path).absolute(), package_result=result[package_name])
 
             # update metadata files including "_metadata.json/pyproject.toml/setup.py/dev_requirements.txt"
