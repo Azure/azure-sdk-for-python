@@ -3254,6 +3254,94 @@ class ElasticBackupPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ElasticBackupPolicyUpdate(_Model):
+    """The type used for update operations of the ElasticBackupPolicy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticBackupPolicyUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticBackupPolicyUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticBackupPolicyUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupPolicyUpdateProperties(_Model):
+    """The updatable properties of the ElasticBackupPolicy.
+
+    :ivar daily_backups_to_keep: Daily backups count to keep.
+    :vartype daily_backups_to_keep: int
+    :ivar weekly_backups_to_keep: Weekly backups count to keep.
+    :vartype weekly_backups_to_keep: int
+    :ivar monthly_backups_to_keep: Monthly backups count to keep.
+    :vartype monthly_backups_to_keep: int
+    :ivar policy_state: The property to identify whether Backup Policy is enabled or not. Known
+     values are: "Enabled" and "Disabled".
+    :vartype policy_state: str or ~azure.mgmt.netapp.models.ElasticBackupPolicyState
+    """
+
+    daily_backups_to_keep: Optional[int] = rest_field(
+        name="dailyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Daily backups count to keep."""
+    weekly_backups_to_keep: Optional[int] = rest_field(
+        name="weeklyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Weekly backups count to keep."""
+    monthly_backups_to_keep: Optional[int] = rest_field(
+        name="monthlyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Monthly backups count to keep."""
+    policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = rest_field(
+        name="policyState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property to identify whether Backup Policy is enabled or not. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        daily_backups_to_keep: Optional[int] = None,
+        weekly_backups_to_keep: Optional[int] = None,
+        monthly_backups_to_keep: Optional[int] = None,
+        policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ElasticBackupProperties(_Model):
     """Elastic Backup properties.
 
@@ -3425,6 +3513,34 @@ class ElasticBackupVaultProperties(_Model):
     )
     """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
      \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+
+
+class ElasticBackupVaultUpdate(_Model):
+    """The type used for update operations of the ElasticBackupVault.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ElasticCapacityPool(TrackedResource):
@@ -4299,6 +4415,101 @@ class ElasticSnapshotPolicyProperties(_Model):
     )
     """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
      \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = None,
+        daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = None,
+        weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = None,
+        monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = None,
+        policy_status: Optional[Union[str, "_models.PolicyStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyUpdate(_Model):
+    """The type used for update operations of the ElasticSnapshotPolicy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticSnapshotPolicyUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticSnapshotPolicyUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyUpdateProperties(_Model):
+    """The updatable properties of the ElasticSnapshotPolicy.
+
+    :ivar hourly_schedule: Schedule for hourly snapshots.
+    :vartype hourly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyHourlySchedule
+    :ivar daily_schedule: Schedule for daily snapshots.
+    :vartype daily_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyDailySchedule
+    :ivar weekly_schedule: Schedule for weekly snapshots.
+    :vartype weekly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyWeeklySchedule
+    :ivar monthly_schedule: Schedule for monthly snapshots.
+    :vartype monthly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyMonthlySchedule
+    :ivar policy_status: Configures if the snapshot policy is enabled on the volumes connected to
+     the policy. Known values are: "Enabled" and "Disabled".
+    :vartype policy_status: str or ~azure.mgmt.netapp.models.PolicyStatus
+    """
+
+    hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = rest_field(
+        name="hourlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for hourly snapshots."""
+    daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = rest_field(
+        name="dailySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for daily snapshots."""
+    weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = rest_field(
+        name="weeklySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for weekly snapshots."""
+    monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = rest_field(
+        name="monthlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for monthly snapshots."""
+    policy_status: Optional[Union[str, "_models.PolicyStatus"]] = rest_field(
+        name="policyStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configures if the snapshot policy is enabled on the volumes connected to the policy. Known
+     values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
@@ -6268,16 +6479,16 @@ class NfsUser(_Model):
 
 
 class NicInfo(_Model):
-    """NIC information and list of volumes for which the NIC has the primary mount ip address.
+    """NIC information and list of volumes for which the NIC has the primary mount IP Address.
 
-    :ivar ip_address: ipAddress.
+    :ivar ip_address: IP Address.
     :vartype ip_address: str
     :ivar volume_resource_ids: Volume resource Ids.
     :vartype volume_resource_ids: list[str]
     """
 
     ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read"])
-    """ipAddress."""
+    """IP Address."""
     volume_resource_ids: Optional[list[str]] = rest_field(
         name="volumeResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )

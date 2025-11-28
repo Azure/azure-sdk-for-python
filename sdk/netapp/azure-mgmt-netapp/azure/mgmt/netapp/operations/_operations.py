@@ -24745,7 +24745,7 @@ class ElasticSnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: Union[_models.ElasticSnapshotPolicy, JSON, IO[bytes]],
+        body: Union[_models.ElasticSnapshotPolicyUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -24822,7 +24822,7 @@ class ElasticSnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: _models.ElasticSnapshotPolicy,
+        body: _models.ElasticSnapshotPolicyUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24837,7 +24837,7 @@ class ElasticSnapshotPoliciesOperations:
         :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
         :type snapshot_policy_name: str
         :param body: The resource properties to be updated. Required.
-        :type body: ~azure.mgmt.netapp.models.ElasticSnapshotPolicy
+        :type body: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24930,7 +24930,7 @@ class ElasticSnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: Union[_models.ElasticSnapshotPolicy, JSON, IO[bytes]],
+        body: Union[_models.ElasticSnapshotPolicyUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ElasticSnapshotPolicy]:
         """Update a ElasticSnapshotPolicy.
@@ -24943,8 +24943,8 @@ class ElasticSnapshotPoliciesOperations:
         :param snapshot_policy_name: The name of the ElasticSnapshotPolicy. Required.
         :type snapshot_policy_name: str
         :param body: The resource properties to be updated. Is one of the following types:
-         ElasticSnapshotPolicy, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.ElasticSnapshotPolicy or JSON or IO[bytes]
+         ElasticSnapshotPolicyUpdate, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns ElasticSnapshotPolicy. The ElasticSnapshotPolicy
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticSnapshotPolicy]
@@ -25774,7 +25774,7 @@ class ElasticBackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.ElasticBackupVault, JSON, IO[bytes]],
+        body: Union[_models.ElasticBackupVaultUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -25851,7 +25851,7 @@ class ElasticBackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: _models.ElasticBackupVault,
+        body: _models.ElasticBackupVaultUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25866,7 +25866,7 @@ class ElasticBackupVaultsOperations:
         :param backup_vault_name: The name of the ElasticBackupVault. Required.
         :type backup_vault_name: str
         :param body: The resource properties to be updated. Required.
-        :type body: ~azure.mgmt.netapp.models.ElasticBackupVault
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupVaultUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25959,7 +25959,7 @@ class ElasticBackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.ElasticBackupVault, JSON, IO[bytes]],
+        body: Union[_models.ElasticBackupVaultUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ElasticBackupVault]:
         """Patch the specified NetApp Elastic Backup Vault.
@@ -25972,8 +25972,8 @@ class ElasticBackupVaultsOperations:
         :param backup_vault_name: The name of the ElasticBackupVault. Required.
         :type backup_vault_name: str
         :param body: The resource properties to be updated. Is one of the following types:
-         ElasticBackupVault, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.ElasticBackupVault or JSON or IO[bytes]
+         ElasticBackupVaultUpdate, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupVaultUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns ElasticBackupVault. The ElasticBackupVault is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupVault]
@@ -26690,7 +26690,7 @@ class ElasticBackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.ElasticBackupPolicy, JSON, IO[bytes]],
+        body: Union[_models.ElasticBackupPolicyUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -26767,7 +26767,7 @@ class ElasticBackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: _models.ElasticBackupPolicy,
+        body: _models.ElasticBackupPolicyUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26782,7 +26782,7 @@ class ElasticBackupPoliciesOperations:
         :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
         :type backup_policy_name: str
         :param body: The resource properties to be updated. Required.
-        :type body: ~azure.mgmt.netapp.models.ElasticBackupPolicy
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupPolicyUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26875,7 +26875,7 @@ class ElasticBackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.ElasticBackupPolicy, JSON, IO[bytes]],
+        body: Union[_models.ElasticBackupPolicyUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ElasticBackupPolicy]:
         """Patch the specified NetApp Elastic Backup Policy.
@@ -26888,8 +26888,8 @@ class ElasticBackupPoliciesOperations:
         :param backup_policy_name: The name of the ElasticBackupPolicy. Required.
         :type backup_policy_name: str
         :param body: The resource properties to be updated. Is one of the following types:
-         ElasticBackupPolicy, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.ElasticBackupPolicy or JSON or IO[bytes]
+         ElasticBackupPolicyUpdate, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.netapp.models.ElasticBackupPolicyUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns ElasticBackupPolicy. The ElasticBackupPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ElasticBackupPolicy]

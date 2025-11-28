@@ -74,28 +74,13 @@ class TestNetAppManagementElasticBackupPoliciesOperations(AzureMgmtRecordedTestC
             account_name="str",
             backup_policy_name="str",
             body={
-                "location": "str",
-                "eTag": "str",
-                "id": "str",
-                "name": "str",
                 "properties": {
-                    "assignedVolumesCount": 0,
                     "dailyBackupsToKeep": 0,
                     "monthlyBackupsToKeep": 0,
                     "policyState": "str",
-                    "provisioningState": "str",
                     "weeklyBackupsToKeep": 0,
                 },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
                 "tags": {"str": "str"},
-                "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
 

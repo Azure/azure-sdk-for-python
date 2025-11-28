@@ -78,28 +78,14 @@ class TestNetAppManagementElasticSnapshotPoliciesOperationsAsync(AzureMgmtRecord
                 account_name="str",
                 snapshot_policy_name="str",
                 body={
-                    "location": "str",
-                    "eTag": "str",
-                    "id": "str",
-                    "name": "str",
                     "properties": {
                         "dailySchedule": {"hour": 0, "minute": 0, "snapshotsToKeep": 0},
                         "hourlySchedule": {"minute": 0, "snapshotsToKeep": 0},
                         "monthlySchedule": {"daysOfMonth": [0], "hour": 0, "minute": 0, "snapshotsToKeep": 0},
                         "policyStatus": "str",
-                        "provisioningState": "str",
                         "weeklySchedule": {"days": ["str"], "hour": 0, "minute": 0, "snapshotsToKeep": 0},
                     },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
                     "tags": {"str": "str"},
-                    "type": "str",
                 },
             )
         ).result()  # call '.result()' to poll until service return final result
