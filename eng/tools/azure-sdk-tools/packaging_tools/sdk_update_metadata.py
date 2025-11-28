@@ -66,7 +66,7 @@ def main(
             )
         else:
             _LOGGER.error(
-                f" Skip metadata update for missing information: pipeline input {pipeline_input}, codegen_config {codegen_config}, readme_or_tsp {readme_or_tsp}."
+                f"Skip metadata update for missing information: pipeline input {pipeline_input}, codegen_config {codegen_config}, readme_or_tsp {readme_or_tsp}."
             )
     except Exception as e:
         _LOGGER.error(f"Fail to update meta: {str(e)}")
