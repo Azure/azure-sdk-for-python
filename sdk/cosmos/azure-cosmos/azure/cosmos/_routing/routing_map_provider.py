@@ -32,8 +32,9 @@ from .routing_range import PartitionKeyRange
 from ..exceptions import CosmosHttpResponseError
 
 if TYPE_CHECKING:
-    from ..cosmos_client import CosmosClient
-# pylint: disable=protected-access
+    from .._cosmos_client_connection import CosmosClientConnection
+# pylint: disable=protected-access, line-too-long
+
 
 logger = logging.getLogger(__name__)
 class PartitionKeyRangeCache(object):
@@ -46,7 +47,7 @@ class PartitionKeyRangeCache(object):
     """
     PAGE_SIZE_CHANGE_FEED = "-1"  # Return all available changes
 
-    def __init__(self, client: "CosmosClient"):
+    def __init__(self, client: "CosmosClientConnection"):
         """
         Constructor
         """
@@ -54,7 +55,7 @@ class PartitionKeyRangeCache(object):
         self._documentClient = client
 
         # keeps the cached collection routing map by collection id
-        self._collection_routing_map_by_item = {}
+        self._collection_routing_map_by_item: Dict[str, CollectionRoutingMap] = {}
         # A lock to control access to the locks dictionary itself
         self._locks_lock = threading.Lock()
         # A dictionary to hold a lock for each collection ID
@@ -79,6 +80,7 @@ class PartitionKeyRangeCache(object):
                 self._collection_locks[collection_id] = threading.Lock()
             return self._collection_locks[collection_id]
 
+    # pylint: disable=invalid-name
     def get_or_refresh_routing_map_for_collection(
             self,
             collection_link: str,
@@ -99,7 +101,8 @@ class PartitionKeyRangeCache(object):
         :param bool force_refresh: If True, forces a refresh of the routing map.
         :param previous_routing_map: An optional previously known routing map, used to check for staleness.
         :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
-        :param kwargs: Additional keyword arguments for the underlying requests.
+        :keyword Any kwargs: Additional keyword arguments for the underlying requests
+        :type kwargs: Any
         :return: The cached CollectionRoutingMap for the collection, or None if retrieval fails.
         :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         """
@@ -118,6 +121,7 @@ class PartitionKeyRangeCache(object):
             if is_initial_load or needs_refresh:
                 # If refresh is forced by a stale previous_routing_map, use it as the base for the incremental update.
                 # Otherwise, use the map currently in the cache.
+                base_routing_map: Optional[CollectionRoutingMap]
                 if needs_refresh and previous_routing_map:
                     base_routing_map = previous_routing_map
                 else:
@@ -188,8 +192,9 @@ class PartitionKeyRangeCache(object):
         :param str collection_id: The unique identifier of the collection.
         :param previous_routing_map: The routing map to be updated. If None, a full load is performed.
         :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
-        :param dict feed_options: Options for the change feed request.
-        :param kwargs: Additional keyword arguments for the underlying client request.
+        :param feed_options: Options for the change feed request.
+        :type feed_options: dict or None
+        :keyword Any kwargs: Additional keyword arguments for the underlying client request.
         :return: The new or updated CollectionRoutingMap, or None if an update fails and fallback is triggered.
         :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         """
@@ -197,7 +202,11 @@ class PartitionKeyRangeCache(object):
         response_headers: Dict[str, Any] = {}
 
         def capture_response_hook(headers: Dict[str, Any], _):
-            """Hook to capture response headers."""
+            """Hook to capture response headers.
+
+            :param dict headers: The response headers to capture.
+            :param _: Unused parameter (response body).
+            """
             nonlocal response_headers
             response_headers = headers
 
@@ -224,6 +233,7 @@ class PartitionKeyRangeCache(object):
             ranges.extend(list(pk_range_generator))
 
         except CosmosHttpResponseError as e:
+            logger.error("Failed to read partition key ranges for collection '%s': %s", collection_link, e)
             raise
 
         new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
@@ -259,8 +269,9 @@ class PartitionKeyRangeCache(object):
                     else:
                         # This would be an inconsistent state from the server. Force a full refresh by clearing the cache for the collection and retrying.
                         logger.warning(
-                            f"Incremental update failed: Parent range '{parent_id}' not found in routing map "
-                            f"for collection '{collection_link}'. Falling back to full refresh."
+                            "Incremental update failed: Parent range '%s' not found in routing map "
+                            "for collection '%s'. Falling back to full refresh.",
+                            parent_id, collection_link
                         )
                         self._collection_routing_map_by_item.pop(collection_id, None)
                         return self._get_routing_map_with_change_feed(collection_link, collection_id, None,
@@ -273,8 +284,9 @@ class PartitionKeyRangeCache(object):
                         range_tuples.append((r, range_info))
                     else:
                         logger.warning(
-                            f"Incremental update failed: Existing range '{range_id}' not found in routing map "
-                            f"for collection '{collection_link}'. Falling back to full refresh."
+                            "Incremental update failed: Existing range '%s' not found in routing map "
+                            "for collection '%s'. Falling back to full refresh.",
+                            range_id, collection_link
                         )
                         self._collection_routing_map_by_item.pop(collection_id, None)
                         return self._get_routing_map_with_change_feed(collection_link, collection_id, None,
@@ -285,8 +297,9 @@ class PartitionKeyRangeCache(object):
             # This can happen if the combination results in an incomplete map.
             # Force a full refresh by clearing the cache for the collection and retrying.
             logger.warning(
-                f"Incremental merge resulted in incomplete routing map for collection '{collection_link}'. "
-                f"Falling back to full refresh."
+                "Incremental merge resulted in incomplete routing map for collection '%s'. "
+                "Falling back to full refresh.",
+                collection_link
             )
             self._collection_routing_map_by_item.pop(collection_id, None)
             return self._get_routing_map_with_change_feed(collection_link, collection_id, None, feed_options, **kwargs)
@@ -296,6 +309,13 @@ class PartitionKeyRangeCache(object):
     def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options, **kwargs):
         """Given a partition key range and a collection, return the list of
         overlapping partition key ranges.
+
+        :param str collection_link: The link to the collection.
+        :param list partition_key_ranges: List of partition key ranges to check for overlaps.
+        :param dict feed_options: Options for the feed request.
+        :keyword Any kwargs: Additional keyword arguments for the underlying client request.
+        :return: List of overlapping partition key ranges.
+        :rtype: list
         """
         if not partition_key_ranges:
             return []  # Avoid unnecessary network call if there are no ranges to check
@@ -315,8 +335,8 @@ class PartitionKeyRangeCache(object):
             **kwargs: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         routing_map = self.get_or_refresh_routing_map_for_collection(
-            collection_link=collection_link,
-            feed_options=feed_options,
+            collection_link,
+            feed_options,
             **kwargs
         )
         if not routing_map:

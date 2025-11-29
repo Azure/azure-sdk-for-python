@@ -30,8 +30,7 @@ from ... import _base, http_constants
 from ..collection_routing_map import CollectionRoutingMap
 from .. import routing_range
 if TYPE_CHECKING:
-    from ...cosmos_client import CosmosClient
-
+    from ...aio._cosmos_client_connection_async import CosmosClientConnection
 # pylint: disable=protected-access
 
 logger = logging.getLogger(__name__)
@@ -46,7 +45,7 @@ class PartitionKeyRangeCache(object):
 
     PAGE_SIZE_CHANGE_FEED = "-1"  # Return all available changes
 
-    def __init__(self, client: "CosmosClient"):
+    def __init__(self, client: "CosmosClientConnection"):
         """
         Constructor
         """
@@ -54,7 +53,7 @@ class PartitionKeyRangeCache(object):
         self._documentClient = client
 
         # keeps the cached collection routing map by collection id
-        self._collection_routing_map_by_item = {}
+        self._collection_routing_map_by_item: Dict[str, CollectionRoutingMap] = {}
         # A lock to control access to the locks dictionary itself
         self._locks_lock = asyncio.Lock()
         # A dictionary to hold a lock for each collection ID
@@ -72,18 +71,21 @@ class PartitionKeyRangeCache(object):
                 self._collection_locks[collection_id] = asyncio.Lock()
             return self._collection_locks[collection_id]
 
-    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options, **kwargs):
-        """Finds overlapping partition key ranges within a collection.
-        This method retrieves the collection's routing map and uses it to determine which
-        of the collection's partition key ranges overlap with the specified input ranges.
+    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options=None, **kwargs):
+        """Efficiently gets overlapping ranges for a collection.
+
+        Overrides the parent method to optimize performance by minimizing unnecessary
+        invocations of CollectionRoutingMap.get_overlapping_ranges().
 
         :param str collection_link: The link to the collection.
-        :param partition_key_ranges: A list of ranges to find overlaps for.
-        :param feed_options: Optional query options used when fetching the routing map.
-        :param kwargs: Additional keyword arguments.
+        :param list partition_key_ranges: A list of sorted, non-overlapping ranges to find overlaps for.
+        :param Optional[Dict[str, Any]] feed_options: Optional query options used when fetching the routing map.
+        :keyword Any kwargs: Additional keyword arguments.
         :return: A list of overlapping partition key ranges from the collection.
+        :rtype: list
         :raises RuntimeError: If the routing map for the collection is not found.
         """
+
         if not partition_key_ranges:
             return []  # Return empty list instead of all ranges
 
@@ -94,6 +96,7 @@ class PartitionKeyRangeCache(object):
         ranges = routing_map.get_overlapping_ranges(partition_key_ranges)
         return ranges
 
+    # pylint: disable=invalid-name
     async def get_or_refresh_routing_map_for_collection(
             self,
             collection_link: str,
@@ -109,13 +112,12 @@ class PartitionKeyRangeCache(object):
         conditions during concurrent updates.
 
         :param str collection_link: The link to the collection.
-        :param feed_options: Optional query options.
+        :param Optional[Dict[str, Any]] feed_options: Optional query options.
         :param bool force_refresh: If True, forces a refresh of the routing map.
-        :param previous_routing_map: The last known routing map, used for incremental updates.
-        :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
-        :param kwargs: Additional keyword arguments.
+        :param Optional[CollectionRoutingMap] previous_routing_map: The last known routing map, used for incremental updates.
+        :param Any kwargs: Additional keyword arguments.
         :return: The updated or cached CollectionRoutingMap, or None if it couldn't be retrieved.
-        :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
+        :rtype: Optional[CollectionRoutingMap]
         """
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -136,6 +138,7 @@ class PartitionKeyRangeCache(object):
 
             if is_initial_load or needs_refresh:
                 # Perform the expensive refresh operation while holding the lock.
+                base_routing_map: Optional[CollectionRoutingMap]
                 if needs_refresh and previous_routing_map:
                     base_routing_map = previous_routing_map
                 else:
@@ -227,7 +230,11 @@ class PartitionKeyRangeCache(object):
         response_headers: Dict[str, Any] = {}
 
         def capture_response_hook(headers: Dict[str, Any], _):
-            """Hook to capture response headers."""
+            """Hook to capture response headers.
+
+            :param Dict[str, Any] headers: The response headers to capture.
+            :param _: Unused response parameter (typically the response body or item).
+            """
             nonlocal response_headers
             response_headers = headers
 
@@ -344,8 +351,8 @@ class PartitionKeyRangeCache(object):
             **kwargs: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         routing_map = await self.get_or_refresh_routing_map_for_collection(
-            collection_link=collection_link,
-            feed_options=feed_options,
+            collection_link,
+            feed_options,
             **kwargs
         )
         if not routing_map:

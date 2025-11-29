@@ -29,7 +29,7 @@ from typing import Optional
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.routing_range import PartitionKeyRange
 
-
+# pylint: disable=line-too-long
 class CollectionRoutingMap(object):
     """Stores partition key ranges in an efficient way with some additional
     information and provides convenience methods for working with set of ranges.

@@ -22,12 +22,8 @@
 """Internal class for connection reset retry policy implementation in the Azure
 Cosmos database service.
 """
-
-from typing import Optional
-
-from azure.cosmos import http_constants
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
-from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
+
 # pylint: disable=protected-access
 
 

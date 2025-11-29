@@ -61,6 +61,10 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             offer_throughput=self.throughput)
 
     async def asyncTearDown(self):
+        try:
+            await self.created_database.delete_container(self.TEST_CONTAINER_ID)
+        except Exception:
+            pass  # Container might not exist if test failed early
         await self.client.close()
 
     async def test_partition_split_query_async(self):
