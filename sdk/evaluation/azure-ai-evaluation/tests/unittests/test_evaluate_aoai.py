@@ -60,6 +60,18 @@ class TestCombineItemSchemas:
         assert data_source_config["item_schema"]["properties"] == expected_properties
         assert data_source_config["item_schema"]["required"] == expected_required
 
+        # "item_schema" as None in kwargs
+        kwargs = {"item_schema": None}
+        _combine_item_schemas(data_source_config, kwargs)
+        assert data_source_config["item_schema"]["properties"] == expected_properties
+        assert data_source_config["item_schema"]["required"] == expected_required
+
+        # "item_schema" is a wrong value in kwargs
+        kwargs = {"item_schema": 12345}
+        _combine_item_schemas(data_source_config, kwargs)
+        assert data_source_config["item_schema"]["properties"] == expected_properties
+        assert data_source_config["item_schema"]["required"] == expected_required
+
         # "item_schema" without "properties" in kwargs
         kwargs = {"item_schema": {}}
         _combine_item_schemas(data_source_config, kwargs)

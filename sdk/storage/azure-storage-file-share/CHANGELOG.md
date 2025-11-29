@@ -10,14 +10,9 @@ for the purposes of signing SAS tokens.
 which specifies the Entra ID of the user that is authorized to use the generated SAS URL.
 - Added support for the keyword `user_delegation_key` to `generate_share_sas` and `generate_file_sas` used with 
 `user_delegation_oid` to authenticate the request to generate a new SAS URL.
-- Added support for the keyword `enable_smb_directory_lease` in `ShareClient`'s `create_share` API for the SMB protocol
-to specify whether granting new directory leases for directories present in a share is allowed.
 - Added support for the keyword `encryption_in_transit`in `ShareSmbSettings` used by `set_service_properties` 
 for the SMB protocol to specify whether encryption in transit is required.
-- Added support for the keyword `file_property_semantics` in `ShareClient`'s `create_directory` and `DirectoryClient`'s
-`create_directory` APIs, which specifies permissions to be configured upon directory creation.
-- Added support for the keyword `data` to `FileClient`'s `create_file` API, which specifies the
-optional initial data to be uploaded (up to 4MB).
+- Added the ability to skip auto decompression on `ShareFileClient.download_file` via the `decompress` keyword.
 
 ### Bugs Fixed
 - Fixed an issue where `FileProperties` and `DirectoryProperties` did not contain timezone information for

@@ -323,6 +323,385 @@ class ActiveDirectory(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActiveDirectoryConfig(TrackedResource):
+    """Active Directory Configuration resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ActiveDirectoryConfigProperties
+    :ivar etag: "If etag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.").
+    :vartype etag: str
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    """
+
+    properties: Optional["_models.ActiveDirectoryConfigProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """\"If etag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.\")."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ActiveDirectoryConfigProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActiveDirectoryConfigProperties(_Model):
+    """Active Directory Configuration properties.
+
+    :ivar user_name: A domain user account with permission to create machine accounts.
+    :vartype user_name: str
+    :ivar dns: An array of DNS server IP addresses(IPv4 only) for the Active Directory.
+    :vartype dns: list[str]
+    :ivar smb_server_name: NetBIOS name of the SMB server. This name will be registered as a
+     computer account in the AD and used to mount volumes.
+    :vartype smb_server_name: str
+    :ivar organizational_unit: The Organizational Unit (OU) within the Windows Active Directory.
+    :vartype organizational_unit: str
+    :ivar site: The Active Directory site the service will limit Domain Controller discovery to.
+    :vartype site: str
+    :ivar backup_operators: Users to be added to the Built-in Backup Operator active directory
+     group. A list of unique usernames without domain specifier.
+    :vartype backup_operators: list[str]
+    :ivar administrators: Users to be added to the Built-in Administrators active directory group.
+     A list of unique usernames without domain specifier.
+    :vartype administrators: list[str]
+    :ivar security_operators: Domain Users in the Active directory to be given SecurityPrivilege
+     privilege (Needed for SMB Continuously available shares for SQL). A list of unique usernames
+     without domain specifier.
+    :vartype security_operators: list[str]
+    :ivar active_directory_status: Status of the Active Directory. Known values are: "Created",
+     "InUse", "Deleted", "Error", and "Updating".
+    :vartype active_directory_status: str or ~azure.mgmt.netapp.models.ActiveDirectoryStatus
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar domain: Name of the Active Directory domain. Required.
+    :vartype domain: str
+    :ivar secret_password: Access password from Azure KeyVault Secrets to connect Active Directory.
+     Required.
+    :vartype secret_password: ~azure.mgmt.netapp.models.SecretPassword
+    """
+
+    user_name: Optional[str] = rest_field(name="userName", visibility=["read", "create", "update", "delete", "query"])
+    """A domain user account with permission to create machine accounts."""
+    dns: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An array of DNS server IP addresses(IPv4 only) for the Active Directory."""
+    smb_server_name: Optional[str] = rest_field(
+        name="smbServerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NetBIOS name of the SMB server. This name will be registered as a computer account in the AD
+     and used to mount volumes."""
+    organizational_unit: Optional[str] = rest_field(
+        name="organizationalUnit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Organizational Unit (OU) within the Windows Active Directory."""
+    site: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Active Directory site the service will limit Domain Controller discovery to."""
+    backup_operators: Optional[list[str]] = rest_field(
+        name="backupOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Users to be added to the Built-in Backup Operator active directory group. A list of unique
+     usernames without domain specifier."""
+    administrators: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Users to be added to the Built-in Administrators active directory group. A list of unique
+     usernames without domain specifier."""
+    security_operators: Optional[list[str]] = rest_field(
+        name="securityOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain Users in the Active directory to be given SecurityPrivilege privilege (Needed for SMB
+     Continuously available shares for SQL). A list of unique usernames without domain specifier."""
+    active_directory_status: Optional[Union[str, "_models.ActiveDirectoryStatus"]] = rest_field(
+        name="activeDirectoryStatus", visibility=["read"]
+    )
+    """Status of the Active Directory. Known values are: \"Created\", \"InUse\", \"Deleted\",
+     \"Error\", and \"Updating\"."""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    domain: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Active Directory domain. Required."""
+    secret_password: "_models.SecretPassword" = rest_field(
+        name="secretPassword", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access password from Azure KeyVault Secrets to connect Active Directory. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        domain: str,
+        secret_password: "_models.SecretPassword",
+        user_name: Optional[str] = None,
+        dns: Optional[list[str]] = None,
+        smb_server_name: Optional[str] = None,
+        organizational_unit: Optional[str] = None,
+        site: Optional[str] = None,
+        backup_operators: Optional[list[str]] = None,
+        administrators: Optional[list[str]] = None,
+        security_operators: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActiveDirectoryConfigUpdate(_Model):
+    """The type used for update operations of the ActiveDirectoryConfig.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ActiveDirectoryConfigUpdateProperties
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ActiveDirectoryConfigUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ActiveDirectoryConfigUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActiveDirectoryConfigUpdateProperties(_Model):
+    """The updatable properties of the ActiveDirectoryConfig.
+
+    :ivar user_name: A domain user account with permission to create machine accounts.
+    :vartype user_name: str
+    :ivar dns: An array of DNS server IP addresses(IPv4 only) for the Active Directory.
+    :vartype dns: list[str]
+    :ivar smb_server_name: NetBIOS name of the SMB server. This name will be registered as a
+     computer account in the AD and used to mount volumes.
+    :vartype smb_server_name: str
+    :ivar organizational_unit: The Organizational Unit (OU) within the Windows Active Directory.
+    :vartype organizational_unit: str
+    :ivar site: The Active Directory site the service will limit Domain Controller discovery to.
+    :vartype site: str
+    :ivar backup_operators: Users to be added to the Built-in Backup Operator active directory
+     group. A list of unique usernames without domain specifier.
+    :vartype backup_operators: list[str]
+    :ivar administrators: Users to be added to the Built-in Administrators active directory group.
+     A list of unique usernames without domain specifier.
+    :vartype administrators: list[str]
+    :ivar security_operators: Domain Users in the Active directory to be given SecurityPrivilege
+     privilege (Needed for SMB Continuously available shares for SQL). A list of unique usernames
+     without domain specifier.
+    :vartype security_operators: list[str]
+    :ivar domain: Name of the Active Directory domain.
+    :vartype domain: str
+    :ivar secret_password: Access password from Azure KeyVault Secrets to connect Active Directory.
+    :vartype secret_password: ~azure.mgmt.netapp.models.SecretPassword
+    """
+
+    user_name: Optional[str] = rest_field(name="userName", visibility=["read", "create", "update", "delete", "query"])
+    """A domain user account with permission to create machine accounts."""
+    dns: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An array of DNS server IP addresses(IPv4 only) for the Active Directory."""
+    smb_server_name: Optional[str] = rest_field(
+        name="smbServerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NetBIOS name of the SMB server. This name will be registered as a computer account in the AD
+     and used to mount volumes."""
+    organizational_unit: Optional[str] = rest_field(
+        name="organizationalUnit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Organizational Unit (OU) within the Windows Active Directory."""
+    site: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Active Directory site the service will limit Domain Controller discovery to."""
+    backup_operators: Optional[list[str]] = rest_field(
+        name="backupOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Users to be added to the Built-in Backup Operator active directory group. A list of unique
+     usernames without domain specifier."""
+    administrators: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Users to be added to the Built-in Administrators active directory group. A list of unique
+     usernames without domain specifier."""
+    security_operators: Optional[list[str]] = rest_field(
+        name="securityOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain Users in the Active directory to be given SecurityPrivilege privilege (Needed for SMB
+     Continuously available shares for SQL). A list of unique usernames without domain specifier."""
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Active Directory domain."""
+    secret_password: Optional["_models.SecretPassword"] = rest_field(
+        name="secretPassword", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access password from Azure KeyVault Secrets to connect Active Directory."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_name: Optional[str] = None,
+        dns: Optional[list[str]] = None,
+        smb_server_name: Optional[str] = None,
+        organizational_unit: Optional[str] = None,
+        site: Optional[str] = None,
+        backup_operators: Optional[list[str]] = None,
+        administrators: Optional[list[str]] = None,
+        security_operators: Optional[list[str]] = None,
+        domain: Optional[str] = None,
+        secret_password: Optional["_models.SecretPassword"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AuthorizeRequest(_Model):
     """Authorize request.
 
@@ -351,34 +730,6 @@ class AuthorizeRequest(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
 class ProxyResource(Resource):
@@ -537,50 +888,6 @@ class BackupPatchProperties(_Model):
         self,
         *,
         label: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1401,7 +1708,7 @@ class BucketPatchProperties(_Model):
      user details are mutually exclusive, meaning one or other must be supplied, but not both.
     :vartype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
-     "Creating", "Patching", "Deleting", "Moving", "Failed", and "Succeeded".
+     "Creating", "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
     :ivar server: Properties of the server managing the lifecycle of volume buckets.
     :vartype server: ~azure.mgmt.netapp.models.BucketServerPatchProperties
@@ -1422,7 +1729,7 @@ class BucketPatchProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state of the resource. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
     server: Optional["_models.BucketServerPatchProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1457,28 +1764,29 @@ class BucketPatchProperties(_Model):
 class BucketProperties(_Model):
     """Bucket resource properties.
 
-       :ivar path: The volume path mounted inside the bucket. The default is the root path '/' if no
-        value is provided when the bucket is created.
-       :vartype path: str
-       :ivar file_system_user: File System user having access to volume data. For Unix, this is the
-        user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
-        user details are mutually exclusive, meaning one or other must be supplied, but not both.
-       :vartype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
-       :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
-        "Creating", "Patching", "Deleting", "Moving", "Failed", and "Succeeded".
-       :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
-       :ivar status: The bucket credentials status. There states:
-    "NoCredentialsSet": Access and Secret key pair have not been generated.
-    "CredentialsExpired": Access and Secret key pair have expired.
-    "Active": The certificate has been installed and credentials are unexpired. Known values are:
-        "NoCredentialsSet", "CredentialsExpired", and "Active".
-       :vartype status: str or ~azure.mgmt.netapp.models.CredentialsStatus
-       :ivar server: Properties of the server managing the lifecycle of volume buckets.
-       :vartype server: ~azure.mgmt.netapp.models.BucketServerProperties
-       :ivar permissions: Access permissions for the bucket. Either ReadOnly or ReadWrite. The default
-        is ReadOnly if no value is provided during bucket creation. Known values are: "ReadOnly" and
-        "ReadWrite".
-       :vartype permissions: str or ~azure.mgmt.netapp.models.BucketPermissions
+    :ivar path: The volume path mounted inside the bucket. The default is the root path '/' if no
+     value is provided when the bucket is created.
+    :vartype path: str
+    :ivar file_system_user: File System user having access to volume data. For Unix, this is the
+     user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
+     user details are mutually exclusive, meaning one or other must be supplied, but not both.
+    :vartype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Creating", "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar status: The bucket credentials status. There states:
+
+     "NoCredentialsSet": Access and Secret key pair have not been generated.
+     "CredentialsExpired": Access and Secret key pair have expired.
+     "Active": The certificate has been installed and credentials are unexpired. Known values are:
+     "NoCredentialsSet", "CredentialsExpired", and "Active".
+    :vartype status: str or ~azure.mgmt.netapp.models.CredentialsStatus
+    :ivar server: Properties of the server managing the lifecycle of volume buckets.
+    :vartype server: ~azure.mgmt.netapp.models.BucketServerProperties
+    :ivar permissions: Access permissions for the bucket. Either ReadOnly or ReadWrite. The default
+     is ReadOnly if no value is provided during bucket creation. Known values are: "ReadOnly" and
+     "ReadWrite".
+    :vartype permissions: str or ~azure.mgmt.netapp.models.BucketPermissions
     """
 
     path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1494,12 +1802,13 @@ class BucketProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state of the resource. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
     status: Optional[Union[str, "_models.CredentialsStatus"]] = rest_field(visibility=["read"])
     """The bucket credentials status. There states:
- \"NoCredentialsSet\": Access and Secret key pair have not been generated.
- \"CredentialsExpired\": Access and Secret key pair have expired.
- \"Active\": The certificate has been installed and credentials are unexpired. Known values are:
+     
+     \"NoCredentialsSet\": Access and Secret key pair have not been generated.
+     \"CredentialsExpired\": Access and Secret key pair have expired.
+     \"Active\": The certificate has been installed and credentials are unexpired. Known values are:
      \"NoCredentialsSet\", \"CredentialsExpired\", and \"Active\"."""
     server: Optional["_models.BucketServerProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1610,6 +1919,424 @@ class BucketServerProperties(_Model):
         *,
         fqdn: Optional[str] = None,
         certificate_object: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Cache(TrackedResource):
+    """Cache resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Cache properties. Required.
+    :vartype properties: ~azure.mgmt.netapp.models.CacheProperties
+    :ivar etag: "If etag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.").
+    :vartype etag: str
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: "_models.CacheProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Cache properties. Required."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """\"If etag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.\")."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create"])
+    """The availability zones."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "_models.CacheProperties",
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CacheMountTargetProperties(_Model):
+    """Contains all the information needed to mount a cache.
+
+    :ivar mount_target_id: UUID v4 used to identify the MountTarget.
+    :vartype mount_target_id: str
+    :ivar ip_address: The mount target's IPv4 address, used to mount the cache.
+    :vartype ip_address: str
+    :ivar smb_server_fqdn: The SMB server's Fully Qualified Domain Name, FQDN.
+    :vartype smb_server_fqdn: str
+    """
+
+    mount_target_id: Optional[str] = rest_field(name="mountTargetId", visibility=["read"])
+    """UUID v4 used to identify the MountTarget."""
+    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read"])
+    """The mount target's IPv4 address, used to mount the cache."""
+    smb_server_fqdn: Optional[str] = rest_field(name="smbServerFqdn", visibility=["read"])
+    """The SMB server's Fully Qualified Domain Name, FQDN."""
+
+
+class CacheProperties(_Model):
+    """Cache resource properties.
+
+    :ivar filepath: The file path of the Cache. Required.
+    :vartype filepath: str
+    :ivar size: Maximum storage quota allowed for a file system in bytes. Valid values are in the
+     range 50GiB to 1PiB. Values expressed in bytes as multiples of 1GiB. Required.
+    :vartype size: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: list[~azure.mgmt.netapp.models.ExportPolicyRule]
+    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype protocol_types: list[str or ~azure.mgmt.netapp.models.ProtocolTypes]
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Creating", "Updating",
+     "Deleting", "Failed", "Succeeded", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.CacheProvisioningState
+    :ivar cache_state: Azure NetApp Files Cache lifecycle management. Known values are:
+     "ClusterPeeringOfferSent", "VserverPeeringOfferSent", "Creating", "Succeeded", and "Failed".
+    :vartype cache_state: str or ~azure.mgmt.netapp.models.CacheLifeCycleState
+    :ivar cache_subnet_resource_id: The Azure Resource URI for a delegated cache subnet that will
+     be used to allocate data IPs. Required.
+    :vartype cache_subnet_resource_id: str
+    :ivar peering_subnet_resource_id: The Azure Resource URI for a delegated subnet that will be
+     used for ANF Intercluster Interface IP addresses. Required.
+    :vartype peering_subnet_resource_id: str
+    :ivar mount_targets: List of mount targets that can be used to mount this cache.
+    :vartype mount_targets: list[~azure.mgmt.netapp.models.CacheMountTargetProperties]
+    :ivar kerberos: Describe if a cache is Kerberos enabled. Known values are: "Disabled" and
+     "Enabled".
+    :vartype kerberos: str or ~azure.mgmt.netapp.models.KerberosState
+    :ivar smb_settings: SMB information for the cache.
+    :vartype smb_settings: ~azure.mgmt.netapp.models.SmbSettings
+    :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this cache volume
+     and this will be accepted as input only for manual qosType cache.
+    :vartype throughput_mibps: float
+    :ivar actual_throughput_mibps: Actual throughput in MiB/s for auto qosType volumes calculated
+     based on size and serviceLevel.
+    :vartype actual_throughput_mibps: float
+    :ivar encryption_key_source: Source of key used to encrypt data in the cache. Applicable if
+     NetApp account has encryption.keySource = 'Microsoft.KeyVault'. Possible values
+     (case-insensitive) are: 'Microsoft.NetApp, Microsoft.KeyVault'. Required. Known values are:
+     "Microsoft.NetApp" and "Microsoft.KeyVault".
+    :vartype encryption_key_source: str or ~azure.mgmt.netapp.models.EncryptionKeySource
+    :ivar key_vault_private_endpoint_resource_id: The resource ID of private endpoint for KeyVault.
+     It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
+     'Microsoft.KeyVault'.
+    :vartype key_vault_private_endpoint_resource_id: str
+    :ivar maximum_number_of_files: Maximum number of files allowed.
+    :vartype maximum_number_of_files: int
+    :ivar encryption: Specifies if the cache is encryption or not. Known values are: "Disabled" and
+     "Enabled".
+    :vartype encryption: str or ~azure.mgmt.netapp.models.EncryptionState
+    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
+     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
+     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
+     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
+     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
+     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
+     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
+     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
+     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
+    :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
+    :ivar ldap: Specifies whether LDAP is enabled or not for flexcache volume. Known values are:
+     "Disabled" and "Enabled".
+    :vartype ldap: str or ~azure.mgmt.netapp.models.LdapState
+    :ivar ldap_server_type: Specifies the type of LDAP server for flexcache volume. Known values
+     are: "ActiveDirectory" and "OpenLDAP".
+    :vartype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
+    :ivar origin_cluster_information: Origin cluster information. Required.
+    :vartype origin_cluster_information: ~azure.mgmt.netapp.models.OriginClusterInformation
+    :ivar cifs_change_notifications: Flag indicating whether a CIFS change notification is enabled
+     for the cache. Known values are: "Disabled" and "Enabled".
+    :vartype cifs_change_notifications: str or ~azure.mgmt.netapp.models.CifsChangeNotifyState
+    :ivar global_file_locking: Flag indicating whether the global file lock is enabled for the
+     cache. Known values are: "Disabled" and "Enabled".
+    :vartype global_file_locking: str or ~azure.mgmt.netapp.models.GlobalFileLockingState
+    :ivar write_back: Flag indicating whether writeback is enabled for the cache. Known values are:
+     "Disabled" and "Enabled".
+    :vartype write_back: str or ~azure.mgmt.netapp.models.EnableWriteBackState
+    """
+
+    filepath: str = rest_field(visibility=["read", "create"])
+    """The file path of the Cache. Required."""
+    size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum storage quota allowed for a file system in bytes. Valid values are in the range 50GiB
+     to 1PiB. Values expressed in bytes as multiples of 1GiB. Required."""
+    export_policy: Optional[list["_models.ExportPolicyRule"]] = rest_field(
+        name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of export policy rules."""
+    protocol_types: Optional[list[Union[str, "_models.ProtocolTypes"]]] = rest_field(
+        name="protocolTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of protocol types, default NFSv3, CIFS for SMB protocol."""
+    provisioning_state: Optional[Union[str, "_models.CacheProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Creating\", \"Updating\", \"Deleting\",
+     \"Failed\", \"Succeeded\", and \"Canceled\"."""
+    cache_state: Optional[Union[str, "_models.CacheLifeCycleState"]] = rest_field(
+        name="cacheState", visibility=["read"]
+    )
+    """Azure NetApp Files Cache lifecycle management. Known values are: \"ClusterPeeringOfferSent\",
+     \"VserverPeeringOfferSent\", \"Creating\", \"Succeeded\", and \"Failed\"."""
+    cache_subnet_resource_id: str = rest_field(name="cacheSubnetResourceId", visibility=["read", "create"])
+    """The Azure Resource URI for a delegated cache subnet that will be used to allocate data IPs.
+     Required."""
+    peering_subnet_resource_id: str = rest_field(name="peeringSubnetResourceId", visibility=["read", "create"])
+    """The Azure Resource URI for a delegated subnet that will be used for ANF Intercluster Interface
+     IP addresses. Required."""
+    mount_targets: Optional[list["_models.CacheMountTargetProperties"]] = rest_field(
+        name="mountTargets", visibility=["read"]
+    )
+    """List of mount targets that can be used to mount this cache."""
+    kerberos: Optional[Union[str, "_models.KerberosState"]] = rest_field(visibility=["read", "create"])
+    """Describe if a cache is Kerberos enabled. Known values are: \"Disabled\" and \"Enabled\"."""
+    smb_settings: Optional["_models.SmbSettings"] = rest_field(
+        name="smbSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SMB information for the cache."""
+    throughput_mibps: Optional[float] = rest_field(
+        name="throughputMibps", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum throughput in MiB/s that can be achieved by this cache volume and this will be accepted
+     as input only for manual qosType cache."""
+    actual_throughput_mibps: Optional[float] = rest_field(name="actualThroughputMibps", visibility=["read"])
+    """Actual throughput in MiB/s for auto qosType volumes calculated based on size and serviceLevel."""
+    encryption_key_source: Union[str, "_models.EncryptionKeySource"] = rest_field(
+        name="encryptionKeySource", visibility=["read", "create"]
+    )
+    """Source of key used to encrypt data in the cache. Applicable if NetApp account has
+     encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive) are:
+     'Microsoft.NetApp, Microsoft.KeyVault'. Required. Known values are: \"Microsoft.NetApp\" and
+     \"Microsoft.KeyVault\"."""
+    key_vault_private_endpoint_resource_id: Optional[str] = rest_field(
+        name="keyVaultPrivateEndpointResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of private endpoint for KeyVault. It must reside in the same VNET as the
+     volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'."""
+    maximum_number_of_files: Optional[int] = rest_field(name="maximumNumberOfFiles", visibility=["read"])
+    """Maximum number of files allowed."""
+    encryption: Optional[Union[str, "_models.EncryptionState"]] = rest_field(visibility=["read"])
+    """Specifies if the cache is encryption or not. Known values are: \"Disabled\" and \"Enabled\"."""
+    language: Optional[Union[str, "_models.VolumeLanguage"]] = rest_field(visibility=["read"])
+    """Language supported for volume. Known values are: \"c.utf-8\", \"utf8mb4\", \"ar\",
+     \"ar.utf-8\", \"hr\", \"hr.utf-8\", \"cs\", \"cs.utf-8\", \"da\", \"da.utf-8\", \"nl\",
+     \"nl.utf-8\", \"en\", \"en.utf-8\", \"fi\", \"fi.utf-8\", \"fr\", \"fr.utf-8\", \"de\",
+     \"de.utf-8\", \"he\", \"he.utf-8\", \"hu\", \"hu.utf-8\", \"it\", \"it.utf-8\", \"ja\",
+     \"ja.utf-8\", \"ja-v1\", \"ja-v1.utf-8\", \"ja-jp.pck\", \"ja-jp.pck.utf-8\", \"ja-jp.932\",
+     \"ja-jp.932.utf-8\", \"ja-jp.pck-v2\", \"ja-jp.pck-v2.utf-8\", \"ko\", \"ko.utf-8\", \"no\",
+     \"no.utf-8\", \"pl\", \"pl.utf-8\", \"pt\", \"pt.utf-8\", \"c\", \"ro\", \"ro.utf-8\", \"ru\",
+     \"ru.utf-8\", \"zh\", \"zh.utf-8\", \"zh.gbk\", \"zh.gbk.utf-8\", \"zh-tw.big5\",
+     \"zh-tw.big5.utf-8\", \"zh-tw\", \"zh-tw.utf-8\", \"sk\", \"sk.utf-8\", \"sl\", \"sl.utf-8\",
+     \"es\", \"es.utf-8\", \"sv\", \"sv.utf-8\", \"tr\", \"tr.utf-8\", \"en-us\", and
+     \"en-us.utf-8\"."""
+    ldap: Optional[Union[str, "_models.LdapState"]] = rest_field(visibility=["read", "create"])
+    """Specifies whether LDAP is enabled or not for flexcache volume. Known values are: \"Disabled\"
+     and \"Enabled\"."""
+    ldap_server_type: Optional[Union[str, "_models.LdapServerType"]] = rest_field(
+        name="ldapServerType", visibility=["read", "create"]
+    )
+    """Specifies the type of LDAP server for flexcache volume. Known values are: \"ActiveDirectory\"
+     and \"OpenLDAP\"."""
+    origin_cluster_information: "_models.OriginClusterInformation" = rest_field(
+        name="originClusterInformation", visibility=["read", "create"]
+    )
+    """Origin cluster information. Required."""
+    cifs_change_notifications: Optional[Union[str, "_models.CifsChangeNotifyState"]] = rest_field(
+        name="cifsChangeNotifications", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag indicating whether a CIFS change notification is enabled for the cache. Known values are:
+     \"Disabled\" and \"Enabled\"."""
+    global_file_locking: Optional[Union[str, "_models.GlobalFileLockingState"]] = rest_field(
+        name="globalFileLocking", visibility=["read", "create"]
+    )
+    """Flag indicating whether the global file lock is enabled for the cache. Known values are:
+     \"Disabled\" and \"Enabled\"."""
+    write_back: Optional[Union[str, "_models.EnableWriteBackState"]] = rest_field(
+        name="writeBack", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag indicating whether writeback is enabled for the cache. Known values are: \"Disabled\" and
+     \"Enabled\"."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        filepath: str,
+        size: int,
+        cache_subnet_resource_id: str,
+        peering_subnet_resource_id: str,
+        encryption_key_source: Union[str, "_models.EncryptionKeySource"],
+        origin_cluster_information: "_models.OriginClusterInformation",
+        export_policy: Optional[list["_models.ExportPolicyRule"]] = None,
+        protocol_types: Optional[list[Union[str, "_models.ProtocolTypes"]]] = None,
+        kerberos: Optional[Union[str, "_models.KerberosState"]] = None,
+        smb_settings: Optional["_models.SmbSettings"] = None,
+        throughput_mibps: Optional[float] = None,
+        key_vault_private_endpoint_resource_id: Optional[str] = None,
+        ldap: Optional[Union[str, "_models.LdapState"]] = None,
+        ldap_server_type: Optional[Union[str, "_models.LdapServerType"]] = None,
+        cifs_change_notifications: Optional[Union[str, "_models.CifsChangeNotifyState"]] = None,
+        global_file_locking: Optional[Union[str, "_models.GlobalFileLockingState"]] = None,
+        write_back: Optional[Union[str, "_models.EnableWriteBackState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CacheUpdate(_Model):
+    """The type used for update operations of the Cache.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.CacheUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.CacheUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.CacheUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CacheUpdateProperties(_Model):
+    """The updatable properties of the Cache.
+
+    :ivar size: Maximum storage quota allowed for a file system in bytes. Valid values are in the
+     range 50GiB to 1PiB. Values expressed in bytes as multiples of 1GiB.
+    :vartype size: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: list[~azure.mgmt.netapp.models.ExportPolicyRule]
+    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype protocol_types: list[str or ~azure.mgmt.netapp.models.ProtocolTypes]
+    :ivar smb_settings: SMB information for the cache.
+    :vartype smb_settings: ~azure.mgmt.netapp.models.SmbSettings
+    :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this cache volume
+     and this will be accepted as input only for manual qosType cache.
+    :vartype throughput_mibps: float
+    :ivar key_vault_private_endpoint_resource_id: The resource ID of private endpoint for KeyVault.
+     It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
+     'Microsoft.KeyVault'.
+    :vartype key_vault_private_endpoint_resource_id: str
+    :ivar cifs_change_notifications: Flag indicating whether a CIFS change notification is enabled
+     for the cache. Known values are: "Disabled" and "Enabled".
+    :vartype cifs_change_notifications: str or ~azure.mgmt.netapp.models.CifsChangeNotifyState
+    :ivar write_back: Flag indicating whether writeback is enabled for the cache. Known values are:
+     "Disabled" and "Enabled".
+    :vartype write_back: str or ~azure.mgmt.netapp.models.EnableWriteBackState
+    """
+
+    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum storage quota allowed for a file system in bytes. Valid values are in the range 50GiB
+     to 1PiB. Values expressed in bytes as multiples of 1GiB."""
+    export_policy: Optional[list["_models.ExportPolicyRule"]] = rest_field(
+        name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of export policy rules."""
+    protocol_types: Optional[list[Union[str, "_models.ProtocolTypes"]]] = rest_field(
+        name="protocolTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of protocol types, default NFSv3, CIFS for SMB protocol."""
+    smb_settings: Optional["_models.SmbSettings"] = rest_field(
+        name="smbSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SMB information for the cache."""
+    throughput_mibps: Optional[float] = rest_field(
+        name="throughputMibps", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum throughput in MiB/s that can be achieved by this cache volume and this will be accepted
+     as input only for manual qosType cache."""
+    key_vault_private_endpoint_resource_id: Optional[str] = rest_field(
+        name="keyVaultPrivateEndpointResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of private endpoint for KeyVault. It must reside in the same VNET as the
+     volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'."""
+    cifs_change_notifications: Optional[Union[str, "_models.CifsChangeNotifyState"]] = rest_field(
+        name="cifsChangeNotifications", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag indicating whether a CIFS change notification is enabled for the cache. Known values are:
+     \"Disabled\" and \"Enabled\"."""
+    write_back: Optional[Union[str, "_models.EnableWriteBackState"]] = rest_field(
+        name="writeBack", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag indicating whether writeback is enabled for the cache. Known values are: \"Disabled\" and
+     \"Enabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size: Optional[int] = None,
+        export_policy: Optional[list["_models.ExportPolicyRule"]] = None,
+        protocol_types: Optional[list[Union[str, "_models.ProtocolTypes"]]] = None,
+        smb_settings: Optional["_models.SmbSettings"] = None,
+        throughput_mibps: Optional[float] = None,
+        key_vault_private_endpoint_resource_id: Optional[str] = None,
+        cifs_change_notifications: Optional[Union[str, "_models.CifsChangeNotifyState"]] = None,
+        write_back: Optional[Union[str, "_models.EnableWriteBackState"]] = None,
     ) -> None: ...
 
     @overload
@@ -1833,6 +2560,34 @@ class ChangeKeyVault(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ChangeZoneRequest(_Model):
+    """Changes the zone for the Zone Redundant elastic capacity pool.
+
+    :ivar new_zone: Availability zone to move Zone Redundant elastic capacity pool to. Required.
+    :vartype new_zone: str
+    """
+
+    new_zone: str = rest_field(name="newZone", visibility=["read", "create", "update", "delete", "query"])
+    """Availability zone to move Zone Redundant elastic capacity pool to. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        new_zone: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CheckAvailabilityResponse(_Model):
     """Information regarding availability of a resource.
 
@@ -1874,6 +2629,91 @@ class CheckAvailabilityResponse(_Model):
         is_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.InAvailabilityReasonType"]] = None,
         message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CheckElasticResourceAvailabilityResponse(_Model):
+    """Information regarding availability of a resource.
+
+    :ivar is_available: True indicates name is valid and available. False indicates the name is
+     invalid, unavailable, or both. Known values are: "True" and "False".
+    :vartype is_available: str or ~azure.mgmt.netapp.models.CheckElasticResourceAvailabilityStatus
+    :ivar reason: Invalid indicates the name provided does not match Azure NetApp Files naming
+     requirements. AlreadyExists indicates that the name is already in use and is therefore
+     unavailable. Known values are: "Invalid" and "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.netapp.models.CheckElasticResourceAvailabilityReason
+    :ivar message: If reason == invalid, provide the user with the reason why the given name is
+     invalid, and provide the resource naming requirements so that the user can select a valid name.
+     If reason == AlreadyExists, explain that resource name is already in use, and direct them to
+     select a different name.
+    :vartype message: str
+    """
+
+    is_available: Optional[Union[str, "_models.CheckElasticResourceAvailabilityStatus"]] = rest_field(
+        name="isAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """True indicates name is valid and available. False indicates the name is invalid, unavailable,
+     or both. Known values are: \"True\" and \"False\"."""
+    reason: Optional[Union[str, "_models.CheckElasticResourceAvailabilityReason"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Invalid indicates the name provided does not match Azure NetApp Files naming requirements.
+     AlreadyExists indicates that the name is already in use and is therefore unavailable. Known
+     values are: \"Invalid\" and \"AlreadyExists\"."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If reason == invalid, provide the user with the reason why the given name is invalid, and
+     provide the resource naming requirements so that the user can select a valid name. If reason ==
+     AlreadyExists, explain that resource name is already in use, and direct them to select a
+     different name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_available: Optional[Union[str, "_models.CheckElasticResourceAvailabilityStatus"]] = None,
+        reason: Optional[Union[str, "_models.CheckElasticResourceAvailabilityReason"]] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CheckElasticVolumeFilePathAvailabilityRequest(_Model):  # pylint: disable=name-too-long
+    """File path availability request content - availability is based on the elastic volume filePath
+    within the given elastic capacityPool.
+
+    :ivar file_path: A unique file path for the volume. Used when creating mount targets. This
+     needs to be unique within the elastic capacity pool. Required.
+    :vartype file_path: str
+    """
+
+    file_path: str = rest_field(name="filePath", visibility=["read", "create", "update", "delete", "query"])
+    """A unique file path for the volume. Used when creating mount targets. This needs to be unique
+     within the elastic capacity pool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_path: str,
     ) -> None: ...
 
     @overload
@@ -2064,6 +2904,2142 @@ class Dimension(_Model):
         *,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticAccount(TrackedResource):
+    """NetApp elastic account resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticAccountProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    """
+
+    properties: Optional["_models.ElasticAccountProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticAccountProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticAccountProperties(_Model):
+    """NetApp elastic account properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.ElasticEncryption
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    encryption: Optional["_models.ElasticEncryption"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        encryption: Optional["_models.ElasticEncryption"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticAccountUpdate(_Model):
+    """The type used for update operations of the ElasticAccount.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticAccountUpdateProperties
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticAccountUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticAccountUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticAccountUpdateProperties(_Model):
+    """The updatable properties of the ElasticAccount.
+
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.ElasticEncryption
+    """
+
+    encryption: Optional["_models.ElasticEncryption"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        encryption: Optional["_models.ElasticEncryption"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackup(ProxyResource):
+    """NetApp Elastic Backup under an elastic Backup Vault.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticBackupProperties
+    """
+
+    properties: Optional["_models.ElasticBackupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ElasticBackupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupPolicy(TrackedResource):
+    """NetApp Elastic Backup Policy resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticBackupPolicyProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ElasticBackupPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticBackupPolicyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupPolicyProperties(_Model):
+    """Elastic Backup Policy properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar daily_backups_to_keep: Daily backups count to keep.
+    :vartype daily_backups_to_keep: int
+    :ivar weekly_backups_to_keep: Weekly backups count to keep.
+    :vartype weekly_backups_to_keep: int
+    :ivar monthly_backups_to_keep: Monthly backups count to keep.
+    :vartype monthly_backups_to_keep: int
+    :ivar assigned_volumes_count: The number of volumes currently using this Backup Policy.
+    :vartype assigned_volumes_count: int
+    :ivar policy_state: The property to identify whether Backup Policy is enabled or not. Known
+     values are: "Enabled" and "Disabled".
+    :vartype policy_state: str or ~azure.mgmt.netapp.models.ElasticBackupPolicyState
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    daily_backups_to_keep: Optional[int] = rest_field(
+        name="dailyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Daily backups count to keep."""
+    weekly_backups_to_keep: Optional[int] = rest_field(
+        name="weeklyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Weekly backups count to keep."""
+    monthly_backups_to_keep: Optional[int] = rest_field(
+        name="monthlyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Monthly backups count to keep."""
+    assigned_volumes_count: Optional[int] = rest_field(name="assignedVolumesCount", visibility=["read"])
+    """The number of volumes currently using this Backup Policy."""
+    policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = rest_field(
+        name="policyState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property to identify whether Backup Policy is enabled or not. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        daily_backups_to_keep: Optional[int] = None,
+        weekly_backups_to_keep: Optional[int] = None,
+        monthly_backups_to_keep: Optional[int] = None,
+        policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupPolicyUpdate(_Model):
+    """The type used for update operations of the ElasticBackupPolicy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticBackupPolicyUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticBackupPolicyUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticBackupPolicyUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupPolicyUpdateProperties(_Model):
+    """The updatable properties of the ElasticBackupPolicy.
+
+    :ivar daily_backups_to_keep: Daily backups count to keep.
+    :vartype daily_backups_to_keep: int
+    :ivar weekly_backups_to_keep: Weekly backups count to keep.
+    :vartype weekly_backups_to_keep: int
+    :ivar monthly_backups_to_keep: Monthly backups count to keep.
+    :vartype monthly_backups_to_keep: int
+    :ivar policy_state: The property to identify whether Backup Policy is enabled or not. Known
+     values are: "Enabled" and "Disabled".
+    :vartype policy_state: str or ~azure.mgmt.netapp.models.ElasticBackupPolicyState
+    """
+
+    daily_backups_to_keep: Optional[int] = rest_field(
+        name="dailyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Daily backups count to keep."""
+    weekly_backups_to_keep: Optional[int] = rest_field(
+        name="weeklyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Weekly backups count to keep."""
+    monthly_backups_to_keep: Optional[int] = rest_field(
+        name="monthlyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Monthly backups count to keep."""
+    policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = rest_field(
+        name="policyState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property to identify whether Backup Policy is enabled or not. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        daily_backups_to_keep: Optional[int] = None,
+        weekly_backups_to_keep: Optional[int] = None,
+        monthly_backups_to_keep: Optional[int] = None,
+        policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupProperties(_Model):
+    """Elastic Backup properties.
+
+    :ivar creation_date: The creation date of the backup.
+    :vartype creation_date: ~datetime.datetime
+    :ivar snapshot_creation_date: The snapshot creation date of the backup.
+    :vartype snapshot_creation_date: ~datetime.datetime
+    :ivar completion_date: The completion date of the backup.
+    :vartype completion_date: ~datetime.datetime
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar size: Size of backup in bytes.
+    :vartype size: int
+    :ivar label: Label for backup.
+    :vartype label: str
+    :ivar backup_type: Type of backup Manual or Scheduled. Known values are: "Manual" and
+     "Scheduled".
+    :vartype backup_type: str or ~azure.mgmt.netapp.models.ElasticBackupType
+    :ivar failure_reason: Failure reason.
+    :vartype failure_reason: str
+    :ivar elastic_volume_resource_id: ResourceId used to identify the Elastic Volume. Required.
+    :vartype elastic_volume_resource_id: str
+    :ivar snapshot_usage: Manual backup using an already existing snapshot. This will always be
+     CreateNewSnapshot for scheduled backups and UseExistingSnapshot/CreateNewSnapshot for manual
+     backups. Known values are: "UseExistingSnapshot" and "CreateNewSnapshot".
+    :vartype snapshot_usage: str or ~azure.mgmt.netapp.models.SnapshotUsage
+    :ivar elastic_snapshot_resource_id: ResourceId used to identify the elastic snapshot resource.
+     This is required when an existing snapshot needs to be used for creating a manual backup.
+    :vartype elastic_snapshot_resource_id: str
+    :ivar elastic_backup_policy_resource_id: ResourceId used to identify the elastic backup policy.
+    :vartype elastic_backup_policy_resource_id: str
+    :ivar volume_size: Specifies if the backup is for a large volume. Known values are: "Large" and
+     "Regular".
+    :vartype volume_size: str or ~azure.mgmt.netapp.models.VolumeSize
+    """
+
+    creation_date: Optional[datetime.datetime] = rest_field(name="creationDate", visibility=["read"], format="rfc3339")
+    """The creation date of the backup."""
+    snapshot_creation_date: Optional[datetime.datetime] = rest_field(
+        name="snapshotCreationDate", visibility=["read"], format="rfc3339"
+    )
+    """The snapshot creation date of the backup."""
+    completion_date: Optional[datetime.datetime] = rest_field(
+        name="completionDate", visibility=["read"], format="rfc3339"
+    )
+    """The completion date of the backup."""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    size: Optional[int] = rest_field(visibility=["read"])
+    """Size of backup in bytes."""
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Label for backup."""
+    backup_type: Optional[Union[str, "_models.ElasticBackupType"]] = rest_field(name="backupType", visibility=["read"])
+    """Type of backup Manual or Scheduled. Known values are: \"Manual\" and \"Scheduled\"."""
+    failure_reason: Optional[str] = rest_field(name="failureReason", visibility=["read"])
+    """Failure reason."""
+    elastic_volume_resource_id: str = rest_field(name="elasticVolumeResourceId", visibility=["read", "create"])
+    """ResourceId used to identify the Elastic Volume. Required."""
+    snapshot_usage: Optional[Union[str, "_models.SnapshotUsage"]] = rest_field(
+        name="snapshotUsage", visibility=["read", "create"]
+    )
+    """Manual backup using an already existing snapshot. This will always be CreateNewSnapshot for
+     scheduled backups and UseExistingSnapshot/CreateNewSnapshot for manual backups. Known values
+     are: \"UseExistingSnapshot\" and \"CreateNewSnapshot\"."""
+    elastic_snapshot_resource_id: Optional[str] = rest_field(
+        name="elasticSnapshotResourceId", visibility=["read", "create"]
+    )
+    """ResourceId used to identify the elastic snapshot resource. This is required when an existing
+     snapshot needs to be used for creating a manual backup."""
+    elastic_backup_policy_resource_id: Optional[str] = rest_field(
+        name="elasticBackupPolicyResourceId", visibility=["read"]
+    )
+    """ResourceId used to identify the elastic backup policy."""
+    volume_size: Optional[Union[str, "_models.VolumeSize"]] = rest_field(name="volumeSize", visibility=["read"])
+    """Specifies if the backup is for a large volume. Known values are: \"Large\" and \"Regular\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        elastic_volume_resource_id: str,
+        label: Optional[str] = None,
+        snapshot_usage: Optional[Union[str, "_models.SnapshotUsage"]] = None,
+        elastic_snapshot_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupVault(TrackedResource):
+    """NetApp elastic backup vault resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticBackupVaultProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ElasticBackupVaultProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticBackupVaultProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupVaultProperties(_Model):
+    """Elastic Backup Vault properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+
+
+class ElasticBackupVaultUpdate(_Model):
+    """The type used for update operations of the ElasticBackupVault.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticCapacityPool(TrackedResource):
+    """NetApp Elastic Capacity Pool resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticCapacityPoolProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: Optional["_models.ElasticCapacityPoolProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create"])
+    """The availability zones."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticCapacityPoolProperties"] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticCapacityPoolProperties(_Model):
+    """Elastic capacity pool properties.
+
+    :ivar size: Provisioned size of the pool (in bytes). For zoneRedundant service level pool,
+     value must be in the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values
+     expressed in bytes as multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to
+     128TiB. Pool size can't be shrunk once it is created. Required.
+    :vartype size: int
+    :ivar service_level: The service level of the elastic capacity pool. Required. "ZoneRedundant"
+    :vartype service_level: str or ~azure.mgmt.netapp.models.ElasticServiceLevel
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.ElasticEncryptionConfiguration
+    :ivar total_throughput_mibps: Total throughput of the pool in MiB/s.
+    :vartype total_throughput_mibps: float
+    :ivar subnet_resource_id: The Azure Resource URI for a delegated subnet. Must have the
+     delegation Microsoft.NetApp/elasticVolumes, this is used by all the volumes within the pool.
+     Required.
+    :vartype subnet_resource_id: str
+    :ivar current_zone: Indicates the current zone of the pool. This can be changed for
+     zoneRedundant service level pool with the changeZone action.
+    :vartype current_zone: str
+    :ivar availability_status: Current availability status of the resource. Known values are:
+     "Online" and "Offline".
+    :vartype availability_status: str or
+     ~azure.mgmt.netapp.models.ElasticResourceAvailabilityStatus
+    :ivar active_directory_config_resource_id: The Azure Resource URI for an Active Directory
+     configuration. This is used by all the SMB volumes within the pool.
+    :vartype active_directory_config_resource_id: str
+    """
+
+    size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Provisioned size of the pool (in bytes). For zoneRedundant service level pool, value must be in
+     the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values expressed in bytes as
+     multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to 128TiB. Pool size can't be
+     shrunk once it is created. Required."""
+    service_level: Union[str, "_models.ElasticServiceLevel"] = rest_field(
+        name="serviceLevel", visibility=["read", "create"]
+    )
+    """The service level of the elastic capacity pool. Required. \"ZoneRedundant\""""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    encryption: Optional["_models.ElasticEncryptionConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+    total_throughput_mibps: Optional[float] = rest_field(name="totalThroughputMibps", visibility=["read"])
+    """Total throughput of the pool in MiB/s."""
+    subnet_resource_id: str = rest_field(name="subnetResourceId", visibility=["read", "create"])
+    """The Azure Resource URI for a delegated subnet. Must have the delegation
+     Microsoft.NetApp/elasticVolumes, this is used by all the volumes within the pool. Required."""
+    current_zone: Optional[str] = rest_field(name="currentZone", visibility=["read"])
+    """Indicates the current zone of the pool. This can be changed for zoneRedundant service level
+     pool with the changeZone action."""
+    availability_status: Optional[Union[str, "_models.ElasticResourceAvailabilityStatus"]] = rest_field(
+        name="availabilityStatus", visibility=["read"]
+    )
+    """Current availability status of the resource. Known values are: \"Online\" and \"Offline\"."""
+    active_directory_config_resource_id: Optional[str] = rest_field(
+        name="activeDirectoryConfigResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource URI for an Active Directory configuration. This is used by all the SMB
+     volumes within the pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size: int,
+        service_level: Union[str, "_models.ElasticServiceLevel"],
+        subnet_resource_id: str,
+        encryption: Optional["_models.ElasticEncryptionConfiguration"] = None,
+        active_directory_config_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticCapacityPoolUpdate(_Model):
+    """The type used for update operations of the ElasticCapacityPool.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticCapacityPoolUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticCapacityPoolUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticCapacityPoolUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticCapacityPoolUpdateProperties(_Model):
+    """The updatable properties of the ElasticCapacityPool.
+
+    :ivar size: Provisioned size of the pool (in bytes). For zoneRedundant service level pool,
+     value must be in the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values
+     expressed in bytes as multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to
+     128TiB. Pool size can't be shrunk once it is created.
+    :vartype size: int
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.ElasticEncryptionConfiguration
+    :ivar active_directory_config_resource_id: The Azure Resource URI for an Active Directory
+     configuration. This is used by all the SMB volumes within the pool.
+    :vartype active_directory_config_resource_id: str
+    """
+
+    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Provisioned size of the pool (in bytes). For zoneRedundant service level pool, value must be in
+     the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values expressed in bytes as
+     multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to 128TiB. Pool size can't be
+     shrunk once it is created."""
+    encryption: Optional["_models.ElasticEncryptionConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+    active_directory_config_resource_id: Optional[str] = rest_field(
+        name="activeDirectoryConfigResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource URI for an Active Directory configuration. This is used by all the SMB
+     volumes within the pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size: Optional[int] = None,
+        encryption: Optional["_models.ElasticEncryptionConfiguration"] = None,
+        active_directory_config_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticEncryption(_Model):
+    """Encryption settings.
+
+    :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
+     Microsoft.NetApp, Microsoft.KeyVault. Known values are: "Microsoft.NetApp" and
+     "Microsoft.KeyVault".
+    :vartype key_source: str or ~azure.mgmt.netapp.models.KeySource
+    :ivar key_vault_properties: Properties provided by KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype key_vault_properties: ~azure.mgmt.netapp.models.ElasticKeyVaultProperties
+    :ivar identity: Identity used to authenticate to KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype identity: ~azure.mgmt.netapp.models.ElasticEncryptionIdentity
+    """
+
+    key_source: Optional[Union[str, "_models.KeySource"]] = rest_field(
+        name="keySource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The encryption keySource (provider). Possible values (case-insensitive): Microsoft.NetApp,
+     Microsoft.KeyVault. Known values are: \"Microsoft.NetApp\" and \"Microsoft.KeyVault\"."""
+    key_vault_properties: Optional["_models.ElasticKeyVaultProperties"] = rest_field(
+        name="keyVaultProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties provided by KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+    identity: Optional["_models.ElasticEncryptionIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identity used to authenticate to KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_source: Optional[Union[str, "_models.KeySource"]] = None,
+        key_vault_properties: Optional["_models.ElasticKeyVaultProperties"] = None,
+        identity: Optional["_models.ElasticEncryptionIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticEncryptionConfiguration(_Model):
+    """CMK Encryption Configuration.
+
+    :ivar elastic_pool_encryption_key_source: Pool Encryption Key Source. Required. Known values
+     are: "NetApp" and "KeyVault".
+    :vartype elastic_pool_encryption_key_source: str or
+     ~azure.mgmt.netapp.models.ElasticPoolEncryptionKeySource
+    :ivar key_vault_private_endpoint_resource_id: The resource ID of private endpoint for KeyVault.
+     It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
+     'Microsoft.KeyVault'. Required.
+    :vartype key_vault_private_endpoint_resource_id: str
+    """
+
+    elastic_pool_encryption_key_source: Union[str, "_models.ElasticPoolEncryptionKeySource"] = rest_field(
+        name="elasticPoolEncryptionKeySource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pool Encryption Key Source. Required. Known values are: \"NetApp\" and \"KeyVault\"."""
+    key_vault_private_endpoint_resource_id: str = rest_field(
+        name="keyVaultPrivateEndpointResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of private endpoint for KeyVault. It must reside in the same VNET as the
+     volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        elastic_pool_encryption_key_source: Union[str, "_models.ElasticPoolEncryptionKeySource"],
+        key_vault_private_endpoint_resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticEncryptionIdentity(_Model):
+    """Identity used to authenticate with key vault.
+
+    :ivar principal_id: The principal ID (object ID) of the identity used to authenticate with key
+     vault. Read-only.
+    :vartype principal_id: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
+     key of identity.userAssignedIdentities.
+    :vartype user_assigned_identity: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID (object ID) of the identity used to authenticate with key vault. Read-only."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
+     Applicable if identity.type has 'UserAssigned'. It should match key of
+     identity.userAssignedIdentities."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticExportPolicy(_Model):
+    """Set of export policy rules.
+
+    :ivar rules: Export policy rule.
+    :vartype rules: list[~azure.mgmt.netapp.models.ElasticExportPolicyRule]
+    """
+
+    rules: Optional[list["_models.ElasticExportPolicyRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Export policy rule."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rules: Optional[list["_models.ElasticExportPolicyRule"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticExportPolicyRule(_Model):
+    """Elastic Volume Export Policy Rule.
+
+    :ivar rule_index: Controls the priority of the export policy rule. When connecting to the
+     volume the rule with the lowest index that applies to the connecting client is used.
+    :vartype rule_index: int
+    :ivar unix_access_rule: Specifies the Unix file access level for the volume. It encompasses
+     both read-only and read-write permissions. Additionally, NoAccess can be set to block all
+     access to the volume. Known values are: "ReadOnly", "ReadWrite", and "NoAccess".
+    :vartype unix_access_rule: str or ~azure.mgmt.netapp.models.ElasticUnixAccessRule
+    :ivar nfsv3: Allows clients to access the volume with the NFSv3 protocol. Enable only for NFSv3
+     type volumes. Known values are: "Enabled" and "Disabled".
+    :vartype nfsv3: str or ~azure.mgmt.netapp.models.ElasticNfsv3Access
+    :ivar nfsv4: Allows clients to access the volume with at least NFSv4.1 protocol. Known values
+     are: "Enabled" and "Disabled".
+    :vartype nfsv4: str or ~azure.mgmt.netapp.models.ElasticNfsv4Access
+    :ivar allowed_clients: Client ingress specification for the export policy as list of IPv4
+     CIDRs, IPv4 host addresses and host names.
+    :vartype allowed_clients: list[str]
+    :ivar root_access: Indicates whether root access to the volume is granted to clients affected
+     by this rule. Known values are: "Enabled" and "Disabled".
+    :vartype root_access: str or ~azure.mgmt.netapp.models.ElasticRootAccess
+    """
+
+    rule_index: Optional[int] = rest_field(name="ruleIndex", visibility=["read", "create", "update", "delete", "query"])
+    """Controls the priority of the export policy rule. When connecting to the volume the rule with
+     the lowest index that applies to the connecting client is used."""
+    unix_access_rule: Optional[Union[str, "_models.ElasticUnixAccessRule"]] = rest_field(
+        name="unixAccessRule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Unix file access level for the volume. It encompasses both read-only and
+     read-write permissions. Additionally, NoAccess can be set to block all access to the volume.
+     Known values are: \"ReadOnly\", \"ReadWrite\", and \"NoAccess\"."""
+    nfsv3: Optional[Union[str, "_models.ElasticNfsv3Access"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allows clients to access the volume with the NFSv3 protocol. Enable only for NFSv3 type
+     volumes. Known values are: \"Enabled\" and \"Disabled\"."""
+    nfsv4: Optional[Union[str, "_models.ElasticNfsv4Access"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allows clients to access the volume with at least NFSv4.1 protocol. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+    allowed_clients: Optional[list[str]] = rest_field(
+        name="allowedClients", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Client ingress specification for the export policy as list of IPv4 CIDRs, IPv4 host addresses
+     and host names."""
+    root_access: Optional[Union[str, "_models.ElasticRootAccess"]] = rest_field(
+        name="rootAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether root access to the volume is granted to clients affected by this rule. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rule_index: Optional[int] = None,
+        unix_access_rule: Optional[Union[str, "_models.ElasticUnixAccessRule"]] = None,
+        nfsv3: Optional[Union[str, "_models.ElasticNfsv3Access"]] = None,
+        nfsv4: Optional[Union[str, "_models.ElasticNfsv4Access"]] = None,
+        allowed_clients: Optional[list[str]] = None,
+        root_access: Optional[Union[str, "_models.ElasticRootAccess"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticKeyVaultProperties(_Model):
+    """Properties of key vault.
+
+    :ivar key_vault_uri: The Uri of KeyVault.
+    :vartype key_vault_uri: str
+    :ivar key_name: The name of KeyVault key.
+    :vartype key_name: str
+    :ivar key_vault_resource_id: The resource ID of KeyVault.
+    :vartype key_vault_resource_id: str
+    :ivar status: Status of the KeyVault connection. Known values are: "Created", "InUse",
+     "Deleted", "Error", and "Updating".
+    :vartype status: str or ~azure.mgmt.netapp.models.ElasticKeyVaultStatus
+    """
+
+    key_vault_uri: Optional[str] = rest_field(
+        name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Uri of KeyVault."""
+    key_name: Optional[str] = rest_field(name="keyName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of KeyVault key."""
+    key_vault_resource_id: Optional[str] = rest_field(
+        name="keyVaultResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of KeyVault."""
+    status: Optional[Union[str, "_models.ElasticKeyVaultStatus"]] = rest_field(visibility=["read"])
+    """Status of the KeyVault connection. Known values are: \"Created\", \"InUse\", \"Deleted\",
+     \"Error\", and \"Updating\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_uri: Optional[str] = None,
+        key_name: Optional[str] = None,
+        key_vault_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticMountTargetProperties(_Model):
+    """Contains all the information needed to mount an elastic volume.
+
+    :ivar ip_address: The mount target's IPv4 address, used to mount the volume.
+    :vartype ip_address: str
+    :ivar smb_server_fqdn: The SMB server's Fully Qualified Domain Name, FQDN.
+    :vartype smb_server_fqdn: str
+    """
+
+    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read"])
+    """The mount target's IPv4 address, used to mount the volume."""
+    smb_server_fqdn: Optional[str] = rest_field(name="smbServerFqdn", visibility=["read"])
+    """The SMB server's Fully Qualified Domain Name, FQDN."""
+
+
+class ElasticSmbPatchProperties(_Model):
+    """SMB Patch Properties.
+
+    :ivar smb_encryption: Used to enable or disable encryption for in-flight SMB data volume. This
+     flag can be modified during Elastic volume update operation as well. Only applicable for SMB
+     protocol Elastic volumes. Known values are: "Enabled" and "Disabled".
+    :vartype smb_encryption: str or ~azure.mgmt.netapp.models.ElasticSmbEncryption
+    """
+
+    smb_encryption: Optional[Union[str, "_models.ElasticSmbEncryption"]] = rest_field(
+        name="smbEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to enable or disable encryption for in-flight SMB data volume. This flag can be modified
+     during Elastic volume update operation as well. Only applicable for SMB protocol Elastic
+     volumes. Known values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        smb_encryption: Optional[Union[str, "_models.ElasticSmbEncryption"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSmbProperties(_Model):
+    """SMB Properties.
+
+    :ivar smb_encryption: Used to enable or disable encryption for in-flight SMB data volume. This
+     flag can be modified during Elastic volume update operation as well. Only applicable for SMB
+     protocol Elastic volumes. Known values are: "Enabled" and "Disabled".
+    :vartype smb_encryption: str or ~azure.mgmt.netapp.models.ElasticSmbEncryption
+    """
+
+    smb_encryption: Optional[Union[str, "_models.ElasticSmbEncryption"]] = rest_field(
+        name="smbEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to enable or disable encryption for in-flight SMB data volume. This flag can be modified
+     during Elastic volume update operation as well. Only applicable for SMB protocol Elastic
+     volumes. Known values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        smb_encryption: Optional[Union[str, "_models.ElasticSmbEncryption"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshot(ProxyResource):
+    """NetApp Elastic Snapshot under an Elastic Volume.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticSnapshotProperties
+    """
+
+    properties: Optional["_models.ElasticSnapshotProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ElasticSnapshotProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicy(TrackedResource):
+    """NetApp Elastic Snapshot Policy under an Elastic Account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ElasticSnapshotPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticSnapshotPolicyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyDailySchedule(_Model):
+    """Daily Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Daily snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar hour: Indicates which hour in UTC timezone a snapshot should be taken.
+    :vartype hour: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshots_to_keep: Optional[int] = rest_field(
+        name="snapshotsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Daily snapshot count to keep."""
+    hour: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which hour in UTC timezone a snapshot should be taken."""
+    minute: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which minute snapshot should be taken."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshots_to_keep: Optional[int] = None,
+        hour: Optional[int] = None,
+        minute: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyHourlySchedule(_Model):
+    """Hourly Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Hourly snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshots_to_keep: Optional[int] = rest_field(
+        name="snapshotsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hourly snapshot count to keep."""
+    minute: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which minute snapshot should be taken."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshots_to_keep: Optional[int] = None,
+        minute: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyMonthlySchedule(_Model):
+    """Monthly Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Monthly snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar days_of_month: Indicates which days of the month snapshot (1-31) should be taken, accepts
+     a list of integers.
+    :vartype days_of_month: list[int]
+    :ivar hour: Indicates which hour in UTC timezone a snapshot should be taken.
+    :vartype hour: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshots_to_keep: Optional[int] = rest_field(
+        name="snapshotsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Monthly snapshot count to keep."""
+    days_of_month: Optional[list[int]] = rest_field(
+        name="daysOfMonth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates which days of the month snapshot (1-31) should be taken, accepts a list of integers."""
+    hour: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which hour in UTC timezone a snapshot should be taken."""
+    minute: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which minute snapshot should be taken."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshots_to_keep: Optional[int] = None,
+        days_of_month: Optional[list[int]] = None,
+        hour: Optional[int] = None,
+        minute: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyProperties(_Model):
+    """Elastic Snapshot policy properties.
+
+    :ivar hourly_schedule: Schedule for hourly snapshots.
+    :vartype hourly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyHourlySchedule
+    :ivar daily_schedule: Schedule for daily snapshots.
+    :vartype daily_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyDailySchedule
+    :ivar weekly_schedule: Schedule for weekly snapshots.
+    :vartype weekly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyWeeklySchedule
+    :ivar monthly_schedule: Schedule for monthly snapshots.
+    :vartype monthly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyMonthlySchedule
+    :ivar policy_status: Configures if the snapshot policy is enabled on the volumes connected to
+     the policy. Known values are: "Enabled" and "Disabled".
+    :vartype policy_status: str or ~azure.mgmt.netapp.models.PolicyStatus
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    """
+
+    hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = rest_field(
+        name="hourlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for hourly snapshots."""
+    daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = rest_field(
+        name="dailySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for daily snapshots."""
+    weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = rest_field(
+        name="weeklySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for weekly snapshots."""
+    monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = rest_field(
+        name="monthlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for monthly snapshots."""
+    policy_status: Optional[Union[str, "_models.PolicyStatus"]] = rest_field(
+        name="policyStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configures if the snapshot policy is enabled on the volumes connected to the policy. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = None,
+        daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = None,
+        weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = None,
+        monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = None,
+        policy_status: Optional[Union[str, "_models.PolicyStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyUpdate(_Model):
+    """The type used for update operations of the ElasticSnapshotPolicy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticSnapshotPolicyUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticSnapshotPolicyUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyUpdateProperties(_Model):
+    """The updatable properties of the ElasticSnapshotPolicy.
+
+    :ivar hourly_schedule: Schedule for hourly snapshots.
+    :vartype hourly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyHourlySchedule
+    :ivar daily_schedule: Schedule for daily snapshots.
+    :vartype daily_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyDailySchedule
+    :ivar weekly_schedule: Schedule for weekly snapshots.
+    :vartype weekly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyWeeklySchedule
+    :ivar monthly_schedule: Schedule for monthly snapshots.
+    :vartype monthly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyMonthlySchedule
+    :ivar policy_status: Configures if the snapshot policy is enabled on the volumes connected to
+     the policy. Known values are: "Enabled" and "Disabled".
+    :vartype policy_status: str or ~azure.mgmt.netapp.models.PolicyStatus
+    """
+
+    hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = rest_field(
+        name="hourlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for hourly snapshots."""
+    daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = rest_field(
+        name="dailySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for daily snapshots."""
+    weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = rest_field(
+        name="weeklySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for weekly snapshots."""
+    monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = rest_field(
+        name="monthlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for monthly snapshots."""
+    policy_status: Optional[Union[str, "_models.PolicyStatus"]] = rest_field(
+        name="policyStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configures if the snapshot policy is enabled on the volumes connected to the policy. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = None,
+        daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = None,
+        weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = None,
+        monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = None,
+        policy_status: Optional[Union[str, "_models.PolicyStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyWeeklySchedule(_Model):
+    """Weekly Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Weekly snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar days: Indicates which weekday(s) snapshot(s) should be taken, accepts a list of week day
+     names in english.
+    :vartype days: list[str or ~azure.mgmt.netapp.models.DayOfWeek]
+    :ivar hour: Indicates which hour in UTC timezone a snapshot should be taken.
+    :vartype hour: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshots_to_keep: Optional[int] = rest_field(
+        name="snapshotsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Weekly snapshot count to keep."""
+    days: Optional[list[Union[str, "_models.DayOfWeek"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates which weekday(s) snapshot(s) should be taken, accepts a list of week day names in
+     english."""
+    hour: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which hour in UTC timezone a snapshot should be taken."""
+    minute: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which minute snapshot should be taken."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshots_to_keep: Optional[int] = None,
+        days: Optional[list[Union[str, "_models.DayOfWeek"]]] = None,
+        hour: Optional[int] = None,
+        minute: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotProperties(_Model):
+    """Elastic Snapshot properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+
+
+class ElasticVolume(TrackedResource):
+    """NetApp Elastic Volume resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticVolumeProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: Optional["_models.ElasticVolumeProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create"])
+    """The availability zones."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticVolumeProperties"] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeBackupProperties(_Model):
+    """Elastic Volume Backup Properties.
+
+    :ivar elastic_backup_policy_resource_id: ResourceId used to identify Elastic Backup Policy.
+    :vartype elastic_backup_policy_resource_id: str
+    :ivar policy_enforcement: The property to decide policy is enforced or not on the volume. Known
+     values are: "Enforced" and "NotEnforced".
+    :vartype policy_enforcement: str or ~azure.mgmt.netapp.models.ElasticVolumePolicyEnforcement
+    :ivar elastic_backup_vault_resource_id: ResourceId used to identify Elastic Backup Vault.
+    :vartype elastic_backup_vault_resource_id: str
+    """
+
+    elastic_backup_policy_resource_id: Optional[str] = rest_field(
+        name="elasticBackupPolicyResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ResourceId used to identify Elastic Backup Policy."""
+    policy_enforcement: Optional[Union[str, "_models.ElasticVolumePolicyEnforcement"]] = rest_field(
+        name="policyEnforcement", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property to decide policy is enforced or not on the volume. Known values are: \"Enforced\"
+     and \"NotEnforced\"."""
+    elastic_backup_vault_resource_id: Optional[str] = rest_field(
+        name="elasticBackupVaultResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ResourceId used to identify Elastic Backup Vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        elastic_backup_policy_resource_id: Optional[str] = None,
+        policy_enforcement: Optional[Union[str, "_models.ElasticVolumePolicyEnforcement"]] = None,
+        elastic_backup_vault_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeDataProtectionPatchProperties(_Model):  # pylint: disable=name-too-long
+    """Data protection configuration option for updating the volume, including snapshot policies and
+    backup.
+
+    :ivar snapshot: Used to apply a snapshot policy to a volume.
+    :vartype snapshot: ~azure.mgmt.netapp.models.ElasticVolumeSnapshotProperties
+    :ivar backup: Used to configure backups on an elastic volume.
+    :vartype backup: ~azure.mgmt.netapp.models.ElasticVolumeBackupProperties
+    """
+
+    snapshot: Optional["_models.ElasticVolumeSnapshotProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to apply a snapshot policy to a volume."""
+    backup: Optional["_models.ElasticVolumeBackupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to configure backups on an elastic volume."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshot: Optional["_models.ElasticVolumeSnapshotProperties"] = None,
+        backup: Optional["_models.ElasticVolumeBackupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeDataProtectionProperties(_Model):
+    """Data protection configuration option for the volume, including snapshot policies and backup.
+
+    :ivar snapshot: Used to apply a snapshot policy to a volume.
+    :vartype snapshot: ~azure.mgmt.netapp.models.ElasticVolumeSnapshotProperties
+    :ivar backup: Used to configure backups on an elastic volume.
+    :vartype backup: ~azure.mgmt.netapp.models.ElasticVolumeBackupProperties
+    """
+
+    snapshot: Optional["_models.ElasticVolumeSnapshotProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to apply a snapshot policy to a volume."""
+    backup: Optional["_models.ElasticVolumeBackupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to configure backups on an elastic volume."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshot: Optional["_models.ElasticVolumeSnapshotProperties"] = None,
+        backup: Optional["_models.ElasticVolumeBackupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeProperties(_Model):
+    """Elastic Volume properties.
+
+    :ivar file_path: A unique file path for the volume. Used when creating mount targets. This
+     needs to be unique within the elastic capacity pool. Required.
+    :vartype file_path: str
+    :ivar size: Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to
+     16TiB. Values expressed in bytes as multiples of 1 GiB. Required.
+    :vartype size: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: ~azure.mgmt.netapp.models.ElasticExportPolicy
+    :ivar protocol_types: Set of support protocol types for the elastic volume. Required.
+    :vartype protocol_types: list[str or ~azure.mgmt.netapp.models.ElasticProtocolType]
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar availability_status: Current availability status of the resource. Known values are:
+     "Online" and "Offline".
+    :vartype availability_status: str or
+     ~azure.mgmt.netapp.models.ElasticResourceAvailabilityStatus
+    :ivar snapshot_resource_id: Resource identifier used to identify the Elastic Snapshot.
+    :vartype snapshot_resource_id: str
+    :ivar mount_targets: List of mount targets that can be used to mount this volume.
+    :vartype mount_targets: list[~azure.mgmt.netapp.models.ElasticMountTargetProperties]
+    :ivar data_protection: Data protection configuration option for the volume, including snapshot
+     policies and backup.
+    :vartype data_protection: ~azure.mgmt.netapp.models.ElasticVolumeDataProtectionProperties
+    :ivar snapshot_directory_visibility: Controls the visibility of the volume's read-only snapshot
+     directory, which provides access to each of the volume's snapshots. Known values are: "Hidden"
+     and "Visible".
+    :vartype snapshot_directory_visibility: str or
+     ~azure.mgmt.netapp.models.SnapshotDirectoryVisibility
+    :ivar smb_properties: SMB Properties.
+    :vartype smb_properties: ~azure.mgmt.netapp.models.ElasticSmbProperties
+    :ivar backup_resource_id: Resource identifier used to identify the Elastic Backup.
+    :vartype backup_resource_id: str
+    :ivar restoration_state: The current state of the restoration process. Known values are:
+     "Restoring", "Restored", and "Failed".
+    :vartype restoration_state: str or ~azure.mgmt.netapp.models.ElasticVolumeRestorationState
+    """
+
+    file_path: str = rest_field(name="filePath", visibility=["read", "create"])
+    """A unique file path for the volume. Used when creating mount targets. This needs to be unique
+     within the elastic capacity pool. Required."""
+    size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to 16TiB. Values
+     expressed in bytes as multiples of 1 GiB. Required."""
+    export_policy: Optional["_models.ElasticExportPolicy"] = rest_field(
+        name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of export policy rules."""
+    protocol_types: list[Union[str, "_models.ElasticProtocolType"]] = rest_field(
+        name="protocolTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of support protocol types for the elastic volume. Required."""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    availability_status: Optional[Union[str, "_models.ElasticResourceAvailabilityStatus"]] = rest_field(
+        name="availabilityStatus", visibility=["read"]
+    )
+    """Current availability status of the resource. Known values are: \"Online\" and \"Offline\"."""
+    snapshot_resource_id: Optional[str] = rest_field(name="snapshotResourceId", visibility=["read", "create"])
+    """Resource identifier used to identify the Elastic Snapshot."""
+    mount_targets: Optional[list["_models.ElasticMountTargetProperties"]] = rest_field(
+        name="mountTargets", visibility=["read"]
+    )
+    """List of mount targets that can be used to mount this volume."""
+    data_protection: Optional["_models.ElasticVolumeDataProtectionProperties"] = rest_field(
+        name="dataProtection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data protection configuration option for the volume, including snapshot policies and backup."""
+    snapshot_directory_visibility: Optional[Union[str, "_models.SnapshotDirectoryVisibility"]] = rest_field(
+        name="snapshotDirectoryVisibility", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls the visibility of the volume's read-only snapshot directory, which provides access to
+     each of the volume's snapshots. Known values are: \"Hidden\" and \"Visible\"."""
+    smb_properties: Optional["_models.ElasticSmbProperties"] = rest_field(
+        name="smbProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SMB Properties."""
+    backup_resource_id: Optional[str] = rest_field(name="backupResourceId", visibility=["read", "create"])
+    """Resource identifier used to identify the Elastic Backup."""
+    restoration_state: Optional[Union[str, "_models.ElasticVolumeRestorationState"]] = rest_field(
+        name="restorationState", visibility=["read"]
+    )
+    """The current state of the restoration process. Known values are: \"Restoring\", \"Restored\",
+     and \"Failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_path: str,
+        size: int,
+        protocol_types: list[Union[str, "_models.ElasticProtocolType"]],
+        export_policy: Optional["_models.ElasticExportPolicy"] = None,
+        snapshot_resource_id: Optional[str] = None,
+        data_protection: Optional["_models.ElasticVolumeDataProtectionProperties"] = None,
+        snapshot_directory_visibility: Optional[Union[str, "_models.SnapshotDirectoryVisibility"]] = None,
+        smb_properties: Optional["_models.ElasticSmbProperties"] = None,
+        backup_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeRevert(_Model):
+    """Reverts the elastic volume to the specified snapshot.
+
+    :ivar snapshot_resource_id: Resource identifier used to identify the Elastic Snapshot.
+    :vartype snapshot_resource_id: str
+    """
+
+    snapshot_resource_id: Optional[str] = rest_field(name="snapshotResourceId", visibility=["read", "create"])
+    """Resource identifier used to identify the Elastic Snapshot."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshot_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeSnapshotProperties(_Model):
+    """Elastic Volume Snapshot Properties.
+
+    :ivar snapshot_policy_resource_id: Snapshot Policy ResourceId.
+    :vartype snapshot_policy_resource_id: str
+    """
+
+    snapshot_policy_resource_id: Optional[str] = rest_field(
+        name="snapshotPolicyResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Snapshot Policy ResourceId."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshot_policy_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeUpdate(_Model):
+    """The type used for update operations of the ElasticVolume.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticVolumeUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticVolumeUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticVolumeUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeUpdateProperties(_Model):
+    """The updatable properties of the ElasticVolume.
+
+    :ivar size: Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to
+     16TiB. Values expressed in bytes as multiples of 1 GiB.
+    :vartype size: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: ~azure.mgmt.netapp.models.ElasticExportPolicy
+    :ivar data_protection: Data protection configuration option for the volume, including snapshot
+     policies and backup.
+    :vartype data_protection: ~azure.mgmt.netapp.models.ElasticVolumeDataProtectionPatchProperties
+    :ivar snapshot_directory_visibility: Controls the visibility of the volume's read-only snapshot
+     directory, which provides access to each of the volume's snapshots. Known values are: "Hidden"
+     and "Visible".
+    :vartype snapshot_directory_visibility: str or
+     ~azure.mgmt.netapp.models.SnapshotDirectoryVisibility
+    :ivar smb_properties: SMB Properties.
+    :vartype smb_properties: ~azure.mgmt.netapp.models.ElasticSmbPatchProperties
+    """
+
+    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to 16TiB. Values
+     expressed in bytes as multiples of 1 GiB."""
+    export_policy: Optional["_models.ElasticExportPolicy"] = rest_field(
+        name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of export policy rules."""
+    data_protection: Optional["_models.ElasticVolumeDataProtectionPatchProperties"] = rest_field(
+        name="dataProtection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data protection configuration option for the volume, including snapshot policies and backup."""
+    snapshot_directory_visibility: Optional[Union[str, "_models.SnapshotDirectoryVisibility"]] = rest_field(
+        name="snapshotDirectoryVisibility", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls the visibility of the volume's read-only snapshot directory, which provides access to
+     each of the volume's snapshots. Known values are: \"Hidden\" and \"Visible\"."""
+    smb_properties: Optional["_models.ElasticSmbPatchProperties"] = rest_field(
+        name="smbProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SMB Properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size: Optional[int] = None,
+        export_policy: Optional["_models.ElasticExportPolicy"] = None,
+        data_protection: Optional["_models.ElasticVolumeDataProtectionPatchProperties"] = None,
+        snapshot_directory_visibility: Optional[Union[str, "_models.SnapshotDirectoryVisibility"]] = None,
+        smb_properties: Optional["_models.ElasticSmbPatchProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -2872,6 +5848,39 @@ class ListQuotaReportResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ListReplicationsRequest(_Model):
+    """Body for the list replications endpoint. If supplied, the body will be used as a filter for
+    example to exclude deleted replications. If omitted, the endpoint returns all replications.
+
+    :ivar exclude: Exclude Replications filter. 'None' returns all replications, 'Deleted' excludes
+     deleted replications. Default is 'None'. Known values are: "None" and "Deleted".
+    :vartype exclude: str or ~azure.mgmt.netapp.models.Exclude
+    """
+
+    exclude: Optional[Union[str, "_models.Exclude"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Exclude Replications filter. 'None' returns all replications, 'Deleted' excludes deleted
+     replications. Default is 'None'. Known values are: \"None\" and \"Deleted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        exclude: Optional[Union[str, "_models.Exclude"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class LogSpecification(_Model):
     """Log Definition of a single resource metric.
 
@@ -3470,16 +6479,16 @@ class NfsUser(_Model):
 
 
 class NicInfo(_Model):
-    """NIC information and list of volumes for which the NIC has the primary mount ip address.
+    """NIC information and list of volumes for which the NIC has the primary mount IP Address.
 
-    :ivar ip_address: ipAddress.
+    :ivar ip_address: IP Address.
     :vartype ip_address: str
     :ivar volume_resource_ids: Volume resource Ids.
     :vartype volume_resource_ids: list[str]
     """
 
     ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read"])
-    """ipAddress."""
+    """IP Address."""
     volume_resource_ids: Optional[list[str]] = rest_field(
         name="volumeResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3643,6 +6652,60 @@ class OperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class OriginClusterInformation(_Model):
+    """Stores the origin cluster information associated to a cache.
+
+    :ivar peer_cluster_name: ONTAP cluster name of external cluster hosting the origin volume.
+     Required.
+    :vartype peer_cluster_name: str
+    :ivar peer_addresses: ONTAP Intercluster LIF IP addresses. One IP address per cluster node is
+     required. Required.
+    :vartype peer_addresses: list[str]
+    :ivar peer_vserver_name: External Vserver (SVM) name  name of the SVM hosting the origin
+     volume. Required.
+    :vartype peer_vserver_name: str
+    :ivar peer_volume_name: External origin volume name associated to this cache. Required.
+    :vartype peer_volume_name: str
+    """
+
+    peer_cluster_name: str = rest_field(
+        name="peerClusterName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ONTAP cluster name of external cluster hosting the origin volume. Required."""
+    peer_addresses: list[str] = rest_field(
+        name="peerAddresses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ONTAP Intercluster LIF IP addresses. One IP address per cluster node is required. Required."""
+    peer_vserver_name: str = rest_field(
+        name="peerVserverName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """External Vserver (SVM) name  name of the SVM hosting the origin volume. Required."""
+    peer_volume_name: str = rest_field(
+        name="peerVolumeName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """External origin volume name associated to this cache. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        peer_cluster_name: str,
+        peer_addresses: list[str],
+        peer_vserver_name: str,
+        peer_volume_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PeerClusterForVolumeMigrationRequest(_Model):
     """Source Cluster properties for a cluster peer request.
 
@@ -3661,6 +6724,50 @@ class PeerClusterForVolumeMigrationRequest(_Model):
         self,
         *,
         peer_ip_addresses: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PeeringPassphrases(_Model):
+    """The response containing peering passphrases and commands for cluster and vserver peering.
+
+    :ivar cluster_peering_command: The cluster peering command. Required.
+    :vartype cluster_peering_command: str
+    :ivar cluster_peering_passphrase: The cluster peering passphrase. Required.
+    :vartype cluster_peering_passphrase: str
+    :ivar vserver_peering_command: The vserver peering command. Required.
+    :vartype vserver_peering_command: str
+    """
+
+    cluster_peering_command: str = rest_field(
+        name="clusterPeeringCommand", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cluster peering command. Required."""
+    cluster_peering_passphrase: str = rest_field(
+        name="clusterPeeringPassphrase", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cluster peering passphrase. Required."""
+    vserver_peering_command: str = rest_field(
+        name="vserverPeeringCommand", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The vserver peering command. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_peering_command: str,
+        cluster_peering_passphrase: str,
+        vserver_peering_command: str,
     ) -> None: ...
 
     @overload
@@ -3933,8 +7040,10 @@ class QuotaAvailabilityRequest(_Model):
     :vartype name: str
     :ivar type: Resource type used for verification. Required. Known values are:
      "Microsoft.NetApp/netAppAccounts", "Microsoft.NetApp/netAppAccounts/capacityPools",
-     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes", and
-     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots".
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes",
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots",
+     "Microsoft.NetApp/netAppAccounts/backupVaults/backups", and
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups".
     :vartype type: str or ~azure.mgmt.netapp.models.CheckQuotaNameResourceTypes
     :ivar resource_group: Resource group name. Required.
     :vartype resource_group: str
@@ -3947,8 +7056,10 @@ class QuotaAvailabilityRequest(_Model):
     )
     """Resource type used for verification. Required. Known values are:
      \"Microsoft.NetApp/netAppAccounts\", \"Microsoft.NetApp/netAppAccounts/capacityPools\",
-     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes\", and
-     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots\"."""
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes\",
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots\",
+     \"Microsoft.NetApp/netAppAccounts/backupVaults/backups\", and
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups\"."""
     resource_group: str = rest_field(name="resourceGroup", visibility=["read", "create", "update", "delete", "query"])
     """Resource group name. Required."""
 
@@ -4112,6 +7223,239 @@ class QuotaReport(_Model):
         quota_limit_total_in_ki_bs: Optional[int] = None,
         percentage_used: Optional[float] = None,
         is_derived_quota: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RansomwareProtectionPatchSettings(_Model):
+    """Advanced Ransomware Protection reports (ARP) updatable settings.
+
+    :ivar desired_ransomware_protection_state: The desired value of the ARP feature state available
+     to the volume. Known values are: "Disabled" and "Enabled".
+    :vartype desired_ransomware_protection_state: str or
+     ~azure.mgmt.netapp.models.DesiredRansomwareProtectionState
+    """
+
+    desired_ransomware_protection_state: Optional[Union[str, "_models.DesiredRansomwareProtectionState"]] = rest_field(
+        name="desiredRansomwareProtectionState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired value of the ARP feature state available to the volume. Known values are:
+     \"Disabled\" and \"Enabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_ransomware_protection_state: Optional[Union[str, "_models.DesiredRansomwareProtectionState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RansomwareProtectionSettings(_Model):
+    """Advanced Ransomware Protection reports (ARP) settings.
+
+    :ivar desired_ransomware_protection_state: The desired value of the Advanced Ransomware
+     Protection feature state available to the volume. Known values are: "Disabled" and "Enabled".
+    :vartype desired_ransomware_protection_state: str or
+     ~azure.mgmt.netapp.models.DesiredRansomwareProtectionState
+    :ivar actual_ransomware_protection_state: The actual state of the Advanced Ransomware
+     Protection feature currently active on the volume. Known values are: "Disabled", "Enabled",
+     "Learning", and "Paused".
+    :vartype actual_ransomware_protection_state: str or
+     ~azure.mgmt.netapp.models.ActualRansomwareProtectionState
+    """
+
+    desired_ransomware_protection_state: Optional[Union[str, "_models.DesiredRansomwareProtectionState"]] = rest_field(
+        name="desiredRansomwareProtectionState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired value of the Advanced Ransomware Protection feature state available to the volume.
+     Known values are: \"Disabled\" and \"Enabled\"."""
+    actual_ransomware_protection_state: Optional[Union[str, "_models.ActualRansomwareProtectionState"]] = rest_field(
+        name="actualRansomwareProtectionState", visibility=["read"]
+    )
+    """The actual state of the Advanced Ransomware Protection feature currently active on the volume.
+     Known values are: \"Disabled\", \"Enabled\", \"Learning\", and \"Paused\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_ransomware_protection_state: Optional[Union[str, "_models.DesiredRansomwareProtectionState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RansomwareReport(ProxyResource):
+    """Advanced Ransomware Protection (ARP) report
+    Get details of the specified Advanced Ransomware Protection report (ARP).
+    ARP reports are created with a list of suspected files when it detects any combination of high
+    data entropy, abnormal volume activity with data encryption, and unusual file extensions.
+    ARP creates snapshots named Anti_ransomware_backup when it detects a potential ransomware
+    threat. You can use one of these ARP snapshots or another snapshot of your volume to restore
+    data.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar properties: Advanced Ransomware Protection reports Properties.
+    :vartype properties: ~azure.mgmt.netapp.models.RansomwareReportProperties
+    """
+
+    properties: Optional["_models.RansomwareReportProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advanced Ransomware Protection reports Properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.RansomwareReportProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RansomwareReportProperties(_Model):
+    """Advanced Ransomware Protection (ARP) report properties.
+
+    Evaluate the report to determine whether the activity is acceptable (false positive) or whether
+    an attack seems malicious using the ClearSuspects operation.
+
+    Advanced Ransomware Protection (ARP) creates snapshots named Anti_ransomware_backup when it
+    detects a potential ransomware threat. You can use one of the ARP snapshots or another snapshot
+    of your volume to restore data.
+
+    :ivar event_time: The creation date and time of the report.
+    :vartype event_time: ~datetime.datetime
+    :ivar state: State of the Advanced Ransomware Protection (ARP) report. Known values are:
+     "Active" and "Resolved".
+    :vartype state: str or ~azure.mgmt.netapp.models.RansomwareReportState
+    :ivar severity: Severity of the Advanced Ransomware Protection (ARP) report. Known values are:
+     "None", "Low", "Moderate", and "High".
+    :vartype severity: str or ~azure.mgmt.netapp.models.RansomwareReportSeverity
+    :ivar cleared_count: The number of cleared suspects identified by the ARP report.
+    :vartype cleared_count: int
+    :ivar reported_count: The number of suspects identified by the ARP report.
+    :vartype reported_count: int
+    :ivar suspects: Suspects identified in an ARP report.
+    :vartype suspects: list[~azure.mgmt.netapp.models.RansomwareSuspects]
+    :ivar provisioning_state: Azure lifecycle management.
+    :vartype provisioning_state: str
+    """
+
+    event_time: Optional[datetime.datetime] = rest_field(name="eventTime", visibility=["read"], format="rfc3339")
+    """The creation date and time of the report."""
+    state: Optional[Union[str, "_models.RansomwareReportState"]] = rest_field(visibility=["read"])
+    """State of the Advanced Ransomware Protection (ARP) report. Known values are: \"Active\" and
+     \"Resolved\"."""
+    severity: Optional[Union[str, "_models.RansomwareReportSeverity"]] = rest_field(visibility=["read"])
+    """Severity of the Advanced Ransomware Protection (ARP) report. Known values are: \"None\",
+     \"Low\", \"Moderate\", and \"High\"."""
+    cleared_count: Optional[int] = rest_field(name="clearedCount", visibility=["read"])
+    """The number of cleared suspects identified by the ARP report."""
+    reported_count: Optional[int] = rest_field(name="reportedCount", visibility=["read"])
+    """The number of suspects identified by the ARP report."""
+    suspects: Optional[list["_models.RansomwareSuspects"]] = rest_field(visibility=["read"])
+    """Suspects identified in an ARP report."""
+    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
+    """Azure lifecycle management."""
+
+
+class RansomwareSuspects(_Model):
+    """List of suspects identified in an Advanced Ransomware Protection (ARP) report.
+
+    :ivar extension: Suspect File extension.
+    :vartype extension: str
+    :ivar resolution: ARP report suspect resolution. Known values are: "PotentialThreat" and
+     "FalsePositive".
+    :vartype resolution: str or ~azure.mgmt.netapp.models.RansomwareSuspectResolution
+    :ivar file_count: The number of suspect files at the time of ARP report, this number can change
+     as files get created and report status progresses.
+    :vartype file_count: int
+    :ivar suspect_files: Suspect files.
+    :vartype suspect_files: list[~azure.mgmt.netapp.models.SuspectFile]
+    """
+
+    extension: Optional[str] = rest_field(visibility=["read"])
+    """Suspect File extension."""
+    resolution: Optional[Union[str, "_models.RansomwareSuspectResolution"]] = rest_field(visibility=["read"])
+    """ARP report suspect resolution. Known values are: \"PotentialThreat\" and \"FalsePositive\"."""
+    file_count: Optional[int] = rest_field(name="fileCount", visibility=["read"])
+    """The number of suspect files at the time of ARP report, this number can change as files get
+     created and report status progresses."""
+    suspect_files: Optional[list["_models.SuspectFile"]] = rest_field(name="suspectFiles", visibility=["read"])
+    """Suspect files."""
+
+
+class RansomwareSuspectsClearRequest(_Model):
+    """Clear suspects for Advanced Ransomware Protection (ARP) report.
+
+    :ivar resolution: ARP report suspect resolution. Required. Known values are: "PotentialThreat"
+     and "FalsePositive".
+    :vartype resolution: str or ~azure.mgmt.netapp.models.RansomwareSuspectResolution
+    :ivar extensions: List of file extensions resolved (PotentialThreat or FalsePositive).
+     Required.
+    :vartype extensions: list[str]
+    """
+
+    resolution: Union[str, "_models.RansomwareSuspectResolution"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARP report suspect resolution. Required. Known values are: \"PotentialThreat\" and
+     \"FalsePositive\"."""
+    extensions: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of file extensions resolved (PotentialThreat or FalsePositive). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resolution: Union[str, "_models.RansomwareSuspectResolution"],
+        extensions: list[str],
     ) -> None: ...
 
     @overload
@@ -4379,6 +7723,13 @@ class Replication(_Model):
     :vartype remote_volume_resource_id: str
     :ivar remote_volume_region: The remote region for the other end of the Volume Replication.
     :vartype remote_volume_region: str
+    :ivar mirror_state: The status of the replication. Known values are: "Uninitialized",
+     "Mirrored", and "Broken".
+    :vartype mirror_state: str or ~azure.mgmt.netapp.models.ReplicationMirrorState
+    :ivar replication_creation_time: Replication creation time.
+    :vartype replication_creation_time: ~datetime.datetime
+    :ivar replication_deletion_time: Replication deletion time.
+    :vartype replication_deletion_time: ~datetime.datetime
     """
 
     replication_id: Optional[str] = rest_field(name="replicationId", visibility=["read"])
@@ -4400,6 +7751,19 @@ class Replication(_Model):
         name="remoteVolumeRegion", visibility=["read", "create", "update", "delete", "query"]
     )
     """The remote region for the other end of the Volume Replication."""
+    mirror_state: Optional[Union[str, "_models.ReplicationMirrorState"]] = rest_field(
+        name="mirrorState", visibility=["read"]
+    )
+    """The status of the replication. Known values are: \"Uninitialized\", \"Mirrored\", and
+     \"Broken\"."""
+    replication_creation_time: Optional[datetime.datetime] = rest_field(
+        name="replicationCreationTime", visibility=["read"], format="rfc3339"
+    )
+    """Replication creation time."""
+    replication_deletion_time: Optional[datetime.datetime] = rest_field(
+        name="replicationDeletionTime", visibility=["read"], format="rfc3339"
+    )
+    """Replication deletion time."""
 
     @overload
     def __init__(
@@ -4593,8 +7957,10 @@ class ResourceNameAvailabilityRequest(_Model):
     :vartype name: str
     :ivar type: Resource type used for verification. Required. Known values are:
      "Microsoft.NetApp/netAppAccounts", "Microsoft.NetApp/netAppAccounts/capacityPools",
-     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes", and
-     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots".
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes",
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots",
+     "Microsoft.NetApp/netAppAccounts/backupVaults/backups", and
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups".
     :vartype type: str or ~azure.mgmt.netapp.models.CheckNameResourceTypes
     :ivar resource_group: Resource group name. Required.
     :vartype resource_group: str
@@ -4607,8 +7973,10 @@ class ResourceNameAvailabilityRequest(_Model):
     )
     """Resource type used for verification. Required. Known values are:
      \"Microsoft.NetApp/netAppAccounts\", \"Microsoft.NetApp/netAppAccounts/capacityPools\",
-     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes\", and
-     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots\"."""
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes\",
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots\",
+     \"Microsoft.NetApp/netAppAccounts/backupVaults/backups\", and
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups\"."""
     resource_group: str = rest_field(name="resourceGroup", visibility=["read", "create", "update", "delete", "query"])
     """Resource group name. Required."""
 
@@ -4668,6 +8036,116 @@ class RestoreStatus(_Model):
     """Displays the total bytes transferred."""
 
 
+class SecretPassword(_Model):
+    """Access password from Azure KeyVault Secrets to connect Active Directory.
+
+    :ivar key_vault_properties: Properties provided by KeyVault.
+    :vartype key_vault_properties: ~azure.mgmt.netapp.models.SecretPasswordKeyVaultProperties
+    :ivar identity: Identity used to authenticate to KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype identity: ~azure.mgmt.netapp.models.SecretPasswordIdentity
+    """
+
+    key_vault_properties: Optional["_models.SecretPasswordKeyVaultProperties"] = rest_field(
+        name="keyVaultProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties provided by KeyVault."""
+    identity: Optional["_models.SecretPasswordIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identity used to authenticate to KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_properties: Optional["_models.SecretPasswordKeyVaultProperties"] = None,
+        identity: Optional["_models.SecretPasswordIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SecretPasswordIdentity(_Model):
+    """Identity used to authenticate with key vault.
+
+    :ivar principal_id: The principal ID (object ID) of the identity used to authenticate with key
+     vault. Read-only.
+    :vartype principal_id: str
+    :ivar user_assigned_identity: The Azure resource identifier of the user assigned identity used
+     to authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
+     key of identity.userAssignedIdentities.
+    :vartype user_assigned_identity: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID (object ID) of the identity used to authenticate with key vault. Read-only."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure resource identifier of the user assigned identity used to authenticate with key
+     vault. Applicable if identity.type has 'UserAssigned'. It should match key of
+     identity.userAssignedIdentities."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SecretPasswordKeyVaultProperties(_Model):
+    """Properties of key vault to get the secrets for password.
+
+    :ivar key_vault_uri: The Uri of KeyVault. Required.
+    :vartype key_vault_uri: str
+    :ivar secret_name: The name of KeyVault password secret. Required.
+    :vartype secret_name: str
+    """
+
+    key_vault_uri: str = rest_field(name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"])
+    """The Uri of KeyVault. Required."""
+    secret_name: str = rest_field(name="secretName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of KeyVault password secret. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_uri: str,
+        secret_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ServiceSpecification(_Model):
     """One property of operation, include metric specifications.
 
@@ -4692,6 +8170,58 @@ class ServiceSpecification(_Model):
         *,
         metric_specifications: Optional[list["_models.MetricSpecification"]] = None,
         log_specifications: Optional[list["_models.LogSpecification"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SmbSettings(_Model):
+    """SMB settings for the cache.
+
+    :ivar smb_encryption: Enables encryption for in-flight smb3 data. Only applicable for
+     SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
+    :vartype smb_encryption: str or ~azure.mgmt.netapp.models.SmbEncryptionState
+    :ivar smb_access_based_enumerations: Enables access-based enumeration share property for SMB
+     Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
+     "Enabled".
+    :vartype smb_access_based_enumerations: str or
+     ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
+    :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
+    """
+
+    smb_encryption: Optional[Union[str, "_models.SmbEncryptionState"]] = rest_field(
+        name="smbEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enables encryption for in-flight smb3 data. Only applicable for SMB/DualProtocol cache. Known
+     values are: \"Disabled\" and \"Enabled\"."""
+    smb_access_based_enumerations: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = rest_field(
+        name="smbAccessBasedEnumerations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enables access-based enumeration share property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: \"Disabled\" and \"Enabled\"."""
+    smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = rest_field(
+        name="smbNonBrowsable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol volume.
+     Known values are: \"Disabled\" and \"Enabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        smb_encryption: Optional[Union[str, "_models.SmbEncryptionState"]] = None,
+        smb_access_based_enumerations: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = None,
+        smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = None,
     ) -> None: ...
 
     @overload
@@ -5431,6 +8961,23 @@ class SubvolumeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SuspectFile(_Model):
+    """Suspect file information.
+
+    :ivar suspect_file_name: Suspect filename.
+    :vartype suspect_file_name: str
+    :ivar file_timestamp: The creation date and time of the file.
+    :vartype file_timestamp: ~datetime.datetime
+    """
+
+    suspect_file_name: Optional[str] = rest_field(name="suspectFileName", visibility=["read"])
+    """Suspect filename."""
+    file_timestamp: Optional[datetime.datetime] = rest_field(
+        name="fileTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """The creation date and time of the file."""
+
+
 class SvmPeerCommandResponse(_Model):
     """Information about svm peering process.
 
@@ -5814,9 +9361,11 @@ class Volume(TrackedResource):
         "enable_subvolumes",
         "provisioned_availability_zone",
         "is_large_volume",
+        "large_volume_type",
         "originating_resource_id",
         "inherited_size_in_bytes",
         "language",
+        "breakthrough_mode",
     ]
 
     @overload
@@ -6304,9 +9853,11 @@ class VolumeGroupVolumeProperties(_Model):
         "enable_subvolumes",
         "provisioned_availability_zone",
         "is_large_volume",
+        "large_volume_type",
         "originating_resource_id",
         "inherited_size_in_bytes",
         "language",
+        "breakthrough_mode",
     ]
 
     @overload
@@ -6441,73 +9992,76 @@ class VolumePatch(_Model):
 class VolumePatchProperties(_Model):
     """Patchable volume properties.
 
-       :ivar service_level: The service level of the file system. Known values are: "Standard",
-        "Premium", "Ultra", "StandardZRS", and "Flexible".
-       :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
-       :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
-        quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-        100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
-        exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
-       :vartype usage_threshold: int
-       :ivar export_policy: Set of export policy rules.
-       :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
-       :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
-       :vartype protocol_types: list[str]
-       :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
-        this will be accepted as input only for manual qosType volume.
-       :vartype throughput_mibps: float
-       :ivar data_protection: DataProtection type volumes include an object containing details of the
-        replication.
-       :vartype data_protection: ~azure.mgmt.netapp.models.VolumePatchPropertiesDataProtection
-       :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
-       :vartype is_default_quota_enabled: bool
-       :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
-        isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
-       :vartype default_user_quota_in_ki_bs: int
-       :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
-        isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
-       :vartype default_group_quota_in_ki_bs: int
-       :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
-        digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
-        selects permission for the owner of the file: read (4), write (2) and execute (1). Third
-        selects permissions for other users in the same group. the fourth for other users not in the
-        group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-        users.
-       :vartype unix_permissions: str
-       :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
-       :vartype cool_access: bool
-       :ivar coolness_period: Specifies the number of days after which data that is not accessed by
-        clients will be tiered.
-       :vartype coolness_period: int
-       :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
-        behavior from the cool tier to standard storage based on the read pattern for cool access
-        enabled volumes. The possible values for this field are:
-    Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-        is the default.
-    OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-        sequential and random reads.
-    Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
-        "Default", "OnRead", and "Never".
-       :vartype cool_access_retrieval_policy: str or
-        ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
-       :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
-        moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
-        in both the Snapshot copies and the active file system to the cool tier tier. This policy is
-        the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
-        associated with the active file system to the cool tier. Known values are: "Auto" and
-        "SnapshotOnly".
-       :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
-       :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
-        snapshot directory which provides access to each of the volume's snapshots.
-       :vartype snapshot_directory_visible: bool
-       :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
-        Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
-        "Enabled".
-       :vartype smb_access_based_enumeration: str or
-        ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
-       :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
-        SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
-       :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
+    :ivar service_level: The service level of the file system. Known values are: "Standard",
+     "Premium", "Ultra", "StandardZRS", and "Flexible".
+    :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
+    :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
+     quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+     100TiB.
+     For large volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis,
+     from to 2400GiB to 2400TiB.
+     For extra large volumes, valid values are in the range 2400GiB to 7200TiB. Values expressed in
+     bytes as multiples of 1 GiB.
+    :vartype usage_threshold: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
+    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype protocol_types: list[str]
+    :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
+     this will be accepted as input only for manual qosType volume.
+    :vartype throughput_mibps: float
+    :ivar data_protection: DataProtection type volumes include an object containing details of the
+     replication.
+    :vartype data_protection: ~azure.mgmt.netapp.models.VolumePatchPropertiesDataProtection
+    :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
+    :vartype is_default_quota_enabled: bool
+    :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
+    :vartype default_user_quota_in_ki_bs: int
+    :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
+    :vartype default_group_quota_in_ki_bs: int
+    :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
+     digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
+     selects permission for the owner of the file: read (4), write (2) and execute (1). Third
+     selects permissions for other users in the same group. the fourth for other users not in the
+     group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+     users.
+    :vartype unix_permissions: str
+    :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
+    :vartype cool_access: bool
+    :ivar coolness_period: Specifies the number of days after which data that is not accessed by
+     clients will be tiered.
+    :vartype coolness_period: int
+    :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
+     behavior from the cool tier to standard storage based on the read pattern for cool access
+     enabled volumes. The possible values for this field are:
+     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
+     is the default.
+     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
+     sequential and random reads.
+     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
+     "Default", "OnRead", and "Never".
+    :vartype cool_access_retrieval_policy: str or
+     ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
+    :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
+     snapshot directory which provides access to each of the volume's snapshots.
+    :vartype snapshot_directory_visible: bool
+    :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
+     Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
+     "Enabled".
+    :vartype smb_access_based_enumeration: str or
+     ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
+    :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
     """
 
     service_level: Optional[Union[str, "_models.ServiceLevel"]] = rest_field(
@@ -6519,9 +10073,11 @@ class VolumePatchProperties(_Model):
         name="usageThreshold", visibility=["read", "create", "update", "delete", "query"]
     )
     """Maximum storage quota allowed for a file system in bytes. This is a soft quota used for
-     alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large
-     volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis, from to
-     2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB."""
+     alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB.
+     For large volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis,
+     from to 2400GiB to 2400TiB.
+     For extra large volumes, valid values are in the range 2400GiB to 7200TiB. Values expressed in
+     bytes as multiples of 1 GiB."""
     export_policy: Optional["_models.VolumePatchPropertiesExportPolicy"] = rest_field(
         name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6575,11 +10131,11 @@ class VolumePatchProperties(_Model):
     """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
      storage based on the read pattern for cool access enabled volumes. The possible values for this
      field are:
- Default - Data will be pulled from cool tier to standard storage on random reads. This policy
+     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
      is the default.
- OnRead - All client-driven data read is pulled from cool tier to standard storage on both
+     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
      sequential and random reads.
- Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
+     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
      \"Default\", \"OnRead\", and \"Never\"."""
     cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = rest_field(
         name="coolAccessTieringPolicy", visibility=["read", "create", "update", "delete", "query"]
@@ -6646,6 +10202,8 @@ class VolumePatchPropertiesDataProtection(_Model):
     :vartype backup: ~azure.mgmt.netapp.models.VolumeBackupProperties
     :ivar snapshot: Snapshot properties.
     :vartype snapshot: ~azure.mgmt.netapp.models.VolumeSnapshotProperties
+    :ivar ransomware_protection: Advanced Ransomware Protection updatable settings.
+    :vartype ransomware_protection: ~azure.mgmt.netapp.models.RansomwareProtectionPatchSettings
     """
 
     backup: Optional["_models.VolumeBackupProperties"] = rest_field(
@@ -6656,6 +10214,10 @@ class VolumePatchPropertiesDataProtection(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Snapshot properties."""
+    ransomware_protection: Optional["_models.RansomwareProtectionPatchSettings"] = rest_field(
+        name="ransomwareProtection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advanced Ransomware Protection updatable settings."""
 
     @overload
     def __init__(
@@ -6663,6 +10225,7 @@ class VolumePatchPropertiesDataProtection(_Model):
         *,
         backup: Optional["_models.VolumeBackupProperties"] = None,
         snapshot: Optional["_models.VolumeSnapshotProperties"] = None,
+        ransomware_protection: Optional["_models.RansomwareProtectionPatchSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -6709,208 +10272,220 @@ class VolumePatchPropertiesExportPolicy(_Model):
 class VolumeProperties(_Model):
     """Volume properties.
 
-       :ivar file_system_id: Unique FileSystem Identifier.
-       :vartype file_system_id: str
-       :ivar creation_token: A unique file path for the volume. Used when creating mount targets.
-        Required.
-       :vartype creation_token: str
-       :ivar service_level: The service level of the file system. Known values are: "Standard",
-        "Premium", "Ultra", "StandardZRS", and "Flexible".
-       :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
-       :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
-        quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-        100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
-        exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
-        Required.
-       :vartype usage_threshold: int
-       :ivar export_policy: Set of export policy rules.
-       :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
-       :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
-       :vartype protocol_types: list[str]
-       :ivar provisioning_state: Azure lifecycle management.
-       :vartype provisioning_state: str
-       :ivar snapshot_id: Resource identifier used to identify the Snapshot.
-       :vartype snapshot_id: str
-       :ivar delete_base_snapshot: If enabled (true) the snapshot the volume was created from will be
-        automatically deleted after the volume create operation has finished.  Defaults to false.
-       :vartype delete_base_snapshot: bool
-       :ivar backup_id: Resource identifier used to identify the Backup.
-       :vartype backup_id: str
-       :ivar baremetal_tenant_id: Unique Baremetal Tenant Identifier.
-       :vartype baremetal_tenant_id: str
-       :ivar subnet_id: The Azure Resource URI for a delegated subnet. Must have the delegation
-        Microsoft.NetApp/volumes. Required.
-       :vartype subnet_id: str
-       :ivar network_features: The original value of the network features type available to the volume
-        at the time it was created. Known values are: "Basic", "Standard", "Basic_Standard", and
-        "Standard_Basic".
-       :vartype network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
-       :ivar effective_network_features: The effective value of the network features type available to
-        the volume, or current effective state of update. Known values are: "Basic", "Standard",
-        "Basic_Standard", and "Standard_Basic".
-       :vartype effective_network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
-       :ivar network_sibling_set_id: Network Sibling Set ID for the the group of volumes sharing
-        networking resources.
-       :vartype network_sibling_set_id: str
-       :ivar storage_to_network_proximity: Provides storage to network proximity information for the
-        volume. Known values are: "Default", "T1", "T2", and "AcrossT2".
-       :vartype storage_to_network_proximity: str or
-        ~azure.mgmt.netapp.models.VolumeStorageToNetworkProximity
-       :ivar mount_targets: List of mount targets.
-       :vartype mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
-       :ivar volume_type: What type of volume is this. For destination volumes in Cross Region
-        Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
-       :vartype volume_type: str
-       :ivar data_protection: DataProtection type volumes include an object containing details of the
-        replication.
-       :vartype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
-       :ivar accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short term
-        clone volume, if the parent pool does not have enough space to accommodate the volume after
-        split, it will be automatically resized, which will lead to increased billing. To accept
-        capacity pool size auto grow and create a short term clone volume, set the property as
-        accepted. Known values are: "Accepted" and "Declined".
-       :vartype accept_grow_capacity_pool_for_short_term_clone_split: str or
-        ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
-       :ivar is_restoring: Restoring.
-       :vartype is_restoring: bool
-       :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
-        snapshot directory which provides access to each of the volume's snapshots (defaults to true).
-       :vartype snapshot_directory_visible: bool
-       :ivar kerberos_enabled: Describe if a volume is KerberosEnabled. To be use with swagger version
-        2020-05-01 or later.
-       :vartype kerberos_enabled: bool
-       :ivar security_style: The security style of volume, default unix, defaults to ntfs for dual
-        protocol or CIFS protocol. Known values are: "ntfs" and "unix".
-       :vartype security_style: str or ~azure.mgmt.netapp.models.SecurityStyle
-       :ivar smb_encryption: Enables encryption for in-flight smb3 data. Only applicable for
-        SMB/DualProtocol volume. To be used with swagger version 2020-08-01 or later.
-       :vartype smb_encryption: bool
-       :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
-        Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
-        "Enabled".
-       :vartype smb_access_based_enumeration: str or
-        ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
-       :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
-        SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
-       :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
-       :ivar smb_continuously_available: Enables continuously available share property for smb volume.
-        Only applicable for SMB volume.
-       :vartype smb_continuously_available: bool
-       :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
-        this will be accepted as input only for manual qosType volume.
-       :vartype throughput_mibps: float
-       :ivar actual_throughput_mibps: Actual throughput in MiB/s for auto qosType volumes calculated
-        based on size and serviceLevel.
-       :vartype actual_throughput_mibps: float
-       :ivar encryption_key_source: Source of key used to encrypt data in volume. Applicable if NetApp
-        account has encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive)
-        are: 'Microsoft.NetApp, Microsoft.KeyVault'. Known values are: "Microsoft.NetApp" and
-        "Microsoft.KeyVault".
-       :vartype encryption_key_source: str or ~azure.mgmt.netapp.models.EncryptionKeySource
-       :ivar key_vault_private_endpoint_resource_id: The resource ID of private endpoint for KeyVault.
-        It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
-        'Microsoft.KeyVault'.
-       :vartype key_vault_private_endpoint_resource_id: str
-       :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
-       :vartype ldap_enabled: bool
-       :ivar ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known values
-        are: "ActiveDirectory" and "OpenLDAP".
-       :vartype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
-       :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
-       :vartype cool_access: bool
-       :ivar coolness_period: Specifies the number of days after which data that is not accessed by
-        clients will be tiered.
-       :vartype coolness_period: int
-       :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
-        behavior from the cool tier to standard storage based on the read pattern for cool access
-        enabled volumes. The possible values for this field are:
-    Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-        is the default.
-    OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-        sequential and random reads.
-    Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
-        "Default", "OnRead", and "Never".
-       :vartype cool_access_retrieval_policy: str or
-        ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
-       :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
-        moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
-        in both the Snapshot copies and the active file system to the cool tier tier. This policy is
-        the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
-        associated with the active file system to the cool tier. Known values are: "Auto" and
-        "SnapshotOnly".
-       :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
-       :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
-        digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
-        selects permission for the owner of the file: read (4), write (2) and execute (1). Third
-        selects permissions for other users in the same group. the fourth for other users not in the
-        group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-        users.
-       :vartype unix_permissions: str
-       :ivar clone_progress: When a volume is being restored from another volume's snapshot, will show
-        the percentage completion of this cloning process. When this value is empty/null there is no
-        cloning process currently happening on this volume. This value will update every 5 minutes
-        during cloning.
-       :vartype clone_progress: int
-       :ivar file_access_logs: Flag indicating whether file access logs are enabled for the volume,
-        based on active diagnostic settings present on the volume. Known values are: "Enabled" and
-        "Disabled".
-       :vartype file_access_logs: str or ~azure.mgmt.netapp.models.FileAccessLogs
-       :ivar avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution (AVS)
-        datastore purpose. Known values are: "Enabled" and "Disabled".
-       :vartype avs_data_store: str or ~azure.mgmt.netapp.models.AvsDataStore
-       :ivar data_store_resource_id: Data store resource unique identifier.
-       :vartype data_store_resource_id: list[str]
-       :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
-       :vartype is_default_quota_enabled: bool
-       :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
-        isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
-       :vartype default_user_quota_in_ki_bs: int
-       :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
-        isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
-       :vartype default_group_quota_in_ki_bs: int
-       :ivar maximum_number_of_files: Maximum number of files allowed. Needs a service request in
-        order to be changed. Only allowed to be changed if volume quota is more than 4TiB.
-       :vartype maximum_number_of_files: int
-       :ivar volume_group_name: Volume Group Name.
-       :vartype volume_group_name: str
-       :ivar capacity_pool_resource_id: Pool Resource Id used in case of creating a volume through
-        volume group.
-       :vartype capacity_pool_resource_id: str
-       :ivar proximity_placement_group: Proximity placement group associated with the volume.
-       :vartype proximity_placement_group: str
-       :ivar t2_network: T2 network information.
-       :vartype t2_network: str
-       :ivar volume_spec_name: Volume spec name is the application specific designation or identifier
-        for the particular volume in a volume group for e.g. data, log.
-       :vartype volume_spec_name: str
-       :ivar encrypted: Specifies if the volume is encrypted or not. Only available on volumes created
-        or updated after 2022-01-01.
-       :vartype encrypted: bool
-       :ivar placement_rules: Application specific placement rules for the particular volume.
-       :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
-       :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
-        volume. Known values are: "Enabled" and "Disabled".
-       :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
-       :ivar provisioned_availability_zone: The availability zone where the volume is provisioned.
-        This refers to the logical availability zone where the volume resides.
-       :vartype provisioned_availability_zone: str
-       :ivar is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
-       :vartype is_large_volume: bool
-       :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
-       :vartype originating_resource_id: str
-       :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
-        bytes.
-       :vartype inherited_size_in_bytes: int
-       :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-        "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-        "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-        "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-        "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-        "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-        "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-        "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-        "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-       :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
+    :ivar file_system_id: Unique FileSystem Identifier.
+    :vartype file_system_id: str
+    :ivar creation_token: A unique file path for the volume. Used when creating mount targets.
+     Required.
+    :vartype creation_token: str
+    :ivar service_level: The service level of the file system. Known values are: "Standard",
+     "Premium", "Ultra", "StandardZRS", and "Flexible".
+    :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
+    :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
+     quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+     100TiB.
+     For large volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis,
+     from to 2400GiB to 2400TiB.
+     For extra large volumes, valid values are in the range 2400GiB to 7200TiB. Values expressed in
+     bytes as multiples of 1 GiB. Required.
+    :vartype usage_threshold: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
+    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype protocol_types: list[str]
+    :ivar provisioning_state: Azure lifecycle management.
+    :vartype provisioning_state: str
+    :ivar snapshot_id: Resource identifier used to identify the Snapshot.
+    :vartype snapshot_id: str
+    :ivar delete_base_snapshot: If enabled (true) the snapshot the volume was created from will be
+     automatically deleted after the volume create operation has finished.  Defaults to false.
+    :vartype delete_base_snapshot: bool
+    :ivar backup_id: Resource identifier used to identify the Backup.
+    :vartype backup_id: str
+    :ivar baremetal_tenant_id: Unique Baremetal Tenant Identifier.
+    :vartype baremetal_tenant_id: str
+    :ivar subnet_id: The Azure Resource URI for a delegated subnet. Must have the delegation
+     Microsoft.NetApp/volumes. Required.
+    :vartype subnet_id: str
+    :ivar network_features: The original value of the network features type available to the volume
+     at the time it was created. Known values are: "Basic", "Standard", "Basic_Standard", and
+     "Standard_Basic".
+    :vartype network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
+    :ivar effective_network_features: The effective value of the network features type available to
+     the volume, or current effective state of update. Known values are: "Basic", "Standard",
+     "Basic_Standard", and "Standard_Basic".
+    :vartype effective_network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
+    :ivar network_sibling_set_id: Network Sibling Set ID for the the group of volumes sharing
+     networking resources.
+    :vartype network_sibling_set_id: str
+    :ivar storage_to_network_proximity: Provides storage to network proximity information for the
+     volume. Known values are: "Default", "T1", "T2", and "AcrossT2".
+    :vartype storage_to_network_proximity: str or
+     ~azure.mgmt.netapp.models.VolumeStorageToNetworkProximity
+    :ivar mount_targets: List of mount targets.
+    :vartype mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
+    :ivar volume_type: What type of volume is this. For destination volumes in Cross Region
+     Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+    :vartype volume_type: str
+    :ivar data_protection: DataProtection type volumes include an object containing details of the
+     replication.
+    :vartype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
+    :ivar accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short term
+     clone volume, if the parent pool does not have enough space to accommodate the volume after
+     split, it will be automatically resized, which will lead to increased billing. To accept
+     capacity pool size auto grow and create a short term clone volume, set the property as
+     accepted. Known values are: "Accepted" and "Declined".
+    :vartype accept_grow_capacity_pool_for_short_term_clone_split: str or
+     ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
+    :ivar is_restoring: Restoring.
+    :vartype is_restoring: bool
+    :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
+     snapshot directory which provides access to each of the volume's snapshots (defaults to true).
+    :vartype snapshot_directory_visible: bool
+    :ivar kerberos_enabled: Describe if a volume is KerberosEnabled. To be use with swagger version
+     2020-05-01 or later.
+    :vartype kerberos_enabled: bool
+    :ivar security_style: The security style of volume, default unix, defaults to ntfs for dual
+     protocol or CIFS protocol. Known values are: "ntfs" and "unix".
+    :vartype security_style: str or ~azure.mgmt.netapp.models.SecurityStyle
+    :ivar smb_encryption: Enables encryption for in-flight smb3 data. Only applicable for
+     SMB/DualProtocol volume. To be used with swagger version 2020-08-01 or later.
+    :vartype smb_encryption: bool
+    :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
+     Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
+     "Enabled".
+    :vartype smb_access_based_enumeration: str or
+     ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
+    :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
+    :ivar smb_continuously_available: Enables continuously available share property for smb volume.
+     Only applicable for SMB volume.
+    :vartype smb_continuously_available: bool
+    :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
+     this will be accepted as input only for manual qosType volume.
+    :vartype throughput_mibps: float
+    :ivar actual_throughput_mibps: Actual throughput in MiB/s for auto qosType volumes calculated
+     based on size and serviceLevel.
+    :vartype actual_throughput_mibps: float
+    :ivar encryption_key_source: Source of key used to encrypt data in volume. Applicable if NetApp
+     account has encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive)
+     are: 'Microsoft.NetApp, Microsoft.KeyVault'. Known values are: "Microsoft.NetApp" and
+     "Microsoft.KeyVault".
+    :vartype encryption_key_source: str or ~azure.mgmt.netapp.models.EncryptionKeySource
+    :ivar key_vault_private_endpoint_resource_id: The resource ID of private endpoint for KeyVault.
+     It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
+     'Microsoft.KeyVault'.
+    :vartype key_vault_private_endpoint_resource_id: str
+    :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
+    :vartype ldap_enabled: bool
+    :ivar ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known values
+     are: "ActiveDirectory" and "OpenLDAP".
+    :vartype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
+    :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
+    :vartype cool_access: bool
+    :ivar coolness_period: Specifies the number of days after which data that is not accessed by
+     clients will be tiered.
+    :vartype coolness_period: int
+    :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
+     behavior from the cool tier to standard storage based on the read pattern for cool access
+     enabled volumes. The possible values for this field are:
+     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
+     is the default.
+     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
+     sequential and random reads.
+     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
+     "Default", "OnRead", and "Never".
+    :vartype cool_access_retrieval_policy: str or
+     ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
+    :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
+     digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
+     selects permission for the owner of the file: read (4), write (2) and execute (1). Third
+     selects permissions for other users in the same group. the fourth for other users not in the
+     group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+     users.
+    :vartype unix_permissions: str
+    :ivar clone_progress: When a volume is being restored from another volume's snapshot, will show
+     the percentage completion of this cloning process. When this value is empty/null there is no
+     cloning process currently happening on this volume. This value will update every 5 minutes
+     during cloning.
+    :vartype clone_progress: int
+    :ivar file_access_logs: Flag indicating whether file access logs are enabled for the volume,
+     based on active diagnostic settings present on the volume. Known values are: "Enabled" and
+     "Disabled".
+    :vartype file_access_logs: str or ~azure.mgmt.netapp.models.FileAccessLogs
+    :ivar avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution (AVS)
+     datastore purpose. Known values are: "Enabled" and "Disabled".
+    :vartype avs_data_store: str or ~azure.mgmt.netapp.models.AvsDataStore
+    :ivar data_store_resource_id: Data store resource unique identifier.
+    :vartype data_store_resource_id: list[str]
+    :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
+    :vartype is_default_quota_enabled: bool
+    :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
+    :vartype default_user_quota_in_ki_bs: int
+    :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
+    :vartype default_group_quota_in_ki_bs: int
+    :ivar maximum_number_of_files: Maximum number of files allowed. Needs a service request in
+     order to be changed. Only allowed to be changed if volume quota is more than 4TiB.
+    :vartype maximum_number_of_files: int
+    :ivar volume_group_name: Volume Group Name.
+    :vartype volume_group_name: str
+    :ivar capacity_pool_resource_id: Pool Resource Id used in case of creating a volume through
+     volume group.
+    :vartype capacity_pool_resource_id: str
+    :ivar proximity_placement_group: Proximity placement group associated with the volume.
+    :vartype proximity_placement_group: str
+    :ivar t2_network: T2 network information.
+    :vartype t2_network: str
+    :ivar volume_spec_name: Volume spec name is the application specific designation or identifier
+     for the particular volume in a volume group for e.g. data, log.
+    :vartype volume_spec_name: str
+    :ivar encrypted: Specifies if the volume is encrypted or not. Only available on volumes created
+     or updated after 2022-01-01.
+    :vartype encrypted: bool
+    :ivar placement_rules: Application specific placement rules for the particular volume.
+    :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+     volume. Known values are: "Enabled" and "Disabled".
+    :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
+    :ivar provisioned_availability_zone: The availability zone where the volume is provisioned.
+     This refers to the logical availability zone where the volume resides.
+    :vartype provisioned_availability_zone: str
+    :ivar is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
+    :vartype is_large_volume: bool
+    :ivar large_volume_type: Specifies the type of the Large Volume. When set to 'LargeVolume', the
+     large volume is created with standard configuration.
+     If it is set to 'ExtraLargeVolume7Dot2PiB', the extra large volume is created with higher
+     capacity limit 7.2PiB with cool access enabled,
+     delivering higher capacity limit with lower costs. Known values are: "LargeVolume" and
+     "PremExtraLargeVolume7Dot2PiB".
+    :vartype large_volume_type: str or ~azure.mgmt.netapp.models.LargeVolumeType
+    :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
+    :vartype originating_resource_id: str
+    :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
+     bytes.
+    :vartype inherited_size_in_bytes: int
+    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
+     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
+     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
+     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
+     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
+     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
+     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
+     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
+     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
+    :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
+    :ivar breakthrough_mode: Specifies whether the volume operates in Breakthrough Mode. Known
+     values are: "Enabled" and "Disabled".
+    :vartype breakthrough_mode: str or ~azure.mgmt.netapp.models.BreakthroughMode
     """
 
     file_system_id: Optional[str] = rest_field(name="fileSystemId", visibility=["read"])
@@ -6924,9 +10499,11 @@ class VolumeProperties(_Model):
      \"StandardZRS\", and \"Flexible\"."""
     usage_threshold: int = rest_field(name="usageThreshold", visibility=["read", "create", "update", "delete", "query"])
     """Maximum storage quota allowed for a file system in bytes. This is a soft quota used for
-     alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large
-     volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis, from to
-     2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB. Required."""
+     alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB.
+     For large volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis,
+     from to 2400GiB to 2400TiB.
+     For extra large volumes, valid values are in the range 2400GiB to 7200TiB. Values expressed in
+     bytes as multiples of 1 GiB. Required."""
     export_policy: Optional["_models.VolumePropertiesExportPolicy"] = rest_field(
         name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7060,11 +10637,11 @@ class VolumeProperties(_Model):
     """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
      storage based on the read pattern for cool access enabled volumes. The possible values for this
      field are:
- Default - Data will be pulled from cool tier to standard storage on random reads. This policy
+     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
      is the default.
- OnRead - All client-driven data read is pulled from cool tier to standard storage on both
+     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
      sequential and random reads.
- Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
+     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
      \"Default\", \"OnRead\", and \"Never\"."""
     cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = rest_field(
         name="coolAccessTieringPolicy", visibility=["read", "create", "update", "delete", "query"]
@@ -7149,6 +10726,15 @@ class VolumeProperties(_Model):
      zone where the volume resides."""
     is_large_volume: Optional[bool] = rest_field(name="isLargeVolume", visibility=["read", "create"])
     """Specifies whether volume is a Large Volume or Regular Volume."""
+    large_volume_type: Optional[Union[str, "_models.LargeVolumeType"]] = rest_field(
+        name="largeVolumeType", visibility=["read", "create"]
+    )
+    """Specifies the type of the Large Volume. When set to 'LargeVolume', the large volume is created
+     with standard configuration.
+     If it is set to 'ExtraLargeVolume7Dot2PiB', the extra large volume is created with higher
+     capacity limit 7.2PiB with cool access enabled,
+     delivering higher capacity limit with lower costs. Known values are: \"LargeVolume\" and
+     \"PremExtraLargeVolume7Dot2PiB\"."""
     originating_resource_id: Optional[str] = rest_field(name="originatingResourceId", visibility=["read"])
     """Id of the snapshot or backup that the volume is restored from."""
     inherited_size_in_bytes: Optional[int] = rest_field(name="inheritedSizeInBytes", visibility=["read"])
@@ -7167,6 +10753,11 @@ class VolumeProperties(_Model):
      \"zh-tw.big5.utf-8\", \"zh-tw\", \"zh-tw.utf-8\", \"sk\", \"sk.utf-8\", \"sl\", \"sl.utf-8\",
      \"es\", \"es.utf-8\", \"sv\", \"sv.utf-8\", \"tr\", \"tr.utf-8\", \"en-us\", and
      \"en-us.utf-8\"."""
+    breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = rest_field(
+        name="breakthroughMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
+     \"Disabled\"."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -7214,7 +10805,9 @@ class VolumeProperties(_Model):
         placement_rules: Optional[list["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Optional[Union[str, "_models.EnableSubvolumes"]] = None,
         is_large_volume: Optional[bool] = None,
+        large_volume_type: Optional[Union[str, "_models.LargeVolumeType"]] = None,
         language: Optional[Union[str, "_models.VolumeLanguage"]] = None,
+        breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -7239,6 +10832,8 @@ class VolumePropertiesDataProtection(_Model):
     :vartype snapshot: ~azure.mgmt.netapp.models.VolumeSnapshotProperties
     :ivar volume_relocation: VolumeRelocation properties.
     :vartype volume_relocation: ~azure.mgmt.netapp.models.VolumeRelocationProperties
+    :ivar ransomware_protection: Advanced Ransomware Protection settings.
+    :vartype ransomware_protection: ~azure.mgmt.netapp.models.RansomwareProtectionSettings
     """
 
     backup: Optional["_models.VolumeBackupProperties"] = rest_field(
@@ -7257,6 +10852,10 @@ class VolumePropertiesDataProtection(_Model):
         name="volumeRelocation", visibility=["read", "create", "update", "delete", "query"]
     )
     """VolumeRelocation properties."""
+    ransomware_protection: Optional["_models.RansomwareProtectionSettings"] = rest_field(
+        name="ransomwareProtection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advanced Ransomware Protection settings."""
 
     @overload
     def __init__(
@@ -7266,6 +10865,7 @@ class VolumePropertiesDataProtection(_Model):
         replication: Optional["_models.ReplicationObject"] = None,
         snapshot: Optional["_models.VolumeSnapshotProperties"] = None,
         volume_relocation: Optional["_models.VolumeRelocationProperties"] = None,
+        ransomware_protection: Optional["_models.RansomwareProtectionSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -7435,8 +11035,8 @@ class VolumeQuotaRulesProperties(_Model):
     """Volume Quota Rule properties.
 
     :ivar provisioning_state: Gets the status of the VolumeQuotaRule at the time the operation was
-     called. Known values are: "Accepted", "Creating", "Patching", "Deleting", "Moving", "Failed",
-     and "Succeeded".
+     called. Known values are: "Accepted", "Creating", "Patching", "Updating", "Deleting", "Moving",
+     "Failed", and "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
     :ivar quota_size_in_ki_bs: Size of quota.
     :vartype quota_size_in_ki_bs: int
@@ -7453,8 +11053,8 @@ class VolumeQuotaRulesProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Gets the status of the VolumeQuotaRule at the time the operation was called. Known values are:
-     \"Accepted\", \"Creating\", \"Patching\", \"Deleting\", \"Moving\", \"Failed\", and
-     \"Succeeded\"."""
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", \"Moving\", \"Failed\",
+     and \"Succeeded\"."""
     quota_size_in_ki_bs: Optional[int] = rest_field(
         name="quotaSizeInKiBs", visibility=["read", "create", "update", "delete", "query"]
     )

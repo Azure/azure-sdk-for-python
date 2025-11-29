@@ -14,14 +14,14 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry project.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. Your model deployment name.
     3) MODEL_ENDPOINT - Required. The Azure AI Model endpoint, as found in the overview page of your
-       Azure AI Foundry project. Example: https://<account_name>.services.ai.azure.com
+       Microsoft Foundry project. Example: https://<account_name>.services.ai.azure.com
     4) MODEL_API_KEY - Required. The API key for your Azure AI Model.
 """
 import os
@@ -44,10 +44,10 @@ model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>
 model_api_key = os.environ["MODEL_API_KEY"]
 model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 
-with AIProjectClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-) as project_client:
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+):
 
     # [START red_team_sample]
     print("Creating a Red Team scan for direct model testing")
