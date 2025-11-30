@@ -4,7 +4,9 @@ languages:
   - python
 products:
   - azure
-urlFragment: azure-ai-contentunderstanding-samples
+  - azure-cognitive-services
+  - azure-content-understanding
+urlFragment: contentunderstanding-samples
 ---
 
 # Azure AI Content Understanding client library for Python Samples
@@ -33,7 +35,7 @@ source .venv/bin/activate  # On Linux/macOS
 # .venv\Scripts\activate  # On Windows
 
 # 3. Install SDK and all dependencies
-pip install -e .
+pip install azure-ai-contentunderstanding
 pip install -r dev_requirements.txt  # Includes aiohttp, pytest, python-dotenv, azure-identity
 
 # 4. Set up environment variables
