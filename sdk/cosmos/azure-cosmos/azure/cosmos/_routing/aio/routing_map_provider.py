@@ -43,14 +43,14 @@ class PartitionKeyRangeCache(object):
     collection on demand.
     """
 
-    PAGE_SIZE_CHANGE_FEED = "-1"  # Return all available changes
+    page_size_change_feed = "-1"  # Return all available changes
 
     def __init__(self, client: "CosmosClientConnection"):
         """
         Constructor
         """
 
-        self._documentClient = client
+        self._document_client = client
 
         # keeps the cached collection routing map by collection id
         self._collection_routing_map_by_item: Dict[str, CollectionRoutingMap] = {}
@@ -80,7 +80,6 @@ class PartitionKeyRangeCache(object):
         :param str collection_link: The link to the collection.
         :param list partition_key_ranges: A list of sorted, non-overlapping ranges to find overlaps for.
         :param Optional[Dict[str, Any]] feed_options: Optional query options used when fetching the routing map.
-        :keyword Any kwargs: Additional keyword arguments.
         :return: A list of overlapping partition key ranges from the collection.
         :rtype: list
         :raises RuntimeError: If the routing map for the collection is not found.
@@ -96,7 +95,7 @@ class PartitionKeyRangeCache(object):
         ranges = routing_map.get_overlapping_ranges(partition_key_ranges)
         return ranges
 
-    # pylint: disable=invalid-name
+    # pylint: name-over-length
     async def get_or_refresh_routing_map_for_collection(
             self,
             collection_link: str,
@@ -114,8 +113,8 @@ class PartitionKeyRangeCache(object):
         :param str collection_link: The link to the collection.
         :param Optional[Dict[str, Any]] feed_options: Optional query options.
         :param bool force_refresh: If True, forces a refresh of the routing map.
-        :param Optional[CollectionRoutingMap] previous_routing_map: The last known routing map, used for incremental updates.
-        :param Any kwargs: Additional keyword arguments.
+        :param Optional[CollectionRoutingMap] previous_routing_map: The last known routing map,
+            used for incremental updates.
         :return: The updated or cached CollectionRoutingMap, or None if it couldn't be retrieved.
         :rtype: Optional[CollectionRoutingMap]
         """
@@ -221,7 +220,6 @@ class PartitionKeyRangeCache(object):
         :param previous_routing_map: The last known routing map for incremental updates.
         :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         :param feed_options: Optional query options.
-        :param kwargs: Additional keyword arguments for the request.
         :return: The updated or newly created CollectionRoutingMap, or None if the update fails.
         :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         :raises CosmosHttpResponseError: If the underlying request to fetch ranges fails.
@@ -233,7 +231,7 @@ class PartitionKeyRangeCache(object):
             """Hook to capture response headers.
 
             :param Dict[str, Any] headers: The response headers to capture.
-            :param _: Unused response parameter (typically the response body or item).
+            :param Any _: Unused response parameter (typically the response body or item).
             """
             nonlocal response_headers
             response_headers = headers
@@ -243,7 +241,7 @@ class PartitionKeyRangeCache(object):
 
         # Prepare headers for change feed
         headers = kwargs.get('headers', {}).copy()
-        headers[http_constants.HttpHeaders.PageSize] = self.PAGE_SIZE_CHANGE_FEED
+        headers[http_constants.HttpHeaders.PageSize] = self.page_size_change_feed
         headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
         if previous_routing_map and previous_routing_map.change_feed_next_if_none_match:
@@ -251,7 +249,7 @@ class PartitionKeyRangeCache(object):
 
         kwargs['headers'] = headers
 
-        pk_range_generator = self._documentClient._ReadPartitionKeyRanges(
+        pk_range_generator = self._document_client._ReadPartitionKeyRanges(
             collection_link,
             change_feed_options,
             response_hook=capture_response_hook,
@@ -353,6 +351,8 @@ class PartitionKeyRangeCache(object):
         routing_map = await self.get_or_refresh_routing_map_for_collection(
             collection_link,
             feed_options,
+            force_refresh=False,
+            previous_routing_map=None,
             **kwargs
         )
         if not routing_map:

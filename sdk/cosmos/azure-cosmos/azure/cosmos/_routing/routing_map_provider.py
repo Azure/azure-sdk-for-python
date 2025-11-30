@@ -45,14 +45,14 @@ class PartitionKeyRangeCache(object):
     This implementation loads and caches the collection routing map per
     collection on demand.
     """
-    PAGE_SIZE_CHANGE_FEED = "-1"  # Return all available changes
+    page_size_change_feed = "-1"  # Return all available changes
 
     def __init__(self, client: "CosmosClientConnection"):
         """
         Constructor
         """
 
-        self._documentClient = client
+        self._document_client = client
 
         # keeps the cached collection routing map by collection id
         self._collection_routing_map_by_item: Dict[str, CollectionRoutingMap] = {}
@@ -80,7 +80,7 @@ class PartitionKeyRangeCache(object):
                 self._collection_locks[collection_id] = threading.Lock()
             return self._collection_locks[collection_id]
 
-    # pylint: disable=invalid-name
+    # pylint: name-over-length
     def get_or_refresh_routing_map_for_collection(
             self,
             collection_link: str,
@@ -101,8 +101,6 @@ class PartitionKeyRangeCache(object):
         :param bool force_refresh: If True, forces a refresh of the routing map.
         :param previous_routing_map: An optional previously known routing map, used to check for staleness.
         :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
-        :keyword Any kwargs: Additional keyword arguments for the underlying requests
-        :type kwargs: Any
         :return: The cached CollectionRoutingMap for the collection, or None if retrieval fails.
         :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         """
@@ -170,6 +168,7 @@ class PartitionKeyRangeCache(object):
         return (previous_routing_map.change_feed_next_if_none_match ==
                 current_map.change_feed_next_if_none_match)
 
+    # pylint: disable=too-many-statements
     def _get_routing_map_with_change_feed(
             self,
             collection_link: str,
@@ -194,7 +193,6 @@ class PartitionKeyRangeCache(object):
         :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
         :param feed_options: Options for the change feed request.
         :type feed_options: dict or None
-        :keyword Any kwargs: Additional keyword arguments for the underlying client request.
         :return: The new or updated CollectionRoutingMap, or None if an update fails and fallback is triggered.
         :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         """
@@ -206,6 +204,7 @@ class PartitionKeyRangeCache(object):
 
             :param dict headers: The response headers to capture.
             :param _: Unused parameter (response body).
+            :type _: Any
             """
             nonlocal response_headers
             response_headers = headers
@@ -215,7 +214,7 @@ class PartitionKeyRangeCache(object):
 
         # Prepare headers for change feed
         headers = kwargs.get('headers', {}).copy()
-        headers[http_constants.HttpHeaders.PageSize] = self.PAGE_SIZE_CHANGE_FEED
+        headers[http_constants.HttpHeaders.PageSize] = self.page_size_change_feed
         headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
         if previous_routing_map and previous_routing_map.change_feed_next_if_none_match:
@@ -224,7 +223,7 @@ class PartitionKeyRangeCache(object):
         kwargs['headers'] = headers
 
         try:
-            pk_range_generator = self._documentClient._ReadPartitionKeyRanges(
+            pk_range_generator = self._document_client._ReadPartitionKeyRanges(
                 collection_link,
                 change_feed_options,
                 response_hook=capture_response_hook,
@@ -313,7 +312,8 @@ class PartitionKeyRangeCache(object):
         :param str collection_link: The link to the collection.
         :param list partition_key_ranges: List of partition key ranges to check for overlaps.
         :param dict feed_options: Options for the feed request.
-        :keyword Any kwargs: Additional keyword arguments for the underlying client request.
+        :param kwargs: Additional keyword arguments for the underlying client request.
+        :type kwargs: Any
         :return: List of overlapping partition key ranges.
         :rtype: list
         """
@@ -337,6 +337,8 @@ class PartitionKeyRangeCache(object):
         routing_map = self.get_or_refresh_routing_map_for_collection(
             collection_link,
             feed_options,
+            force_refresh=False,
+            previous_routing_map=None,
             **kwargs
         )
         if not routing_map:

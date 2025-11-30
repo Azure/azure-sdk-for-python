@@ -1944,7 +1944,7 @@ class ContainerProxy:
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
     @distributed_trace
-    def read_feed_ranges(
+    async def read_feed_ranges(
             self,
             *,
             force_refresh: bool = False,
@@ -1963,7 +1963,7 @@ class ContainerProxy:
 
         """
         if force_refresh is True:
-            self.client_connection.refresh_routing_map_provider()
+            await self.client_connection.refresh_routing_map_provider()
 
         async def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
             partition_key_ranges = \
