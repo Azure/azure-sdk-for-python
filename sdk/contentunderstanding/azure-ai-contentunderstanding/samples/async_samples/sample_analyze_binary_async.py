@@ -52,7 +52,7 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_document_from_binary]
-        file_path = "../sample_files/sample_invoice.pdf"
+        file_path = "sample_files/sample_invoice.pdf"
 
         with open(file_path, "rb") as f:
             pdf_bytes = f.read()

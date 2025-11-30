@@ -58,7 +58,7 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_with_configs]
-        file_path = "../sample_files/sample_document_features.pdf"
+        file_path = "sample_files/sample_document_features.pdf"
 
         with open(file_path, "rb") as f:
             pdf_bytes = f.read()

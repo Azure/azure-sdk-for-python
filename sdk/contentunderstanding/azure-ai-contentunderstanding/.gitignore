@@ -24,3 +24,4 @@ htmlcov/
 # Environment variables
 .env
 
+.local_only/

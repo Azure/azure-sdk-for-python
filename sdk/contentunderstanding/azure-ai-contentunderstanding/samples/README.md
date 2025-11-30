@@ -46,8 +46,11 @@ cp ../env.sample .env
 # 5. Configure model deployments (required for prebuilt analyzers)
 python sample_configure_defaults.py
 
-# 6. Run a sample
+# 6. Run a sync sample
 python sample_analyze_url.py
+
+# Or run an async sample
+python ../async_samples/sample_analyze_url_async.py
 ```
 
 ### Detailed Setup Instructions
@@ -125,13 +128,61 @@ az login
 
 **Important:** Always run samples from the activated virtual environment!
 
+### Running Sync Samples
+
+Sync samples are in the `samples/` directory. Run them from the package directory:
+
 ```bash
 # Make sure virtual environment is activated
 source .venv/bin/activate
 
-# Run a sample
+# From the package directory, run sync samples
 python samples/sample_analyze_url.py
+python samples/sample_analyze_binary.py
 ```
+
+Or navigate to the samples directory first:
+
+```bash
+# Make sure virtual environment is activated
+source .venv/bin/activate
+
+# Navigate to samples directory
+cd samples
+
+# Run sync samples
+python sample_analyze_url.py
+python sample_analyze_binary.py
+```
+
+### Running Async Samples
+
+Async samples are in the `samples/async_samples/` directory. Run them from the package directory:
+
+```bash
+# Make sure virtual environment is activated
+source .venv/bin/activate
+
+# From the package directory, run async samples
+python samples/async_samples/sample_analyze_url_async.py
+python samples/async_samples/sample_analyze_binary_async.py
+```
+
+Or navigate to the async_samples directory:
+
+```bash
+# Make sure virtual environment is activated
+source .venv/bin/activate
+
+# Navigate to async_samples directory
+cd samples/async_samples
+
+# Run async samples
+python sample_analyze_url_async.py
+python sample_analyze_binary_async.py
+```
+
+**Note:** When running samples that use local files (like `sample_analyze_binary.py`), make sure you run them from the `samples/` directory (or use the full path) so that relative paths like `sample_files/sample_invoice.pdf` resolve correctly.
 
 ## Sample Files
 
@@ -406,6 +457,21 @@ python sample_configure_defaults.py
 ```
 
 This configures the required GPT-4.1, GPT-4.1-mini, and text-embedding-3-large model deployments that prebuilt analyzers depend on.
+
+### "FileNotFoundError" when running samples with local files
+
+**Solution:** Make sure you run samples that use local files from the `samples/` directory:
+```bash
+source .venv/bin/activate
+cd samples
+python sample_analyze_binary.py  # This will find sample_files/sample_invoice.pdf
+```
+
+If running from the package directory, use the full path:
+```bash
+source .venv/bin/activate
+python samples/sample_analyze_binary.py  # Make sure you're in the package directory
+```
 
 ## Next Steps
 

@@ -105,7 +105,7 @@ async def main() -> None:
         # [END create_classifier]
 
         # [START analyze_with_classifier]
-        file_path = "../sample_files/mixed_financial_docs.pdf"
+        file_path = "sample_files/mixed_financial_docs.pdf"
 
         with open(file_path, "rb") as f:
             file_bytes = f.read()

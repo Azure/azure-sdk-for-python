@@ -59,7 +59,7 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_return_raw_json]
-        file_path = "../sample_files/sample_invoice.pdf"
+        file_path = "sample_files/sample_invoice.pdf"
 
         with open(file_path, "rb") as f:
             file_bytes = f.read()

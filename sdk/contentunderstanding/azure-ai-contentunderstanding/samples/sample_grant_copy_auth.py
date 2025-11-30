@@ -154,26 +154,30 @@ def main() -> None:
         poller.result()
         print(f"  Source analyzer created successfully!")
 
-        # Step 2: Grant copy authorization from target
-        print(f"\nStep 2: Granting copy authorization from target resource...")
+        # Step 2: Grant copy authorization from source
+        # Grant authorization on the source client for copying to the target resource
+        print(f"\nStep 2: Granting copy authorization from source resource...")
 
-        copy_auth = target_client.grant_copy_authorization(
-            analyzer_id=target_analyzer_id,
-            source_resource_id=source_resource_id,
-            source_region=source_region,
+        copy_auth = source_client.grant_copy_authorization(
+            analyzer_id=source_analyzer_id,
+            target_azure_resource_id=target_resource_id,
+            target_region=target_region,
         )
 
         print(f"  Authorization granted!")
-        print(f"  Target Analyzer ID: {copy_auth.analyzer_id}")
-        print(f"  Expires: {copy_auth.expires_on}")
+        print(f"  Target Azure Resource ID: {copy_auth.target_azure_resource_id}")
+        print(f"  Target Region: {target_region}")
+        print(f"  Expires at: {copy_auth.expires_at}")
 
         # Step 3: Copy analyzer using authorization
+        # Copy is performed on the target client, copying from source to target
         print(f"\nStep 3: Copying analyzer from source to target...")
 
-        copy_poller = source_client.begin_copy_analyzer(
-            target_analyzer_id=target_analyzer_id,
+        copy_poller = target_client.begin_copy_analyzer(
+            analyzer_id=target_analyzer_id,
             source_analyzer_id=source_analyzer_id,
-            copy_authorization=copy_auth,
+            source_azure_resource_id=source_resource_id,
+            source_region=source_region,
         )
         copy_poller.result()
         print(f"  Analyzer copied successfully!")
