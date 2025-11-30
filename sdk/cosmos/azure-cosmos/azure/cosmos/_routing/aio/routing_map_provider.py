@@ -95,7 +95,7 @@ class PartitionKeyRangeCache(object):
         ranges = routing_map.get_overlapping_ranges(partition_key_ranges)
         return ranges
 
-    # pylint: name-over-length
+    # pylint: disable=invalid-name
     async def get_or_refresh_routing_map_for_collection(
             self,
             collection_link: str,
@@ -219,7 +219,8 @@ class PartitionKeyRangeCache(object):
         :param str collection_id: The ID of the collection.
         :param previous_routing_map: The last known routing map for incremental updates.
         :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
-        :param feed_options: Optional query options.
+        :param feed_options: Options for the change feed request.
+        :type feed_options: dict or None
         :return: The updated or newly created CollectionRoutingMap, or None if the update fails.
         :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         :raises CosmosHttpResponseError: If the underlying request to fetch ranges fails.

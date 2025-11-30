@@ -80,7 +80,7 @@ class PartitionKeyRangeCache(object):
                 self._collection_locks[collection_id] = threading.Lock()
             return self._collection_locks[collection_id]
 
-    # pylint: name-over-length
+    # pylint: disable=invalid-name
     def get_or_refresh_routing_map_for_collection(
             self,
             collection_link: str,
@@ -312,8 +312,6 @@ class PartitionKeyRangeCache(object):
         :param str collection_link: The link to the collection.
         :param list partition_key_ranges: List of partition key ranges to check for overlaps.
         :param dict feed_options: Options for the feed request.
-        :param kwargs: Additional keyword arguments for the underlying client request.
-        :type kwargs: Any
         :return: List of overlapping partition key ranges.
         :rtype: list
         """
