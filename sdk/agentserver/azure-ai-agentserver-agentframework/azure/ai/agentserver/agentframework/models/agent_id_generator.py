@@ -35,9 +35,9 @@ class AgentIdGenerator:
 
         agent_id = projects.AgentId(
             {
-                "type": agent.type,
-                "name": agent.name,
-                "version": agent.version,
+                "type": agent["type"],
+                "name": agent["name"],
+                "version": agent["version"],
             }
         )
 
