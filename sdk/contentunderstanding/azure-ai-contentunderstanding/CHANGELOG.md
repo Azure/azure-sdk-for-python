@@ -1,7 +1,13 @@
 # Release History
 
-## 1.0.0b1 (1970-01-01)
+## 1.0.0-beta.1 (Unreleased)
+
+### Features Added
+- Initial release of Azure AI Content Understanding client library for .NET
+- Added `ContentUnderstandingClient` for analyzing documents, audio, and video content
+
+### Breaking Changes
+
+### Bugs Fixed
 
 ### Other Changes
-
-  - Initial version
