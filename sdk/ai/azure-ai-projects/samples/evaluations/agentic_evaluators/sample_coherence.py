@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -78,8 +78,8 @@ def main() -> None:
         print("Creating Evaluation")
         eval_object = client.evals.create(
             name="Test Coherence Evaluator with inline data",
-            data_source_config=data_source_config, 
-            testing_criteria=testing_criteria,   # type: ignore
+            data_source_config=data_source_config,
+            testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Evaluation created")
 

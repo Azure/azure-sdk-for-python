@@ -1,5 +1,31 @@
 # Release History
 
+## 1.2.0b2 (2025-11-20)
+
+### Features Added
+
+- **Enhanced Avatar Configuration**: Expanded avatar functionality with new configuration options:
+  - Added `AvatarConfigTypes` enum with support for `video-avatar` and `photo-avatar` types
+  - Added `PhotoAvatarBaseModes` enum for photo avatar base models (e.g., `vasa-1`)
+  - Added `AvatarOutputProtocol` enum for avatar streaming protocols (`webrtc`, `websocket`)
+  - Enhanced `AvatarConfig` model with new properties: `type`, `model`, and `output_protocol`
+- **Image Content Support**: Added support for image inputs in conversations:
+  - New `RequestImageContentPart` model for including images in requests
+  - New `RequestImageContentPartDetail` enum for controlling image detail levels (`auto`, `low`, `high`)
+  - Added `INPUT_IMAGE` to `ContentPartType` enum
+  - Enhanced token details models (`InputTokenDetails`, `CachedTokenDetails`) with `image_tokens` tracking
+- **Enhanced OpenAI Voices**: Added new OpenAI voice options:
+  - Added `marin` and `cedar` voices to `OpenAIVoiceName` enum
+- **Extended Azure Personal Voice Configuration**: Enhanced `AzurePersonalVoice` with additional customization options:
+  - Added support for custom lexicon via `custom_lexicon_url`
+  - Added `prefer_locales` for locale preferences
+  - Added `locale`, `style`, `pitch`, `rate`, and `volume` properties for fine-tuned voice control
+- **Enhanced MCP Server Events**: Added completion status events for MCP tool calls:
+  - `ServerEventResponseMcpCallInProgress` for tracking in-progress MCP calls
+  - `ServerEventResponseMcpCallCompleted` for successful MCP call completion
+  - `ServerEventResponseMcpCallFailed` for failed MCP calls
+- **Pre-generated Assistant Messages**: Added support for pre-generated assistant messages in `ResponseCreateParams` via the `pre_generated_assistant_message` property
+
 ## 1.2.0b1 (2025-11-14)
 
 ### Features Added

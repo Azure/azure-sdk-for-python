@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.
@@ -96,7 +96,7 @@ async def main() -> None:
             name=memory_store.name,
             scope=scope,
             items=[user_message],  # Pass conversation items that you want to add to memory
-            update_delay=300  # Keep default inactivity delay before starting update
+            update_delay=300,  # Keep default inactivity delay before starting update
         )
         print(
             f"Scheduled memory update operation (Update ID: {update_poller.update_id}, Status: {update_poller.status()})"
