@@ -6,6 +6,7 @@ from typing import Any
 
 from azure.core.tracing.decorator import distributed_trace
 
+from ._models import KeyVaultEkmConnection
 from ._generated.models import (
     EkmConnection,
     EkmProxyClientCertificateInfo,
@@ -31,17 +32,18 @@ class KeyVaultEkmClient(KeyVaultClientBase):
     """
 
     @distributed_trace
-    def get_ekm_connection(self, **kwargs: Any) -> EkmConnection:
+    def get_ekm_connection(self, **kwargs: Any) -> KeyVaultEkmConnection:
         """Gets the EKM connection.
 
         The External Key Manager (EKM) Get operation returns EKM connection. This operation requires
         ekm/read permission.
 
-        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration._models.EkmConnection
+        :return: KeyVaultEkmConnection. The KeyVaultEkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._models.KeyVaultEkmConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._client.get_ekm_connection(**kwargs)
+        result = self._client.get_ekm_connection(**kwargs)
+        return KeyVaultEkmConnection._from_generated(result)
 
     @distributed_trace
     def get_ekm_certificate(self, **kwargs: Any) -> EkmProxyClientCertificateInfo:
@@ -72,58 +74,69 @@ class KeyVaultEkmClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_ekm_connection(
-        self, ekm_connection: EkmConnection, **kwargs: Any
-    ) -> EkmConnection:
+        self, ekm_connection: KeyVaultEkmConnection, **kwargs: Any
+    ) -> KeyVaultEkmConnection:
         """Creates the EKM connection.
 
         The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
         exists, this operation fails. This operation requires ekm/write permission.
 
-        :param ekm_connection: The EkmConnection to create. Is one of the following types:
-         EkmConnection, JSON, IO[bytes] Required.
-        :type ekm_connection: ~azure.keyvault.administration._models.EkmConnection or JSON or
-         IO[bytes]
-        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration._models.EkmConnection
+        :param ekm_connection: The KeyVaultEkmConnection to create.
+        :type ekm_connection: ~azure.keyvault.administration._models.KeyVaultEkmConnection
+        :return: KeyVaultEkmConnection. The KeyVaultEkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._models.KeyVaultEkmConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._client.create_ekm_connection(
-            ekm_connection=ekm_connection, **kwargs
+        internal_ekm_connection = EkmConnection(
+            host=ekm_connection.host,
+            path_prefix=ekm_connection.path_prefix,
+            server_ca_certificates=ekm_connection.server_ca_certificates,
+            server_subject_common_name=ekm_connection.server_subject_common_name,
         )
+        result = self._client.create_ekm_connection(
+            ekm_connection=internal_ekm_connection, **kwargs
+        )
+        return KeyVaultEkmConnection._from_generated(result)
 
     @distributed_trace
     def update_ekm_connection(
-        self, ekm_connection: EkmConnection, **kwargs: Any
-    ) -> EkmConnection:
+        self, ekm_connection: KeyVaultEkmConnection, **kwargs: Any
+    ) -> KeyVaultEkmConnection:
         """Updates the EKM connection.
 
         The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
         not exist, this operation fails. This operation requires ekm/write permission.
 
-        :param ekm_connection: The ekmConnection to update. Is one of the following types:
-         EkmConnection, JSON, IO[bytes] Required.
-        :type ekm_connection: ~azure.keyvault.administration._models.EkmConnection or JSON or
-         IO[bytes]
-        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration._models.EkmConnection
+        :param ekm_connection: The ekmConnection to update.
+        :type ekm_connection: ~azure.keyvault.administration._models.KeyVaultEkmConnection
+        :return: KeyVaultEkmConnection. The KeyVaultEkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._models.KeyVaultEkmConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._client.update_ekm_connection(
-            ekm_connection=ekm_connection, **kwargs
+        internal_ekm_connection = EkmConnection(
+            host=ekm_connection.host,
+            path_prefix=ekm_connection.path_prefix,
+            server_ca_certificates=ekm_connection.server_ca_certificates,
+            server_subject_common_name=ekm_connection.server_subject_common_name,
         )
+        result = self._client.update_ekm_connection(
+            ekm_connection=internal_ekm_connection, **kwargs
+        )
+        return KeyVaultEkmConnection._from_generated(result)
 
     @distributed_trace
-    def delete_ekm_connection(self, **kwargs: Any) -> EkmConnection:
+    def delete_ekm_connection(self, **kwargs: Any) -> KeyVaultEkmConnection:
         """Deletes the EKM connection.
 
         The External Key Manager (EKM) deletes the existing EKM connection. If the EKM connection does
         not already exists, this operation fails. This operation requires ekm/delete permission.
 
-        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration._models.EkmConnection
+        :return: KeyVaultEkmConnection. The KeyVaultEkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._models.KeyVaultEkmConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._client.delete_ekm_connection(**kwargs)
+        result = self._client.delete_ekm_connection(**kwargs)
+        return KeyVaultEkmConnection._from_generated(result)
 
     def __enter__(self) -> "KeyVaultEkmClient":
         self._client.__enter__()

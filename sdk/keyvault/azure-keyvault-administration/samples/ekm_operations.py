@@ -38,8 +38,7 @@ import os
 # [START create_a_settings_client]
 import base64
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultEkmClient
-from azure.keyvault.administration._generated.models import EkmConnection
+from azure.keyvault.administration import KeyVaultEkmClient, KeyVaultEkmConnection
 
 MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
 CA_CERTIFICATE = os.environ["CA_CERTIFICATE"]
@@ -50,7 +49,7 @@ client = KeyVaultEkmClient(vault_url=MANAGED_HSM_URL, credential=credential)
 # First, let's create an EKM connection
 print("\n.. Create EKM connection")
 # [START create_ekm_connection]
-ekm_connection = EkmConnection(
+ekm_connection = KeyVaultEkmConnection(
     host="my-ekm-host",
     server_ca_certificates=[base64.b64encode(CA_CERTIFICATE.encode())],
     path_prefix="/ekm-path-prefix",
@@ -84,7 +83,7 @@ print(f"EKM connection status: {connection_status}")
 # Update the EKM connection
 print("\n.. Update EKM connection")
 # [START update_ekm_connection]
-updated_ekm_connection = EkmConnection(
+updated_ekm_connection = KeyVaultEkmConnection(
     host="my-updated-ekm-host",
     server_ca_certificates=[base64.b64encode(CA_CERTIFICATE.encode())],
     path_prefix="/updated-ekm-path-prefix",
