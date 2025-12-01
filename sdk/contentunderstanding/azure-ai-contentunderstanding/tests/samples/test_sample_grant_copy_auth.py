@@ -18,9 +18,10 @@ USAGE:
 
 import os
 import uuid
+import pytest
 from datetime import datetime, timezone
 from typing import Optional, cast
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
@@ -64,15 +65,23 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             target_region = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_REGION")
             target_key = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_KEY")
             
-            # Require environment variables
-            if not source_resource_id:
-                raise ValueError("AZURE_CONTENT_UNDERSTANDING_SOURCE_RESOURCE_ID is required")
-            if not source_region:
-                raise ValueError("AZURE_CONTENT_UNDERSTANDING_SOURCE_REGION is required")
-            if not target_resource_id:
-                raise ValueError("AZURE_CONTENT_UNDERSTANDING_TARGET_RESOURCE_ID is required")
-            if not target_region:
-                raise ValueError("AZURE_CONTENT_UNDERSTANDING_TARGET_REGION is required")
+            # Only require environment variables in live mode
+            # In playback mode, the test proxy will replay recorded interactions
+            if is_live():
+                if not source_resource_id:
+                    raise ValueError("AZURE_CONTENT_UNDERSTANDING_SOURCE_RESOURCE_ID is required for cross-resource copy test in live mode")
+                if not source_region:
+                    raise ValueError("AZURE_CONTENT_UNDERSTANDING_SOURCE_REGION is required for cross-resource copy test in live mode")
+                if not target_resource_id:
+                    raise ValueError("AZURE_CONTENT_UNDERSTANDING_TARGET_RESOURCE_ID is required for cross-resource copy test in live mode")
+                if not target_region:
+                    raise ValueError("AZURE_CONTENT_UNDERSTANDING_TARGET_REGION is required for cross-resource copy test in live mode")
+            else:
+                # In playback mode, use placeholder values - test proxy will use recorded values
+                source_resource_id = source_resource_id or "placeholder-source-resource-id"
+                source_region = source_region or "placeholder-source-region"
+                target_resource_id = target_resource_id or "placeholder-target-resource-id"
+                target_region = target_region or "placeholder-target-region"
             
             # Create clients
             source_client = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -117,22 +126,26 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             assert source_analyzer_id != target_analyzer_id, "Source and target IDs should be different"
             print("[PASS] Analyzer IDs verified")
             
-            # Verify resource information
-            assert source_resource_id is not None, "Source resource ID should not be null"
-            assert source_resource_id.strip(), "Source resource ID should not be empty"
-            assert source_region is not None, "Source region should not be null"
-            assert source_region.strip(), "Source region should not be empty"
-            assert target_resource_id is not None, "Target resource ID should not be null"
-            assert target_resource_id.strip(), "Target resource ID should not be empty"
-            assert target_region is not None, "Target region should not be null"
-            assert target_region.strip(), "Target region should not be empty"
+            # Verify resource information (only in live mode)
+            # In playback mode, the test proxy will replay recorded interactions
+            if is_live():
+                assert source_resource_id is not None, "Source resource ID should not be null"
+                assert source_resource_id.strip(), "Source resource ID should not be empty"
+                assert source_region is not None, "Source region should not be null"
+                assert source_region.strip(), "Source region should not be empty"
+                assert target_resource_id is not None, "Target resource ID should not be null"
+                assert target_resource_id.strip(), "Target resource ID should not be empty"
+                assert target_region is not None, "Target region should not be null"
+                assert target_region.strip(), "Target region should not be empty"
+            
             assert target_endpoint is not None, "Target endpoint should not be null"
             assert target_endpoint.strip(), "Target endpoint should not be empty"
             
-            print(f"[INFO] Source resource: {source_resource_id}")
-            print(f"[INFO] Source region: {source_region}")
-            print(f"[INFO] Target resource: {target_resource_id}")
-            print(f"[INFO] Target region: {target_region}")
+            if is_live():
+                print(f"[INFO] Source resource: {source_resource_id}")
+                print(f"[INFO] Source region: {source_region}")
+                print(f"[INFO] Target resource: {target_resource_id}")
+                print(f"[INFO] Target region: {target_region}")
             print(f"[INFO] Target endpoint: {target_endpoint}")
             
             # Verify clients
@@ -248,28 +261,40 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             assert hasattr(copy_auth, 'target_azure_resource_id'), "Copy authorization should have target_azure_resource_id"
             assert copy_auth.target_azure_resource_id is not None, "Target Azure resource ID should not be null"
             assert copy_auth.target_azure_resource_id.strip(), "Target Azure resource ID should not be empty"
-            assert copy_auth.target_azure_resource_id == target_resource_id, \
-                f"Target resource ID should match, but got '{copy_auth.target_azure_resource_id}' instead of '{target_resource_id}'"
-            print(f"[PASS] Target Azure Resource ID verified: {copy_auth.target_azure_resource_id}")
-            print(f"[INFO] Target region (tracked): {target_region}")
+            # In playback mode, compare against the recorded response value
+            # In live mode, compare against the environment variable
+            if is_live():
+                assert copy_auth.target_azure_resource_id == target_resource_id, \
+                    f"Target resource ID should match, but got '{copy_auth.target_azure_resource_id}' instead of '{target_resource_id}'"
+                print(f"[PASS] Target Azure Resource ID verified: {copy_auth.target_azure_resource_id}")
+                print(f"[INFO] Target region (tracked): {target_region}")
+            else:
+                # In playback mode, just verify the response has a value (from recording)
+                print(f"[INFO] Target Azure Resource ID (from recording): {copy_auth.target_azure_resource_id}")
+                print(f"[INFO] Target region (from recording): {target_region}")
             
             # Verify expiration time
             assert hasattr(copy_auth, 'expires_at'), "Copy authorization should have expires_at"
             expires_at = copy_auth.expires_at
-            now = datetime.now(timezone.utc)
-            
-            assert expires_at > now, \
-                f"Expiration time should be in the future, but expires at {expires_at} (now: {now})"
-            
-            # Calculate time until expiration
-            time_until_expiration = expires_at - now
-            assert time_until_expiration.total_seconds() > 0, "Should have positive time until expiration"
-            
-            print(f"[PASS] Expiration time verified: {expires_at.strftime('%Y-%m-%d %H:%M:%S')} UTC")
-            print(f"[INFO] Time until expiration: {time_until_expiration.total_seconds() / 60:.2f} minutes")
-            
-            if time_until_expiration.total_seconds() / 3600 < 24:
-                print("[WARN] Note: Authorization expires in less than 24 hours")
+            # Only verify expiration time in live/record mode, not in playback mode
+            # (recorded expiration times may be in the past during playback)
+            if is_live():
+                now = datetime.now(timezone.utc)
+                
+                assert expires_at > now, \
+                    f"Expiration time should be in the future, but expires at {expires_at} (now: {now})"
+                
+                # Calculate time until expiration
+                time_until_expiration = expires_at - now
+                assert time_until_expiration.total_seconds() > 0, "Should have positive time until expiration"
+                
+                print(f"[PASS] Expiration time verified: {expires_at.strftime('%Y-%m-%d %H:%M:%S')} UTC")
+                print(f"[INFO] Time until expiration: {time_until_expiration.total_seconds() / 60:.2f} minutes")
+                
+                if time_until_expiration.total_seconds() / 3600 < 24:
+                    print("[WARN] Note: Authorization expires in less than 24 hours")
+            else:
+                print(f"[INFO] Expiration time: {expires_at.strftime('%Y-%m-%d %H:%M:%S')} UTC (from recorded response)")
             
             print(f"[INFO] Copy authorization granted successfully:")
             print(f"[INFO]   Source analyzer: {source_analyzer_id}")
