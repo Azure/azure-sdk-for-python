@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_07_list_analyzers.py
+TEST FILE: test_sample_list_analyzers.py
 
 DESCRIPTION:
-    These tests validate the sample_07_list_analyzers.py sample code.
-    Tests correspond to .NET Sample07_ListAnalyzers.cs
+    These tests validate the sample_list_analyzers.py sample code.
 
 USAGE:
-    pytest test_sample_07_list_analyzers.py
+    pytest test_sample_list_analyzers.py
 """
 
 import pytest
@@ -22,12 +21,12 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 
 
-class TestSample07ListAnalyzers(ContentUnderstandingClientTestBase):
-    """Tests for sample_07_list_analyzers.py"""
+class TestSampleListAnalyzers(ContentUnderstandingClientTestBase):
+    """Tests for sample_list_analyzers.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_07_list_analyzers(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_list_analyzers(self, contentunderstanding_endpoint: str) -> None:
         """Test listing all available analyzers.
         
         This test validates:
@@ -35,7 +34,7 @@ class TestSample07ListAnalyzers(ContentUnderstandingClientTestBase):
         2. Counting prebuilt vs custom analyzers
         3. Displaying analyzer details
         
-        Corresponds to .NET Sample07_ListAnalyzers.ListAnalyzersAsync()
+        07_ListAnalyzers.ListAnalyzersAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -115,4 +114,4 @@ class TestSample07ListAnalyzers(ContentUnderstandingClientTestBase):
         assert len(analyzers) == valid_analyzers, "All analyzers should have valid IDs"
         print(f"\n[PASS] All {valid_analyzers} analyzers have valid IDs")
         print(f"[INFO] Analyzers with description: {analyzers_with_description}")
-        print("\n[SUCCESS] All test_sample_07_list_analyzers assertions passed")
+        print("\n[SUCCESS] All test_sample_list_analyzers assertions passed")

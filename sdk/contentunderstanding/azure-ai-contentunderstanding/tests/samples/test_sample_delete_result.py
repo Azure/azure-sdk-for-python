@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_13_delete_result.py
+TEST FILE: test_sample_delete_result.py
 
 DESCRIPTION:
-    These tests validate the sample_13_delete_result.py sample code.
-    Tests correspond to .NET Sample13_DeleteResult.cs
+    These tests validate the sample_delete_result.py sample code.
 
 USAGE:
-    pytest test_sample_13_delete_result.py
+    pytest test_sample_delete_result.py
 """
 
 import os
@@ -23,12 +22,12 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 
 
-class TestSample13DeleteResult(ContentUnderstandingClientTestBase):
-    """Tests for sample_13_delete_result.py"""
+class TestSampleDeleteResult(ContentUnderstandingClientTestBase):
+    """Tests for sample_delete_result.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_13_delete_result(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_delete_result(self, contentunderstanding_endpoint: str) -> None:
         """Test deleting an analysis result.
         
         This test validates:
@@ -36,7 +35,7 @@ class TestSample13DeleteResult(ContentUnderstandingClientTestBase):
         2. Extracting result ID
         3. Deleting the result
         
-        Corresponds to .NET Sample13_DeleteResult.DeleteResultAsync()
+        13_DeleteResult.DeleteResultAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -109,4 +108,4 @@ class TestSample13DeleteResult(ContentUnderstandingClientTestBase):
             print("[INFO] Operation ID not available in response")
             print("[INFO] Delete result operation skipped - operation ID extraction not supported")
         
-        print("\n[SUCCESS] All test_sample_13_delete_result assertions passed")
+        print("\n[SUCCESS] All test_sample_delete_result assertions passed")

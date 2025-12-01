@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_05_create_classifier.py
+TEST FILE: test_sample_create_classifier.py
 
 DESCRIPTION:
-    These tests validate the sample_05_create_classifier.py sample code.
-    Tests correspond to .NET Sample05_CreateClassifier.cs
+    These tests validate the sample_create_classifier.py sample code.
 
 USAGE:
-    pytest test_sample_05_create_classifier.py
+    pytest test_sample_create_classifier.py
 """
 
 import pytest
@@ -28,12 +27,12 @@ from azure.ai.contentunderstanding.models import (
 )
 
 
-class TestSample05CreateClassifier(ContentUnderstandingClientTestBase):
-    """Tests for sample_05_create_classifier.py"""
+class TestSampleCreateClassifier(ContentUnderstandingClientTestBase):
+    """Tests for sample_create_classifier.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_05_create_classifier(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_create_classifier(self, contentunderstanding_endpoint: str) -> None:
         """Test creating a custom classifier with content categories.
         
         This test validates:
@@ -41,7 +40,7 @@ class TestSample05CreateClassifier(ContentUnderstandingClientTestBase):
         2. Analyzer configuration with segmentation
         3. Classifier creation
         
-        Corresponds to .NET Sample05_CreateClassifier.CreateClassifierAsync()
+        05_CreateClassifier.CreateClassifierAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -135,4 +134,4 @@ class TestSample05CreateClassifier(ContentUnderstandingClientTestBase):
             print(f"\n[ERROR] Full error message:\n{error_msg}")
             pytest.skip(f"Classifier creation not available or failed: {error_msg[:100]}")
         
-        print("\n[SUCCESS] All test_sample_05_create_classifier assertions passed")
+        print("\n[SUCCESS] All test_sample_create_classifier assertions passed")

@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_06_get_analyzer.py
+TEST FILE: test_sample_get_analyzer.py
 
 DESCRIPTION:
-    These tests validate the sample_06_get_analyzer.py sample code.
-    Tests correspond to .NET Sample06_GetAnalyzer.cs
+    These tests validate the sample_get_analyzer.py sample code.
 
 USAGE:
-    pytest test_sample_06_get_analyzer.py
+    pytest test_sample_get_analyzer.py
 """
 
 import json
@@ -23,12 +22,12 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 
 
-class TestSample06GetAnalyzer(ContentUnderstandingClientTestBase):
-    """Tests for sample_06_get_analyzer.py"""
+class TestSampleGetAnalyzer(ContentUnderstandingClientTestBase):
+    """Tests for sample_get_analyzer.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_06_get_analyzer(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_get_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """Test getting information about a prebuilt analyzer.
         
         This test validates:
@@ -36,7 +35,7 @@ class TestSample06GetAnalyzer(ContentUnderstandingClientTestBase):
         2. Analyzer response structure
         3. Analyzer JSON serialization
         
-        Corresponds to .NET Sample06_GetAnalyzer.GetPrebuiltAnalyzerAsync()
+        06_GetAnalyzer.GetPrebuiltAnalyzerAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -116,4 +115,4 @@ class TestSample06GetAnalyzer(ContentUnderstandingClientTestBase):
             assert analyzer is not None, "Analyzer should not be null"
         
         print("\n[PASS] All prebuilt analyzer properties validated successfully")
-        print("\n[SUCCESS] All test_sample_06_get_analyzer assertions passed")
+        print("\n[SUCCESS] All test_sample_get_analyzer assertions passed")

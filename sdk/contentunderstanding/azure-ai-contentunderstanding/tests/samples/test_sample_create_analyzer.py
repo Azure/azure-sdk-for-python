@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_04_create_analyzer.py
+TEST FILE: test_sample_create_analyzer.py
 
 DESCRIPTION:
-    These tests validate the sample_04_create_analyzer.py sample code.
-    Tests correspond to .NET Sample04_CreateAnalyzer.cs
+    These tests validate the sample_create_analyzer.py sample code.
 
 USAGE:
-    pytest test_sample_04_create_analyzer.py
+    pytest test_sample_create_analyzer.py
 """
 
 import pytest
@@ -29,12 +28,12 @@ from azure.ai.contentunderstanding.models import (
 )
 
 
-class TestSample04CreateAnalyzer(ContentUnderstandingClientTestBase):
-    """Tests for sample_04_create_analyzer.py"""
+class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
+    """Tests for sample_create_analyzer.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_04_create_analyzer(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_create_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """Test creating a custom analyzer with field schema.
         
         This test validates:
@@ -44,7 +43,7 @@ class TestSample04CreateAnalyzer(ContentUnderstandingClientTestBase):
         4. Model mappings
         5. Analyzer creation operation
         
-        Corresponds to .NET Sample04_CreateAnalyzer.CreateAnalyzerAsync()
+        04_CreateAnalyzer.CreateAnalyzerAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -167,4 +166,4 @@ class TestSample04CreateAnalyzer(ContentUnderstandingClientTestBase):
             except Exception as e:
                 print(f"[WARN] Cleanup failed: {str(e)}")
         
-        print("\n[SUCCESS] All test_sample_04_create_analyzer assertions passed")
+        print("\n[SUCCESS] All test_sample_create_analyzer assertions passed")

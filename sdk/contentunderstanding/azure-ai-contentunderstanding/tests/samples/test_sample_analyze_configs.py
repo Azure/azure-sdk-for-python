@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_10_analyze_configs.py
+TEST FILE: test_sample_analyze_configs.py
 
 DESCRIPTION:
-    These tests validate the sample_10_analyze_configs.py sample code.
-    Tests correspond to .NET Sample10_AnalyzeConfigs.cs
+    These tests validate the sample_analyze_configs.py sample code.
 
 USAGE:
-    pytest test_sample_10_analyze_configs.py
+    pytest test_sample_analyze_configs.py
 """
 
 import os
@@ -23,12 +22,12 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 
 
-class TestSample10AnalyzeConfigs(ContentUnderstandingClientTestBase):
-    """Tests for sample_10_analyze_configs.py"""
+class TestSampleAnalyzeConfigs(ContentUnderstandingClientTestBase):
+    """Tests for sample_analyze_configs.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_10_analyze_configs(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_analyze_configs(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document with specific configuration options.
         
         This test validates:
@@ -36,7 +35,7 @@ class TestSample10AnalyzeConfigs(ContentUnderstandingClientTestBase):
         2. Configuration options (formulas, layout, OCR enabled)
         3. Document features extraction (charts, annotations, hyperlinks, formulas)
         
-        Corresponds to .NET Sample10_AnalyzeConfigs.AnalyzeConfigsAsync()
+        10_AnalyzeConfigs.AnalyzeConfigsAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -125,7 +124,7 @@ class TestSample10AnalyzeConfigs(ContentUnderstandingClientTestBase):
         # Test document feature extraction
         self._test_document_features(first_content)
         
-        print("\n[SUCCESS] All test_sample_10_analyze_configs assertions passed")
+        print("\n[SUCCESS] All test_sample_analyze_configs assertions passed")
 
     def _test_document_features(self, content):
         """Test extraction of document features like charts, annotations, hyperlinks."""

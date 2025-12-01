@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_01_analyze_binary.py
+TEST FILE: test_sample_analyze_binary.py
 
 DESCRIPTION:
-    These tests validate the sample_01_analyze_binary.py sample code.
-    Tests correspond to .NET Sample01_AnalyzeBinary.cs
+    These tests validate the sample_analyze_binary.py sample code.
 
 USAGE:
-    pytest test_sample_01_analyze_binary.py
+    pytest test_sample_analyze_binary.py
 """
 
 import os
@@ -23,12 +22,12 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 
 
-class TestSample01AnalyzeBinary(ContentUnderstandingClientTestBase):
-    """Tests for sample_01_analyze_binary.py"""
+class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
+    """Tests for sample_analyze_binary.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_01_analyze_binary(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_analyze_binary(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document from binary data.
         
         This test validates:
@@ -37,7 +36,6 @@ class TestSample01AnalyzeBinary(ContentUnderstandingClientTestBase):
         3. Markdown content extraction
         4. Document properties (MIME type, pages, tables)
         
-        Corresponds to .NET Sample01_AnalyzeBinary.AnalyzeBinaryAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -57,7 +55,7 @@ class TestSample01AnalyzeBinary(ContentUnderstandingClientTestBase):
         assert len(file_bytes) > 0, "File should not be empty"
         print(f"[PASS] File loaded: {len(file_bytes)} bytes")
         
-        # Assertion: Verify binary data (equivalent to .NET BinaryData)
+        # Assertion: Verify binary data
         assert file_bytes is not None, "Binary data should not be null"
         print("[PASS] Binary data created successfully")
         
@@ -74,7 +72,7 @@ class TestSample01AnalyzeBinary(ContentUnderstandingClientTestBase):
         assert poller is not None, "Analysis operation should not be null"
         assert poller.done(), "Operation should be completed"
         
-        # Verify raw response (equivalent to .NET GetRawResponse())
+        # Verify raw response
         # In Python SDK, we can check if the poller has result and get HTTP response info
         # type: ignore is used here because we're accessing internal implementation details
         if hasattr(poller, '_polling_method'):
@@ -110,12 +108,11 @@ class TestSample01AnalyzeBinary(ContentUnderstandingClientTestBase):
         # Test document properties access
         self._test_document_properties(result)
         
-        print("\n[SUCCESS] All test_sample_01_analyze_binary assertions passed")
+        print("\n[SUCCESS] All test_sample_analyze_binary assertions passed")
 
     def _test_markdown_extraction(self, result):
         """Test markdown content extraction.
         
-        Corresponds to .NET Assertion:ContentUnderstandingExtractMarkdown
         """
         # Assertion: Verify contents structure
         assert result.contents is not None, "Result should contain contents"
@@ -138,12 +135,11 @@ class TestSample01AnalyzeBinary(ContentUnderstandingClientTestBase):
     def _test_document_properties(self, result):
         """Test document property access.
         
-        Corresponds to .NET Assertion:ContentUnderstandingAccessDocumentProperties
         """
         content = result.contents[0]
         assert content is not None, "Content should not be null for document properties validation"
         
-        # Check if this is DocumentContent (equivalent to .NET's DocumentContent type check)
+        # Check if this is DocumentContent
         content_type = type(content).__name__
         print(f"[INFO] Content type: {content_type}")
         
@@ -193,7 +189,7 @@ class TestSample01AnalyzeBinary(ContentUnderstandingClientTestBase):
         else:
             print("No tables found in document content")
         
-        # Final validation message (matching .NET)
+        # Final validation message
         print("[PASS] All document properties validated successfully")
 
     def _validate_pages(self, pages, start_page, end_page, content=None):
@@ -219,7 +215,7 @@ class TestSample01AnalyzeBinary(ContentUnderstandingClientTestBase):
                 f"Page number {page.page_number} appears multiple times"
             page_numbers.add(page.page_number)
             
-            # Print page details with unit (matching .NET output)
+            # Print page details with unit
             print(f"  Page {page.page_number}: {page.width} x {page.height} {unit_str}")
         
         print(f"[PASS] All {len(pages)} pages validated successfully")

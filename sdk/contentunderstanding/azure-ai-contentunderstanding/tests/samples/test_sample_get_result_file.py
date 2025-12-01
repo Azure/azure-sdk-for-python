@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_12_get_result_file.py
+TEST FILE: test_sample_get_result_file.py
 
 DESCRIPTION:
-    These tests validate the sample_12_get_result_file.py sample code.
-    Tests correspond to .NET Sample12_GetResultFile.cs
+    These tests validate the sample_get_result_file.py sample code.
 
 USAGE:
-    pytest test_sample_12_get_result_file.py
+    pytest test_sample_get_result_file.py
 """
 
 import os
@@ -24,12 +23,12 @@ from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClien
 from azure.ai.contentunderstanding.models import AnalyzeInput
 
 
-class TestSample12GetResultFile(ContentUnderstandingClientTestBase):
-    """Tests for sample_12_get_result_file.py"""
+class TestSampleGetResultFile(ContentUnderstandingClientTestBase):
+    """Tests for sample_get_result_file.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_12_get_result_file(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_get_result_file(self, contentunderstanding_endpoint: str) -> None:
         """Test getting result files (like keyframe images) from analysis results.
         
         This test validates:
@@ -38,7 +37,7 @@ class TestSample12GetResultFile(ContentUnderstandingClientTestBase):
         3. Waiting for operation completion
         4. Retrieving keyframe images using get_result_file
         
-        Corresponds to .NET Sample12_GetResultFile.GetResultFileAsync()
+        12_GetResultFile.GetResultFileAsync()
         
         Note: This test uses document analysis as video analysis may not be available.
         The API pattern is the same for both document and video analysis.
@@ -145,5 +144,5 @@ class TestSample12GetResultFile(ContentUnderstandingClientTestBase):
             else:
                 print(f"[INFO] get_result_file returned: {str(e)[:100]}")
         
-        print("\n[SUCCESS] All test_sample_12_get_result_file assertions passed")
+        print("\n[SUCCESS] All test_sample_get_result_file assertions passed")
         print("[INFO] get_result_file API pattern demonstrated successfully")

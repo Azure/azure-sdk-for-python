@@ -12,7 +12,7 @@ Tests for Content Understanding analyzer operation ID functionality.
 import pytest
 from unittest.mock import Mock, patch
 from azure.core.polling import LROPoller, PollingMethod
-from azure.ai.contentunderstanding.operations._patch import (
+from azure.ai.contentunderstanding.models._patch import (
     AnalyzeLROPoller,
     _parse_operation_id,
 )

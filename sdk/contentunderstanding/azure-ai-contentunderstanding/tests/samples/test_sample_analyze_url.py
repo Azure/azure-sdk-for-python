@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_02_analyze_url.py
+TEST FILE: test_sample_analyze_url.py
 
 DESCRIPTION:
-    These tests validate the sample_02_analyze_url.py sample code.
-    Tests correspond to .NET Sample02_AnalyzeUrl.cs
+    These tests validate the sample_analyze_url.py sample code.
 
 USAGE:
-    pytest test_sample_02_analyze_url.py
+    pytest test_sample_analyze_url.py
 """
 
 import os
@@ -24,12 +23,12 @@ from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClien
 from azure.ai.contentunderstanding.models import AnalyzeInput
 
 
-class TestSample02AnalyzeUrl(ContentUnderstandingClientTestBase):
-    """Tests for sample_02_analyze_url.py"""
+class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
+    """Tests for sample_analyze_url.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_02_analyze_url(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_analyze_url(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document from URL.
         
         This test validates:
@@ -38,7 +37,7 @@ class TestSample02AnalyzeUrl(ContentUnderstandingClientTestBase):
         3. Markdown content extraction
         4. Document properties (MIME type, pages, tables)
         
-        Corresponds to .NET Sample02_AnalyzeUrl.AnalyzeUrlAsync()
+        02_AnalyzeUrl.AnalyzeUrlAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -99,7 +98,7 @@ class TestSample02AnalyzeUrl(ContentUnderstandingClientTestBase):
         # Test document properties access
         self._test_document_properties(result)
         
-        print("\n[SUCCESS] All test_sample_02_analyze_url assertions passed")
+        print("\n[SUCCESS] All test_sample_analyze_url assertions passed")
 
     def _test_markdown_extraction(self, result):
         """Test markdown content extraction."""

@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_00_configure_defaults.py
+TEST FILE: test_sample_configure_defaults.py
 
 DESCRIPTION:
-    These tests validate the sample_00_configure_defaults.py sample code.
-    Tests correspond to .NET Sample00_ConfigureDefaults.cs
+    These tests validate the sample_configure_defaults.py sample code.
 
 USAGE:
-    pytest test_sample_00_configure_defaults.py
+    pytest test_sample_configure_defaults.py
 """
 
 import pytest
@@ -22,12 +21,12 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 
 
-class TestSample00ConfigureDefaults(ContentUnderstandingClientTestBase):
-    """Tests for sample_00_configure_defaults.py"""
+class TestSampleConfigureDefaults(ContentUnderstandingClientTestBase):
+    """Tests for sample_configure_defaults.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_00_configure_defaults(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_configure_defaults(self, contentunderstanding_endpoint: str) -> None:
         """Test configuring and getting model deployment defaults.
         
         This test validates:
@@ -35,7 +34,7 @@ class TestSample00ConfigureDefaults(ContentUnderstandingClientTestBase):
         2. Getting current defaults (GetDefaults)
         3. Model deployment mappings structure
         
-        Corresponds to .NET Sample00_ConfigureDefaults.ConfigureDefaultsAsync()
+        00_ConfigureDefaults.ConfigureDefaultsAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -45,12 +44,12 @@ class TestSample00ConfigureDefaults(ContentUnderstandingClientTestBase):
         # Test GetDefaults - always run
         self._test_get_defaults(client)
         
-        print("\n[SUCCESS] All test_sample_00_configure_defaults assertions passed")
+        print("\n[SUCCESS] All test_sample_configure_defaults assertions passed")
 
     def _test_update_defaults(self, client):
         """Test updating model deployment defaults.
         
-        Corresponds to .NET Snippet:ContentUnderstandingUpdateDefaults
+        
         """
         # Check if deployment names are configured in environment
         # In Python tests, these would come from environment variables or test configuration
@@ -87,7 +86,7 @@ class TestSample00ConfigureDefaults(ContentUnderstandingClientTestBase):
     def _test_get_defaults(self, client):
         """Test getting current model deployment defaults.
         
-        Corresponds to .NET Snippet:ContentUnderstandingGetDefaults and assertions
+         and assertions
         """
         # Get current defaults
         get_response = client.get_defaults()

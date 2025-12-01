@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_09_delete_analyzer.py
+TEST FILE: test_sample_delete_analyzer.py
 
 DESCRIPTION:
-    These tests validate the sample_09_delete_analyzer.py sample code.
-    Tests correspond to .NET Sample09_DeleteAnalyzer.cs
+    These tests validate the sample_delete_analyzer.py sample code.
 
 USAGE:
-    pytest test_sample_09_delete_analyzer.py
+    pytest test_sample_delete_analyzer.py
 """
 
 import uuid
@@ -25,12 +24,12 @@ from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyze
 from azure.core.exceptions import ResourceNotFoundError
 
 
-class TestSample09DeleteAnalyzer(ContentUnderstandingClientTestBase):
-    """Tests for sample_09_delete_analyzer.py"""
+class TestSampleDeleteAnalyzer(ContentUnderstandingClientTestBase):
+    """Tests for sample_delete_analyzer.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_09_delete_analyzer(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_delete_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """Test deleting an analyzer.
         
         This test validates:
@@ -39,7 +38,7 @@ class TestSample09DeleteAnalyzer(ContentUnderstandingClientTestBase):
         3. Deleting the analyzer
         4. Verifying deletion was successful
         
-        Corresponds to .NET Sample09_DeleteAnalyzer.DeleteAnalyzerAsync()
+        09_DeleteAnalyzer.DeleteAnalyzerAsync()
         """
         # Skip this test if API is not available
         try:
@@ -167,7 +166,7 @@ class TestSample09DeleteAnalyzer(ContentUnderstandingClientTestBase):
             assert deletion_verified, "Deletion should be verified (analyzer not found after deletion)"
             print(f"[PASS] Deletion verified: Analyzer '{analyzer_id}' is no longer accessible")
             
-            print("\n[SUCCESS] All test_sample_09_delete_analyzer assertions passed")
+            print("\n[SUCCESS] All test_sample_delete_analyzer assertions passed")
             
         except Exception as e:
             error_msg = str(e).lower()

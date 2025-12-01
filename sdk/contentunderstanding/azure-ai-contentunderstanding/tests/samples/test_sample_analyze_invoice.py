@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_03_analyze_invoice.py
+TEST FILE: test_sample_analyze_invoice.py
 
 DESCRIPTION:
-    These tests validate the sample_03_analyze_invoice.py sample code.
-    Tests correspond to .NET Sample03_AnalyzeInvoice.cs
+    These tests validate the sample_analyze_invoice.py sample code.
 
 USAGE:
-    pytest test_sample_03_analyze_invoice.py
+    pytest test_sample_analyze_invoice.py
 """
 
 import os
@@ -24,12 +23,12 @@ from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClien
 from azure.ai.contentunderstanding.models import AnalyzeInput, DocumentContent
 
 
-class TestSample03AnalyzeInvoice(ContentUnderstandingClientTestBase):
-    """Tests for sample_03_analyze_invoice.py"""
+class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
+    """Tests for sample_analyze_invoice.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_03_analyze_invoice(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_analyze_invoice(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing an invoice document with prebuilt-invoice analyzer.
         
         This test validates:
@@ -37,7 +36,7 @@ class TestSample03AnalyzeInvoice(ContentUnderstandingClientTestBase):
         2. Extracting invoice-specific fields (CustomerName, InvoiceDate, TotalAmount, LineItems)
         3. Field confidence scores and source locations
         
-        Corresponds to .NET Sample03_AnalyzeInvoice.AnalyzeInvoiceAsync()
+        03_AnalyzeInvoice.AnalyzeInvoiceAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -207,4 +206,4 @@ class TestSample03AnalyzeInvoice(ContentUnderstandingClientTestBase):
         else:
             print("[INFO] LineItems field not found in this document")
         
-        print("\n[SUCCESS] All test_sample_03_analyze_invoice assertions passed")
+        print("\n[SUCCESS] All test_sample_analyze_invoice assertions passed")

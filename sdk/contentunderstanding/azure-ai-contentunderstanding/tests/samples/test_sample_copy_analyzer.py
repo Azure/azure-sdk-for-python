@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_14_copy_analyzer.py
+TEST FILE: test_sample_copy_analyzer.py
 
 DESCRIPTION:
-    These tests validate the sample_14_copy_analyzer.py sample code.
-    Tests correspond to .NET Sample14_CopyAnalyzer.cs
+    These tests validate the sample_copy_analyzer.py sample code.
 
 USAGE:
-    pytest test_sample_14_copy_analyzer.py
+    pytest test_sample_copy_analyzer.py
 """
 
 import uuid
@@ -31,12 +30,12 @@ from azure.ai.contentunderstanding.models import (
 )
 
 
-class TestSample14CopyAnalyzer(ContentUnderstandingClientTestBase):
-    """Tests for sample_14_copy_analyzer.py"""
+class TestSampleCopyAnalyzer(ContentUnderstandingClientTestBase):
+    """Tests for sample_copy_analyzer.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_14_copy_analyzer(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_copy_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """Test copying an analyzer (within same resource or across resources).
         
         This test validates:
@@ -45,7 +44,7 @@ class TestSample14CopyAnalyzer(ContentUnderstandingClientTestBase):
         3. Verifying the copy completed successfully
         4. Validating the target analyzer has the same configuration
         
-        Corresponds to .NET Sample14_CopyAnalyzer.CopyAnalyzerAsync()
+        14_CopyAnalyzer.CopyAnalyzerAsync()
         
         Note: This test requires copy API support. If not available, test will be skipped.
         """
@@ -178,7 +177,7 @@ class TestSample14CopyAnalyzer(ContentUnderstandingClientTestBase):
                     pytest.skip(f"Copy analyzer API not available: {str(copy_error)[:100]}")
                 raise
             
-            print("\n[SUCCESS] All test_sample_14_copy_analyzer assertions passed")
+            print("\n[SUCCESS] All test_sample_copy_analyzer assertions passed")
             print("[INFO] Copy analyzer functionality demonstrated")
             
         except Exception as e:

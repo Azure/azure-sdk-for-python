@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_08_update_analyzer.py
+TEST FILE: test_sample_update_analyzer.py
 
 DESCRIPTION:
-    These tests validate the sample_08_update_analyzer.py sample code.
-    Tests correspond to .NET Sample08_UpdateAnalyzer.cs
+    These tests validate the sample_update_analyzer.py sample code.
 
 USAGE:
-    pytest test_sample_08_update_analyzer.py
+    pytest test_sample_update_analyzer.py
 """
 
 import uuid
@@ -24,12 +23,12 @@ from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClien
 from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyzerConfig
 
 
-class TestSample08UpdateAnalyzer(ContentUnderstandingClientTestBase):
-    """Tests for sample_08_update_analyzer.py"""
+class TestSampleUpdateAnalyzer(ContentUnderstandingClientTestBase):
+    """Tests for sample_update_analyzer.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_08_update_analyzer(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_update_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """Test updating an analyzer's properties.
         
         This test validates:
@@ -38,7 +37,7 @@ class TestSample08UpdateAnalyzer(ContentUnderstandingClientTestBase):
         3. Updating analyzer description and tags
         4. Verifying updates were applied correctly
         
-        Corresponds to .NET Sample08_UpdateAnalyzer.UpdateAnalyzerAsync()
+        08_UpdateAnalyzer.UpdateAnalyzerAsync()
         """
         # Skip this test if API is not available
         try:
@@ -147,7 +146,7 @@ class TestSample08UpdateAnalyzer(ContentUnderstandingClientTestBase):
             assert updated_tags.get("tag3") == "tag3_value", "tag3 value should match"
             print("[PASS] tag3 added correctly")
             
-            print("\n[SUCCESS] All test_sample_08_update_analyzer assertions passed")
+            print("\n[SUCCESS] All test_sample_update_analyzer assertions passed")
             
         except Exception as e:
             error_msg = str(e).lower()

@@ -7,14 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_11_analyze_return_raw_json.py
+TEST FILE: test_sample_analyze_return_raw_json.py
 
 DESCRIPTION:
-    These tests validate the sample_11_analyze_return_raw_json.py sample code.
-    Tests correspond to .NET Sample11_AnalyzeReturnRawJson.cs
+    These tests validate the sample_analyze_return_raw_json.py sample code.
 
 USAGE:
-    pytest test_sample_11_analyze_return_raw_json.py
+    pytest test_sample_analyze_return_raw_json.py
 """
 
 import os
@@ -24,12 +23,12 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 
 
-class TestSample11AnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
-    """Tests for sample_11_analyze_return_raw_json.py"""
+class TestSampleAnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
+    """Tests for sample_analyze_return_raw_json.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_11_analyze_return_raw_json(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_analyze_return_raw_json(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document and getting raw JSON response.
         
         This test validates:
@@ -37,7 +36,7 @@ class TestSample11AnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
         2. Raw JSON response format
         3. JSON structure validation
         
-        Corresponds to .NET Sample11_AnalyzeReturnRawJson.AnalyzeReturnRawJsonAsync()
+        11_AnalyzeReturnRawJson.AnalyzeReturnRawJsonAsync()
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -132,4 +131,4 @@ class TestSample11AnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
         if result.contents and len(result.contents) > 0:
             print(f"[PASS] Response contains {len(result.contents)} content(s)")
         
-        print("\n[SUCCESS] All test_sample_11_analyze_return_raw_json assertions passed")
+        print("\n[SUCCESS] All test_sample_analyze_return_raw_json assertions passed")
