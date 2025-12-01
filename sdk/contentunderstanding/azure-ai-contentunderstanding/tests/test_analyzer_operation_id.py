@@ -54,8 +54,8 @@ class TestParseOperationId:
 class TestAnalyzeLROPoller:
     """Test the AnalyzeLROPoller class."""
 
-    def test_details_property_success(self):
-        """Test the details property when operation ID can be extracted."""
+    def test_operation_id_property_success(self):
+        """Test the operation_id property when operation ID can be extracted."""
         # Mock the polling method and initial response
         mock_polling_method = Mock()
         mock_initial_response = Mock()
@@ -72,13 +72,12 @@ class TestAnalyzeLROPoller:
             client=Mock(), initial_response=Mock(), deserialization_callback=Mock(), polling_method=mock_polling_method
         )
 
-        # Test details property
-        details = poller.details
-        assert details["operation_id"] == "test-op-id"
-        assert details["operation_type"] == "analyze"
+        # Test operation_id property
+        operation_id = poller.operation_id
+        assert operation_id == "test-op-id"
 
-    def test_details_property_missing_header(self):
-        """Test the details property when Operation-Location header is missing."""
+    def test_operation_id_property_missing_header(self):
+        """Test the operation_id property when Operation-Location header is missing."""
         # Mock the polling method and initial response
         mock_polling_method = Mock()
         mock_initial_response = Mock()
@@ -93,14 +92,12 @@ class TestAnalyzeLROPoller:
             client=Mock(), initial_response=Mock(), deserialization_callback=Mock(), polling_method=mock_polling_method
         )
 
-        # Test details property
-        details = poller.details
-        assert details["operation_id"] is None
-        assert details["operation_type"] == "analyze"
-        assert "error" in details
+        # Test operation_id property raises ValueError when header is missing
+        with pytest.raises(ValueError, match="Could not extract operation ID"):
+            _ = poller.operation_id
 
-    def test_details_property_invalid_url(self):
-        """Test the details property when URL format is invalid."""
+    def test_operation_id_property_invalid_url(self):
+        """Test the operation_id property when URL format is invalid."""
         # Mock the polling method and initial response
         mock_polling_method = Mock()
         mock_initial_response = Mock()
@@ -117,11 +114,9 @@ class TestAnalyzeLROPoller:
             client=Mock(), initial_response=Mock(), deserialization_callback=Mock(), polling_method=mock_polling_method
         )
 
-        # Test details property
-        details = poller.details
-        assert details["operation_id"] is None
-        assert details["operation_type"] == "analyze"
-        assert "error" in details
+        # Test operation_id property raises ValueError when URL format is invalid
+        with pytest.raises(ValueError, match="Could not extract operation ID"):
+            _ = poller.operation_id
 
     def test_from_continuation_token(self):
         """Test the from_continuation_token class method."""
@@ -146,27 +141,28 @@ class TestPollerIntegration:
     """Test integration with the operations classes."""
 
     def test_analyze_operation_returns_custom_poller(self):
-        """Test that begin_analyze returns AnalyzeLROPoller with details property."""
+        """Test that begin_analyze returns AnalyzeLROPoller with operation_id property."""
         # Create a mock client
         mock_client = Mock(spec=ContentUnderstandingClient)
 
         # Create a mock poller with the required structure
-        mock_poller = Mock(spec=AnalyzeLROPoller)
-        mock_poller._polling_method = Mock()
-        mock_poller._polling_method._initial_response = Mock()
-        mock_poller._polling_method._initial_response.http_response = Mock()
-        mock_poller._polling_method._initial_response.http_response.headers = {
+        mock_polling_method = Mock()
+        mock_initial_response = Mock()
+        mock_http_response = Mock()
+        mock_http_response.headers = {
             "Operation-Location": "https://endpoint.com/analyzerResults/test-op-id-123?api-version=2025-11-01"
         }
+        mock_initial_response.http_response = mock_http_response
+        mock_polling_method.return_value = mock_polling_method
+        mock_polling_method._initial_response = mock_initial_response
 
         # Create actual AnalyzeLROPoller instance
         result = AnalyzeLROPoller(
-            mock_client, mock_poller._polling_method._initial_response, Mock(), mock_poller._polling_method
+            mock_client, mock_initial_response, Mock(), mock_polling_method
         )
 
-        # Verify it has the details property
+        # Verify it has the operation_id property
         assert isinstance(result, AnalyzeLROPoller)
-        assert hasattr(result, "details")
-        details = result.details
-        assert "operation_id" in details
-        assert details["operation_id"] == "test-op-id-123"
+        assert hasattr(result, "operation_id")
+        operation_id = result.operation_id
+        assert operation_id == "test-op-id-123"

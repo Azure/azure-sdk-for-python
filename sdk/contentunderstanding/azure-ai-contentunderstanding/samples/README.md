@@ -110,11 +110,11 @@ Set the following in `.env`:
 
 **Example `.env` file:**
 ```bash
-AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://your-resource.services.ai.azure.com/
+AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://mmi-sample-foundry.services.ai.azure.com/
 AZURE_CONTENT_UNDERSTANDING_KEY=your-api-key-here  # Optional
-GPT_4_1_DEPLOYMENT=your-gpt-4.1-deployment-name
-GPT_4_1_MINI_DEPLOYMENT=your-gpt-4.1-mini-deployment-name
-TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=your-text-embedding-3-large-deployment-name
+GPT_4_1_DEPLOYMENT=gpt-4.1
+GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
+TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
 ```
 
 #### 4. Authenticate (if using DefaultAzureCredential)

@@ -394,7 +394,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                     },
                     "mode": "standard",
                     "processingLocation": "global",
-                    "models": {"completion": "gpt-4o"},  # Required when using fieldSchema
+                    "models": {"completion": "gpt-4.1"},  # Required when using fieldSchema
                     "tags": {"tag1_name": "tag1_value"},
                 },
             )
@@ -695,7 +695,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         Tests retrieving result files from a video analysis operation.
         Verifies that image files generated from video analysis can be retrieved and saved.
         """
-        if not is_live_and_not_recording():
+        if not is_live():
             pytest.skip(
                 "This test requires live mode to run, as it involves large video files that are too big for test proxy to record"
             )

@@ -80,7 +80,7 @@ def new_simple_content_analyzer_object(
             name="schema name here",
         ),
         processing_location=ProcessingLocation.GLOBAL,
-        models={"completion": "gpt-4o"},  # Required when using field_schema
+        models={"completion": "gpt-4.1"},  # Required when using field_schema
         tags=tags,
     )
 
@@ -110,7 +110,7 @@ def new_marketing_video_analyzer_object(
         ),
         description=description,
         processing_location=ProcessingLocation.GLOBAL,
-        models={"completion": "gpt-4o"},  # Required when using field_schema
+        models={"completion": "gpt-4.1"},  # Required when using field_schema
         tags=tags,
     )
 
@@ -158,7 +158,7 @@ def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str
     assert hasattr(first_content, "fields"), "First content should have fields"
     print(f"Verified fields node exists in first result")
 
-    # Verify total_amount field exists and equals 110
+    # Verify total_amount field exists and equals 610.0
     fields = first_content.fields
 
     # Fields is expected to be a dictionary
@@ -174,7 +174,7 @@ def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str
     total_amount_value = total_amount_field.value
 
     print(f"Total amount field value: {total_amount_value}")
-    assert total_amount_value == 110, f"Expected total_amount to be 110, but got {total_amount_value}"
+    assert total_amount_value == 610.0, f"Expected total_amount to be 610.0, but got {total_amount_value}"
     print(f"Total amount field validation successful")
 
 
@@ -461,7 +461,7 @@ def new_invoice_analyzer_object(
             name="invoice_schema",
         ),
         processing_location=ProcessingLocation.GLOBAL,
-        models={"completion": "gpt-4o"},  # Required when using field_schema
+        models={"completion": "gpt-4.1"},  # Required when using field_schema
         tags=tags,
     )
 

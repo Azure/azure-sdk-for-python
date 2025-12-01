@@ -13,6 +13,8 @@ from devtools_testutils import (
     add_general_string_sanitizer,
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
+    add_uri_regex_sanitizer,
+    add_general_regex_sanitizer,
 )
 
 load_dotenv()
@@ -73,3 +75,20 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+
+    # Sanitize dynamic analyzer IDs in URLs only
+    # Note: We don't sanitize analyzer IDs in response bodies because tests using variables
+    # (like test_sample_grant_copy_auth) need the actual IDs to match the variables.
+    # URI sanitization is still needed for consistent URL matching in recordings.
+    add_uri_regex_sanitizer(
+        regex=r"/analyzers/test_analyzer_source_[a-f0-9]+",
+        value="/analyzers/test_analyzer_source_0000000000000000",
+    )
+    add_uri_regex_sanitizer(
+        regex=r"/analyzers/test_analyzer_target_[a-f0-9]+",
+        value="/analyzers/test_analyzer_target_0000000000000000",
+    )
+    add_uri_regex_sanitizer(
+        regex=r"/analyzers/test_analyzer_[a-f0-9]+",
+        value="/analyzers/test_analyzer_0000000000000000",
+    )

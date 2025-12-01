@@ -31,7 +31,14 @@ def get_content_understanding_credential_async():
 class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
 
     def create_async_client(self, endpoint: str) -> ContentUnderstandingClient:
-        credential = self.get_credential(ContentUnderstandingClient, is_async=True)
+        # Try API key first (for Content Understanding service)
+        # Check both CONTENTUNDERSTANDING_KEY (PowerShellPreparer convention) and AZURE_CONTENT_UNDERSTANDING_KEY
+        key = os.getenv("CONTENTUNDERSTANDING_KEY") or os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+        if key and key.strip():
+            credential = AzureKeyCredential(key)
+        else:
+            # Fall back to service principal or DefaultAzureCredential
+            credential = self.get_credential(ContentUnderstandingClient, is_async=True)
         return cast(
             ContentUnderstandingClient,
             self.create_client_from_credential(

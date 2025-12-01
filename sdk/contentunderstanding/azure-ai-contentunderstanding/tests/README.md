@@ -142,7 +142,7 @@ MaxRetryError: HTTPConnectionPool(host='localhost', port=5000)
 **Symptoms:** Tests fail with connection errors, proxy doesn't start.
 
 **Solution:**
-1. Check `.env` file at repository root (`/home/yslin/repos/azure-sdk-for-python-pr/.env`)
+1. Check `.env` file at repository root
 2. Remove any `PROXY_MANUAL_START=false` line
 3. The framework will use the default `False` (boolean) for automatic startup
 

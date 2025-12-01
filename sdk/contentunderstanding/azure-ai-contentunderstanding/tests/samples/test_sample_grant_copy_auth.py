@@ -38,7 +38,7 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_grant_copy_auth(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_grant_copy_auth(self, contentunderstanding_endpoint: str, **kwargs) -> None:
         """Test granting copy authorization for cross-resource analyzer copying.
         
         This test validates:
@@ -96,9 +96,15 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
                 # Use same endpoint and credential as source
                 target_client = self.create_client(endpoint=target_endpoint)
             
+            # Get variables from test proxy (for playback mode) or use defaults (for record mode)
+            variables = kwargs.pop("variables", {})
+            
             # Generate unique analyzer IDs for this test
-            source_analyzer_id = f"test_analyzer_source_{uuid.uuid4().hex[:16]}"
-            target_analyzer_id = f"test_analyzer_target_{uuid.uuid4().hex[:16]}"
+            # Use variables from recording if available (playback mode), otherwise generate new ones (record mode)
+            default_source_id = f"test_analyzer_source_{uuid.uuid4().hex[:16]}"
+            default_target_id = f"test_analyzer_target_{uuid.uuid4().hex[:16]}"
+            source_analyzer_id = variables.setdefault("grantCopySourceAnalyzerId", default_source_id)
+            target_analyzer_id = variables.setdefault("grantCopyTargetAnalyzerId", default_target_id)
             
             print(f"[INFO] Source analyzer ID: {source_analyzer_id}")
             print(f"[INFO] Target analyzer ID: {target_analyzer_id}")
@@ -312,6 +318,9 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             
             print("\n[SUCCESS] All test_sample_grant_copy_auth assertions passed")
             print("[INFO] Grant copy authorization functionality demonstrated")
+            
+            # Return variables to be recorded for playback mode
+            return variables
         finally:
             # Clean up: delete test analyzers
             try:
