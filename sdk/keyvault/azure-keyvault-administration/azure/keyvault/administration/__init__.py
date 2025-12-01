@@ -4,6 +4,7 @@
 # ------------------------------------
 from ._access_control_client import KeyVaultAccessControlClient
 from ._backup_client import KeyVaultBackupClient
+from ._ekm_client import KeyVaultEkmClient
 from ._enums import KeyVaultRoleScope, KeyVaultDataAction, KeyVaultSettingType
 from ._internal.client_base import ApiVersion
 from ._models import (
@@ -23,6 +24,7 @@ __all__ = [
     "KeyVaultAccessControlClient",
     "KeyVaultBackupClient",
     "KeyVaultDataAction",
+    "KeyVaultEkmClient",
     "KeyVaultPermission",
     "KeyVaultRoleAssignment",
     "KeyVaultRoleAssignmentProperties",

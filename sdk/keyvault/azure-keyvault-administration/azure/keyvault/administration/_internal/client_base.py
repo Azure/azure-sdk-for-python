@@ -24,6 +24,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
+    V2026_01_01_preview = "2026-01-01-preview"
     V7_6 = "7.6"
     V7_5 = "7.5"
     V7_4 = "7.4"
@@ -31,7 +32,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V7_2 = "7.2"
 
 
-DEFAULT_VERSION = ApiVersion.V7_6
+DEFAULT_VERSION = ApiVersion.V2026_01_01_preview
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -109,7 +110,7 @@ class KeyVaultClientBase(object):
         except ValueError as exc:
             raise NotImplementedError(
                 f"This package doesn't support API version '{self.api_version}'. "
-                + f"Supported versions: {', '.join(v.value for v in ApiVersion)}"
+                + f"Supported versions: {', '.join(v.value for v in ApiVersion)}" # pyright: ignore[reportGeneralTypeIssues]
             ) from exc
 
     @property
