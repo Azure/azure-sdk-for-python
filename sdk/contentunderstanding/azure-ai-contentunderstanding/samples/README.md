@@ -13,7 +13,7 @@ urlFragment: contentunderstanding-samples
 
 These code samples demonstrate common scenarios with the Azure AI Content Understanding client library.
 
-**Note:** All samples in this folder use synchronous operations. For async samples, see the [`async_samples`](async_samples) directory.
+**Note:** All samples in this folder use synchronous operations. For async samples, see the [`async_samples`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/async_samples) directory.
 
 ## Prerequisites
 
@@ -477,12 +477,12 @@ python samples/sample_analyze_binary.py  # Make sure you're in the package direc
 
 * Review the [Azure AI Content Understanding documentation][contentunderstanding_docs]
 * Check the [API reference][apiref] for detailed API information
-* See the main [README](../README.md) for more getting started information
+* See the main [README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md) for more getting started information
 
 <!-- LINKS -->
 [azure_sub]: https://azure.microsoft.com/free/
 [contentunderstanding_docs]: https://learn.microsoft.com/azure/ai-services/content-understanding/
 [contentunderstanding_quickstart]: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api
 [contentunderstanding_regions]: https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support
-[apiref]: https://learn.microsoft.com/python/api/azure-ai-contentunderstanding/
+[apiref]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-contentunderstanding/latest/
 

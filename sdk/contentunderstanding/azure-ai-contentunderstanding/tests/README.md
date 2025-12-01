@@ -1,8 +1,8 @@
-# Testing Guide for Azure AI Content Understanding SDK
+# Azure AI Content Understanding client library for Python - Testing Guide
 
 This guide provides instructions for running tests for the Azure AI Content Understanding SDK.
 
-## Prerequisites
+## Getting started
 
 1. Python 3.8 or higher
 2. Virtual environment activated
@@ -95,12 +95,14 @@ If you need to run tests in parallel (`pytest -n auto`), you must manually start
 
 **Note:** The string `"true"` is truthy in Python, so setting `PROXY_MANUAL_START=true` correctly tells the framework that the proxy is manually managed.
 
-## Test Modes
+## Key concepts
 
-### Playback Mode (Default)
+### Test Modes
+
+#### Playback Mode (Default)
 Tests run against recorded HTTP responses. No live service calls are made.
 
-### Live Mode
+#### Live Mode
 Tests make actual API calls to Azure services. Requires valid credentials.
 
 Set environment variable:
@@ -108,7 +110,7 @@ Set environment variable:
 export AZURE_TEST_RUN_LIVE=true
 ```
 
-### Record Mode
+#### Record Mode
 Tests make live API calls and record the responses for future playback.
 
 Set environment variable:
@@ -116,6 +118,9 @@ Set environment variable:
 export AZURE_TEST_RUN_LIVE=true
 export AZURE_TEST_RECORD_MODE=true
 ```
+
+### Test Proxy
+The test framework uses the **test-proxy** for recording and playing back HTTP requests during tests. This allows tests to run consistently without requiring live Azure resources in most scenarios.
 
 ## Troubleshooting
 
@@ -146,16 +151,61 @@ MaxRetryError: HTTPConnectionPool(host='localhost', port=5000)
 2. Remove any `PROXY_MANUAL_START=false` line
 3. The framework will use the default `False` (boolean) for automatic startup
 
+## Examples
+
+### Running a Single Test
+```bash
+pytest tests/test_content_understanding_content_analyzers_operations.py::TestContentUnderstandingContentAnalyzersOperations::test_content_analyzers_get
+```
+
+### Running Tests in Parallel
+```bash
+# Start test-proxy manually first
+./start_test_proxy_for_parallel.sh
+export PROXY_MANUAL_START=true
+
+# Run tests in parallel
+pytest -n auto
+
+# Stop test-proxy when done
+./stop_test_proxy.sh
+```
+
+### Running Tests in Live Mode
+```bash
+export AZURE_TEST_RUN_LIVE=true
+pytest tests/
+```
+
 ## Helper Scripts
 
 - `start_test_proxy_for_parallel.sh` - Start test-proxy manually for parallel execution
 - `stop_test_proxy.sh` - Stop manually started test-proxy
 - `enable_parallel_proxy.md` - Detailed guide for parallel execution setup
 
+## Next steps
+
+- Review the [Azure SDK Python Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md) for comprehensive testing documentation
+- Check the [Test-Proxy Documentation](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy) for test-proxy details
+- See the main [README](../README.md) for package documentation
+
+## Contributing
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][code_of_conduct_faq] or contact [opencode@microsoft.com][opencode_email] with any additional questions or comments.
+
 ## Additional Resources
 
-- [Azure SDK Python Testing Guide](../../../../../doc/dev/tests.md) - Comprehensive testing documentation
+- [Azure SDK Python Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md) - Comprehensive testing documentation
 - [Test-Proxy Documentation](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy) - Official test-proxy documentation
+
+[cla]: https://cla.microsoft.com
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[opencode_email]: mailto:opencode@microsoft.com
 
 
 
