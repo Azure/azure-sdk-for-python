@@ -83,17 +83,17 @@ class TestAgentCrud(TestBase):
         )
 
         # Retrieve specific versions of the first Agent
-        retrieved_agent: AgentVersionDetails = project_client.agents.get_version(
+        retrieved_agent_version: AgentVersionDetails = project_client.agents.get_version(
             agent_name=first_agent_name, agent_version=agent1_version1.version
         )
         self._validate_agent_version(
-            retrieved_agent, expected_name=first_agent_name, expected_version=agent1_version1.version
+            retrieved_agent_version, expected_name=first_agent_name, expected_version=agent1_version1.version
         )
-        retrieved_agent: AgentVersionDetails = project_client.agents.get_version(
+        retrieved_agent_version: AgentVersionDetails = project_client.agents.get_version(
             agent_name=first_agent_name, agent_version=agent1_version2.version
         )
         self._validate_agent_version(
-            retrieved_agent, expected_name=first_agent_name, expected_version=agent1_version2.version
+            retrieved_agent_version, expected_name=first_agent_name, expected_version=agent1_version2.version
         )
 
         # List all versions of the first Agent (three should be at least two, per the above..)

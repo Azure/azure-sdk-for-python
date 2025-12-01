@@ -23,6 +23,7 @@
 """
 
 import base64
+import time
 from email.utils import formatdate
 import json
 import uuid
@@ -73,7 +74,8 @@ _COMMON_OPTIONS = {
     'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
-    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS
+    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
+    "availability_strategy_config": Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -113,6 +115,13 @@ def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
+    if 'read_timeout' in kwargs:
+        options['read_timeout'] = kwargs['read_timeout']
+    if 'timeout' in kwargs:
+        options['timeout'] = kwargs['timeout']
+
+
+    options[Constants.OperationStartTime] = time.time()
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}

@@ -38,7 +38,6 @@ from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
     ContentDecodePolicy,
     HeadersPolicy,
-    UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     DistributedTracingPolicy,
@@ -47,6 +46,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.aio._global_partition_endpoint_manager_per_partition_automatic_failover_async import (
     _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync)
 from .. import _base as base
+from .._availability_strategy_config import CrossRegionHedgingStrategyConfig, _validate_hedging_config
 from .._base import _build_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
@@ -78,8 +78,7 @@ from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper_async import ReadItemsHelperAsync
-
-
+from ..user_agent_policy import CosmosUserAgentPolicy
 
 
 class CredentialDict(TypedDict, total=False):
@@ -119,6 +118,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             auth: CredentialDict,
             connection_policy: Optional[ConnectionPolicy] = None,
             consistency_level: Optional[str] = None,
+            availability_strategy_config: Optional[dict[str, Any]] = None,
+            availability_strategy_max_concurrency: Optional[int] = None,
             **kwargs: Any
     ) -> None:
         """
@@ -139,6 +140,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
+        self.availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] =\
+            _validate_hedging_config(availability_strategy_config)
+        self.availability_strategy_max_concurrency: Optional[int] = availability_strategy_max_concurrency
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[AsyncTokenCredential] = None
@@ -224,7 +228,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
+            CosmosUserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
             credentials_policy,
@@ -238,6 +242,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 **kwargs
             ),
         ]
+        # after passing in the user_agent into the user agent policy the user_agent is no longer needed
+        kwargs.pop("user_agent", None)
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient(
@@ -815,6 +821,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -962,6 +970,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
         # update session for write request
@@ -1268,6 +1278,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
@@ -1537,6 +1549,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         request_data = {}
         if options.get("filterPredicate"):
             request_data["condition"] = options.get("filterPredicate")
@@ -1647,6 +1661,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         result, last_response_headers = await self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -1966,6 +1982,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         result, last_response_headers = await self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -2084,7 +2102,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        headers,
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         result = await self.__Post(path, request_params, batch_operations, headers, **kwargs)
         return cast(Tuple[list[dict[str, Any]], CaseInsensitiveDict], result)
 
@@ -2979,6 +3000,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
+        read_timeout = options.get("read_timeout")
+        if read_timeout is not None:
+            # we currently have a gap where kwargs are not getting passed correctly down the pipeline. In order to make
+            # absolute time out work, we are passing read_timeout via kwargs as a temporary fix
+            kwargs.setdefault("read_timeout", read_timeout)
+
+        operation_start_time = options.get(Constants.OperationStartTime)
+        if operation_start_time is not None:
+            # we need to set operation_state in kwargs as thats where it is looked at while sending the request
+            kwargs.setdefault(Constants.OperationStartTime, operation_start_time)
+        timeout = options.get("timeout")
+        if timeout is not None:
+            # we need to set operation_state in kwargs as that's where it is looked at while sending the request
+            kwargs.setdefault("timeout", timeout)
+
         if query:
             __GetBodiesFromQueryResult = result_fn
         else:
@@ -3009,6 +3045,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options.get("partitionKey", None),
             )
             request_params.set_excluded_location_from_options(options)
+            request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+            request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, resource_type,
                                       request_params.operation_type, options, partition_key_range_id)
             await base.set_session_token_header_async(self, headers, path, request_params, options,
@@ -3050,6 +3088,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        req_headers,
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         if not is_query_plan:
             await base.set_session_token_header_async(self, req_headers, path, request_params, options,
                                                       partition_key_range_id)
@@ -3383,7 +3423,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             "contentType": runtime_constants.MediaTypes.Json,
             "isQueryPlanRequest": True,
             "supportedQueryFeatures": supported_query_features,
-            "queryVersion": http_constants.Versions.QueryVersion
+            "queryVersion": http_constants.Versions.QueryVersion,
         }
         if excluded_locations is not None:
             options["excludedLocations"] = excluded_locations
@@ -3436,8 +3476,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        headers,
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_availability_strategy_config(options, self.availability_strategy_config)
+        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         _, last_response_headers = await self.__Post(path=path, request_params=request_params,
-                                                        req_headers=headers, body=None, **kwargs)
+                                                         req_headers=headers, body=None, **kwargs)
         self._UpdateSessionIfRequired(headers, None, last_response_headers)
         self.last_response_headers = last_response_headers
         if response_hook:

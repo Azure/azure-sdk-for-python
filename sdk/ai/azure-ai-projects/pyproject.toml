@@ -34,8 +34,8 @@ keywords = ["azure", "azure sdk"]
 dependencies = [
     "isodate>=0.6.1",
     "azure-core>=1.35.0",
-    "azure-identity>=1.25.0",
-    "openai>=2.0.0",
+    "azure-identity>=1.15.0",
+    "openai>=2.8.0",
     "azure-storage-blob>=12.15.0",
 ]
 dynamic = [
@@ -65,3 +65,4 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 verifytypes = false
+
