@@ -226,6 +226,28 @@ def _normalize_transport_specs(specs):
     return norm
 
 
+def _transform_args(recording_id: str, *call_args, **call_kwargs):
+    """Transform azure.core transport call arguments to route through the test proxy.
+    
+    Used by both sync and async decorators.
+    """
+    copied_positional_args = list(call_args)
+    request = copied_positional_args[1]
+    transform_request(request, recording_id)
+    return tuple(copied_positional_args), call_kwargs
+
+
+def _transform_httpx_args(recording_id: str, *call_args, **call_kwargs):
+    """Transform httpx transport call arguments to route through the test proxy.
+    
+    Used by both sync and async decorators.
+    """
+    copied_positional_args = list(call_args)
+    request = copied_positional_args[1]
+    transform_httpx_request(request, recording_id)
+    return tuple(copied_positional_args), call_kwargs
+
+
 def recorded_by_proxy(*maybe_specs):
     """
     Usages:
@@ -272,27 +294,15 @@ def _make_proxy_decorator(transports):
             test_id = get_test_id()
             recording_id, variables = start_record_or_playback(test_id)
 
-            def transform_args_inner(*call_args, **call_kwargs):
-                copied_positional_args = list(call_args)
-                request = copied_positional_args[1]
-                transform_request(request, recording_id)
-                return tuple(copied_positional_args), call_kwargs
-
-            def transform_httpx_args_inner(*call_args, **call_kwargs):
-                copied_positional_args = list(call_args)
-                request = copied_positional_args[1]
-                transform_httpx_request(request, recording_id)
-                return tuple(copied_positional_args), call_kwargs
-
             # Build a wrapper factory so each patched method closes over its own original
             def make_combined_call(original_transport_func, is_httpx=False):
                 def combined_call(*call_args, **call_kwargs):
                     if is_httpx:
-                        adjusted_args, adjusted_kwargs = transform_httpx_args_inner(*call_args, **call_kwargs)
+                        adjusted_args, adjusted_kwargs = _transform_httpx_args(recording_id, *call_args, **call_kwargs)
                         result = original_transport_func(*adjusted_args, **adjusted_kwargs)
                         restore_httpx_response_url(result)
                     else:
-                        adjusted_args, adjusted_kwargs = transform_args_inner(*call_args, **call_kwargs)
+                        adjusted_args, adjusted_kwargs = _transform_args(recording_id, *call_args, **call_kwargs)
                         result = original_transport_func(*adjusted_args, **adjusted_kwargs)
                         # rewrite request.url to the original upstream for LROs, etc.
                         parsed_result = url_parse.urlparse(result.request.url)

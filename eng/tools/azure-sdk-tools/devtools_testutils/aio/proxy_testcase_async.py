@@ -23,10 +23,10 @@ except ImportError:
 from ..helpers import is_live_and_not_recording, trim_kwargs_from_test_function
 from ..proxy_testcase import (
     _normalize_transport_specs,
+    _transform_args,
+    _transform_httpx_args,
     get_test_id,
     start_record_or_playback,
-    transform_request,
-    transform_httpx_request,
     restore_httpx_response_url,
     stop_record_or_playback,
 )
@@ -78,27 +78,15 @@ def _make_proxy_decorator_async(transports):
             test_id = get_test_id()
             recording_id, variables = start_record_or_playback(test_id)
 
-            def transform_args_inner(*call_args, **call_kwargs):
-                copied_positional_args = list(call_args)
-                request = copied_positional_args[1]
-                transform_request(request, recording_id)
-                return tuple(copied_positional_args), call_kwargs
-
-            def transform_httpx_args_inner(*call_args, **call_kwargs):
-                copied_positional_args = list(call_args)
-                request = copied_positional_args[1]
-                transform_httpx_request(request, recording_id)
-                return tuple(copied_positional_args), call_kwargs
-
             # Build a wrapper factory so each patched method closes over its own original
             def make_combined_call(original_transport_func, is_httpx=False):
                 async def combined_call(*call_args, **call_kwargs):
                     if is_httpx:
-                        adjusted_args, adjusted_kwargs = transform_httpx_args_inner(*call_args, **call_kwargs)
+                        adjusted_args, adjusted_kwargs = _transform_httpx_args(recording_id, *call_args, **call_kwargs)
                         result = await original_transport_func(*adjusted_args, **adjusted_kwargs)
                         restore_httpx_response_url(result)
                     else:
-                        adjusted_args, adjusted_kwargs = transform_args_inner(*call_args, **call_kwargs)
+                        adjusted_args, adjusted_kwargs = _transform_args(recording_id, *call_args, **call_kwargs)
                         result = await original_transport_func(*adjusted_args, **adjusted_kwargs)
                         # rewrite request.url to the original upstream for LROs, etc.
                         parsed_result = url_parse.urlparse(result.request.url)
