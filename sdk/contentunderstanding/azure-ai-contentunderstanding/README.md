@@ -85,7 +85,7 @@ cp sdk/contentunderstanding/azure-ai-contentunderstanding/env.sample .env
 
 Then edit `.env` and set at minimum:
 
-```env
+```
 AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
 # Optionally provide a key; if omitted DefaultAzureCredential is used.
 AZURE_CONTENT_UNDERSTANDING_KEY=<optional-api-key>
@@ -318,7 +318,7 @@ To run the tests for this package, you need to set up a `.env` file with your te
 
 ### Running tests
 
-**Important:** Make sure you have activated the virtual environment before running tests (see [Virtual Environment Setup](#virtual-environment-setup) above).
+**Important:** Make sure you have activated the virtual environment before running tests.
 
 Install the development dependencies (if not already installed):
 ```bash
