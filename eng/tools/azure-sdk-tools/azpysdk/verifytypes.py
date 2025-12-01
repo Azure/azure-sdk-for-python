@@ -13,7 +13,7 @@ from subprocess import CalledProcessError
 from .Check import Check
 from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
-from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults, set_envvar_defaults
+from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.functions import get_pip_command
 from ci_tools.logging import logger
