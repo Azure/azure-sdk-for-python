@@ -67,11 +67,3 @@ class QueryParamPolicy(HTTPPolicy):
             pass
 
         return self.next.send(request)
-
-    @staticmethod
-    def __sort_key(v: str):
-        if v == "":
-            return (2, "")  # empty string last
-        if v == " ":
-            return (1, v)  # space second to last
-        return (0, v)  # other non-empty values first
