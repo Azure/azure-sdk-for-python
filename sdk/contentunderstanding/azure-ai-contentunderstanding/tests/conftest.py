@@ -75,6 +75,18 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    
+    # Sanitize cross-resource copy fields in request body
+    # These fields are required for grant_copy_authorization and copy_analyzer API calls
+    # Sanitizing them allows playback mode to use placeholder values
+    add_body_key_sanitizer(json_path="$.targetAzureResourceId", value="placeholder-target-resource-id")
+    add_body_key_sanitizer(json_path="$.targetRegion", value="placeholder-target-region")
+    add_body_key_sanitizer(json_path="$..targetAzureResourceId", value="placeholder-target-resource-id")
+    add_body_key_sanitizer(json_path="$..targetRegion", value="placeholder-target-region")
+    add_body_key_sanitizer(json_path="$.sourceAzureResourceId", value="placeholder-source-resource-id")
+    add_body_key_sanitizer(json_path="$.sourceRegion", value="placeholder-source-region")
+    add_body_key_sanitizer(json_path="$..sourceAzureResourceId", value="placeholder-source-resource-id")
+    add_body_key_sanitizer(json_path="$..sourceRegion", value="placeholder-source-region")
 
     # Sanitize dynamic analyzer IDs in URLs only
     # Note: We don't sanitize analyzer IDs in response bodies because tests using variables
