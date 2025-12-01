@@ -41,12 +41,8 @@ class QueryParamPolicy(HTTPPolicy):
                     grouped[k].append(v)
                 normalized_params = []
                 for k in sorted(grouped.keys()):
-                    values = grouped[k]
-                    if len(values) > 1:
-                        # Empty values last, space values second to last, other non-empty values sorted
-                        # lexicographically first
-                        values = sorted(values, key=self.__sort_key)
-                    normalized_params.extend([(k, v) for v in values])
+                    # Preserve relative order for all values, including empty and space
+                    normalized_params.extend([(k, v) for v in grouped[k]])
 
                 # Rebuild the query string, encoding spaces as %20 instead of +
                 new_query = urlencode(normalized_params, quote_via=quote)

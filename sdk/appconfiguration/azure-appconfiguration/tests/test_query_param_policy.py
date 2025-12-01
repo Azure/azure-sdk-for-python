@@ -208,7 +208,7 @@ def test_tags_parameters_with_complex_values():
 def test_tags_parameters_mixed_with_other_parameters():
     """Test that tags parameters mixed with other parameters are handled correctly."""
     original_url = "?$select=key,value&tags=feature%3Dauth&label=*&api-version=2023-11-01&$filter=startsWith(key,'app')&tags=env%3Dtest"
-    expected_url = "?%24filter=startsWith%28key%2C%27app%27%29&%24select=key%2Cvalue&api-version=2023-11-01&label=%2A&tags=env%3Dtest&tags=feature%3Dauth"
+    expected_url = "?%24filter=startsWith%28key%2C%27app%27%29&%24select=key%2Cvalue&api-version=2023-11-01&label=%2A&tags=feature%3Dauth&tags=env%3Dtest"
 
     run_query_param_policy_test(original_url, expected_url)
 
