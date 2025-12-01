@@ -65,7 +65,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         polling_method: AsyncPollingMethod[PollingReturnType_co],
         continuation_token: str,
         **kwargs: Any,
-    ) -> "AnalyzeAsyncLROPoller":
+    ) -> AsyncLROPoller[PollingReturnType_co]:
         """Create a poller from a continuation token.
 
         :param polling_method: The polling strategy to adopt
@@ -73,14 +73,15 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :param continuation_token: An opaque continuation token
         :type continuation_token: str
         :return: An instance of AnalyzeAsyncLROPoller
-        :rtype: AnalyzeAsyncLROPoller
+        :rtype: AsyncLROPoller[PollingReturnType_co]
         :raises ~azure.core.exceptions.HttpResponseError: If the continuation token is invalid.
         """
+        result = await polling_method.from_continuation_token(continuation_token, **kwargs)
         (
             client,
             initial_response,
             deserialization_callback,
-        ) = await polling_method.from_continuation_token(continuation_token, **kwargs)
+        ) = result
 
         return cls(client, initial_response, deserialization_callback, polling_method)
 

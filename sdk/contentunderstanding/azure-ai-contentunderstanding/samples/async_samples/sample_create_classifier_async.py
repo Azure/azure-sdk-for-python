@@ -116,12 +116,12 @@ async def main() -> None:
 
         print(f"\nAnalyzing document with classifier '{analyzer_id}'...")
 
-        poller = await client.begin_analyze_binary(
+        analyze_poller = await client.begin_analyze_binary(
             analyzer_id=analyzer_id,
             content_type="application/pdf",
             binary_input=file_bytes,
         )
-        analyze_result: AnalyzeResult = await poller.result()
+        analyze_result: AnalyzeResult = await analyze_poller.result()
 
         # Display classification results
         if analyze_result.contents and len(analyze_result.contents) > 0:

@@ -68,10 +68,11 @@ async def main() -> None:
             return
 
         # Map your deployed models to the models required by prebuilt analyzers
-        model_deployments = {
-            "gpt-4.1": gpt_4_1_deployment,
-            "gpt-4.1-mini": gpt_4_1_mini_deployment,
-            "text-embedding-3-large": text_embedding_3_large_deployment,
+        # At this point, all deployments are guaranteed to be non-None due to the check above
+        model_deployments: dict[str, str] = {
+            "gpt-4.1": gpt_4_1_deployment,  # type: ignore[assignment]
+            "gpt-4.1-mini": gpt_4_1_mini_deployment,  # type: ignore[assignment]
+            "text-embedding-3-large": text_embedding_3_large_deployment,  # type: ignore[assignment]
         }
 
         print("Configuring model deployments...")

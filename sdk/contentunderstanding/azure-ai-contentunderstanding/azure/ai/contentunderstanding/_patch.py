@@ -47,7 +47,7 @@ class ContentUnderstandingClient(GeneratedClient):
      Retry-After header is present.
     """
 
-    @overload
+    @overload  # type: ignore[override]
     def begin_analyze(
         self,
         analyzer_id: str,
@@ -86,7 +86,7 @@ class ContentUnderstandingClient(GeneratedClient):
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
 
-    @overload
+    @overload  # type: ignore[override]
     def begin_analyze(
         self,
         analyzer_id: str,
@@ -119,7 +119,7 @@ class ContentUnderstandingClient(GeneratedClient):
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
 
-    @overload
+    @overload  # type: ignore[override]
     def begin_analyze(
         self,
         analyzer_id: str,
@@ -152,7 +152,7 @@ class ContentUnderstandingClient(GeneratedClient):
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
 
-    def begin_analyze(
+    def begin_analyze(  # type: ignore[override]
         self,
         analyzer_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -196,12 +196,14 @@ class ContentUnderstandingClient(GeneratedClient):
 
         # Call parent implementation
         # Only pass body if it's not _Unset (let parent construct from inputs if not provided)
+        # Ensure content_type is always a string (not None)
+        content_type_str = content_type if content_type is not None else "application/json"
         if body is not _Unset:
             poller = super().begin_analyze(
                 analyzer_id=analyzer_id,
                 body=body,
                 processing_location=processing_location,
-                content_type=content_type,
+                content_type=content_type_str,
                 inputs=inputs,
                 model_deployments=model_deployments,
                 **kwargs,
@@ -210,7 +212,7 @@ class ContentUnderstandingClient(GeneratedClient):
             poller = super().begin_analyze(
                 analyzer_id=analyzer_id,
                 processing_location=processing_location,
-                content_type=content_type,
+                content_type=content_type_str,
                 inputs=inputs,
                 model_deployments=model_deployments,
                 **kwargs,

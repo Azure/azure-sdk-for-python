@@ -132,8 +132,9 @@ def main() -> None:
     if result.field_schema and result.field_schema.fields:
         print(f"  Fields ({len(result.field_schema.fields)}):")
         for field_name, field_def in result.field_schema.fields.items():
-            method = field_def.method.value if field_def.method else "auto"
-            print(f"    - {field_name}: {field_def.type.value if field_def.type else 'unknown'} ({method})")
+            method = field_def.method if field_def.method else "auto"
+            field_type = field_def.type if field_def.type else "unknown"
+            print(f"    - {field_name}: {field_type} ({method})")
     # [END create_analyzer]
 
     # Clean up - delete the analyzer
