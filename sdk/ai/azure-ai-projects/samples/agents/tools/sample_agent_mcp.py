@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -33,23 +33,21 @@ from openai.types.responses.response_input_param import McpApprovalResponse, Res
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# Get the OpenAI client for responses and conversations
-openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    # [START tool_declaration]
+    mcp_tool = MCPTool(
+        server_label="api-specs",
+        server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
+        require_approval="always",
+    )
+    # [END tool_declaration]
 
-# [START tool_declaration]
-mcp_tool = MCPTool(
-    server_label="api-specs",
-    server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
-    require_approval="always",
-)
-# [END tool_declaration]
-
-with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(

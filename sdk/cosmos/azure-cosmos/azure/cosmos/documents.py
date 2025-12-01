@@ -79,6 +79,7 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         self._WritableLocations: list[dict[str, str]] = []
         self._ReadableLocations: list[dict[str, str]] = []
         self._EnableMultipleWritableLocations = False
+        self._EnablePerPartitionFailoverBehavior = False
 
     @property
     def WritableLocations(self) -> list[dict[str, str]]:

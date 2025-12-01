@@ -7,7 +7,7 @@ import random
 import re
 import functools
 import json
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, Final
 from azure.ai.projects.models import (
     Connection,
     ConnectionType,
@@ -28,7 +28,7 @@ from azure.ai.projects.models import (
     ResponsesMessageRole,
     ItemContentType,
 )
-from azure.ai.projects.models._models import AgentObject, AgentVersionObject
+from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live_and_not_recording
 from azure.ai.projects import AIProjectClient as AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
@@ -62,7 +62,22 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
+    azure_ai_projects_tests_bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
+    azure_ai_projects_tests_ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    azure_ai_projects_tests_ai_search_index_name="sanitized-index-name",
+    azure_ai_projects_tests_mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
+    azure_ai_projects_tests_image_model_deployment_name="gpt-image-1-mini",
 )
+
+# Fine-tuning job type constants
+SFT_JOB_TYPE: Final[str] = "sft"
+DPO_JOB_TYPE: Final[str] = "dpo"
+RFT_JOB_TYPE: Final[str] = "rft"
+
+# Training type constants
+STANDARD_TRAINING_TYPE: Final[str] = "Standard"
+GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
+DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
 
 
 class TestBase(AzureRecordedTestCase):
@@ -116,6 +131,30 @@ class TestBase(AzureRecordedTestCase):
     test_files_params = {
         "test_file_name": "test_file.jsonl",
         "file_purpose": "fine-tune",
+    }
+
+    test_finetuning_params = {
+        "sft": {
+            "openai": {
+                "model_name": "gpt-4.1",
+            },
+            "oss": {"model_name": "Ministral-3B"},
+            "training_file_name": "sft_training_set.jsonl",
+            "validation_file_name": "sft_validation_set.jsonl",
+        },
+        "dpo": {
+            "openai": {"model_name": "gpt-4o-mini"},
+            "training_file_name": "dpo_training_set.jsonl",
+            "validation_file_name": "dpo_validation_set.jsonl",
+        },
+        "rft": {
+            "openai": {"model_name": "o4-mini"},
+            "training_file_name": "rft_training_set.jsonl",
+            "validation_file_name": "rft_validation_set.jsonl",
+        },
+        "n_epochs": 1,
+        "batch_size": 1,
+        "learning_rate_multiplier": 1.0,
     }
 
     # Regular expression describing the pattern of an Application Insights connection string.
@@ -343,10 +382,10 @@ class TestBase(AzureRecordedTestCase):
         print(f"Conversation validated (id: {conversation.id})")
 
     def _validate_agent_version(
-        self, agent: AgentVersionObject, expected_name: Optional[str] = None, expected_version: Optional[str] = None
+        self, agent: AgentVersionDetails, expected_name: Optional[str] = None, expected_version: Optional[str] = None
     ) -> None:
         assert agent is not None
-        assert isinstance(agent, AgentVersionObject)
+        assert isinstance(agent, AgentVersionDetails)
         assert agent.id is not None
         if expected_name:
             assert agent.name == expected_name
@@ -355,10 +394,10 @@ class TestBase(AzureRecordedTestCase):
         print(f"Agent version validated (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     def _validate_agent(
-        self, agent: AgentObject, expected_name: Optional[str] = None, expected_latest_version: Optional[str] = None
+        self, agent: AgentDetails, expected_name: Optional[str] = None, expected_latest_version: Optional[str] = None
     ) -> None:
         assert agent is not None
-        assert isinstance(agent, AgentObject)
+        assert isinstance(agent, AgentDetails)
         assert agent.id is not None
         if expected_name:
             assert agent.name == expected_name
@@ -428,6 +467,26 @@ class TestBase(AzureRecordedTestCase):
         TestBase.assert_equal_or_not_none(file_obj.filename, expected_filename)
         TestBase.assert_equal_or_not_none(file_obj.purpose, expected_purpose)
 
+    @classmethod
+    def validate_fine_tuning_job(
+        cls,
+        job_obj,
+        *,
+        expected_job_id: Optional[str] = None,
+        expected_model: Optional[str] = None,
+        expected_status: Optional[str] = None,
+    ):
+        assert job_obj is not None
+        assert job_obj.id is not None
+        assert job_obj.model is not None
+        assert job_obj.created_at is not None
+        assert job_obj.status is not None
+        assert job_obj.training_file is not None
+
+        TestBase.assert_equal_or_not_none(job_obj.id, expected_job_id)
+        TestBase.assert_equal_or_not_none(job_obj.model, expected_model)
+        TestBase.assert_equal_or_not_none(job_obj.status, expected_status)
+
     def _request_callback(self, pipeline_request) -> None:
         self.pipeline_request = pipeline_request
 
@@ -457,6 +516,7 @@ def recorded_by_proxy_httpx(test_func):
         raise ImportError("httpx is required to use recorded_by_proxy_httpx. Install it with: pip install httpx")
 
     def record_wrap(*args, **kwargs):
+
         def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
             """Transform an httpx.Request to route through the test proxy."""
             parsed_result = url_parse.urlparse(str(request.url))
@@ -561,6 +621,7 @@ def recorded_by_proxy_async_httpx(test_func):
         raise ImportError("httpx is required to use recorded_by_proxy_async_httpx. Install it with: pip install httpx")
 
     async def record_wrap(*args, **kwargs):
+
         def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
             """Transform an httpx.Request to route through the test proxy."""
             parsed_result = url_parse.urlparse(str(request.url))

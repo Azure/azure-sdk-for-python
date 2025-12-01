@@ -30,7 +30,7 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_cancel_training_job_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
 
@@ -63,7 +63,9 @@ async def sample_cancel_training_job_async():
             print(f"Evaluation %: {result.evaluation_status.percent_complete}")
         print(f"Estimated End: {result.estimated_end_on}")
 
+
 # [END conversation_authoring_cancel_training_job_async]
+
 
 async def main():
     await sample_cancel_training_job_async()

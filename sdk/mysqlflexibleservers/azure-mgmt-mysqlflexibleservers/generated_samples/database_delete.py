@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/stable/2024-12-30/examples/DatabaseDelete.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2025-06-01-preview/examples/DatabaseDelete.json
 if __name__ == "__main__":
     main()

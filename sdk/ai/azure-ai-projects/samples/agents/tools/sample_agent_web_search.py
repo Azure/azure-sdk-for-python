@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -31,18 +31,18 @@ from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
 
-openai_client = project_client.get_openai_client()
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# [START tool_declaration]
-tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
-# [END tool_declaration]
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    # [START tool_declaration]
+    tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
+    # [END tool_declaration]
 
-with project_client:
     # Create Agent with web search tool
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

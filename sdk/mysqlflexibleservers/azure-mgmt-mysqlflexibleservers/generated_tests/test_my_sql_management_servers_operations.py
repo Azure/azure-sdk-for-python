@@ -22,7 +22,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_servers_list(self, resource_group):
         response = self.client.servers.list(
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
     def test_servers_list_by_resource_group(self, resource_group):
         response = self.client.servers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
         response = self.client.servers.get(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,12 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
                 "databasePort": 0,
                 "fullVersion": "str",
                 "fullyQualifiedDomainName": "str",
-                "highAvailability": {"mode": "str", "standbyAvailabilityZone": "str", "state": "str"},
+                "highAvailability": {
+                    "mode": "str",
+                    "replicationMode": "str",
+                    "standbyAvailabilityZone": "str",
+                    "state": "str",
+                },
                 "id": "str",
                 "identity": {
                     "principalId": "str",
@@ -93,6 +98,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
                     "storageType": "str",
                     "storageUrl": "str",
                 },
+                "lowerCaseTableNames": 0,
                 "maintenancePolicy": {"patchStrategy": "str"},
                 "maintenanceWindow": {
                     "batchOfMaintenance": "str",
@@ -157,7 +163,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -184,7 +190,12 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
                     "primaryUserAssignedIdentityId": "str",
                     "type": "str",
                 },
-                "highAvailability": {"mode": "str", "standbyAvailabilityZone": "str", "state": "str"},
+                "highAvailability": {
+                    "mode": "str",
+                    "replicationMode": "str",
+                    "standbyAvailabilityZone": "str",
+                    "state": "str",
+                },
                 "identity": {
                     "principalId": "str",
                     "tenantId": "str",
@@ -218,7 +229,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "version": "str",
             },
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -230,7 +241,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
         response = self.client.servers.begin_delete(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -243,7 +254,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             parameters={"publicNetworkAccess": "str"},
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -255,7 +266,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
         response = self.client.servers.begin_failover(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -268,7 +279,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             parameters={"gtidSet": "str"},
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -281,7 +292,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             parameters={"maxFailoverSeconds": 0, "restartWithFailover": "str"},
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -293,7 +304,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
         response = self.client.servers.begin_start(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -305,7 +316,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
         response = self.client.servers.begin_stop(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -322,7 +333,7 @@ class TestMySQLManagementServersOperations(AzureMgmtRecordedTestCase):
                 "expectedStandbyAvailabilityZone": "str",
                 "scheduledStandbyAvailabilityZone": "str",
             },
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself

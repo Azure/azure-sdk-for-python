@@ -19,7 +19,11 @@
         "fstring",
         "aiprojectclient",
         "Tadmaq",
-        "Udbk"
+        "Udbk",
+        "Ministral",
+        "cogsvc",
+        "evals",
+        "FineTuning"
     ],
     "ignorePaths": [
         "*.csv",
