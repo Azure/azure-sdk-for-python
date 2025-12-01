@@ -54,8 +54,8 @@ class AnonymousACRExchangeClient(object):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._client = ContainerRegistry(
+            endpoint=endpoint,
             credential=AsyncAnonymousAccessCredential(),
-            url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
             **kwargs
