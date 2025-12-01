@@ -240,6 +240,7 @@ def recorded_by_proxy(*maybe_specs):
       def test(...): ...
 
       # If your test uses both azure.core and httpx for network calls
+      from azure.core.pipeline.transport import RequestsTransport
       from httpx import HTTPTransport as HTTPXTransport
       @recorded_by_proxy((RequestsTransport, "send"), (HTTPXTransport, "handle_request"))
       def test(...): ...
