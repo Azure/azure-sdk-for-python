@@ -2136,7 +2136,9 @@ def _convert_results_to_aoai_evaluation_results(
                 is_descrease_boolean_metric = False
                 if len(decrease_boolean_metrics) > 0 and metric in decrease_boolean_metrics:
                     is_descrease_boolean_metric = True
-                    logger.info(f"Metric {metric} is identified as decrease boolean metric,, eval_id: {eval_id}, eval_run_id: {eval_run_id}.")
+                    logger.info(
+                        f"Metric {metric} is identified as decrease boolean metric,, eval_id: {eval_id}, eval_run_id: {eval_run_id}."
+                    )
                 elif (
                     metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"]
