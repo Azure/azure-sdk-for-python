@@ -155,8 +155,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-# [END ContentUnderstandingDeleteCopiedAnalyzers]
-
-
-if __name__ == "__main__":
-    main()

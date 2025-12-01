@@ -36,7 +36,7 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
-    ContentCategoryDefinition,
+    ContentCategory,
     AnalyzeResult,
     DocumentContent,
     MediaContentKind,
@@ -62,17 +62,17 @@ def main() -> None:
 
     # Define content categories for classification
     categories = {
-        "Loan_Application": ContentCategoryDefinition(
+        "Loan_Application": ContentCategory(
             description="Documents submitted by individuals or businesses to request funding, "
             "typically including personal or business details, financial history, "
             "loan amount, purpose, and supporting documentation."
         ),
-        "Invoice": ContentCategoryDefinition(
+        "Invoice": ContentCategory(
             description="Billing documents issued by sellers or service providers to request "
             "payment for goods or services, detailing items, prices, taxes, totals, "
             "and payment terms."
         ),
-        "Bank_Statement": ContentCategoryDefinition(
+        "Bank_Statement": ContentCategory(
             description="Official statements issued by banks that summarize account activity "
             "over a period, including deposits, withdrawals, fees, and balances."
         ),
