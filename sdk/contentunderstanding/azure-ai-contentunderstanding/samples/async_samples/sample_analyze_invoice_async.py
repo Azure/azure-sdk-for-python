@@ -41,6 +41,8 @@ from azure.ai.contentunderstanding.models import (
     DocumentContent,
     ContentField,
     MediaContentKind,
+    ArrayField,
+    ObjectField,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
@@ -131,23 +133,40 @@ async def main() -> None:
                 if total_amount_field.confidence:
                     print(f"  Confidence: {total_amount_field.confidence:.2f}")
 
-            # Extract array field (Items - line items)
-            items_field = document_content.fields.get("Items")
-            if items_field and items_field.value:
-                items_array: list = items_field.value  # type: ignore
+            # Extract array field (LineItems - line items)
+            # Note: The field name is "LineItems" (not "Items") to match the service response
+            line_items_field = document_content.fields.get("LineItems")
+            if line_items_field and isinstance(line_items_field, ArrayField) and line_items_field.value:
+                items_array: list = line_items_field.value  # type: ignore
                 print(f"\nLine Items ({len(items_array)}):")
                 for i, item in enumerate(items_array, 1):
-                    if isinstance(item, dict):
-                        description_field = item.get("Description")
-                        quantity_field = item.get("Quantity")
-                        amount_field = item.get("Amount")
+                    # Each item in the array is a ContentField (ObjectField for line items)
+                    if isinstance(item, ObjectField) and item.value:
+                        item_dict: dict[str, ContentField] = item.value  # type: ignore
+                        description_field = item_dict.get("Description")
+                        quantity_field = item_dict.get("Quantity")
+                        # Try UnitPrice first, then Amount (matching .NET sample pattern)
+                        unit_price_field = item_dict.get("UnitPrice")
+                        amount_field = item_dict.get("Amount")
 
                         description = description_field.value if description_field else "(no description)"
                         quantity = quantity_field.value if quantity_field else "N/A"
-                        amount = amount_field.value if amount_field else "N/A"
-
+                        
+                        # Display price information - prefer UnitPrice if available, otherwise Amount
+                        # UnitPrice is an ObjectField with Amount and CurrencyCode sub-fields (like TotalAmount)
+                        price_info = ""
+                        if unit_price_field and isinstance(unit_price_field, ObjectField) and unit_price_field.value:
+                            unit_price_obj: dict[str, ContentField] = unit_price_field.value  # type: ignore
+                            unit_price_amount_field = unit_price_obj.get("Amount")
+                            unit_price_currency_field = unit_price_obj.get("CurrencyCode")
+                            if unit_price_amount_field and unit_price_amount_field.value is not None:
+                                currency = unit_price_currency_field.value if unit_price_currency_field else ""
+                                price_info = f"Unit Price: {unit_price_amount_field.value} {currency}".strip()
+                        elif amount_field and amount_field.value is not None:
+                            price_info = f"Amount: {amount_field.value}"
+                        
                         print(f"  {i}. {description}")
-                        print(f"     Quantity: {quantity}, Amount: {amount}")
+                        print(f"     Quantity: {quantity}" + (f", {price_info}" if price_info else ""))
         # [END extract_invoice_fields]
 
     if not isinstance(credential, AzureKeyCredential):
