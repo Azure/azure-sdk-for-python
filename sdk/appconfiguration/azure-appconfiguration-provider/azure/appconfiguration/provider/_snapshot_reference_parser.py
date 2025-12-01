@@ -6,7 +6,7 @@
 
 import json
 from typing import Optional
-from azure.appconfiguration import ConfigurationSetting  # type: ignore
+from azure.appconfiguration import ConfigurationSetting  # pylint:disable=no-name-in-module
 from ._constants import SNAPSHOT_NAME_FIELD
 
 
