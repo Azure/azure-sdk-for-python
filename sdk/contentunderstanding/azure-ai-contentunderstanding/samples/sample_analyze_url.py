@@ -49,7 +49,9 @@ def main() -> None:
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
     # [START analyze_document_from_url]
-    document_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+    document_url = (
+        "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+    )
 
     print(f"Analyzing document from URL with prebuilt-documentSearch...")
     print(f"  URL: {document_url}")

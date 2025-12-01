@@ -84,16 +84,18 @@ async def main() -> None:
                 if document_content.figures and len(document_content.figures) > 0:
                     # Filter for chart figures
                     chart_figures = [
-                        f for f in document_content.figures
-                        if isinstance(f, DocumentChartFigure) or (hasattr(f, 'kind') and f.kind == DocumentFigureKind.CHART)
+                        f
+                        for f in document_content.figures
+                        if isinstance(f, DocumentChartFigure)
+                        or (hasattr(f, "kind") and f.kind == DocumentFigureKind.CHART)
                     ]
 
                     print(f"\nFound {len(chart_figures)} chart(s)")
                     for chart in chart_figures:
                         print(f"  Chart ID: {chart.id}")
-                        if hasattr(chart, 'description') and chart.description:
+                        if hasattr(chart, "description") and chart.description:
                             print(f"    Description: {chart.description}")
-                        if hasattr(chart, 'caption') and chart.caption and chart.caption.content:
+                        if hasattr(chart, "caption") and chart.caption and chart.caption.content:
                             print(f"    Caption: {chart.caption.content}")
                 else:
                     print("\nNo figures found in the document.")
@@ -127,14 +129,14 @@ async def main() -> None:
                 all_formulas = []
                 if document_content.pages:
                     for page in document_content.pages:
-                        if hasattr(page, 'formulas') and page.formulas:
+                        if hasattr(page, "formulas") and page.formulas:
                             all_formulas.extend(page.formulas)
 
                 if len(all_formulas) > 0:
                     print(f"\nFound {len(all_formulas)} formula(s)")
                     for formula in all_formulas:
                         print(f"  Formula: {formula.value or '(no value)'}")
-                        if hasattr(formula, 'kind') and formula.kind:
+                        if hasattr(formula, "kind") and formula.kind:
                             print(f"    Kind: {formula.kind}")
                 else:
                     print("\nNo formulas found in the document.")
@@ -147,14 +149,18 @@ async def main() -> None:
             if content.kind == MediaContentKind.DOCUMENT:
                 document_content: DocumentContent = content  # type: ignore
 
-                if hasattr(document_content, 'annotations') and document_content.annotations and len(document_content.annotations) > 0:
+                if (
+                    hasattr(document_content, "annotations")
+                    and document_content.annotations
+                    and len(document_content.annotations) > 0
+                ):
                     print(f"\nFound {len(document_content.annotations)} annotation(s)")
                     for annotation in document_content.annotations:
                         print(f"  Annotation ID: {annotation.id}")
                         print(f"    Kind: {annotation.kind}")
-                        if hasattr(annotation, 'author') and annotation.author:
+                        if hasattr(annotation, "author") and annotation.author:
                             print(f"    Author: {annotation.author}")
-                        if hasattr(annotation, 'comments') and annotation.comments and len(annotation.comments) > 0:
+                        if hasattr(annotation, "comments") and annotation.comments and len(annotation.comments) > 0:
                             print(f"    Comments: {len(annotation.comments)}")
                             for comment in annotation.comments:
                                 print(f"      - {comment.message}")

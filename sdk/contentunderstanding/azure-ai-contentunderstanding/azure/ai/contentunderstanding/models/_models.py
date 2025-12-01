@@ -402,14 +402,6 @@ class AudioVisualContent(MediaContent, discriminator="audioVisual"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # Workaround for service bug: keyFrameTimesMs is returned as KeyFrameTimesMs
-        # Fix the incorrect casing before calling parent __init__
-        if args and isinstance(args[0], Mapping):
-            mapping = dict(args[0])
-            if "KeyFrameTimesMs" in mapping and "keyFrameTimesMs" not in mapping:
-                mapping["keyFrameTimesMs"] = mapping.pop("KeyFrameTimesMs")
-            args = (mapping,) + args[1:]
-        
         super().__init__(*args, **kwargs)
         self.kind = MediaContentKind.AUDIO_VISUAL  # type: ignore
 
@@ -701,8 +693,7 @@ class ContentAnalyzerConfig(_Model):
     :ivar estimate_field_source_and_confidence: Return field grounding source and confidence.
     :vartype estimate_field_source_and_confidence: bool
     :ivar content_categories: Map of categories to classify the input content(s) against.
-    :vartype content_categories: dict[str,
-     ~azure.ai.contentunderstanding.models.ContentCategoryDefinition]
+    :vartype content_categories: dict[str, ~azure.ai.contentunderstanding.models.ContentCategory]
     :ivar enable_segment: Enable segmentation of the input by contentCategories.
     :vartype enable_segment: bool
     :ivar segment_per_page: Force segmentation of document content by page.
@@ -761,7 +752,7 @@ class ContentAnalyzerConfig(_Model):
         name="estimateFieldSourceAndConfidence", visibility=["read", "create", "update", "delete", "query"]
     )
     """Return field grounding source and confidence."""
-    content_categories: Optional[dict[str, "_models.ContentCategoryDefinition"]] = rest_field(
+    content_categories: Optional[dict[str, "_models.ContentCategory"]] = rest_field(
         name="contentCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """Map of categories to classify the input content(s) against."""
@@ -795,7 +786,7 @@ class ContentAnalyzerConfig(_Model):
         annotation_format: Optional[Union[str, "_models.AnnotationFormat"]] = None,
         disable_face_blurring: Optional[bool] = None,
         estimate_field_source_and_confidence: Optional[bool] = None,
-        content_categories: Optional[dict[str, "_models.ContentCategoryDefinition"]] = None,
+        content_categories: Optional[dict[str, "_models.ContentCategory"]] = None,
         enable_segment: Optional[bool] = None,
         segment_per_page: Optional[bool] = None,
         omit_content: Optional[bool] = None,
@@ -864,7 +855,7 @@ class ContentAnalyzerOperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentCategoryDefinition(_Model):
+class ContentCategory(_Model):
     """Content category definition.
 
     :ivar description: The description of the category.
@@ -1196,46 +1187,6 @@ class DateField(ContentField, discriminator="date"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.field_type = ContentFieldType.DATE  # type: ignore
-
-
-class DetectedPerson(_Model):
-    """Detected person.
-
-    :ivar person_id: Person identifier in the optional person directory if found.  Otherwise, each
-     unknown person is assigned a unique ``Person-{Number}``.
-    :vartype person_id: str
-    :ivar confidence: Confidence of the person identification, if a person directory is provided.
-    :vartype confidence: float
-    :ivar source: Encoded source that identifies the position of the person in the input content.
-    :vartype source: str
-    """
-
-    person_id: Optional[str] = rest_field(name="personId", visibility=["read", "create", "update", "delete", "query"])
-    """Person identifier in the optional person directory if found.  Otherwise, each unknown person is
-     assigned a unique ``Person-{Number}``."""
-    confidence: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Confidence of the person identification, if a person directory is provided."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Encoded source that identifies the position of the person in the input content."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        person_id: Optional[str] = None,
-        confidence: Optional[float] = None,
-        source: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class DocumentAnnotation(_Model):
@@ -1572,13 +1523,13 @@ class DocumentChartFigure(DocumentFigure, discriminator="chart"):
     :vartype kind: str or ~azure.ai.contentunderstanding.models.CHART
     :ivar content: Chart content represented using `Chart.js config
      <https://www.chartjs.org/docs/latest/configuration/>`_. Required.
-    :vartype content: any
+    :vartype content: dict[str, any]
     """
 
     kind: Literal[DocumentFigureKind.CHART] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Figure kind. Required. Figure containing a chart, such as a bar chart, line chart, or pie
      chart."""
-    content: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Chart content represented using `Chart.js config
      <https://www.chartjs.org/docs/latest/configuration/>`_. Required."""
 
@@ -1587,7 +1538,7 @@ class DocumentChartFigure(DocumentFigure, discriminator="chart"):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        content: Any,
+        content: dict[str, Any],
         source: Optional[str] = None,
         span: Optional["_models.ContentSpan"] = None,
         elements: Optional[list[str]] = None,
@@ -1648,9 +1599,6 @@ class DocumentContent(MediaContent, discriminator="document"):
     :ivar figures: List of figures in the document.  Only if enableLayout and returnDetails are
      true.
     :vartype figures: list[~azure.ai.contentunderstanding.models.DocumentFigure]
-    :ivar persons: List of detected persons in the document.  Only if enableFace and returnDetails
-     are true.
-    :vartype persons: list[~azure.ai.contentunderstanding.models.DetectedPerson]
     :ivar annotations: List of annotations in the document.  Only if enableAnnotations and
      returnDetails are true.
     :vartype annotations: list[~azure.ai.contentunderstanding.models.DocumentAnnotation]
@@ -1694,10 +1642,6 @@ class DocumentContent(MediaContent, discriminator="document"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of figures in the document.  Only if enableLayout and returnDetails are true."""
-    persons: Optional[list["_models.DetectedPerson"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of detected persons in the document.  Only if enableFace and returnDetails are true."""
     annotations: Optional[list["_models.DocumentAnnotation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1729,7 +1673,6 @@ class DocumentContent(MediaContent, discriminator="document"):
         sections: Optional[list["_models.DocumentSection"]] = None,
         tables: Optional[list["_models.DocumentTable"]] = None,
         figures: Optional[list["_models.DocumentFigure"]] = None,
-        persons: Optional[list["_models.DetectedPerson"]] = None,
         annotations: Optional[list["_models.DocumentAnnotation"]] = None,
         hyperlinks: Optional[list["_models.DocumentHyperlink"]] = None,
         segments: Optional[list["_models.DocumentContentSegment"]] = None,
@@ -2726,22 +2669,22 @@ class SupportedModels(_Model):
     """Chat completion and embedding models supported by the analyzer.
 
     :ivar completion: Chat completion models supported by the analyzer. Required.
-    :vartype completion: dict[str, str]
+    :vartype completion: list[str]
     :ivar embedding: Embedding models supported by the analyzer. Required.
-    :vartype embedding: dict[str, str]
+    :vartype embedding: list[str]
     """
 
-    completion: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    completion: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Chat completion models supported by the analyzer. Required."""
-    embedding: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    embedding: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Embedding models supported by the analyzer. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        completion: dict[str, str],
-        embedding: dict[str, str],
+        completion: list[str],
+        embedding: list[str],
     ) -> None: ...
 
     @overload

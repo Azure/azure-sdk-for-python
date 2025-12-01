@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -279,9 +280,7 @@ class ContentUnderstandingClient(GeneratedClient):
             poller._polling_method,  # pylint: disable=protected-access
         )
 
-    async def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
-    ) -> AsyncHttpResponse:
+    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

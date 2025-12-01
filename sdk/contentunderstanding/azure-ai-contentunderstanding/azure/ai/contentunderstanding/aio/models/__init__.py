@@ -8,4 +8,3 @@
 from ._patch import AnalyzeAsyncLROPoller
 
 __all__ = ["AnalyzeAsyncLROPoller"]
-

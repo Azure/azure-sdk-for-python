@@ -77,7 +77,9 @@ def main() -> None:
             print(f"  - {var}")
         print("\nPlease set these environment variables and try again.")
         print("\nExample resource ID format:")
-        print("  /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{name}")
+        print(
+            "  /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{name}"
+        )
         return
 
     # [START grant_copy_auth]

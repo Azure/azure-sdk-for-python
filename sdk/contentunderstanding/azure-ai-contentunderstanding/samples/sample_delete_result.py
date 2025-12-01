@@ -56,7 +56,9 @@ def main() -> None:
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
     # [START analyze_and_delete_result]
-    document_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+    document_url = (
+        "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+    )
 
     print("Document Analysis Workflow")
     print("=" * 60)

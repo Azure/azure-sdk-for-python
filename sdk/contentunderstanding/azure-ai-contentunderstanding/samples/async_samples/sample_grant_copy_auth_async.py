@@ -78,7 +78,9 @@ async def main() -> None:
             print(f"  - {var}")
         print("\nPlease set these environment variables and try again.")
         print("\nExample resource ID format:")
-        print("  /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{name}")
+        print(
+            "  /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{name}"
+        )
         return
 
     # [START grant_copy_auth]
@@ -196,7 +198,7 @@ async def main() -> None:
         print(f"\nCleaning up...")
         cleanup_source_client = ContentUnderstandingClient(endpoint=source_endpoint, credential=source_credential)
         cleanup_target_client = ContentUnderstandingClient(endpoint=target_endpoint, credential=target_credential)
-        
+
         try:
             async with cleanup_source_client, cleanup_target_client:
                 try:

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -44,7 +45,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
     @property
     def operation_id(self) -> str:
         """Returns the operation ID for this long-running operation.
-        
+
         The operation ID can be used with get_result_file() to retrieve
         intermediate or final result files from the service.
 
@@ -94,4 +95,3 @@ def patch_sdk():
     :return: None
     :rtype: None
     """
-

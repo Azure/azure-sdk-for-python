@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -72,7 +73,7 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
     @property
     def operation_id(self) -> str:
         """Returns the operation ID for this long-running operation.
-        
+
         The operation ID can be used with get_result_file() to retrieve
         intermediate or final result files from the service.
 
@@ -138,15 +139,24 @@ def patch_sdk():
     _add_value_property_to_field(ArrayField, "value_array")
     _add_value_property_to_field(ObjectField, "value_object")
     _add_value_property_to_field(JsonField, "value_json")
-    
+
     # Add dynamic .value to ContentField base class
     # This checks which value_* attribute exists and returns it
     def _content_field_value_getter(self) -> Any:
         """Get the value of this field regardless of its specific type."""
-        for attr in ['value_string', 'value_integer', 'value_number', 'value_boolean',
-                     'value_date', 'value_time', 'value_array', 'value_object', 'value_json']:
+        for attr in [
+            "value_string",
+            "value_integer",
+            "value_number",
+            "value_boolean",
+            "value_date",
+            "value_time",
+            "value_array",
+            "value_object",
+            "value_json",
+        ]:
             if hasattr(self, attr):
                 return getattr(self, attr)
         return None
-    
+
     setattr(ContentField, "value", property(_content_field_value_getter))

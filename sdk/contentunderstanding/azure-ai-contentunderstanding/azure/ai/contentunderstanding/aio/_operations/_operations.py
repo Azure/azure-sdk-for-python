@@ -52,7 +52,6 @@ from ..._operations._operations import (
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
-from ..._validation import api_version_validation
 from .._configuration import ContentUnderstandingClientConfiguration
 
 JSON = MutableMapping[str, Any]
@@ -349,22 +348,6 @@ class _ContentUnderstandingClientOperationsMixin(
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={
-            "2025-11-01": [
-                "api_version",
-                "analyzer_id",
-                "string_encoding",
-                "processing_location",
-                "content_type",
-                "input_range",
-                "client_request_id",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-01"],
-    )
     async def _analyze_binary_initial(
         self,
         analyzer_id: str,
@@ -436,22 +419,6 @@ class _ContentUnderstandingClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={
-            "2025-11-01": [
-                "api_version",
-                "analyzer_id",
-                "string_encoding",
-                "processing_location",
-                "content_type",
-                "input_range",
-                "client_request_id",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-01"],
-    )
     async def begin_analyze_binary(
         self,
         analyzer_id: str,
@@ -547,13 +514,6 @@ class _ContentUnderstandingClientOperationsMixin(
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={
-            "2025-11-01": ["api_version", "analyzer_id", "allow_replace", "client_request_id", "content_type", "accept"]
-        },
-        api_versions_list=["2025-11-01"],
-    )
     async def _copy_analyzer_initial(
         self,
         analyzer_id: str,
@@ -616,10 +576,7 @@ class _ContentUnderstandingClientOperationsMixin(
 
         response = pipeline_response.http_response
 
-        # Accept both 201 (Created) and 202 (Accepted) for copy analyzer operation
-        # Service currently returns 201 but may return 202 in the future
-        # This ensures compatibility with both current and future service behavior
-        if response.status_code not in [201, 202]:
+        if response.status_code not in [202]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -736,13 +693,6 @@ class _ContentUnderstandingClientOperationsMixin(
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={
-            "2025-11-01": ["api_version", "analyzer_id", "allow_replace", "client_request_id", "content_type", "accept"]
-        },
-        api_versions_list=["2025-11-01"],
-    )
     async def begin_copy_analyzer(
         self,
         analyzer_id: str,
@@ -841,10 +791,6 @@ class _ContentUnderstandingClientOperationsMixin(
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        params_added_on={"2025-11-01": ["allow_replace"]},
-        api_versions_list=["2025-05-01-preview", "2025-11-01"],
-    )
     async def _create_analyzer_initial(
         self,
         analyzer_id: str,
@@ -1004,10 +950,6 @@ class _ContentUnderstandingClientOperationsMixin(
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2025-11-01": ["allow_replace"]},
-        api_versions_list=["2025-05-01-preview", "2025-11-01"],
-    )
     async def begin_create_analyzer(
         self,
         analyzer_id: str,
@@ -1147,11 +1089,6 @@ class _ContentUnderstandingClientOperationsMixin(
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={"2025-11-01": ["api_version", "operation_id"]},
-        api_versions_list=["2025-11-01"],
-    )
     async def delete_result(self, operation_id: str, **kwargs: Any) -> None:
         """Mark the result of an analysis operation for deletion.
 
@@ -1265,11 +1202,6 @@ class _ContentUnderstandingClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={"2025-11-01": ["api_version", "accept"]},
-        api_versions_list=["2025-11-01"],
-    )
     async def get_defaults(self, **kwargs: Any) -> _models.ContentUnderstandingDefaults:
         """Return default settings for this Content Understanding resource.
 
@@ -1581,11 +1513,6 @@ class _ContentUnderstandingClientOperationsMixin(
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={"2025-11-01": ["api_version", "analyzer_id", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-11-01"],
-    )
     async def grant_copy_authorization(
         self,
         analyzer_id: str,
@@ -1965,11 +1892,6 @@ class _ContentUnderstandingClientOperationsMixin(
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={"2025-11-01": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-11-01"],
-    )
     async def update_defaults(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,

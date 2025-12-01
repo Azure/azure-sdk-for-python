@@ -36,7 +36,6 @@ from .._configuration import ContentUnderstandingClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
-from .._validation import api_version_validation
 
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
@@ -134,7 +133,7 @@ def build_content_understanding_copy_analyzer_request(  # pylint: disable=name-t
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/analyzers/{analyzerId}:copy"
+    _url = "/analyzers/{analyzerId}:copyAnalyzer"
     path_format_arguments = {
         "analyzerId": _SERIALIZER.url("analyzer_id", analyzer_id, "str"),
     }
@@ -739,22 +738,6 @@ class _ContentUnderstandingClientOperationsMixin(
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={
-            "2025-11-01": [
-                "api_version",
-                "analyzer_id",
-                "string_encoding",
-                "processing_location",
-                "content_type",
-                "input_range",
-                "client_request_id",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-01"],
-    )
     def _analyze_binary_initial(
         self,
         analyzer_id: str,
@@ -826,22 +809,6 @@ class _ContentUnderstandingClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={
-            "2025-11-01": [
-                "api_version",
-                "analyzer_id",
-                "string_encoding",
-                "processing_location",
-                "content_type",
-                "input_range",
-                "client_request_id",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-01"],
-    )
     def begin_analyze_binary(
         self,
         analyzer_id: str,
@@ -936,13 +903,6 @@ class _ContentUnderstandingClientOperationsMixin(
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={
-            "2025-11-01": ["api_version", "analyzer_id", "allow_replace", "client_request_id", "content_type", "accept"]
-        },
-        api_versions_list=["2025-11-01"],
-    )
     def _copy_analyzer_initial(
         self,
         analyzer_id: str,
@@ -1005,10 +965,7 @@ class _ContentUnderstandingClientOperationsMixin(
 
         response = pipeline_response.http_response
 
-        # Accept both 201 (Created) and 202 (Accepted) for copy analyzer operation
-        # Service currently returns 201 but may return 202 in the future
-        # This ensures compatibility with both current and future service behavior
-        if response.status_code not in [201, 202]:
+        if response.status_code not in [202]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -1122,13 +1079,6 @@ class _ContentUnderstandingClientOperationsMixin(
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={
-            "2025-11-01": ["api_version", "analyzer_id", "allow_replace", "client_request_id", "content_type", "accept"]
-        },
-        api_versions_list=["2025-11-01"],
-    )
     def begin_copy_analyzer(
         self,
         analyzer_id: str,
@@ -1225,10 +1175,6 @@ class _ContentUnderstandingClientOperationsMixin(
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        params_added_on={"2025-11-01": ["allow_replace"]},
-        api_versions_list=["2025-05-01-preview", "2025-11-01"],
-    )
     def _create_analyzer_initial(
         self,
         analyzer_id: str,
@@ -1385,10 +1331,6 @@ class _ContentUnderstandingClientOperationsMixin(
         """
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2025-11-01": ["allow_replace"]},
-        api_versions_list=["2025-05-01-preview", "2025-11-01"],
-    )
     def begin_create_analyzer(
         self,
         analyzer_id: str,
@@ -1528,11 +1470,6 @@ class _ContentUnderstandingClientOperationsMixin(
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={"2025-11-01": ["api_version", "operation_id"]},
-        api_versions_list=["2025-11-01"],
-    )
     def delete_result(self, operation_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Mark the result of an analysis operation for deletion.
 
@@ -1646,11 +1583,6 @@ class _ContentUnderstandingClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={"2025-11-01": ["api_version", "accept"]},
-        api_versions_list=["2025-11-01"],
-    )
     def get_defaults(self, **kwargs: Any) -> _models.ContentUnderstandingDefaults:
         """Return default settings for this Content Understanding resource.
 
@@ -1962,11 +1894,6 @@ class _ContentUnderstandingClientOperationsMixin(
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={"2025-11-01": ["api_version", "analyzer_id", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-11-01"],
-    )
     def grant_copy_authorization(
         self,
         analyzer_id: str,
@@ -2345,11 +2272,6 @@ class _ContentUnderstandingClientOperationsMixin(
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-01",
-        params_added_on={"2025-11-01": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-11-01"],
-    )
     def update_defaults(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,

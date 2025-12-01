@@ -55,7 +55,9 @@ def main() -> None:
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
     # [START analyze_invoice]
-    invoice_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+    invoice_url = (
+        "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+    )
 
     print(f"Analyzing invoice with prebuilt-invoice analyzer...")
     print(f"  URL: {invoice_url}")
@@ -97,7 +99,11 @@ def main() -> None:
 
         print(f"Customer Name: {customer_name or '(None)'}")
         if customer_name_field:
-            print(f"  Confidence: {customer_name_field.confidence:.2f}" if customer_name_field.confidence else "  Confidence: N/A")
+            print(
+                f"  Confidence: {customer_name_field.confidence:.2f}"
+                if customer_name_field.confidence
+                else "  Confidence: N/A"
+            )
             # Source is an encoded identifier containing bounding box coordinates
             # Format: D(pageNumber, x1, y1, x2, y2, x3, y3, x4, y4)
             print(f"  Source: {customer_name_field.source or 'N/A'}")
@@ -107,7 +113,11 @@ def main() -> None:
 
         print(f"Invoice Date: {invoice_date or '(None)'}")
         if invoice_date_field:
-            print(f"  Confidence: {invoice_date_field.confidence:.2f}" if invoice_date_field.confidence else "  Confidence: N/A")
+            print(
+                f"  Confidence: {invoice_date_field.confidence:.2f}"
+                if invoice_date_field.confidence
+                else "  Confidence: N/A"
+            )
 
         # Extract object field (TotalAmount contains Amount and CurrencyCode)
         total_amount_field = document_content.fields.get("TotalAmount")
