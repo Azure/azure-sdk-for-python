@@ -1044,7 +1044,14 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("_eval_meta_data")
     if kwargs.get("_convert_to_aoai_evaluation_result", False):
         _convert_results_to_aoai_evaluation_results(
-            result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data
+            result,
+            LOGGER,
+            eval_id,
+            eval_run_id,
+            evaluators_and_graders,
+            eval_run_summary_dict,
+            eval_meta_data,
+            evaluator_config,
         )
         if app_insights_configuration := kwargs.get("_app_insights_configuration"):
             emit_eval_result_events_to_app_insights(
@@ -1780,6 +1787,7 @@ def _convert_results_to_aoai_evaluation_results(
     evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]] = None,
     eval_run_summary: Optional[Dict[str, Any]] = None,
     eval_meta_data: Optional[Dict[str, Any]] = None,
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
 ) -> None:
     """
     Convert evaluation results to AOAI evaluation results format.
@@ -1825,7 +1833,25 @@ def _convert_results_to_aoai_evaluation_results(
             current_evaluator_metrics = criteria_name_types_from_meta[criteria_name].get("metrics", None)
             if current_evaluator_metrics and len(current_evaluator_metrics) > 0:
                 metrics.extend(current_evaluator_metrics)
+            elif (
+                evaluator_config
+                and criteria_name in evaluator_config
+                and isinstance(evaluator_config[criteria_name], dict)
+                and "_evaluator_definition" in evaluator_config[criteria_name]
+            ):
+                testing_criteria_config = evaluator_config[criteria_name]
+                if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
+                    metric_config_detail = evaluator_definition.get("metrics")
+                    if (
+                        metric_config_detail
+                        and isinstance(metric_config_detail, dict)
+                        and len(metric_config_detail) > 0
+                    ):
+                        metrics.extend(metric_config_detail.keys())
             elif evaluator_name:
+                logger.info(
+                    f"Calculating criteria_type and metrics for {criteria_name}, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
+                )
                 if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
                     evaluator_name = evaluator_name.replace("builtin.", "")
                 metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])

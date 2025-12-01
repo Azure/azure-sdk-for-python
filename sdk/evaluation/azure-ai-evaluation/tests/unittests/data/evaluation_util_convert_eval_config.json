@@ -1,0 +1,62 @@
+{
+    "my_violence": {
+        "column_mapping": {
+            "query": "${data.item.query}",
+            "response": "${data.item.response}",
+            "context": "${data.item.context}",
+            "ground_truth": "${data.item.ground_truth}"
+        },
+        "_evaluator_definition": {
+            "type": "service",
+            "metrics": {
+                "violence": {
+                    "type": "ordinal",
+                    "desirable_direction": "decrease",
+                    "min_value": 0.0,
+                    "max_value": 7.0
+                }
+            }
+        },
+        "_evaluator_id": "azureml://registries/azureml/evaluators/builtin.violence/versions/2"
+    },
+    "my_self_harm": {
+        "column_mapping": {
+            "query": "${data.item.query}",
+            "response": "${data.item.response}",
+            "context": "${data.item.context}",
+            "ground_truth": "${data.item.ground_truth}"
+        },
+        "_evaluator_definition": {
+            "type": "service",
+            "metrics": {
+                "self_harm": {
+                    "type": "ordinal",
+                    "desirable_direction": "decrease",
+                    "min_value": 0.0,
+                    "max_value": 7.0
+                }
+            }
+        },
+        "_evaluator_id": "azureml://registries/azureml/evaluators/builtin.self_harm/versions/2"
+    },
+    "ViolenceContentCustomEvaluator": {
+        "column_mapping": {
+            "query": "{{item.question}}",
+            "response": "{{item.answer}}",
+            "context": "{{item.context}}",
+            "ground_truth": "{{item.ground_truth}}"
+        },
+        "_evaluator_definition": {
+            "type": "service",
+            "metrics": {
+                "ViolenceContentCustomEvaluator": {
+                    "type": "ordinal",
+                    "desirable_direction": "decrease",
+                    "min_value": 0.0,
+                    "max_value": 7.0
+                }
+            }
+        },
+        "_evaluator_id": "azureml://registries/azureml/evaluators/builtin.self_harm/versions/2"
+    }
+}
