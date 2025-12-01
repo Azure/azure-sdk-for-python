@@ -8,16 +8,16 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Optional, Union, IO, overload
+from typing import TYPE_CHECKING, Any, IO, Optional, Union, overload
 from typing_extensions import Self
-from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
 
 from ._client import ContentUnderstandingClient as GeneratedClient
 from . import models as _models
 from .models import AnalyzeLROPoller
 
-if False:  # TYPE_CHECKING
+if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 JSON = dict[str, Any]
@@ -152,6 +152,7 @@ class ContentUnderstandingClient(GeneratedClient):
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
 
+    @distributed_trace
     def begin_analyze(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         analyzer_id: str,
@@ -226,6 +227,7 @@ class ContentUnderstandingClient(GeneratedClient):
             poller._polling_method,  # pylint: disable=protected-access
         )
 
+    @distributed_trace
     def begin_analyze_binary(
         self,
         analyzer_id: str,
@@ -282,7 +284,7 @@ class ContentUnderstandingClient(GeneratedClient):
             poller._polling_method,  # pylint: disable=protected-access
         )
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:  # pylint: disable=useless-parent-delegation
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -301,7 +303,7 @@ class ContentUnderstandingClient(GeneratedClient):
         """
         return super().send_request(request, stream=stream, **kwargs)
 
-    def close(self) -> None:
+    def close(self) -> None:  # pylint: disable=useless-parent-delegation
         """Close the client session."""
         super().close()
 
@@ -309,7 +311,7 @@ class ContentUnderstandingClient(GeneratedClient):
         super().__enter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:
+    def __exit__(self, *exc_details: Any) -> None:  # pylint: disable=useless-parent-delegation
         super().__exit__(*exc_details)
 
 

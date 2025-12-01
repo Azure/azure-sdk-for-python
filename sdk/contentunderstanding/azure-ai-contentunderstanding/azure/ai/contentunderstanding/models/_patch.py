@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import re
-from typing import Optional, Any, Dict, List, Union, TYPE_CHECKING, Mapping, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar
 from azure.core.polling import LROPoller, PollingMethod
 from ._models import (
     StringField,
@@ -115,27 +115,36 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
 
 def _add_value_property_to_field(field_class: type, value_attr: str, return_type: Any = Any) -> None:
     """Add a .value property implementation at runtime.
-    
+
     This function adds the actual property implementation so IntelliSense works.
     The type declarations in TYPE_CHECKING tell type checkers about the types.
-    
-    :param field_class: The field class to add the property to
-    :param value_attr: The attribute name to read from (e.g., "value_string")
-    :param return_type: The expected return type for better type checking
+
+    :param field_class: The field class to add the property to.
+    :type field_class: type
+    :param value_attr: The attribute name to read from (e.g., "value_string").
+    :type value_attr: str
+    :param return_type: The expected return type for better type checking.
+    :type return_type: Any
+    :return: None
+    :rtype: None
     """
     def value_getter(self: Any) -> Any:
-        """Get the value of this field."""
+        """Get the value of this field.
+
+        :return: The value of the field.
+        :rtype: Any
+        """
         return getattr(self, value_attr, None)
-    
+
     # Set return type annotation for better type checking
     value_getter.__annotations__['return'] = return_type
-    
+
     # Create property with type annotation
     value_property = property(value_getter)
-    
+
     # Add property to class at runtime (for IntelliSense)
     setattr(field_class, "value", value_property)
-    
+
     # Also add to __annotations__ for better IDE support
     if not hasattr(field_class, "__annotations__"):
         field_class.__annotations__ = {}
@@ -165,7 +174,13 @@ def patch_sdk():
     # Add dynamic .value to ContentField base class
     # This checks which value_* attribute exists and returns it
     def _content_field_value_getter(self: ContentField) -> Any:
-        """Get the value of this field regardless of its specific type."""
+        """Get the value of this field regardless of its specific type.
+
+        :param self: The ContentField instance.
+        :type self: ContentField
+        :return: The value of the field.
+        :rtype: Any
+        """
         for attr in [
             "value_string",
             "value_integer",
@@ -180,14 +195,14 @@ def patch_sdk():
             if hasattr(self, attr):
                 return getattr(self, attr)
         return None
-    
+
     # Set return type annotation
     _content_field_value_getter.__annotations__['return'] = Any
-    
+
     # Add property to ContentField base class
     content_field_value = property(_content_field_value_getter)
     setattr(ContentField, "value", content_field_value)
-    
+
     # Also add to __annotations__ for IDE support
     if not hasattr(ContentField, "__annotations__"):
         ContentField.__annotations__ = {}
@@ -197,13 +212,20 @@ def patch_sdk():
     # The service returns "KeyFrameTimesMs" (capital K) but TypeSpec defines "keyFrameTimesMs" (lowercase k)
     # This fix is forward compatible: if the service fixes the issue and returns "keyFrameTimesMs" correctly,
     # the patch will be a no-op and the correct value will pass through unchanged.
-    _original_audio_visual_content_init = _models.AudioVisualContent.__init__
+    _original_audio_visual_content_init = _models.AudioVisualContent.__init__  # type: ignore[attr-defined]
 
     def _patched_audio_visual_content_init(self, *args: Any, **kwargs: Any) -> None:
         """Patched __init__ that normalizes casing for KeyFrameTimesMs before calling parent.
-        
+
         This patch is forward compatible: it only normalizes when the service returns incorrect casing.
         If the service returns the correct "keyFrameTimesMs" casing, the patch does nothing.
+
+        :param args: Positional arguments passed to __init__.
+        :type args: Any
+        :param kwargs: Keyword arguments passed to __init__.
+        :type kwargs: Any
+        :return: None
+        :rtype: None
         """
         # If first arg is a dict (mapping), normalize the casing
         if args and isinstance(args[0], dict):

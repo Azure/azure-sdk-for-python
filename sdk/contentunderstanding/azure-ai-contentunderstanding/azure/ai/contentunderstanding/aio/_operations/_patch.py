@@ -11,8 +11,11 @@ SDK-FIX: Fix copy analyzer endpoint path and status code handling for async oper
 - Status codes: Accept both 201 and 202 (service inconsistently returns both status codes)
 """
 
-from typing import Any, Optional, Union, IO, AsyncIterator
-from azure.core.rest import HttpRequest
+import json
+from collections.abc import MutableMapping
+from io import IOBase
+from typing import Any, AsyncIterator, IO, Optional, Union
+
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -25,30 +28,27 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.utils import case_insensitive_dict
-from collections.abc import MutableMapping
-from io import IOBase
-import json
 
 __all__: list[str] = []
 
 
 def patch_sdk():
     """Patch the SDK to fix async copy analyzer operations.
-    
+
     This function:
     1. Uses the patched build_content_understanding_copy_analyzer_request (from sync operations)
     2. Wraps _copy_analyzer_initial method to accept both 201 and 202 status codes
     """
     from ..._operations import _operations as sync_operations
-    from . import _operations
-    
+    from . import _operations  # pylint: disable=protected-access
+
     # Note: The request builder is shared between sync and async, so it's already patched
     # by the sync _patch.py. We just need to patch the async _copy_analyzer_initial method.
-    
+
     # SDK-FIX: Wrap _copy_analyzer_initial to accept both 201 and 202 status codes
-    _original_copy_initial = _operations._ContentUnderstandingClientOperationsMixin._copy_analyzer_initial
-    
-    async def _patched_copy_analyzer_initial(
+    _original_copy_initial = _operations._ContentUnderstandingClientOperationsMixin._copy_analyzer_initial  # pylint: disable=protected-access
+
+    async def _patched_copy_analyzer_initial(  # pylint: disable=protected-access
         self,
         analyzer_id: str,
         body: Union[_operations.JSON, IO[bytes]] = _operations._Unset,
@@ -59,7 +59,23 @@ def patch_sdk():
         source_region: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        """Patched version that accepts both 201 and 202 status codes."""
+        """Patched version that accepts both 201 and 202 status codes.
+
+        :param analyzer_id: The analyzer ID for the copy operation.
+        :type analyzer_id: str
+        :param body: The request body.
+        :type body: Union[JSON, IO[bytes]]
+        :keyword source_analyzer_id: The source analyzer ID.
+        :paramtype source_analyzer_id: str
+        :keyword allow_replace: Whether to allow replacing an existing analyzer.
+        :paramtype allow_replace: Optional[bool]
+        :keyword source_azure_resource_id: The source Azure resource ID.
+        :paramtype source_azure_resource_id: Optional[str]
+        :keyword source_region: The source region.
+        :paramtype source_region: Optional[str]
+        :return: An async iterator of bytes.
+        :rtype: AsyncIterator[bytes]
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -133,5 +149,5 @@ def patch_sdk():
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-    
-    _operations._ContentUnderstandingClientOperationsMixin._copy_analyzer_initial = _patched_copy_analyzer_initial
+
+    _operations._ContentUnderstandingClientOperationsMixin._copy_analyzer_initial = _patched_copy_analyzer_initial  # pylint: disable=protected-access

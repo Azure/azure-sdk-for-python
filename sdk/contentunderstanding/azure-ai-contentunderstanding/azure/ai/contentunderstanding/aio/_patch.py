@@ -8,16 +8,16 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Optional, Union, IO, overload
+from typing import TYPE_CHECKING, Any, IO, Optional, Union, overload
 from typing_extensions import Self
-from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._client import ContentUnderstandingClient as GeneratedClient
 from .. import models as _models
 from .models import AnalyzeAsyncLROPoller
 
-if False:  # TYPE_CHECKING
+if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 JSON = dict[str, Any]
@@ -152,6 +152,7 @@ class ContentUnderstandingClient(GeneratedClient):
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
 
+    @distributed_trace_async
     async def begin_analyze(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         analyzer_id: str,
@@ -226,6 +227,7 @@ class ContentUnderstandingClient(GeneratedClient):
             poller._polling_method,  # pylint: disable=protected-access
         )
 
+    @distributed_trace_async
     async def begin_analyze_binary(
         self,
         analyzer_id: str,
@@ -282,7 +284,7 @@ class ContentUnderstandingClient(GeneratedClient):
             poller._polling_method,  # pylint: disable=protected-access
         )
 
-    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> AsyncHttpResponse:
+    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> AsyncHttpResponse:  # pylint: disable=invalid-overridden-method,useless-parent-delegation
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -301,7 +303,7 @@ class ContentUnderstandingClient(GeneratedClient):
         """
         return await super().send_request(request, stream=stream, **kwargs)
 
-    async def close(self) -> None:
+    async def close(self) -> None:  # pylint: disable=useless-parent-delegation
         """Close the client session."""
         await super().close()
 
@@ -309,7 +311,7 @@ class ContentUnderstandingClient(GeneratedClient):
         await super().__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details: Any) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:  # pylint: disable=useless-parent-delegation
         await super().__aexit__(*exc_details)
 
 

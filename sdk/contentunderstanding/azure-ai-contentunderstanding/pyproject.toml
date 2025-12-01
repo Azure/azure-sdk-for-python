@@ -15,7 +15,7 @@ authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 description = "Microsoft Corporation Azure AI Content Understanding Client Library for Python"
-license = "MIT"
+license = {text = "MIT"}
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",

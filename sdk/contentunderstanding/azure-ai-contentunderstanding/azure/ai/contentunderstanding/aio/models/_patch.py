@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import re
-from typing import Any, Mapping, TypeVar
+from typing import Any, TypeVar
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
@@ -60,7 +60,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
     @classmethod
-    async def from_continuation_token(  # type: ignore[override]
+    async def from_continuation_token(  # type: ignore[override]  # pylint: disable=invalid-overridden-method
         cls,
         polling_method: AsyncPollingMethod[PollingReturnType_co],
         continuation_token: str,
