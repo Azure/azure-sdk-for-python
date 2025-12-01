@@ -8,8 +8,8 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from azure.core.tracing.decorator_async import distributed_trace_async
 from typing import Any
+from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import (
     _MapsGeolocationClientOperationsMixin as _MapsGeolocationClientOperationsMixinGenerated,
 )
