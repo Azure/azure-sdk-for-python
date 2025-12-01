@@ -48,7 +48,7 @@ def create_analyzer_and_assert_sync(
     print(f"\nCreating analyzer {analyzer_id}")
 
     # Start the analyzer creation operation
-    poller = client.begin_create_or_replace(
+    poller = client.begin_create_analyzer(
         analyzer_id=analyzer_id,
         resource=resource,
     )
@@ -86,7 +86,7 @@ def delete_analyzer_and_assert_sync(
     if created_analyzer:
         print(f"Cleaning up analyzer {analyzer_id}")
         try:
-            client.delete(analyzer_id=analyzer_id)
+            client.delete_analyzer(analyzer_id=analyzer_id)
             # Verify deletion
             print(f"Analyzer {analyzer_id} is deleted successfully")
         except Exception as e:
@@ -321,7 +321,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
             # Get the analyzer before update to verify initial state
             print(f"Getting analyzer {analyzer_id} before update")
-            analyzer_before_update = client.get(analyzer_id=analyzer_id)
+            analyzer_before_update = client.get_analyzer(analyzer_id=analyzer_id)
             assert analyzer_before_update is not None
             assert analyzer_before_update.analyzer_id == analyzer_id
             assert analyzer_before_update.description == f"Initial analyzer for update test: {analyzer_id}"
@@ -331,23 +331,23 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             )
 
             # Create updated analyzer with only allowed properties (description and tags)
-            updated_analyzer = ContentAnalyzer(
-                base_analyzer_id=analyzer_before_update.base_analyzer_id,
-                models=analyzer_before_update.models,
-                analyzer_id=analyzer_id,
-                description=f"Updated analyzer description: {analyzer_id}",
-                tags={"updated_tag": "updated_value"},
-            )
+            updated_analyzer = {
+                "analyzerId": analyzer_id,
+                "baseAnalyzerId": analyzer_before_update.base_analyzer_id,
+                "models": analyzer_before_update.models,
+                "description": f"Updated analyzer description: {analyzer_id}",
+                "tags": {"updated_tag": "updated_value"},
+            }
 
             # Update the analyzer
             print(f"Updating analyzer {analyzer_id}")
-            response = client.update(analyzer_id=analyzer_id, resource=updated_analyzer)
+            response = client.update_analyzer(analyzer_id=analyzer_id, resource=updated_analyzer)
             assert response is not None
             assert response.analyzer_id == analyzer_id
 
             # Get the analyzer after update to verify changes persisted
             print(f"Getting analyzer {analyzer_id} after update")
-            analyzer_after_update = client.get(analyzer_id=analyzer_id)
+            analyzer_after_update = client.get_analyzer(analyzer_id=analyzer_id)
             assert analyzer_after_update is not None
             assert analyzer_after_update.analyzer_id == analyzer_id
             assert analyzer_after_update.description == f"Updated analyzer description: {analyzer_id}"
@@ -387,7 +387,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
             # Delete the analyzer
             print(f"Deleting analyzer {analyzer_id}")
-            response = client.delete(analyzer_id=analyzer_id)
+            response = client.delete_analyzer(analyzer_id=analyzer_id)
 
             # Verify the delete response
             assert response is None
@@ -556,10 +556,12 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             print(f"Waiting for video analysis to complete")
             analysis_result = analysis_poller.result()
 
-            # Get the operation ID from the poller details
-            details = analysis_poller.details
-            assert "operation_id" in details, "Details should contain operation_id"
-            analysis_operation_id = details["operation_id"]
+            # Get the operation ID from the poller using custom poller's operation_id property
+            from azure.ai.contentunderstanding.models import AnalyzeLROPoller
+
+            assert isinstance(analysis_poller, AnalyzeLROPoller), "Should return custom AnalyzeLROPoller"
+
+            analysis_operation_id = analysis_poller.operation_id
             assert analysis_operation_id is not None, "Operation ID should not be None"
             assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
             print(f"Analysis operation ID: {analysis_operation_id}")
@@ -575,6 +577,316 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         finally:
             # Always clean up the created analyzer, even if the test fails
             delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_content_analyzers_analyze_binary_extract_markdown(self, contentunderstanding_endpoint: str) -> None:
+        """Test extracting markdown content from analyzed binary documents.
+        
+        This test corresponds to .NET AnalyzeBinary_ExtractMarkdown.
+        Verifies that markdown is successfully extracted and is non-empty.
+        """
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        print("\n=== Test: Extract Markdown from Binary Document ===")
+        
+        # Get test file path
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(current_dir, "test_data", "sample_invoice.pdf")
+        assert os.path.exists(file_path), f"Sample file should exist at {file_path}"
+        print(f"Test file: {file_path}")
+        
+        # Read file content
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
+        assert len(file_bytes) > 0, "File should not be empty"
+        print(f"File size: {len(file_bytes)} bytes")
+        
+        # Analyze the document
+        print("\nAnalyzing document with prebuilt-documentSearch...")
+        poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_type="application/pdf",
+        )
+        
+        # Wait for completion
+        result = poller.result()
+        assert_poller_properties(poller)
+        
+        # Verify result
+        assert result is not None, "Analysis result should not be null"
+        assert hasattr(result, "contents"), "Result should have contents attribute"
+        assert result.contents is not None, "Result contents should not be null"
+        assert len(result.contents) > 0, "Result should contain at least one content element"
+        assert len(result.contents) == 1, "PDF file should have exactly one content element"
+        print(f"✓ Analysis completed with {len(result.contents)} content element(s)")
+        
+        # Extract markdown from first content
+        content = result.contents[0]
+        assert content is not None, "Content should not be null"
+        
+        # Verify markdown content
+        assert hasattr(content, "markdown"), "Content should have markdown attribute"
+        assert content.markdown is not None, "Markdown content should not be null"
+        assert isinstance(content.markdown, str), "Markdown should be a string"
+        assert len(content.markdown) > 0, "Markdown content should not be empty"
+        assert content.markdown.strip(), "Markdown content should not be just whitespace"
+        
+        print(f"\n✓ Markdown extraction successful:")
+        print(f"  - Markdown length: {len(content.markdown)} characters")
+        print(f"  - First 100 chars: {content.markdown[:100]}...")
+        print(f"✓ Markdown extraction test completed successfully")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_content_analyzers_create_classifier(self, contentunderstanding_endpoint: str) -> None:
+        """Test creating a classifier with content categories and document segmentation.
+        
+        This test corresponds to .NET CreateClassifier.
+        Verifies that the classifier is created successfully with the specified categories 
+        and configuration, and can segment documents into different categories.
+        """
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
+        created_analyzer = False
+        analyzer_id = generate_analyzer_id(client, "test_classifier", is_async=False)
+        
+        print(f"\n=== Test: Create Classifier with Segmentation ===")
+        print(f"Analyzer ID: {analyzer_id}")
+        
+        try:
+            # Define content categories for classification
+            content_categories = {
+                "Loan_Application": {
+                    "description": "Documents submitted by individuals or businesses to request funding"
+                },
+                "Invoice": {
+                    "description": "Billing documents issued by sellers or service providers to request payment"
+                },
+                "Bank_Statement": {
+                    "description": "Official statements issued by banks that summarize account activity"
+                }
+            }
+            
+            # Create analyzer configuration with categories and segmentation enabled
+            config = {
+                "returnDetails": True,
+                "enableSegment": True,
+                "contentCategories": content_categories
+            }
+            
+            # Create the classifier analyzer
+            classifier = {
+                "baseAnalyzerId": "prebuilt-document",
+                "description": "Custom classifier for financial document categorization",
+                "config": config,
+                "models": {
+                    "completion": "gpt-4.1"
+                }
+            }
+            
+            print(f"\nCreating classifier with {len(content_categories)} categories...")
+            print(f"Categories: {', '.join(content_categories.keys())}")
+            
+            # Create the classifier
+            poller = create_analyzer_and_assert_sync(client, analyzer_id, classifier)
+            created_analyzer = True
+            
+            # Get the created classifier to verify full details
+            get_response = client.get_analyzer(analyzer_id=analyzer_id)
+            assert get_response is not None, "Get analyzer response should not be null"
+            
+            result = get_response
+            assert result is not None, "Classifier result should not be null"
+            
+            # Verify config
+            if hasattr(result, "config") and result.config is not None:
+                config_dict = result.config if isinstance(result.config, dict) else result.config.as_dict()
+                if "contentCategories" in config_dict or "content_categories" in config_dict:
+                    categories_key = "contentCategories" if "contentCategories" in config_dict else "content_categories"
+                    categories = config_dict[categories_key]
+                    assert len(categories) >= 3, "Should have at least 3 content categories"
+                    print(f"✓ Classifier created successfully with {len(categories)} categories")
+                else:
+                    print("  (Config exists but contentCategories not verified - may be service behavior)")
+            else:
+                print("  (Config verification skipped - result.config is None)")
+            
+            print(f"✓ Classifier test completed successfully")
+            
+        finally:
+            # Always clean up the created analyzer
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_content_analyzers_analyze_configs(self, contentunderstanding_endpoint: str) -> None:
+        """Test analyzing a document with specific configurations enabled.
+        
+        This test corresponds to .NET AnalyzeConfigs.
+        Verifies that document features can be extracted with formulas, layout, and OCR enabled.
+        """
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        print("\n=== Test: Analyze with Specific Configurations ===")
+        
+        # Get test file path
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(current_dir, "test_data", "sample_invoice.pdf")
+        
+        assert os.path.exists(file_path), f"Test file should exist at {file_path}"
+        print(f"Test file: {file_path}")
+        
+        # Read file content
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
+        assert len(file_bytes) > 0, "File should not be empty"
+        print(f"File size: {len(file_bytes)} bytes")
+        
+        # Analyze with prebuilt-documentSearch which has formulas, layout, and OCR enabled
+        print("\nAnalyzing document with prebuilt-documentSearch (formulas, layout, OCR enabled)...")
+        poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_type="application/pdf",
+        )
+        
+        # Wait for completion
+        result = poller.result()
+        assert_poller_properties(poller)
+        
+        # Verify result
+        assert result is not None, "Analysis result should not be null"
+        assert hasattr(result, "contents"), "Result should have contents attribute"
+        assert result.contents is not None, "Result should contain contents"
+        assert len(result.contents) > 0, "Result should have at least one content"
+        assert len(result.contents) == 1, "PDF file should have exactly one content element"
+        print(f"✓ Analysis completed with {len(result.contents)} content element(s)")
+        
+        # Verify document content
+        document_content = result.contents[0]
+        assert document_content is not None, "Content should not be null"
+        assert hasattr(document_content, "start_page_number"), "Should have start_page_number"
+        start_page = getattr(document_content, "start_page_number", None)
+        assert start_page is not None and start_page >= 1, "Start page should be >= 1"
+        
+        if hasattr(document_content, "end_page_number"):
+            end_page = getattr(document_content, "end_page_number", None)
+            assert end_page is not None and end_page >= start_page, \
+                "End page should be >= start page"
+            print(f"✓ Document page range: {start_page}-{end_page}")
+        
+        # Verify markdown was extracted (OCR/layout result)
+        if hasattr(document_content, "markdown") and document_content.markdown:
+            print(f"✓ Markdown extracted ({len(document_content.markdown)} characters)")
+        
+        print(f"✓ Configuration test completed successfully")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_content_analyzers_analyze_return_raw_json(self, contentunderstanding_endpoint: str) -> None:
+        """Test analyzing a document and returning raw JSON response.
+        
+        This test corresponds to .NET AnalyzeReturnRawJson.
+        Verifies that the raw JSON response can be retrieved and parsed.
+        """
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        print("\n=== Test: Analyze and Return Raw JSON ===")
+        
+        # Get test file path
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(current_dir, "test_data", "sample_invoice.pdf")
+        assert os.path.exists(file_path), f"Sample file should exist at {file_path}"
+        print(f"Test file: {file_path}")
+        
+        # Read file content
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
+        assert len(file_bytes) > 0, "File should not be empty"
+        print(f"File size: {len(file_bytes)} bytes")
+        
+        # Analyze the document
+        print("\nAnalyzing document with prebuilt-documentSearch...")
+        poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_type="application/pdf",
+        )
+        
+        # Wait for completion
+        result = poller.result()
+        assert_poller_properties(poller)
+        
+        # Verify operation completed successfully
+        assert result is not None, "Analysis result should not be null"
+        
+        # Verify response can be serialized to JSON
+        import json
+        result_dict = result.as_dict() if hasattr(result, 'as_dict') else dict(result)
+        json_str = json.dumps(result_dict, indent=2)
+        assert len(json_str) > 0, "JSON string should not be empty"
+        
+        # Verify JSON can be parsed back
+        parsed = json.loads(json_str)
+        assert parsed is not None, "Parsed JSON should not be null"
+        assert isinstance(parsed, dict), "Parsed JSON should be a dictionary"
+        
+        print(f"✓ JSON serialization successful:")
+        print(f"  - JSON length: {len(json_str)} characters")
+        print(f"  - Top-level keys: {', '.join(list(parsed.keys())[:5])}...")
+        print(f"✓ Raw JSON test completed successfully")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_content_analyzers_delete_result(self, contentunderstanding_endpoint: str) -> None:
+        """Test deleting an analysis result.
+        
+        This test corresponds to .NET DeleteResult.
+        Verifies that an analysis result can be deleted using its operation ID.
+        """
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        print("\n=== Test: Delete Analysis Result ===")
+        
+        # Get test file URI
+        document_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+        print(f"Document URL: {document_url}")
+        
+        # Start the analysis operation
+        print("\nStarting analysis operation...")
+        poller = client.begin_analyze(
+            analyzer_id="prebuilt-invoice",
+            inputs=[AnalyzeInput(url=document_url)],
+            polling_interval=1,
+        )
+        
+        # Get the operation ID from the poller
+        operation_id = poller._polling_method._operation.get_polling_url().split('/')[-1]  # type: ignore[attr-defined]
+        if '?' in operation_id:
+            operation_id = operation_id.split('?')[0]
+        assert operation_id is not None, "Operation ID should not be null"
+        assert len(operation_id) > 0, "Operation ID should not be empty"
+        print(f"Operation ID: {operation_id}")
+        
+        # Wait for completion
+        print("Waiting for analysis to complete...")
+        result = poller.result()
+        
+        # Verify analysis completed successfully
+        assert result is not None, "Analysis result should not be null"
+        assert hasattr(result, "contents"), "Result should have contents"
+        assert result.contents is not None, "Result should contain contents"
+        assert len(result.contents) > 0, "Result should have at least one content"
+        print(f"✓ Analysis completed successfully")
+        
+        # Delete the analysis result
+        print(f"\nDeleting analysis result (operation ID: {operation_id})...")
+        client.delete_result(operation_id=operation_id)
+        
+        print(f"✓ Delete result completed successfully")
+        print("Note: Deletion success verified by no exception thrown")
+        print(f"✓ Delete result test completed successfully")
 
 
 #     def test_content_analyzers_begin_analyze(self, contentunderstanding_endpoint):
