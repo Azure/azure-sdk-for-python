@@ -49,3 +49,4 @@ pyright = true
 pylint = true
 black = true
 generate = false
+apistub = false

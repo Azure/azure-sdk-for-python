@@ -13,11 +13,11 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 from opentelemetry import metrics
 from openai import OpenAI
-
-from devtools_testutils import recorded_by_proxy
-
-from test_base import servicePreparer
-from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, CONTENT_TRACING_ENV_VARIABLE
+from test_base import servicePreparer, recorded_by_proxy_httpx
+from test_ai_instrumentor_base import (
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
@@ -62,16 +62,18 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
         return operation_duration_metrics, token_usage_metrics
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_non_streaming_responses(self, **kwargs):
         """Test that metrics are collected for non-streaming responses API calls."""
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -86,7 +88,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
         # Make a responses API call
         response = client.responses.create(
-            model=deployment_name, conversation=conversation.id, input="Write a short haiku about testing", stream=False
+            model=deployment_name,
+            conversation=conversation.id,
+            input="Write a short haiku about testing",
+            stream=False,
         )
 
         # Verify the response exists
@@ -104,16 +109,18 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # The test passes if we got here without errors and the API calls worked
         assert True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_streaming_responses(self, **kwargs):
         """Test that metrics are collected for streaming responses API calls."""
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -155,16 +162,18 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # The test passes if we got here without errors and streaming worked
         assert True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_conversation_create(self, **kwargs):
         """Test that metrics are collected for conversation creation calls."""
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -190,16 +199,18 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # The test passes if we got here without errors and the conversation was created
         assert True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_multiple_operations(self, **kwargs):
         """Test that metrics are collected correctly for multiple operations."""
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -214,7 +225,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
         # Make multiple responses API calls
         response1 = client.responses.create(
-            model=deployment_name, conversation=conversation.id, input="First question: What is AI?", stream=False
+            model=deployment_name,
+            conversation=conversation.id,
+            input="First question: What is AI?",
+            stream=False,
         )
 
         response2 = client.responses.create(
@@ -237,16 +251,18 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # The test passes if we got here without errors and multiple calls worked
         assert True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_httpx
     def test_metrics_collection_without_content_recording(self, **kwargs):
         """Test that metrics are still collected when content recording is disabled."""
         self.cleanup()
 
         os.environ.update(
-            {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "False",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
         )
         self.setup_telemetry()
 
@@ -259,7 +275,10 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         # Create a conversation and make a responses call
         conversation = client.conversations.create()
         response = client.responses.create(
-            model=deployment_name, conversation=conversation.id, input="Test question", stream=False
+            model=deployment_name,
+            conversation=conversation.id,
+            input="Test question",
+            stream=False,
         )
 
         # Verify the response exists
