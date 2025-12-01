@@ -406,7 +406,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Wait for analysis completion
         - Save analysis result to output file
         - Verify fields node exists in first result
-        - Verify total_amount field exists and equals 110
+        - Verify amount_due field exists and equals 610
         - Clean up created analyzer
         """
         client: ContentUnderstandingClient = self.create_client(endpoint=azure_content_understanding_endpoint)
@@ -460,7 +460,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Wait for analysis completion
         - Save analysis result to output file
         - Verify fields node exists in first result
-        - Verify total_amount field exists and equals 110
+        - Verify amount_due field exists and equals 610
         - Clean up created analyzer
         """
         client: ContentUnderstandingClient = self.create_client(endpoint=azure_content_understanding_endpoint)

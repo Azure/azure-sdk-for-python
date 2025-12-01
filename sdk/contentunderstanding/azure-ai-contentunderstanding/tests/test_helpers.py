@@ -70,8 +70,8 @@ def new_simple_content_analyzer_object(
         description=description,
         field_schema=ContentFieldSchema(
             fields={
-                "total_amount": ContentFieldDefinition(
-                    description="Total amount of this table",
+                "amount_due": ContentFieldDefinition(
+                    description="Total amount due of this table",
                     method=GenerationMethod.EXTRACT,
                     type=ContentFieldType.NUMBER,
                 )
@@ -158,23 +158,23 @@ def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str
     assert hasattr(first_content, "fields"), "First content should have fields"
     print(f"Verified fields node exists in first result")
 
-    # Verify total_amount field exists and equals 610.0
+    # Verify amount_due field exists and equals 610.0
     fields = first_content.fields
 
     # Fields is expected to be a dictionary
     assert isinstance(fields, dict), f"Fields should be a dictionary, got {type(fields)}"
-    assert "total_amount" in fields, f"Fields should contain total_amount. Available fields: {list(fields.keys())}"
+    assert "amount_due" in fields, f"Fields should contain amount_due. Available fields: {list(fields.keys())}"
 
-    total_amount_field = fields["total_amount"]
-    assert total_amount_field is not None, "total_amount field should not be None"
+    amount_due_field = fields["amount_due"]
+    assert amount_due_field is not None, "amount_due field should not be None"
     assert (
-        total_amount_field.__class__.__name__ == "NumberField"
-    ), f"total_amount field should be of type NumberField, got {total_amount_field.__class__.__name__}"
+        amount_due_field.__class__.__name__ == "NumberField"
+    ), f"amount_due field should be of type NumberField, got {amount_due_field.__class__.__name__}"
 
-    total_amount_value = total_amount_field.value
+    amount_due_value = amount_due_field.value
 
-    print(f"Total amount field value: {total_amount_value}")
-    assert total_amount_value == 610.0, f"Expected total_amount to be 610.0, but got {total_amount_value}"
+    print(f"Total amount field value: {amount_due_value}")
+    assert amount_due_value == 610.0, f"Expected amount_due to be 610.0, but got {amount_due_value}"
     print(f"Total amount field validation successful")
 
 
@@ -379,7 +379,7 @@ def new_invoice_analyzer_object(
     - customer_address: The customer's address
     - subtotal: The subtotal amount before tax
     - tax_amount: The tax amount
-    - total_amount: The total amount due
+    - amount_due: The total amount due
 
     Args:
         analyzer_id: The analyzer ID
@@ -451,7 +451,7 @@ def new_invoice_analyzer_object(
                     method=GenerationMethod.EXTRACT,
                     type=ContentFieldType.NUMBER,
                 ),
-                "total_amount": ContentFieldDefinition(
+                "amount_due": ContentFieldDefinition(
                     description="The total amount due",
                     method=GenerationMethod.EXTRACT,
                     type=ContentFieldType.NUMBER,
@@ -471,7 +471,7 @@ def assert_invoice_fields(analysis_result: Any, result_name: str = "Invoice anal
 
     Validates that the analysis result contains expected invoice fields and their properties:
     - Fields are present and have values
-    - Numeric fields (total_amount, subtotal, tax_amount) have correct types
+    - Numeric fields (amount_due, subtotal, tax_amount) have correct types
     - String fields (invoice_number, dates, names) are non-empty
     - Confidence scores are present
     - Source/span information is available
@@ -506,14 +506,14 @@ def assert_invoice_fields(analysis_result: Any, result_name: str = "Invoice anal
         'invoice_number', 'invoice_date', 'due_date',
         'vendor_name', 'vendor_address',
         'customer_name', 'customer_address',
-        'subtotal', 'tax_amount', 'total_amount'
+        'subtotal', 'tax_amount', 'amount_due'
     ]
     
     found_fields = [f for f in expected_fields if f in fields]
     print(f"✓ Found {len(found_fields)} expected invoice fields: {found_fields}")
     
     # Validate numeric fields if present
-    numeric_fields = ['total_amount', 'subtotal', 'tax_amount']
+    numeric_fields = ['amount_due', 'subtotal', 'tax_amount']
     for field_name in numeric_fields:
         if field_name in fields:
             field_value = fields[field_name]

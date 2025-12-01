@@ -383,8 +383,8 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                     "description": f"test analyzer: {analyzer_id}",
                     "fieldSchema": {
                         "fields": {
-                            "total_amount": {
-                                "description": "Total amount of this table",
+                            "amount_due": {
+                                "description": "Total amount due of this table",
                                 "method": "extract",
                                 "type": "number",
                             }
@@ -825,10 +825,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             
             # Verify fields were extracted if field schema was defined
             if hasattr(first_content, 'fields') and first_content.fields:
-                assert 'total_amount' in first_content.fields, "Should extract total_amount field"
-                total_amount = first_content.fields['total_amount']
-                assert total_amount is not None, "total_amount field should have a value"
-                print(f"✓ Extracted total_amount: {total_amount}")
+                assert 'amount_due' in first_content.fields, "Should extract amount_due field"
+                amount_due = first_content.fields['amount_due']
+                assert amount_due is not None, "amount_due field should have a value"
+                print(f"✓ Extracted amount_due: {amount_due}")
 
             print(f"✓ Document properties validation test completed successfully")
 
@@ -889,44 +889,44 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Validate invoice fields using the specialized assertion function
             assert_invoice_fields(analysis_result, "Invoice analysis result")
 
-            # Additional validation - verify at least total_amount is extracted (most critical field)
+            # Additional validation - verify at least amount_due is extracted (most critical field)
             first_content = analysis_result.contents[0]
             assert hasattr(first_content, 'fields'), "Content should have fields"
             assert first_content.fields is not None, "Fields should not be None"
             
             fields = first_content.fields
-            assert 'total_amount' in fields, "Should extract total_amount field (most critical invoice field)"
+            assert 'amount_due' in fields, "Should extract amount_due field (most critical invoice field)"
             
-            total_field = fields['total_amount']
+            amount_due_field = fields['amount_due']
             print(f"\n✓ Critical field verification:")
-            print(f"  - total_amount extracted successfully")
+            print(f"  - amount_due extracted successfully")
             
-            if isinstance(total_field, dict) and 'valueNumber' in total_field:
-                total_value = total_field['valueNumber']
-                print(f"  - Total amount value: {total_value}")
-                assert total_value > 0, "Total amount should be positive"
+            if isinstance(amount_due_field, dict) and 'valueNumber' in amount_due_field:
+                amount_due_value = amount_due_field['valueNumber']
+                print(f"  - Total amount value: {amount_due_value}")
+                assert amount_due_value > 0, "Total amount should be positive"
                 
                 # Verify confidence if available
-                if 'confidence' in total_field:
-                    confidence = total_field['confidence']
+                if 'confidence' in amount_due_field:
+                    confidence = amount_due_field['confidence']
                     print(f"  - Confidence: {confidence:.2%}")
                     # Note: We don't enforce a minimum confidence as it depends on document quality
                 
                 # Verify source information if available
-                if 'spans' in total_field:
-                    spans = total_field['spans']
+                if 'spans' in amount_due_field:
+                    spans = amount_due_field['spans']
                     print(f"  - Source locations: {len(spans)} span(s)")
                     assert len(spans) > 0, "Should have source location for extracted field"
                 
-                if 'source' in total_field:
-                    source = total_field['source']
+                if 'source' in amount_due_field:
+                    source = amount_due_field['source']
                     print(f"  - Source: {source[:50]}..." if len(source) > 50 else f"  - Source: {source}")
 
             # Count how many invoice fields were successfully extracted
             invoice_field_names = [
                 'invoice_number', 'invoice_date', 'due_date',
                 'vendor_name', 'vendor_address', 'customer_name', 'customer_address',
-                'subtotal', 'tax_amount', 'total_amount'
+                'subtotal', 'tax_amount', 'amount_due'
             ]
             extracted_count = sum(1 for field in invoice_field_names if field in fields)
             print(f"\n✓ Successfully extracted {extracted_count}/{len(invoice_field_names)} invoice fields")
