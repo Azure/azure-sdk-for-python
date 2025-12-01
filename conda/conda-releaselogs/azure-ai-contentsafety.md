@@ -1,4 +1,4 @@
-Azure AI Content Safety client library for Python (conda)
+# Azure AI Content Safety client library for Python (conda)
 
 ## 2025.12.01
 
