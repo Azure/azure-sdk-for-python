@@ -191,24 +191,24 @@ def test_comprehensive_query_parameter_normalization():
 def test_multiple_tags_parameters():
     """Test that multiple tags parameters are handled correctly."""
     # cspell thinks the url encoding is part of the word
-    original_url = "?api-version=2023-11-01&key=*&label=dev&tags=environment%3Ddev&tags=team%3Dfrontend" # cspell:ignore
-    expected_url = "?api-version=2023-11-01&key=%2A&label=dev&tags=environment%3Ddev&tags=team%3Dfrontend" # cspell:ignore
+    original_url = "?api-version=2023-11-01&key=*&label=dev&tags=environment%3Ddev&tags=team%3Dfrontend" # cspell:disable-line
+    expected_url = "?api-version=2023-11-01&key=%2A&label=dev&tags=environment%3Ddev&tags=team%3Dfrontend"# cspell:disable-line
 
     run_query_param_policy_test(original_url, expected_url)
 
 
 def test_tags_parameters_with_complex_values():
     """Test that tags parameters with complex values are handled correctly."""
-    original_url = "?tags=environment%3Dproduction&tags=team%3Dbackend&api-version=2023-11-01"
-    expected_url = "?api-version=2023-11-01&tags=environment%3Dproduction&tags=team%3Dbackend"
+    original_url = "?tags=environment%3Dproduction&tags=team%3Dbackend&api-version=2023-11-01" # cspell:disable-line
+    expected_url = "?api-version=2023-11-01&tags=environment%3Dproduction&tags=team%3Dbackend" # cspell:disable-line
 
     run_query_param_policy_test(original_url, expected_url)
 
 
 def test_tags_parameters_mixed_with_other_parameters():
     """Test that tags parameters mixed with other parameters are handled correctly."""
-    original_url = "?$select=key,value&tags=feature%3Dauth&label=*&api-version=2023-11-01&$filter=startsWith(key,'app')&tags=env%3Dtest"
-    expected_url = "?%24filter=startsWith%28key%2C%27app%27%29&%24select=key%2Cvalue&api-version=2023-11-01&label=%2A&tags=feature%3Dauth&tags=env%3Dtest"
+    original_url = "?$select=key,value&tags=feature%3Dauth&label=*&api-version=2023-11-01&$filter=startsWith(key,'app')&tags=env%3Dtest" # cspell:disable-line
+    expected_url = "?%24filter=startsWith%28key%2C%27app%27%29&%24select=key%2Cvalue&api-version=2023-11-01&label=%2A&tags=feature%3Dauth&tags=env%3Dtest" # cspell:disable-line
 
     run_query_param_policy_test(original_url, expected_url)
 
