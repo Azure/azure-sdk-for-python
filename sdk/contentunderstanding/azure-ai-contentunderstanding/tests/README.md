@@ -187,7 +187,7 @@ pytest tests/
 
 - Review the [Azure SDK Python Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md) for comprehensive testing documentation
 - Check the [Test-Proxy Documentation](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy) for test-proxy details
-- See the main [README](../README.md) for package documentation
+- See the main [README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md) for package documentation
 
 ## Contributing
 
