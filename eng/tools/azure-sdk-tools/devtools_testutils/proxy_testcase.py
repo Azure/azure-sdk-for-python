@@ -228,7 +228,7 @@ def _normalize_transport_specs(specs):
 
 def _transform_args(recording_id: str, *call_args, **call_kwargs):
     """Transform azure.core transport call arguments to route through the test proxy.
-    
+
     Used by both sync and async decorators.
     """
     copied_positional_args = list(call_args)
@@ -239,7 +239,7 @@ def _transform_args(recording_id: str, *call_args, **call_kwargs):
 
 def _transform_httpx_args(recording_id: str, *call_args, **call_kwargs):
     """Transform httpx transport call arguments to route through the test proxy.
-    
+
     Used by both sync and async decorators.
     """
     copied_positional_args = list(call_args)
