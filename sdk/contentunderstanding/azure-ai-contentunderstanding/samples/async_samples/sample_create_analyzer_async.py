@@ -120,11 +120,14 @@ async def main() -> None:
             analyzer_id=analyzer_id,
             resource=analyzer,
         )
-        result = await poller.result()
+        result = await poller.result()  # Wait for creation to complete
+
+        # Get the full analyzer details after creation
+        result = await client.get_analyzer(analyzer_id=analyzer_id)
 
         print(f"Analyzer '{analyzer_id}' created successfully!")
-        print(f"  Status: {result.status}")
-        print(f"  Description: {result.description}")
+        if result.description:
+            print(f"  Description: {result.description}")
 
         if result.field_schema and result.field_schema.fields:
             print(f"  Fields ({len(result.field_schema.fields)}):")

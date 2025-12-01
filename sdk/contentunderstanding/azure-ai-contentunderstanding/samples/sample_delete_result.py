@@ -103,16 +103,6 @@ def main() -> None:
     client.delete_result(operation_id=operation_id)
     print("Analysis result deleted successfully!")
 
-    # Verify deletion by trying to get the result (should fail)
-    print("\nStep 3: Verifying deletion...")
-    try:
-        # Try to get the result - this should fail after deletion
-        client._get_result(operation_id=operation_id)  # type: ignore[attr-defined]
-        print("  Warning: Result still accessible")
-    except ResourceNotFoundError:
-        print("  Verified: Result is no longer accessible (404 Not Found)")
-    except Exception as e:
-        print(f"  Result access check: {type(e).__name__}: {e}")
     # [END analyze_and_delete_result]
 
 

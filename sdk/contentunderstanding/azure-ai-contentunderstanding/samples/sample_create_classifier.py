@@ -98,10 +98,14 @@ def main() -> None:
         analyzer_id=analyzer_id,
         resource=classifier,
     )
-    result = poller.result()
+    result = poller.result()  # Wait for creation to complete
+
+    # Get the full analyzer details after creation
+    result = client.get_analyzer(analyzer_id=analyzer_id)
 
     print(f"Classifier '{analyzer_id}' created successfully!")
-    print(f"  Status: {result.status}")
+    if result.description:
+        print(f"  Description: {result.description}")
     # [END create_classifier]
 
     # [START analyze_with_classifier]
