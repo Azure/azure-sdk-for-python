@@ -27,7 +27,7 @@ class TestSampleDeleteResult(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_delete_result(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_delete_result(self, azure_content_understanding_endpoint: str) -> None:
         """Test deleting an analysis result.
         
         This test validates:
@@ -37,7 +37,7 @@ class TestSampleDeleteResult(ContentUnderstandingClientTestBase):
         
         13_DeleteResult.DeleteResultAsync()
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
         # First, analyze a document to create a result
         tests_dir = os.path.dirname(os.path.dirname(__file__))

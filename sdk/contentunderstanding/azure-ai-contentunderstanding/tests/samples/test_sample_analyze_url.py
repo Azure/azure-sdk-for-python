@@ -28,7 +28,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_analyze_url(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_analyze_url(self, azure_content_understanding_endpoint: str) -> None:
         """Test analyzing a document from URL.
         
         This test validates:
@@ -39,7 +39,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         
         02_AnalyzeUrl.AnalyzeUrlAsync()
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
         # Use a publicly accessible URL for testing
         # In production, this would be a real URL to a document

@@ -9,22 +9,8 @@ import os
 from typing import cast
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.core.credentials import AzureKeyCredential
-from azure.identity import DefaultAzureCredential
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 import functools
-
-
-def get_content_understanding_credential():
-    """Get the appropriate credential for Content Understanding.
-
-    Checks for AZURE_CONTENT_UNDERSTANDING_KEY first, then falls back to DefaultAzureCredential.
-    """
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-
-    if key and key.strip():
-        return AzureKeyCredential(key)
-    else:
-        return DefaultAzureCredential()
 
 
 class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
@@ -32,7 +18,7 @@ class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
     def create_client(self, endpoint: str) -> ContentUnderstandingClient:
         # Try API key first (for Content Understanding service)
         # Check both CONTENTUNDERSTANDING_KEY (PowerShellPreparer convention) and AZURE_CONTENT_UNDERSTANDING_KEY
-        key = os.getenv("CONTENTUNDERSTANDING_KEY") or os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+        key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
         if key and key.strip():
             credential = AzureKeyCredential(key)
         else:
@@ -50,6 +36,6 @@ class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
 
 ContentUnderstandingPreparer = functools.partial(
     PowerShellPreparer,
-    "contentunderstanding",
-    contentunderstanding_endpoint="https://fake_contentunderstanding_endpoint.services.ai.azure.com/",
+    "azure_content_understanding",
+    azure_content_understanding_endpoint="https://fake_contentunderstanding_endpoint.services.ai.azure.com/",
 )

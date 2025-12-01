@@ -32,7 +32,7 @@ class TestSampleCreateClassifier(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_create_classifier(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_create_classifier(self, azure_content_understanding_endpoint: str) -> None:
         """Test creating a custom classifier with content categories.
         
         This test validates:
@@ -42,7 +42,7 @@ class TestSampleCreateClassifier(ContentUnderstandingClientTestBase):
         
         05_CreateClassifier.CreateClassifierAsync()
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
         # Generate a unique analyzer ID
         analyzer_id = f"test_classifier_{uuid.uuid4().hex[:16]}"

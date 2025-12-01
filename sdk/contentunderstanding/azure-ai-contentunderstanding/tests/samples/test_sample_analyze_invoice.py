@@ -28,7 +28,7 @@ class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_analyze_invoice(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_analyze_invoice(self, azure_content_understanding_endpoint: str) -> None:
         """Test analyzing an invoice document with prebuilt-invoice analyzer.
         
         This test validates:
@@ -38,7 +38,7 @@ class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
         
         03_AnalyzeInvoice.AnalyzeInvoiceAsync()
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
         # Get the invoice file path (use sample_invoice.pdf from test_data)
         current_dir = os.path.dirname(os.path.abspath(__file__))

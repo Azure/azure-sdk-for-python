@@ -9,23 +9,8 @@ import os
 from typing import cast
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.core.credentials import AzureKeyCredential
-from azure.identity import DefaultAzureCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 import functools
-
-
-def get_content_understanding_credential_async():
-    """Get the appropriate async credential for Content Understanding.
-
-    Checks for AZURE_CONTENT_UNDERSTANDING_KEY first, then falls back to DefaultAzureCredential.
-    """
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-
-    if key and key.strip():
-        return AzureKeyCredential(key)
-    else:
-        return AsyncDefaultAzureCredential()
 
 
 class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
@@ -33,11 +18,11 @@ class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
     def create_async_client(self, endpoint: str) -> ContentUnderstandingClient:
         # Try API key first (for Content Understanding service)
         # Check both CONTENTUNDERSTANDING_KEY (PowerShellPreparer convention) and AZURE_CONTENT_UNDERSTANDING_KEY
-        key = os.getenv("CONTENTUNDERSTANDING_KEY") or os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+        key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
         if key and key.strip():
             credential = AzureKeyCredential(key)
         else:
-            # Fall back to service principal or DefaultAzureCredential
+            # Fall back to service principal or AsyncDefaultAzureCredential
             credential = self.get_credential(ContentUnderstandingClient, is_async=True)
         return cast(
             ContentUnderstandingClient,
@@ -52,6 +37,6 @@ class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
 
 ContentUnderstandingPreparer = functools.partial(
     PowerShellPreparer,
-    "contentunderstanding",
-    contentunderstanding_endpoint="https://fake_contentunderstanding_endpoint.services.ai.azure.com/",
+    "azure_content_understanding",
+    azure_content_understanding_endpoint="https://fake_contentunderstanding_endpoint.services.ai.azure.com/",
 )

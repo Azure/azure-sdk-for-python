@@ -28,7 +28,7 @@ class TestSampleGetResultFile(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_get_result_file(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_get_result_file(self, azure_content_understanding_endpoint: str) -> None:
         """Test getting result files (like keyframe images) from analysis results.
         
         This test validates:
@@ -42,7 +42,7 @@ class TestSampleGetResultFile(ContentUnderstandingClientTestBase):
         Note: This test uses document analysis as video analysis may not be available.
         The API pattern is the same for both document and video analysis.
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
         # Use document analysis for testing as video analysis may not be available
         # The get_result_file API pattern is the same for both document and video

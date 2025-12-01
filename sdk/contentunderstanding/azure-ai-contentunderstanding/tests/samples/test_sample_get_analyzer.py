@@ -27,7 +27,7 @@ class TestSampleGetAnalyzer(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_get_analyzer(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_get_analyzer(self, azure_content_understanding_endpoint: str) -> None:
         """Test getting information about a prebuilt analyzer.
         
         This test validates:
@@ -37,7 +37,7 @@ class TestSampleGetAnalyzer(ContentUnderstandingClientTestBase):
         
         06_GetAnalyzer.GetPrebuiltAnalyzerAsync()
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
         # Get information about a prebuilt analyzer
         response = client.get_analyzer(analyzer_id="prebuilt-documentSearch")

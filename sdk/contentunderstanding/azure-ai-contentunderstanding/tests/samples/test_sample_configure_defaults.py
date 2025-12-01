@@ -26,7 +26,7 @@ class TestSampleConfigureDefaults(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_configure_defaults(self, contentunderstanding_endpoint: str) -> None:
+    def test_sample_configure_defaults(self, azure_content_understanding_endpoint: str) -> None:
         """Test configuring and getting model deployment defaults.
         
         This test validates:
@@ -36,7 +36,7 @@ class TestSampleConfigureDefaults(ContentUnderstandingClientTestBase):
         
         00_ConfigureDefaults.ConfigureDefaultsAsync()
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
         # Test UpdateDefaults - only if deployment names are provided
         self._test_update_defaults(client)

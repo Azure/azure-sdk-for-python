@@ -39,7 +39,7 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_grant_copy_auth(self, contentunderstanding_endpoint: str, **kwargs) -> None:
+    def test_sample_grant_copy_auth(self, azure_content_understanding_endpoint: str, **kwargs) -> None:
         """Test granting copy authorization for cross-resource analyzer copying.
         
         This test validates:
@@ -60,7 +60,7 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             # In production, these would be different resources
             source_resource_id = os.environ.get("AZURE_CONTENT_UNDERSTANDING_SOURCE_RESOURCE_ID")
             source_region = os.environ.get("AZURE_CONTENT_UNDERSTANDING_SOURCE_REGION")
-            target_endpoint = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_ENDPOINT", contentunderstanding_endpoint)
+            target_endpoint = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_ENDPOINT", azure_content_understanding_endpoint)
             target_resource_id = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_RESOURCE_ID")
             target_region = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_REGION")
             target_key = os.environ.get("AZURE_CONTENT_UNDERSTANDING_TARGET_KEY")
@@ -84,13 +84,13 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
                 target_region = target_region or "placeholder-target-region"
             
             # Create clients
-            source_client = self.create_client(endpoint=contentunderstanding_endpoint)
+            source_client = self.create_client(endpoint=azure_content_understanding_endpoint)
             
             # Create target client (may use different endpoint and credential)
             from azure.core.credentials import AzureKeyCredential
             from azure.identity import DefaultAzureCredential
             
-            if target_endpoint != contentunderstanding_endpoint or target_key:
+            if target_endpoint != azure_content_understanding_endpoint or target_key:
                 # Create target client with different endpoint/credential
                 target_credential = AzureKeyCredential(target_key) if target_key else DefaultAzureCredential()
                 target_client = cast(
