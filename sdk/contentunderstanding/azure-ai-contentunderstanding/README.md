@@ -311,7 +311,7 @@ To run the tests for this package, you need to set up a `.env` file with your te
    ```
 
 4. Edit the `.env` file at the repo root and fill in your actual values:
-   - `CONTENTUNDERSTANDING_ENDPOINT`: Your Microsoft Foundry resource endpoint
+   - `AZURE_CONTENT_UNDERSTANDING_ENDPOINT`: Your Microsoft Foundry resource endpoint
    - `AZURE_CONTENT_UNDERSTANDING_KEY`: Your API key (optional if using DefaultAzureCredential)
    - `AZURE_TEST_RUN_LIVE`: Set to `true` to run tests against real Azure resources
    - `AZURE_SKIP_LIVE_RECORDING`: Set to `true` to skip recording when running live tests
