@@ -16,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity azure-monitor-query python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv azure-monitor-query
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -44,14 +44,12 @@ from pprint import pprint
 load_dotenv()
 
 
-endpoint = os.environ[
-    "AZURE_AI_PROJECT_ENDPOINT"
-]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 appinsights_resource_id = os.environ[
     "APPINSIGHTS_RESOURCE_ID"
 ]  # Sample : /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>
-agent_id = os.environ["AGENT_ID"]  # Sample : gcp-cloud-run-agent
-model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
+agent_id = os.environ["AGENT_ID"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 trace_query_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "1"))
 
 
@@ -139,73 +137,73 @@ def main() -> None:
         print(f"  - {trace_id}")
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(
-            endpoint=endpoint,
-            credential=credential,
-            api_version="2025-11-15-preview",
-        ) as project_client:
+        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
             client = project_client.get_openai_client()
             data_source_config = {
                 "type": "azure_ai_source",
                 "scenario": "traces",
             }
 
-            testing_criteria = [
-                _build_evaluator_config(
-                    name="intent_resolution",
-                    evaluator_name="builtin.intent_resolution",
-                ),
-                _build_evaluator_config(
-                    name="task_adherence",
-                    evaluator_name="builtin.task_adherence",
-                ),
-            ]
+        testing_criteria = [
+            _build_evaluator_config(
+                name="intent_resolution",
+                evaluator_name="builtin.intent_resolution",
+            ),
+            _build_evaluator_config(
+                name="task_adherence",
+                evaluator_name="builtin.task_adherence",
+            ),
+        ]
 
-            print("\nCreating Eval Group")
-            eval_object = client.evals.create(
-                name="agent_trace_eval_group",
-                data_source_config=data_source_config,  # type: ignore
-                testing_criteria=testing_criteria,  # type: ignore
-            )
-            print("Eval Group created")
+        print("\nCreating evaluation")
+        eval_object = client.evals.create(
+            name="agent_trace_eval_group",
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
+        )
+        print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-            print("\nGet Eval Group by Id")
-            eval_object_response = client.evals.retrieve(eval_object.id)
-            print("Eval Group Response:")
-            pprint(eval_object_response)
+        print("\nGet Evaluation by Id")
+        eval_object_response = client.evals.retrieve(eval_object.id)
+        print("Evaluation Response:")
+        pprint(eval_object_response)
 
-            print("\nCreating Eval Run with trace IDs")
-            run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            eval_run_object = client.evals.runs.create(
-                eval_id=eval_object.id,
-                name=run_name,
-                metadata={
-                    "agent_id": agent_id,
-                    "start_time": start_time.isoformat(),
-                    "end_time": end_time.isoformat(),
-                },
-                data_source={  # type: ignore
-                    "type": "azure_ai_traces",
-                    "trace_ids": trace_ids,
-                    "lookback_hours": trace_query_hours,
-                },
-            )
-            print("Eval Run created")
-            pprint(eval_run_object)
+        print("\nCreating Eval Run with trace IDs")
+        run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        data_source = {
+            "type": "azure_ai_traces",
+            "trace_ids": trace_ids,
+            "lookback_hours": trace_query_hours,
+        }
+        eval_run_object = client.evals.runs.create(
+            eval_id=eval_object.id,
+            name=run_name,
+            metadata={
+                "agent_id": agent_id,
+                "start_time": start_time.isoformat(),
+                "end_time": end_time.isoformat(),
+            },
+            data_source=data_source,  # type: ignore
+        )
+        print("Eval Run created")
+        pprint(eval_run_object)
 
-            print("\nMonitoring Eval Run status...")
-            while True:
-                run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-                print(f"Status: {run.status}")
+        print("\nMonitoring Eval Run status...")
+        while True:
+            run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
+            print(f"Status: {run.status}")
 
-                if run.status in {"completed", "failed", "canceled"}:
-                    print("\nEval Run finished!")
-                    print("Final Eval Run Response:")
-                    pprint(run)
-                    break
+            if run.status in {"completed", "failed", "canceled"}:
+                print("\nEval Run finished!")
+                print("Final Eval Run Response:")
+                pprint(run)
+                break
 
-                time.sleep(5)
-                print("Waiting for eval run to complete...")
+            time.sleep(5)
+            print("Waiting for eval run to complete...")
+
+        client.evals.delete(eval_id=eval_object.id)
+        print("Evaluation deleted")
 
 
 if __name__ == "__main__":

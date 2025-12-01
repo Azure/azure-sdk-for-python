@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -40,36 +40,37 @@ async def main() -> None:
     model_publisher = os.environ.get("MODEL_PUBLISHER", "Microsoft")
     model_name = os.environ.get("MODEL_NAME", "Phi-4")
 
-    async with DefaultAzureCredential() as credential:
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    ):
 
-        async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-
-            print("List all deployments:")
-            async for deployment in project_client.deployments.list():
-                print(deployment)
-
-            print(f"List all deployments by the model publisher `{model_publisher}`:")
-            async for deployment in project_client.deployments.list(model_publisher=model_publisher):
-                print(deployment)
-
-            print(f"List all deployments of model `{model_name}`:")
-            async for deployment in project_client.deployments.list(model_name=model_name):
-                print(deployment)
-
-            print(f"Get a single deployment named `{model_deployment_name}`:")
-            deployment = await project_client.deployments.get(model_deployment_name)
+        print("List all deployments:")
+        async for deployment in project_client.deployments.list():
             print(deployment)
 
-            # At the moment, the only deployment type supported is ModelDeployment
-            if isinstance(deployment, ModelDeployment):
-                print(f"Type: {deployment.type}")
-                print(f"Name: {deployment.name}")
-                print(f"Model Name: {deployment.model_name}")
-                print(f"Model Version: {deployment.model_version}")
-                print(f"Model Publisher: {deployment.model_publisher}")
-                print(f"Capabilities: {deployment.capabilities}")
-                print(f"SKU: {deployment.sku}")
-                print(f"Connection Name: {deployment.connection_name}")
+        print(f"List all deployments by the model publisher `{model_publisher}`:")
+        async for deployment in project_client.deployments.list(model_publisher=model_publisher):
+            print(deployment)
+
+        print(f"List all deployments of model `{model_name}`:")
+        async for deployment in project_client.deployments.list(model_name=model_name):
+            print(deployment)
+
+        print(f"Get a single deployment named `{model_deployment_name}`:")
+        deployment = await project_client.deployments.get(model_deployment_name)
+        print(deployment)
+
+        # At the moment, the only deployment type supported is ModelDeployment
+        if isinstance(deployment, ModelDeployment):
+            print(f"Type: {deployment.type}")
+            print(f"Name: {deployment.name}")
+            print(f"Model Name: {deployment.model_name}")
+            print(f"Model Version: {deployment.model_version}")
+            print(f"Model Publisher: {deployment.model_publisher}")
+            print(f"Capabilities: {deployment.capabilities}")
+            print(f"SKU: {deployment.sku}")
+            print(f"Connection Name: {deployment.connection_name}")
 
 
 if __name__ == "__main__":

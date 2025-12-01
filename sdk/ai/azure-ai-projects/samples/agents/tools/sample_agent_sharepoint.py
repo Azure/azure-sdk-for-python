@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -39,25 +39,23 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# Get the OpenAI client for responses
-openai_client = project_client.get_openai_client()
-
-# [START tool_declaration]
-tool = SharepointAgentTool(
-    sharepoint_grounding_preview=SharepointGroundingToolParameters(
-        project_connections=[
-            ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
-        ]
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
+    # [START tool_declaration]
+    tool = SharepointAgentTool(
+        sharepoint_grounding_preview=SharepointGroundingToolParameters(
+            project_connections=[
+                ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
+            ]
+        )
     )
-)
-# [END tool_declaration]
+    # [END tool_declaration]
 
-with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
@@ -69,10 +67,12 @@ with project_client:
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
+    user_input = input("Enter your question corresponded to the documents in SharePoint:\n")
+
     # Send initial request that will trigger the SharePoint tool
     stream_response = openai_client.responses.create(
         stream=True,
-        input="Please summarize the last meeting notes stored in SharePoint.",
+        input=user_input,
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
 

@@ -46,7 +46,8 @@ def main():
                 "expiration": "2022-12-31T23:59:59.008Z",
                 "jumpHostsAllowed": ["192.0.2.1", "192.0.2.5"],
                 "osGroupName": "standardAccessGroup",
-                "privilegeLevel": "Standard",
+                "privilegeLevel": "Other",
+                "privilegeLevelName": "SecurityScanner",
                 "userList": [
                     {
                         "azureUserName": "userABC",
@@ -72,6 +73,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/BareMetalMachineKeySets_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2025-07-01-preview/examples/BareMetalMachineKeySets_Create.json
 if __name__ == "__main__":
     main()

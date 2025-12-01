@@ -20,11 +20,11 @@ class TestMicrosoftElasticVMHostOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_vm_host_list(self, resource_group):
         response = self.client.vm_host.list(
             resource_group_name=resource_group.name,
             monitor_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -30,91 +30,89 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto
 
+load_dotenv()
+
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
 
 async def main() -> None:
     """Main async function to demonstrate code interpreter with async client and credential management."""
 
-    load_dotenv()
-
-    # Load the CSV file to be processed
-    asset_file_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
-    )
-
-    async with DefaultAzureCredential() as credential:
-        project_client = AIProjectClient(
-            endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-            credential=credential,
-        )
-
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
         try:
-            async with project_client:
-                openai_client = project_client.get_openai_client()
+            # Load the CSV file to be processed
+            asset_file_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
+            )
 
-                # Upload the CSV file for the code interpreter to use
-                with open(asset_file_path, "rb") as file_data:
-                    file = await openai_client.files.create(purpose="assistants", file=file_data)
-                print(f"File uploaded (id: {file.id})")
+            # Upload the CSV file for the code interpreter to use
+            with open(asset_file_path, "rb") as file_data:
+                file = await openai_client.files.create(purpose="assistants", file=file_data)
+            print(f"File uploaded (id: {file.id})")
 
-                # Create agent with code interpreter tool
-                agent = await project_client.agents.create_version(
-                    agent_name="MyAgent",
-                    definition=PromptAgentDefinition(
-                        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                        instructions="You are a helpful assistant.",
-                        tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))],
-                    ),
-                    description="Code interpreter agent for data analysis and visualization.",
+            # Create agent with code interpreter tool
+            agent = await project_client.agents.create_version(
+                agent_name="MyAgent",
+                definition=PromptAgentDefinition(
+                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                    instructions="You are a helpful assistant.",
+                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))],
+                ),
+                description="Code interpreter agent for data analysis and visualization.",
+            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+            # Create a conversation for the agent interaction
+            conversation = await openai_client.conversations.create()
+            print(f"Created conversation (id: {conversation.id})")
+
+            # Send request to create a chart and generate a file
+            response = await openai_client.responses.create(
+                conversation=conversation.id,
+                input="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
+            print(f"Response completed (id: {response.id})")
+
+            # Extract file information from response annotations
+            file_id = ""
+            filename = ""
+            container_id = ""
+
+            # Get the last message which should contain file citations
+            last_message = response.output[-1]  # ResponseOutputMessage
+            if last_message.type == "message":
+                # Get the last content item (contains the file annotations)
+                text_content = last_message.content[-1]  # ResponseOutputText
+                if text_content.type == "output_text":
+                    # Get the last annotation (most recent file)
+                    if text_content.annotations:
+                        file_citation = text_content.annotations[-1]  # AnnotationContainerFileCitation
+                        if file_citation.type == "container_file_citation":
+                            file_id = file_citation.file_id
+                            filename = file_citation.filename
+                            container_id = file_citation.container_id
+                            print(f"Found generated file: {filename} (ID: {file_id})")
+
+            # Download the generated file if available
+            if file_id and filename:
+                file_content = await openai_client.containers.files.content.retrieve(
+                    file_id=file_id, container_id=container_id
                 )
-                print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+                with open(filename, "wb") as f:
+                    f.write(file_content.read())
+                    print(f"File {filename} downloaded successfully.")
+                print(f"File ready for download: {filename}")
+            else:
+                print("No file generated in response")
 
-                # Create a conversation for the agent interaction
-                conversation = await openai_client.conversations.create()
-                print(f"Created conversation (id: {conversation.id})")
-
-                # Send request to create a chart and generate a file
-                response = await openai_client.responses.create(
-                    conversation=conversation.id,
-                    input="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                )
-                print(f"Response completed (id: {response.id})")
-
-                # Extract file information from response annotations
-                file_id = ""
-                filename = ""
-                container_id = ""
-
-                # Get the last message which should contain file citations
-                last_message = response.output[-1]  # ResponseOutputMessage
-                if last_message.type == "message":
-                    # Get the last content item (contains the file annotations)
-                    text_content = last_message.content[-1]  # ResponseOutputText
-                    if text_content.type == "output_text":
-                        # Get the last annotation (most recent file)
-                        if text_content.annotations:
-                            file_citation = text_content.annotations[-1]  # AnnotationContainerFileCitation
-                            if file_citation.type == "container_file_citation":
-                                file_id = file_citation.file_id
-                                filename = file_citation.filename
-                                container_id = file_citation.container_id
-                                print(f"Found generated file: {filename} (ID: {file_id})")
-
-                # Download the generated file if available
-                if file_id and filename:
-                    file_content = await openai_client.containers.files.content.retrieve(
-                        file_id=file_id, container_id=container_id
-                    )
-                    with open(filename, "wb") as f:
-                        f.write(file_content.read())
-                        print(f"File {filename} downloaded successfully.")
-                    print(f"File ready for download: {filename}")
-                else:
-                    print("No file generated in response")
-
-                print("\nCleaning up...")
-                await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-                print("Agent deleted")
+            print("\nCleaning up...")
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Agent deleted")
 
         except Exception as e:
             print(f"Error occurred: {str(e)}")

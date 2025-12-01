@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -24,7 +24,6 @@ USAGE:
 """
 
 import os
-import json
 import asyncio
 from dotenv import load_dotenv
 
@@ -39,43 +38,39 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+
 
 async def main():
-    async with DefaultAzureCredential() as credential:
-        project_client = AIProjectClient(
-            endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-            credential=credential,
+
+    async with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client,
+    ):
+
+        teacher_agent = await project_client.agents.create_version(
+            agent_name="teacher-agent",
+            definition=PromptAgentDefinition(
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                instructions="""You are a teacher that create pre-school math question for student and check answer. 
+                              If the answer is correct, you stop the conversation by saying [COMPLETE]. 
+                              If the answer is wrong, you ask student to fix it.""",
+            ),
         )
+        print(f"Agent created (id: {teacher_agent.id}, name: {teacher_agent.name}, version: {teacher_agent.version})")
 
-        async with project_client:
-            openai_client = project_client.get_openai_client()
+        student_agent = await project_client.agents.create_version(
+            agent_name="student-agent",
+            definition=PromptAgentDefinition(
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                instructions="""You are a student who answers questions from the teacher. 
+                              When the teacher gives you a question, you answer it.""",
+            ),
+        )
+        print(f"Agent created (id: {student_agent.id}, name: {student_agent.name}, version: {student_agent.version})")
 
-            teacher_agent = await project_client.agents.create_version(
-                agent_name="teacher-agent",
-                definition=PromptAgentDefinition(
-                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                    instructions="""You are a teacher that create pre-school math question for student and check answer. 
-                                    If the answer is correct, you stop the conversation by saying [COMPLETE]. 
-                                    If the answer is wrong, you ask student to fix it.""",
-                ),
-            )
-            print(
-                f"Agent created (id: {teacher_agent.id}, name: {teacher_agent.name}, version: {teacher_agent.version})"
-            )
-
-            student_agent = await project_client.agents.create_version(
-                agent_name="student-agent",
-                definition=PromptAgentDefinition(
-                    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                    instructions="""You are a student who answers questions from the teacher. 
-                                    When the teacher gives you a question, you answer it.""",
-                ),
-            )
-            print(
-                f"Agent created (id: {student_agent.id}, name: {student_agent.name}, version: {student_agent.version})"
-            )
-
-            workflow_yaml = f"""
+        workflow_yaml = f"""
 kind: workflow
 trigger:
   kind: OnConversationStart
@@ -143,56 +138,52 @@ trigger:
           actionId: student_agent
 """
 
-            workflow = await project_client.agents.create_version(
-                agent_name="student-teacherworkflow",
-                definition=WorkflowAgentDefinition(workflow=workflow_yaml),
-            )
+        workflow = await project_client.agents.create_version(
+            agent_name="student-teacherworkflow",
+            definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+        )
 
-            print(f"Agent created (id: {workflow.id}, name: {workflow.name}, version: {workflow.version})")
+        print(f"Agent created (id: {workflow.id}, name: {workflow.name}, version: {workflow.version})")
 
-            conversation = await openai_client.conversations.create()
-            print(f"Created conversation (id: {conversation.id})")
+        conversation = await openai_client.conversations.create()
+        print(f"Created conversation (id: {conversation.id})")
 
-            stream = await openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
-                input="1 + 1 = ?",
-                stream=True,
-                metadata={"x-ms-debug-mode-enabled": "1"},
-            )
+        stream = await openai_client.responses.create(
+            conversation=conversation.id,
+            extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
+            input="1 + 1 = ?",
+            stream=True,
+            metadata={"x-ms-debug-mode-enabled": "1"},
+        )
 
-            async for event in stream:
-                if event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE:
-                    print("\t", event.text)
-                elif (
-                    event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-                    and event.item.type == "workflow_action"
-                    and (event.item.action_id == "teacher_agent" or event.item.action_id == "student_agent")
-                ):
-                    print(f"********************************\nActor - '{event.item.action_id}' :")
-                # feel free to uncomment below to see more events
-                # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED and event.item.type == "workflow_action":
-                #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was : '{event.item.previous_action_id}')")
-                # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE and event.item.type == "workflow_action":
-                #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was: '{event.item.previous_action_id}')")
-                # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA:
-                #     print(event.delta)
+        async for event in stream:
+            if event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE:
+                print("\t", event.text)
+            elif (
+                event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
+                and event.item.type == "workflow_action"
+                and (event.item.action_id == "teacher_agent" or event.item.action_id == "student_agent")
+            ):
+                print(f"********************************\nActor - '{event.item.action_id}' :")
+            # feel free to uncomment below to see more events
+            # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED and event.item.type == "workflow_action":
+            #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was : '{event.item.previous_action_id}')")
+            # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE and event.item.type == "workflow_action":
+            #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was: '{event.item.previous_action_id}')")
+            # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA:
+            #     print(event.delta)
 
-            await openai_client.conversations.delete(conversation_id=conversation.id)
-            print("Conversation deleted")
+        await openai_client.conversations.delete(conversation_id=conversation.id)
+        print("Conversation deleted")
 
-            await project_client.agents.delete_version(agent_name=workflow.name, agent_version=workflow.version)
-            print("Workflow deleted")
+        await project_client.agents.delete_version(agent_name=workflow.name, agent_version=workflow.version)
+        print("Workflow deleted")
 
-            await project_client.agents.delete_version(
-                agent_name=student_agent.name, agent_version=student_agent.version
-            )
-            print("Student Agent deleted")
+        await project_client.agents.delete_version(agent_name=student_agent.name, agent_version=student_agent.version)
+        print("Student Agent deleted")
 
-            await project_client.agents.delete_version(
-                agent_name=teacher_agent.name, agent_version=teacher_agent.version
-            )
-            print("Teacher Agent deleted")
+        await project_client.agents.delete_version(agent_name=teacher_agent.name, agent_version=teacher_agent.version)
+        print("Teacher Agent deleted")
 
 
 if __name__ == "__main__":
