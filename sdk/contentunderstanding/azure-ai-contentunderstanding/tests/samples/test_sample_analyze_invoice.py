@@ -28,7 +28,7 @@ class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_sample_analyze_invoice(self, azure_content_understanding_endpoint: str) -> None:
+    def test_sample_analyze_invoice(self, azure_content_understanding_endpoint: str, **kwargs) -> None:
         """Test analyzing an invoice document with prebuilt-invoice analyzer.
         
         This test validates:

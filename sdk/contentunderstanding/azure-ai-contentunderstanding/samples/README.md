@@ -476,7 +476,7 @@ python samples/sample_analyze_binary.py  # Make sure you're in the package direc
 ## Next Steps
 
 * Review the [Azure AI Content Understanding documentation][contentunderstanding_docs]
-* Check the [API reference][apiref] for detailed API information
+* Check the API reference for detailed API information
 * See the main [README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md) for more getting started information
 
 <!-- LINKS -->
@@ -484,5 +484,3 @@ python samples/sample_analyze_binary.py  # Make sure you're in the package direc
 [contentunderstanding_docs]: https://learn.microsoft.com/azure/ai-services/content-understanding/
 [contentunderstanding_quickstart]: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api
 [contentunderstanding_regions]: https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support
-[apiref]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-contentunderstanding/latest/
-

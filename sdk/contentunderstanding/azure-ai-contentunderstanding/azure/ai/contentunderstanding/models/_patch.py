@@ -222,10 +222,6 @@ def patch_sdk():
 
         :param args: Positional arguments passed to __init__.
         :type args: Any
-        :param kwargs: Keyword arguments passed to __init__.
-        :type kwargs: Any
-        :return: None
-        :rtype: None
         """
         # If first arg is a dict (mapping), normalize the casing
         if args and isinstance(args[0], dict):
