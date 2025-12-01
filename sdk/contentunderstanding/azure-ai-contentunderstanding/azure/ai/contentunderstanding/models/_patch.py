@@ -160,3 +160,28 @@ def patch_sdk():
         return None
 
     setattr(ContentField, "value", property(_content_field_value_getter))
+
+    # SDK-FIX: Patch AudioVisualContent.__init__ to handle KeyFrameTimesMs casing inconsistency
+    # The service returns "KeyFrameTimesMs" (capital K) but TypeSpec defines "keyFrameTimesMs" (lowercase k)
+    # This fix is forward compatible: if the service fixes the issue and returns "keyFrameTimesMs" correctly,
+    # the patch will be a no-op and the correct value will pass through unchanged.
+    _original_audio_visual_content_init = _models.AudioVisualContent.__init__
+
+    def _patched_audio_visual_content_init(self, *args: Any, **kwargs: Any) -> None:
+        """Patched __init__ that normalizes casing for KeyFrameTimesMs before calling parent.
+        
+        This patch is forward compatible: it only normalizes when the service returns incorrect casing.
+        If the service returns the correct "keyFrameTimesMs" casing, the patch does nothing.
+        """
+        # If first arg is a dict (mapping), normalize the casing
+        if args and isinstance(args[0], dict):
+            mapping = dict(args[0])  # Make a copy
+            # SDK-FIX: Handle both "keyFrameTimesMs" (TypeSpec) and "KeyFrameTimesMs" (service response)
+            # Forward compatible: only normalizes if incorrect casing exists and correct casing doesn't
+            if "KeyFrameTimesMs" in mapping and "keyFrameTimesMs" not in mapping:
+                mapping["keyFrameTimesMs"] = mapping["KeyFrameTimesMs"]
+            # Call original with normalized mapping
+            args = (mapping,) + args[1:]
+        _original_audio_visual_content_init(self, *args, **kwargs)
+
+    _models.AudioVisualContent.__init__ = _patched_audio_visual_content_init  # type: ignore[assignment]
