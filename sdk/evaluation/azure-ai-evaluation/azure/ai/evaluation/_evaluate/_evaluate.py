@@ -1824,6 +1824,8 @@ def _convert_results_to_aoai_evaluation_results(
                 if criteria_name is not None and criteria_type is not None:
                     criteria_name_types_from_meta[criteria_name] = criteria
 
+    decrease_boolean_metrics = _get_decrease_boolean_metrics(evaluator_config)
+
     for criteria_name, evaluator in evaluators.items():
         criteria_type = None
         metrics = []
@@ -2131,13 +2133,20 @@ def _convert_results_to_aoai_evaluation_results(
                     "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
                 }
                 # Add optional fields
-                if (
+                is_descrease_boolean_metric = False
+                if len(decrease_boolean_metrics) > 0 and metric in decrease_boolean_metrics:
+                    is_descrease_boolean_metric = True
+                    logger.info(f"Metric {metric} is identified as decrease boolean metric,, eval_id: {eval_id}, eval_run_id: {eval_run_id}.")
+                elif (
                     metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["eci"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["ungrounded_attributes"]
                 ):
+                    is_descrease_boolean_metric = True
+
+                if is_descrease_boolean_metric:
                     copy_label = label
                     if copy_label is not None and isinstance(copy_label, bool) and copy_label == True:
                         label = "fail"
@@ -2257,6 +2266,41 @@ def _is_none_or_nan(value: Any) -> bool:
     if isinstance(value, str) and value.lower() in ["nan", "null", "none", ""]:
         return True
     return False
+
+
+def _get_decrease_boolean_metrics(
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
+) -> List[str]:
+    """
+    Get the list of decrease boolean metrics.
+
+    :param evaluator_config: Optional dictionary of evaluator configurations
+    :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+    :return: List of decrease boolean metric names
+    :rtype: List[str]
+    """
+    decrease_boolean_metrics = []
+    if evaluator_config and isinstance(evaluator_config, dict):
+        for criteria_name, config in evaluator_config.items():
+            if config and isinstance(config, dict) and "_evaluator_definition" in config:
+                if evaluator_definition := config.get("_evaluator_definition"):
+                    metric_config_detail = evaluator_definition.get("metrics")
+                    if (
+                        metric_config_detail
+                        and isinstance(metric_config_detail, dict)
+                        and len(metric_config_detail) > 0
+                    ):
+                        for metric_name, metric_info in metric_config_detail.items():
+                            if (
+                                metric_info
+                                and isinstance(metric_info, dict)
+                                and "desirable_direction" in metric_info
+                                and metric_info["desirable_direction"] is True
+                                and "type" in metric_info
+                                and metric_info["type"] == "boolean"
+                            ):
+                                decrease_boolean_metrics.append(metric_name)
+    return decrease_boolean_metrics
 
 
 def _append_indirect_attachments_to_results(
