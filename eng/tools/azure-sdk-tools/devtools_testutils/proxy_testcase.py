@@ -243,8 +243,6 @@ def recorded_by_proxy(*maybe_specs):
       from httpx import HTTPTransport as HTTPXTransport
       @recorded_by_proxy((RequestsTransport, "send"), (HTTPXTransport, "handle_request"))
       def test(...): ...
-
-      # TODO: This is how you decorate your async test functions
     """
 
     # Bare decorator usage: @recorded_by_proxy
