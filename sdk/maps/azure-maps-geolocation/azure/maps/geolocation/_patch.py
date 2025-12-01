@@ -9,9 +9,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, Optional, TYPE_CHECKING, Union
-from ._client import MapsGeolocationClient as MapsGeolocationClientGenerated
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.pipeline import policies
+from ._client import MapsGeolocationClient as MapsGeolocationClientGenerated
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential

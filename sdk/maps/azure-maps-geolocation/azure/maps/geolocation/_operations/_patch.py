@@ -19,6 +19,7 @@ from ..models._patch import CountryRegionResult
 class _MapsGeolocationClientOperationsMixin(
     _MapsGeolocationClientOperationsMixinGenerated
 ):
+    # pylint: disable=arguments-renamed
     @distributed_trace
     def get_country_code(  # type: ignore[override]
         self, ip_address: str, **kwargs: Any

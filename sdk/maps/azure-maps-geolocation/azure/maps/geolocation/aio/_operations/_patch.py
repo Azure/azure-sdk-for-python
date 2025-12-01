@@ -8,17 +8,18 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from azure.core.tracing.decorator_async import distributed_trace_async
+from typing import Any
 from ._operations import (
     _MapsGeolocationClientOperationsMixin as _MapsGeolocationClientOperationsMixinGenerated,
 )
-from azure.core.tracing.decorator_async import distributed_trace_async
-from typing import Any
 from ...models._patch import CountryRegionResult
 
 
 class _MapsGeolocationClientOperationsMixin(
     _MapsGeolocationClientOperationsMixinGenerated
 ):
+    # pylint: disable=arguments-renamed
     @distributed_trace_async
     async def get_country_code(self, ip_address: str, **kwargs: Any) -> CountryRegionResult:  # type: ignore[override]
         """
