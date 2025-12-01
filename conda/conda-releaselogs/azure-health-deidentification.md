@@ -1,4 +1,4 @@
-Azure Health Deidentification client library for Python (conda)
+# Azure Health Deidentification client library for Python (conda)
 
 ## 2025.12.01
 

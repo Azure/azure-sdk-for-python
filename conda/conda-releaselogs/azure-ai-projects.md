@@ -1,4 +1,4 @@
-Azure AI Projects client library for Python (conda)
+# Azure AI Projects client library for Python (conda)
 
 ## 2025.12.01
 

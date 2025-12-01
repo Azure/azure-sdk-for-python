@@ -1,4 +1,4 @@
-Azure Monitor Query Metrics client library for Python (conda)
+# Azure Monitor Query Metrics client library for Python (conda)
 
 ## 2025.12.01
 

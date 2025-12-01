@@ -1,4 +1,4 @@
-Azure AI Vision client library for Python (conda)
+# Azure AI Vision client library for Python (conda)
 
 ## 2025.12.01
 
