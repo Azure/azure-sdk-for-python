@@ -443,7 +443,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
                 if self._feature_flag_refresh_enabled:
                     self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
-            elif settings.content_type and SNAPSHOT_REF_CONTENT_TYPE in settings.content_type:
+            elif settings.content_type and SNAPSHOT_REF_CONTENT_TYPE == settings.content_type:
                 # Check if this is a snapshot reference
 
                 # Track snapshot reference usage for telemetry
