@@ -49,6 +49,13 @@ def create_random_item():
         "description": paragraph1 + "\n\n" + paragraph2
     }
 
+# Added per request: generate a random embedding vector of floating point values.
+# create_random_embedding uses snake_case; createRandomEmbedding provided as a thin wrapper
+# to mirror the Go-style signature the user specified.
+def create_random_embedding(length: int = 10) -> list[float]:
+    """Return a list of 'length' random float values in range [0.0, 1.0)."""
+    return [random.random() for _ in range(length)]
+
 def _get_upsert_item():
     # 10 percent of the time, create a new item instead of updating an existing one
     return create_random_item() if random.random() < 0.1 else get_existing_random_item()
@@ -122,6 +129,13 @@ async def query_items_concurrently(container, excluded_locations, num_queries):
         tasks.append(perform_query_concurrently(container, excluded_locations))
     await asyncio.gather(*tasks)
 
+
+async def vs_query_items_concurrently(container, excluded_locations, num_queries):
+    tasks = []
+    for _ in range(num_queries):
+        tasks.append(vs_perform_query_concurrently(container, excluded_locations))
+    await asyncio.gather(*tasks)
+
 def create_custom_session():
     proxied_connector = ProxiedTCPConnector(proxy_host=COSMOS_PROXY_URI,
                          proxy_port=5100,
@@ -147,6 +161,24 @@ async def perform_query_concurrently(container, excluded_locations):
                                                     {"name": "@pk", "value": random_item["pk"]}],
                                         partition_key=random_item[PARTITION_KEY])
     items = [item async for item in results]
+
+
+async def vs_perform_query_concurrently(container, excluded_locations):
+    random_item = get_existing_random_item()
+    embedding = create_random_embedding(10)
+    if excluded_locations:
+        results = container.query_items(query="SELECT TOP 10 c.id FROM c ORDER BY VectorDistance(c.embedding, @embedding)",
+                                        parameters=[{"name": "@embedding", "value": embedding}],
+                                        partition_key=random_item[PARTITION_KEY],
+                                        excluded_locations=excluded_locations)
+    else:
+        results = container.query_items(query="SELECT TOP 10 c.id FROM c ORDER BY VectorDistance(c.embedding, @embedding)",
+                                        parameters=[{"name": "@embedding", "value": embedding}],
+                                        partition_key=random_item[PARTITION_KEY])
+    items = [item async for item in results]
+
+
+
 
 def create_logger(file_name):
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = str(CIRCUIT_BREAKER_ENABLED)
