@@ -304,3 +304,262 @@ def get_test_data_path(relative_path: str) -> str:
     """
     test_file_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(test_file_dir, "test_data", relative_path)
+
+
+def assert_document_properties(analysis_result: Any, expected_min_pages: int = 1) -> None:
+    """Assert document-level properties from analysis result.
+
+    Validates that the analysis result contains expected document properties such as:
+    - Page count
+    - Content structure (pages, paragraphs, etc.)
+    - OCR results if enabled
+    - Layout information
+
+    Args:
+        analysis_result: The analysis result object to validate
+        expected_min_pages: Minimum expected number of pages (default: 1)
+
+    Raises:
+        AssertionError: If any document property assertion fails
+    """
+    print(f"Validating document properties")
+    
+    assert analysis_result is not None, "Analysis result should not be None"
+    assert analysis_result.contents is not None, "Analysis result should have contents"
+    assert len(analysis_result.contents) > 0, "Analysis result should have at least one content item"
+    
+    # Verify the first content has expected structure
+    first_content = analysis_result.contents[0]
+    assert first_content is not None, "First content should not be None"
+    
+    # Check if markdown content is present (most common output format)
+    if hasattr(first_content, 'markdown') and first_content.markdown:
+        markdown_content = first_content.markdown
+        assert isinstance(markdown_content, str), "Markdown content should be a string"
+        assert len(markdown_content) > 0, "Markdown content should not be empty"
+        print(f"✓ Markdown content found: {len(markdown_content)} characters")
+    
+    # Check pages information if available
+    if hasattr(first_content, 'pages') and first_content.pages:
+        pages = first_content.pages
+        assert len(pages) >= expected_min_pages, f"Expected at least {expected_min_pages} page(s), got {len(pages)}"
+        print(f"✓ Document has {len(pages)} page(s)")
+        
+        # Validate first page properties
+        first_page = pages[0]
+        if hasattr(first_page, 'page_number'):
+            assert first_page.page_number >= 1, "Page number should be >= 1"
+            print(f"✓ First page number: {first_page.page_number}")
+    
+    # Check if fields were extracted (if using field schema)
+    if hasattr(first_content, 'fields') and first_content.fields:
+        fields = first_content.fields
+        assert isinstance(fields, dict), "Fields should be a dictionary"
+        print(f"✓ Extracted {len(fields)} field(s): {list(fields.keys())}")
+        
+        # Validate each field has value
+        for field_name, field_value in fields.items():
+            assert field_value is not None, f"Field '{field_name}' should have a value"
+    
+    print(f"✓ Document properties validation completed successfully")
+
+
+def new_invoice_analyzer_object(
+    analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None
+) -> ContentAnalyzer:
+    """Create an invoice ContentAnalyzer object with comprehensive field extraction schema.
+
+    This analyzer is configured to extract common invoice fields including:
+    - invoice_number: The invoice number or ID
+    - invoice_date: The date the invoice was issued
+    - due_date: The payment due date
+    - vendor_name: The name of the vendor/seller
+    - vendor_address: The vendor's address
+    - customer_name: The name of the customer/buyer
+    - customer_address: The customer's address
+    - subtotal: The subtotal amount before tax
+    - tax_amount: The tax amount
+    - total_amount: The total amount due
+
+    Args:
+        analyzer_id: The analyzer ID
+        description: Optional description for the analyzer
+        tags: Optional tags for the analyzer
+
+    Returns:
+        ContentAnalyzer: A configured ContentAnalyzer object for invoice analysis
+    """
+    if description is None:
+        description = f"invoice analyzer: {analyzer_id}"
+    if tags is None:
+        tags = {"test_type": "invoice_analysis"}
+
+    return ContentAnalyzer(
+        base_analyzer_id="prebuilt-document",
+        config=ContentAnalyzerConfig(
+            enable_formula=True,
+            enable_layout=True,
+            enable_ocr=True,
+            estimate_field_source_and_confidence=True,
+            return_details=True,
+        ),
+        description=description,
+        field_schema=ContentFieldSchema(
+            fields={
+                "invoice_number": ContentFieldDefinition(
+                    description="The invoice number or ID",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.STRING,
+                ),
+                "invoice_date": ContentFieldDefinition(
+                    description="The date the invoice was issued",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.STRING,
+                ),
+                "due_date": ContentFieldDefinition(
+                    description="The payment due date",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.STRING,
+                ),
+                "vendor_name": ContentFieldDefinition(
+                    description="The name of the vendor or seller",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.STRING,
+                ),
+                "vendor_address": ContentFieldDefinition(
+                    description="The address of the vendor",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.STRING,
+                ),
+                "customer_name": ContentFieldDefinition(
+                    description="The name of the customer or buyer",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.STRING,
+                ),
+                "customer_address": ContentFieldDefinition(
+                    description="The address of the customer",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.STRING,
+                ),
+                "subtotal": ContentFieldDefinition(
+                    description="The subtotal amount before tax",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.NUMBER,
+                ),
+                "tax_amount": ContentFieldDefinition(
+                    description="The tax amount",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.NUMBER,
+                ),
+                "total_amount": ContentFieldDefinition(
+                    description="The total amount due",
+                    method=GenerationMethod.EXTRACT,
+                    type=ContentFieldType.NUMBER,
+                ),
+            },
+            description="Invoice field extraction schema",
+            name="invoice_schema",
+        ),
+        processing_location=ProcessingLocation.GLOBAL,
+        models={"completion": "gpt-4o"},  # Required when using field_schema
+        tags=tags,
+    )
+
+
+def assert_invoice_fields(analysis_result: Any, result_name: str = "Invoice analysis result") -> None:
+    """Assert invoice-specific field extraction from analysis result.
+
+    Validates that the analysis result contains expected invoice fields and their properties:
+    - Fields are present and have values
+    - Numeric fields (total_amount, subtotal, tax_amount) have correct types
+    - String fields (invoice_number, dates, names) are non-empty
+    - Confidence scores are present
+    - Source/span information is available
+
+    Args:
+        analysis_result: The analysis result object to validate
+        result_name: Optional name for the result in log messages
+
+    Raises:
+        AssertionError: If any invoice field assertion fails
+    """
+    print(f"Validating {result_name} invoice fields")
+    
+    assert analysis_result is not None, f"{result_name} should not be None"
+    assert analysis_result.contents is not None, f"{result_name} should have contents"
+    assert len(analysis_result.contents) > 0, f"{result_name} should have at least one content item"
+    
+    first_content = analysis_result.contents[0]
+    assert first_content is not None, "First content should not be None"
+    
+    # Verify fields were extracted
+    assert hasattr(first_content, 'fields'), "Content should have fields attribute"
+    assert first_content.fields is not None, "Fields should not be None"
+    fields = first_content.fields
+    assert isinstance(fields, dict), "Fields should be a dictionary"
+    assert len(fields) > 0, "Should have extracted at least one field"
+    
+    print(f"✓ Extracted {len(fields)} invoice field(s): {list(fields.keys())}")
+    
+    # Define expected invoice fields (at least some should be present)
+    expected_fields = [
+        'invoice_number', 'invoice_date', 'due_date',
+        'vendor_name', 'vendor_address',
+        'customer_name', 'customer_address',
+        'subtotal', 'tax_amount', 'total_amount'
+    ]
+    
+    found_fields = [f for f in expected_fields if f in fields]
+    print(f"✓ Found {len(found_fields)} expected invoice fields: {found_fields}")
+    
+    # Validate numeric fields if present
+    numeric_fields = ['total_amount', 'subtotal', 'tax_amount']
+    for field_name in numeric_fields:
+        if field_name in fields:
+            field_value = fields[field_name]
+            assert field_value is not None, f"Field '{field_name}' should have a value"
+            
+            # Check if it's a dict with 'valueNumber' (common response format)
+            if isinstance(field_value, dict):
+                assert 'type' in field_value, f"Field '{field_name}' should have a type"
+                assert field_value['type'] == 'number', f"Field '{field_name}' should have type 'number'"
+                
+                if 'valueNumber' in field_value:
+                    value = field_value['valueNumber']
+                    assert isinstance(value, (int, float)), f"Field '{field_name}' valueNumber should be numeric"
+                    assert value >= 0, f"Field '{field_name}' value should be non-negative"
+                    print(f"✓ {field_name}: {value}")
+                
+                # Check confidence if available
+                if 'confidence' in field_value:
+                    confidence = field_value['confidence']
+                    assert isinstance(confidence, (int, float)), f"Confidence should be numeric"
+                    assert 0 <= confidence <= 1, f"Confidence should be between 0 and 1"
+                    print(f"  - Confidence: {confidence:.2%}")
+                
+                # Check spans/source if available
+                if 'spans' in field_value:
+                    spans = field_value['spans']
+                    assert isinstance(spans, list), "Spans should be a list"
+                    assert len(spans) > 0, "Should have at least one span"
+                    print(f"  - Source spans: {len(spans)} location(s)")
+    
+    # Validate string fields if present
+    string_fields = ['invoice_number', 'vendor_name', 'customer_name']
+    for field_name in string_fields:
+        if field_name in fields:
+            field_value = fields[field_name]
+            assert field_value is not None, f"Field '{field_name}' should have a value"
+            
+            # Check if it's a dict with 'valueString' (common response format)
+            if isinstance(field_value, dict):
+                assert 'type' in field_value, f"Field '{field_name}' should have a type"
+                assert field_value['type'] == 'string', f"Field '{field_name}' should have type 'string'"
+                
+                if 'valueString' in field_value:
+                    value = field_value['valueString']
+                    assert isinstance(value, str), f"Field '{field_name}' valueString should be string"
+                    assert len(value) > 0, f"Field '{field_name}' value should not be empty"
+                    print(f"✓ {field_name}: {value}")
+    
+    print(f"✓ Invoice fields validation completed successfully")

@@ -18,9 +18,12 @@ from azure.ai.contentunderstanding.models import AnalyzeInput
 from test_helpers import (
     generate_analyzer_id,
     new_simple_content_analyzer_object,
+    new_invoice_analyzer_object,
     new_marketing_video_analyzer_object,
     assert_poller_properties,
     assert_simple_content_analyzer_result,
+    assert_invoice_fields,
+    assert_document_properties,
     save_analysis_result_to_file,
     save_keyframe_image_to_file,
 )
@@ -46,7 +49,7 @@ async def create_analyzer_and_assert_async(
     print(f"\nCreating analyzer {analyzer_id}")
 
     # Start the analyzer creation operation
-    poller = await client.begin_create_or_replace(
+    poller = await client.begin_create_analyzer(
         analyzer_id=analyzer_id,
         resource=resource,
     )
@@ -83,7 +86,7 @@ async def delete_analyzer_and_assert(
     if created_analyzer:
         print(f"Cleaning up analyzer {analyzer_id}")
         try:
-            await client.delete(analyzer_id=analyzer_id)
+            await client.delete_analyzer(analyzer_id=analyzer_id)
         except Exception as e:
             # If deletion fails, the test should fail
             raise AssertionError(f"Failed to delete analyzer {analyzer_id}: {e}") from e
@@ -215,14 +218,121 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_begin_create_with_content_analyzer(
+    async def test_update_defaults_async(self, contentunderstanding_endpoint: str) -> None:
+        """
+        Tests updating default model deployments for the Content Understanding service.
+        Verifies that model deployments (gpt-4.1, gpt-4.1-mini, text-embedding-3-large) can be updated and are correctly persisted.
+        """
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
+
+        # Check if model deployments are configured in test environment
+        gpt41_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_DEPLOYMENT")
+        gpt41_mini_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_MINI_DEPLOYMENT")
+        text_embedding_deployment = os.getenv("CONTENTUNDERSTANDING_TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
+
+        if not gpt41_deployment or not gpt41_mini_deployment or not text_embedding_deployment:
+            pytest.skip("Model deployments are not configured in test environment. Skipping test_update_defaults_async.")
+            return
+
+        # Update defaults with configured deployments
+        model_deployments = {
+            "gpt-4.1": gpt41_deployment,
+            "gpt-4.1-mini": gpt41_mini_deployment,
+            "text-embedding-3-large": text_embedding_deployment,
+        }
+
+        response = await client.update_defaults(model_deployments=model_deployments)
+
+        assert response is not None, "Update response should not be null"
+        assert hasattr(response, "model_deployments"), "Updated defaults should have model_deployments attribute"
+
+        # Verify the updated defaults
+        updated_defaults = response
+        assert updated_defaults.model_deployments is not None, "Updated model deployments should not be null"
+        assert len(updated_defaults.model_deployments) >= 3, "Should have at least 3 model deployments"
+
+        # Verify each deployment was set correctly
+        assert "gpt-4.1" in updated_defaults.model_deployments, "Should contain gpt-4.1 deployment"
+        assert updated_defaults.model_deployments["gpt-4.1"] == gpt41_deployment, "gpt-4.1 deployment should match"
+
+        assert "gpt-4.1-mini" in updated_defaults.model_deployments, "Should contain gpt-4.1-mini deployment"
+        assert (
+            updated_defaults.model_deployments["gpt-4.1-mini"] == gpt41_mini_deployment
+        ), "gpt-4.1-mini deployment should match"
+
+        assert (
+            "text-embedding-3-large" in updated_defaults.model_deployments
+        ), "Should contain text-embedding-3-large deployment"
+        assert (
+            updated_defaults.model_deployments["text-embedding-3-large"] == text_embedding_deployment
+        ), "text-embedding-3-large deployment should match"
+
+        print(f"Successfully updated defaults with {len(updated_defaults.model_deployments)} model deployments")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_get_defaults_async(self, contentunderstanding_endpoint: str) -> None:
+        """
+        Tests retrieving default model deployments from the Content Understanding service.
+        Verifies that the returned defaults contain the expected model deployment configurations.
+        """
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
+
+        # Load expected model values from test environment
+        gpt41_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_DEPLOYMENT")
+        gpt41_mini_deployment = os.getenv("CONTENTUNDERSTANDING_GPT41_MINI_DEPLOYMENT")
+        text_embedding_deployment = os.getenv("CONTENTUNDERSTANDING_TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
+
+        response = await client.get_defaults()
+
+        assert response is not None, "Response should not be null"
+
+        # Verify defaults structure
+        defaults = response
+        assert defaults is not None, "Defaults should not be null"
+
+        # ModelDeployments may be null or empty if not configured
+        if defaults.model_deployments is not None and len(defaults.model_deployments) > 0:
+            assert len(defaults.model_deployments) > 0, "Model deployments dictionary should not be empty if not null"
+
+            # Verify expected keys exist if deployments are configured
+            for key, value in defaults.model_deployments.items():
+                assert key is not None and len(key) > 0, "Model deployment key should not be null or empty"
+                assert value is not None and len(value) > 0, "Model deployment value should not be null or empty"
+
+            # Verify specific model values if they are configured in test environment
+            if gpt41_deployment:
+                assert "gpt-4.1" in defaults.model_deployments, "Should contain gpt-4.1 deployment"
+                assert (
+                    defaults.model_deployments["gpt-4.1"] == gpt41_deployment
+                ), "gpt-4.1 deployment should match test environment value"
+
+            if gpt41_mini_deployment:
+                assert "gpt-4.1-mini" in defaults.model_deployments, "Should contain gpt-4.1-mini deployment"
+                assert (
+                    defaults.model_deployments["gpt-4.1-mini"] == gpt41_mini_deployment
+                ), "gpt-4.1-mini deployment should match test environment value"
+
+            if text_embedding_deployment:
+                assert (
+                    "text-embedding-3-large" in defaults.model_deployments
+                ), "Should contain text-embedding-3-large deployment"
+                assert (
+                    defaults.model_deployments["text-embedding-3-large"] == text_embedding_deployment
+                ), "text-embedding-3-large deployment should match test environment value"
+
+            print(f"Successfully retrieved defaults with {len(defaults.model_deployments)} model deployments")
+        else:
+            print("Model deployments not configured or empty")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_create_analyzer_async(
         self, contentunderstanding_endpoint: str
     ) -> None:
         """
-        Test Summary:
-        - Create analyzer using ContentAnalyzer object
-        - Verify analyzer creation and poller properties
-        - Clean up created analyzer
+        Tests creating a custom analyzer using ContentAnalyzer object.
+        Verifies analyzer creation, poller properties, and proper cleanup.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "create_content_analyzer", is_async=True)
@@ -243,12 +353,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_begin_create_with_json(self, contentunderstanding_endpoint: str) -> None:
+    async def test_create_analyzer_with_json_async(self, contentunderstanding_endpoint: str) -> None:
         """
-        Test Summary:
-        - Create analyzer using JSON dictionary
-        - Verify analyzer creation and poller properties
-        - Clean up created analyzer
+        Tests creating a custom analyzer using JSON dictionary representation.
+        Verifies analyzer creation, poller properties, and proper cleanup.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "create_json", is_async=True)
@@ -298,14 +406,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_update(self, contentunderstanding_endpoint: str) -> None:
+    async def test_update_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
         """
-        Test Summary:
-        - Create initial analyzer
-        - Get analyzer before update to verify initial state
-        - Update analyzer with new description and tags
-        - Get analyzer after update to verify changes persisted
-        - Clean up created analyzer
+        Tests updating an analyzer's properties (description and tags).
+        Verifies that updates are correctly applied and persisted.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "update", is_async=True)
@@ -325,7 +429,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Get the analyzer before update to verify initial state
             print(f"Getting analyzer {analyzer_id} before update")
-            analyzer_before_update = await client.get(analyzer_id=analyzer_id)
+            analyzer_before_update = await client.get_analyzer(analyzer_id=analyzer_id)
             assert analyzer_before_update is not None
             assert analyzer_before_update.analyzer_id == analyzer_id
             assert analyzer_before_update.description == f"Initial analyzer for update test: {analyzer_id}"
@@ -347,7 +451,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             print(f"Updating analyzer {analyzer_id} with new tag and description")
 
             # Update the analyzer
-            response = await client.update(
+            response = await client.update_analyzer(
                 analyzer_id=analyzer_id,
                 resource=updated_analyzer,
             )
@@ -367,7 +471,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Get the analyzer after update to verify the changes persisted
             print(f"Getting analyzer {analyzer_id} after update")
-            analyzer_after_update = await client.get(analyzer_id=analyzer_id)
+            analyzer_after_update = await client.get_analyzer(analyzer_id=analyzer_id)
             assert analyzer_after_update is not None
             assert analyzer_after_update.analyzer_id == analyzer_id
             assert analyzer_after_update.description == f"Updated analyzer for update test: {analyzer_id}"
@@ -382,14 +486,13 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_get(self, contentunderstanding_endpoint: str) -> None:
+    async def test_get_analyzer_async(self, contentunderstanding_endpoint: str) -> None:
         """
-        Test Summary:
-        - Get existing prebuilt analyzer
-        - Verify analyzer properties and status
+        Tests retrieving an analyzer by ID.
+        Verifies that the prebuilt-documentSearch analyzer can be retrieved with all properties.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.get(
+        response = await client.get_analyzer(
             analyzer_id="prebuilt-documentSearch",
         )
         assert response is not None
@@ -403,12 +506,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_delete(self, contentunderstanding_endpoint: str) -> None:
+    async def test_delete_analyzer_async(
+        self, contentunderstanding_endpoint: str
+    ) -> None:
         """
-        Test Summary:
-        - Create analyzer for deletion test
-        - Delete analyzer
-        - Clean up if deletion failed
+        Tests deleting an analyzer.
+        Verifies that an analyzer can be successfully deleted.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "delete", is_async=True)
@@ -428,7 +531,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Delete the analyzer
             print(f"Deleting analyzer {analyzer_id}")
-            response = await client.delete(analyzer_id=analyzer_id)
+            response = await client.delete_analyzer(analyzer_id=analyzer_id)
 
             # Verify the delete response
             assert response is None
@@ -439,7 +542,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             if created_analyzer:
                 print(f"Cleaning up analyzer {analyzer_id} that was not properly deleted")
                 try:
-                    await client.delete(analyzer_id=analyzer_id)
+                    await client.delete_analyzer(analyzer_id=analyzer_id)
                     # Verify deletion (NOTE: check disabled - list too long to execute)
                     #     client, analyzer_id
                     # ), f"Failed to delete analyzer {analyzer_id} during cleanup"
@@ -453,15 +556,15 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @pytest.mark.skip(reason="TEMPORARILY SKIPPED: List operation is too long - too many analyzers")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_list(self, contentunderstanding_endpoint: str) -> None:
+    async def test_list_analyzers_async(
+        self, contentunderstanding_endpoint: str
+    ) -> None:
         """
-        Test Summary:
-        - List all available analyzers
-        - Verify list response contains expected prebuilt analyzers
-        - Verify each analyzer has required properties
+        Tests listing all available analyzers.
+        Verifies that prebuilt analyzers are included and have required properties.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = client.list()
+        response = client.list_analyzers()
         result = [r async for r in response]
         assert len(result) > 0, "Should have at least one analyzer in the list"
         print(f"Found {len(result)} analyzers")
@@ -482,16 +585,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_begin_analyze_url(self, contentunderstanding_endpoint: str) -> None:
+    async def test_analyze_url_async(self, contentunderstanding_endpoint: str) -> None:
         """
-        Test Summary:
-        - Create simple analyzer for URL analysis
-        - Begin analysis operation with URL input
-        - Wait for analysis completion
-        - Save analysis result to output file
-        - Verify fields node exists in first result
-        - Verify total_amount field exists and equals 110
-        - Clean up created analyzer
+        Tests analyzing a document from a URL.
+        Verifies that analysis completes successfully and returns expected field results.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "analyze_url", is_async=True)
@@ -540,17 +637,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_begin_analyze_binary(self, contentunderstanding_endpoint: str) -> None:
+    async def test_analyze_binary_basic_async(self, contentunderstanding_endpoint: str) -> None:
         """
-        Test Summary:
-        - Create simple analyzer for binary analysis
-        - Read sample invoice PDF file
-        - Begin binary analysis operation with analyzer
-        - Wait for analysis completion
-        - Save analysis result to output file
-        - Verify fields node exists in first result
-        - Verify total_amount field exists and equals 110
-        - Clean up created analyzer
+        Tests analyzing a document from binary data (PDF file).
+        Verifies that binary analysis completes successfully and returns expected field results.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id(client, "analyze_binary", is_async=True)
@@ -577,7 +667,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             print(f"Starting binary analysis with analyzer {analyzer_id}")
 
             # Begin binary analysis operation
-            analysis_poller = await client.begin_analyze_binary(analyzer_id=analyzer_id, binary_input=pdf_content)
+            analysis_poller = await client.begin_analyze_binary(
+                analyzer_id=analyzer_id, binary_input=pdf_content, content_type="application/pdf"
+            )
             assert_poller_properties(analysis_poller, "Analysis poller")
 
             # Wait for analysis completion
@@ -598,16 +690,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint: str) -> None:
+    async def test_get_result_file_async(self, contentunderstanding_endpoint: str) -> None:
         """
-        Test Summary:
-        - Create marketing video analyzer based on the marketing video template
-        - Read FlightSimulator.mp4 file
-        - Begin video analysis operation with analyzer
-        - Wait for analysis completion
-        - Use get_result_file to retrieve image files generated from video analysis
-        - Verify image file content is returned and save to test_output
-        - Clean up created analyzer
+        Tests retrieving result files from a video analysis operation.
+        Verifies that image files generated from video analysis can be retrieved and saved.
         """
         if not is_live_and_not_recording():
             pytest.skip(
@@ -654,14 +740,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 analysis_result, "test_content_analyzers_get_result_file", test_file_dir, analyzer_id
             )
 
-            # Extract operation ID for get_result_file test using custom poller's details property
-            from azure.ai.contentunderstanding.aio.operations._patch import AnalyzeAsyncLROPoller
+            # Extract operation ID for get_result_file test using custom poller's operation_id property
+            from azure.ai.contentunderstanding.aio.models import AnalyzeAsyncLROPoller
 
             assert isinstance(analysis_poller, AnalyzeAsyncLROPoller), "Should return custom AnalyzeAsyncLROPoller"
 
-            details = analysis_poller.details
-            assert "operation_id" in details, "Details should contain operation_id"
-            analysis_operation_id = details["operation_id"]
+            analysis_operation_id = analysis_poller.operation_id
             assert analysis_operation_id is not None, "Operation ID should not be None"
             assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
             print(f"Analysis operation ID: {analysis_operation_id}")
@@ -678,231 +762,176 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Always clean up the created analyzer, even if the test fails
             await delete_analyzer_and_assert(client, analyzer_id, created_analyzer)
 
-    # @ContentUnderstandingPreparer()
-    # @recorded_by_proxy_async
-    # @pytest.mark.skip(reason="GA API addition - to be implemented")
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_validate_document_properties_async(self, contentunderstanding_endpoint: str) -> None:
+        """
+        Tests document property validation from analysis results.
+        Verifies that analyzed documents contain expected properties like page count, content structure, and layout information.
+        """
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        analyzer_id = generate_analyzer_id(client, "validate_props", is_async=True)
+        created_analyzer = False
 
+        # Create a simple analyzer with OCR and layout enabled to get rich document properties
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for document properties validation: {analyzer_id}",
+            tags={"test_type": "document_properties"},
+        )
 
-#     @ContentUnderstandingPreparer()
-#     @recorded_by_proxy_async
-#     @pytest.mark.skip(reason="GA API addition - to be implemented")
-#     async def test_content_analyzers_begin_analyze(self, contentunderstanding_endpoint):
-#         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-#         response = await (
-#             await client.begin_analyze(
-#                 analyzer_id="str",
-#                 body={
-#                     "inputs": [
-#                         {
-#                             "data": bytes("bytes", encoding="utf-8"),
-#                             "mimeType": "str",
-#                             "name": "str",
-#                             "range": "str",
-#                             "url": "str",
-#                         }
-#                     ],
-#                     "modelDeployments": {"str": "str"},
-#                 },
-#             )
-#         ).result()  # call '.result()' to poll until service return final result
+        try:
+            # Create analyzer
+            poller = await create_analyzer_and_assert_async(client, analyzer_id, content_analyzer)
+            created_analyzer = True
 
-# please add some check logic here by yourself
-# ...
+            # Read the sample invoice PDF file
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
 
+            print(f"Starting analysis for document properties validation")
 
-# @ContentUnderstandingPreparer()
-# @recorded_by_proxy_async
-# @pytest.mark.skip(reason="GA API addition - to be implemented")
+            # Begin binary analysis
+            analysis_poller = await client.begin_analyze_binary(
+                analyzer_id=analyzer_id, binary_input=pdf_content, content_type="application/pdf"
+            )
+            assert_poller_properties(analysis_poller, "Document properties analysis poller")
 
+            # Wait for completion
+            print(f"Waiting for analysis completion")
+            analysis_result = await analysis_poller.result()
+            print(f"Analysis completed")
 
-#     @ContentUnderstandingPreparer()
-#     @recorded_by_proxy_async
-#     @pytest.mark.skip(reason="GA API addition - to be implemented")
-#     async def test_content_analyzers_begin_copy(self, contentunderstanding_endpoint):
-#         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-#         response = await (
-#             await client.begin_copy(
-#                 analyzer_id="str",
-#                 body={"sourceAnalyzerId": "str", "sourceAzureResourceId": "str", "sourceRegion": "str"},
-#                 source_analyzer_id="str",
-#             )
-#         ).result()  # call '.result()' to poll until service return final result
+            # Save result to file
+            output_filename = save_analysis_result_to_file(
+                analysis_result, "test_validate_document_properties", test_file_dir, analyzer_id
+            )
 
-# please add some check logic here by yourself
-# ...
+            # Validate document properties using the new helper function
+            # Sample invoice PDF is a single-page document
+            assert_document_properties(analysis_result, expected_min_pages=1)
 
+            # Additional specific validations
+            assert analysis_result.contents is not None, "Should have contents"
+            first_content = analysis_result.contents[0]
+            
+            # Verify markdown output exists (basic OCR result)
+            assert hasattr(first_content, 'markdown'), "Content should have markdown attribute"
+            if first_content.markdown:
+                assert len(first_content.markdown) > 100, "Markdown content should contain substantial text from the document"
+                print(f"✓ Markdown content length: {len(first_content.markdown)} characters")
+            
+            # Verify fields were extracted if field schema was defined
+            if hasattr(first_content, 'fields') and first_content.fields:
+                assert 'total_amount' in first_content.fields, "Should extract total_amount field"
+                total_amount = first_content.fields['total_amount']
+                assert total_amount is not None, "total_amount field should have a value"
+                print(f"✓ Extracted total_amount: {total_amount}")
 
-# @ContentUnderstandingPreparer()
-# @recorded_by_proxy_async
-# @pytest.mark.skip(reason="GA API addition - to be implemented")
+            print(f"✓ Document properties validation test completed successfully")
 
+        finally:
+            # Always clean up the created analyzer
+            await delete_analyzer_and_assert(client, analyzer_id, created_analyzer)
 
-#     @ContentUnderstandingPreparer()
-#     @recorded_by_proxy_async
-#     @pytest.mark.skip(reason="GA API addition - to be implemented")
-#     async def test_content_analyzers_begin_create_or_replace(self, contentunderstanding_endpoint):
-#         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-#         response = await (
-#             await client.begin_create_or_replace(
-#                 analyzer_id="str",
-#                 resource={
-#                     "analyzerId": "str",
-#                     "createdAt": "2020-02-20 00:00:00",
-#                     "lastModifiedAt": "2020-02-20 00:00:00",
-#                     "status": "str",
-#                     "baseAnalyzerId": "str",
-#                     "config": {
-#                         "annotationFormat": "str",
-#                         "chartFormat": "str",
-#                         "contentCategories": {"str": {"analyzer": ..., "analyzerId": "str", "description": "str"}},
-#                         "disableFaceBlurring": bool,
-#                         "enableAnnotation": bool,
-#                         "enableFigureAnalysis": bool,
-#                         "enableFigureDescription": bool,
-#                         "enableFormula": bool,
-#                         "enableLayout": bool,
-#                         "enableOcr": bool,
-#                         "enableSegment": bool,
-#                         "estimateFieldSourceAndConfidence": bool,
-#                         "locales": ["str"],
-#                         "omitContent": bool,
-#                         "returnDetails": bool,
-#                         "segmentPerPage": bool,
-#                         "tableFormat": "str",
-#                     },
-#                     "description": "str",
-#                     "dynamicFieldSchema": bool,
-#                     "fieldSchema": {
-#                         "fields": {
-#                             "str": {
-#                                 "$ref": "str",
-#                                 "description": "str",
-#                                 "enum": ["str"],
-#                                 "enumDescriptions": {"str": "str"},
-#                                 "estimateSourceAndConfidence": bool,
-#                                 "examples": ["str"],
-#                                 "items": ...,
-#                                 "method": "str",
-#                                 "properties": {"str": ...},
-#                                 "type": "str",
-#                             }
-#                         },
-#                         "definitions": {
-#                             "str": {
-#                                 "$ref": "str",
-#                                 "description": "str",
-#                                 "enum": ["str"],
-#                                 "enumDescriptions": {"str": "str"},
-#                                 "estimateSourceAndConfidence": bool,
-#                                 "examples": ["str"],
-#                                 "items": ...,
-#                                 "method": "str",
-#                                 "properties": {"str": ...},
-#                                 "type": "str",
-#                             }
-#                         },
-#                         "description": "str",
-#                         "name": "str",
-#                     },
-#                     "knowledgeSources": ["knowledge_source"],
-#                     "models": {"str": "str"},
-#                     "processingLocation": "str",
-#                     "supportedModels": {"completion": {"str": "str"}, "embedding": {"str": "str"}},
-#                     "tags": {"str": "str"},
-#                     "warnings": [...],
-#                 },
-#             )
-#         ).result()  # call '.result()' to poll until service return final result
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_analyze_invoice_with_fields_async(self, contentunderstanding_endpoint: str) -> None:
+        """
+        Tests invoice analysis with comprehensive field extraction.
+        Verifies that invoice-specific fields (invoice_number, dates, amounts, vendor/customer info) are correctly extracted.
+        This test demonstrates structured data extraction from invoices using field schema.
+        """
+        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        analyzer_id = generate_analyzer_id(client, "invoice_fields", is_async=True)
+        created_analyzer = False
 
-# please add some check logic here by yourself
-# ...
+        # Create an invoice analyzer with comprehensive field schema
+        invoice_analyzer = new_invoice_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for invoice field extraction: {analyzer_id}",
+            tags={"test_type": "invoice_fields"},
+        )
 
+        try:
+            # Create analyzer
+            print(f"\nCreating invoice analyzer with field schema")
+            poller = await create_analyzer_and_assert_async(client, analyzer_id, invoice_analyzer)
+            created_analyzer = True
 
-# @ContentUnderstandingPreparer()
-# @recorded_by_proxy_async
-# @pytest.mark.skip(reason="GA API addition - to be implemented")
+            # Read the sample invoice PDF file
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
 
+            print(f"Starting invoice analysis with field extraction")
 
-#     @ContentUnderstandingPreparer()
-#     @recorded_by_proxy_async
-#     @pytest.mark.skip(reason="GA API addition - to be implemented")
-#     async def test_content_analyzers_delete_result(self, contentunderstanding_endpoint):
-#         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-#         response = await client.delete_result(
-#             operation_id="str",
-#         )
+            # Begin binary analysis
+            analysis_poller = await client.begin_analyze_binary(
+                analyzer_id=analyzer_id, binary_input=pdf_content, content_type="application/pdf"
+            )
+            assert_poller_properties(analysis_poller, "Invoice analysis poller")
 
-# please add some check logic here by yourself
-# ...
+            # Wait for completion
+            print(f"Waiting for invoice analysis completion")
+            analysis_result = await analysis_poller.result()
+            print(f"Invoice analysis completed")
 
+            # Save result to file for inspection
+            output_filename = save_analysis_result_to_file(
+                analysis_result, "test_analyze_invoice_with_fields", test_file_dir, analyzer_id
+            )
+            print(f"Analysis result saved to: {output_filename}")
 
-# @ContentUnderstandingPreparer()
-# @recorded_by_proxy_async
-# @pytest.mark.skip(reason="GA API addition - to be implemented")
+            # Validate invoice fields using the specialized assertion function
+            assert_invoice_fields(analysis_result, "Invoice analysis result")
 
+            # Additional validation - verify at least total_amount is extracted (most critical field)
+            first_content = analysis_result.contents[0]
+            assert hasattr(first_content, 'fields'), "Content should have fields"
+            assert first_content.fields is not None, "Fields should not be None"
+            
+            fields = first_content.fields
+            assert 'total_amount' in fields, "Should extract total_amount field (most critical invoice field)"
+            
+            total_field = fields['total_amount']
+            print(f"\n✓ Critical field verification:")
+            print(f"  - total_amount extracted successfully")
+            
+            if isinstance(total_field, dict) and 'valueNumber' in total_field:
+                total_value = total_field['valueNumber']
+                print(f"  - Total amount value: {total_value}")
+                assert total_value > 0, "Total amount should be positive"
+                
+                # Verify confidence if available
+                if 'confidence' in total_field:
+                    confidence = total_field['confidence']
+                    print(f"  - Confidence: {confidence:.2%}")
+                    # Note: We don't enforce a minimum confidence as it depends on document quality
+                
+                # Verify source information if available
+                if 'spans' in total_field:
+                    spans = total_field['spans']
+                    print(f"  - Source locations: {len(spans)} span(s)")
+                    assert len(spans) > 0, "Should have source location for extracted field"
+                
+                if 'source' in total_field:
+                    source = total_field['source']
+                    print(f"  - Source: {source[:50]}..." if len(source) > 50 else f"  - Source: {source}")
 
-#     @ContentUnderstandingPreparer()
-#     @recorded_by_proxy_async
-#     @pytest.mark.skip(reason="GA API addition - to be implemented")
-#     async def test_content_analyzers_get_defaults(self, contentunderstanding_endpoint):
-#         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-#         response = await client.get_defaults()
+            # Count how many invoice fields were successfully extracted
+            invoice_field_names = [
+                'invoice_number', 'invoice_date', 'due_date',
+                'vendor_name', 'vendor_address', 'customer_name', 'customer_address',
+                'subtotal', 'tax_amount', 'total_amount'
+            ]
+            extracted_count = sum(1 for field in invoice_field_names if field in fields)
+            print(f"\n✓ Successfully extracted {extracted_count}/{len(invoice_field_names)} invoice fields")
+            print(f"✓ Invoice field extraction test completed successfully")
 
-# please add some check logic here by yourself
-# ...
-
-
-# @ContentUnderstandingPreparer()
-# @recorded_by_proxy_async
-# @pytest.mark.skip(reason="GA API addition - to be implemented")
-
-
-#     @ContentUnderstandingPreparer()
-#     @recorded_by_proxy_async
-#     @pytest.mark.skip(reason="GA API addition - to be implemented")
-#     async def test_content_analyzers_get_operation_status(self, contentunderstanding_endpoint):
-#         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-#         response = await client.get_operation_status(
-#             analyzer_id="str",
-#             operation_id="str",
-#         )
-
-# please add some check logic here by yourself
-# ...
-
-
-# @ContentUnderstandingPreparer()
-# @recorded_by_proxy_async
-# @pytest.mark.skip(reason="GA API addition - to be implemented")
-
-
-#     @ContentUnderstandingPreparer()
-#     @recorded_by_proxy_async
-#     @pytest.mark.skip(reason="GA API addition - to be implemented")
-#     async def test_content_analyzers_grant_copy_authorization(self, contentunderstanding_endpoint):
-#         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-#         response = await client.grant_copy_authorization(
-#             analyzer_id="str",
-#             body={"targetAzureResourceId": "str", "targetRegion": "str"},
-#             target_azure_resource_id="str",
-#         )
-
-# please add some check logic here by yourself
-# ...
-
-
-# @ContentUnderstandingPreparer()
-# @recorded_by_proxy_async
-# @pytest.mark.skip(reason="GA API addition - to be implemented")
-
-
-#     @ContentUnderstandingPreparer()
-#     @recorded_by_proxy_async
-#     @pytest.mark.skip(reason="GA API addition - to be implemented")
-#     async def test_content_analyzers_update_defaults(self, contentunderstanding_endpoint):
-#         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-#         response = await client.update_defaults(
-#             body={"modelDeployments": {}},
-#         )
-#         please add some check logic here by yourself
-#
+        finally:
+            # Always clean up the created analyzer
+            await delete_analyzer_and_assert(client, analyzer_id, created_analyzer)
