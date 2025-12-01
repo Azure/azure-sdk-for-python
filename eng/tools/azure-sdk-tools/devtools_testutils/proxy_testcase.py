@@ -39,7 +39,6 @@ from .helpers import (
     trim_kwargs_from_test_function,  # to clean up incoming arguments to the test function we are wrapping
 )
 from .proxy_startup import discovered_roots
-from urllib3.exceptions import HTTPError
 import json
 
 if TYPE_CHECKING:
@@ -219,8 +218,10 @@ def _normalize_transport_specs(specs):
             norm.append((owner, attr))
         else:
             # If a class was provided, assume attribute name "send"
-            # (Safer than accepting a bare function object like RequestsTransport.send,
+            # (Safer than accepting a bare function object like RequestsTransport.send or AioHttpTransport.send,
             # because assignment requires knowing the owner and attribute name.)
+            # This works for both sync transports (RequestsTransport, HTTPTransport) and
+            # async transports (AioHttpTransport, AsyncHTTPTransport).
             norm.append((spec, "send"))
     return norm
 

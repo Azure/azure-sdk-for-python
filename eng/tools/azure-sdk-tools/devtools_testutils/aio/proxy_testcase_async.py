@@ -22,6 +22,7 @@ except ImportError:
 
 from ..helpers import is_live_and_not_recording, trim_kwargs_from_test_function
 from ..proxy_testcase import (
+    _normalize_transport_specs,
     get_test_id,
     start_record_or_playback,
     transform_request,
@@ -29,21 +30,6 @@ from ..proxy_testcase import (
     restore_httpx_response_url,
     stop_record_or_playback,
 )
-
-
-# helper: turn decorator args into a normalized list of (owner, attr_name)
-def _normalize_transport_specs(specs):
-    norm = []
-    for spec in specs:
-        if isinstance(spec, tuple) and len(spec) == 2:
-            owner, attr = spec
-            norm.append((owner, attr))
-        else:
-            # If a class was provided, assume attribute name "send"
-            # (Safer than accepting a bare function object like AioHttpTransport.send,
-            # because assignment requires knowing the owner and attribute name.)
-            norm.append((spec, "send"))
-    return norm
 
 
 def recorded_by_proxy_async(*maybe_specs):
@@ -133,9 +119,8 @@ def _make_proxy_decorator_async(transports):
                 for owner, name in transports:
                     original = getattr(owner, name)
                     # Check if this is an httpx transport by comparing with httpx transport classes
-                    is_httpx_transport = (
-                        (AsyncHTTPXTransport is not None and owner is AsyncHTTPXTransport)
-                        or (httpx is not None and owner.__module__.startswith("httpx"))
+                    is_httpx_transport = (AsyncHTTPXTransport is not None and owner is AsyncHTTPXTransport) or (
+                        httpx is not None and owner.__module__.startswith("httpx")
                     )
                     setattr(owner, name, make_combined_call(original, is_httpx=is_httpx_transport))
                     originals.append((owner, name, original))
