@@ -39,13 +39,6 @@ def patch_sdk():
     This function:
     1. Replaces build_content_understanding_copy_analyzer_request to fix URL path
     2. Wraps _copy_analyzer_initial method to accept both 201 and 202 status codes
-
-    :param analyzer_id: The analyzer ID for the copy operation.
-    :type analyzer_id: str
-    :keyword allow_replace: Whether to allow replacing an existing analyzer.
-    :paramtype allow_replace: Optional[bool]
-    :return: The HTTP request object.
-    :rtype: HttpRequest
     """
     from . import _operations  # pylint: disable=protected-access
 

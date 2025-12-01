@@ -1,3 +1,8 @@
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 # Stub file for _models.py
 # This file declares the .value property added at runtime via patch_sdk()
 # Type checkers (MyPy, Pyright) use this to understand the properties exist
@@ -35,4 +40,3 @@ class ObjectField(ContentField):
 
 class JsonField(ContentField):
     value: Optional[Any]  # Added at runtime via patch_sdk()
-
