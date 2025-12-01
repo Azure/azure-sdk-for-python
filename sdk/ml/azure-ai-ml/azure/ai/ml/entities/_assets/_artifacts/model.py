@@ -11,7 +11,11 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ModelVersion,
     ModelVersionProperties,
 )
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionDetails, ModelVersionData
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
+    ModelVersionDetails,
+    ModelVersionData,
+    ModelVersionDefaultDeploymentTemplate,
+)
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
 from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
@@ -217,7 +221,9 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         
         # Set default_deployment_template if it exists
         if self.default_deployment_template:
-            model_version.default_deployment_template = {"asset_id": self.default_deployment_template.asset_id}
+            model_version.default_deployment_template = ModelVersionDefaultDeploymentTemplate(
+                asset_id=self.default_deployment_template.asset_id
+            )
 
         model_version_resource = ModelVersionData(properties=model_version)
 
