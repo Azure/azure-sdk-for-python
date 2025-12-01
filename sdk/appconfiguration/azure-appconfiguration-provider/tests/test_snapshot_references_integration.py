@@ -183,7 +183,7 @@ class TestRequestTracingContextIntegration:
 
         # Test correlation context header update
         headers = {"existing": "header"}
-        context.update_correlation_context_header(headers)
+        context.update_correlation_context_header(headers, "Startup", 0, False, False, False)
 
         # Should contain correlation context header
         assert "Correlation-Context" in headers

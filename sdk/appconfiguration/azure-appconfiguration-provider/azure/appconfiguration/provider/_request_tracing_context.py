@@ -220,9 +220,6 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         if self.is_failover_request:
             tags.append(FAILOVER_TAG)
 
-        if self.uses_snapshot_reference:
-            tags.append(SNAPSHOT_REFERENCE_TAG)
-
         # Build the correlation context string
         context_parts: List[str] = []
 
@@ -281,7 +278,8 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             features_list.append(AI_CHAT_COMPLETION_FEATURE)
         if self.get_assembly_version(AZURE_AI_PROJECTS_PACKAGE):
             features_list.append(AI_FOUNDRY_SDK_FEATURE)
-
+        if self.uses_snapshot_reference:
+            features_list.append(SNAPSHOT_REFERENCE_TAG)
         return Delimiter.join(features_list)
 
     def _create_ff_features_string(self) -> str:

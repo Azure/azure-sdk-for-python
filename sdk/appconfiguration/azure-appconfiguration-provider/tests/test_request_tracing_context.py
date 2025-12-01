@@ -376,7 +376,7 @@ class TestSnapshotReferenceTracking(unittest.TestCase):
 
     def test_snapshot_reference_tag_constant(self):
         """Test that the snapshot reference tag constant has the expected value."""
-        self.assertEqual(SNAPSHOT_REFERENCE_TAG, "UsesSnapshotReference=true")
+        self.assertEqual(SNAPSHOT_REFERENCE_TAG, "UsesSnapshotReference")
 
     def test_initialization(self):
         """Test that request tracing context initializes snapshot reference tracking."""

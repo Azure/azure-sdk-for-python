@@ -39,7 +39,6 @@ from ._constants import (
     ALLOCATION_ID_KEY,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
-    SNAPSHOT_REF_CONTENT_TYPE,
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
 )
@@ -472,8 +471,6 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                     self._tracing_context.uses_ai_configuration = True
                 if APP_CONFIG_AICC_MIME_PROFILE in config.content_type:
                     self._tracing_context.uses_aicc_configuration = True
-                if SNAPSHOT_REF_CONTENT_TYPE in config.content_type:
-                    self._tracing_context.uses_snapshot_reference = True
                 return json.loads(config.value)
             except json.JSONDecodeError:
                 try:
@@ -504,10 +501,14 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         return processed_settings
 
     def _process_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
-        feature_flag_value = json.loads(feature_flag.value)
-        self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
-        self._tracing_context.update_feature_filter_telemetry(feature_flag)
-        return feature_flag_value
+        try:
+            feature_flag_value = json.loads(feature_flag.value)
+            self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
+            self._tracing_context.update_feature_filter_telemetry(feature_flag)
+            return feature_flag_value
+        except json.JSONDecodeError:
+            # Feature flag value is not a valid JSON
+            return {}
 
     def _update_watched_settings(
         self, configuration_settings: List[ConfigurationSetting]

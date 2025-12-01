@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 
 import json
+from typing import Optional
 from azure.appconfiguration import ConfigurationSetting  # type: ignore
 from ._constants import SNAPSHOT_NAME_FIELD
 
@@ -15,11 +16,11 @@ class SnapshotReferenceParser:
     """
 
     @staticmethod
-    def parse(setting: ConfigurationSetting) -> str:
+    def parse(setting: Optional[ConfigurationSetting]) -> str:
         """
         Parse a snapshot reference from a configuration setting containing snapshot reference JSON.
 
-        :param ConfigurationSetting setting: The configuration setting containing the snapshot reference JSON
+        :param Optional[ConfigurationSetting] setting: The configuration setting containing the snapshot reference JSON
         :return: The snapshot name extracted from the reference
         :rtype: str
         :raises ValueError: When the setting is None
