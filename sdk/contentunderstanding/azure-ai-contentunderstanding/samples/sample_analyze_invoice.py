@@ -96,8 +96,8 @@ def main() -> None:
         customer_name_field = document_content.fields.get("CustomerName")
         invoice_date_field = document_content.fields.get("InvoiceDate")
 
-        customer_name = customer_name_field.value if customer_name_field else None  # type: ignore[attr-defined]
-        invoice_date = invoice_date_field.value if invoice_date_field else None  # type: ignore[attr-defined]
+        customer_name = customer_name_field.value if customer_name_field else None
+        invoice_date = invoice_date_field.value if invoice_date_field else None
 
         print(f"Customer Name: {customer_name or '(None)'}")
         if customer_name_field:
@@ -123,13 +123,13 @@ def main() -> None:
 
         # Extract object field (TotalAmount contains Amount and CurrencyCode)
         total_amount_field = document_content.fields.get("TotalAmount")
-        if total_amount_field and total_amount_field.value:  # type: ignore[attr-defined]
+        if total_amount_field and total_amount_field.value:
             total_amount_obj: dict[str, ContentField] = total_amount_field.value  # type: ignore
             amount_field = total_amount_obj.get("Amount")
             currency_field = total_amount_obj.get("CurrencyCode")
 
-            amount = amount_field.value if amount_field else None  # type: ignore[attr-defined]
-            currency = currency_field.value if currency_field else None  # type: ignore[attr-defined]
+            amount = amount_field.value if amount_field else None
+            currency = currency_field.value if currency_field else None
 
             print(f"\nTotal Amount: {amount} {currency}")
             if total_amount_field.confidence:
@@ -138,12 +138,12 @@ def main() -> None:
         # Extract array field (LineItems - line items)
         # Note: The field name is "LineItems" (not "Items") to match the service response
         line_items_field = document_content.fields.get("LineItems")
-        if line_items_field and isinstance(line_items_field, ArrayField) and line_items_field.value:  # type: ignore[attr-defined]
+        if line_items_field and isinstance(line_items_field, ArrayField) and line_items_field.value:
             items_array: list = line_items_field.value  # type: ignore
             print(f"\nLine Items ({len(items_array)}):")
             for i, item in enumerate(items_array, 1):
                 # Each item in the array is a ContentField (ObjectField for line items)
-                if isinstance(item, ObjectField) and item.value:  # type: ignore[attr-defined]
+                if isinstance(item, ObjectField) and item.value:
                     item_dict: dict[str, ContentField] = item.value  # type: ignore
                     description_field = item_dict.get("Description")
                     quantity_field = item_dict.get("Quantity")
@@ -151,21 +151,21 @@ def main() -> None:
                     unit_price_field = item_dict.get("UnitPrice")
                     amount_field = item_dict.get("Amount")
 
-                    description = description_field.value if description_field else "(no description)"  # type: ignore[attr-defined]
-                    quantity = quantity_field.value if quantity_field else "N/A"  # type: ignore[attr-defined]
+                    description = description_field.value if description_field else "(no description)"
+                    quantity = quantity_field.value if quantity_field else "N/A"
                     
                     # Display price information - prefer UnitPrice if available, otherwise Amount
                     # UnitPrice is an ObjectField with Amount and CurrencyCode sub-fields (like TotalAmount)
                     price_info = ""
-                    if unit_price_field and isinstance(unit_price_field, ObjectField) and unit_price_field.value:  # type: ignore[attr-defined]
+                    if unit_price_field and isinstance(unit_price_field, ObjectField) and unit_price_field.value:
                         unit_price_obj: dict[str, ContentField] = unit_price_field.value  # type: ignore
                         unit_price_amount_field = unit_price_obj.get("Amount")
                         unit_price_currency_field = unit_price_obj.get("CurrencyCode")
-                        if unit_price_amount_field and unit_price_amount_field.value is not None:  # type: ignore[attr-defined]
-                            currency = unit_price_currency_field.value if unit_price_currency_field else ""  # type: ignore[attr-defined]
-                            price_info = f"Unit Price: {unit_price_amount_field.value} {currency}".strip()  # type: ignore[attr-defined]
-                    elif amount_field and amount_field.value is not None:  # type: ignore[attr-defined]
-                        price_info = f"Amount: {amount_field.value}"  # type: ignore[attr-defined]
+                        if unit_price_amount_field and unit_price_amount_field.value is not None:
+                            currency = unit_price_currency_field.value if unit_price_currency_field else ""
+                            price_info = f"Unit Price: {unit_price_amount_field.value} {currency}".strip()
+                    elif amount_field and amount_field.value is not None:
+                        price_info = f"Amount: {amount_field.value}"
                     
                     print(f"  {i}. {description}")
                     print(f"     Quantity: {quantity}" + (f", {price_info}" if price_info else ""))

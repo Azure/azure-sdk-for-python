@@ -60,7 +60,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
     @classmethod
-    async def from_continuation_token(
+    async def from_continuation_token(  # type: ignore[override]
         cls,
         polling_method: AsyncPollingMethod[PollingReturnType_co],
         continuation_token: str,
@@ -76,7 +76,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :rtype: AsyncLROPoller[PollingReturnType_co]
         :raises ~azure.core.exceptions.HttpResponseError: If the continuation token is invalid.
         """
-        result = await polling_method.from_continuation_token(continuation_token, **kwargs)
+        result = await polling_method.from_continuation_token(continuation_token, **kwargs)  # type: ignore[misc]
         (
             client,
             initial_response,

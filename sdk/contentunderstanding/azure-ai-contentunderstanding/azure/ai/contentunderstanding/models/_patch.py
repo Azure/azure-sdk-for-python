@@ -24,6 +24,9 @@ from ._models import (
     ContentField,
 )
 
+# Note: The .value property is added to ContentField classes at runtime in patch_sdk()
+# Type annotations are set on the classes' __annotations__ for type checker support
+
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 __all__ = [
@@ -110,15 +113,33 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-def _add_value_property_to_field(field_class: type, value_attr: str) -> None:
-    """Add a .value property to a field class that returns the appropriate attribute."""
-
-    @property  # type: ignore[misc]
-    def value(self) -> Any:  # type: ignore[misc]
+def _add_value_property_to_field(field_class: type, value_attr: str, return_type: Any = Any) -> None:
+    """Add a .value property implementation at runtime.
+    
+    This function adds the actual property implementation so IntelliSense works.
+    The type declarations in TYPE_CHECKING tell type checkers about the types.
+    
+    :param field_class: The field class to add the property to
+    :param value_attr: The attribute name to read from (e.g., "value_string")
+    :param return_type: The expected return type for better type checking
+    """
+    def value_getter(self: Any) -> Any:
         """Get the value of this field."""
-        return getattr(self, value_attr)
-
-    setattr(field_class, "value", value)
+        return getattr(self, value_attr, None)
+    
+    # Set return type annotation for better type checking
+    value_getter.__annotations__['return'] = return_type
+    
+    # Create property with type annotation
+    value_property = property(value_getter)
+    
+    # Add property to class at runtime (for IntelliSense)
+    setattr(field_class, "value", value_property)
+    
+    # Also add to __annotations__ for better IDE support
+    if not hasattr(field_class, "__annotations__"):
+        field_class.__annotations__ = {}
+    field_class.__annotations__["value"] = return_type
 
 
 def patch_sdk():
@@ -128,21 +149,22 @@ def patch_sdk():
     # Add RecordMergePatchUpdate as an alias
     _models.RecordMergePatchUpdate = RecordMergePatchUpdate  # type: ignore[attr-defined]
 
-    # Add .value property to all ContentField subclasses for easier access
-    # Note: The attribute names follow the pattern "value_<type>"
-    _add_value_property_to_field(StringField, "value_string")
-    _add_value_property_to_field(IntegerField, "value_integer")
-    _add_value_property_to_field(NumberField, "value_number")
-    _add_value_property_to_field(BooleanField, "value_boolean")
-    _add_value_property_to_field(DateField, "value_date")
-    _add_value_property_to_field(TimeField, "value_time")
-    _add_value_property_to_field(ArrayField, "value_array")
-    _add_value_property_to_field(ObjectField, "value_object")
-    _add_value_property_to_field(JsonField, "value_json")
+    # Runtime implementation: Add .value property to all ContentField subclasses
+    # The TYPE_CHECKING block above declares the types for static analysis
+    # These runtime implementations make IntelliSense work
+    _add_value_property_to_field(StringField, "value_string", Optional[str])
+    _add_value_property_to_field(IntegerField, "value_integer", Optional[int])
+    _add_value_property_to_field(NumberField, "value_number", Optional[float])
+    _add_value_property_to_field(BooleanField, "value_boolean", Optional[bool])
+    _add_value_property_to_field(DateField, "value_date", Optional[str])
+    _add_value_property_to_field(TimeField, "value_time", Optional[str])
+    _add_value_property_to_field(ArrayField, "value_array", Optional[List[Any]])
+    _add_value_property_to_field(ObjectField, "value_object", Optional[Dict[str, Any]])
+    _add_value_property_to_field(JsonField, "value_json", Optional[Any])
 
     # Add dynamic .value to ContentField base class
     # This checks which value_* attribute exists and returns it
-    def _content_field_value_getter(self) -> Any:
+    def _content_field_value_getter(self: ContentField) -> Any:
         """Get the value of this field regardless of its specific type."""
         for attr in [
             "value_string",
@@ -158,8 +180,18 @@ def patch_sdk():
             if hasattr(self, attr):
                 return getattr(self, attr)
         return None
-
-    setattr(ContentField, "value", property(_content_field_value_getter))
+    
+    # Set return type annotation
+    _content_field_value_getter.__annotations__['return'] = Any
+    
+    # Add property to ContentField base class
+    content_field_value = property(_content_field_value_getter)
+    setattr(ContentField, "value", content_field_value)
+    
+    # Also add to __annotations__ for IDE support
+    if not hasattr(ContentField, "__annotations__"):
+        ContentField.__annotations__ = {}
+    ContentField.__annotations__["value"] = Any
 
     # SDK-FIX: Patch AudioVisualContent.__init__ to handle KeyFrameTimesMs casing inconsistency
     # The service returns "KeyFrameTimesMs" (capital K) but TypeSpec defines "keyFrameTimesMs" (lowercase k)

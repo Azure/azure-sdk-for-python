@@ -94,7 +94,7 @@ async def main() -> None:
                     print(f"  Total fields extracted: {len(doc_content.fields)}")
                     customer_name_field = doc_content.fields.get("CustomerName")
                     if customer_name_field:
-                        print(f"  Customer Name: {customer_name_field.value or '(not found)'}")  # type: ignore[attr-defined]
+                        print(f"  Customer Name: {customer_name_field.value or '(not found)'}")
 
         # Step 2: Delete the analysis result
         print(f"\nStep 2: Deleting analysis result (Operation ID: {operation_id})...")

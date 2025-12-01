@@ -135,7 +135,7 @@ async def main() -> None:
                 if len(all_formulas) > 0:
                     print(f"\nFound {len(all_formulas)} formula(s)")
                     for formula in all_formulas:
-                        print(f"  Formula: {formula.value or '(no value)'}")  # type: ignore[attr-defined]
+                        print(f"  Formula: {formula.value or '(no value)'}")
                         if hasattr(formula, "kind") and formula.kind:
                             print(f"    Kind: {formula.kind}")
                 else:
