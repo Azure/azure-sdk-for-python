@@ -112,10 +112,20 @@ def main() -> int:
             "git", "diff", args.base, args.head, "--", filepath
         ])
         if pins := check_for_new_strict_pins(filepath, diff_output):
-            all_strict_pins.extend(pins)
+            all_strict_pins += pins
     
-    if not all_strict_pins or len(all_strict_pins) == 0:
+    if not all_strict_pins:
         return 0
+    
+    # Print detected strict pins
+    print("\n" + "=" * 80)
+    print("STRICT VERSION PINS DETECTED")
+    print("=" * 80)
+    for pins in all_strict_pins:
+        print(f"  - {pins}")
+    print("\n" + "-" * 80)
+    print(f"Required approvers: {', '.join(sorted(ARCHITECTS))}")
+    print("-" * 80)
     
     if check_architect_approval_via_cli(args.pr_number):
         print("\nArchitect approval found")
