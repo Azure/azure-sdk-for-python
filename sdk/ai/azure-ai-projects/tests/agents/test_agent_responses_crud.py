@@ -18,6 +18,8 @@ from azure.ai.projects.models import (
 
 class TestAgentResponsesCrud(TestBase):
 
+    # To run this test:
+    # pytest tests/agents/test_agent_responses_crud.py::TestAgentResponsesCrud::test_agent_responses_crud -s
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_responses_crud(self, **kwargs):
@@ -153,7 +155,7 @@ class TestAgentResponsesCrud(TestBase):
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print("Agent deleted")
 
-    # To run this tes:
+    # To run this test:
     # pytest tests\agents\test_agent_responses_crud.py::TestAgentResponsesCrud::test_agent_responses_with_structured_output -s
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
