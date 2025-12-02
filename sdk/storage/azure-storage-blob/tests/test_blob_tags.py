@@ -556,7 +556,6 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         blob.set_blob_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
         tags = blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
         assert tags == second_tags
-
         blob.upload_blob(b"def456", overwrite=True)
 
         with pytest.raises(ResourceModifiedError):
