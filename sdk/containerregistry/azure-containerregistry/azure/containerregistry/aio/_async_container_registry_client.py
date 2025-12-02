@@ -10,6 +10,7 @@ import hashlib
 import json
 from io import BytesIO
 from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, MutableMapping, TYPE_CHECKING
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential
@@ -23,6 +24,8 @@ from azure.core.exceptions import (
 from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
+from azure.core.rest import HttpRequest, HttpResponse
 
 from ._async_base_client import ContainerRegistryBaseClient
 from ._async_download_stream import AsyncDownloadBlobStream
@@ -55,6 +58,8 @@ from .._models import (
     TagAttributesBase,
     ManifestAttributesBase,
 )
+
+from .operations._operations import build_container_registry_get_repositories_request
 
 from ..models import AcrManifests
 from .._utils.model_base import _deserialize
@@ -173,79 +178,66 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters: Dict[str, Any] = {}
-            header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
-                "accept", accept, "str"
-            )
-
+            query_parameters: Dict[str, Any] = {}
+            
             if not next_link:
-                # Construct URL
-                url = "/acr/v1/_catalog"
-                path_format_arguments = {
-                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.endpoint",
-                        self._client._config.endpoint,  # pylint: disable=protected-access
-                        "str",
-                        skip_quote=True,
-                    ),
-                }
-                url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
-                # Construct parameters
-                query_parameters: Dict[str, Any] = {}
-                if last is not None:
-                    query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "last", last, "str"
-                    )
-                if results_per_page is not None:
-                    query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "n", results_per_page, "int"
-                    )
 
-                request = self._client._client.get(  # pylint: disable=protected-access
-                    url, query_parameters, header_parameters
+                _request = build_container_registry_get_repositories_request(
+                    last=last,
+                    n=None,
+                    #api_version=self._config.api_version,
+                    api_version=self._client._config.api_version,  # pylint: disable=protected-access
+                    headers=header_parameters,
+                    params=query_parameters,
                 )
-            else:
-                url = next_link
-                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
-                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.endpoint",
-                        self._client._config.endpoint,  # pylint: disable=protected-access
-                        "str",
-                        skip_quote=True,
+                    "endpoint": self._client._serialize.url(
+                        "self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
-                request = self._client._client.get(  # pylint: disable=protected-access
-                    url, query_parameters, header_parameters
+                _request.url = self._client._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
                 )
-            return request
+                _next_request_params["api-version"] = self._client._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._client._serialize.url(
+                        "self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
 
         async def extract_data(pipeline_response):
-            list_of_elem = _deserialize(
-                list[str],
-                (await pipeline_response.http_response.internal_response.json()).get("repositories", [])
-            )
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[str], deserialized.get("repositories", []))
             if cls:
-                list_of_elem = cls(list_of_elem)
-            link = None
-            if "Link" in pipeline_response.http_response.headers.keys():
-                link = _parse_next_link(pipeline_response.http_response.headers["Link"])
-            return link, AsyncList(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("link") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
-            pipeline_response = await self._client._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
-                    AcrErrors, response
-                )
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
