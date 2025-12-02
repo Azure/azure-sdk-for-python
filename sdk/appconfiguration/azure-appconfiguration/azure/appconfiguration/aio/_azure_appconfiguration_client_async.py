@@ -35,11 +35,13 @@ from .._models import (
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
 )
+
 from .._utils import (
     get_key_filter,
     get_label_filter,
     parse_connection_string,
 )
+from .._audience_policy import AudiencePolicy
 
 
 class AzureAppConfigurationClient:
@@ -70,6 +72,10 @@ class AzureAppConfigurationClient:
         credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
+        audience_policy = AudiencePolicy(kwargs.get("credential_scopes", None))
+
+        per_call_policies = [self._sync_token_policy, audience_policy]
+
         if isinstance(credential, AzureKeyCredential):
             id_credential = kwargs.pop("id_credential")
             kwargs.update(
@@ -89,7 +95,7 @@ class AzureAppConfigurationClient:
             )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfigurationClientGenerated(
-            base_url, credential, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
+            base_url, credential, per_call_policies=per_call_policies, **kwargs  # type: ignore[arg-type]
         )
 
     @classmethod

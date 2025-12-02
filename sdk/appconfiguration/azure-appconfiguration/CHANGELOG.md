@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Fixed AudiencePolicy to correctly handle AAD audience errors and return HttpResponseError as expected.
+- Added/updated unit tests for AudiencePolicy error handling.
+
 ### Breaking Changes
 
 ### Bugs Fixed
