@@ -217,23 +217,6 @@ def restore_httpx_response_url(response) -> None:
         pass
 
 
-# helper: turn decorator args into a normalized list of (owner, attr_name)
-def _normalize_transport_specs(specs):
-    norm = []
-    for spec in specs:
-        if isinstance(spec, tuple) and len(spec) == 2:
-            owner, attr = spec
-            norm.append((owner, attr))
-        else:
-            # If a class was provided, assume attribute name "send"
-            # (Safer than accepting a bare function object like RequestsTransport.send or AioHttpTransport.send,
-            # because assignment requires knowing the owner and attribute name.)
-            # This works for both sync transports (RequestsTransport, HTTPTransport) and
-            # async transports (AioHttpTransport, AsyncHTTPTransport).
-            norm.append((spec, "send"))
-    return norm
-
-
 def _transform_args(recording_id: str, *call_args, **call_kwargs):
     """Transform azure.core transport call arguments to route through the test proxy.
 
@@ -288,8 +271,8 @@ def recorded_by_proxy(*transports):
     # Bare decorator usage: @recorded_by_proxy
     if len(transports) == 1 and callable(transports[0]):
         test_func = transports[0]
-        transports_normalized = _normalize_transport_specs([(RequestsTransport, "send")])
-        return _make_proxy_decorator(transports_normalized)(test_func)
+        transports_list = [(RequestsTransport, "send")]
+        return _make_proxy_decorator(transports_list)(test_func)
 
     # Parameterized decorator usage: @recorded_by_proxy(...)
     # Determine which transports to use
@@ -314,10 +297,8 @@ def recorded_by_proxy(*transports):
     if not transport_list:
         transport_list = [(RequestsTransport, "send")]
 
-    transports_normalized = _normalize_transport_specs(transport_list)
-
     # Return a decorator function that will be applied to the test function
-    return lambda test_func: _make_proxy_decorator(transports_normalized)(test_func)
+    return lambda test_func: _make_proxy_decorator(transport_list)(test_func)
 
 
 def _make_proxy_decorator(transports):
