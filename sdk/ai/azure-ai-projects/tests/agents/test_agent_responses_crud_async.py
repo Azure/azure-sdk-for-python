@@ -10,6 +10,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from httpx import AsyncHTTPTransport as AsyncHTTPXTransport
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     ResponseTextFormatConfigurationJsonSchema,
@@ -20,7 +21,7 @@ from azure.ai.projects.models import (
 class TestAgentResponsesCrudAsync(TestBase):
 
     @servicePreparer() 
-    @recorded_by_proxy_async((AioHttpTransport, "send"), (AsyncHTTPXTransport, "handle_async_request"))
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_responses_crud_async(self, **kwargs):
 
         model = self.test_agents_params["model_deployment_name"]

@@ -251,6 +251,8 @@ def recorded_by_proxy(*transports):
             - RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX: Record both transports.
 
     Usages:
+      from devtools_testutils import recorded_by_proxy, RecordedTransport
+
       # If your test uses azure.core only network calls (default)
       @recorded_by_proxy
       def test(...): ...

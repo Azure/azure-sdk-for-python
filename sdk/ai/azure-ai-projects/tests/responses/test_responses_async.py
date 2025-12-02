@@ -8,13 +8,14 @@
 from httpx import AsyncHTTPTransport as AsyncHTTPXTransport
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
 
 class TestResponsesAsync(TestBase):
 
     # To run this test:
     # pytest tests\responses\test_responses_async.py::TestResponsesAsync::test_responses_async -s
     @servicePreparer()
-    @recorded_by_proxy_async((AsyncHTTPXTransport, "handle_async_request"))
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_responses_async(self, **kwargs):
 
         model = self.test_agents_params["model_deployment_name"]
