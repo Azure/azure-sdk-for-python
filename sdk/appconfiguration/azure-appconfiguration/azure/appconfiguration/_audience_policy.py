@@ -9,15 +9,14 @@ from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 NO_AUDIENCE_ERROR_MESSAGE = (
-    "Unable to authenticate to Azure App Configuration. No authentication token audience was provided. "
-    "Please set the audience via credential_scopes when constructing AzureAppConfigurationClient for the target cloud. "
-    "For details on how to configure the authentication token audience visit "
-    "https://aka.ms/appconfig/client-token-audience."
+    "Unable to authenticate to Azure App Configuration. No authentication token audience was provided. Please set the "
+    "audience via credential_scopes when constructing AzureAppConfigurationClient for the target cloud. For details on "
+    "how to configure the authentication token audience visit https://aka.ms/appconfig/client-token-audience."
 )
 INCORRECT_AUDIENCE_ERROR_MESSAGE = (
-    "Unable to authenticate to Azure App Configuration. An incorrect token audience was provided. "
-    "Please set the audience via credential_scopes when constructing AzureAppConfigurationClient to the appropriate audience for this cloud. "
-    "For details on how to configure the authentication token audience visit "
+    "Unable to authenticate to Azure App Configuration. An incorrect token audience was provided. Please set the "
+    "audience via credential_scopes when constructing AzureAppConfigurationClient to the appropriate audience for this "
+    "cloud. For details on how to configure the authentication token audience visit "
     "https://aka.ms/appconfig/client-token-audience."
 )
 AAD_AUDIENCE_ERROR_CODE = "AADSTS500011"
@@ -44,6 +43,7 @@ class AudiencePolicy(SansIOHTTPPolicy):
         If the exception is a ClientAuthenticationError related to audience, raises a more descriptive error.
 
         :param request: The pipeline request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
         :return: The exception if not handled, otherwise raises a new error.
         """
         ex_type, ex_value, _ = sys.exc_info()
@@ -53,11 +53,12 @@ class AudiencePolicy(SansIOHTTPPolicy):
             self._handle_audience_exception(ex_value)
         return ex_value
 
-    def _handle_audience_exception(self, ex):
+    def _handle_audience_exception(self, ex: ClientAuthenticationError):
         """
         Checks the exception message for audience errors and raises a descriptive ClientAuthenticationError.
 
         :param ex: The exception to check and potentially re-raise.
+        :type ex: ClientAuthenticationError
         """
         if ex.message and AAD_AUDIENCE_ERROR_CODE in ex.message:
             message = NO_AUDIENCE_ERROR_MESSAGE if self.has_audience is None else INCORRECT_AUDIENCE_ERROR_MESSAGE
