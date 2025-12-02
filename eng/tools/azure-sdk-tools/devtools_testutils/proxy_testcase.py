@@ -7,7 +7,6 @@ from enum import Enum
 import logging
 import os
 from typing import TYPE_CHECKING, Optional
-from contextlib import ExitStack
 from functools import wraps
 import urllib.parse as url_parse
 
@@ -340,52 +339,53 @@ def _make_proxy_decorator(transports):
             # Patch multiple transports and ensure restoration
             test_variables = None
             test_run = False
-            with ExitStack() as stack:
-                originals = []
-                # monkeypatch all requested transports
-                for owner, name in transports:
-                    original = getattr(owner, name)
-                    # Check if this is an httpx transport by comparing with httpx transport classes
-                    is_httpx_transport = (
-                        (HTTPXTransport is not None and owner is HTTPXTransport)
-                        or (AsyncHTTPXTransport is not None and owner is AsyncHTTPXTransport)
-                        or (httpx is not None and owner.__module__.startswith("httpx"))
-                    )
-                    setattr(owner, name, make_combined_call(original, is_httpx=is_httpx_transport))
-                    originals.append((owner, name, original))
+            originals = []
+            # monkeypatch all requested transports
+            for owner, name in transports:
+                original = getattr(owner, name)
+                # Check if this is an httpx transport by comparing with httpx transport classes
+                is_httpx_transport = (
+                    (HTTPXTransport is not None and owner is HTTPXTransport)
+                    or (AsyncHTTPXTransport is not None and owner is AsyncHTTPXTransport)
+                    or (httpx is not None and owner.__module__.startswith("httpx"))
+                )
+                setattr(owner, name, make_combined_call(original, is_httpx=is_httpx_transport))
+                originals.append((owner, name, original))
 
+            try:
                 try:
-                    try:
-                        test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
-                        test_run = True
-                    except TypeError as error:
-                        if "unexpected keyword argument" in str(error) and "variables" in str(error):
-                            logger = logging.getLogger()
-                            logger.info(
-                                "This test can't accept variables as input. "
-                                "Accept `**kwargs` and/or a `variables` parameter to use recorded variables."
-                            )
-                        else:
-                            raise
+                    test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+                    test_run = True
+                except TypeError as error:
+                    if "unexpected keyword argument" in str(error) and "variables" in str(error):
+                        logger = logging.getLogger()
+                        logger.info(
+                            "This test can't accept variables as input. "
+                            "Accept `**kwargs` and/or a `variables` parameter to use recorded variables."
+                        )
+                    else:
+                        raise
 
-                    if not test_run:
-                        test_variables = test_func(*args, **trimmed_kwargs)
+                if not test_run:
+                    test_variables = test_func(*args, **trimmed_kwargs)
 
-                except ResourceNotFoundError as error:
-                    error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-                    troubleshoot = "Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot."
-                    message = error_body.get("message") or error_body.get("Message")
-                    error_with_message = ResourceNotFoundError(
-                        message=f"{troubleshoot} Error details:\n{message}",
-                        response=error.response,
-                    )
-                    raise error_with_message from error
+            except ResourceNotFoundError as error:
+                error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+                troubleshoot = (
+                    "Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot."
+                )
+                message = error_body.get("message") or error_body.get("Message")
+                error_with_message = ResourceNotFoundError(
+                    message=f"{troubleshoot} Error details:\n{message}",
+                    response=error.response,
+                )
+                raise error_with_message from error
 
-                finally:
-                    # restore in reverse order
-                    for owner, name, original in reversed(originals):
-                        setattr(owner, name, original)
-                    stop_record_or_playback(test_id, recording_id, test_variables)
+            finally:
+                # restore in reverse order
+                for owner, name, original in reversed(originals):
+                    setattr(owner, name, original)
+                stop_record_or_playback(test_id, recording_id, test_variables)
 
             return test_variables
 
