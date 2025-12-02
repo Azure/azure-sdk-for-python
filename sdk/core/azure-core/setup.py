@@ -69,7 +69,7 @@ setup(
     },
     python_requires=">=3.9",
     install_requires=[
-        "requests==2.31.0",
+        "requests>=2.21.0",
         "typing-extensions==4.6.0",
     ],
     extras_require={
@@ -81,4 +81,3 @@ setup(
         ],
     },
 )
-
