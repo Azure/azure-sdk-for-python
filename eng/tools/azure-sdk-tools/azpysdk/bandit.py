@@ -57,16 +57,10 @@ class bandit(Check):
                     continue
 
             try:
-                check_call(
-                    [
-                        executable,
-                        "-m",
-                        "bandit",
-                        "-r",
-                        os.path.join(package_dir, "azure"),
-                        "-ll",
-                    ]
+                self.run_venv_command(
+                    executable, ["-m", "bandit", "-r", os.path.join(package_dir, "azure"), "-ll"], package_dir
                 )
+
             except CalledProcessError as e:
                 logger.error(f"{package_name} exited with error {e.returncode}")
                 results.append(e.returncode)
