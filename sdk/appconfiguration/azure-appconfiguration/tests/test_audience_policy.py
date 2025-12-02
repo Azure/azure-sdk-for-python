@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError
 from azure.appconfiguration._audience_policy import AudiencePolicy
+import pytest
 
 NO_AUDIENCE_ERROR_MESSAGE = (
     "Unable to authenticate to Azure App Configuration. No authentication token audience was provided. "
@@ -21,47 +22,30 @@ INCORRECT_AUDIENCE_ERROR_MESSAGE = (
 AAD_AUDIENCE_ERROR_CODE = "AADSTS500011"
 
 
-class DummyRequest:
-    def __init__(self, exception=None):
-        self.context = type("ctx", (), {"options": {"exception": exception}})()
-
-
-class DummyResponse:
-    pass
-
-
-def make_exception(message):
-    return HttpResponseError(message=message, response=None)
-
-
 def test_on_exception_no_audience():
     policy = AudiencePolicy(audience=None)
-    ex = make_exception(f"{AAD_AUDIENCE_ERROR_CODE} some error")
-    req = DummyRequest(exception=ex)
-    result = policy.on_exception(req)
-    assert isinstance(result, HttpResponseError)
-    assert NO_AUDIENCE_ERROR_MESSAGE in str(result)
+    try:
+        raise ClientAuthenticationError(message=f"{AAD_AUDIENCE_ERROR_CODE} some error", response=None)
+    except ClientAuthenticationError:
+        with pytest.raises(ClientAuthenticationError) as exc_info:
+            policy.on_exception(None)
+        assert NO_AUDIENCE_ERROR_MESSAGE in str(exc_info.value)
 
 
 def test_on_exception_incorrect_audience():
     policy = AudiencePolicy(audience="some_audience")
-    ex = make_exception(f"{AAD_AUDIENCE_ERROR_CODE} some error")
-    req = DummyRequest(exception=ex)
-    result = policy.on_exception(req)
-    assert isinstance(result, HttpResponseError)
-    assert INCORRECT_AUDIENCE_ERROR_MESSAGE in str(result)
+    try:
+        raise ClientAuthenticationError(message=f"{AAD_AUDIENCE_ERROR_CODE} some error", response=None)
+    except ClientAuthenticationError:
+        with pytest.raises(ClientAuthenticationError) as exc_info:
+            policy.on_exception(None)
+        assert INCORRECT_AUDIENCE_ERROR_MESSAGE in str(exc_info.value)
 
 
 def test_on_exception_non_audience_error():
     policy = AudiencePolicy(audience=None)
-    ex = make_exception("Some other error")
-    req = DummyRequest(exception=ex)
-    result = policy.on_exception(req)
-    assert result is ex
-
-
-def test_on_response_noop():
-    policy = AudiencePolicy()
-    req = DummyRequest()
-    resp = DummyResponse()
-    assert policy.on_response(req, resp) is None
+    try:
+        raise ClientAuthenticationError(message="Some other error", response=None)
+    except ClientAuthenticationError as ex:
+        result = policy.on_exception(None)
+        assert result is ex
