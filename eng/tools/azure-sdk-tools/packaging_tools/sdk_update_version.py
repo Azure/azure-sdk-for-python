@@ -142,7 +142,7 @@ def main(
         enable_log_error = not bool(package_result)
         log_failed_message(
             f"Changelog content for {package_name} seems invalid and we cannot calculate the next version based on it. "
-            f"But we will stil update _version.py and CHANGELOG.md so that you could know where to update manually.",
+            f"But we will still update _version.py and CHANGELOG.md so that you could know where to update manually.",
             enable_log_error,
         )
 
