@@ -6,8 +6,7 @@
 # cSpell:disable
 
 # import os
-from httpx import HTTPTransport as HTTPXTransport
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from test_base import TestBase, servicePreparer
 
 
@@ -16,7 +15,7 @@ class TestResponses(TestBase):
     # To run this test:
     # pytest tests\responses\test_responses.py::TestResponses::test_responses -s
     @servicePreparer()
-    @recorded_by_proxy((HTTPXTransport, "handle_request"))
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_responses(self, **kwargs):
         """
         Test creating a responses call (no Agents, no Conversation).

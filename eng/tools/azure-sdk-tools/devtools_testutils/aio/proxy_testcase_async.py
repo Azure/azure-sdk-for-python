@@ -22,7 +22,7 @@ except ImportError:
 
 from ..helpers import is_live_and_not_recording, trim_kwargs_from_test_function
 from ..proxy_testcase import (
-    _normalize_transport_specs,
+    RecordedTransport,
     _transform_args,
     _transform_httpx_args,
     get_test_id,
@@ -32,36 +32,70 @@ from ..proxy_testcase import (
 )
 
 
-def recorded_by_proxy_async(*maybe_specs):
+def recorded_by_proxy_async(*transports):
     """
-    Usages:
-      # This is how you decorate your async test functions
+    Decorator for recording and playing back test proxy sessions in async tests.
 
-      # If your test uses azure.core only network calls
+    Args:
+        *transports: Which transport(s) to record. Pass one or more comma separated RecordedTransport enum values.
+            - No args (default): Record AioHttpTransport.send calls (azure.core).
+            - RecordedTransport.AZURE_CORE: Record AioHttpTransport.send calls. Same as the default above.
+            - RecordedTransport.HTTPX: Record AsyncHTTPXTransport.handle_async_request calls.
+            - RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX: Record both transports.
+
+    Usages:
+
+      from devtools_testutils.aio import recorded_by_proxy_async
+      from devtools_testutils import RecordedTransport
+
+      # If your test uses azure.core only network calls (default)
       @recorded_by_proxy_async
       async def test(...): ...
 
+      # Explicitly enable azure.core recordings only (equivalent to the above)
+      @recorded_by_proxy_async(RecordedTransport.AZURE_CORE)
+      async def test(...): ...
+
       # If your test uses httpx only for network calls
-      from httpx import AsyncHTTPTransport as AsyncHTTPXTransport
-      @recorded_by_proxy_async((AsyncHTTPXTransport, "handle_async_request"))
+      @recorded_by_proxy_async(RecordedTransport.HTTPX)
       async def test(...): ...
 
       # If your test uses both azure.core and httpx for network calls
-      from azure.core.pipeline.transport import AioHttpTransport
-      from httpx import AsyncHTTPTransport as AsyncHTTPXTransport
-      @recorded_by_proxy_async((AioHttpTransport, "send"), (AsyncHTTPXTransport, "handle_async_request"))
+      @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
       async def test(...): ...
     """
 
     # Bare decorator usage: @recorded_by_proxy_async
-    if len(maybe_specs) == 1 and callable(maybe_specs[0]):
-        test_func = maybe_specs[0]
-        transports = _normalize_transport_specs([(AioHttpTransport, "send")])
-        return _make_proxy_decorator_async(transports)(test_func)
+    if len(transports) == 1 and callable(transports[0]):
+        test_func = transports[0]
+        transports_set = [(AioHttpTransport, "send")]
+        return _make_proxy_decorator_async(transports_set)(test_func)
 
     # Parameterized decorator usage: @recorded_by_proxy_async(...)
-    transports = _normalize_transport_specs(maybe_specs or [(AioHttpTransport, "send")])
-    return _make_proxy_decorator_async(transports)
+    # Determine which transports to use
+    transport_list = []
+
+    # If no transports specified, default to azure.core
+    transport_set = set(transports) if transports else {RecordedTransport.AZURE_CORE}
+
+    # Add transports based on what's in the set
+    for transport in transport_set:
+        if transport == RecordedTransport.AZURE_CORE or (
+            isinstance(transport, str) and transport == RecordedTransport.AZURE_CORE.value
+        ):
+            transport_list.append((AioHttpTransport, "send"))
+        elif transport == RecordedTransport.HTTPX or (
+            isinstance(transport, str) and transport == RecordedTransport.HTTPX.value
+        ):
+            if AsyncHTTPXTransport is not None:
+                transport_list.append((AsyncHTTPXTransport, "handle_async_request"))
+
+    # If still no transports, fall back to azure.core
+    if not transport_list:
+        transport_list = [(AioHttpTransport, "send")]
+
+    # Return a decorator function that will be applied to the test function
+    return lambda test_func: _make_proxy_decorator_async(transport_list)(test_func)
 
 
 def _make_proxy_decorator_async(transports):
