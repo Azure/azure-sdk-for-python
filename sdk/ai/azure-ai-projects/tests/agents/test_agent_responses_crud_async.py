@@ -130,7 +130,7 @@ class TestAgentResponsesCrudAsync(TestBase):
     # To run this test:
     # pytest tests\agents\test_agent_responses_crud_async.py::TestAgentResponsesCrudAsync::test_agent_responses_with_structured_output_async -s
     @servicePreparer()
-    @recorded_by_proxy_async((AioHttpTransport, "send"), (AsyncHTTPXTransport, "handle_async_request"))
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_responses_with_structured_output_async(self, **kwargs):
         model = self.test_agents_params["model_deployment_name"]
 
