@@ -111,7 +111,8 @@ def main() -> int:
         diff_output = run_git_command([
             "git", "diff", args.base, args.head, "--", filepath
         ])
-        all_strict_pins = check_for_new_strict_pins(filepath, diff_output)
+        if pins := check_for_new_strict_pins(filepath, diff_output):
+            all_strict_pins.extend(pins)
     
     if not all_strict_pins or len(all_strict_pins) == 0:
         return 0
