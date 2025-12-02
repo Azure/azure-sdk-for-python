@@ -454,21 +454,38 @@ class _AIAgentsInstrumentorPreview:
         additional_instructions: Optional[str],
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
+        response_schema: Optional[Any] = None,
     ) -> None:
-        # Early return if no instructions to trace
-        if not instructions:
+        # Early return if no instructions AND no response schema to trace
+        if not instructions and response_schema is None:
             return
 
         content_array: List[Dict[str, Any]] = []
         if _trace_agents_content:
-            # Combine instructions if both exist
-            if additional_instructions:
-                combined_text = f"{instructions} {additional_instructions}"
-            else:
-                combined_text = instructions
+            # Add instructions if provided
+            if instructions:
+                # Combine instructions if both exist
+                if additional_instructions:
+                    combined_text = f"{instructions} {additional_instructions}"
+                else:
+                    combined_text = instructions
 
-            # Use optimized format with consistent "content" field
-            content_array.append({"type": "text", "content": combined_text})
+                # Use optimized format with consistent "content" field
+                content_array.append({"type": "text", "content": combined_text})
+
+            # Add response schema if provided
+            if response_schema is not None:
+                # Convert schema to JSON string if it's a dict/object
+                if isinstance(response_schema, dict):
+                    schema_str = json.dumps(response_schema, ensure_ascii=False)
+                elif hasattr(response_schema, "__dict__"):
+                    # Handle model objects by converting to dict first
+                    schema_dict = {k: v for k, v in response_schema.__dict__.items() if not k.startswith("_")}
+                    schema_str = json.dumps(schema_dict, ensure_ascii=False)
+                else:
+                    schema_str = str(response_schema)
+
+                content_array.append({"type": "response_schema", "content": schema_str})
 
         attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
         # Store as JSON array directly without outer wrapper
@@ -536,8 +553,21 @@ class _AIAgentsInstrumentorPreview:
             if agent_type:
                 span.add_attribute("gen_ai.agent.type", agent_type)
 
+            # Extract response schema from text parameter if available
+            response_schema = None
+            if response_format and text:
+                # Extract schema from text.format.schema if available
+                if hasattr(text, "format"):
+                    format_info = getattr(text, "format", None)
+                    if format_info and hasattr(format_info, "schema"):
+                        response_schema = getattr(format_info, "schema", None)
+                elif isinstance(text, dict):
+                    format_info = text.get("format")
+                    if format_info and isinstance(format_info, dict):
+                        response_schema = format_info.get("schema")
+
             # Add instructions event (if instructions exist)
-            self._add_instructions_event(span, instructions, None)
+            self._add_instructions_event(span, instructions, None, response_schema=response_schema)
 
             # Add workflow event if workflow type agent (always add event, but only include YAML content if content recording enabled)
             if workflow_yaml is not None:
