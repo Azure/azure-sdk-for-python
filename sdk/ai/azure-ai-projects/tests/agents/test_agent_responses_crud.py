@@ -5,7 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-from httpx import HTTPTransport as HTTPXTransport
 from pydantic import BaseModel, Field
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
