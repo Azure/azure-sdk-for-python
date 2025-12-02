@@ -466,6 +466,8 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         assert tags == second_tags
 
         await blob.upload_blob(b"def456", overwrite=True)
+        content = await (await blob.download_blob()).readall()
+        assert content == b"def456"
         later = (await blob.get_blob_properties()).last_modified
 
         if self.is_live:
