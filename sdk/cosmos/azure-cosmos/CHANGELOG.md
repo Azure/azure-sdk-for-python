@@ -1,10 +1,10 @@
 ## Release History
 
-### 4.14.3 (Unreleased)
+### 4.14.3 (2025-12-03)
 
 #### Bugs Fixed
 * Fixed bug where client timeout/read_timeout values were not properly enforced. See [PR 42652](https://github.com/Azure/azure-sdk-for-python/pull/42652).
-* Fixed bug when passing in None for some option in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
+* Fixed bug when passing in None for some options in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
 
 ### 4.14.2 (2025-11-14)
 
