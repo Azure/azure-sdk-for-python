@@ -555,6 +555,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert tags == second_tags
 
         blob.upload_blob(b"def456", overwrite=True)
+        later = blob.get_blob_properties().last_modified
 
         if self.is_live:
             sleep(10)
