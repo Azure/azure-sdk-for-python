@@ -132,7 +132,7 @@ class AccountPreparer(AzureMgmtPreparer):
         return {self.parameter_name: self.resource, self.creds_parameter: credentials}
 
     def remove_resource(self, name, **kwargs):
-        if self.is_live:
+        if self.is_live and not self.existing_account_name:
             group = self._get_resource_group(**kwargs)
             deleting = self.client.batch_account.begin_delete(group.name, name)
             try:

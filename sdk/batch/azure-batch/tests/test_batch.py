@@ -14,6 +14,7 @@ import time
 import binascii
 import pytest
 import six
+import functools
 
 import azure.core.exceptions
 from azure.batch import models
@@ -27,6 +28,9 @@ from decorators import recorded_by_proxy_async, client_setup
 
 from devtools_testutils import (
     AzureMgmtRecordedTestCase,
+    AzureRecordedTestCase,
+    recorded_by_proxy,
+    EnvironmentVariableLoader,
     StorageAccountPreparer,
     CachedResourceGroupPreparer,
     set_custom_default_matcher,
@@ -57,6 +61,20 @@ def get_redacted_key(key):
     digest = hashlib.sha256(six.ensure_binary(key)).digest()
     redacted_value += six.ensure_str(binascii.hexlify(digest))[:6]
     return redacted_value
+
+#
+# Define these environment variables. They should point to a Mistral Large model
+# hosted on MaaS, or any other MaaS model that suppots chat completions with tools.
+# AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
+# AZURE_AI_CHAT_KEY=<api-key>
+#
+BatchEnviromentVariableLoader = functools.partial(
+    EnvironmentVariableLoader,
+    "batch",
+    batch_diskencryptionset_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/batch-rg1/providers/Microsoft.Compute/diskEncryptionSets/diskEncryption",
+    batch_usersub_account_name="batch-usersub-account-name",
+    batch_resource_group="batch-rg",
+    )
 
 
 class TestBatch(AzureMgmtRecordedTestCase):
@@ -338,15 +356,24 @@ class TestBatch(AzureMgmtRecordedTestCase):
             is models.SecurityEncryptionTypes.VM_GUEST_STATE_ONLY
         )
 
-    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT, existing_account_name=os.environ.get("BATCH_USERSUB_ACCOUNT_NAME"), existing_resource_group=os.environ.get("BATCH_RESOURCE_GROUP"))
+
+    # to run this test you must first create the arm resources in test-resources.json. To create run the following command:
+    #
+    #   azure-sdk-for-python\sdk\batch\azure-batch>..\..\..\eng\common\TestResources\New-TestResources.ps1 batch
+    #
+    # then copy the outputed environment variables from the output into your local powershell command window.  Then launch VSCode from this same window:
+    #
+    #   azure-sdk-for-python\sdk\batch\azure-batch>code .
+    #
+    # now when you run this test VSCode it will have access to the environment variables
+    @BatchEnviromentVariableLoader()
+    #@CachedResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT, existing_account_name=os.environ.get("BATCH_USERSUB_ACCOUNT_NAME","batch-usersub-account-name"), existing_resource_group=os.environ.get("BATCH_RESOURCE_GROUP","batch-rg"))
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_create_pool_with_osdiskdiskencryption(self, client: BatchClient, **kwargs):
-
-        diskEncriptionID = os.environ.get("DISKENCRYPTIONSET_ID")
-        
+    async def test_batch_create_pool_with_osdiskdiskencryption(self, client: BatchClient, batch_diskencryptionset_id, batch_resource_group, batch_usersub_account_name, **kwargs):
+ 
         test_iaas_pool = models.BatchPoolCreateOptions(
             id="batch_iass_",
             vm_size=DEFAULT_VM_SIZE,
@@ -374,7 +401,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                         security_profile=models.BatchVmDiskSecurityProfile(
                             security_encryption_type=models.SecurityEncryptionTypes.VM_GUEST_STATE_ONLY
                         ),
-                        disk_encryption_set=models.DiskEncryptionSetParameters(id=diskEncriptionID)
+                        disk_encryption_set=models.DiskEncryptionSetParameters(id=batch_diskencryptionset_id)
                     ),
                 ),
                 data_disks=[
@@ -382,7 +409,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                         logical_unit_number=0,
                         disk_size_gb=50,
                         managed_disk=models.ManagedDisk(
-                            disk_encryption_set=models.DiskEncryptionSetParameters(id=diskEncriptionID),
+                            disk_encryption_set=models.DiskEncryptionSetParameters(id=batch_diskencryptionset_id),
                             storage_account_type=models.StorageAccountType.STANDARD_LRS,
                         ),
                     )
@@ -404,10 +431,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
             is models.HostEndpointSettingsModeTypes.AUDIT
         )
         assert (
-            pool.virtual_machine_configuration.os_disk.managed_disk.disk_encryption_set.id == diskEncriptionID
+            pool.virtual_machine_configuration.os_disk.managed_disk.disk_encryption_set.id == batch_diskencryptionset_id
         )
         assert (
-            pool.virtual_machine_configuration.data_disks[0].managed_disk.disk_encryption_set.id == diskEncriptionID
+            pool.virtual_machine_configuration.data_disks[0].managed_disk.disk_encryption_set.id == batch_diskencryptionset_id
         )
 
         poller = await wrap_result(client.begin_delete_pool(pool_id=pool.id, polling_interval=5))

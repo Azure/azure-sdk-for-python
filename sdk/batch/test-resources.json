@@ -344,11 +344,11 @@
       "type": "string",
       "value": "[reference(parameters('batchAccounts_usersubscription_name')).accountEndpoint]"
     },
-    "diskencryptionset_id": {
+    "batch_diskencryptionset_id": {
       "type": "string",
       "value": "[resourceId('Microsoft.Compute/diskEncryptionSets', parameters('diskEncryptionSets_name'))]"
     },
-    "cmk_keyvault_keyUriWithVersion": {
+    "batch_cmk_keyvault_keyUriWithVersion": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', parameters('vaults_keyvault_name'), 'cmk'), '2019-09-01', 'Full').properties.keyUriWithVersion]"
     },
