@@ -5,7 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-from httpx import AsyncHTTPTransport as AsyncHTTPXTransport
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport

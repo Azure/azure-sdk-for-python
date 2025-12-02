@@ -244,7 +244,7 @@ def recorded_by_proxy(*transports):
     Decorator for recording and playing back test proxy sessions.
 
     Args:
-        *transports: Which transport(s) to record. Pass one or more comman seperated RecordedTransport enum values.
+        *transports: Which transport(s) to record. Pass one or more comma separated RecordedTransport enum values.
             - No args (default): Record RequestsTransport.send calls (azure.core).
             - RecordedTransport.AZURE_CORE: Record RequestsTransport.send calls. Same as the default above.
             - RecordedTransport.HTTPX: Record HTTPXTransport.handle_request calls.

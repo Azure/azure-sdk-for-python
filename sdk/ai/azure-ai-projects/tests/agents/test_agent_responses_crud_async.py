@@ -6,8 +6,6 @@
 # cSpell:disable
 
 from pydantic import BaseModel, Field
-from azure.core.pipeline.transport import AioHttpTransport
-from httpx import AsyncHTTPTransport as AsyncHTTPXTransport
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
@@ -20,7 +18,7 @@ from azure.ai.projects.models import (
 
 class TestAgentResponsesCrudAsync(TestBase):
 
-    @servicePreparer() 
+    @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_responses_crud_async(self, **kwargs):
 
