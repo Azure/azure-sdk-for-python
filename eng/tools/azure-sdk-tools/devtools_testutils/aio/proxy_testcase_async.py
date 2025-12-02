@@ -68,8 +68,8 @@ def recorded_by_proxy_async(*transports):
     # Bare decorator usage: @recorded_by_proxy_async
     if len(transports) == 1 and callable(transports[0]):
         test_func = transports[0]
-        transports_set = [(AioHttpTransport, "send")]
-        return _make_proxy_decorator_async(transports_set)(test_func)
+        transport_list = [(AioHttpTransport, "send")]
+        return _make_proxy_decorator_async(transport_list)(test_func)
 
     # Parameterized decorator usage: @recorded_by_proxy_async(...)
     # Determine which transports to use

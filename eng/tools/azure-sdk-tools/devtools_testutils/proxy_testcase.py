@@ -273,8 +273,8 @@ def recorded_by_proxy(*transports):
     # Bare decorator usage: @recorded_by_proxy
     if len(transports) == 1 and callable(transports[0]):
         test_func = transports[0]
-        transports_list = [(RequestsTransport, "send")]
-        return _make_proxy_decorator(transports_list)(test_func)
+        transport_list = [(RequestsTransport, "send")]
+        return _make_proxy_decorator(transport_list)(test_func)
 
     # Parameterized decorator usage: @recorded_by_proxy(...)
     # Determine which transports to use
