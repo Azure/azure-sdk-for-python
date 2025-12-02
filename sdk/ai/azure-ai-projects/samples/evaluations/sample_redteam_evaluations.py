@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -31,7 +31,7 @@ from azure.ai.projects.models._models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AgentVersionObject,
+    AgentVersionDetails,
     EvaluationTaxonomy,
     AzureAIAgentTarget,
     AgentTaxonomyInput,
@@ -153,7 +153,7 @@ def main() -> None:
         print("Agent deleted")
 
 
-def _get_tool_descriptions(agent: AgentVersionObject):
+def _get_tool_descriptions(agent: AgentVersionDetails):
     tools = agent.definition.get("tools", [])
     tool_descriptions = []
     for tool in tools:

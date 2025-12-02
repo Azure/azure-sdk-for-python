@@ -5,9 +5,7 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
-from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from test_base import TestBase, servicePreparer, recorded_by_proxy_async_httpx
 
 # from azure.ai.projects.models import ResponsesUserMessageItemParam, ItemContentInputText
 
@@ -15,15 +13,11 @@ from devtools_testutils import is_live_and_not_recording
 class TestConversationCrudAsync(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy_async_httpx
     async def test_conversation_crud_async(self, **kwargs):
 
-        client = await self.create_async_client(operation_group="agents", **kwargs).get_openai_client()
+        async with self.create_async_client(operation_group="agents", **kwargs).get_openai_client() as client:
 
-        async with client:
             # Create a conversations with no messages
             # See https://platform.openai.com/docs/api-reference/conversations/create
             conversation1 = await client.conversations.create()

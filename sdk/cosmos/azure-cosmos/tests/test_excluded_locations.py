@@ -441,6 +441,7 @@ class TestExcludedLocations:
             MOCK_HANDLER.reset()
 
             # API call: delete_item
+            container.upsert_item(body)
             if request_excluded_locations is None:
                 container.delete_item(item_id, PARTITION_KEY_VALUES)
             else:
