@@ -10,13 +10,13 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 NO_AUDIENCE_ERROR_MESSAGE = (
     "Unable to authenticate to Azure App Configuration. No authentication token audience was provided. "
-    "Please set an Audience in your ConfigurationClientBuilder for the target cloud. "
+    "Please set the audience via credential_scopes when constructing AzureAppConfigurationClient for the target cloud. "
     "For details on how to configure the authentication token audience visit "
     "https://aka.ms/appconfig/client-token-audience."
 )
 INCORRECT_AUDIENCE_ERROR_MESSAGE = (
     "Unable to authenticate to Azure App Configuration. An incorrect token audience was provided. "
-    "Please set the Audience in your ConfigurationClientBuilder to the appropriate audience for this cloud. "
+    "Please set the audience via credential_scopes when constructing AzureAppConfigurationClient to the appropriate audience for this cloud. "
     "For details on how to configure the authentication token audience visit "
     "https://aka.ms/appconfig/client-token-audience."
 )
