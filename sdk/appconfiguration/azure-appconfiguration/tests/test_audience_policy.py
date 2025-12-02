@@ -8,15 +8,14 @@ from azure.appconfiguration._audience_policy import AudiencePolicy
 import pytest
 
 NO_AUDIENCE_ERROR_MESSAGE = (
-    "Unable to authenticate to Azure App Configuration. No authentication token audience was provided. "
-    "Please set an Audience in your ConfigurationClientBuilder for the target cloud. "
-    "For details on how to configure the authentication token audience visit "
-    "https://aka.ms/appconfig/client-token-audience."
+    "Unable to authenticate to Azure App Configuration. No authentication token audience was provided. Please set the "
+    "audience via credential_scopes when constructing AzureAppConfigurationClient for the target cloud. For details on "
+    "how to configure the authentication token audience visit https://aka.ms/appconfig/client-token-audience."
 )
 INCORRECT_AUDIENCE_ERROR_MESSAGE = (
-    "Unable to authenticate to Azure App Configuration. An incorrect token audience was provided. "
-    "Please set the Audience in your ConfigurationClientBuilder to the appropriate audience for this cloud. "
-    "For details on how to configure the authentication token audience visit "
+    "Unable to authenticate to Azure App Configuration. An incorrect token audience was provided. Please set the "
+    "audience via credential_scopes when constructing AzureAppConfigurationClient to the appropriate audience for this "
+    "cloud. For details on how to configure the authentication token audience visit "
     "https://aka.ms/appconfig/client-token-audience."
 )
 AAD_AUDIENCE_ERROR_CODE = "AADSTS500011"
@@ -29,7 +28,7 @@ def test_on_exception_no_audience():
     except ClientAuthenticationError:
         with pytest.raises(ClientAuthenticationError) as exc_info:
             policy.on_exception(None)
-        assert NO_AUDIENCE_ERROR_MESSAGE in str(exc_info.value)
+            assert NO_AUDIENCE_ERROR_MESSAGE in str(exc_info.value)
 
 
 def test_on_exception_incorrect_audience():
@@ -39,7 +38,7 @@ def test_on_exception_incorrect_audience():
     except ClientAuthenticationError:
         with pytest.raises(ClientAuthenticationError) as exc_info:
             policy.on_exception(None)
-        assert INCORRECT_AUDIENCE_ERROR_MESSAGE in str(exc_info.value)
+            assert INCORRECT_AUDIENCE_ERROR_MESSAGE in str(exc_info.value)
 
 
 def test_on_exception_non_audience_error():
