@@ -1,3 +1,45 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-storage-blob-changefeed"
+authors = [
+    {name = "Microsoft Corporation", email = "ascl@microsoft.com"},
+]
+description = "Microsoft Azure Storage Blob ChangeFeed Client Library for Python"
+keywords = ["azure", "azure sdk"]
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "azure-storage-blob>=12.19.1,<13.0.0"
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+homepage = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob-changefeed"
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.storage.blob.changefeed._version.VERSION"}
+readme = {file = ["README.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+include = ["azure.storage.blob.changefeed*"]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.azure-sdk-build]
 mypy = true
 pyright = false
