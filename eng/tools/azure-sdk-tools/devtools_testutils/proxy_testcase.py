@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 import logging
 import os
 from typing import TYPE_CHECKING, Optional
@@ -51,6 +52,13 @@ RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
 RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
+
+
+class RecordedTransport(str, Enum):
+    """Enum for specifying which transports to record in the test proxy."""
+
+    AZURE_CORE = "azure_core"
+    HTTPX = "httpx"
 
 
 def get_recording_assets(test_id: str) -> Optional[str]:
@@ -248,36 +256,62 @@ def _transform_httpx_args(recording_id: str, *call_args, **call_kwargs):
     return tuple(copied_positional_args), call_kwargs
 
 
-def recorded_by_proxy(*maybe_specs):
+def recorded_by_proxy(*transports):
     """
-    Usages:
-      # This is how you decorate your sync test functions
+    Decorator for recording and playing back test proxy sessions.
 
-      # If your test uses azure.core only network calls
+    Args:
+        *transports: Which transport(s) to record. Pass one or more RecordedTransport enum values.
+            - No args (default): Record RequestsTransport.send calls (azure.core)
+            - RecordedTransport.AZURE_CORE: Record RequestsTransport.send calls
+            - RecordedTransport.HTTPX: Record HTTPXTransport.handle_request calls
+            - RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX: Record both transports
+
+    Usages:
+      # If your test uses azure.core only network calls (default)
       @recorded_by_proxy
       def test(...): ...
 
+      # Explicitly enable azure.core recordings only (equivalent to the above)
+      @recorded_by_proxy(RecordedTransport.AZURE_CORE)
+      def test(...): ...
+
       # If your test uses httpx only for network calls
-      from httpx import HTTPTransport as HTTPXTransport
-      @recorded_by_proxy((HTTPXTransport, "handle_request"))
+      @recorded_by_proxy(RecordedTransport.HTTPX)
       def test(...): ...
 
       # If your test uses both azure.core and httpx for network calls
-      from azure.core.pipeline.transport import RequestsTransport
-      from httpx import HTTPTransport as HTTPXTransport
-      @recorded_by_proxy((RequestsTransport, "send"), (HTTPXTransport, "handle_request"))
+      @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
       def test(...): ...
     """
 
-    # Bare decorator usage: @recorded_by_proxy
-    if len(maybe_specs) == 1 and callable(maybe_specs[0]):
-        test_func = maybe_specs[0]
-        transports = _normalize_transport_specs([(RequestsTransport, "send")])
-        return _make_proxy_decorator(transports)(test_func)
+    def decorator(test_func):
+        # Determine which transports to use
+        transport_list = []
 
-    # Parameterized decorator usage: @recorded_by_proxy(...)
-    transports = _normalize_transport_specs(maybe_specs or [(RequestsTransport, "send")])
-    return _make_proxy_decorator(transports)
+        # If no transports specified, default to azure.core
+        transport_set = set(transports) if transports else {RecordedTransport.AZURE_CORE}
+
+        # Add transports based on what's in the set
+        for transport in transport_set:
+            if transport == RecordedTransport.AZURE_CORE or (
+                isinstance(transport, str) and transport == RecordedTransport.AZURE_CORE.value
+            ):
+                transport_list.append((RequestsTransport, "send"))
+            elif transport == RecordedTransport.HTTPX or (
+                isinstance(transport, str) and transport == RecordedTransport.HTTPX.value
+            ):
+                if HTTPXTransport is not None:
+                    transport_list.append((HTTPXTransport, "handle_request"))
+
+        # If still no transports, fall back to azure.core
+        if not transport_list:
+            transport_list = [(RequestsTransport, "send")]
+
+        transports_normalized = _normalize_transport_specs(transport_list)
+        return _make_proxy_decorator(transports_normalized)(test_func)
+
+    return decorator
 
 
 def _make_proxy_decorator(transports):

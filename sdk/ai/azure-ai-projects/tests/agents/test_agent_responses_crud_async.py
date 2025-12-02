@@ -19,7 +19,7 @@ from azure.ai.projects.models import (
 
 class TestAgentResponsesCrudAsync(TestBase):
 
-    @servicePreparer()
+    @servicePreparer() 
     @recorded_by_proxy_async((AioHttpTransport, "send"), (AsyncHTTPXTransport, "handle_async_request"))
     async def test_agent_responses_crud_async(self, **kwargs):
 
