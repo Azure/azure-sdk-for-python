@@ -20,19 +20,22 @@ CONDA_ENV_PATH = os.path.join(CONDA_RECIPES_DIR, "conda_env.yml")
 # constants
 RELEASE_PERIOD_MONTHS = 3
 AZURE_SDK_CSV_URL = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
-PACKAGE_COL_NAME = "Package"
+PACKAGE_COL = "Package"
+LATEST_GA_DATE_COL = "LatestGADate"
+VERSION_GA_COL = "VersionGA"
+FIRST_GA_DATE_COL = "FirstGADate"
 
 
-def update_conda_version() -> str:
-    """Update the AZURESDK_CONDA_VERSION in conda_env.yml and return the new version."""
+def update_conda_version() -> Tuple[str, str]:
+    """Update the AZURESDK_CONDA_VERSION in conda_env.yml and return the old and new versions."""
 
     with open(CONDA_ENV_PATH, "r") as file:
         conda_env_data = yaml.safe_load(file)
 
-    current_version = conda_env_data["variables"]["AZURESDK_CONDA_VERSION"]
-    current_date = datetime.strptime(current_version, "%Y.%m.%d")
+    old_version = conda_env_data["variables"]["AZURESDK_CONDA_VERSION"]
+    old_date = datetime.strptime(old_version, "%Y.%m.%d")
 
-    new_date = current_date + relativedelta(months=RELEASE_PERIOD_MONTHS)
+    new_date = old_date + relativedelta(months=RELEASE_PERIOD_MONTHS)
 
     # bump version
     new_version = new_date.strftime("%Y.%m.%d")
@@ -41,11 +44,9 @@ def update_conda_version() -> str:
     with open(CONDA_ENV_PATH, "w") as file:
         yaml.dump(conda_env_data, file, default_flow_style=False, sort_keys=False)
 
-    logger.info(
-        f"Updated AZURESDK_CONDA_VERSION from {current_version} to {new_version}"
-    )
+    logger.info(f"Updated AZURESDK_CONDA_VERSION from {old_version} to {new_version}")
 
-    return new_version
+    return old_version, new_version
 
 
 # read from csv
@@ -62,11 +63,6 @@ def parse_csv() -> List[Dict[str, str]]:
         packages = list(csv_reader)
 
         logger.info(f"Successfully parsed {len(packages)} packages from CSV")
-
-        # Log some sample data for debugging
-        if packages:
-            logger.debug(f"Sample package data: {packages[0]}")
-            logger.debug(f"CSV headers: {list(packages[0].keys())}")
 
         return packages
 
@@ -89,7 +85,7 @@ def separate_packages_by_type(
     mgmt_plane_packages = []
 
     for pkg in packages:
-        package_name = pkg.get(PACKAGE_COL_NAME, "")
+        package_name = pkg.get(PACKAGE_COL, "")
         if is_mgmt_package(package_name):
             mgmt_plane_packages.append(pkg)
         else:
@@ -102,7 +98,37 @@ def separate_packages_by_type(
     return (data_plane_packages, mgmt_plane_packages)
 
 
-# get new data plane libraries
+def is_new_package(package_row: Dict[str, str], prev_release_date: str) -> bool:
+    """Check if the package is new (i.e., FirstGADate is after the last release)."""
+    firstGA = package_row.get(FIRST_GA_DATE_COL)
+    if not firstGA:
+        logger.error(
+            f"Package {package_row.get(PACKAGE_COL)} missing {FIRST_GA_DATE_COL}"
+        )
+        return False
+
+    try:
+        # Convert string dates to datetime objects for proper comparison
+        first_ga_date = datetime.strptime(firstGA, "%m/%d/%Y")
+        prev_date = datetime.strptime(prev_release_date, "%m/%d/%Y")
+        return first_ga_date > prev_date
+    except ValueError as e:
+        logger.error(
+            f"Date parsing error for package {package_row.get(PACKAGE_COL)}: {e}"
+        )
+        return False
+
+
+def update_package_versions(
+    packages: List[Dict[str, str]], prev_release_date: str
+) -> List[Dict[str, str]]:
+    """Update outdated package versions and return new packages"""
+    new_packages = []
+    # todo
+
+    logger.info(f"Detected {len(new_packages)} new packages")
+    return new_packages
+
 
 # get outdated versions
 
@@ -120,19 +146,40 @@ def separate_packages_by_type(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Update conda package files and versions."
+        description="Update conda package files and versions for release."
     )
 
     args = parser.parse_args()
 
     configure_logging(args)
 
-    new_version = update_conda_version()
+    old_version, new_version = update_conda_version()
+    # convert to mm/dd/yyyy for comparison
+    old_date_obj = datetime.strptime(old_version, "%Y.%m.%d")
+    old_version = old_date_obj.strftime("%m/%d/%Y")
 
     # Parse CSV data
     packages = parse_csv()
+
     if not packages:
         logger.error("No packages found in CSV data.")
         exit(1)
 
+    # Only ship GA packages
+    packages = [pkg for pkg in packages if pkg.get(VERSION_GA_COL)]
+    logger.info(f"Filtered to {len(packages)} GA packages")
+
     data_plane_packages, mgmt_plane_packages = separate_packages_by_type(packages)
+
+    for pkg in data_plane_packages:
+        logger.info(
+            f"Processing Data Plane Package: {pkg[PACKAGE_COL]} - Version GA: {pkg[VERSION_GA_COL]} , First GA: {pkg[FIRST_GA_DATE_COL]}, Latest GA: {pkg[LATEST_GA_DATE_COL]}"
+        )
+        if is_new_package(pkg, old_version):
+            logger.info(
+                f"New Data Plane Package Detected: {pkg[PACKAGE_COL]} - First GA: {pkg[FIRST_GA_DATE_COL]}"
+            )
+        else:
+            logger.info(
+                f"Existing Data Plane Package: {pkg[PACKAGE_COL]} - Latest GA: {pkg[LATEST_GA_DATE_COL]}"
+            )
