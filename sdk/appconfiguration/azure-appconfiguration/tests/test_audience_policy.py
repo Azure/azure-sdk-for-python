@@ -23,7 +23,7 @@ AAD_AUDIENCE_ERROR_CODE = "AADSTS500011"
 
 
 def test_on_exception_no_audience():
-    policy = AudiencePolicy(audience=None)
+    policy = AudiencePolicy(False)
     try:
         raise ClientAuthenticationError(message=f"{AAD_AUDIENCE_ERROR_CODE} some error", response=None)
     except ClientAuthenticationError:
@@ -33,7 +33,7 @@ def test_on_exception_no_audience():
 
 
 def test_on_exception_incorrect_audience():
-    policy = AudiencePolicy(audience="some_audience")
+    policy = AudiencePolicy(True)
     try:
         raise ClientAuthenticationError(message=f"{AAD_AUDIENCE_ERROR_CODE} some error", response=None)
     except ClientAuthenticationError:
@@ -43,7 +43,7 @@ def test_on_exception_incorrect_audience():
 
 
 def test_on_exception_non_audience_error():
-    policy = AudiencePolicy(audience=None)
+    policy = AudiencePolicy(False)
     try:
         raise ClientAuthenticationError(message="Some other error", response=None)
     except ClientAuthenticationError as ex:

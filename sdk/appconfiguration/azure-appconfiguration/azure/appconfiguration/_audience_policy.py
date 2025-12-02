@@ -24,10 +24,28 @@ AAD_AUDIENCE_ERROR_CODE = "AADSTS500011"
 
 
 class AudiencePolicy(SansIOHTTPPolicy):
-    def __init__(self, audience=None):
-        self.audience = audience
+    """
+    A policy to handle audience-related authentication errors for Azure App Configuration.
+    Raises a ClientAuthenticationError with a helpful message if the audience is missing or incorrect.
+    """
+
+    def __init__(self, has_audience: bool = False):
+        """
+        Initialize the AudiencePolicy.
+
+        :param has_audience: Indicates if the expected audience is set for the authentication token.
+        :type has_audience: bool
+        """
+        self.has_audience = has_audience
 
     def on_exception(self, request: PipelineRequest):
+        """
+        Handles exceptions raised during pipeline execution.
+        If the exception is a ClientAuthenticationError related to audience, raises a more descriptive error.
+
+        :param request: The pipeline request object.
+        :return: The exception if not handled, otherwise raises a new error.
+        """
         ex_type, ex_value, _ = sys.exc_info()
         if ex_type is None:
             return None
@@ -36,8 +54,13 @@ class AudiencePolicy(SansIOHTTPPolicy):
         return ex_value
 
     def _handle_audience_exception(self, ex):
+        """
+        Checks the exception message for audience errors and raises a descriptive ClientAuthenticationError.
+
+        :param ex: The exception to check and potentially re-raise.
+        """
         if ex.message and AAD_AUDIENCE_ERROR_CODE in ex.message:
-            message = NO_AUDIENCE_ERROR_MESSAGE if self.audience is None else INCORRECT_AUDIENCE_ERROR_MESSAGE
+            message = NO_AUDIENCE_ERROR_MESSAGE if self.has_audience is None else INCORRECT_AUDIENCE_ERROR_MESSAGE
             err = ClientAuthenticationError(message, ex.response)
             err.message = message
             raise err

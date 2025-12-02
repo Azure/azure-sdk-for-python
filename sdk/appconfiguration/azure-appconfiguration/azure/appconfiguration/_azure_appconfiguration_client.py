@@ -68,7 +68,7 @@ class AzureAppConfigurationClient:
         credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = SyncTokenPolicy()
 
-        audience_policy = AudiencePolicy(kwargs.get("credential_scopes", None))
+        audience_policy = AudiencePolicy(bool(kwargs.get("credential_scopes", None)))
 
         per_call_policies = [self._sync_token_policy, audience_policy]
 
