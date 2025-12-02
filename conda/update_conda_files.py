@@ -26,7 +26,9 @@ VERSION_GA_COL = "VersionGA"
 FIRST_GA_DATE_COL = "FirstGADate"
 
 
-def update_conda_version() -> Tuple[str, str]:
+def update_conda_version() -> (
+    Tuple[datetime, str]
+):  # TODO do i need the new date anywhere else? i think i may
     """Update the AZURESDK_CONDA_VERSION in conda_env.yml and return the old and new versions."""
 
     with open(CONDA_ENV_PATH, "r") as file:
@@ -46,7 +48,7 @@ def update_conda_version() -> Tuple[str, str]:
 
     logger.info(f"Updated AZURESDK_CONDA_VERSION from {old_version} to {new_version}")
 
-    return old_version, new_version
+    return old_date, new_version
 
 
 # read from csv
@@ -98,20 +100,39 @@ def separate_packages_by_type(
     return (data_plane_packages, mgmt_plane_packages)
 
 
-def is_new_package(package_row: Dict[str, str], prev_release_date: str) -> bool:
-    """Check if the package is new (i.e., FirstGADate is after the last release)."""
-    firstGA = package_row.get(FIRST_GA_DATE_COL)
-    if not firstGA:
+def package_needs_update(
+    package_row: Dict[str, str], prev_release_date: str, is_new=False
+) -> bool:
+    """
+    Check if the package is new or needs version update (i.e., FirstGADate or LatestGADate is after the last release).
+
+    :param package_row: The parsed CSV row for the package.
+    :param prev_release_date: The date of the previous release in "mm/dd/yyyy" format.
+    :param is_new: Whether to check for new package (FirstGADate) or outdated package (LatestGADate).
+    :return: if the package is new or needs an update.
+    """
+    compareDate = (
+        package_row.get(FIRST_GA_DATE_COL)
+        if is_new
+        else package_row.get(LATEST_GA_DATE_COL)
+    )
+
+    if not compareDate:
         logger.error(
-            f"Package {package_row.get(PACKAGE_COL)} missing {FIRST_GA_DATE_COL}"
+            f"Package {package_row.get(PACKAGE_COL)} missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}"
         )
+
+        # TODO if date is missing, check PyPi for release date instead
         return False
 
     try:
         # Convert string dates to datetime objects for proper comparison
-        first_ga_date = datetime.strptime(firstGA, "%m/%d/%Y")
+        compare_date = datetime.strptime(compareDate, "%m/%d/%Y")
         prev_date = datetime.strptime(prev_release_date, "%m/%d/%Y")
-        return first_ga_date > prev_date
+        logger.debug(
+            f"Comparing {package_row.get(PACKAGE_COL)} CompareDate {compare_date} with previous release date {prev_date}"
+        )
+        return compare_date > prev_date
     except ValueError as e:
         logger.error(
             f"Date parsing error for package {package_row.get(PACKAGE_COL)}: {e}"
@@ -150,13 +171,13 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
+    args.debug = True
     configure_logging(args)
 
-    old_version, new_version = update_conda_version()
-    # convert to mm/dd/yyyy for comparison
-    old_date_obj = datetime.strptime(old_version, "%Y.%m.%d")
-    old_version = old_date_obj.strftime("%m/%d/%Y")
+    old_date, new_version = update_conda_version()
+
+    # convert to mm/dd/yyyy format for comparison with CSV dates
+    old_version = old_date.strftime("%m/%d/%Y")
 
     # Parse CSV data
     packages = parse_csv()
@@ -171,15 +192,11 @@ if __name__ == "__main__":
 
     data_plane_packages, mgmt_plane_packages = separate_packages_by_type(packages)
 
+    # TODO testing
     for pkg in data_plane_packages:
-        logger.info(
-            f"Processing Data Plane Package: {pkg[PACKAGE_COL]} - Version GA: {pkg[VERSION_GA_COL]} , First GA: {pkg[FIRST_GA_DATE_COL]}, Latest GA: {pkg[LATEST_GA_DATE_COL]}"
-        )
-        if is_new_package(pkg, old_version):
-            logger.info(
-                f"New Data Plane Package Detected: {pkg[PACKAGE_COL]} - First GA: {pkg[FIRST_GA_DATE_COL]}"
-            )
-        else:
-            logger.info(
-                f"Existing Data Plane Package: {pkg[PACKAGE_COL]} - Latest GA: {pkg[LATEST_GA_DATE_COL]}"
-            )
+        if package_needs_update(pkg, old_version, is_new=True):
+            logger.info(f"New data plane package detected: {pkg.get(PACKAGE_COL)}")
+    print("---")
+    for pkg in data_plane_packages:
+        if package_needs_update(pkg, old_version, is_new=False):
+            logger.info(f"Outdated data plane package detected: {pkg.get(PACKAGE_COL)}")
