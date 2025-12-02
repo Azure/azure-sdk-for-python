@@ -13,6 +13,8 @@ from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.logging import logger, run_logged
 
+REPO_ROOT = discover_repo_root()
+
 class devtest(Check):
     def __init__(self) -> None:
         super().__init__()
@@ -20,7 +22,7 @@ class devtest(Check):
     def register(
         self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
     ) -> None:
-        """Register the devtest check. The devtest check installs devtest and runs devtest against the target package."""
+        """Register the devtest check. The devtest check tests a package against dependencies installed from a dev index."""
         parents = parent_parsers or []
         p = subparsers.add_parser("devtest", parents=parents, help="Run the devtest check to test a package against dependencies installed from a dev index")
         p.set_defaults(func=self.run)
@@ -42,6 +44,20 @@ class devtest(Check):
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
+
+            create_package_and_install(
+                distribution_directory=staging_directory,
+                target_setup=package_dir,
+                skip_install=False,
+                cache_dir=None,
+                work_dir=staging_directory,
+                force_create=False,
+                package_type="sdist",
+                pre_download_disabled=False,
+                python_executable=executable,
+            )
+
+            # install dev build dependency
 
 
         return max(results) if results else 0
