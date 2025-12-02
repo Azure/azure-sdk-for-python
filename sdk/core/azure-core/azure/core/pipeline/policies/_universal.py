@@ -389,8 +389,8 @@ class HttpLoggingPolicy(
 
     :param logger: The logger to use for logging. Default to azure.core.pipeline.policies.http_logging_policy.
     :type logger: logging.Logger
-    :keyword int logging_level: The logging level to use for request and response logs. Defaults to logging.INFO.
-    :type logging_level: int
+    :keyword int http_logging_level: The logging level to use for HTTP request and response logs. Defaults to logging.INFO.
+    :type http_logging_level: int
     """
 
     DEFAULT_HEADERS_ALLOWLIST: Set[str] = set(
@@ -428,10 +428,10 @@ class HttpLoggingPolicy(
     MULTI_RECORD_LOG: str = "AZURE_SDK_LOGGING_MULTIRECORD"
 
     def __init__(
-        self, logger: Optional[logging.Logger] = None, *, logging_level: int = logging.INFO, **kwargs: Any
+        self, logger: Optional[logging.Logger] = None, *, http_logging_level: int = logging.INFO, **kwargs: Any
     ):  # pylint: disable=unused-argument
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
-        self.logging_level: int = logging_level
+        self.http_logging_level: int = http_logging_level
         self.allowed_query_params: Set[str] = set()
         self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 
@@ -458,7 +458,7 @@ class HttpLoggingPolicy(
         # then use my instance logger
         logger = request.context.setdefault("logger", options.pop("logger", self.logger))
 
-        if not logger.isEnabledFor(self.logging_level):
+        if not logger.isEnabledFor(self.http_logging_level):
             return
 
         try:
@@ -471,25 +471,25 @@ class HttpLoggingPolicy(
 
             multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
             if multi_record:
-                logger.log(self.logging_level, "Request URL: %r", redacted_url)
-                logger.log(self.logging_level, "Request method: %r", http_request.method)
-                logger.log(self.logging_level, "Request headers:")
+                logger.log(self.http_logging_level, "Request URL: %r", redacted_url)
+                logger.log(self.http_logging_level, "Request method: %r", http_request.method)
+                logger.log(self.http_logging_level, "Request headers:")
                 for header, value in http_request.headers.items():
                     value = self._redact_header(header, value)
-                    logger.log(self.logging_level, "    %r: %r", header, value)
+                    logger.log(self.http_logging_level, "    %r: %r", header, value)
                 if isinstance(http_request.body, types.GeneratorType):
-                    logger.log(self.logging_level, "File upload")
+                    logger.log(self.http_logging_level, "File upload")
                     return
                 try:
                     if isinstance(http_request.body, types.AsyncGeneratorType):
-                        logger.log(self.logging_level, "File upload")
+                        logger.log(self.http_logging_level, "File upload")
                         return
                 except AttributeError:
                     pass
                 if http_request.body:
-                    logger.log(self.logging_level, "A body is sent with the request")
+                    logger.log(self.http_logging_level, "A body is sent with the request")
                     return
-                logger.log(self.logging_level, "No body was attached to the request")
+                logger.log(self.http_logging_level, "No body was attached to the request")
                 return
             log_string = "Request URL: '{}'".format(redacted_url)
             log_string += "\nRequest method: '{}'".format(http_request.method)
@@ -499,21 +499,21 @@ class HttpLoggingPolicy(
                 log_string += "\n    '{}': '{}'".format(header, value)
             if isinstance(http_request.body, types.GeneratorType):
                 log_string += "\nFile upload"
-                logger.log(self.logging_level, log_string)
+                logger.log(self.http_logging_level, log_string)
                 return
             try:
                 if isinstance(http_request.body, types.AsyncGeneratorType):
                     log_string += "\nFile upload"
-                    logger.log(self.logging_level, log_string)
+                    logger.log(self.http_logging_level, log_string)
                     return
             except AttributeError:
                 pass
             if http_request.body:
                 log_string += "\nA body is sent with the request"
-                logger.log(self.logging_level, log_string)
+                logger.log(self.http_logging_level, log_string)
                 return
             log_string += "\nNo body was attached to the request"
-            logger.log(self.logging_level, log_string)
+            logger.log(self.http_logging_level, log_string)
 
         except Exception:  # pylint: disable=broad-except
             logger.warning("Failed to log request.")
@@ -540,23 +540,23 @@ class HttpLoggingPolicy(
         logger = request.context.setdefault("logger", options.pop("logger", self.logger))
 
         try:
-            if not logger.isEnabledFor(self.logging_level):
+            if not logger.isEnabledFor(self.http_logging_level):
                 return
 
             multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
             if multi_record:
-                logger.log(self.logging_level, "Response status: %r", http_response.status_code)
-                logger.log(self.logging_level, "Response headers:")
+                logger.log(self.http_logging_level, "Response status: %r", http_response.status_code)
+                logger.log(self.http_logging_level, "Response headers:")
                 for res_header, value in http_response.headers.items():
                     value = self._redact_header(res_header, value)
-                    logger.log(self.logging_level, "    %r: %r", res_header, value)
+                    logger.log(self.http_logging_level, "    %r: %r", res_header, value)
                 return
             log_string = "Response status: {}".format(http_response.status_code)
             log_string += "\nResponse headers:"
             for res_header, value in http_response.headers.items():
                 value = self._redact_header(res_header, value)
                 log_string += "\n    '{}': '{}'".format(res_header, value)
-            logger.log(self.logging_level, log_string)
+            logger.log(self.http_logging_level, log_string)
         except Exception:  # pylint: disable=broad-except
             logger.warning("Failed to log response.")
 

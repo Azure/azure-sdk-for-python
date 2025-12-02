@@ -279,7 +279,7 @@ def test_http_logger_with_custom_log_level(http_request, http_response):
     logger.addHandler(mock_handler)
     logger.setLevel(logging.DEBUG)
 
-    policy = HttpLoggingPolicy(logger=logger, logging_level=logging.DEBUG)
+    policy = HttpLoggingPolicy(logger=logger, http_logging_level=logging.DEBUG)
 
     universal_request = http_request("GET", "http://localhost/")
     http_response = create_http_response(http_response, universal_request, None)
