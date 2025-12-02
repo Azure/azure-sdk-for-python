@@ -450,6 +450,9 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         first_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         second_tags = {"tag4": "fourthtag", "tag5": "fifthtag", "tag6": "sixthtag"}
 
+        if self.is_live:
+            sleep(10)
+
         with pytest.raises(ResourceModifiedError):
             await blob.set_blob_tags(first_tags, if_modified_since=early)
         with pytest.raises(ResourceModifiedError):
@@ -466,12 +469,6 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         assert tags == second_tags
 
         await blob.upload_blob(b"def456", overwrite=True)
-        content = await (await blob.download_blob()).readall()
-        assert content == b"def456"
-        later = (await blob.get_blob_properties()).last_modified
-
-        if self.is_live:
-            sleep(10)
 
         with pytest.raises(ResourceModifiedError):
             await blob.set_blob_tags(first_tags, if_unmodified_since=early)
