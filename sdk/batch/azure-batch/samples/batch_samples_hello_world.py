@@ -30,7 +30,7 @@ class BatchSamples:
 
         # set up virtual machine configuration
         vm_configuration = models.VirtualMachineConfiguration(
-            image_reference=models.ImageReference(
+            image_reference=models.BatchVmImageReference(
                 publisher="MicrosoftWindowsServer",
                 offer="WindowsServer",
                 sku="2016-Datacenter-smalldisk",
@@ -39,7 +39,7 @@ class BatchSamples:
         )
 
         # set up parameters for a batch pool
-        pool_content = models.BatchPoolCreateContent(
+        pool_content = models.BatchPoolCreateOptions(
             id=pool_id,
             vm_size="standard_d2_v2",
             target_dedicated_nodes=1,
@@ -55,7 +55,7 @@ class BatchSamples:
     def create_job_and_submit_task(self, client: BatchClient, pool_id: str, job_id: str):
 
         # set up parameters for a batch job
-        job_content = models.BatchJobCreateContent(
+        job_content = models.BatchJobCreateOptions(
             id=job_id,
             pool_info=models.BatchPoolInfo(pool_id=pool_id),
         )
@@ -67,7 +67,7 @@ class BatchSamples:
             print(e)
 
         # set up parameters for a batch task
-        task_content = models.BatchTaskCreateContent(
+        task_content = models.BatchTaskCreateOptions(
             id="my_task",
             command_line='cmd /c "echo hello world"',
         )
@@ -80,9 +80,9 @@ class BatchSamples:
 
     def cleanup(self, client: BatchClient, pool_id: str, job_id: str):
         # deleting the job
-        client.delete_job(job_id=job_id)
+        client.begin_delete_job(job_id=job_id)
         # deleting the pool
-        client.delete_pool(pool_id=pool_id)
+        client.begin_delete_pool(pool_id=pool_id)
 
 
 if __name__ == "__main__":

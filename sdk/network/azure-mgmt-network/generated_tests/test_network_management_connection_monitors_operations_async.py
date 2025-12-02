@@ -82,7 +82,7 @@ class TestNetworkManagementConnectionMonitorsOperationsAsync(AzureMgmtRecordedTe
                         }
                     ],
                 },
-                api_version="2024-07-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,7 +96,7 @@ class TestNetworkManagementConnectionMonitorsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             connection_monitor_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -110,7 +110,7 @@ class TestNetworkManagementConnectionMonitorsOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
                 connection_monitor_name="str",
-                api_version="2024-07-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -125,7 +125,7 @@ class TestNetworkManagementConnectionMonitorsOperationsAsync(AzureMgmtRecordedTe
             network_watcher_name="str",
             connection_monitor_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -139,7 +139,7 @@ class TestNetworkManagementConnectionMonitorsOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
                 connection_monitor_name="str",
-                api_version="2024-07-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -152,7 +152,7 @@ class TestNetworkManagementConnectionMonitorsOperationsAsync(AzureMgmtRecordedTe
         response = self.client.connection_monitors.list(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

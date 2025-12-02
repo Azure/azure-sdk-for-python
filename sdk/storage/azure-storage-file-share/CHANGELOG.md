@@ -3,6 +3,36 @@
 ## 12.24.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2026-02-06.
+- Added new `get_user_delegation_key` API to `ShareServiceClient` to obtain a user delegation key
+for the purposes of signing SAS tokens.
+- Added support for the keyword `user_delegation_oid` to `generate_share_sas` and `generate_file_sas`, 
+which specifies the Entra ID of the user that is authorized to use the generated SAS URL.
+- Added support for the keyword `user_delegation_key` to `generate_share_sas` and `generate_file_sas` used with 
+`user_delegation_oid` to authenticate the request to generate a new SAS URL.
+- Added support for the keyword `encryption_in_transit`in `ShareSmbSettings` used by `set_service_properties` 
+for the SMB protocol to specify whether encryption in transit is required.
+- Added the ability to skip auto decompression on `ShareFileClient.download_file` via the `decompress` keyword.
+
+### Bugs Fixed
+- Fixed an issue where `FileProperties` and `DirectoryProperties` did not contain timezone information for
+`change_time`, `creation_time`, and `last_write_time` attributes.
+
+## 12.23.1 (2025-10-29)
+
+### Bugs Fixed
+- Fixed MyPy `attr-defined` errors for `ShareClient`, `ShareDirectoryClient`, and `ShareFileClient`.
+
+## 12.23.0 (2025-10-15)
+
+### Features Added
+- Stable release of features from 12.23.0b1
+
+### Bugs Fixed
+- Fixed an issue where `ShareClient`'s `list_directories_and_files` API specified with `name_starts_with`
+would not return all results when the share contains a large number of files and directories.
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+and let the `AttributeError` raise directly.
 
 ## 12.22.0 (2025-07-16)
 

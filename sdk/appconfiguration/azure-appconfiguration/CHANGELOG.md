@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.2 (Unreleased)
+## 1.7.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(timezone.utc)`.
+
+## 1.7.2 (2025-10-20)
+
+### Bugs Fixed
+- Fixed a bug where non-HTTPS endpoints would not function correctly.
 
 ## 1.7.1 (2024-08-22)
 

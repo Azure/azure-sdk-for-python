@@ -76,6 +76,7 @@ class ManagedIdentityCredential:
         user_identity_info = validate_identity_config(client_id, identity_config)
         self._credential: Optional[SupportsTokenInfo] = None
         exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
+        self._enable_imds_probe = kwargs.pop("_enable_imds_probe", None)
         managed_identity_type = None
 
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
@@ -136,7 +137,12 @@ class ManagedIdentityCredential:
             managed_identity_type = "IMDS"
             from .imds import ImdsCredential
 
-            self._credential = ImdsCredential(client_id=client_id, identity_config=identity_config, **kwargs)
+            self._credential = ImdsCredential(
+                client_id=client_id,
+                identity_config=identity_config,
+                _enable_imds_probe=self._enable_imds_probe,
+                **kwargs,
+            )
 
         if managed_identity_type:
             log_msg = f"{self.__class__.__name__} will use {managed_identity_type}"

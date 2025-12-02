@@ -449,6 +449,34 @@ class TestPerformanceCountersManager(unittest.TestCase):
         self.assertIs(manager1, manager2)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
+    def test_record_span_consumer(self, mock_get_meter_provider):
+        """Test recording span for requests."""
+        mock_meter_provider = MagicMock()
+        mock_meter = MagicMock()
+        mock_meter_provider.get_meter.return_value = mock_meter
+        mock_get_meter_provider.return_value = mock_meter_provider
+        
+        manager = _PerformanceCountersManager()
+        manager._request_duration_histogram = MagicMock()
+        
+        # Create a mock span
+        mock_span = MagicMock(spec=ReadableSpan)
+        mock_span.kind = SpanKind.CONSUMER
+        mock_span.start_time = 1000000000  # 1 second in nanoseconds
+        mock_span.end_time = 2000000000    # 2 seconds in nanoseconds
+        mock_span.events = []
+        
+        # Import to access global counter
+        import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
+        initial_count = manager_module._REQUESTS_COUNT
+        
+        manager._record_span(mock_span)
+        
+        # Check that request was counted and duration recorded
+        self.assertEqual(manager_module._REQUESTS_COUNT, initial_count + 1)
+        manager._request_duration_histogram.record.assert_called_once_with(1.0)  # 1 second duration
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager.metrics.get_meter_provider")
     def test_record_span_request(self, mock_get_meter_provider):
         """Test recording span for requests."""
         mock_meter_provider = MagicMock()
@@ -506,7 +534,7 @@ class TestPerformanceCountersManager(unittest.TestCase):
         # Check that exception was counted
         self.assertEqual(manager_module._EXCEPTIONS_COUNT, initial_exceptions + 1)
 
-    def test_record_span_non_server_kind(self):
+    def test_record_span_non_server_consumer_kind(self):
         """Test recording span that's not a server/consumer kind."""
         manager = _PerformanceCountersManager()
         

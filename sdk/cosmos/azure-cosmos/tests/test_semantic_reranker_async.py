@@ -57,7 +57,7 @@ class TestSemanticRerankerAsync(unittest.TestCase):
         async def run_test():
             await self.asyncSetUp()
             try:
-                documents = self._get_documents()
+                documents = self._get_documents(document_type="string")
                 results = await self.test_container.semantic_rerank(
                     reranking_context="What is the capital of France?",
                     documents=documents,
@@ -71,20 +71,78 @@ class TestSemanticRerankerAsync(unittest.TestCase):
                 assert len(results["Scores"]) == len(documents)
                 assert results["Scores"][0]["document"] == "Paris is the capital of France."
 
-                print("Async semantic reranking test passed!")
-                print(json.dumps(results, indent=2))
-
             finally:
                 await self.asyncTearDown()
         asyncio.run(run_test())
 
-    def _get_documents(self):
-        return [
-            "Berlin is the capital of Germany.",
-            "Paris is the capital of France.",
-            "Madrid is the capital of Spain."
-        ]
+    def test_semantic_reranker_async_json_documents(self):
+        async def run_test():
+            await self.asyncSetUp()
+            try:
+                documents = self._get_documents(document_type="json")
+                results = await self.test_container.semantic_rerank(
+                    reranking_context="What is the capital of France?",
+                    documents=[json.dumps(item) for item in documents],
+                    semantic_reranking_options={
+                        "return_documents": True,
+                        "top_k": 10,
+                        "batch_size": 32,
+                        "sort": True,
+                        "document_type": "json",
+                        "target_paths": "text",
+                    }
+                )
 
+                assert len(results["Scores"]) == len(documents)
+                returned_document = json.loads(results["Scores"][0]["document"])
+                assert returned_document["text"] == "Paris is the capital of France."
+            finally:
+                await self.asyncTearDown()
+        asyncio.run(run_test())
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_semantic_reranker_async_nested_json_documents(self):
+        async def run_test():
+            await self.asyncSetUp()
+            try:
+                documents = self._get_documents(document_type="nested_json")
+                results = await self.test_container.semantic_rerank(
+                    reranking_context="What is the capital of France?",
+                    documents=[json.dumps(item) for item in documents],
+                    semantic_reranking_options={
+                        "return_documents": True,
+                        "top_k": 10,
+                        "batch_size": 32,
+                        "sort": True,
+                        "document_type": "json",
+                        "target_paths": "info.text",
+                    }
+                )
+
+                assert len(results["Scores"]) == len(documents)
+                returned_document = json.loads(results["Scores"][0]["document"])
+                assert returned_document["info"]["text"] == "Paris is the capital of France."
+            finally:
+                await self.asyncTearDown()
+        asyncio.run(run_test())
+
+    def _get_documents(self, document_type: str):
+        if document_type == "string":
+            return [
+                "Berlin is the capital of Germany.",
+                "Paris is the capital of France.",
+                "Madrid is the capital of Spain."
+            ]
+        elif document_type == "json":
+            return [
+                {"id": "1", "text": "Berlin is the capital of Germany."},
+                {"id": "2", "text": "Paris is the capital of France."},
+                {"id": "3", "text": "Madrid is the capital of Spain."}
+            ]
+        elif document_type == "nested_json":
+            return [
+                {"id": "1", "info": {"text": "Berlin is the capital of Germany."}},
+                {"id": "2", "info": {"text": "Paris is the capital of France."}},
+                {"id": "3", "info": {"text": "Madrid is the capital of Spain."}}
+            ]
+        else:
+            raise ValueError("Unsupported document type")

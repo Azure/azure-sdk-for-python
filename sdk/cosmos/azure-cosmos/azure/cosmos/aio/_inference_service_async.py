@@ -22,7 +22,7 @@
 import json
 import os
 import urllib
-from typing import Any, cast, Dict, List, Optional
+from typing import Any, cast, Optional
 from urllib.parse import urlparse
 from urllib3.util.retry import Retry
 
@@ -171,24 +171,28 @@ class _InferenceService:
     async def rerank(
         self,
         reranking_context: str,
-        documents: List[str],
-        semantic_reranking_options: Optional[Dict[str, Any]] = None,
+        documents: list[str],
+        semantic_reranking_options: Optional[dict[str, Any]] = None,
     ) -> CosmosDict:
         """Rerank documents using the semantic reranking service (async).
 
-        :param reranking_context: Query / context string used to score documents.
-        :type reranking_context: str
-        :param documents: List of document strings to rerank.
-        :type documents: List[str]
-        :param semantic_reranking_options: Optional dictionary of tuning parameters. Supported keys:
-            * return_documents (bool): Include original document text in results. Default True.
-            * top_k (int): Limit number of scored documents returned.
-            * batch_size (int): Batch size for internal scoring operations.
-            * sort (bool): If True (default) results are ordered by descending score.
-        :type semantic_reranking_options: Optional[Dict[str, Any]]
-        :returns: Reranking result payload.
+        :param str reranking_context: The context or query string to use for reranking the documents.
+        :param list[str] documents: A list of documents (as strings) to be reranked.
+        :param dict[str, Any] semantic_reranking_options: Optional dictionary of additional options to customize the semantic reranking process.
+
+         Supported options:
+
+         * **return_documents** (bool): Whether to return the document text in the response. If False, only scores and indices are returned. Default is True.
+         * **top_k** (int): Maximum number of documents to return in the reranked results. If not specified, all documents are returned.
+         * **batch_size** (int): Number of documents to process in each batch. Used for optimizing performance with large document sets.
+         * **sort** (bool): Whether to sort the results by relevance score in descending order. Default is True.
+         * **document_type** (str): Type of documents being reranked. Supported values are "string" and "json".
+         * **target_paths** (str): If document_type is "json", the list of JSON paths to extract text from for reranking. Comma-separated string.
+
+        :type semantic_reranking_options: Optional[dict[str, Any]]
+        :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: On HTTP or service error.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
         """
         try:
             body = {
@@ -196,16 +200,8 @@ class _InferenceService:
                 "documents": documents,
             }
 
-            # Add optional parameters if provided
             if semantic_reranking_options:
-                if "return_documents" in semantic_reranking_options:
-                    body["return_documents"] = semantic_reranking_options["return_documents"]
-                if "top_k" in semantic_reranking_options:
-                    body["top_k"] = semantic_reranking_options["top_k"]
-                if "batch_size" in semantic_reranking_options:
-                    body["batch_size"] = semantic_reranking_options["batch_size"]
-                if "sort" in semantic_reranking_options:
-                    body["sort"] = semantic_reranking_options["sort"]
+                body.update(semantic_reranking_options)
 
             headers = {
                 HttpHeaders.ContentType: "application/json"

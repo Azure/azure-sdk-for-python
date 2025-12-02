@@ -18,7 +18,8 @@ from azure.storage.blob import BlobLeaseClient
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.storage.filedatalake import FileSystemClient
-    from ._path_client import PathClient
+    from ._data_lake_file_client import DataLakeFileClient
+    from ._data_lake_directory_client import DataLakeDirectoryClient
 
 
 class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -30,8 +31,8 @@ class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         The client of the file system, directory, or file to lease.
     :type client:
         ~azure.storage.filedatalake.FileSystemClient or
-        ~azure.storage.filedatalake.DataLakeDirectoryClient or
-        ~azure.storage.filedatalake.DataLakeFileClient
+        ~azure.storage.filedatalake.aio.DataLakeDirectoryClient or
+        ~azure.storage.filedatalake.aio.DataLakeFileClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
@@ -48,7 +49,7 @@ class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         This will be `None` if no lease has yet been acquired or modified."""
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
-        self, client: Union["FileSystemClient", "PathClient"],
+        self, client: Union["FileSystemClient", "DataLakeDirectoryClient", "DataLakeFileClient"],
         lease_id: Optional[str] = None
     ) -> None:
         self.id = lease_id or str(uuid.uuid4())

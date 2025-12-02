@@ -6,8 +6,8 @@ Cosmos database service. Exceptions caught in this policy have had some issue re
 from the service, and as such we do not know what the output of the operation was. As such, we
 only do cross regional retries for read operations.
 """
+#cspell:ignore PPAF, ppaf
 
-import logging
 from azure.cosmos.documents import _OperationType
 
 class ServiceResponseRetryPolicy(object):
@@ -21,16 +21,12 @@ class ServiceResponseRetryPolicy(object):
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
         if self.request:
-            if self.request.retry_write:
+            if self.request.retry_write > 0:
                 # If the request is a write operation, we set the maximum retry count to be the number of
-                # write regional routing contexts available in the global endpoint manager.
-                # This ensures that we retry the write operation across all available regions.
-                # We also ensure that we retry at least once, hence the max is set to 2 by default.
-                self.max_write_retry_count = max(len(self.global_endpoint_manager.
-                                                 location_cache.write_regional_routing_contexts), 2)
+                # write retries provided by the customer.
+                self.max_write_retry_count = self.request.retry_write
             self.location_endpoint = (self.global_endpoint_manager
                                       .resolve_service_endpoint_for_partition(self.request, pk_range_wrapper))
-        self.logger = logging.getLogger('azure.cosmos.ServiceResponseRetryPolicy')
 
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
@@ -47,10 +43,12 @@ class ServiceResponseRetryPolicy(object):
             return False
 
         if self.request:
-
-            if not _OperationType.IsReadOnlyOperation(self.request.operation_type) and not self.request.retry_write:
+            # We track consecutive failures for per partition automatic failover, and only fail over at a partition
+            # level after the threshold is reached
+            self.global_endpoint_manager.try_ppaf_failover_threshold(self.pk_range_wrapper, self.request)
+            if not _OperationType.IsReadOnlyOperation(self.request.operation_type) and not self.request.retry_write > 0:
                 return False
-            if self.request.retry_write and self.failover_retry_count + 1 >= self.max_write_retry_count:
+            if self.request.retry_write > 0 and self.failover_retry_count + 1 >= self.max_write_retry_count:
                 # If we have already retried the write operation to the maximum allowed number of times,
                 # we do not retry further.
                 return False

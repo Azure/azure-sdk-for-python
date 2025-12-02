@@ -204,11 +204,6 @@ class MLflowIntegration:
                         raise ValueError("aoai_summary parameter is required but was not provided")
 
                     payload = dict(aoai_summary)  # Make a copy
-                    # Ensure conversations are included for scan output
-                    if "conversations" not in payload:
-                        payload["conversations"] = (
-                            redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
-                        )
                     json.dump(payload, f)
 
                 # Save legacy format as instance_results.json
@@ -357,7 +352,7 @@ class MLflowIntegration:
                 try:
                     create_evaluation_result_response = (
                         self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                            name=uuid.uuid4(),
+                            name=str(uuid.uuid4()),
                             path=tmpdir,
                             metrics=metrics,
                             result_type=ResultType.REDTEAM,
@@ -413,7 +408,16 @@ class MLflowIntegration:
 
         # Return the scan_result directly for legacy compatibility
         # This maintains the old format that was expected previously
-        legacy_payload = scan_result.copy() if scan_result else {}
+        # Filter out AOAI_Compatible properties - those belong in results.json only
+        legacy_payload = (
+            {
+                k: v
+                for k, v in scan_result.items()
+                if k not in ["AOAI_Compatible_Summary", "AOAI_Compatible_Row_Results"]
+            }
+            if scan_result
+            else {}
+        )
 
         # Ensure we have the basic required fields
         if "scorecard" not in legacy_payload:

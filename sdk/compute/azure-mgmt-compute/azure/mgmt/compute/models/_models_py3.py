@@ -275,15 +275,25 @@ class AdditionalCapabilities(_serialization.Model):
     :vartype ultra_ssd_enabled: bool
     :ivar hibernation_enabled: The flag that enables or disables hibernation capability on the VM.
     :vartype hibernation_enabled: bool
+    :ivar enable_fips1403_encryption: The flag enables the usage of FIPS 140-3 compliant
+     cryptography on the protectedSettings of an extension. Learn more at:
+     https://aka.ms/linuxagentfipssupport.
+    :vartype enable_fips1403_encryption: bool
     """
 
     _attribute_map = {
         "ultra_ssd_enabled": {"key": "ultraSSDEnabled", "type": "bool"},
         "hibernation_enabled": {"key": "hibernationEnabled", "type": "bool"},
+        "enable_fips1403_encryption": {"key": "enableFips1403Encryption", "type": "bool"},
     }
 
     def __init__(
-        self, *, ultra_ssd_enabled: Optional[bool] = None, hibernation_enabled: Optional[bool] = None, **kwargs: Any
+        self,
+        *,
+        ultra_ssd_enabled: Optional[bool] = None,
+        hibernation_enabled: Optional[bool] = None,
+        enable_fips1403_encryption: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword ultra_ssd_enabled: The flag that enables or disables a capability to have one or more
@@ -294,10 +304,15 @@ class AdditionalCapabilities(_serialization.Model):
         :keyword hibernation_enabled: The flag that enables or disables hibernation capability on the
          VM.
         :paramtype hibernation_enabled: bool
+        :keyword enable_fips1403_encryption: The flag enables the usage of FIPS 140-3 compliant
+         cryptography on the protectedSettings of an extension. Learn more at:
+         https://aka.ms/linuxagentfipssupport.
+        :paramtype enable_fips1403_encryption: bool
         """
         super().__init__(**kwargs)
         self.ultra_ssd_enabled = ultra_ssd_enabled
         self.hibernation_enabled = hibernation_enabled
+        self.enable_fips1403_encryption = enable_fips1403_encryption
 
 
 class AdditionalReplicaSet(_serialization.Model):
@@ -3768,8 +3783,6 @@ class CreationData(_serialization.Model):
 class DataDisk(_serialization.Model):
     """Describes a data disk.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to server.
 
     :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
@@ -3814,12 +3827,10 @@ class DataDisk(_serialization.Model):
      VirtualMachine/VirtualMachineScaleset.
     :vartype to_be_detached: bool
     :ivar disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk when
-     StorageAccountType is UltraSSD_LRS. Returned only for VirtualMachine ScaleSet VM disks. Can be
-     updated only via updates to the VirtualMachine Scale Set.
+     StorageAccountType is UltraSSD_LRS.
     :vartype disk_iops_read_write: int
     :ivar disk_m_bps_read_write: Specifies the bandwidth in MB per second for the managed disk when
-     StorageAccountType is UltraSSD_LRS. Returned only for VirtualMachine ScaleSet VM disks. Can be
-     updated only via updates to the VirtualMachine Scale Set.
+     StorageAccountType is UltraSSD_LRS.
     :vartype disk_m_bps_read_write: int
     :ivar detach_option: Specifies the detach behavior to be used while detaching a disk or which
      is already in the process of detachment from the virtual machine. Supported values:
@@ -3840,8 +3851,6 @@ class DataDisk(_serialization.Model):
     _validation = {
         "lun": {"required": True},
         "create_option": {"required": True},
-        "disk_iops_read_write": {"readonly": True},
-        "disk_m_bps_read_write": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3876,6 +3885,8 @@ class DataDisk(_serialization.Model):
         managed_disk: Optional["_models.ManagedDiskParameters"] = None,
         source_resource: Optional["_models.ApiEntityReference"] = None,
         to_be_detached: Optional[bool] = None,
+        disk_iops_read_write: Optional[int] = None,
+        disk_m_bps_read_write: Optional[int] = None,
         detach_option: Optional[Union[str, "_models.DiskDetachOptionTypes"]] = None,
         delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = None,
         **kwargs: Any
@@ -3922,6 +3933,12 @@ class DataDisk(_serialization.Model):
         :keyword to_be_detached: Specifies whether the data disk is in process of detachment from the
          VirtualMachine/VirtualMachineScaleset.
         :paramtype to_be_detached: bool
+        :keyword disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk when
+         StorageAccountType is UltraSSD_LRS.
+        :paramtype disk_iops_read_write: int
+        :keyword disk_m_bps_read_write: Specifies the bandwidth in MB per second for the managed disk
+         when StorageAccountType is UltraSSD_LRS.
+        :paramtype disk_m_bps_read_write: int
         :keyword detach_option: Specifies the detach behavior to be used while detaching a disk or
          which is already in the process of detachment from the virtual machine. Supported values:
          **ForceDetach.** detachOption: **ForceDetach** is applicable only for managed data disks. If a
@@ -3949,8 +3966,8 @@ class DataDisk(_serialization.Model):
         self.managed_disk = managed_disk
         self.source_resource = source_resource
         self.to_be_detached = to_be_detached
-        self.disk_iops_read_write: Optional[int] = None
-        self.disk_m_bps_read_write: Optional[int] = None
+        self.disk_iops_read_write = disk_iops_read_write
+        self.disk_m_bps_read_write = disk_m_bps_read_write
         self.detach_option = detach_option
         self.delete_option = delete_option
 
@@ -6239,12 +6256,17 @@ class DiskRestorePointInstanceView(_serialization.Model):
 
     :ivar id: Disk restore point Id.
     :vartype id: str
+    :ivar snapshot_access_state: The state of snapshot which determines the access availability of
+     the snapshot. Known values are: "Unknown", "Pending", "Available", "InstantAccess", and
+     "AvailableWithInstantAccess".
+    :vartype snapshot_access_state: str or ~azure.mgmt.compute.models.SnapshotAccessState
     :ivar replication_status: The disk restore point replication status information.
     :vartype replication_status: ~azure.mgmt.compute.models.DiskRestorePointReplicationStatus
     """
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
+        "snapshot_access_state": {"key": "snapshotAccessState", "type": "str"},
         "replication_status": {"key": "replicationStatus", "type": "DiskRestorePointReplicationStatus"},
     }
 
@@ -6252,17 +6274,23 @@ class DiskRestorePointInstanceView(_serialization.Model):
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        snapshot_access_state: Optional[Union[str, "_models.SnapshotAccessState"]] = None,
         replication_status: Optional["_models.DiskRestorePointReplicationStatus"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword id: Disk restore point Id.
         :paramtype id: str
+        :keyword snapshot_access_state: The state of snapshot which determines the access availability
+         of the snapshot. Known values are: "Unknown", "Pending", "Available", "InstantAccess", and
+         "AvailableWithInstantAccess".
+        :paramtype snapshot_access_state: str or ~azure.mgmt.compute.models.SnapshotAccessState
         :keyword replication_status: The disk restore point replication status information.
         :paramtype replication_status: ~azure.mgmt.compute.models.DiskRestorePointReplicationStatus
         """
         super().__init__(**kwargs)
         self.id = id
+        self.snapshot_access_state = snapshot_access_state
         self.replication_status = replication_status
 
 
@@ -15558,6 +15586,10 @@ class RestorePoint(ProxyResource):
     :vartype source_restore_point: ~azure.mgmt.compute.models.ApiEntityReference
     :ivar instance_view: The restore point instance view.
     :vartype instance_view: ~azure.mgmt.compute.models.RestorePointInstanceView
+    :ivar instant_access_duration_minutes: This property determines the time in minutes the
+     snapshot is retained as instant access for restoring Premium SSD v2 or Ultra disk with fast
+     restore performance in this restore point.
+    :vartype instant_access_duration_minutes: int
     """
 
     _validation = {
@@ -15581,6 +15613,7 @@ class RestorePoint(ProxyResource):
         "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
         "source_restore_point": {"key": "properties.sourceRestorePoint", "type": "ApiEntityReference"},
         "instance_view": {"key": "properties.instanceView", "type": "RestorePointInstanceView"},
+        "instant_access_duration_minutes": {"key": "properties.instantAccessDurationMinutes", "type": "int"},
     }
 
     def __init__(
@@ -15591,6 +15624,7 @@ class RestorePoint(ProxyResource):
         consistency_mode: Optional[Union[str, "_models.ConsistencyModeTypes"]] = None,
         time_created: Optional[datetime.datetime] = None,
         source_restore_point: Optional["_models.ApiEntityReference"] = None,
+        instant_access_duration_minutes: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15610,6 +15644,10 @@ class RestorePoint(ProxyResource):
         :keyword source_restore_point: Resource Id of the source restore point from which a copy needs
          to be created.
         :paramtype source_restore_point: ~azure.mgmt.compute.models.ApiEntityReference
+        :keyword instant_access_duration_minutes: This property determines the time in minutes the
+         snapshot is retained as instant access for restoring Premium SSD v2 or Ultra disk with fast
+         restore performance in this restore point.
+        :paramtype instant_access_duration_minutes: int
         """
         super().__init__(**kwargs)
         self.exclude_disks = exclude_disks
@@ -15619,6 +15657,7 @@ class RestorePoint(ProxyResource):
         self.time_created = time_created
         self.source_restore_point = source_restore_point
         self.instance_view: Optional["_models.RestorePointInstanceView"] = None
+        self.instant_access_duration_minutes = instant_access_duration_minutes
 
 
 class RestorePointCollection(TrackedResource):
@@ -15653,6 +15692,11 @@ class RestorePointCollection(TrackedResource):
     :ivar restore_points: A list containing all restore points created under this restore point
      collection.
     :vartype restore_points: list[~azure.mgmt.compute.models.RestorePoint]
+    :ivar instant_access: This property determines whether instant access snapshot is enabled for
+     restore points created under this restore point collection for Premium SSD v2 or Ultra disk.
+     Instant access snapshot for Premium SSD v2 or Ultra disk is instantaneously available for
+     restoring disk with fast restore performance.
+    :vartype instant_access: bool
     """
 
     _validation = {
@@ -15677,6 +15721,7 @@ class RestorePointCollection(TrackedResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "restore_point_collection_id": {"key": "properties.restorePointCollectionId", "type": "str"},
         "restore_points": {"key": "properties.restorePoints", "type": "[RestorePoint]"},
+        "instant_access": {"key": "properties.instantAccess", "type": "bool"},
     }
 
     def __init__(
@@ -15685,6 +15730,7 @@ class RestorePointCollection(TrackedResource):
         location: str,
         tags: Optional[dict[str, str]] = None,
         source: Optional["_models.RestorePointCollectionSourceProperties"] = None,
+        instant_access: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15695,12 +15741,18 @@ class RestorePointCollection(TrackedResource):
         :keyword source: The properties of the source resource that this restore point collection is
          created from.
         :paramtype source: ~azure.mgmt.compute.models.RestorePointCollectionSourceProperties
+        :keyword instant_access: This property determines whether instant access snapshot is enabled
+         for restore points created under this restore point collection for Premium SSD v2 or Ultra
+         disk. Instant access snapshot for Premium SSD v2 or Ultra disk is instantaneously available for
+         restoring disk with fast restore performance.
+        :paramtype instant_access: bool
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.source = source
         self.provisioning_state: Optional[str] = None
         self.restore_point_collection_id: Optional[str] = None
         self.restore_points: Optional[list["_models.RestorePoint"]] = None
+        self.instant_access = instant_access
 
 
 class RestorePointCollectionListResult(_serialization.Model):
@@ -15786,6 +15838,11 @@ class RestorePointCollectionUpdate(UpdateResource):
     :ivar restore_points: A list containing all restore points created under this restore point
      collection.
     :vartype restore_points: list[~azure.mgmt.compute.models.RestorePoint]
+    :ivar instant_access: This property determines whether instant access snapshot is enabled for
+     restore points created under this restore point collection for Premium SSD v2 or Ultra disk.
+     Instant access snapshot for Premium SSD v2 or Ultra disk is instantaneously available for
+     restoring disk with fast restore performance.
+    :vartype instant_access: bool
     """
 
     _validation = {
@@ -15800,6 +15857,7 @@ class RestorePointCollectionUpdate(UpdateResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "restore_point_collection_id": {"key": "properties.restorePointCollectionId", "type": "str"},
         "restore_points": {"key": "properties.restorePoints", "type": "[RestorePoint]"},
+        "instant_access": {"key": "properties.instantAccess", "type": "bool"},
     }
 
     def __init__(
@@ -15807,6 +15865,7 @@ class RestorePointCollectionUpdate(UpdateResource):
         *,
         tags: Optional[dict[str, str]] = None,
         source: Optional["_models.RestorePointCollectionSourceProperties"] = None,
+        instant_access: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15815,12 +15874,18 @@ class RestorePointCollectionUpdate(UpdateResource):
         :keyword source: The properties of the source resource that this restore point collection is
          created from.
         :paramtype source: ~azure.mgmt.compute.models.RestorePointCollectionSourceProperties
+        :keyword instant_access: This property determines whether instant access snapshot is enabled
+         for restore points created under this restore point collection for Premium SSD v2 or Ultra
+         disk. Instant access snapshot for Premium SSD v2 or Ultra disk is instantaneously available for
+         restoring disk with fast restore performance.
+        :paramtype instant_access: bool
         """
         super().__init__(tags=tags, **kwargs)
         self.source = source
         self.provisioning_state: Optional[str] = None
         self.restore_point_collection_id: Optional[str] = None
         self.restore_points: Optional[list["_models.RestorePoint"]] = None
+        self.instant_access = instant_access
 
 
 class RestorePointEncryption(_serialization.Model):

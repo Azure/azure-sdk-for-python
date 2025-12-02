@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -48,7 +48,7 @@ from ...operations._share_operations import (
 from .._configuration import AzureFileStorageConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class ShareOperations:
@@ -74,7 +74,7 @@ class ShareOperations:
     async def create(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         quota: Optional[int] = None,
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         enabled_protocols: Optional[str] = None,
@@ -896,7 +896,7 @@ class ShareOperations:
 
     @distributed_trace_async
     async def create_snapshot(
-        self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, timeout: Optional[int] = None, metadata: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """Creates a read-only snapshot of a share.
 
@@ -1325,7 +1325,7 @@ class ShareOperations:
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1406,7 +1406,7 @@ class ShareOperations:
         timeout: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
-    ) -> List[_models.SignedIdentifier]:
+    ) -> list[_models.SignedIdentifier]:
         """Returns information about stored access policies specified on the share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1433,7 +1433,7 @@ class ShareOperations:
 
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -1483,7 +1483,7 @@ class ShareOperations:
         self,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        share_acl: Optional[List[_models.SignedIdentifier]] = None,
+        share_acl: Optional[list[_models.SignedIdentifier]] = None,
         **kwargs: Any
     ) -> None:
         """Sets a stored access policy for use with shared access signatures.
@@ -1514,7 +1514,8 @@ class ShareOperations:
 
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if share_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None

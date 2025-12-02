@@ -33,7 +33,7 @@
 # ServiceLabel: %AI
 
 # PRLabel: %AI
-/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @jhakulin
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @trrwilson
 
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
@@ -62,18 +62,12 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
-# AzureSdkOwners: @xiangyan99
+# AzureSdkOwners: @mrm9084
 # ServiceLabel: %App Configuration
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @xiangyan99
-
-# ServiceOwners: @mrm9084
-# ServiceLabel: %App Configuration Provider
-
-# PRLabel: %App Configuration Provider
-/sdk/appconfiguration/azure-appconfiguration-provider/               @albertofori @avanigupta @mrm9084 @rossgrambo
+/sdk/appconfiguration/                                               @albertofori @avanigupta @mrm9084 @rossgrambo @xiangyan99
 
 # ServiceLabel: %Attestation
 # PRLabel: %Attestation
@@ -84,7 +78,13 @@
 /sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861
 
 # PRLabel: %CognitiveServices
-/sdk/cognitiveservices/                                              @kristapratico
+/sdk/cognitiveservices/                                              @lmazuel
+
+# ServiceOwners: @amber-yujueWang @rhurey @xitzhang
+# ServiceLabel: %Speech Transcription
+
+# PRLabel: %Speech Transcription
+/sdk/cognitiveservices/azure-ai-transcription/                       @amber-yujueWang @rhurey @xitzhang
 
 # ServiceLabel: %Communication
 # PRLabel: %Communication
@@ -156,12 +156,12 @@
 # PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @tomsft @koen-mertens
 
-# AzureSdkOwners: @mccoyp @Azure/azure-sdk-write-keyvault
+# AzureSdkOwners: @Azure/azure-sdk-write-keyvault
 # ServiceLabel: %KeyVault
 # ServiceOwners:                                                     @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @mccoyp @Azure/azure-sdk-write-keyvault
+/sdk/keyvault/                                                       @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @prativen @mitsha-microsoft @ninallam
@@ -249,19 +249,19 @@
 
 # PRLabel: %AI Model Inference
 # ServiceLabel: %AI Model Inference %Service Attention
-/sdk/ai/azure-ai-inference/                                          @dargilco @trangevi @jhakulin
+/sdk/ai/azure-ai-inference/                                          @dargilco @trangevi @trrwilson
 
 # PRLabel: %AI Agents
 # ServiceLabel: %AI Agents %Service Attention
-/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
+/sdk/ai/azure-ai-agents/                                             @dargilco @trrwilson @trangevi @glharper @nick863 @howieleung
 
 # PRLabel: %AI Projects
 # ServiceLabel: %AI Projects %Service Attention
-/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
+/sdk/ai/azure-ai-projects/                                           @dargilco @trrwilson @trangevi @glharper @nick863 @howieleung @kingernupur
 
 # PRLabel: %Voice Live
 # ServiceLabel: %Voice Live %Service Attention
-/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
 
 
 # PRLabel: %HDInsight
@@ -320,11 +320,15 @@
 # ServiceOwners: @trrwilson
 
 # PRLabel: %OpenAI
-/sdk/openai/                                                         @trrwilson
+/sdk/openai/                                                         @trrwilson @kashifkhan
 
 # ServiceLabel: %Operator Nexus - Network Cloud
 # PRLabel: %Operator Nexus - Network Cloud
 /sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
+
+# ServiceLabel: %Planetary Computer
+# PRLabel: %Planetary Computer
+/sdk/planetarycomputer/                                              @mandarinamdar @chahibi
 
 # AzureSdkOwners: @annatisch
 # ServiceLabel: %Azure Projects
@@ -402,21 +406,21 @@
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Cognitive - Metrics Advisor
 # PRLabel: %Cognitive - Metrics Advisor
-/sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico @iscai-msft
+/sdk/metricsadvisor/                                                 @xiangyan99 @iscai-msft
 
 # ServiceLabel: %Cognitive - Anomaly Detector
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
-# ServiceOwners: @MikeyMCZ
+# ServiceOwners: @MikeyMCZ @Han-msft
 # ServiceLabel: %Cognitive - Translator
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/                                                    @kristapratico
+/sdk/translation/azure-ai-translation-document/                      @Han-msft
 /sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
 
 # PRLabel: %Cognitive - Language
-/sdk/cognitivelanguage/                                              @quentinRobinson @wangyuantao
+/sdk/cognitivelanguage/                                              @quentinRobinson @bidisha-c @mikaelsitruk @sarkar-rajarshi @ahmedaashour
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/                                                   @sharathmalladi
@@ -841,7 +845,8 @@
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
 /.github/workflows/                                                  @Azure/azure-sdk-eng
-/.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kristapratico @Azure/azure-sdk-eng
+/.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kashifkhan @Azure/azure-sdk-eng
+/.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
 
 /.config/1espt/                                                      @benbp @weshaggard
@@ -856,13 +861,13 @@
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312 @kristapratico
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @pvaneck
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 /eng/pipelines/docindex.yml                                          @danieljurek @scbedd @weshaggard @benbp
 
 # Add approvers for typespec-python emitter version updates
-/eng/emitter-package.json                                            @mccoyp @catalinaperalta @kristapratico @iscai-msft
-/eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
+/eng/emitter-package.json                                            @mccoyp @catalinaperalta @iscai-msft
+/eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @iscai-msft
 
 /pylintrc                                                            @l0lawrence @scbedd @mccoyp
-/sdk/**/ci.yml                                                       @msyyc @lmazuel
+/sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd

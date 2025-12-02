@@ -43,6 +43,7 @@ from ._enums import (  # type: ignore
     ProvisioningState,
     PurgeableOrchestrationState,
     RedundancyState,
+    SchedulerSkuName,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -75,6 +76,7 @@ __all__ = [
     "ProvisioningState",
     "PurgeableOrchestrationState",
     "RedundancyState",
+    "SchedulerSkuName",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

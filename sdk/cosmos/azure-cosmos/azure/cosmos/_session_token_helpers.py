@@ -21,7 +21,7 @@
 
 """Internal Helper functions for manipulating session tokens.
 """
-from typing import Tuple, List, Dict, Any
+from typing import Tuple, Any
 
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._vector_session_token import VectorSessionToken
@@ -57,7 +57,7 @@ def parse_session_token(session_token: str) -> Tuple[str, VectorSessionToken]:
     tokens = session_token.split(":")
     return tokens[0], VectorSessionToken.create(tokens[1])
 
-def split_compound_session_tokens(compound_session_tokens: List[Tuple[Range, str]]) -> List[str]:
+def split_compound_session_tokens(compound_session_tokens: list[Tuple[Range, str]]) -> list[str]:
     session_tokens = []
     for _, session_token in compound_session_tokens:
         if is_compound_session_token(session_token):
@@ -70,8 +70,8 @@ def split_compound_session_tokens(compound_session_tokens: List[Tuple[Range, str
 
 # ex inputs:
 # ["1:1#51", "1:1#55", "1:1#57", "2:1#42", "2:1#45", "2:1#47"] -> ["1:1#57", "2:1#47"]
-def merge_session_tokens_for_same_partition(session_tokens: List[str]) -> List[str]:
-    pk_session_tokens: Dict[str, List[str]] = {}
+def merge_session_tokens_for_same_partition(session_tokens: list[str]) -> list[str]:
+    pk_session_tokens: dict[str, list[str]] = {}
     for session_token in session_tokens:
         pk_range_id, _ = parse_session_token(session_token)
         if pk_range_id in pk_session_tokens:
@@ -100,7 +100,7 @@ def merge_session_tokens_for_same_partition(session_tokens: List[str]) -> List[s
 # [("AA", "DD"), "4:1#57,1:1#52,3:1#55"]
 # goal here is to detect any obvious merges or splits that happened
 # compound session tokens are not considered will just pass them along
-def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> List[Tuple[Range, str]]:
+def merge_ranges_with_subsets(overlapping_ranges: list[Tuple[Range, str]]) -> list[Tuple[Range, str]]:
     processed_ranges = []
     while len(overlapping_ranges) != 0: # pylint: disable=too-many-nested-blocks
         feed_range_cmp, session_token_cmp = overlapping_ranges[0]
@@ -167,8 +167,8 @@ def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> Li
         overlapping_ranges.remove(overlapping_ranges[0])
     return processed_ranges
 
-def get_latest_session_token(feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
-                             target_feed_range: Dict[str, Any]):
+def get_latest_session_token(feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]],
+                             target_feed_range: dict[str, Any]):
 
     target_feed_range_epk = FeedRangeInternalEpk.from_json(target_feed_range)
     target_feed_range_normalized = target_feed_range_epk.get_normalized_range()

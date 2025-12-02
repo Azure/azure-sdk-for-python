@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -29,7 +29,7 @@ from .._configuration import AzureFileStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -39,7 +39,7 @@ def build_create_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     quota: Optional[int] = None,
     access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
     enabled_protocols: Optional[str] = None,
@@ -57,7 +57,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -129,7 +129,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -172,7 +172,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -220,7 +220,7 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -271,7 +271,7 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -320,7 +320,7 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -370,7 +370,7 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -419,7 +419,7 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -458,7 +458,7 @@ def build_create_snapshot_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -467,7 +467,7 @@ def build_create_snapshot_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -508,7 +508,7 @@ def build_create_permission_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -550,7 +550,7 @@ def build_get_permission_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -603,7 +603,7 @@ def build_set_properties_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -665,7 +665,7 @@ def build_set_metadata_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     lease_id: Optional[str] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -675,7 +675,7 @@ def build_set_metadata_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -718,7 +718,7 @@ def build_get_access_policy_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -761,7 +761,7 @@ def build_set_access_policy_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -804,7 +804,7 @@ def build_get_statistics_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -847,7 +847,7 @@ def build_restore_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -904,7 +904,7 @@ class ShareOperations:
     def create(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         quota: Optional[int] = None,
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         enabled_protocols: Optional[str] = None,
@@ -1726,7 +1726,7 @@ class ShareOperations:
 
     @distributed_trace
     def create_snapshot(  # pylint: disable=inconsistent-return-statements
-        self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, timeout: Optional[int] = None, metadata: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """Creates a read-only snapshot of a share.
 
@@ -2155,7 +2155,7 @@ class ShareOperations:
     def set_metadata(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -2236,7 +2236,7 @@ class ShareOperations:
         timeout: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
-    ) -> List[_models.SignedIdentifier]:
+    ) -> list[_models.SignedIdentifier]:
         """Returns information about stored access policies specified on the share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2263,7 +2263,7 @@ class ShareOperations:
 
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -2313,7 +2313,7 @@ class ShareOperations:
         self,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        share_acl: Optional[List[_models.SignedIdentifier]] = None,
+        share_acl: Optional[list[_models.SignedIdentifier]] = None,
         **kwargs: Any
     ) -> None:
         """Sets a stored access policy for use with shared access signatures.
@@ -2344,7 +2344,8 @@ class ShareOperations:
 
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if share_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None

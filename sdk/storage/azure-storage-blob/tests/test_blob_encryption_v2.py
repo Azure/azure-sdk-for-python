@@ -14,7 +14,7 @@ from unittest import mock
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobServiceClient, BlobType
+from azure.storage.blob import BlobServiceClient, BlobType, ContentSettings
 from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
@@ -195,6 +195,26 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         # Assert
         assert content == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_decompression_with_encryption(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+
+        result = blob.download_blob(decompress=False).readall()
+        assert result == compressed_data
 
     @pytest.mark.live_test_only
     @BlobPreparer()

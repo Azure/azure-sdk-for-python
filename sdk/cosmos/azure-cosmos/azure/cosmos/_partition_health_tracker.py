@@ -24,7 +24,7 @@
 import logging
 import threading
 import os
-from typing import Dict, Any, List
+from typing import Any
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 from azure.cosmos._location_cache import EndpointOperationType
 from azure.cosmos._request_object import RequestObject
@@ -44,6 +44,8 @@ UNAVAILABLE_INTERVAL = "unavailableInterval"
 LAST_UNAVAILABILITY_CHECK_TIME_STAMP = "lastUnavailabilityCheckTimeStamp"
 HEALTH_STATUS = "healthStatus"
 
+#cspell:ignore PPAF
+
 class _PartitionHealthInfo(object):
     """
     This internal class keeps the health and statistics for a partition.
@@ -56,7 +58,7 @@ class _PartitionHealthInfo(object):
         self.read_success_count: int = 0
         self.read_consecutive_failure_count: int = 0
         self.write_consecutive_failure_count: int = 0
-        self.unavailability_info: Dict[str, Any] = {}
+        self.unavailability_info: dict[str, Any] = {}
 
     def reset_failure_rate_health_stats(self) -> None:
         self.write_failure_count = 0
@@ -117,7 +119,7 @@ class _PartitionHealthTracker(object):
 
     def __init__(self) -> None:
         # partition -> regions -> health info
-        self.pk_range_wrapper_to_health_info: Dict[PartitionKeyRangeWrapper, Dict[str, _PartitionHealthInfo]] = {}
+        self.pk_range_wrapper_to_health_info: dict[PartitionKeyRangeWrapper, dict[str, _PartitionHealthInfo]] = {}
         self.last_refresh = current_time_millis()
         self.stale_partition_lock = threading.Lock()
 
@@ -190,16 +192,16 @@ class _PartitionHealthTracker(object):
             self,
             request: RequestObject,
             pk_range_wrapper: PartitionKeyRangeWrapper
-        ) -> List[str]:
-        excluded_locations = []
+        ) -> list[str]:
+        unhealthy_locations = []
         if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
             for location, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
                 if (partition_health_info.unavailability_info and
                         not (request.healthy_tentative_location and request.healthy_tentative_location == location)):
                     health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
                     if health_status in (UNHEALTHY_TENTATIVE, UNHEALTHY) :
-                        excluded_locations.append(location)
-        return excluded_locations
+                        unhealthy_locations.append(location)
+        return unhealthy_locations
 
     def add_failure(
             self,
@@ -299,3 +301,28 @@ class _PartitionHealthTracker(object):
         for locations in self.pk_range_wrapper_to_health_info.values():
             for health_info in locations.values():
                 health_info.reset_failure_rate_health_stats()
+
+class _PPAFPartitionThresholdsTracker(object):
+    """
+    This internal class implements the logic for tracking consecutive failure thresholds for a partition
+    in the context for per-partition automatic failover. This tracker is only used in the context of 408, 5xx and
+    ServiceResponseError errors as a defensive measure to avoid failing over too early without confirmation
+    from the service.
+    """
+
+    def __init__(self) -> None:
+        self.pk_range_wrapper_to_failure_count: dict[PartitionKeyRangeWrapper, int] = {}
+        self._failure_lock = threading.Lock()
+
+    def add_failure(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
+        with self._failure_lock:
+            if pk_range_wrapper not in self.pk_range_wrapper_to_failure_count:
+                self.pk_range_wrapper_to_failure_count[pk_range_wrapper] = 0
+            self.pk_range_wrapper_to_failure_count[pk_range_wrapper] += 1
+
+    def clear_pk_failures(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
+        if pk_range_wrapper in self.pk_range_wrapper_to_failure_count:
+            del self.pk_range_wrapper_to_failure_count[pk_range_wrapper]
+
+    def get_pk_failures(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> int:
+        return self.pk_range_wrapper_to_failure_count.get(pk_range_wrapper, 0)

@@ -156,44 +156,29 @@ def _normalize_url_fields(pkg_info, metadata: Dict[str, Any]) -> None:
     # Homepage from PEP 566 style
     if pkg_info.home_page:
         metadata["homepage"] = pkg_info.home_page
-
-    # Handle project URLs (can be in various formats)
-    if pkg_info.project_urls:
-        metadata["project_urls"] = pkg_info.project_urls
-
-        # Try to extract homepage from project_urls if not already set
-        if "homepage" not in metadata:
-            homepage = _extract_homepage_from_project_urls(pkg_info.project_urls)
-            if homepage:
-                metadata["homepage"] = homepage
+    elif pkg_info.project_urls:  # If homepage not found, try to extract from project_urls
+        if isinstance(pkg_info.project_urls, (list, tuple)):
+            for url_entry in pkg_info.project_urls:
+                if isinstance(url_entry, str) and "," in url_entry:
+                    # Format: "Label, https://example.com"
+                    label, url_value = url_entry.split(",", 1)
+                    label_lower = label.strip().lower()
+                    url_value = url_value.strip()
+                    if label_lower in ["homepage", "home-page", "home"]:
+                        metadata["homepage"] = url_value
+                    elif label_lower == "repository":
+                        metadata["repository"] = url_value
+        elif isinstance(pkg_info.project_urls, dict):
+            for key, value in pkg_info.project_urls.items():
+                key_lower = key.lower()
+                if key_lower in ["homepage", "home-page", "home"]:
+                    metadata["homepage"] = value
+                elif key_lower == "repository":
+                    metadata["repository"] = value
 
     # Download URL
     if hasattr(pkg_info, "download_url") and getattr(pkg_info, "download_url", None):
         metadata["download_url"] = pkg_info.download_url
-
-
-def _extract_homepage_from_project_urls(project_urls) -> Optional[str]:
-    """Extract homepage URL from project_urls in various formats."""
-    if not project_urls:
-        return None
-
-    # Handle different project_urls formats
-    if isinstance(project_urls, (list, tuple)):
-        for url_entry in project_urls:
-            if isinstance(url_entry, str) and "," in url_entry:
-                # Format: "Homepage, https://example.com"
-                url_type, url_value = url_entry.split(",", 1)
-                url_type = url_type.strip().lower()
-                url_value = url_value.strip()
-                if url_type in ["homepage", "home-page", "home", "website"]:
-                    return url_value
-    elif isinstance(project_urls, dict):
-        # Handle dictionary format
-        for key, value in project_urls.items():
-            if key.lower() in ["homepage", "home-page", "home", "website"]:
-                return value
-
-    return None
 
 
 def _add_optional_fields(pkg_info, metadata: Dict[str, Any]) -> None:
@@ -205,6 +190,17 @@ def _add_optional_fields(pkg_info, metadata: Dict[str, Any]) -> None:
             value = getattr(pkg_info, field, None)
             if value:
                 metadata[field] = value
+
+
+def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
+    """
+    Given a list of subdirectories, return those that are not part of the package source and should be skipped.
+
+    :param List[str] subdirs: List of subdirectory names
+    :rtype: List[str]
+    :return: Filtered list of subdirectory names to skip
+    """
+    return [x for x in subdirs if (x.startswith(("_", ".")) or x == "build" or x in EXCLUDE or x.endswith(".egg-info"))]
 
 
 def discover_namespace(package_root_path: str) -> Optional[str]:
@@ -222,11 +218,7 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
     namespace = None
 
     for root, subdirs, files in os.walk(package_root_path):
-        # Ignore any modules with name starts with "_"
-        # For e.g. _generated, _shared etc
-        # Ignore build, which is created when installing a package from source.
-        # Ignore tests, which may have an __init__.py but is not part of the package.
-        dirs_to_skip = [x for x in subdirs if x.startswith(("_", ".", "test", "build")) or x in EXCLUDE]
+        dirs_to_skip = get_dirs_to_skip(subdirs)
         for d in dirs_to_skip:
             logging.debug("Dirs to skip: {}".format(dirs_to_skip))
             subdirs.remove(d)
@@ -710,7 +702,8 @@ def get_version_py(setup_path: str) -> Optional[str]:
 
     # Find path to _version.py recursively
     for root, dirs, files in os.walk(file_path):
-        dirs[:] = [d for d in dirs if d not in EXCLUDE and not d.endswith(".egg-info") and not d.startswith(".")]
+        dirs_to_skip = get_dirs_to_skip(dirs)
+        dirs[:] = [d for d in dirs if d not in dirs_to_skip]
 
         if VERSION_PY in files:
             return os.path.join(root, VERSION_PY)

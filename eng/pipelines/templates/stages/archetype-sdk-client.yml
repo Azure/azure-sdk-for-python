@@ -84,6 +84,9 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  - name: PythonVersionForAnalyze
+    type: string
+    default: ''
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -120,6 +123,7 @@ extends:
               VerifyAutorest: ${{ parameters.VerifyAutorest }}
               TestProxy: ${{ parameters.TestProxy }}
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+              PythonVersionForAnalyze: ${{ parameters.PythonVersionForAnalyze }}
 
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml

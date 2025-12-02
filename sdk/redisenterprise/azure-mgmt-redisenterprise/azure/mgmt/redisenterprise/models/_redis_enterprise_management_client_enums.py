@@ -182,6 +182,16 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
 
 
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether or not public network traffic can access the Redis cluster. Only 'Enabled' or
+    'Disabled' can be set. null is returned only for clusters created using an old API version
+    which do not have this property and cannot be set.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class RdbFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sets the frequency at which a snapshot of the database is created."""
 

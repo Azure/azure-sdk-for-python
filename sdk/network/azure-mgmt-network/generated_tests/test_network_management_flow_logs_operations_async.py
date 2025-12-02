@@ -51,6 +51,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
                     "location": "str",
                     "name": "str",
                     "provisioningState": "str",
+                    "recordTypes": "str",
                     "retentionPolicy": {"days": 0, "enabled": False},
                     "storageId": "str",
                     "tags": {"str": "str"},
@@ -58,7 +59,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
                     "targetResourceId": "str",
                     "type": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -73,7 +74,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
             network_watcher_name="str",
             flow_log_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +87,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             flow_log_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +101,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
                 flow_log_name="str",
-                api_version="2024-07-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -113,7 +114,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.flow_logs.list(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

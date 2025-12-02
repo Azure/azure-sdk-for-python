@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-08-01-preview/MongoClusters_FirewallRuleList.json
+# x-ms-original-file: 2025-09-01/MongoClusters_FirewallRuleList.json
 if __name__ == "__main__":
     main()

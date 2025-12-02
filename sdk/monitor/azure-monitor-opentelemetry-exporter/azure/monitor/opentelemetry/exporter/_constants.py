@@ -9,8 +9,6 @@ from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
     HTTP_SERVER_REQUEST_DURATION,
 )
-# pylint:disable=no-name-in-module
-from fixedint import Int32
 from azure.core import CaseInsensitiveEnumMeta
 
 
@@ -319,11 +317,14 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
 _SAMPLING_HASH = 5381
-_INTEGER_MAX: int = Int32.maxval
-_INTEGER_MIN: int = Int32.minval
+_INT32_MAX: int = 2**31 - 1   # 2147483647
+_INT32_MIN: int = -2**31      # -2147483648
 
 # AAD Auth
 
 _DEFAULT_AAD_SCOPE = "https://monitor.azure.com//.default"
+
+# Default message for messages(MessageData) with empty body
+_DEFAULT_LOG_MESSAGE = "n/a"
 
 # cSpell:disable

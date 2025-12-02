@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -18,14 +18,18 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._utils.serialization import Deserializer, Serializer
@@ -39,7 +43,8 @@ from ...operations._http_route_config_operations import (
 from .._configuration import ContainerAppsAPIClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class HttpRouteConfigOperations:
@@ -65,9 +70,9 @@ class HttpRouteConfigOperations:
     async def get(
         self, resource_group_name: str, environment_name: str, http_route_name: str, **kwargs: Any
     ) -> _models.HttpRouteConfig:
-        """Get the specified Managed Http Route Config.
+        """Get the specified Http Route Config.
 
-        Get the specified Managed Http Route Config.
+        Get the specified Http Route Config.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -146,7 +151,7 @@ class HttpRouteConfigOperations:
         :type environment_name: str
         :param http_route_name: Name of the Http Route Config Resource. Required.
         :type http_route_name: str
-        :param http_route_config_envelope: Http Route config to be created or updated. Default value is
+        :param http_route_config_envelope: Http Route Config to be created or updated. Default value is
          None.
         :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -179,7 +184,7 @@ class HttpRouteConfigOperations:
         :type environment_name: str
         :param http_route_name: Name of the Http Route Config Resource. Required.
         :type http_route_name: str
-        :param http_route_config_envelope: Http Route config to be created or updated. Default value is
+        :param http_route_config_envelope: Http Route Config to be created or updated. Default value is
          None.
         :type http_route_config_envelope: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -210,7 +215,7 @@ class HttpRouteConfigOperations:
         :type environment_name: str
         :param http_route_name: Name of the Http Route Config Resource. Required.
         :type http_route_name: str
-        :param http_route_config_envelope: Http Route config to be created or updated. Is either a
+        :param http_route_config_envelope: Http Route Config to be created or updated. Is either a
          HttpRouteConfig type or a IO[bytes] type. Default value is None.
         :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig or IO[bytes]
         :return: HttpRouteConfig or the result of cls(response)
@@ -230,9 +235,10 @@ class HttpRouteConfigOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if http_route_config_envelope else None
         cls: ClsType[_models.HttpRouteConfig] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if http_route_config_envelope else None
         _json = None
         _content = None
         if isinstance(http_route_config_envelope, (IOBase, bytes)):
@@ -287,9 +293,9 @@ class HttpRouteConfigOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HttpRouteConfig:
-        """Update tags of a manged http route object.
+        """Update tags of a Http Route Config object.
 
-        Patches an http route config resource. Only patching of tags is supported.
+        Patches a Http Route Config resource. Only patching of tags is supported.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -320,9 +326,9 @@ class HttpRouteConfigOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HttpRouteConfig:
-        """Update tags of a manged http route object.
+        """Update tags of a Http Route Config object.
 
-        Patches an http route config resource. Only patching of tags is supported.
+        Patches a Http Route Config resource. Only patching of tags is supported.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -351,9 +357,9 @@ class HttpRouteConfigOperations:
         http_route_config_envelope: Union[_models.HttpRouteConfig, IO[bytes]],
         **kwargs: Any
     ) -> _models.HttpRouteConfig:
-        """Update tags of a manged http route object.
+        """Update tags of a Http Route Config object.
 
-        Patches an http route config resource. Only patching of tags is supported.
+        Patches a Http Route Config resource. Only patching of tags is supported.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -425,25 +431,9 @@ class HttpRouteConfigOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete(
+    async def _delete_initial(
         self, resource_group_name: str, environment_name: str, http_route_name: str, **kwargs: Any
-    ) -> None:
-        """Deletes the specified Managed Http Route.
-
-        Deletes the specified Managed Http Route.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param environment_name: Name of the Managed Environment. Required.
-        :type environment_name: str
-        :param http_route_name: Name of the Http Route Config Resource. Required.
-        :type http_route_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -456,7 +446,7 @@ class HttpRouteConfigOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -469,28 +459,101 @@ class HttpRouteConfigOperations:
         )
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self, resource_group_name: str, environment_name: str, http_route_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes the specified Http Route Config.
+
+        Deletes the specified Http Route Config.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the Managed Environment. Required.
+        :type environment_name: str
+        :param http_route_name: Name of the Http Route Config Resource. Required.
+        :type http_route_name: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                environment_name=environment_name,
+                http_route_name=http_route_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list(
         self, resource_group_name: str, environment_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.HttpRouteConfig"]:
-        """Get the Managed Http Routes in a given managed environment.
+        """List the Http Route Configs in a given managed environment.
 
-        Get the Managed Http Routes in a given managed environment.
+        List the Http Route Configs in a given managed environment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.

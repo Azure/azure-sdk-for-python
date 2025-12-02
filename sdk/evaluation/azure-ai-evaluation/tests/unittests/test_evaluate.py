@@ -20,10 +20,13 @@ from azure.ai.evaluation import (
     ProtectedMaterialEvaluator,
     evaluate,
     ViolenceEvaluator,
+    FluencyEvaluator,
     SexualEvaluator,
     SelfHarmEvaluator,
     HateUnfairnessEvaluator,
+    AzureOpenAIModelConfiguration,
 )
+from azure.ai.evaluation._aoai.label_grader import AzureOpenAILabelGrader
 from azure.ai.evaluation._constants import (
     DEFAULT_EVALUATION_RESULTS_FILE_NAME,
     _AggregationType,
@@ -33,6 +36,7 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
     _apply_target_to_data,
     _rename_columns_conditionally,
+    _convert_results_to_aoai_evaluation_results,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -79,6 +83,11 @@ def evaluate_test_data_conversion_jsonl_file():
 @pytest.fixture
 def evaluate_test_data_alphanumeric():
     return _get_file("evaluate_test_data_alphanumeric.jsonl")
+
+
+@pytest.fixture
+def evaluate_test_data_for_groundedness():
+    return _get_file("evaluate_test_data_for_groundedness.jsonl")
 
 
 @pytest.fixture
@@ -460,6 +469,31 @@ class TestEvaluate:
         assert "inputs.response123" in row_result_df.columns
         assert "inputs.query456" in row_result_df.columns
         assert "inputs.context789" in row_result_df.columns
+
+    def test_evaluate_groundedness_tool_result(self, mock_model_config, evaluate_test_data_for_groundedness):
+        # Validates if groundedness evaluator does not add tool_call results to tool call messages
+
+        result = evaluate(
+            data=evaluate_test_data_for_groundedness,
+            evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+            fail_on_evaluator_errors=False,
+        )
+
+        # Verify that the test completed without errors related to column mapping format
+        # The test data has the fields with numeric characters, so it should work correctly
+        assert result is not None
+        # Verify we're getting data from the numerically-named fields
+        row_result_df = pd.DataFrame(result["rows"])
+        assert "inputs.response" in row_result_df.columns
+        assert "inputs.query" in row_result_df.columns
+
+        # Break down the assertion for better error handling
+        response_data = row_result_df["inputs.response"][0]
+        first_message = response_data[0]
+        content_data = first_message["content"][0]
+
+        # Now check if "tool_result" is in the keys
+        assert "tool_result" not in content_data.keys()
 
     def test_renaming_column(self):
         """Test that the columns are renamed correctly."""
@@ -1051,6 +1085,203 @@ class TestEvaluate:
         assert "foo" in row3_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
         assert {"query", "response", "bar"}.isdisjoint(row3_kwargs), "Named parameters should not be in kwargs"
 
+    def test_convert_results_to_aoai_evaluation_results(self):
+        """Test _convert_results_to_aoai_evaluation_results function with test data"""
+        import logging
+
+        # Load test data from the JSON file
+        parent = pathlib.Path(__file__).parent.resolve()
+        test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
+        test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_util_convert_eval_meta_data.json")
+        test_input_eval_error_summary_path = os.path.join(parent, "data", "evaluation_util_convert_error_summary.json")
+        test_expected_output_path = os.path.join(parent, "data", "evaluation_util_convert_expected_output.json")
+
+        mock_model_config = AzureOpenAIModelConfiguration(
+            azure_deployment="test-deployment",
+            azure_endpoint="https://test-endpoint.openai.azure.com/",
+            api_key="test-api-key",
+            api_version="2024-12-01-preview",
+        )
+        fake_project = {"subscription_id": "123", "resource_group_name": "123", "project_name": "123"}
+
+        evaluators = {
+            "labelgrader": AzureOpenAILabelGrader(
+                model_config=mock_model_config,
+                input=[{"content": "{{item.query}}", "role": "user"}],
+                labels=["positive", "negative", "neutral"],
+                passing_labels=["neutral"],
+                model="gpt-4o-2024-11-20",
+                name="labelgrader",
+            ),
+            "violence": ViolenceEvaluator(None, fake_project),
+            "self_harm": SelfHarmEvaluator(None, fake_project),
+            "Fluency": FluencyEvaluator(model_config=mock_model_config),
+            "ViolenceContentCustomEvaluator": callable(fake_project),
+        }
+
+        # Create logger
+        logger = logging.getLogger("test_logger")
+        # Read and parse the JSONL file (contains multiple JSON objects)
+        test_rows = []
+        with open(test_data_path, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    logger.info(line)
+                    test_rows.append(json.loads(line))
+        test_eval_input_metadata = {}
+        with open(test_input_eval_metadata_path, "r") as f:
+            test_eval_input_metadata = json.load(f)
+        test_eval_error_summary = {}
+        with open(test_input_eval_error_summary_path, "r") as f:
+            test_eval_error_summary = json.load(f)
+
+        eval_id = "test_eval_group_123"
+        eval_run_id = "test_run_456"
+        # Create EvaluationResult structure
+        test_results = {"metrics": {"overall_score": 0.75}, "rows": test_rows, "studio_url": "https://test-studio.com"}
+
+        # Test the conversion function
+        def run_test():
+            _convert_results_to_aoai_evaluation_results(
+                results=test_results,
+                logger=logger,
+                eval_run_id=eval_run_id,
+                eval_id=eval_id,
+                evaluators=evaluators,
+                eval_run_summary=test_eval_error_summary,
+                eval_meta_data=test_eval_input_metadata,
+            )
+
+        # Run the async function
+        run_test()
+        converted_results = test_results
+
+        # Verify the structure
+        assert "metrics" in converted_results
+        assert "rows" in converted_results
+        assert "studio_url" in converted_results
+        assert "_evaluation_results_list" in converted_results
+        assert "_evaluation_summary" in converted_results
+
+        # Normalize timestamp for comparison
+        result_list = []
+        for item in converted_results["_evaluation_results_list"]:
+            item["created_at"] = 1762319309  # Fixed timestamp for testing
+            result_list.append(item)
+        converted_results["_evaluation_results_list"] = result_list
+        converted_results_json = json.loads(f"{json.dumps(converted_results)}")
+        expected_results_json = None
+        with open(test_expected_output_path, "r") as f:
+            expected_results_json = json.load(f)
+        assert converted_results_json == expected_results_json
+
+        # Verify metrics preserved
+        assert converted_results["metrics"]["overall_score"] == 0.75
+
+        # Verify studio URL preserved
+        assert converted_results["studio_url"] == "https://test-studio.com"
+
+        # Verify _evaluation_results_list is same as rows (converted format)
+        assert len(converted_results["_evaluation_results_list"]) == len(test_rows)
+        assert len(converted_results["_evaluation_results_list"]) == len(converted_results["rows"])
+
+        # Verify conversion structure for each row
+        for i, converted_row in enumerate(converted_results["_evaluation_results_list"]):
+            # Check RunOutputItem structure
+            assert "object" in converted_row
+            assert converted_row["object"] == "eval.run.output_item"
+            assert "id" in converted_row
+            assert "run_id" in converted_row
+            assert "eval_id" in converted_row
+            assert "created_at" in converted_row
+            assert "datasource_item_id" in converted_row
+            assert "results" in converted_row
+            assert "sample" in converted_row
+
+            # Verify IDs
+            assert converted_row["run_id"] == "test_run_456"
+            assert converted_row["eval_id"] == "test_eval_group_123"
+            assert converted_row["datasource_item_id"] == i
+
+            # Verify results array structure
+            assert isinstance(converted_row["results"], list)
+
+            # Check that results contain expected evaluator results
+            result_names = [result.get("name") for result in converted_row["results"]]
+
+            # Based on test data, should have violence and labelgrader
+            if i < len(test_rows):
+                original_row = test_rows[i]
+                expected_evaluators = set()
+                for key in original_row.keys():
+                    if key.startswith("outputs."):
+                        parts = key.split(".", 2)
+                        if len(parts) >= 2:
+                            expected_evaluators.add(parts[1])
+
+                # Verify all expected evaluators are present in results
+                for evaluator in expected_evaluators:
+                    assert evaluator in result_names
+
+            # Check individual result structure
+            for result in converted_row["results"]:
+                assert "type" in result
+                assert "name" in result
+                assert "metric" in result
+
+        # Verify _evaluation_summary structure
+        summary = converted_results["_evaluation_summary"]
+        assert "result_counts" in summary
+        assert "per_model_usage" in summary
+        assert "per_testing_criteria_results" in summary
+
+        # Check result counts structure
+        result_counts = summary["result_counts"]
+        assert "total" in result_counts
+        assert "passed" in result_counts
+        assert "failed" in result_counts
+        assert "errored" in result_counts
+
+        logger.info(result_counts)
+        # Verify counts are non-negative integers
+        for count_type, count_value in result_counts.items():
+            assert isinstance(count_value, int)
+            assert count_value >= 0
+
+        # Check per_testing_criteria_results structure
+        criteria_results = summary["per_testing_criteria_results"]
+        assert isinstance(criteria_results, list)
+        logger.info(criteria_results)
+        for criteria_result in criteria_results:
+            assert "testing_criteria" in criteria_result
+            assert "passed" in criteria_result
+            assert "failed" in criteria_result
+            assert isinstance(criteria_result["passed"], int)
+            assert isinstance(criteria_result["failed"], int)
+
+        # Check per_model_usage structure
+        model_usage = summary["per_model_usage"]
+        assert isinstance(model_usage, list)
+        for usage_item in model_usage:
+            assert "model_name" in usage_item
+            assert "invocation_count" in usage_item
+            assert "total_tokens" in usage_item
+            assert "prompt_tokens" in usage_item
+            assert "completion_tokens" in usage_item
+            assert "cached_tokens" in usage_item
+
+        # Test with empty results
+        empty_results = {"metrics": {}, "rows": [], "studio_url": None}
+        _convert_results_to_aoai_evaluation_results(
+            results=empty_results, logger=logger, eval_run_id=eval_run_id, eval_id=eval_id, evaluators=evaluators
+        )
+        empty_converted = empty_results
+
+        assert len(empty_converted["rows"]) == 0
+        assert len(empty_converted["_evaluation_results_list"]) == 0
+        assert empty_converted["_evaluation_summary"]["result_counts"]["total"] == 0
+
 
 @pytest.mark.unittest
 class TestTagsInLoggingFunctions:
@@ -1219,17 +1450,26 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
-            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+
+        # Mock create_evaluation_result
+        mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
+        mock_client.create_evaluation_result.return_value = mock_create_result
+
+        # Mock start_evaluation_run
+        mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
+        mock_client.start_evaluation_run.return_value = mock_start_result
+
+        # Mock update_evaluation_run
+        mock_update_result = type(
+            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
+        mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Test data
         metrics = {"accuracy": 0.8, "f1_score": 0.7}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
         tags = {"experiment": "test-exp", "version": "1.0", "model": "gpt-4"}
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
 
         # Call the function
         result = _log_metrics_and_instance_results_onedp(
@@ -1243,15 +1483,9 @@ class TestTagsInLoggingFunctions:
 
         # Verify that start_evaluation_run was called with tags
         mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
-        assert start_call_args.tags == tags
-        assert start_call_args.display_name == "test-evaluation"
-
-        # Verify that update_evaluation_run was called WITHOUT tags (not redundant)
-        mock_client.update_evaluation_run.assert_called_once()
-        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert getattr(update_call_args, "tags", None) is None
-        assert update_call_args.status == "Completed"
+        call_args = mock_client.start_evaluation_run.call_args
+        eval_upload = call_args[1]["evaluation"]
+        assert eval_upload.tags == tags
 
         # Verify return value
         assert result == "https://test-uri"
@@ -1264,16 +1498,25 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
-            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+
+        # Mock create_evaluation_result
+        mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
+        mock_client.create_evaluation_result.return_value = mock_create_result
+
+        # Mock start_evaluation_run
+        mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
+        mock_client.start_evaluation_run.return_value = mock_start_result
+
+        # Mock update_evaluation_run
+        mock_update_result = type(
+            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
+        mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
 
         # Call the function with None tags
         result = _log_metrics_and_instance_results_onedp(
@@ -1287,13 +1530,12 @@ class TestTagsInLoggingFunctions:
 
         # Verify that start_evaluation_run was called with None tags
         mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
-        assert start_call_args.tags is None
+        call_args = mock_client.start_evaluation_run.call_args
+        eval_upload = call_args[1]["evaluation"]
+        assert eval_upload.tags is None
 
-        # Verify that update_evaluation_run was called without tags
-        mock_client.update_evaluation_run.assert_called_once()
-        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert not hasattr(update_call_args, "tags") or update_call_args.tags is None
+        # Verify return value
+        assert result == "https://test-uri"
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
@@ -1303,16 +1545,25 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
-            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+
+        # Mock create_evaluation_result
+        mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
+        mock_client.create_evaluation_result.return_value = mock_create_result
+
+        # Mock start_evaluation_run
+        mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
+        mock_client.start_evaluation_run.return_value = mock_start_result
+
+        # Mock update_evaluation_run
+        mock_update_result = type(
+            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
+        mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
         empty_tags = {}
 
         # Call the function with empty tags
@@ -1327,22 +1578,32 @@ class TestTagsInLoggingFunctions:
 
         # Verify that start_evaluation_run was called with empty tags
         mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
-        assert start_call_args.tags == {}
+        call_args = mock_client.start_evaluation_run.call_args
+        eval_upload = call_args[1]["evaluation"]
+        assert eval_upload.tags == {}
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
     def test_log_metrics_and_instance_results_onedp_no_redundant_tags(self, mock_client_class, mock_token_manager):
-        """Test that tags are not redundantly set in update_evaluation_run."""
+        """Test that tags are properly included in properties for sync_evals."""
         from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
-            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+
+        # Mock create_evaluation_result
+        mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
+        mock_client.create_evaluation_result.return_value = mock_create_result
+
+        # Mock start_evaluation_run
+        mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
+        mock_client.start_evaluation_run.return_value = mock_start_result
+
+        # Mock update_evaluation_run
+        mock_update_result = type(
+            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
+        mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Mock data for the test
         metrics = {"accuracy": 0.95}
@@ -1353,15 +1614,14 @@ class TestTagsInLoggingFunctions:
         _log_metrics_and_instance_results_onedp(
             metrics=metrics,
             instance_results=instance_results,
-            project_url="https://test-project.cognitiveservices.azure.com/",
+            project_url="https://test-project.cognitiveservices.azure.com/api/projects/test-project",
             evaluation_name="test-evaluation",
             name_map={},
             tags=tags,
         )
 
-        # Verify that update_evaluation_run was called without redundant tags
-        mock_client.update_evaluation_run.assert_called_once()
-        call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert (
-            not hasattr(call_args, "tags") or call_args.tags is None
-        ), "Tags should not be redundantly set in update_evaluation_run"
+        # Verify that start_evaluation_run was called with tags
+        mock_client.start_evaluation_run.assert_called_once()
+        call_args = mock_client.start_evaluation_run.call_args
+        eval_upload = call_args[1]["evaluation"]
+        assert eval_upload.tags == tags
