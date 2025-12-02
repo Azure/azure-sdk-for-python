@@ -131,7 +131,6 @@ def main() -> int:
         print("\nArchitect approval found")
         return 0
     
-    print(f"\nNo architect approval found, strict version pins detected. Get approval from one of the following architects before merging: {', '.join(ARCHITECTS)}\n")
     return 1
 
 
