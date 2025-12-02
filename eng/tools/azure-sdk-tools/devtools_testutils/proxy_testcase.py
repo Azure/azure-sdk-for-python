@@ -261,11 +261,11 @@ def recorded_by_proxy(*transports):
     Decorator for recording and playing back test proxy sessions.
 
     Args:
-        *transports: Which transport(s) to record. Pass one or more RecordedTransport enum values.
-            - No args (default): Record RequestsTransport.send calls (azure.core)
-            - RecordedTransport.AZURE_CORE: Record RequestsTransport.send calls
-            - RecordedTransport.HTTPX: Record HTTPXTransport.handle_request calls
-            - RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX: Record both transports
+        *transports: Which transport(s) to record. Pass one or more comman seperated RecordedTransport enum values.
+            - No args (default): Record RequestsTransport.send calls (azure.core).
+            - RecordedTransport.AZURE_CORE: Record RequestsTransport.send calls. Same as the default above.
+            - RecordedTransport.HTTPX: Record HTTPXTransport.handle_request calls.
+            - RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX: Record both transports.
 
     Usages:
       # If your test uses azure.core only network calls (default)
@@ -285,33 +285,39 @@ def recorded_by_proxy(*transports):
       def test(...): ...
     """
 
-    def decorator(test_func):
-        # Determine which transports to use
-        transport_list = []
-
-        # If no transports specified, default to azure.core
-        transport_set = set(transports) if transports else {RecordedTransport.AZURE_CORE}
-
-        # Add transports based on what's in the set
-        for transport in transport_set:
-            if transport == RecordedTransport.AZURE_CORE or (
-                isinstance(transport, str) and transport == RecordedTransport.AZURE_CORE.value
-            ):
-                transport_list.append((RequestsTransport, "send"))
-            elif transport == RecordedTransport.HTTPX or (
-                isinstance(transport, str) and transport == RecordedTransport.HTTPX.value
-            ):
-                if HTTPXTransport is not None:
-                    transport_list.append((HTTPXTransport, "handle_request"))
-
-        # If still no transports, fall back to azure.core
-        if not transport_list:
-            transport_list = [(RequestsTransport, "send")]
-
-        transports_normalized = _normalize_transport_specs(transport_list)
+    # Bare decorator usage: @recorded_by_proxy
+    if len(transports) == 1 and callable(transports[0]):
+        test_func = transports[0]
+        transports_normalized = _normalize_transport_specs([(RequestsTransport, "send")])
         return _make_proxy_decorator(transports_normalized)(test_func)
 
-    return decorator
+    # Parameterized decorator usage: @recorded_by_proxy(...)
+    # Determine which transports to use
+    transport_list = []
+
+    # If no transports specified, default to azure.core
+    transport_set = set(transports) if transports else {RecordedTransport.AZURE_CORE}
+
+    # Add transports based on what's in the set
+    for transport in transport_set:
+        if transport == RecordedTransport.AZURE_CORE or (
+            isinstance(transport, str) and transport == RecordedTransport.AZURE_CORE.value
+        ):
+            transport_list.append((RequestsTransport, "send"))
+        elif transport == RecordedTransport.HTTPX or (
+            isinstance(transport, str) and transport == RecordedTransport.HTTPX.value
+        ):
+            if HTTPXTransport is not None:
+                transport_list.append((HTTPXTransport, "handle_request"))
+
+    # If still no transports, fall back to azure.core
+    if not transport_list:
+        transport_list = [(RequestsTransport, "send")]
+
+    transports_normalized = _normalize_transport_specs(transport_list)
+
+    # Return a decorator function that will be applied to the test function
+    return lambda test_func: _make_proxy_decorator(transports_normalized)(test_func)
 
 
 def _make_proxy_decorator(transports):
