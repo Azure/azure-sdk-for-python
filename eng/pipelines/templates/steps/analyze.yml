@@ -75,6 +75,10 @@ steps:
       SourceDirectory: $(Build.SourcesDirectory)
       Condition: succeededOrFailed()
 
+  - template: ../steps/check_strict_pins.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
   - template: ../steps/verify-autorest.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
