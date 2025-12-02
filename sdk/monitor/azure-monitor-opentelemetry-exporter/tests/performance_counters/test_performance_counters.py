@@ -568,14 +568,14 @@ class TestPerformanceCountersManager(unittest.TestCase):
             EXCEPTION_MESSAGE: "Test exception"
         }
         
-        mock_log_data = MagicMock(spec=ReadableLogRecord)
-        mock_log_data.log_record = mock_log_record
-        
+        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
+        mock_readable_log_record.log_record = mock_log_record
+
         # Import to access global counter
         import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
         initial_exceptions = manager_module._EXCEPTIONS_COUNT
-        
-        manager._record_log_record(mock_log_data)
+
+        manager._record_log_record(mock_readable_log_record)
         
         # Check that exception was counted
         self.assertEqual(manager_module._EXCEPTIONS_COUNT, initial_exceptions + 1)
@@ -587,15 +587,15 @@ class TestPerformanceCountersManager(unittest.TestCase):
         # Create a mock log data without exception attributes
         mock_log_record = MagicMock()
         mock_log_record.attributes = {"normal": "attribute"}
-        
-        mock_log_data = MagicMock(spec=ReadableLogRecord)
-        mock_log_data.log_record = mock_log_record
-        
+
+        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
+        mock_readable_log_record.log_record = mock_log_record
+
         # Import to access global counter
         import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
         initial_exceptions = manager_module._EXCEPTIONS_COUNT
-        
-        manager._record_log_record(mock_log_data)
+
+        manager._record_log_record(mock_readable_log_record)
         
         # Exception count should not change
         self.assertEqual(manager_module._EXCEPTIONS_COUNT, initial_exceptions)

@@ -42,13 +42,13 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         processor = _PerformanceCountersLogRecordProcessor()
         
         # Create mock log data
-        mock_log_data = MagicMock(spec=ReadableLogRecord)
-        
-        processor.on_emit(mock_log_data)
-        
+        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
+
+        processor.on_emit(mock_readable_log_record)
+
         # Verify manager was called
         mock_manager_class.assert_called_once()
-        mock_manager._record_log_record.assert_called_once_with(mock_log_data)
+        mock_manager._record_log_record.assert_called_once_with(mock_readable_log_record)
 
     def test_emit_calls_on_emit(self):
         """Test emit method calls on_emit."""
@@ -58,12 +58,12 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         processor.on_emit = MagicMock()
         
         # Create mock log data
-        mock_log_data = MagicMock(spec=ReadableLogRecord)
-        
-        processor.emit(mock_log_data)
-        
+        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
+
+        processor.emit(mock_readable_log_record)
+
         # Verify on_emit was called
-        processor.on_emit.assert_called_once_with(mock_log_data)
+        processor.on_emit.assert_called_once_with(mock_readable_log_record)
 
     def test_shutdown(self):
         """Test shutdown method."""
@@ -91,12 +91,11 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         processor = _PerformanceCountersLogRecordProcessor()
         
         # Create mock log data
-        mock_log_data = MagicMock(spec=ReadableLogRecord)
+        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
         
         # Exception should be propagated
         with self.assertRaises(Exception) as context:
-            processor.on_emit(mock_log_data)
-        
+            processor.on_emit(mock_readable_log_record)
         self.assertEqual(str(context.exception), "Test error")
 
 

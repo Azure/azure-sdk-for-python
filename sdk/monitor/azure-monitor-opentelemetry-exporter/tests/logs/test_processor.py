@@ -71,7 +71,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         span = NonRecordingSpan(span_context)
         ctx = set_span_in_context(span)
 
-        log_record = _logs.LogData(
+        log_record = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
@@ -111,7 +111,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         span = NonRecordingSpan(span_context)
         ctx = set_span_in_context(span)
 
-        log_record = _logs.LogData(
+        log_record = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
@@ -152,7 +152,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         span = NonRecordingSpan(span_context)
         ctx = set_span_in_context(span)
 
-        log_record = _logs.LogData(
+        log_record = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
@@ -191,7 +191,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         span = NonRecordingSpan(span_context)
         ctx = set_span_in_context(span)
 
-        log_record = _logs.LogData(
+        log_record = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
@@ -215,7 +215,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             options={"enable_trace_based_sampling_for_logs": True}
         )
 
-        log_record = _logs.LogData(
+        log_record = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 context=None,
@@ -263,7 +263,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         span = NonRecordingSpan(span_context)
         ctx = set_span_in_context(span)
 
-        log_record_unsampled = _logs.LogData( # cspell:disable-line
+        log_record_unsampled = _logs.ReadWriteLogRecord( # cspell:disable-line
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
@@ -283,7 +283,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         span = NonRecordingSpan(span_context)
         ctx = set_span_in_context(span)
 
-        log_record_sampled = _logs.LogData(
+        log_record_sampled = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419457,
                 context=ctx,
