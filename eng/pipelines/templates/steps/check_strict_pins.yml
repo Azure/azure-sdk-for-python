@@ -1,0 +1,10 @@
+parameters:
+  ServiceDirectory: ''
+
+steps:
+  - task: PythonScript@0
+    displayName: 'Check for Strict Version Pins'
+    condition: and(succeededOrFailed(), eq(variables['Build.Reason'], 'PullRequest'), ne(variables['Skip.StrictPinCheck'], 'true'))
+    inputs:
+      scriptPath: 'scripts/devops_tasks/check_strict_pins.py'
+      arguments: '--base origin/$(System.PullRequest.TargetBranch) --head $(Build.SourceVersion) --pr-number $(System.PullRequest.PullRequestNumber)'
