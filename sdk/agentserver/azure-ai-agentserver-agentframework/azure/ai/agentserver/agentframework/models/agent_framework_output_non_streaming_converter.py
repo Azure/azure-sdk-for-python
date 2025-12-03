@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import datetime
 import json
-from typing import Any, List
+from typing import Any, List, Optional
 
 from agent_framework import AgentRunResponse, FunctionResultContent
 from agent_framework._types import FunctionCallContent, TextContent
@@ -14,6 +14,8 @@ from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import Response as OpenAIResponse
 from azure.ai.agentserver.core.models.projects import (
+    AgentId,
+    CreatedBy,
     ItemContentOutputText,
     ResponsesAssistantMessageItemResource,
 )
@@ -27,10 +29,12 @@ logger = get_logger()
 class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-long
     """Non-streaming converter: AgentRunResponse -> OpenAIResponse."""
 
-    def __init__(self, context: AgentRunContext):
+    def __init__(self, context: AgentRunContext, agent: Any = None):
         self._context = context
+        self._agent = agent
         self._response_id = None
         self._response_created_at = None
+        self._created_by: dict = {}
 
     def _ensure_response_started(self) -> None:
         if not self._response_id:
@@ -41,10 +45,27 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
     def _build_item_content_output_text(self, text: str) -> ItemContentOutputText:
         return ItemContentOutputText(text=text, annotations=[])
 
+    def _build_created_by(self, author_name: Optional[str]) -> dict:
+        self._ensure_response_started()
+        
+        agent_dict = {
+            "type": "agent_id",
+            "name": author_name if author_name else "",
+            "version": "",  # Default to empty string
+        }
+        
+        return {
+            "agent": agent_dict,
+            "response_id": self._response_id,
+        }
+
     def _new_assistant_message_item(self, message_text: str) -> ResponsesAssistantMessageItemResource:
         item_content = self._build_item_content_output_text(message_text)
         return ResponsesAssistantMessageItemResource(
-            id=self._context.id_generator.generate_message_id(), status="completed", content=[item_content]
+            id=self._context.id_generator.generate_message_id(), 
+            status="completed", 
+            content=[item_content],
+            created_by=self._created_by,
         )
 
     def transform_output_for_response(self, response: AgentRunResponse) -> OpenAIResponse:
@@ -64,6 +85,10 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         """
         logger.debug("Transforming non-streaming response (messages=%d)", len(response.messages))
         self._ensure_response_started()
+
+        # Extract author_name from response, default to empty string if not present
+        author_name = getattr(response, "author_name", "") or ""
+        self._created_by = self._build_created_by(author_name)
 
         completed_items: List[dict] = []
 
@@ -129,6 +154,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                         "logprobs": [],
                     }
                 ],
+                "created_by": self._created_by,
             }
         )
         logger.debug("    added message item id=%s text_len=%d", item_id, len(text_value))
@@ -151,6 +177,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                 "call_id": call_id,
                 "name": name,
                 "arguments": arguments or "",
+                "created_by": self._created_by,
             }
         )
         logger.debug(
@@ -179,6 +206,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                 "status": "completed",
                 "call_id": call_id,
                 "output": json.dumps(result) if len(result) > 0 else "",
+                "created_by": self._created_by,
             }
         )
         logger.debug(
