@@ -74,7 +74,6 @@ class SearchIndexingBufferedSender:
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID.
     """
 
-    _ODATA_ACCEPT: str = "application/json;odata.metadata=none"
     _DEFAULT_AUTO_FLUSH_INTERVAL = 60
     _DEFAULT_INITIAL_BATCH_ACTION_COUNT = 512
     _DEFAULT_MAX_RETRIES = 3

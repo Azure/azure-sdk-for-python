@@ -14,7 +14,9 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AIServices,
     AzureBlobKnowledgeSourceParams,
+    CompletedSynchronizationState,
     IndexedOneLakeKnowledgeSourceParams,
     IndexedSharePointKnowledgeSourceParams,
     KnowledgeBaseActivityRecord,
@@ -43,15 +45,23 @@ from ._models import (  # type: ignore
     KnowledgeRetrievalMinimalReasoningEffort,
     KnowledgeRetrievalReasoningEffort,
     KnowledgeRetrievalSemanticIntent,
+    KnowledgeSourceAzureOpenAIVectorizer,
+    KnowledgeSourceIngestionParameters,
     KnowledgeSourceParams,
+    KnowledgeSourceStatistics,
+    KnowledgeSourceStatus,
+    KnowledgeSourceVectorizer,
     RemoteSharePointKnowledgeSourceParams,
     SearchIndexKnowledgeSourceParams,
     SharePointSensitivityLabelInfo,
+    SynchronizationState,
     WebKnowledgeSourceParams,
 )
 
 from ._enums import (  # type: ignore
+    KnowledgeBaseActivityRecordType,
     KnowledgeBaseMessageContentType,
+    KnowledgeBaseReferenceType,
     KnowledgeRetrievalIntentType,
     KnowledgeRetrievalOutputMode,
     KnowledgeRetrievalReasoningEffortKind,
@@ -61,7 +71,9 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AIServices",
     "AzureBlobKnowledgeSourceParams",
+    "CompletedSynchronizationState",
     "IndexedOneLakeKnowledgeSourceParams",
     "IndexedSharePointKnowledgeSourceParams",
     "KnowledgeBaseActivityRecord",
@@ -90,12 +102,20 @@ __all__ = [
     "KnowledgeRetrievalMinimalReasoningEffort",
     "KnowledgeRetrievalReasoningEffort",
     "KnowledgeRetrievalSemanticIntent",
+    "KnowledgeSourceAzureOpenAIVectorizer",
+    "KnowledgeSourceIngestionParameters",
     "KnowledgeSourceParams",
+    "KnowledgeSourceStatistics",
+    "KnowledgeSourceStatus",
+    "KnowledgeSourceVectorizer",
     "RemoteSharePointKnowledgeSourceParams",
     "SearchIndexKnowledgeSourceParams",
     "SharePointSensitivityLabelInfo",
+    "SynchronizationState",
     "WebKnowledgeSourceParams",
+    "KnowledgeBaseActivityRecordType",
     "KnowledgeBaseMessageContentType",
+    "KnowledgeBaseReferenceType",
     "KnowledgeRetrievalIntentType",
     "KnowledgeRetrievalOutputMode",
     "KnowledgeRetrievalReasoningEffortKind",

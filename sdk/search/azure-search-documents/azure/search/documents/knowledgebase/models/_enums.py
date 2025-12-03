@@ -10,6 +10,29 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of activity record."""
+
+    SEARCH_INDEX = "searchIndex"
+    """Search index retrieval activity."""
+    AZURE_BLOB = "azureBlob"
+    """Azure Blob retrieval activity."""
+    INDEXED_SHARE_POINT = "indexedSharePoint"
+    """Indexed SharePoint retrieval activity."""
+    INDEXED_ONE_LAKE = "indexedOneLake"
+    """Indexed OneLake retrieval activity."""
+    WEB = "web"
+    """Web retrieval activity."""
+    REMOTE_SHARE_POINT = "remoteSharePoint"
+    """Remote SharePoint retrieval activity."""
+    MODEL_QUERY_PLANNING = "modelQueryPlanning"
+    """LLM query planning activity."""
+    MODEL_ANSWER_SYNTHESIS = "modelAnswerSynthesis"
+    """LLM answer synthesis activity."""
+    AGENTIC_REASONING = "agenticReasoning"
+    """Agentic reasoning activity."""
+
+
 class KnowledgeBaseMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of message content."""
 
@@ -17,6 +40,23 @@ class KnowledgeBaseMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Text message content kind."""
     IMAGE = "image"
     """Image message content kind."""
+
+
+class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of reference."""
+
+    SEARCH_INDEX = "searchIndex"
+    """Search index document reference."""
+    AZURE_BLOB = "azureBlob"
+    """Azure Blob document reference."""
+    INDEXED_SHARE_POINT = "indexedSharePoint"
+    """Indexed SharePoint document reference."""
+    INDEXED_ONE_LAKE = "indexedOneLake"
+    """Indexed OneLake document reference."""
+    WEB = "web"
+    """Web document reference."""
+    REMOTE_SHARE_POINT = "remoteSharePoint"
+    """Remote SharePoint document reference."""
 
 
 class KnowledgeRetrievalIntentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

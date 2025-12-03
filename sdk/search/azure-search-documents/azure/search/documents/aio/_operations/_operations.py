@@ -54,13 +54,9 @@ class _SearchClientOperationsMixin(
 ):
 
     @distributed_trace_async
-    async def get_document_count(self, *, query_source_authorization: Optional[str] = None, **kwargs: Any) -> int:
+    async def get_document_count(self, **kwargs: Any) -> int:
         """Queries the number of documents in the index.
 
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: int
         :rtype: int
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -80,7 +76,6 @@ class _SearchClientOperationsMixin(
 
         _request = build_search_get_document_count_request(
             index_name=self._config.index_name,
-            query_source_authorization=query_source_authorization,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -110,13 +105,16 @@ class _SearchClientOperationsMixin(
             )
             raise HttpResponseError(response=response, model=error)
 
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(int, response.text())
+            deserialized = _deserialize(int, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -124,6 +122,8 @@ class _SearchClientOperationsMixin(
     async def _search_get(
         self,
         *,
+        query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
         search_text: Optional[str] = None,
         include_total_result_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
@@ -154,11 +154,17 @@ class _SearchClientOperationsMixin(
         query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
         speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
         semantic_fields: Optional[list[str]] = None,
-        query_source_authorization: Optional[str] = None,
         **kwargs: Any
     ) -> _models2.SearchDocumentsResult:
         """Searches for documents in the index.
 
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
+         permission checks for the query operation. Default value is None.
+        :paramtype enable_elevated_read: bool
         :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
          match all documents. Default value is None.
         :paramtype search_text: str
@@ -303,10 +309,6 @@ class _SearchClientOperationsMixin(
         :keyword semantic_fields: The list of field names used for semantic ranking. Default value is
          None.
         :paramtype semantic_fields: list[str]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -326,6 +328,8 @@ class _SearchClientOperationsMixin(
 
         _request = build_search_search_get_request(
             index_name=self._config.index_name,
+            query_source_authorization=query_source_authorization,
+            enable_elevated_read=enable_elevated_read,
             search_text=search_text,
             include_total_result_count=include_total_result_count,
             facets=facets,
@@ -356,7 +360,6 @@ class _SearchClientOperationsMixin(
             query_language=query_language,
             speller=speller,
             semantic_fields=semantic_fields,
-            query_source_authorization=query_source_authorization,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -401,6 +404,7 @@ class _SearchClientOperationsMixin(
         self,
         *,
         query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
         content_type: str = "application/json",
         include_total_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
@@ -443,6 +447,7 @@ class _SearchClientOperationsMixin(
         body: JSON,
         *,
         query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models2.SearchDocumentsResult: ...
@@ -452,6 +457,7 @@ class _SearchClientOperationsMixin(
         body: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models2.SearchDocumentsResult: ...
@@ -462,6 +468,7 @@ class _SearchClientOperationsMixin(
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
         include_total_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
         filter: Optional[str] = None,
@@ -505,6 +512,9 @@ class _SearchClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
+         permission checks for the query operation. Default value is None.
+        :paramtype enable_elevated_read: bool
         :keyword include_total_count: A value that specifies whether to fetch the total count of
          results. Default is false. Setting this value to true may have a performance impact. Note that
          the count returned is an approximation. Default value is None.
@@ -707,6 +717,7 @@ class _SearchClientOperationsMixin(
         _request = build_search_search_post_request(
             index_name=self._config.index_name,
             query_source_authorization=query_source_authorization,
+            enable_elevated_read=enable_elevated_read,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -753,21 +764,25 @@ class _SearchClientOperationsMixin(
         self,
         key: str,
         *,
-        selected_fields: Optional[list[str]] = None,
         query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
+        selected_fields: Optional[list[str]] = None,
         **kwargs: Any
     ) -> _models2.LookupDocument:
         """Retrieves a document from the index.
 
         :param key: The key of the document to retrieve. Required.
         :type key: str
-        :keyword selected_fields: List of field names to retrieve for the document; Any field not
-         retrieved will be missing from the returned document. Default value is None.
-        :paramtype selected_fields: list[str]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
+         permission checks for the query operation. Default value is None.
+        :paramtype enable_elevated_read: bool
+        :keyword selected_fields: List of field names to retrieve for the document; Any field not
+         retrieved will be missing from the returned document. Default value is None.
+        :paramtype selected_fields: list[str]
         :return: LookupDocument. The LookupDocument is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.LookupDocument
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -788,8 +803,9 @@ class _SearchClientOperationsMixin(
         _request = build_search_get_document_request(
             key=key,
             index_name=self._config.index_name,
-            selected_fields=selected_fields,
             query_source_authorization=query_source_authorization,
+            enable_elevated_read=enable_elevated_read,
+            selected_fields=selected_fields,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -844,7 +860,6 @@ class _SearchClientOperationsMixin(
         search_fields: Optional[list[str]] = None,
         select: Optional[list[str]] = None,
         top: Optional[int] = None,
-        query_source_authorization: Optional[str] = None,
         **kwargs: Any
     ) -> _models2._models.SuggestDocumentsResult:
         """Suggests documents in the index that match the given partial query text.
@@ -893,10 +908,6 @@ class _SearchClientOperationsMixin(
         :keyword top: The number of suggestions to retrieve. The value must be a number between 1 and
          100. The default is 5. Default value is None.
         :paramtype top: int
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.SuggestDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -927,7 +938,6 @@ class _SearchClientOperationsMixin(
             search_fields=search_fields,
             select=select,
             top=top,
-            query_source_authorization=query_source_authorization,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -975,7 +985,6 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str,
         suggester_name: str,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
@@ -990,21 +999,11 @@ class _SearchClientOperationsMixin(
     ) -> _models2._models.SuggestDocumentsResult: ...
     @overload
     async def _suggest_post(
-        self,
-        body: JSON,
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.SuggestDocumentsResult: ...
     @overload
     async def _suggest_post(
-        self,
-        body: IO[bytes],
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.SuggestDocumentsResult: ...
 
     @distributed_trace_async
@@ -1014,7 +1013,6 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
-        query_source_authorization: Optional[str] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1036,10 +1034,6 @@ class _SearchClientOperationsMixin(
         :keyword suggester_name: The name of the suggester as specified in the suggesters collection
          that's part of the index definition. Required.
         :paramtype suggester_name: str
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword filter: An OData expression that filters the documents considered for suggestions.
          Default value is None.
         :paramtype filter: str
@@ -1124,7 +1118,6 @@ class _SearchClientOperationsMixin(
 
         _request = build_search_suggest_post_request(
             index_name=self._config.index_name,
-            query_source_authorization=query_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1170,49 +1163,26 @@ class _SearchClientOperationsMixin(
 
     @overload
     async def _index(
-        self,
-        batch: _models2.IndexDocumentsBatch,
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, batch: _models2.IndexDocumentsBatch, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.IndexDocumentsResult: ...
     @overload
     async def _index(
-        self,
-        batch: JSON,
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, batch: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.IndexDocumentsResult: ...
     @overload
     async def _index(
-        self,
-        batch: IO[bytes],
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, batch: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.IndexDocumentsResult: ...
 
     @distributed_trace_async
     async def _index(
-        self,
-        batch: Union[_models2.IndexDocumentsBatch, JSON, IO[bytes]],
-        *,
-        query_source_authorization: Optional[str] = None,
-        **kwargs: Any
+        self, batch: Union[_models2.IndexDocumentsBatch, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2._models.IndexDocumentsResult:
         """Sends a batch of document write actions to the index.
 
         :param batch: The batch of index actions. Is one of the following types: IndexDocumentsBatch,
          JSON, IO[bytes] Required.
         :type batch: ~azure.search.documents.models.IndexDocumentsBatch or JSON or IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: IndexDocumentsResult. The IndexDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.IndexDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1240,7 +1210,6 @@ class _SearchClientOperationsMixin(
 
         _request = build_search_index_request(
             index_name=self._config.index_name,
-            query_source_authorization=query_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1298,7 +1267,6 @@ class _SearchClientOperationsMixin(
         minimum_coverage: Optional[float] = None,
         search_fields: Optional[list[str]] = None,
         top: Optional[int] = None,
-        query_source_authorization: Optional[str] = None,
         **kwargs: Any
     ) -> _models2._models.AutocompleteResult:
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
@@ -1339,10 +1307,6 @@ class _SearchClientOperationsMixin(
         :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
          and 100. The default is 5. Default value is None.
         :paramtype top: int
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.AutocompleteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1372,7 +1336,6 @@ class _SearchClientOperationsMixin(
             minimum_coverage=minimum_coverage,
             search_fields=search_fields,
             top=top,
-            query_source_authorization=query_source_authorization,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1420,7 +1383,6 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str,
         suggester_name: str,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         autocomplete_mode: Optional[Union[str, _models2.AutocompleteMode]] = None,
         filter: Optional[str] = None,
@@ -1434,21 +1396,11 @@ class _SearchClientOperationsMixin(
     ) -> _models2._models.AutocompleteResult: ...
     @overload
     async def _autocomplete_post(
-        self,
-        body: JSON,
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.AutocompleteResult: ...
     @overload
     async def _autocomplete_post(
-        self,
-        body: IO[bytes],
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2._models.AutocompleteResult: ...
 
     @distributed_trace_async
@@ -1458,7 +1410,6 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
-        query_source_authorization: Optional[str] = None,
         autocomplete_mode: Optional[Union[str, _models2.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
@@ -1478,10 +1429,6 @@ class _SearchClientOperationsMixin(
         :keyword suggester_name: The name of the suggester as specified in the suggesters collection
          that's part of the index definition. Required.
         :paramtype suggester_name: str
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
          'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
          auto-completed terms. Known values are: "oneTerm", "twoTerms", and "oneTermWithContext".
@@ -1559,7 +1506,6 @@ class _SearchClientOperationsMixin(
 
         _request = build_search_autocomplete_post_request(
             index_name=self._config.index_name,
-            query_source_authorization=query_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

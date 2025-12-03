@@ -586,6 +586,26 @@ class KnowledgeBaseModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use Azure Open AI models for query planning."""
 
 
+class KnowledgeSourceContentExtractionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Optional content extraction mode. Default is 'minimal'."""
+
+    MINIMAL = "minimal"
+    """Extracts only essential metadata while deferring most content processing."""
+    STANDARD = "standard"
+    """Performs the full default content extraction pipeline."""
+
+
+class KnowledgeSourceIngestionPermissionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Permission types to ingest together with document content."""
+
+    USER_IDS = "userIds"
+    """Ingest explicit user identifiers alongside document content."""
+    GROUP_IDS = "groupIds"
+    """Ingest group identifiers alongside document content."""
+    RBAC_SCOPE = "rbacScope"
+    """Ingest RBAC scope information alongside document content."""
+
+
 class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of the knowledge source."""
 
@@ -601,6 +621,17 @@ class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A knowledge source that reads data from the web."""
     REMOTE_SHARE_POINT = "remoteSharePoint"
     """A knowledge source that reads data from remote SharePoint."""
+
+
+class KnowledgeSourceSynchronizationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current synchronization status of the knowledge source."""
+
+    CREATING = "creating"
+    """The knowledge source is being provisioned."""
+    ACTIVE = "active"
+    """The knowledge source is active and synchronization runs are occurring."""
+    DELETING = "deleting"
+    """The knowledge source is being deleted and synchronization is paused."""
 
 
 class LexicalAnalyzerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

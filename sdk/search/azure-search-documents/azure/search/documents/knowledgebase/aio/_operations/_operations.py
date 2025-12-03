@@ -28,7 +28,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models2
-from ...._utils.model_base import SdkJSONEncoder, _deserialize
+from .... import models as _models3
+from ...._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ...._utils.utils import ClientMixinABC
 from ..._operations._operations import build_knowledge_base_retrieval_retrieve_request
 from .._configuration import KnowledgeBaseRetrievalClientConfiguration
@@ -205,7 +206,11 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models3.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()

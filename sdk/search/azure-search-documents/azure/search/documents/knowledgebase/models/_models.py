@@ -8,15 +8,55 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
+import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from ......search.models._enums import KnowledgeBaseActivityRecordType, KnowledgeBaseReferenceType
 from ..._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ...indexes.models._enums import KnowledgeSourceKind
-from ._enums import KnowledgeBaseMessageContentType, KnowledgeRetrievalIntentType, KnowledgeRetrievalReasoningEffortKind
+from ...indexes.models._enums import KnowledgeSourceKind, VectorSearchVectorizerKind
+from ._enums import (
+    KnowledgeBaseActivityRecordType,
+    KnowledgeBaseMessageContentType,
+    KnowledgeBaseReferenceType,
+    KnowledgeRetrievalIntentType,
+    KnowledgeRetrievalReasoningEffortKind,
+)
 
 if TYPE_CHECKING:
     from .. import models as _models
+    from ...indexes import models as _indexes_models3
+
+
+class AIServices(_Model):
+    """Parameters for AI Services.
+
+    :ivar uri: The URI of the AI Services endpoint. Required.
+    :vartype uri: str
+    :ivar api_key: The API key for accessing AI Services.
+    :vartype api_key: str
+    """
+
+    uri: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URI of the AI Services endpoint. Required."""
+    api_key: Optional[str] = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
+    """The API key for accessing AI Services."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        uri: str,
+        api_key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class KnowledgeSourceParams(_Model):
@@ -145,6 +185,64 @@ class AzureBlobKnowledgeSourceParams(KnowledgeSourceParams, discriminator="azure
         self.kind = KnowledgeSourceKind.AZURE_BLOB  # type: ignore
 
 
+class CompletedSynchronizationState(_Model):
+    """Represents the completed state of the last synchronization.
+
+    :ivar start_time: The start time of the last completed synchronization. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the last completed synchronization. Required.
+    :vartype end_time: ~datetime.datetime
+    :ivar items_updates_processed: The number of item updates successfully processed in the last
+     synchronization. Required.
+    :vartype items_updates_processed: int
+    :ivar items_updates_failed: The number of item updates that failed in the last synchronization.
+     Required.
+    :vartype items_updates_failed: int
+    :ivar items_skipped: The number of items skipped in the last synchronization. Required.
+    :vartype items_skipped: int
+    """
+
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the last completed synchronization. Required."""
+    end_time: datetime.datetime = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the last completed synchronization. Required."""
+    items_updates_processed: int = rest_field(
+        name="itemsUpdatesProcessed", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of item updates successfully processed in the last synchronization. Required."""
+    items_updates_failed: int = rest_field(
+        name="itemsUpdatesFailed", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of item updates that failed in the last synchronization. Required."""
+    items_skipped: int = rest_field(name="itemsSkipped", visibility=["read", "create", "update", "delete", "query"])
+    """The number of items skipped in the last synchronization. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        items_updates_processed: int,
+        items_updates_failed: int,
+        items_skipped: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="indexedOneLake"):
     """Specifies runtime parameters for a indexed OneLake knowledge source.
 
@@ -254,7 +352,8 @@ class KnowledgeBaseActivityRecord(_Model):
     :ivar type: The type of the activity record. Required. Known values are: "searchIndex",
      "azureBlob", "indexedSharePoint", "indexedOneLake", "web", "remoteSharePoint",
      "modelQueryPlanning", "modelAnswerSynthesis", and "agenticReasoning".
-    :vartype type: str or ~search.models.KnowledgeBaseActivityRecordType
+    :vartype type: str or
+     ~azure.search.documents.knowledgebase.models.KnowledgeBaseActivityRecordType
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
     :vartype elapsed_ms: int
     :ivar error: The error detail explaining why the operation failed. This property is only
@@ -311,7 +410,7 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
      included when the activity does not succeed.
     :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
     :ivar type: The discriminator value. Required. Agentic reasoning activity.
-    :vartype type: str or ~search.models.AGENTIC_REASONING
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.AGENTIC_REASONING
     :ivar reasoning_tokens: The number of input tokens for agentic reasoning.
     :vartype reasoning_tokens: int
     :ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
@@ -363,7 +462,7 @@ class KnowledgeBaseReference(_Model):
 
     :ivar type: The type of the reference. Required. Known values are: "searchIndex", "azureBlob",
      "indexedSharePoint", "indexedOneLake", "web", and "remoteSharePoint".
-    :vartype type: str or ~search.models.KnowledgeBaseReferenceType
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.KnowledgeBaseReferenceType
     :ivar id: The ID of the reference. Required.
     :vartype id: str
     :ivar activity_source: The source activity ID for the reference. Required.
@@ -425,7 +524,7 @@ class KnowledgeBaseAzureBlobReference(KnowledgeBaseReference, discriminator="azu
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Azure Blob document reference.
-    :vartype type: str or ~search.models.AZURE_BLOB
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.AZURE_BLOB
     :ivar blob_url: The blob URL for the reference.
     :vartype blob_url: str
     """
@@ -543,7 +642,7 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Indexed OneLake document reference.
-    :vartype type: str or ~search.models.INDEXED_ONE_LAKE
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.INDEXED_ONE_LAKE
     :ivar doc_url: The document URL for the reference.
     :vartype doc_url: str
     """
@@ -588,7 +687,7 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Indexed SharePoint document reference.
-    :vartype type: str or ~search.models.INDEXED_SHARE_POINT
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.INDEXED_SHARE_POINT
     :ivar doc_url: The document URL for the reference.
     :vartype doc_url: str
     """
@@ -769,7 +868,7 @@ class KnowledgeBaseModelAnswerSynthesisActivityRecord(
      included when the activity does not succeed.
     :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
     :ivar type: The discriminator value. Required. LLM answer synthesis activity.
-    :vartype type: str or ~search.models.MODEL_ANSWER_SYNTHESIS
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.MODEL_ANSWER_SYNTHESIS
     :ivar input_tokens: The number of input tokens for the LLM answer synthesis activity.
     :vartype input_tokens: int
     :ivar output_tokens: The number of output tokens for the LLM answer synthesis activity.
@@ -823,7 +922,7 @@ class KnowledgeBaseModelQueryPlanningActivityRecord(
      included when the activity does not succeed.
     :vartype error: ~azure.search.documents.knowledgebase.models.KnowledgeBaseErrorDetail
     :ivar type: The discriminator value. Required. LLM query planning activity.
-    :vartype type: str or ~search.models.MODEL_QUERY_PLANNING
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.MODEL_QUERY_PLANNING
     :ivar input_tokens: The number of input tokens for the LLM query planning activity.
     :vartype input_tokens: int
     :ivar output_tokens: The number of output tokens for the LLM query planning activity.
@@ -876,7 +975,7 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Remote SharePoint document reference.
-    :vartype type: str or ~search.models.REMOTE_SHARE_POINT
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.REMOTE_SHARE_POINT
     :ivar web_url: The url the reference data originated from. Required.
     :vartype web_url: str
     :ivar search_sensitivity_label_info: Information about the sensitivity label applied to the
@@ -1059,7 +1158,7 @@ class KnowledgeBaseSearchIndexReference(KnowledgeBaseReference, discriminator="s
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Search index document reference.
-    :vartype type: str or ~search.models.SEARCH_INDEX
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.SEARCH_INDEX
     :ivar doc_key: The document key for the reference.
     :vartype doc_key: str
     """
@@ -1104,7 +1203,7 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Web document reference.
-    :vartype type: str or ~search.models.WEB
+    :vartype type: str or ~azure.search.documents.knowledgebase.models.WEB
     :ivar url: The url the reference data originated from. Required.
     :vartype url: str
     :ivar title: The title of the web document.
@@ -1326,6 +1425,283 @@ class KnowledgeRetrievalSemanticIntent(KnowledgeRetrievalIntent, discriminator="
         self.type = KnowledgeRetrievalIntentType.SEMANTIC  # type: ignore
 
 
+class KnowledgeSourceVectorizer(_Model):
+    """Specifies the vectorization method to be used for knowledge source embedding model.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    KnowledgeSourceAzureOpenAIVectorizer
+
+    :ivar kind: The name of the kind of vectorization method being configured for use with vector
+     search. Required. Known values are: "azureOpenAI", "customWebApi", "aiServicesVision", and
+     "aml".
+    :vartype kind: str or ~azure.search.documents.indexes.models.VectorSearchVectorizerKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the kind of vectorization method being configured for use with vector search.
+     Required. Known values are: \"azureOpenAI\", \"customWebApi\", \"aiServicesVision\", and
+     \"aml\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeSourceAzureOpenAIVectorizer(KnowledgeSourceVectorizer, discriminator="azureOpenAI"):
+    """Specifies the Azure OpenAI resource used to vectorize a query string.
+
+    :ivar kind: The discriminator value. Required. Generate embeddings using an Azure OpenAI
+     resource at query time.
+    :vartype kind: str or ~azure.search.documents.indexes.models.AZURE_OPEN_AI
+    :ivar azure_open_ai_parameters: Contains the parameters specific to Azure OpenAI embedding
+     vectorization.
+    :vartype azure_open_ai_parameters: ~azure.search.documents.indexes.models.AzureOpenAiParameters
+    """
+
+    kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Generate embeddings using an Azure OpenAI resource at query
+     time."""
+    azure_open_ai_parameters: Optional["_indexes_models3.AzureOpenAiParameters"] = rest_field(
+        name="azureOpenAIParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains the parameters specific to Azure OpenAI embedding vectorization."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_open_ai_parameters: Optional["_indexes_models3.AzureOpenAiParameters"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VectorSearchVectorizerKind.AZURE_OPEN_AI  # type: ignore
+
+
+class KnowledgeSourceIngestionParameters(_Model):
+    """Consolidates all general ingestion settings for knowledge sources.
+
+    :ivar identity: An explicit identity to use for this knowledge source.
+    :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
+    :ivar embedding_model: Optional vectorizer configuration for vectorizing content.
+    :vartype embedding_model:
+     ~azure.search.documents.knowledgebase.models.KnowledgeSourceVectorizer
+    :ivar chat_completion_model: Optional chat completion model for image verbalization or context
+     extraction.
+    :vartype chat_completion_model: ~azure.search.documents.indexes.models.KnowledgeBaseModel
+    :ivar disable_image_verbalization: Indicates whether image verbalization should be disabled.
+     Default is false.
+    :vartype disable_image_verbalization: bool
+    :ivar ingestion_schedule: Optional schedule for data ingestion.
+    :vartype ingestion_schedule: ~azure.search.documents.indexes.models.IndexingSchedule
+    :ivar ingestion_permission_options: Optional list of permission types to ingest together with
+     document content. If specified, it will set the indexer permission options for the data source.
+    :vartype ingestion_permission_options: list[str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceIngestionPermissionOption]
+    :ivar content_extraction_mode: Optional content extraction mode. Default is 'minimal'. Known
+     values are: "minimal" and "standard".
+    :vartype content_extraction_mode: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceContentExtractionMode
+    :ivar ai_services: Optional AI Services configuration for content processing.
+    :vartype ai_services: ~azure.search.documents.knowledgebase.models.AIServices
+    """
+
+    identity: Optional["_indexes_models3.SearchIndexerDataIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An explicit identity to use for this knowledge source."""
+    embedding_model: Optional["_models.KnowledgeSourceVectorizer"] = rest_field(
+        name="embeddingModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional vectorizer configuration for vectorizing content."""
+    chat_completion_model: Optional["_indexes_models3.KnowledgeBaseModel"] = rest_field(
+        name="chatCompletionModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional chat completion model for image verbalization or context extraction."""
+    disable_image_verbalization: Optional[bool] = rest_field(
+        name="disableImageVerbalization", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether image verbalization should be disabled. Default is false."""
+    ingestion_schedule: Optional["_indexes_models3.IndexingSchedule"] = rest_field(
+        name="ingestionSchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional schedule for data ingestion."""
+    ingestion_permission_options: Optional[
+        list[Union[str, "_indexes_models3.KnowledgeSourceIngestionPermissionOption"]]
+    ] = rest_field(name="ingestionPermissionOptions", visibility=["read", "create", "update", "delete", "query"])
+    """Optional list of permission types to ingest together with document content. If specified, it
+     will set the indexer permission options for the data source."""
+    content_extraction_mode: Optional[Union[str, "_indexes_models3.KnowledgeSourceContentExtractionMode"]] = rest_field(
+        name="contentExtractionMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional content extraction mode. Default is 'minimal'. Known values are: \"minimal\" and
+     \"standard\"."""
+    ai_services: Optional["_models.AIServices"] = rest_field(
+        name="aiServices", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional AI Services configuration for content processing."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_indexes_models3.SearchIndexerDataIdentity"] = None,
+        embedding_model: Optional["_models.KnowledgeSourceVectorizer"] = None,
+        chat_completion_model: Optional["_indexes_models3.KnowledgeBaseModel"] = None,
+        disable_image_verbalization: Optional[bool] = None,
+        ingestion_schedule: Optional["_indexes_models3.IndexingSchedule"] = None,
+        ingestion_permission_options: Optional[
+            list[Union[str, "_indexes_models3.KnowledgeSourceIngestionPermissionOption"]]
+        ] = None,
+        content_extraction_mode: Optional[Union[str, "_indexes_models3.KnowledgeSourceContentExtractionMode"]] = None,
+        ai_services: Optional["_models.AIServices"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeSourceStatistics(_Model):
+    """Statistical information about knowledge source synchronization history.
+
+    :ivar total_synchronization: Total number of synchronizations. Required.
+    :vartype total_synchronization: int
+    :ivar average_synchronization_duration: Average synchronization duration in HH:MM:SS format.
+     Required.
+    :vartype average_synchronization_duration: str
+    :ivar average_items_processed_per_synchronization: Average items processed per synchronization.
+     Required.
+    :vartype average_items_processed_per_synchronization: int
+    """
+
+    total_synchronization: int = rest_field(
+        name="totalSynchronization", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of synchronizations. Required."""
+    average_synchronization_duration: str = rest_field(
+        name="averageSynchronizationDuration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Average synchronization duration in HH:MM:SS format. Required."""
+    average_items_processed_per_synchronization: int = rest_field(
+        name="averageItemsProcessedPerSynchronization", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Average items processed per synchronization. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_synchronization: int,
+        average_synchronization_duration: str,
+        average_items_processed_per_synchronization: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeSourceStatus(_Model):
+    """Represents the status and synchronization history of a knowledge source.
+
+    :ivar synchronization_status: The current synchronization status. Required. Known values are:
+     "creating", "active", and "deleting".
+    :vartype synchronization_status: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceSynchronizationStatus
+    :ivar synchronization_interval: The synchronization interval (e.g., '1d' for daily). Null if no
+     schedule is configured.
+    :vartype synchronization_interval: str
+    :ivar current_synchronization_state: Current synchronization state that spans multiple indexer
+     runs.
+    :vartype current_synchronization_state:
+     ~azure.search.documents.knowledgebase.models.SynchronizationState
+    :ivar last_synchronization_state: Details of the last completed synchronization. Null on first
+     sync.
+    :vartype last_synchronization_state:
+     ~azure.search.documents.knowledgebase.models.CompletedSynchronizationState
+    :ivar statistics: Statistical information about the knowledge source synchronization history.
+     Null on first sync.
+    :vartype statistics: ~azure.search.documents.knowledgebase.models.KnowledgeSourceStatistics
+    """
+
+    synchronization_status: Union[str, "_indexes_models3.KnowledgeSourceSynchronizationStatus"] = rest_field(
+        name="synchronizationStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current synchronization status. Required. Known values are: \"creating\", \"active\", and
+     \"deleting\"."""
+    synchronization_interval: Optional[str] = rest_field(
+        name="synchronizationInterval", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The synchronization interval (e.g., '1d' for daily). Null if no schedule is configured."""
+    current_synchronization_state: Optional["_models.SynchronizationState"] = rest_field(
+        name="currentSynchronizationState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current synchronization state that spans multiple indexer runs."""
+    last_synchronization_state: Optional["_models.CompletedSynchronizationState"] = rest_field(
+        name="lastSynchronizationState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details of the last completed synchronization. Null on first sync."""
+    statistics: Optional["_models.KnowledgeSourceStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Statistical information about the knowledge source synchronization history. Null on first sync."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        synchronization_status: Union[str, "_indexes_models3.KnowledgeSourceSynchronizationStatus"],
+        synchronization_interval: Optional[str] = None,
+        current_synchronization_state: Optional["_models.SynchronizationState"] = None,
+        last_synchronization_state: Optional["_models.CompletedSynchronizationState"] = None,
+        statistics: Optional["_models.KnowledgeSourceStatistics"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RemoteSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminator="remoteSharePoint"):
     """Specifies runtime parameters for a remote SharePoint knowledge source.
 
@@ -1486,6 +1862,57 @@ class SharePointSensitivityLabelInfo(_Model):
         priority: Optional[int] = None,
         color: Optional[str] = None,
         is_encrypted: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SynchronizationState(_Model):
+    """Represents the current state of an ongoing synchronization that spans multiple indexer runs.
+
+    :ivar start_time: The start time of the current synchronization. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar items_updates_processed: The number of item updates successfully processed in the current
+     synchronization. Required.
+    :vartype items_updates_processed: int
+    :ivar items_updates_failed: The number of item updates that failed in the current
+     synchronization. Required.
+    :vartype items_updates_failed: int
+    :ivar items_skipped: The number of items skipped in the current synchronization. Required.
+    :vartype items_skipped: int
+    """
+
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the current synchronization. Required."""
+    items_updates_processed: int = rest_field(
+        name="itemsUpdatesProcessed", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of item updates successfully processed in the current synchronization. Required."""
+    items_updates_failed: int = rest_field(
+        name="itemsUpdatesFailed", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of item updates that failed in the current synchronization. Required."""
+    items_skipped: int = rest_field(name="itemsSkipped", visibility=["read", "create", "update", "delete", "query"])
+    """The number of items skipped in the current synchronization. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_time: datetime.datetime,
+        items_updates_processed: int,
+        items_updates_failed: int,
+        items_skipped: int,
     ) -> None: ...
 
     @overload

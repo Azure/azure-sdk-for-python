@@ -95,7 +95,6 @@ class SearchIndexingBufferedSender:
         will be assumed.
     """
 
-    _ODATA_ACCEPT: str = "application/json;odata.metadata=none"
     _DEFAULT_AUTO_FLUSH_INTERVAL = 60
     _DEFAULT_INITIAL_BATCH_ACTION_COUNT = 512
     _DEFAULT_MAX_RETRIES = 3
@@ -121,7 +120,6 @@ class SearchIndexingBufferedSender:
         self._retry_counter: Dict[str, int] = {}
 
         self._index_documents_batch = IndexDocumentsBatch()
-        audience = kwargs.pop("audience", None)
 
         # Create the search client based on credential type
         if isinstance(credential, AzureKeyCredential):

@@ -569,7 +569,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         index: _models2.SearchIndex,
         *,
         allow_index_downtime: Optional[bool] = None,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -582,7 +581,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         index: JSON,
         *,
         allow_index_downtime: Optional[bool] = None,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -595,7 +593,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         index: IO[bytes],
         *,
         allow_index_downtime: Optional[bool] = None,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -609,7 +606,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         index: Union[_models2.SearchIndex, JSON, IO[bytes]],
         *,
         allow_index_downtime: Optional[bool] = None,
-        query_source_authorization: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -627,10 +623,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
          the index can be impaired for several minutes after the index is updated, or longer for very
          large indexes. Default value is None.
         :paramtype allow_index_downtime: bool
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -671,7 +663,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _request = build_search_index_create_or_update_index_request(
             index_name=index_name,
             allow_index_downtime=allow_index_downtime,
-            query_source_authorization=query_source_authorization,
             etag=etag,
             match_condition=match_condition,
             prefer=prefer,
@@ -721,7 +712,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         self,
         index_name: str,
         *,
-        query_source_authorization: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -732,10 +722,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         :param index_name: The name of the index. Required.
         :type index_name: str
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -766,7 +752,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         _request = build_search_index_delete_index_request(
             index_name=index_name,
-            query_source_authorization=query_source_authorization,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -797,17 +782,11 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_index(
-        self, index_name: str, *, query_source_authorization: Optional[str] = None, **kwargs: Any
-    ) -> _models2.SearchIndex:
+    async def get_index(self, index_name: str, **kwargs: Any) -> _models2.SearchIndex:
         """Retrieves an index definition.
 
         :param index_name: The name of the index. Required.
         :type index_name: str
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: SearchIndex. The SearchIndex is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -827,7 +806,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         _request = build_search_index_get_index_request(
             index_name=index_name,
-            query_source_authorization=query_source_authorization,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1084,17 +1062,11 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_index_statistics(
-        self, index_name: str, *, query_source_authorization: Optional[str] = None, **kwargs: Any
-    ) -> _models2.GetIndexStatisticsResult:
+    async def get_index_statistics(self, index_name: str, **kwargs: Any) -> _models2.GetIndexStatisticsResult:
         """Returns statistics for the given index, including a document count and storage usage.
 
         :param index_name: The name of the index. Required.
         :type index_name: str
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: GetIndexStatisticsResult. The GetIndexStatisticsResult is compatible with
          MutableMapping
         :rtype: ~azure.search.documents.indexes.models.GetIndexStatisticsResult
@@ -1115,7 +1087,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         _request = build_search_index_get_index_statistics_request(
             index_name=index_name,
-            query_source_authorization=query_source_authorization,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1161,7 +1132,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         index_name: str,
         request: _models2.AnalyzeTextOptions,
         *,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models2.AnalyzeResult:
@@ -1171,10 +1141,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :type index_name: str
         :param request: The text and analyzer or analysis components to test. Required.
         :type request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1185,13 +1151,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def analyze_text(
-        self,
-        index_name: str,
-        request: JSON,
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, index_name: str, request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
 
@@ -1199,10 +1159,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :type index_name: str
         :param request: The text and analyzer or analysis components to test. Required.
         :type request: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1213,13 +1169,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def analyze_text(
-        self,
-        index_name: str,
-        request: IO[bytes],
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, index_name: str, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
 
@@ -1227,10 +1177,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :type index_name: str
         :param request: The text and analyzer or analysis components to test. Required.
         :type request: IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1241,12 +1187,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def analyze_text(
-        self,
-        index_name: str,
-        request: Union[_models2.AnalyzeTextOptions, JSON, IO[bytes]],
-        *,
-        query_source_authorization: Optional[str] = None,
-        **kwargs: Any
+        self, index_name: str, request: Union[_models2.AnalyzeTextOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
 
@@ -1255,10 +1196,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :param request: The text and analyzer or analysis components to test. Is one of the following
          types: AnalyzeTextOptions, JSON, IO[bytes] Required.
         :type request: ~azure.search.documents.indexes.models.AnalyzeTextOptions or JSON or IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: AnalyzeResult. The AnalyzeResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1286,7 +1223,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         _request = build_search_index_analyze_text_request(
             index_name=index_name,
-            query_source_authorization=query_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3465,12 +3401,77 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def resync(self, indexer_name: str, **kwargs: Any) -> None:
+    @overload
+    async def resync(
+        self,
+        indexer_name: str,
+        indexer_resync: _models2.IndexerResyncBody,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
 
         :param indexer_name: The name of the indexer. Required.
         :type indexer_name: str
+        :param indexer_resync: The definition of the indexer resync options. Required.
+        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def resync(
+        self, indexer_name: str, indexer_resync: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Resync selective options from the datasource to be re-ingested by the indexer.".
+
+        :param indexer_name: The name of the indexer. Required.
+        :type indexer_name: str
+        :param indexer_resync: The definition of the indexer resync options. Required.
+        :type indexer_resync: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def resync(
+        self, indexer_name: str, indexer_resync: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Resync selective options from the datasource to be re-ingested by the indexer.".
+
+        :param indexer_name: The name of the indexer. Required.
+        :type indexer_name: str
+        :param indexer_resync: The definition of the indexer resync options. Required.
+        :type indexer_resync: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def resync(
+        self, indexer_name: str, indexer_resync: Union[_models2.IndexerResyncBody, JSON, IO[bytes]], **kwargs: Any
+    ) -> None:
+        """Resync selective options from the datasource to be re-ingested by the indexer.".
+
+        :param indexer_name: The name of the indexer. Required.
+        :type indexer_name: str
+        :param indexer_resync: The definition of the indexer resync options. Is one of the following
+         types: IndexerResyncBody, JSON, IO[bytes] Required.
+        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or JSON or
+         IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3483,14 +3484,24 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(indexer_resync, (IOBase, bytes)):
+            _content = indexer_resync
+        else:
+            _content = json.dumps(indexer_resync, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_indexer_resync_request(
             indexer_name=indexer_name,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
