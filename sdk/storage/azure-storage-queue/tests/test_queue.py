@@ -1497,9 +1497,9 @@ class TestStorageQueue(StorageRecordedTestCase):
         queue_msg = queue_client.send_message(message)
         assert queue_msg is not None
 
-        result = next(queue_client.receive_messages())
-        assert message == result.content
-
+        messages = list(queue_client.receive_messages())
+        assert len(messages) > 0
+        assert message == messages[0].content
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
