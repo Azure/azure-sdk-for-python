@@ -219,7 +219,7 @@ class Worker(Executor):
                 AgentRunUpdateEvent(
                     self.id,
                     data=AgentRunResponseUpdate(
-                        contents=contents, role=ChatRole.ASSISTANT
+                        contents=contents, role=ChatRole.ASSISTANT, author_name=self.id
                     ),
                 )
             )
