@@ -23,7 +23,7 @@ class TestMySQLManagementLocationBasedCapabilitySetOperations(AzureMgmtRecordedT
     def test_location_based_capability_set_list(self, resource_group):
         response = self.client.location_based_capability_set.list(
             location_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestMySQLManagementLocationBasedCapabilitySetOperations(AzureMgmtRecordedT
         response = self.client.location_based_capability_set.get(
             location_name="str",
             capability_set_name="default",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself

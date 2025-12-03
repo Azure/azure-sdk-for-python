@@ -261,7 +261,7 @@
 
 # PRLabel: %Voice Live
 # ServiceLabel: %Voice Live %Service Attention
-/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
 
 
 # PRLabel: %HDInsight
@@ -412,12 +412,11 @@
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
-# ServiceOwners: @MikeyMCZ @Han-msft
 # ServiceLabel: %Cognitive - Translator
+# ServiceOwners: @jrjrguo @SG-MS
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/azure-ai-translation-document/                      @Han-msft
-/sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
+/sdk/translation/                                                    @jrjrguo @SG-MS
 
 # PRLabel: %Cognitive - Language
 /sdk/cognitivelanguage/                                              @quentinRobinson @bidisha-c @mikaelsitruk @sarkar-rajarshi @ahmedaashour

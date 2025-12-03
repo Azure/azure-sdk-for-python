@@ -5,8 +5,13 @@
 ### Features Added
 
 ### Breaking Changes
+- Pin OpenTelemetry versions to guard against upstream logging breaking changes
+  ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
 
 ### Bugs Fixed
+
+- Fix default value overriding user-configured sampling ratio in distro
+  ([#44162](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
 ### Other Changes
 

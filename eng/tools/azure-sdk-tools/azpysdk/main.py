@@ -24,7 +24,9 @@ from .pyright import pyright
 from .next_pyright import next_pyright
 from .ruff import ruff
 from .verifytypes import verifytypes
+from .apistub import apistub
 from .verify_sdist import verify_sdist
+from .whl import whl
 from .verify_whl import verify_whl
 from .bandit import bandit
 from .verify_keywords import verify_keywords
@@ -85,7 +87,9 @@ def build_parser() -> argparse.ArgumentParser:
     next_pyright().register(subparsers, [common])
     ruff().register(subparsers, [common])
     verifytypes().register(subparsers, [common])
+    apistub().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])
+    whl().register(subparsers, [common])
     verify_whl().register(subparsers, [common])
     bandit().register(subparsers, [common])
     verify_keywords().register(subparsers, [common])
