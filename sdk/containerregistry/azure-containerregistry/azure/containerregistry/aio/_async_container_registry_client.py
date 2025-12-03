@@ -338,7 +338,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[str], deserialized.get("manifests", []))
+            list_of_elem = _deserialize(list[ManifestAttributesBase], deserialized.get("manifests", []))
             
             if cls:
                 list_of_elem = cls(list_of_elem)
