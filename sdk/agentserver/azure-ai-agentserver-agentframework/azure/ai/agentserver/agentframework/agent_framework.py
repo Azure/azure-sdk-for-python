@@ -228,7 +228,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             # Use split converters
             if context.stream:
                 logger.info("Running agent in streaming mode")
-                streaming_converter = AgentFrameworkOutputStreamingConverter(context, agent)
+                streaming_converter = AgentFrameworkOutputStreamingConverter(context)
 
                 async def stream_updates():
                     try:
@@ -252,7 +252,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
             # Non-streaming path
             logger.info("Running agent in non-streaming mode")
-            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, agent)
+            non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context)
             result = await agent.run(message)
             logger.debug(f"Agent run completed, result type: {type(result)}")
             transformed_result = non_streaming_converter.transform_output_for_response(result)

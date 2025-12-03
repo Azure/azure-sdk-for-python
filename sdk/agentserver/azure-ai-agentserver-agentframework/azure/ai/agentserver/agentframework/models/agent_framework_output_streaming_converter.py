@@ -255,9 +255,8 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
 class AgentFrameworkOutputStreamingConverter:
     """Streaming converter using content-type-specific state handlers."""
 
-    def __init__(self, context: AgentRunContext, agent: Any = None) -> None:
+    def __init__(self, context: AgentRunContext) -> None:
         self._context = context
-        self._agent = agent
         # sequence numbers must start at 0 for first emitted event
         self._sequence = -1
         self._next_output_index = -1
