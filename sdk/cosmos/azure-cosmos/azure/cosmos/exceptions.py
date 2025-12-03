@@ -117,7 +117,8 @@ class CosmosBatchOperationError(HttpResponseError):
 class CosmosClientTimeoutError(AzureError):
     """An operation failed to complete within the specified timeout."""
 
-    def __init__(self, message=None, **kwargs):
+    def __init__(self, **kwargs):
+        message = kwargs.pop('message', None)
         if message is None:
             message = "The request failed to complete within the given timeout."
         self.response = None
