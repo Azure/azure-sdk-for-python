@@ -19,6 +19,31 @@ from devtools_testutils import (
 load_dotenv()
 
 
+# Define fixtures for test parameters
+@pytest.fixture(scope="session")
+def transcription_endpoint():
+    """Fixture providing the transcription endpoint."""
+    return os.environ.get(
+        "TRANSCRIPTION_ENDPOINT", 
+        "https://fakeendpoint.cognitiveservices.azure.com"
+    )
+
+
+@pytest.fixture(scope="session")
+def transcription_api_key():
+    """Fixture providing the transcription API key."""
+    return os.environ.get("TRANSCRIPTION_API_KEY", "fake-api-key")
+
+
+@pytest.fixture(scope="session")
+def transcription_test_audio_url():
+    """Fixture providing a test audio URL."""
+    return os.environ.get(
+        "TRANSCRIPTION_TEST_AUDIO_URL",
+        "https://example.com/test-audio.wav"
+    )
+
+
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
