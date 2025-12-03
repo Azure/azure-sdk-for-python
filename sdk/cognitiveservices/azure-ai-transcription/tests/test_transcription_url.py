@@ -6,7 +6,6 @@
 import pytest
 from devtools_testutils import recorded_by_proxy
 from preparer import TranscriptionClientTestBase, TranscriptionPreparer
-from azure.ai.transcription.models import TranscriptionOptions
 
 
 class TestTranscriptionUrl(TranscriptionClientTestBase):
