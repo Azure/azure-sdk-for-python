@@ -28,6 +28,7 @@ from ..._utils.serialization import Deserializer, Serializer
 from ...operations._service_operations import (
     build_get_properties_request,
     build_get_statistics_request,
+    build_get_user_delegation_key_request,
     build_list_queues_segment_request,
     build_set_properties_request,
 )
@@ -275,6 +276,93 @@ class ServiceOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         deserialized = self._deserialize("StorageServiceStats", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_user_delegation_key(
+        self,
+        key_info: _models.KeyInfo,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.UserDelegationKey:
+        """Retrieves a user delegation key for the Queue service. This is only a valid operation when
+        using bearer token authentication.
+
+        :param key_info: Key information. Required.
+        :type key_info: ~azure.storage.queue.models.KeyInfo
+        :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>. Default value is None.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
+        :type request_id_parameter: str
+        :return: UserDelegationKey or the result of cls(response)
+        :rtype: ~azure.storage.queue.models.UserDelegationKey
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+        comp: Literal["userdelegationkey"] = kwargs.pop("comp", _params.pop("comp", "userdelegationkey"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.UserDelegationKey] = kwargs.pop("cls", None)
+
+        _content = self._serialize.body(key_info, "KeyInfo", is_xml=True)
+
+        _request = build_get_user_delegation_key_request(
+            url=self._config.url,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        deserialized = self._deserialize("UserDelegationKey", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
