@@ -568,7 +568,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             list_of_elem = _deserialize(
                 list[TagAttributesBase],
                 (await pipeline_response.http_response.internal_response.json()).get("tags", []),
-            )
+            ) or []
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
