@@ -10954,9 +10954,7 @@ class VirtualMachineConfiguration(_Model):
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
      applied. Values are:
-
-      Windows_Server - The on-premises license is for Windows
-     Server.
+      Windows_Server - The on-premises license is for Windows Server.
       Windows_Client - The on-premises license is for Windows Client.
     :vartype license_type: str
     :ivar container_configuration: The container configuration for the Pool. If specified, setup is
@@ -11026,9 +11024,7 @@ class VirtualMachineConfiguration(_Model):
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
      applied. Values are:
-     
-      Windows_Server - The on-premises license is for Windows
-     Server.
+      Windows_Server - The on-premises license is for Windows Server.
       Windows_Client - The on-premises license is for Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
