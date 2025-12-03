@@ -74,7 +74,6 @@ with (
             elif event.type == "response.completed":
                 print(f"\n\nResponse completed. Access final text in 'event.response.output_text'")
 
-
     openai_client.conversations.delete(conversation_id=conversation.id)
     print("Conversation deleted")
 
