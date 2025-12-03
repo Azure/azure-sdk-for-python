@@ -221,7 +221,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         def extract_data(pipeline_response):
             list_of_elem = _deserialize(
                 list[str], pipeline_response.http_response.internal_response.json().get("repositories", [])
-            )
+            ) or []
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
