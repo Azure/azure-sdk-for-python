@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -337,38 +337,6 @@ class GeoReplication(_serialization.Model):
         self.last_sync_time = last_sync_time
 
 
-class KeyInfo(_serialization.Model):
-    """Key information.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar start: The date-time the key is active in ISO 8601 UTC time.
-    :vartype start: str
-    :ivar expiry: The date-time the key expires in ISO 8601 UTC time. Required.
-    :vartype expiry: str
-    """
-
-    _validation = {
-        "expiry": {"required": True},
-    }
-
-    _attribute_map = {
-        "start": {"key": "Start", "type": "str"},
-        "expiry": {"key": "Expiry", "type": "str"},
-    }
-
-    def __init__(self, *, expiry: str, start: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword start: The date-time the key is active in ISO 8601 UTC time.
-        :paramtype start: str
-        :keyword expiry: The date-time the key expires in ISO 8601 UTC time. Required.
-        :paramtype expiry: str
-        """
-        super().__init__(**kwargs)
-        self.start = start
-        self.expiry = expiry
-
-
 class ListQueuesSegmentResponse(_serialization.Model):
     """The object returned when calling List Queues on a Queue Service.
 
@@ -417,7 +385,7 @@ class ListQueuesSegmentResponse(_serialization.Model):
         max_results: int,
         next_marker: str,
         marker: Optional[str] = None,
-        queue_items: Optional[List["_models.QueueItem"]] = None,
+        queue_items: Optional[list["_models.QueueItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -647,7 +615,7 @@ class QueueItem(_serialization.Model):
     }
     _xml_map = {"name": "Queue"}
 
-    def __init__(self, *, name: str, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, name: str, metadata: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Queue. Required.
         :paramtype name: str
@@ -808,7 +776,7 @@ class StorageServiceProperties(_serialization.Model):
         logging: Optional["_models.Logging"] = None,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[List["_models.CorsRule"]] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -848,83 +816,3 @@ class StorageServiceStats(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.geo_replication = geo_replication
-
-
-class UserDelegationKey(_serialization.Model):
-    """A user delegation key.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar signed_oid: The Azure Active Directory object ID in GUID format. Required.
-    :vartype signed_oid: str
-    :ivar signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
-    :vartype signed_tid: str
-    :ivar signed_start: The date-time the key is active. Required.
-    :vartype signed_start: ~datetime.datetime
-    :ivar signed_expiry: The date-time the key expires. Required.
-    :vartype signed_expiry: ~datetime.datetime
-    :ivar signed_service: Abbreviation of the Azure Storage service that accepts the key. Required.
-    :vartype signed_service: str
-    :ivar signed_version: The service version that created the key. Required.
-    :vartype signed_version: str
-    :ivar value: The key as a base64 string. Required.
-    :vartype value: str
-    """
-
-    _validation = {
-        "signed_oid": {"required": True},
-        "signed_tid": {"required": True},
-        "signed_start": {"required": True},
-        "signed_expiry": {"required": True},
-        "signed_service": {"required": True},
-        "signed_version": {"required": True},
-        "value": {"required": True},
-    }
-
-    _attribute_map = {
-        "signed_oid": {"key": "SignedOid", "type": "str"},
-        "signed_tid": {"key": "SignedTid", "type": "str"},
-        "signed_start": {"key": "SignedStart", "type": "iso-8601"},
-        "signed_expiry": {"key": "SignedExpiry", "type": "iso-8601"},
-        "signed_service": {"key": "SignedService", "type": "str"},
-        "signed_version": {"key": "SignedVersion", "type": "str"},
-        "value": {"key": "Value", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        signed_oid: str,
-        signed_tid: str,
-        signed_start: datetime.datetime,
-        signed_expiry: datetime.datetime,
-        signed_service: str,
-        signed_version: str,
-        value: str,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword signed_oid: The Azure Active Directory object ID in GUID format. Required.
-        :paramtype signed_oid: str
-        :keyword signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
-        :paramtype signed_tid: str
-        :keyword signed_start: The date-time the key is active. Required.
-        :paramtype signed_start: ~datetime.datetime
-        :keyword signed_expiry: The date-time the key expires. Required.
-        :paramtype signed_expiry: ~datetime.datetime
-        :keyword signed_service: Abbreviation of the Azure Storage service that accepts the key.
-         Required.
-        :paramtype signed_service: str
-        :keyword signed_version: The service version that created the key. Required.
-        :paramtype signed_version: str
-        :keyword value: The key as a base64 string. Required.
-        :paramtype value: str
-        """
-        super().__init__(**kwargs)
-        self.signed_oid = signed_oid
-        self.signed_tid = signed_tid
-        self.signed_start = signed_start
-        self.signed_expiry = signed_expiry
-        self.signed_service = signed_service
-        self.signed_version = signed_version
-        self.value = value

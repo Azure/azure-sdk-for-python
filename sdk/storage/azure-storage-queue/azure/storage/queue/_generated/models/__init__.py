@@ -19,7 +19,6 @@ from ._models_py3 import (  # type: ignore
     DequeuedMessageItem,
     EnqueuedMessage,
     GeoReplication,
-    KeyInfo,
     ListQueuesSegmentResponse,
     Logging,
     Metrics,
@@ -31,7 +30,6 @@ from ._models_py3 import (  # type: ignore
     StorageError,
     StorageServiceProperties,
     StorageServiceStats,
-    UserDelegationKey,
 )
 
 from ._azure_queue_storage_enums import (  # type: ignore
@@ -48,7 +46,6 @@ __all__ = [
     "DequeuedMessageItem",
     "EnqueuedMessage",
     "GeoReplication",
-    "KeyInfo",
     "ListQueuesSegmentResponse",
     "Logging",
     "Metrics",
@@ -60,7 +57,6 @@ __all__ = [
     "StorageError",
     "StorageServiceProperties",
     "StorageServiceStats",
-    "UserDelegationKey",
     "GeoReplicationStatusType",
     "StorageErrorCode",
 ]
