@@ -189,12 +189,6 @@ def transform_httpx_request(request, recording_id: str) -> None:
     request.headers["x-recording-id"] = recording_id
     request.headers["x-recording-mode"] = "record" if is_live() else "playback"
 
-    # Remove all request headers that start with `x-stainless`, since they contain CPU info, OS info, etc.
-    # Those change depending on which machine the tests are run on, so we cannot have a single test recording with those.
-    headers_to_remove = [key for key in request.headers.keys() if key.lower().startswith("x-stainless")]
-    for header in headers_to_remove:
-        del request.headers[header]
-
     # Rewrite URL to proxy
     updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
     request.url = httpx.URL(updated_target)
