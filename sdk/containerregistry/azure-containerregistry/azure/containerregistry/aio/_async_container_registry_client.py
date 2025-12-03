@@ -61,7 +61,7 @@ from .._models import (
 
 from .operations._operations import (
     build_container_registry_get_repositories_request,
-    build_container_registry_get_manifests_request
+    build_container_registry_get_manifests_request,
 )
 
 from ..models import AcrManifests
@@ -182,13 +182,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             # Construct headers
             header_parameters: Dict[str, Any] = {}
             query_parameters: Dict[str, Any] = {}
-            
+
             if not next_link:
 
                 _request = build_container_registry_get_repositories_request(
                     last=last,
-                    n=None,
-                    #api_version=self._config.api_version,
+                    n=results_per_page,
                     api_version=self._client._config.api_version,  # pylint: disable=protected-access
                     headers=header_parameters,
                     params=query_parameters,
@@ -233,8 +232,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
@@ -301,7 +302,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             query_parameters: Dict[str, Any] = {}
 
             if not next_link:
-                
+
                 _request = build_container_registry_get_manifests_request(
                     name=name,
                     last=last,
@@ -313,9 +314,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
 
                 path_format_arguments = {
-                    "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True),
+                    "endpoint": self._client._serialize.url(
+                        "self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True
+                    ),
                 }
-                
+
                 _request.url = self._client._client.format_url(_request.url, **path_format_arguments)
             else:
                 _parsed_next_link = urllib.parse.urlparse(next_link)
@@ -329,9 +332,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                
+
                 path_format_arguments = {
-                    "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True),
+                    "endpoint": self._client._serialize.url(
+                        "self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client._client.format_url(_request.url, **path_format_arguments)
             return _request
@@ -339,7 +344,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(list[ManifestAttributesBase], deserialized.get("manifests", []))
-            
+
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
@@ -561,7 +566,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         async def extract_data(pipeline_response):
             list_of_elem = _deserialize(
-                list[TagAttributesBase], (await pipeline_response.http_response.internal_response.json()).get("tags", [])
+                list[TagAttributesBase],
+                (await pipeline_response.http_response.internal_response.json()).get("tags", []),
             )
             if cls:
                 list_of_elem = cls(list_of_elem)
