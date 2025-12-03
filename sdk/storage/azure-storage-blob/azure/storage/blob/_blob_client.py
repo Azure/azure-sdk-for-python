@@ -3288,6 +3288,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
+            Specifies the source encryption key to use to encrypt
+            the source data provided in the request.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the service. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -3319,8 +3325,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        if self.scheme.lower() != 'https':
+            if kwargs.get('cpk') or kwargs.get('source_cpk'):
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _append_block_from_url_options(
             copy_source_url=copy_source_url,
             source_offset=source_offset,

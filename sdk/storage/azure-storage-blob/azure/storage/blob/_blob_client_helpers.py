@@ -1181,8 +1181,12 @@ def _append_block_from_url_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
+    source_cpk = kwargs.pop('source_cpk', None)
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -1199,8 +1203,17 @@ def _append_block_from_url_options(
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
         'cls': return_response_headers,
-        'timeout': kwargs.pop('timeout', None)}
+        'timeout': kwargs.pop('timeout', None)
+    }
     options.update(kwargs)
+
+    if source_cpk:
+        options.update({
+            'source_encryption_key': source_cpk.key_value,
+            'source_encryption_key_sha256': source_cpk.key_hash,
+            'source_encryption_algorithm': source_cpk.algorithm
+        })
+
     return options
 
 def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
