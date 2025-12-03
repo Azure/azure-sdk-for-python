@@ -433,21 +433,6 @@ class ContainerRepositoryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteRepositoryResult(_Model):
-    """Deleted repository.
-
-    :ivar deleted_manifests: SHA of the deleted image.
-    :vartype deleted_manifests: list[str]
-    :ivar deleted_tags: Tag of the deleted image.
-    :vartype deleted_tags: list[str]
-    """
-
-    deleted_manifests: Optional[list[str]] = rest_field(name="manifestsDeleted", visibility=["read"])
-    """SHA of the deleted image."""
-    deleted_tags: Optional[list[str]] = rest_field(name="tagsDeleted", visibility=["read"])
-    """Tag of the deleted image."""
-
-
 class Descriptor(_Model):
     """Docker V2 image layer descriptor including config and layers.
 

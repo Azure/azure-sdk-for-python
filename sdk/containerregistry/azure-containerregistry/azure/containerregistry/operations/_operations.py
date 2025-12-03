@@ -186,12 +186,9 @@ def build_container_registry_get_properties_request(  # pylint: disable=name-too
 def build_container_registry_delete_repository_request(  # pylint: disable=name-too-long
     name: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/acr/v1/{name}"
     path_format_arguments = {
@@ -203,10 +200,7 @@ def build_container_registry_delete_repository_request(  # pylint: disable=name-
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_container_registry_update_properties_request(  # pylint: disable=name-too-long
@@ -1238,13 +1232,13 @@ class ContainerRegistryOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_repository(self, name: str, **kwargs: Any) -> _models.DeleteRepositoryResult:
+    def delete_repository(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete the repository identified by ``name``.
 
         :param name: Name of the image (including the namespace). Required.
         :type name: str
-        :return: DeleteRepositoryResult. The DeleteRepositoryResult is compatible with MutableMapping
-        :rtype: ~azure.containerregistry.models.DeleteRepositoryResult
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1258,7 +1252,7 @@ class ContainerRegistryOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteRepositoryResult] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_registry_delete_repository_request(
             name=name,
@@ -1271,31 +1265,19 @@ class ContainerRegistryOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+        if response.status_code not in [202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.DeleteRepositoryResult, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def update_properties(
