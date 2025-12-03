@@ -21,7 +21,7 @@ from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
 from ._utils import (
-    AZ_AI_AGENT_SYSTEM,
+    AZURE_AI_AGENTS_PROVIDER,
     ERROR_TYPE,
     GEN_AI_AGENT_DESCRIPTION,
     GEN_AI_AGENT_ID,
@@ -30,7 +30,7 @@ from ._utils import (
     GEN_AI_MESSAGE_ID,
     GEN_AI_MESSAGE_STATUS,
     GEN_AI_OPERATION_NAME,
-    GEN_AI_SYSTEM,
+    GEN_AI_PROVIDER_NAME,
     GEN_AI_SYSTEM_MESSAGE,
     GEN_AI_THREAD_ID,
     GEN_AI_THREAD_RUN_ID,
@@ -265,7 +265,7 @@ class _AIAgentsInstrumentorPreview:
         run_step_last_error: Optional[Any] = None,
         usage: Optional[Any] = None,
     ) -> Dict[str, Any]:
-        attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
+        attrs: Dict[str, Any] = {GEN_AI_PROVIDER_NAME: AZURE_AI_AGENTS_PROVIDER}
         if thread_id:
             attrs[GEN_AI_THREAD_ID] = thread_id
 
@@ -343,11 +343,11 @@ class _AIAgentsInstrumentorPreview:
             attachments=(
                 message.get("attachments") if isinstance(message, dict) else getattr(message, "attachments", None)
             ),
-            thread_id=message.get("thread_id") if isinstance(message, dict) else getattr(message, "thread_id", None),
-            agent_id=message.get("agent_id") if isinstance(message, dict) else getattr(message, "agent_id", None),
-            message_id=message.get("id") if isinstance(message, dict) else getattr(message, "id", None),
-            thread_run_id=message.get("run_id") if isinstance(message, dict) else getattr(message, "run_id", None),
-            message_status=message.get("status") if isinstance(message, dict) else getattr(message, "status", None),
+            thread_id=(message.get("thread_id") if isinstance(message, dict) else getattr(message, "thread_id", None)),
+            agent_id=(message.get("agent_id") if isinstance(message, dict) else getattr(message, "agent_id", None)),
+            message_id=(message.get("id") if isinstance(message, dict) else getattr(message, "id", None)),
+            thread_run_id=(message.get("run_id") if isinstance(message, dict) else getattr(message, "run_id", None)),
+            message_status=(message.get("status") if isinstance(message, dict) else getattr(message, "status", None)),
             incomplete_details=(
                 message.get("incomplete_details")
                 if isinstance(message, dict)
@@ -372,27 +372,46 @@ class _AIAgentsInstrumentorPreview:
     ) -> None:
         # TODO document new fields
 
-        event_body: dict[str, Any] = {}
+        content_array: List[Dict[str, Any]] = []
         if _trace_agents_content:
             if isinstance(content, List):
                 for block in content:
                     if isinstance(block, Dict):
                         if block.get("type") == "input_text" and "text" in block:
-                            event_body["content"] = block["text"]
+                            # Use optimized format with consistent "content" field
+                            content_array.append({"type": "text", "content": block["text"]})
                             break
-            else:
-                event_body["content"] = content
-            if attachments:
-                event_body["attachments"] = []
-                for attachment in attachments:
-                    attachment_body = {"id": attachment.file_id}
-                    if attachment.tools:
-                        attachment_body["tools"] = [self._get_field(tool, "type") for tool in attachment.tools]
-                    event_body["attachments"].append(attachment_body)
+            elif content:
+                # Simple text content
+                content_array.append({"type": "text", "content": content})
 
+            if attachments:
+                # Add attachments as separate content items
+                for attachment in attachments:
+                    attachment_body: Dict[str, Any] = {
+                        "type": "attachment",
+                        "content": {"id": attachment.file_id},
+                    }
+                    if attachment.tools:
+                        content_dict: Dict[str, Any] = attachment_body["content"]  # type: ignore[assignment]
+                        content_dict["tools"] = [self._get_field(tool, "type") for tool in attachment.tools]
+                    content_array.append(attachment_body)
+
+        # Add metadata fields if present
+        metadata: Dict[str, Any] = {}
         if incomplete_details:
-            event_body["incomplete_details"] = incomplete_details
-        event_body["role"] = role
+            metadata["incomplete_details"] = incomplete_details
+
+        # Combine content array with metadata if needed
+        event_data: Union[Dict[str, Any], List[Dict[str, Any]]] = {}
+        if metadata:
+            # When we have metadata, we need to wrap it differently
+            event_data = metadata
+            if content_array:
+                event_data["content"] = content_array
+        else:
+            # No metadata, use content array directly as the event data
+            event_data = content_array if isinstance(content_array, list) else {}
 
         attributes = self._create_event_attributes(
             thread_id=thread_id,
@@ -402,7 +421,11 @@ class _AIAgentsInstrumentorPreview:
             message_status=message_status,
             usage=usage,
         )
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
+        # Store as JSON - either array or object depending on metadata
+        if not metadata and content_array:
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+        else:
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_data, ensure_ascii=False)
 
         event_name = None
         if role == "user":
@@ -431,24 +454,42 @@ class _AIAgentsInstrumentorPreview:
         additional_instructions: Optional[str],
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
+        response_schema: Optional[Any] = None,
     ) -> None:
-        # Early return if no instructions to trace
-        if not instructions:
+        # Early return if no instructions AND no response schema to trace
+        if not instructions and response_schema is None:
             return
 
-        event_body: Dict[str, Any] = {}
+        content_array: List[Dict[str, Any]] = []
         if _trace_agents_content:
-            # Combine instructions if both exist
-            if additional_instructions:
-                combined_text = f"{instructions} {additional_instructions}"
-            else:
-                combined_text = instructions
+            # Add instructions if provided
+            if instructions:
+                # Combine instructions if both exist
+                if additional_instructions:
+                    combined_text = f"{instructions} {additional_instructions}"
+                else:
+                    combined_text = instructions
 
-            # Use standard content format
-            event_body["content"] = [{"type": "text", "text": combined_text}]
+                # Use optimized format with consistent "content" field
+                content_array.append({"type": "text", "content": combined_text})
+
+            # Add response schema if provided
+            if response_schema is not None:
+                # Convert schema to JSON string if it's a dict/object
+                if isinstance(response_schema, dict):
+                    schema_str = json.dumps(response_schema, ensure_ascii=False)
+                elif hasattr(response_schema, "__dict__"):
+                    # Handle model objects by converting to dict first
+                    schema_dict = {k: v for k, v in response_schema.__dict__.items() if not k.startswith("_")}
+                    schema_str = json.dumps(schema_dict, ensure_ascii=False)
+                else:
+                    schema_str = str(response_schema)
+
+                content_array.append({"type": "response_schema", "content": schema_str})
 
         attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
+        # Store as JSON array directly without outer wrapper
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
         span.span_instance.add_event(name=GEN_AI_SYSTEM_MESSAGE, attributes=attributes)
 
     def _status_to_string(self, status: Any) -> str:
@@ -501,8 +542,7 @@ class _AIAgentsInstrumentorPreview:
             response_format=_AIAgentsInstrumentorPreview.agent_api_response_to_str(response_format),
             reasoning_effort=reasoning_effort,
             reasoning_summary=reasoning_summary,
-            structured_inputs=str(structured_inputs) if structured_inputs is not None else None,
-            gen_ai_system=AZ_AI_AGENT_SYSTEM,
+            structured_inputs=(str(structured_inputs) if structured_inputs is not None else None),
         )
         if span and span.span_instance.is_recording:
             span.add_attribute(GEN_AI_OPERATION_NAME, OperationName.CREATE_AGENT.value)
@@ -513,12 +553,31 @@ class _AIAgentsInstrumentorPreview:
             if agent_type:
                 span.add_attribute("gen_ai.agent.type", agent_type)
 
-            # Add instructions event (if instructions exist)
-            self._add_instructions_event(span, instructions, None)
+            # Extract response schema from text parameter if available
+            response_schema = None
+            if response_format and text:
+                # Extract schema from text.format.schema if available
+                if hasattr(text, "format"):
+                    format_info = getattr(text, "format", None)
+                    if format_info and hasattr(format_info, "schema"):
+                        response_schema = getattr(format_info, "schema", None)
+                elif isinstance(text, dict):
+                    format_info = text.get("format")
+                    if format_info and isinstance(format_info, dict):
+                        response_schema = format_info.get("schema")
 
-            # Add workflow YAML as event if content recording is enabled and workflow exists
-            if _trace_agents_content and workflow_yaml:
-                event_body: Dict[str, Any] = {"content": [{"type": "workflow", "workflow": workflow_yaml}]}
+            # Add instructions event (if instructions exist)
+            self._add_instructions_event(span, instructions, None, response_schema=response_schema)
+
+            # Add workflow event if workflow type agent (always add event, but only include YAML content if content recording enabled)
+            if workflow_yaml is not None:
+                # Always create event with empty array or workflow content based on recording setting
+                if _trace_agents_content:
+                    # Include actual workflow YAML when content recording is enabled
+                    event_body: List[Dict[str, Any]] = [{"type": "workflow", "content": workflow_yaml}]
+                else:
+                    # Empty array when content recording is disabled (agent type already indicates it's a workflow)
+                    event_body = []
                 attributes = self._create_event_attributes()
                 attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
                 span.span_instance.add_event(name="gen_ai.agent.workflow", attributes=attributes)
@@ -532,9 +591,7 @@ class _AIAgentsInstrumentorPreview:
         messages: Optional[List[Dict[str, str]]] = None,
         # _tool_resources: Optional["ToolResources"] = None,
     ) -> "Optional[AbstractSpan]":
-        span = start_span(
-            OperationName.CREATE_THREAD, server_address=server_address, port=port, gen_ai_system=AZ_AI_AGENT_SYSTEM
-        )
+        span = start_span(OperationName.CREATE_THREAD, server_address=server_address, port=port)
         if span and span.span_instance.is_recording:
             for message in messages or []:
                 self.add_thread_message_event(span, message)

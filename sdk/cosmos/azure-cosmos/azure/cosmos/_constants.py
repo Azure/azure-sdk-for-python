@@ -26,14 +26,21 @@ from enum import IntEnum
 from typing_extensions import Literal
 # cspell:ignore PPAF
 
-# cspell:ignore reranker
+class TimeoutScope:
+    """Defines the scope of timeout application"""
+    OPERATION: Literal["operation"] = "operation"  # Apply timeout to entire logical operation
+    PAGE: Literal["page"] = "page"  # Apply timeout to individual page requests
 
+# cspell:ignore reranker
 
 class _Constants:
     """Constants used in the azure-cosmos package"""
 
     UserConsistencyPolicy: Literal["userConsistencyPolicy"] = "userConsistencyPolicy"
     DefaultConsistencyLevel: Literal["defaultConsistencyLevel"] = "defaultConsistencyLevel"
+    OperationStartTime: Literal["operationStartTime"] = "operationStartTime"
+    # whether to apply timeout to the whole logical operation or just a page request
+    TimeoutScope: Literal["timeoutScope"] = "timeoutScope"
 
     # GlobalDB related constants
     WritableLocations: Literal["writableLocations"] = "writableLocations"
@@ -103,8 +110,9 @@ class _Constants:
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
-
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
+        AVAILABILITY_STRATEGY_CONFIG: Literal["availabilityStrategyConfig"] = "availabilityStrategyConfig"
+        """Availability strategy config. Used either at client level or request level"""
 
     class UserAgentFeatureFlags(IntEnum):
         """
