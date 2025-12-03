@@ -1,5 +1,43 @@
 # Release History
 
+## 4.0.0b2 (2025-12-03)
+
+### Features Added
+
+  - Model `ContainerServiceFleetMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ContainerServiceFleetMgmtClient` added operation group `fleet_managed_namespaces`
+  - Added enum `AdoptionPolicy`
+  - Added model `Affinity`
+  - Added model `ClusterAffinity`
+  - Added model `ClusterResourcePlacementSpec`
+  - Added model `ClusterSelector`
+  - Added model `ClusterSelectorTerm`
+  - Added enum `DeletePolicy`
+  - Added model `FleetManagedNamespace`
+  - Added model `FleetManagedNamespacePatch`
+  - Added model `FleetManagedNamespaceProperties`
+  - Added enum `FleetManagedNamespaceProvisioningState`
+  - Added model `FleetManagedNamespaceStatus`
+  - Added model `LabelSelector`
+  - Added enum `LabelSelectorOperator`
+  - Added model `LabelSelectorRequirement`
+  - Added model `ManagedNamespaceProperties`
+  - Added model `NetworkPolicy`
+  - Added model `PlacementPolicy`
+  - Added model `PlacementProfile`
+  - Added enum `PlacementType`
+  - Added enum `PolicyRule`
+  - Added model `PropagationPolicy`
+  - Added enum `PropagationType`
+  - Added model `PropertySelector`
+  - Added enum `PropertySelectorOperator`
+  - Added model `PropertySelectorRequirement`
+  - Added model `ResourceQuota`
+  - Added enum `TaintEffect`
+  - Added model `Toleration`
+  - Added enum `TolerationOperator`
+  - Added model `FleetManagedNamespacesOperations`
+
 ## 4.0.0b1 (2025-08-04)
 
 ### Features Added
