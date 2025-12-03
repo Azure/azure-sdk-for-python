@@ -6,7 +6,12 @@
 import os
 import pytest
 from dotenv import load_dotenv, find_dotenv
-from devtools_testutils import remove_batch_sanitizers, add_general_regex_sanitizer, add_body_key_sanitizer
+from devtools_testutils import (
+    remove_batch_sanitizers,
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_remove_header_sanitizer,
+)
 
 if not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
@@ -100,6 +105,24 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Sanitize SAS URI from Datasets get credential response
     add_body_key_sanitizer(json_path="blobReference.credential.sasUri", value="sanitized-sas-uri")
     add_body_key_sanitizer(json_path="blobReferenceForConsumption.credential.sasUri", value="sanitized-sas-uri")
+
+    # Remove Stainless headers from OpenAI client requests, since they include platform and OS specific info, which we can't have in recorded requests.
+    # Here is an example of all the `x-stainless` headers from a Responses call:
+    #   x-stainless-arch: other:amd64
+    #   x-stainless-async: false
+    #   x-stainless-lang: python
+    #   x-stainless-os: Windows
+    #   x-stainless-package-version: 2.8.1
+    #   x-stainless-read-timeout: 600
+    #   x-stainless-retry-count: 0
+    #   x-stainless-runtime: CPython
+    #   x-stainless-runtime-version: 3.14.0
+    # Note that even though the doc string for `add_remove_header_sanitizer`` says `condition` is supported, it is not implemented. So we can't do this:
+    #   add_remove_header_sanitizer(condition='{"uriRegex": "(?i)^x-stainless-.*$"}')
+    # We have to explicitly list all the headers to remove:
+    add_remove_header_sanitizer(
+        headers="x-stainless-arch, x-stainless-async, x-stainless-lang, x-stainless-os, x-stainless-package-version, x-stainless-read-timeout, x-stainless-retry-count, x-stainless-runtime, x-stainless-runtime-version"
+    )
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
