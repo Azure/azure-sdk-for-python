@@ -5,6 +5,8 @@
 ### Features Added
 
 ### Breaking Changes
+- Pin OpenTelemetry versions to guard against upstream logging breaking changes
+  ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
 
 ### Bugs Fixed
 
