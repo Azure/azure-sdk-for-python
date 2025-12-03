@@ -88,7 +88,7 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [LogRecord][log_record]: Represents a log record emitted from a supported logging library.
 
-* [Logger][logger]: Converts a `LogRecord` into `ReadableLogRecord`, and will be pushed through the SDK to be exported.
+* [Logger][logger]: Converts a `LogRecord` into a readable `LogData`, and will be pushed through the SDK to be exported.
 
 * [Logger Provider][logger_provider]: Provides a `Logger` for the given instrumentation library.
 

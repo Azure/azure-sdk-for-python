@@ -121,7 +121,7 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
-    envelope.tags.update(_utils._populate_part_a_fields(log_record.resource))  # type: ignore
+    envelope.tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
     envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
         log_record.trace_id or _DEFAULT_TRACE_ID
     )

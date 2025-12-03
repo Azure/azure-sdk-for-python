@@ -3,6 +3,7 @@ import unittest
 from unittest import mock
 
 from opentelemetry.sdk import _logs
+from opentelemetry._logs import LogRecord
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry._logs.severity import SeverityNumber
 from opentelemetry.trace import TraceFlags, set_span_in_context, SpanContext, NonRecordingSpan
@@ -72,7 +73,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         ctx = set_span_in_context(span)
 
         log_record = _logs.ReadWriteLogRecord(
-            _logs.LogRecord(
+            LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
                 severity_text="INFO",
@@ -112,7 +113,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         ctx = set_span_in_context(span)
 
         log_record = _logs.ReadWriteLogRecord(
-            _logs.LogRecord(
+            LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
                 severity_text="INFO",
@@ -153,7 +154,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         ctx = set_span_in_context(span)
 
         log_record = _logs.ReadWriteLogRecord(
-            _logs.LogRecord(
+            LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
                 severity_text="INFO",
@@ -192,7 +193,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         ctx = set_span_in_context(span)
 
         log_record = _logs.ReadWriteLogRecord(
-            _logs.LogRecord(
+            LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
                 severity_text="INFO",
@@ -216,7 +217,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         )
 
         log_record = _logs.ReadWriteLogRecord(
-            _logs.LogRecord(
+            LogRecord(
                 timestamp=1646865018558419456,
                 context=None,
                 severity_text="INFO",
@@ -264,7 +265,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         ctx = set_span_in_context(span)
 
         log_record_unsampled = _logs.ReadWriteLogRecord( # cspell:disable-line
-            _logs.LogRecord(
+            LogRecord(
                 timestamp=1646865018558419456,
                 context=ctx,
                 severity_text="INFO",
@@ -284,7 +285,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         ctx = set_span_in_context(span)
 
         log_record_sampled = _logs.ReadWriteLogRecord(
-            _logs.LogRecord(
+            LogRecord(
                 timestamp=1646865018558419457,
                 context=ctx,
                 severity_text="INFO",

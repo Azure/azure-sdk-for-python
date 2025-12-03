@@ -4,7 +4,7 @@
 from dataclasses import dataclass, fields
 from typing import Dict, no_type_check
 
-from opentelemetry.sdk._logs import LogRecord
+from opentelemetry._logs import LogRecord
 from opentelemetry.sdk.trace import Event, ReadableSpan
 from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.semconv.attributes.http_attributes import (
@@ -177,7 +177,7 @@ class _ExceptionData(_TelemetryData):
 
     @staticmethod
     @no_type_check
-    def _from_span_event(span_event: LogRecord.event_name):
+    def _from_span_event(span_event: LogRecord):
         return _ExceptionData(
             message=str(span_event.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")),
             stack_trace=str(span_event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE, "")),

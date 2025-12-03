@@ -959,7 +959,7 @@ class TestQuickpulseManager(unittest.TestCase):
         """Test _record_log_record when readable_log_record.log_record is None."""
         post_state_mock.return_value = True
         log_data_mock = mock.Mock()
-        log_data_mock.readable_log_record = None
+        log_data_mock.log_record = None
 
         qpm = _QuickpulseManager()
         qpm.initialize(connection_string=self.connection_string, resource=self.resource)
