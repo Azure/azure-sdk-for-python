@@ -5,7 +5,7 @@ from dataclasses import dataclass, fields
 from typing import Dict, no_type_check
 
 from opentelemetry._logs import LogRecord
-from opentelemetry.sdk.trace import Event, ReadableSpan
+from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.semconv.attributes.http_attributes import (
     HTTP_REQUEST_METHOD,

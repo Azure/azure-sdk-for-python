@@ -13,7 +13,7 @@ class _PerformanceCountersLogRecordProcessor(LogRecordProcessor):
         super().__init__()
         self.call_on_emit = hasattr(super(), 'on_emit')
 
-    def on_emit(self, readable_log_record: ReadableLogRecord) -> None:  # type: ignore
+    def on_emit(self, readable_log_record: ReadableLogRecord) -> None:  # type: ignore # pylint: disable=arguments-renamed
         pcm = _PerformanceCountersManager()
         if pcm:
             pcm._record_log_record(readable_log_record)

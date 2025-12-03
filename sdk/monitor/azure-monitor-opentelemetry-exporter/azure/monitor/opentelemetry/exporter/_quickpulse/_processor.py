@@ -13,7 +13,7 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
         super().__init__()
         self.call_on_emit = hasattr(super(), 'on_emit')
 
-    def on_emit(self, readable_log_record: ReadableLogRecord) -> None:  # type: ignore
+    def on_emit(self, readable_log_record: ReadableLogRecord) -> None:  # type: ignore # pylint: disable=arguments-renamed
         qpm = get_quickpulse_manager()
         if qpm:
             qpm._record_log_record(readable_log_record)
@@ -23,7 +23,7 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
             # this method was removed in opentelemetry-sdk and replaced with on_emit
             super().emit(readable_log_record)  # type: ignore[safe-super,misc] # pylint: disable=no-member
 
-    def emit(self, readable_log_record: ReadableLogRecord) -> None:
+    def emit(self, readable_log_record: ReadableLogRecord) -> None: # pylint: disable=arguments-renamed
         self.on_emit(readable_log_record)
 
     def shutdown(self):
