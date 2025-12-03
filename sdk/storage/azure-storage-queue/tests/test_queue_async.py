@@ -1521,6 +1521,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         assert len(messages) > 0
         assert message == messages[0].content
 
+
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
     unittest.main()
