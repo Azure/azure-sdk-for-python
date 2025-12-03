@@ -59,7 +59,10 @@ from .._models import (
     ManifestAttributesBase,
 )
 
-from .operations._operations import build_container_registry_get_repositories_request
+from .operations._operations import (
+    build_container_registry_get_repositories_request,
+    build_container_registry_get_manifests_request
+)
 
 from ..models import AcrManifests
 from .._utils.model_base import _deserialize
@@ -295,64 +298,48 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters: Dict[str, Any] = {}
-            header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
-                "accept", accept, "str"
-            )
+            query_parameters: Dict[str, Any] = {}
 
             if not next_link:
-                # Construct URL
-                url = "/acr/v1/{name}/_manifests"
-                path_format_arguments = {
-                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.endpoint",
-                        self._client._config.endpoint,  # pylint: disable=protected-access
-                        "str",
-                        skip_quote=True,
-                    ),
-                    "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
-                }
-                url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
-                # Construct parameters
-                query_parameters: Dict[str, Any] = {}
-                if last is not None:
-                    query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "last", last, "str"
-                    )
-                if results_per_page is not None:
-                    query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "n", results_per_page, "int"
-                    )
-                if order_by is not None:
-                    query_parameters["orderby"] = self._client._serialize.query(  # pylint: disable=protected-access
-                        "orderby", order_by, "str"
-                    )
+                
+                _request = build_container_registry_get_manifests_request(
+                    name=name,
+                    last=last,
+                    n=results_per_page,
+                    orderby=order_by,
+                    api_version=self._client._config.api_version,
+                    headers=header_parameters,
+                    params=query_parameters,
+                )
 
-                request = self._client._client.get(  # pylint: disable=protected-access
-                    url, query_parameters, header_parameters
-                )
-            else:
-                url = next_link
-                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
-                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.endpoint",
-                        self._client._config.endpoint,  # pylint: disable=protected-access
-                        "str",
-                        skip_quote=True,
-                    ),
-                    "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
+                    "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True),
                 }
-                url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
-                request = self._client._client.get(  # pylint: disable=protected-access
-                    url, query_parameters, header_parameters
+                
+                _request.url = self._client._client.format_url(_request.url, **path_format_arguments)
+            else:
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
                 )
-            return request
+                _next_request_params["api-version"] = self._client._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                
+                path_format_arguments = {
+                    "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True),
+                }
+                _request.url = self._client._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
         async def extract_data(pipeline_response):
-            list_of_elem = _deserialize(
-                list[ManifestAttributesBase],
-                (await pipeline_response.http_response.internal_response.json()).get("manifests", [])
-            )
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[str], deserialized.get("manifests", []))
+            
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
