@@ -49,7 +49,7 @@ class AudiencePolicy(SansIOHTTPPolicy):
         ex_type, ex_value, _ = sys.exc_info()
         if ex_type is None:
             return None
-        if ex_type is ClientAuthenticationError:
+        if ex_type is ClientAuthenticationError and isinstance(ex_value, ClientAuthenticationError):
             self._handle_audience_exception(ex_value)
         return ex_value
 
