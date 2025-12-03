@@ -8,7 +8,7 @@ DESCRIPTION:
     This sample demonstrates how to run a basic streaming responses operation
     using OpenAI client `.responses.create()` method with `stream=True`.
 
-    See also https://platform.openai.com/docs/api-reference/responses/create?lang=python
+    See also https://platform.openai.com/docs/guides/streaming-responses?api-mode=responses&lang=python
 
     Note also the alternative streaming approach shown in sample_responses_stream_manager.py.
 
@@ -42,20 +42,20 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    response_stream_events = openai_client.responses.create(
+    with openai_client.responses.create(
         model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
         input=[
             {"role": "user", "content": "Give me 5 good reasons why I should exercise daily."},
         ],
         stream=True,
-    )
+    ) as response_stream_events:
 
-    for event in response_stream_events:
-        if event.type == "response.created":
-            print(f"Stream response created with ID: {event.response.id}")
-        elif event.type == "response.output_text.delta":
-            print(f"Delta: {event.delta}")
-        elif event.type == "response.text.done":
-            print(f"Response done with full message: {event.text}")
-        elif event.type == "response.completed":
-            print(f"Response completed with full message: {event.response.output_text}")
+        for event in response_stream_events:
+            if event.type == "response.created":
+                print(f"Stream response created with ID: {event.response.id}")
+            elif event.type == "response.output_text.delta":
+                print(f"Delta: {event.delta}")
+            elif event.type == "response.text.done":
+                print(f"Response done with full message: {event.text}")
+            elif event.type == "response.completed":
+                print(f"Response completed with full message: {event.response.output_text}")
