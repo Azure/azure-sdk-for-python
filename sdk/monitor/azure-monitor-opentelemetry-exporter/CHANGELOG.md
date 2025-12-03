@@ -5,7 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
-- Fix to accomodate breaking log changes from Otel
+- Fix to accommodate breaking log changes from Otel
   ([#43626](https://github.com/Azure/azure-sdk-for-python/pull/43626))
 - Pin OpenTelemetry versions to guard against upstream logging breaking changes
   ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
