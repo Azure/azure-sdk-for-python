@@ -7,9 +7,9 @@
 
 """
 DESCRIPTION:
-    Demonstrates how to use session IDs for consistent scoring.
+    Demonstrates how to perform a simple text search.
 USAGE:
-    python sample_query_session_async.py
+    python sample_query_simple_async.py
 
     Set the following environment variables before running the sample:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - base URL of your Azure AI Search service
@@ -20,26 +20,27 @@ USAGE:
 import os
 import asyncio
 
+
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
 
 
-async def query_session_async():
-    # [START query_session_async]
+async def simple_query_async():
+    # [START simple_query_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.aio import SearchClient
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     async with search_client:
-        results = await search_client.search(search_text="spa", session_id="session-1")
+        results = await search_client.search(search_text="spa")
 
         print("Results: hotels with 'spa'")
         async for result in results:
             print(f"  HotelName: {result['HotelName']} (rating {result['Rating']})")
-    # [END query_session_async]
+    # [END simple_query_async]
 
 
 if __name__ == "__main__":
-    asyncio.run(query_session_async())
+    asyncio.run(simple_query_async())

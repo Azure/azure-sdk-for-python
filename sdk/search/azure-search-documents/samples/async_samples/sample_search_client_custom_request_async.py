@@ -7,9 +7,10 @@
 
 """
 DESCRIPTION:
-    Demonstrates how to use session IDs for consistent scoring.
+    Demonstrates how to make custom HTTP requests using SearchClient.
+
 USAGE:
-    python sample_query_session_async.py
+    python sample_search_client_custom_request_async.py
 
     Set the following environment variables before running the sample:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - base URL of your Azure AI Search service
@@ -17,29 +18,37 @@ USAGE:
     3) AZURE_SEARCH_API_KEY - the primary admin key for your search service
 """
 
-import os
 import asyncio
+import os
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
 
 
-async def query_session_async():
-    # [START query_session_async]
+async def sample_send_request_async():
     from azure.core.credentials import AzureKeyCredential
+    from azure.core.rest import HttpRequest
     from azure.search.documents.aio import SearchClient
+    import sys
+    from pathlib import Path
+
+    sys.path.append(str(Path(__file__).resolve().parents[1]))
+    from sample_utils import AZURE_SEARCH_API_VERSION
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
+    # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
+    # while adding convenience for endpoint construction.
+    request = HttpRequest(
+        method="GET", url=f"/docs/$count?api-version={AZURE_SEARCH_API_VERSION}"
+    )
     async with search_client:
-        results = await search_client.search(search_text="spa", session_id="session-1")
-
-        print("Results: hotels with 'spa'")
-        async for result in results:
-            print(f"  HotelName: {result['HotelName']} (rating {result['Rating']})")
-    # [END query_session_async]
+        response = await search_client.send_request(request)
+    response.raise_for_status()
+    response_body = response.json()
+    print(f"Document count: {response_body} (index '{index_name}')")
 
 
 if __name__ == "__main__":
-    asyncio.run(query_session_async())
+    asyncio.run(sample_send_request_async())
