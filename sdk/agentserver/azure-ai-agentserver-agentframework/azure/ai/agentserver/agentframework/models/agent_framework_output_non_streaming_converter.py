@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import datetime
 import json
-from typing import Any, List, Optional
+from typing import Any, List
 
 from agent_framework import AgentRunResponse, FunctionResultContent
 from agent_framework._types import FunctionCallContent, TextContent
@@ -44,7 +44,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
     def _build_item_content_output_text(self, text: str) -> ItemContentOutputText:
         return ItemContentOutputText(text=text, annotations=[])
 
-    def _build_created_by(self, author_name: Optional[str]) -> dict:
+    def _build_created_by(self, author_name: str) -> dict:
         self._ensure_response_started()
         
         agent_dict = {

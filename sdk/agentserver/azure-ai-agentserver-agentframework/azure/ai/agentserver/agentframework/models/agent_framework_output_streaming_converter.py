@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import datetime
 import json
-from typing import Any, AsyncIterable, List, Optional
+from typing import Any, AsyncIterable, List
 
 from agent_framework import AgentRunResponseUpdate, BaseContent, FunctionApprovalRequestContent, FunctionResultContent
 from agent_framework._types import (
@@ -338,7 +338,7 @@ class AgentFrameworkOutputStreamingConverter:
             response=self._build_response(status="completed"),
         )
 
-    def _build_created_by(self, author_name: Optional[str]) -> dict:
+    def _build_created_by(self, author_name: str) -> dict:
         agent_dict = {
             "type": "agent_id",
             "name": author_name if author_name else "",
@@ -350,8 +350,8 @@ class AgentFrameworkOutputStreamingConverter:
             "response_id": self._response_id,
         }
 
-    async def _read_updates(self, updates: AsyncIterable[AgentRunResponseUpdate]) -> AsyncIterable[tuple[BaseContent, Optional[str]]]:
-        current_author_name: Optional[str] = None
+    async def _read_updates(self, updates: AsyncIterable[AgentRunResponseUpdate]) -> AsyncIterable[tuple[BaseContent, str]]:
+        current_author_name: str = ""
         
         async for update in updates:
             if not update.contents:
