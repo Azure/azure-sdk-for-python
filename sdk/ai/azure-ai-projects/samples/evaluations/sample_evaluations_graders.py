@@ -87,7 +87,7 @@ with (
     testing_criteria = [
         {
             "type": "label_model",
-            "model": "{{aoai_deployment_and_model}}",
+            "model": model_deployment_name,
             "input": [
                 {
                     "role": "developer",
@@ -117,7 +117,7 @@ with (
         {
             "type": "score_model",
             "name": "score",
-            "model": "{{aoai_deployment_and_model}}",
+            "model": model_deployment_name,
             "input": [
                 {
                     "role": "system",
