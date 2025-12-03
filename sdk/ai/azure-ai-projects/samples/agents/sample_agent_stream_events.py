@@ -5,15 +5,16 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to run a basic streaming responses operation
-    using OpenAI client `.responses.create()` method with `stream=True`.
+    This sample demonstrates how to run basic Prompt Agent operations
+    using the synchronous AIProjectClient and OpenAI clients. The response
+    is streamed by setting `stream=True` in the `.responses.create` call.
 
-    See also https://platform.openai.com/docs/guides/streaming-responses?api-mode=responses&lang=python
-
-    Note also the alternative streaming approach shown in sample_responses_stream_manager.py.
+    The OpenAI compatible Responses and Conversation calls in this sample are made using
+    the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference
+    for more information.
 
 USAGE:
-    python sample_responses_stream_events.py
+    python sample_agent_stream_events.py
 
     Before running the sample:
 
@@ -28,9 +29,9 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
-
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
@@ -42,11 +43,24 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
+    agent = project_client.agents.create_version(
+        agent_name="MyAgent",
+        definition=PromptAgentDefinition(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+        ),
+    )
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+    conversation = openai_client.conversations.create(
+        items=[{"type": "message", "role": "user", "content": "Give me 5 good reasons why I should exercise daily."}],
+    )
+    print(f"Created conversation with initial user message (id: {conversation.id})")
+
     with openai_client.responses.create(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-        input=[
-            {"role": "user", "content": "Give me 5 good reasons why I should exercise daily."},
-        ],
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
         stream=True,
     ) as response_stream_events:
 
@@ -59,3 +73,10 @@ with (
                 print(f"\n\nResponse text done. Access final text in 'event.text'")
             elif event.type == "response.completed":
                 print(f"\n\nResponse completed. Access final text in 'event.response.output_text'")
+
+
+    openai_client.conversations.delete(conversation_id=conversation.id)
+    print("Conversation deleted")
+
+    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+    print("Agent deleted")

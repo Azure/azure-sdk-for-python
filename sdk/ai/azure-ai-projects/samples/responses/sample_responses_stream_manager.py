@@ -46,14 +46,14 @@ with (
         input=[
             {"role": "user", "content": "Give me 5 good reasons why I should exercise daily."},
         ],
-    ) as responses_stream_manager:
+    ) as response_stream_manager:
 
-        for event in responses_stream_manager:
+        for event in response_stream_manager:
             if event.type == "response.created":
-                print(f"Stream response created with ID: {event.response.id}")
+                print(f"Stream response created with ID: {event.response.id}\n")
             elif event.type == "response.output_text.delta":
-                print(f"Delta: {event.delta}")
+                print(event.delta, end="", flush=True)
             elif event.type == "response.text.done":
-                print(f"Response done with full message: {event.text}")
+                print(f"\n\nResponse text done. Access final text in 'event.text'")
             elif event.type == "response.completed":
-                print(f"Response completed with full message: {event.response.output_text}")
+                print(f"\n\nResponse completed. Access final text in 'event.response.output_text'")
