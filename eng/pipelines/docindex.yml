@@ -56,6 +56,7 @@ jobs:
           Repositories:
             - Name: $(DocRepoOwner)/$(DocRepoName)
               WorkingDirectory: $(DocRepoLocation)
+              Commitish: djurek/clean-onboarding
 
       - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
@@ -110,7 +111,7 @@ jobs:
         # Push changes to docs repo
         - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
           parameters:
-            BaseRepoBranch: $(DefaultBranch)
+            BaseRepoBranch: djurek/clean-onboarding
             BaseRepoOwner: $(DocRepoOwner)
             CommitMsg: "Update docs CI configuration Build: $(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
             TargetRepoName: $(DocRepoName)
