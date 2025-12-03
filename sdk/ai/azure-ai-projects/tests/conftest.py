@@ -117,7 +117,7 @@ def add_sanitizers(test_proxy, sanitized_values):
     #   x-stainless-retry-count: 0
     #   x-stainless-runtime: CPython
     #   x-stainless-runtime-version: 3.14.0
-    # Note that even though the doc string for `add_remove_header_sanitizer`` says `condition` is supported, it is not implemented. So we can't do this:
+    # Note that even though the doc string for `add_remove_header_sanitizer` says `condition` is supported, it is not implemented. So we can't do this:
     #   add_remove_header_sanitizer(condition='{"uriRegex": "(?i)^x-stainless-.*$"}')
     # We have to explicitly list all the headers to remove:
     add_remove_header_sanitizer(
