@@ -1173,32 +1173,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 page_etags.append(etag)
 
             # monitor page updates without changes
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
+            has_changes = await client.check_configuration_settings(
+                page_etags, key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
-            first_page_response = await client.send_request(request)
-            assert first_page_response.status_code == 304
-
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = await client.send_request(request)
-                assert response.status_code == 304
-
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
+            assert has_changes is False
 
             # do some changes
             await client.add_configuration_setting(
@@ -1224,39 +1202,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             assert page_etags[2] != new_page_etags[2]
 
             # monitor page after updates
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
+            has_changes = await client.check_configuration_settings(
+                page_etags, key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
-            first_page_response = await client.send_request(request)
-            # 304 means the page doesn't have changes.
-            assert first_page_response.status_code == 304
-
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = await client.send_request(request)
-
-                # 200 means the page has changes.
-                assert response.status_code == 200
-                items = response.json()["items"]
-                for item in items:
-                    # Read the keys
-                    pass
-
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
+            assert has_changes is True
 
             # clean up
             await self.tear_down()
