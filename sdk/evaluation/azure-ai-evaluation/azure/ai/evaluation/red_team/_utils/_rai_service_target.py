@@ -61,6 +61,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
         api_version: Optional[str] = None,
         model: Optional[str] = None,
         objective: Optional[str] = None,
+        tense: Optional[str] = None,
         prompt_template_key: Optional[str] = None,
         logger: Optional[logging.Logger] = None,
         crescendo_format: bool = False,
@@ -78,6 +79,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
         self._api_version = api_version
         self._model = model
         self.objective = objective
+        self.tense = tense
         self.prompt_template_key = prompt_template_key
         self.logger = logger
         self.crescendo_format = crescendo_format
@@ -103,7 +105,6 @@ class AzureRAIServiceTarget(PromptChatTarget):
             "templateParameters": {
                 "temperature": 0.7,
                 "max_tokens": 2000,  # TODO: this might not be enough
-                "objective": objective or self.objective,
                 "max_turns": 5,
             },
             "json": json.dumps(
@@ -118,6 +119,11 @@ class AzureRAIServiceTarget(PromptChatTarget):
             "params": {"api-version": "2023-07-01-preview"},
             "simulationType": "Default",
         }
+
+        if self.tense:
+            body["templateParameters"]["tense"] = self.tense
+        if objective or self.objective:
+            body["templateParameters"]["objective"] = objective or self.objective
 
         self.logger.debug(f"Created simulation request body: {json.dumps(body, indent=2)}")
         return body

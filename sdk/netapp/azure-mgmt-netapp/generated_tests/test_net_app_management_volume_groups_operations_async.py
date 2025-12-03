@@ -63,6 +63,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                                     "avsDataStore": "str",
                                     "backupId": "str",
                                     "baremetalTenantId": "str",
+                                    "breakthroughMode": "str",
                                     "capacityPoolResourceId": "str",
                                     "cloneProgress": 0,
                                     "coolAccess": bool,
@@ -74,6 +75,10 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                                             "backupPolicyId": "str",
                                             "backupVaultId": "str",
                                             "policyEnforced": bool,
+                                        },
+                                        "ransomwareProtection": {
+                                            "actualRansomwareProtectionState": "str",
+                                            "desiredRansomwareProtectionState": "str",
                                         },
                                         "replication": {
                                             "destinationReplications": [
@@ -140,6 +145,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                                     "kerberosEnabled": bool,
                                     "keyVaultPrivateEndpointResourceId": "str",
                                     "language": "str",
+                                    "largeVolumeType": "str",
                                     "ldapEnabled": bool,
                                     "ldapServerType": "str",
                                     "maximumNumberOfFiles": 0,

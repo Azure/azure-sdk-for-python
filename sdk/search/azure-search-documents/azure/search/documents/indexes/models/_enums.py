@@ -455,6 +455,17 @@ class ImageDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Details recognized as landmarks."""
 
 
+class IndexedSharePointContainerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies which SharePoint libraries to access."""
+
+    DEFAULT_SITE_LIBRARY = "defaultSiteLibrary"
+    """Index content from the site's default document library."""
+    ALL_SITE_LIBRARIES = "allSiteLibraries"
+    """Index content from every document library in the site."""
+    USE_QUERY = "useQuery"
+    """Index only content that matches the query specified in the knowledge source."""
+
+
 class IndexerExecutionEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the environment in which the indexer should execute."""
 
@@ -610,7 +621,7 @@ class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of the knowledge source."""
 
     SEARCH_INDEX = "searchIndex"
-    """A knowledge source that reads data from a Search Index."""
+    """A knowledge source that retrieves data from a Search Index."""
     AZURE_BLOB = "azureBlob"
     """A knowledge source that read and ingest data from Azure Blob Storage to a Search Index."""
     INDEXED_SHARE_POINT = "indexedSharePoint"

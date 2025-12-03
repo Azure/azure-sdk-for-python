@@ -766,6 +766,105 @@ class TestQuery(unittest.TestCase):
         else:
             raise StopIteration
 
+    def test_query_items_with_parameters_none(self):
+        """Test that query_items handles parameters=None correctly (issue #43662)."""
+        created_collection = self.created_db.create_container(
+            "test_params_none_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+        
+        # Create test documents
+        doc1_id = 'doc1_' + str(uuid.uuid4())
+        doc2_id = 'doc2_' + str(uuid.uuid4())
+        created_collection.create_item(body={'pk': 'pk1', 'id': doc1_id, 'value1': 1})
+        created_collection.create_item(body={'pk': 'pk2', 'id': doc2_id, 'value1': 2})
+
+        # Test 1: Explicitly passing parameters=None should not cause TypeError
+        query = 'SELECT * FROM c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None,
+            enable_cross_partition_query=True
+        )
+        results = list(query_iterable)
+        self.assertEqual(len(results), 2)
+
+        # Test 2: parameters=None with partition_key should work
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None,
+            partition_key='pk1'
+        )
+        results = list(query_iterable)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['id'], doc1_id)
+
+        # Test 3: Verify parameterized query still works with actual parameters
+        query_with_params = 'SELECT * FROM c WHERE c.value1 = @value'
+        query_iterable = created_collection.query_items(
+            query=query_with_params,
+            parameters=[{'name': '@value', 'value': 2}],
+            enable_cross_partition_query=True
+        )
+        results = list(query_iterable)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['id'], doc2_id)
+
+        # Test 4: Query without parameters argument should work (default behavior)
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        results = list(query_iterable)
+        self.assertEqual(len(results), 2)
+
+        self.created_db.delete_container(created_collection.id)
+
+    def test_query_items_parameters_none_with_options(self):
+        """Test parameters=None works with various query options."""
+        created_collection = self.created_db.create_container(
+            "test_params_none_opts_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+        
+        # Create multiple test documents
+        for i in range(5):
+            doc_id = f'doc_{i}_' + str(uuid.uuid4())
+            created_collection.create_item(body={'pk': 'test', 'id': doc_id, 'index': i})
+
+        # Test with parameters=None and max_item_count
+        query = 'SELECT * FROM c ORDER BY c.index'
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None,
+            partition_key='test',
+            max_item_count=2
+        )
+        
+        # Verify pagination works
+        page_count = 0
+        total_items = 0
+        for page in query_iterable.by_page():
+            page_count += 1
+            items = list(page)
+            total_items += len(items)
+            self.assertLessEqual(len(items), 2)
+        
+        self.assertEqual(total_items, 5)
+        self.assertGreaterEqual(page_count, 2)  # Should have multiple pages
+
+        # Test with parameters=None and populate_query_metrics
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None,
+            partition_key='test',
+            populate_query_metrics=True
+        )
+        results = list(query_iterable)
+        self.assertEqual(len(results), 5)
+        
+        # Verify query metrics were populated
+        metrics_header_name = 'x-ms-documentdb-query-metrics'
+        self.assertTrue(metrics_header_name in created_collection.client_connection.last_response_headers)
+
+        self.created_db.delete_container(created_collection.id)
+
 
 if __name__ == "__main__":
     unittest.main()

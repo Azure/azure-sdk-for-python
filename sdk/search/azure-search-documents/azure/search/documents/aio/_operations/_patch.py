@@ -514,6 +514,10 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
         :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
         :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :keyword x_ms_enable_elevated_read: A value that enables elevated read that bypass document level 
+            permission checks for the query operation. Default value is None.
+        :paramtype x_ms_enable_elevated_read: bool
+        :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
         :rtype: AsyncSearchItemPaged[dict]
 

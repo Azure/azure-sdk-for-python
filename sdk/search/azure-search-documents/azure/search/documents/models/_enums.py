@@ -323,6 +323,8 @@ class ScoringStatistics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The scoring statistics will be calculated locally for lower latency."""
     GLOBAL = "global"
     """The scoring statistics will be calculated globally for more consistent scoring."""
+    GLOBAL_ENUM = "global"
+    """The scoring statistics will be calculated globally for more consistent scoring."""
 
 
 class SearchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

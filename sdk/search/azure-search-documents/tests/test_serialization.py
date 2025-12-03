@@ -26,7 +26,9 @@ def test_serialize_search_index():
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
+        SearchableField(
+            name="description", type=SearchFieldDataType.String, collection=True
+        ),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
         ComplexField(
             name="address",
@@ -43,7 +45,10 @@ def test_serialize_search_index():
     scoring_profiles = []
     scoring_profiles.append(scoring_profile)
     index = SearchIndex(
-        name=new_index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
+        name=new_index_name,
+        fields=fields,
+        scoring_profiles=scoring_profiles,
+        cors_options=cors_options,
     )
     search_index_serialized = index.as_dict()
     search_index = SearchIndex(search_index_serialized)
@@ -54,7 +59,9 @@ def test_serialize_search_indexer_skillset():
     COGNITIVE_KEY = ...
     COGNITIVE_DESCRIPTION = ...
 
-    cognitive_services_account = CognitiveServicesAccountKey(key=COGNITIVE_KEY, description=COGNITIVE_DESCRIPTION)
+    cognitive_services_account = CognitiveServicesAccountKey(
+        key=COGNITIVE_KEY, description=COGNITIVE_DESCRIPTION
+    )
 
     inputs = [InputFieldMappingEntry(name="text", source="/document/content")]
 
@@ -71,7 +78,9 @@ def test_serialize_search_indexer_skillset():
 
     skills = [split_skill]
     skillset = SearchIndexerSkillset(
-        name="Skillset", skills=skills, cognitive_services_account=cognitive_services_account
+        name="Skillset",
+        skills=skills,
+        cognitive_services_account=cognitive_services_account,
     )
 
     serialized_skillset = skillset.as_dict()
@@ -84,7 +93,9 @@ def test_serialize_search_index_dict():
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
+        SearchableField(
+            name="description", type=SearchFieldDataType.String, collection=True
+        ),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
         ComplexField(
             name="address",
@@ -101,7 +112,10 @@ def test_serialize_search_index_dict():
     scoring_profiles = []
     scoring_profiles.append(scoring_profile)
     index = SearchIndex(
-        name=new_index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
+        name=new_index_name,
+        fields=fields,
+        scoring_profiles=scoring_profiles,
+        cors_options=cors_options,
     )
     search_index_serialized_dict = index.as_dict()
     search_index = SearchIndex(search_index_serialized_dict)
