@@ -22,11 +22,7 @@ def test_model_initialization():
 
 
 def test_model_attribute_list_for_compatibility():
-    # if none of attributes in properties of model instance is assigned, attribute_list will return top-level attributes
-    assert {"id", "name", "type", "system_data", "properties", "location", "tags"} == set(attribute_list(Key()))
-
-    # if any attribute in properties of model instance is assigned, attribute_list will return flattened attributes
-    expected_attributes = {
+    expected_attributes = sorted([
         "id",
         "name",
         "type",
@@ -42,6 +38,8 @@ def test_model_attribute_list_for_compatibility():
         "release_policy",
         "location",
         "tags",
-    }
-    assert expected_attributes == set(attribute_list(Key(properties=KeyProperties(kty="RSA"))))
-    assert expected_attributes == set(attribute_list(Key(kty="RSA")))
+    ])
+    assert expected_attributes == sorted(attribute_list(Key(properties=KeyProperties(kty="RSA"))))
+    assert expected_attributes == sorted(attribute_list(Key(kty="RSA")))
+    assert expected_attributes == sorted(attribute_list(Key()))
+
