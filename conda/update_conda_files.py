@@ -2,6 +2,7 @@
 
 import os
 import argparse
+import json
 import csv
 import yaml
 import urllib.request
@@ -16,6 +17,7 @@ CONDA_DIR = os.path.join(ROOT_DIR, "conda")
 CONDA_RECIPES_DIR = os.path.join(CONDA_DIR, "conda-recipes")
 CONDA_RELEASE_LOGS_DIR = os.path.join(CONDA_DIR, "conda-releaselogs")
 CONDA_ENV_PATH = os.path.join(CONDA_RECIPES_DIR, "conda_env.yml")
+CONDA_CLIENT_YAML_PATH = os.path.join(ROOT_DIR, "eng", "pipelines", "templates", "stages", "conda-sdk-client.yml")
 
 # constants
 RELEASE_PERIOD_MONTHS = 3
@@ -118,11 +120,12 @@ def package_needs_update(
     )
 
     if not compareDate:
-        logger.error(
-            f"Package {package_row.get(PACKAGE_COL)} missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}"
+        logger.warning(
+            f"Package {package_row.get(PACKAGE_COL)} missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}."
         )
 
-        # TODO if date is missing, check PyPi for release date instead
+        # TODO need to verify that this is the desired behavior / we're not skipping needed packages
+
         return False
 
     try:
@@ -139,31 +142,114 @@ def package_needs_update(
         )
         return False
 
+def get_package_data_from_pypi(package_name: str, version: str) -> Tuple[Optional[str], Optional[str]]:
+    """Fetch the latest version and download URI for a package from PyPI."""
+    pypi_url = f"https://pypi.org/pypi/{package_name}/json"
+    try:
+        with urllib.request.urlopen(pypi_url, timeout=10) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            
+            # Get the latest version
+            latest_version = data["info"]["version"]
+            
+            # Construct download URL from releases data
+            if version in data["releases"] and data["releases"][version]:
+                # Get the source distribution (sdist) if available, otherwise get the first file
+                files = data["releases"][version]
+                source_dist = next((f for f in files if f["packagetype"] == "sdist"), None)
+                if source_dist:
+                    download_url = source_dist["url"]
+                    return latest_version, download_url
+                
+    except Exception as e:
+        logger.error(f"Failed to fetch download URI from PyPI for {package_name}=={version}: {e}")
+    return None, None
+
+def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int]]:
+    """Build an index of package name -> (artifact_idx, checkout_idx) for fast lookups."""
+    package_index = {}
+    for artifact_idx, artifact in enumerate(conda_artifacts):
+        if 'checkout' in artifact:
+            for checkout_idx, checkout_item in enumerate(artifact['checkout']):
+                package_name = checkout_item.get('package')
+                if package_name:
+                    package_index[package_name] = (artifact_idx, checkout_idx)
+    return package_index
 
 def update_package_versions(
     packages: List[Dict[str, str]], prev_release_date: str
-) -> List[Dict[str, str]]:
-    """Update outdated package versions and return new packages"""
-    new_packages = []
-    # todo
+) -> None:
+    """
+    Update outdated package versions in the conda-sdk-client.yml file
+    :param packages: List of package rows from the CSV.
+    :param prev_release_date: The date of the previous release in "mm/dd/yyyy" format.
+    """
+    packages_to_update = []
+    
+    for package in packages:
+        if package_needs_update(package, prev_release_date, is_new=False):
+            packages_to_update.append((package.get(PACKAGE_COL), package.get(VERSION_GA_COL)))
+    
+    if not packages_to_update:
+        logger.info("No packages need version updates")
+        return
+        
+    logger.info(f"Detected {len(packages_to_update)} packages to update")
 
-    logger.info(f"Detected {len(new_packages)} new packages")
-    return new_packages
+    with open(CONDA_CLIENT_YAML_PATH, "r") as file:
+        conda_client_data = yaml.safe_load(file)
+
+    updated_count = 0
+
+    # Navigate to the CondaArtifacts section
+    conda_artifacts = conda_client_data['extends']['parameters']['stages'][0]['jobs'][0]['steps'][0]['parameters']['CondaArtifacts']
+    package_index = build_package_index(conda_artifacts)
+
+    for pkg_name, new_version in packages_to_update:
+        if pkg_name in package_index:
+            artifact_idx, checkout_idx = package_index[pkg_name]
+            checkout_item = conda_artifacts[artifact_idx]['checkout'][checkout_idx]
+            old_version = checkout_item.get('version', '')
+            checkout_item['version'] = new_version
+            logger.info(f"Updated {pkg_name}: {old_version} -> {new_version}")
+            updated_count += 1
+
+            # update download_uri
+            if 'download_uri' in checkout_item:
+                old_uri = checkout_item['download_uri']
+                pypi_version, new_uri = get_package_data_from_pypi(pkg_name, new_version)
+
+                if pypi_version != new_version:
+                    logger.error(f"Version mismatch for {pkg_name}: got {new_version} from CSV, but {pypi_version} from PyPi")
+                
+                if new_uri:
+                    checkout_item['download_uri'] = new_uri
+                    logger.info(f"Updated download_uri for {pkg_name}: {old_uri} -> {new_uri}")
+                else:
+                    logger.warning(f"Could not fetch new download_uri for {pkg_name}, keeping existing URI")
+        else:
+            logger.warning(f"Package {pkg_name} not found in conda-sdk-client.yml, skipping update")
+    if updated_count > 0:
+        with open(CONDA_CLIENT_YAML_PATH, "w") as file:
+            yaml.dump(conda_client_data, file, default_flow_style=False, sort_keys=False, width=float('inf'))
+        logger.info(f"Successfully updated {updated_count} package versions in conda-sdk-client.yml")
+    else:
+        logger.warning("No packages were found in the YAML file to update")
 
 
-# get outdated versions
+def add_new_data_plane_packages(
+    new_packages: List[Dict[str, str]]
+) -> None:
+    """Handle adding new data plane packages."""
+    # TODO implement logic to add new data plane packages
+    logger.info(f"Adding {len(new_packages)} new data plane packages")
 
-# handle data yml
-
-# mgmt yml
-
-# import tests for data
-
-# import tests for mgmt
-
-# update conda-sdk-client
-
-# release logs
+def add_new_mgmt_plane_packages(
+    new_packages: List[Dict[str, str]]
+) -> None:
+    """Handle adding new management plane packages."""
+    # TODO implement logic to add new management plane packages
+    logger.info(f"Adding {len(new_packages)} new management plane packages")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -190,13 +276,30 @@ if __name__ == "__main__":
     packages = [pkg for pkg in packages if pkg.get(VERSION_GA_COL)]
     logger.info(f"Filtered to {len(packages)} GA packages")
 
-    data_plane_packages, mgmt_plane_packages = separate_packages_by_type(packages)
+    # testing
+    # for pkg in packages:
+    #     if not pkg.get(LATEST_GA_DATE_COL):
+    #         logger.warning(f"Package {pkg.get(PACKAGE_COL)} missing {LATEST_GA_DATE_COL}")
+    #     if not pkg.get(FIRST_GA_DATE_COL):
+    #         logger.warning(f"Package {pkg.get(PACKAGE_COL)} missing {FIRST_GA_DATE_COL}")
 
-    # TODO testing
-    for pkg in data_plane_packages:
-        if package_needs_update(pkg, old_version, is_new=True):
-            logger.info(f"New data plane package detected: {pkg.get(PACKAGE_COL)}")
-    print("---")
-    for pkg in data_plane_packages:
-        if package_needs_update(pkg, old_version, is_new=False):
-            logger.info(f"Outdated data plane package detected: {pkg.get(PACKAGE_COL)}")
+    # update existing package versions
+    update_package_versions(packages, old_version)
+
+    # handle new packages
+    new_packages = [
+        pkg
+        for pkg in packages
+        if package_needs_update(pkg, old_version, is_new=True)
+    ]
+    new_data_plane_packages, new_mgmt_plane_packages = separate_packages_by_type(new_packages)
+
+    # handle new data plane libraries
+
+    # handle new mgmt plane libraries
+
+    # update conda-sdk-client
+
+    # add/update release logs
+
+
