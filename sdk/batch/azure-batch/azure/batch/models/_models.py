@@ -9958,7 +9958,7 @@ class OutputFile(_Model):
      negation to match any character not specified (for example [!abc] matches any character but a,
      b, or c). If a file name starts with "." it is ignored by default but may be matched by
      specifying it explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple
-     example: \\*\\*\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
+     example: \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
      working directory or any subdirectory. If the filename contains a wildcard character it can be
      escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\\\
      and / are treated as directory separators on Windows, but only / is on Linux. Environment
@@ -9981,7 +9981,7 @@ class OutputFile(_Model):
      match any character not specified (for example [!abc] matches any character but a, b, or c). If
      a file name starts with \".\" it is ignored by default but may be matched by specifying it
      explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple example:
-     \\*\\*\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
+     \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
      directory or any subdirectory. If the filename contains a wildcard character it can be escaped
      using brackets (for example abc[*] would match a file named abc*). Note that both \\\\ and / are
      treated as directory separators on Windows, but only / is on Linux. Environment variables

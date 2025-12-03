@@ -193,10 +193,11 @@ class PoolPreparer(AzureMgmtPreparer):
             raise AzureTestError(template)
 
     def create_resource(self, name, **kwargs):
-        if self.is_live:
 
-            if self.pool_name:
+        if self.pool_name:
                 name = self.pool_name
+
+        if self.is_live:
 
             self.client = self.create_mgmt_client(azure.mgmt.batch.BatchManagementClient, base_url=AZURE_ARM_ENDPOINT)
             group = self._get_resource_group(**kwargs)
