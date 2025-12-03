@@ -5,17 +5,16 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
-from devtools_testutils import is_live_and_not_recording
-from test_base import TestBase, recorded_by_proxy_async_httpx, servicePreparer
-
+from test_base import TestBase, servicePreparer
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
 
 class TestResponsesAsync(TestBase):
 
     # To run this test:
     # pytest tests\responses\test_responses_async.py::TestResponsesAsync::test_responses_async -s
     @servicePreparer()
-    @recorded_by_proxy_async_httpx
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_responses_async(self, **kwargs):
 
         model = self.test_agents_params["model_deployment_name"]
