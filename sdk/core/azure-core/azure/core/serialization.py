@@ -5,13 +5,21 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
+from functools import partial
 from json import JSONEncoder
-from typing import Dict, List, Optional, Union, cast, Any
+from typing import Dict, List, Optional, Union, cast, Any, Type, Callable, Tuple
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
 
-__all__ = ["NULL", "AzureJSONEncoder", "is_generated_model", "as_attribute_dict", "attribute_list"]
+__all__ = [
+    "NULL",
+    "AzureJSONEncoder",
+    "is_generated_model",
+    "as_attribute_dict",
+    "attribute_list",
+    "TypeHandlerRegistry",
+]
 TZ_UTC = timezone.utc
 
 
@@ -27,6 +35,165 @@ NULL = _Null()
 A falsy sentinel object which is supposed to be used to specify attributes
 with no data. This gets serialized to `null` on the wire.
 """
+
+
+class TypeHandlerRegistry:
+    """A registry for custom serializers and deserializers for specific types or conditions."""
+
+    def __init__(self) -> None:
+        self._serializer_types: Dict[Type, Callable] = {}
+        self._deserializer_types: Dict[Type, Callable] = {}
+        self._serializer_predicates: List[Tuple[Callable[[Any], bool], Callable]] = []
+        self._deserializer_predicates: List[Tuple[Callable[[Any], bool], Callable]] = []
+
+        self._serializer_cache: Dict[Type, Optional[Callable]] = {}
+        self._deserializer_cache: Dict[Type, Optional[Callable]] = {}
+
+    def register_serializer(
+        self, condition: Union[Type, Callable[[Any], bool]]
+    ) -> Callable[[Callable[[Any], Dict[str, Any]]], Callable[[Any], Dict[str, Any]]]:
+        """Decorator to register a serializer.
+
+        The handler function is expected to take a single argument, the object to serialize,
+        and return a dictionary representation of that object.
+
+        Examples:
+
+        .. code-block:: python
+
+            @registry.register_serializer(CustomModel)
+            def serialize_single_type(value: CustomModel) -> dict:
+                return value.to_dict()
+
+            @registry.register_serializer(lambda x: isinstance(x, BaseModel))
+            def serialize_with_condition(value: BaseModel) -> dict:
+                return value.to_dict()
+
+            # Called manually for a specific type
+            def custom_serializer(value: CustomModel) -> Dict[str, Any]:
+                return {"custom": value.custom}
+
+            registry.register_serializer(CustomModel)(custom_serializer)
+
+        :param condition: A type or a callable predicate function that takes an object and returns a bool.
+        :type condition: Union[Type, Callable[[Any], bool]]
+        :return: A decorator that registers the handler function.
+        :rtype: Callable[[Callable[[Any], Dict[str, Any]]], Callable[[Any], Dict[str, Any]]]
+        :raises TypeError: If the condition is neither a type nor a callable.
+        """
+
+        def decorator(handler_func: Callable[[Any], Dict[str, Any]]) -> Callable[[Any], Dict[str, Any]]:
+            if isinstance(condition, type):
+                self._serializer_types[condition] = handler_func
+            elif callable(condition):
+                self._serializer_predicates.append((condition, handler_func))
+            else:
+                raise TypeError("Condition must be a type or a callable predicate function.")
+
+            self._serializer_cache.clear()
+            return handler_func
+
+        return decorator
+
+    def register_deserializer(
+        self, condition: Union[Type, Callable[[Any], bool]]
+    ) -> Callable[[Callable[[Type, Dict[str, Any]], Any]], Callable[[Type, Dict[str, Any]], Any]]:
+        """Decorator to register a deserializer.
+
+        The handler function is expected to take two arguments: the target type and the data dictionary,
+        and return an instance of the target type.
+
+        Examples:
+
+        .. code-block:: python
+
+            @registry.register_deserializer(CustomModel)
+            def deserialize_single_type(cls: Type[CustomModel], data: dict) -> CustomModel:
+                return cls(**data)
+
+            @registry.register_deserializer(lambda t: issubclass(t, BaseModel))
+            def deserialize_with_condition(cls: Type[BaseModel], data: dict) -> BaseModel:
+                return cls(**data)
+
+            # Called manually for a specific type
+            def custom_deserializer(cls: Type[CustomModel], data: Dict[str, Any]) -> CustomModel:
+                return cls(custom=data["custom"])
+
+            registry.register_deserializer(CustomModel)(custom_deserializer)
+
+        :param condition: A type or a callable predicate function that takes an object and returns a bool.
+        :type condition: Union[Type, Callable[[Any], bool]]
+        :return: A decorator that registers the handler function.
+        :rtype: Callable[[Callable[[Type, Dict[str, Any]], Any]], Callable[[Type, Dict[str, Any]], Any]]
+        :raises TypeError: If the condition is neither a type nor a callable.
+        """
+
+        def decorator(handler_func: Callable[[Type, Dict[str, Any]], Any]) -> Callable[[Type, Dict[str, Any]], Any]:
+            if isinstance(condition, type):
+                self._deserializer_types[condition] = handler_func
+            elif callable(condition):
+                self._deserializer_predicates.append((condition, handler_func))
+            else:
+                raise TypeError("Condition must be a type or a callable predicate function.")
+
+            self._deserializer_cache.clear()
+            return handler_func
+
+        return decorator
+
+    def get_serializer(self, obj: Any) -> Optional[Callable[[Any], Dict[str, Any]]]:
+        """Gets the appropriate serializer for an object.
+
+        It first checks the type dictionary for a direct type match.
+        If no match is found, it iterates through the predicate list to find a match.
+
+        Results of the lookup are cached for performance based on the object's type.
+
+        :param obj: The object to serialize.
+        :type obj: any
+        :return: The serializer function if found, otherwise None.
+        :rtype: Optional[Callable[[Any], Dict[str, Any]]]
+        """
+        obj_type = type(obj)
+        if obj_type in self._serializer_cache:
+            return self._serializer_cache[obj_type]
+
+        handler = self._serializer_types.get(type(obj))
+        if not handler:
+            for predicate, pred_handler in self._serializer_predicates:
+                if predicate(obj):
+                    handler = pred_handler
+                    break
+
+        self._serializer_cache[obj_type] = handler
+        return handler
+
+    def get_deserializer(self, cls: Type) -> Optional[Callable[[Dict[str, Any]], Any]]:
+        """Gets the appropriate deserializer for a class.
+
+        It first checks the type dictionary for a direct type match.
+        If no match is found, it iterates through the predicate list to find a match.
+
+        Results of the lookup are cached for performance based on the class.
+
+        :param cls: The class to deserialize.
+        :type cls: type
+        :return: A deserializer function bound to the specified class that takes a dictionary and returns
+            an instance of that class, or None if no deserializer is found.
+        :rtype: Optional[Callable[[Dict[str, Any]], Any]]
+        """
+        if cls in self._deserializer_cache:
+            return self._deserializer_cache[cls]
+
+        handler = self._deserializer_types.get(cls)
+        if not handler:
+            for predicate, pred_handler in self._deserializer_predicates:
+                if predicate(cls):
+                    handler = pred_handler
+                    break
+
+        self._deserializer_cache[cls] = partial(handler, cls) if handler else None
+        return self._deserializer_cache[cls]
 
 
 def _timedelta_as_isostr(td: timedelta) -> str:

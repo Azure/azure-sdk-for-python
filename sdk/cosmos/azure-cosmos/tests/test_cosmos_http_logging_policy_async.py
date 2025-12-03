@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Tests for the CosmosHttpLoggingPolicy."""
+import asyncio
 import unittest
 import uuid
 import logging
@@ -103,6 +104,9 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         self.client_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
                                                             consistency_level="Session", logger=self.logger,
                                                             enable_diagnostics_logging=True)
+        await self.client_diagnostic.__aenter__()
+        # give time to background health check to run
+        await asyncio.sleep(1)
         # Test if we can log into from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
         await self.client_diagnostic.create_database(id=database_id)

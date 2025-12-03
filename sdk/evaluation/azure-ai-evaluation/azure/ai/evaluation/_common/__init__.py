@@ -6,7 +6,7 @@
 # that would have otherwise been a relative import scoped to single evaluator directories.
 
 from . import constants
-from .rai_service import evaluate_with_rai_service
+from .rai_service import evaluate_with_rai_service, evaluate_with_rai_service_sync
 from .utils import get_harm_severity_level
 from .evaluation_onedp_client import EvaluationServiceOneDPClient
 from .onedp.models import EvaluationUpload, EvaluationResult, RedTeamUpload, ResultType
@@ -14,6 +14,7 @@ from .onedp.models import EvaluationUpload, EvaluationResult, RedTeamUpload, Res
 __all__ = [
     "get_harm_severity_level",
     "evaluate_with_rai_service",
+    "evaluate_with_rai_service_sync",
     "constants",
     "EvaluationServiceOneDPClient",
     "EvaluationResult",

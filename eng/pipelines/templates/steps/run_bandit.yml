@@ -6,11 +6,8 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
-  - script: |
-      python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Bandit'],'true'))
-
+  # this step should run on python 3.9.
+  # a previous step should have installed eng/ci_tools.txt to active venv
   - task: PythonScript@0
     displayName: 'Run Bandit'
     inputs:
@@ -20,6 +17,7 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="bandit"
+        --disable-compatibility-filter
         --disablecov
         ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}

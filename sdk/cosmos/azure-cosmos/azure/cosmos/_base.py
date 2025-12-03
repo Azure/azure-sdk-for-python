@@ -23,12 +23,13 @@
 """
 
 import base64
+import time
 from email.utils import formatdate
 import json
 import uuid
 import re
 import binascii
-from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
+from typing import Any, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import unquote as urllib_unquote
@@ -46,9 +47,13 @@ from .partition_key import _Empty, _Undefined
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
+    from ._global_partition_endpoint_manager_per_partition_automatic_failover import (
+        _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover)
     from ._request_object import RequestObject
+    from ._routing.routing_range import PartitionKeyRangeWrapper
 
 # pylint: disable=protected-access
+#cspell:ignore PPAF, ppaf
 
 _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
@@ -69,7 +74,8 @@ _COMMON_OPTIONS = {
     'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
-    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS
+    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
+    "availability_strategy_config": Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -79,7 +85,7 @@ _COMMON_OPTIONS = {
 _VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
-def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
+def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
     if_match = kwargs.pop('if_match', None)
     if_none_match = kwargs.pop('if_none_match', None)
     match_condition = kwargs.pop('match_condition', None)
@@ -104,11 +110,18 @@ def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[
     return if_match, if_none_match
 
 
-def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
+    if 'read_timeout' in kwargs:
+        options['read_timeout'] = kwargs['read_timeout']
+    if 'timeout' in kwargs:
+        options['timeout'] = kwargs['timeout']
+
+
+    options[Constants.OperationStartTime] = time.time()
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
@@ -128,7 +141,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
         client_id: Optional[str] = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Gets HTTP request headers.
 
     :param _cosmos_client_connection.CosmosClientConnection cosmos_client_connection:
@@ -146,6 +159,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     """
     headers = dict(default_headers)
     options = options or {}
+
+    # SDK supported capabilities header for partition merge support
+    headers[http_constants.HttpHeaders.SDKSupportedCapabilities] = \
+        http_constants.SDKSupportedCapabilities.PARTITION_MERGE
 
     # Generate a new activity ID for each request client side.
     headers[http_constants.HttpHeaders.ActivityId] = GenerateGuidId()
@@ -335,8 +352,7 @@ def _is_session_token_request(
     # Verify that it is not a metadata request, and that it is either a read request, batch request, or an account
     # configured to use multiple write regions. Batch requests are special-cased because they can contain both read and
     # write operations, and we want to use session consistency for the read operations.
-    return (is_session_consistency is True and cosmos_client_connection.session is not None
-            and not IsMasterResource(request_object.resource_type)
+    return (is_session_consistency is True and not IsMasterResource(request_object.resource_type)
             and (documents._OperationType.IsReadOnlyOperation(request_object.operation_type)
                  or request_object.operation_type == "Batch"
                  or cosmos_client_connection._global_endpoint_manager.can_use_multiple_write_locations(request_object)))
@@ -713,7 +729,7 @@ def TrimBeginningAndEndingSlashes(path: str) -> str:
 
 
 # Parses the paths into a list of token each representing a property
-def ParsePaths(paths: List[str]) -> List[str]:
+def ParsePaths(paths: list[str]) -> list[str]:
     segmentSeparator = "/"
     tokens = []
     for path in paths:
@@ -792,7 +808,7 @@ def _validate_resource(resource: Mapping[str, Any]) -> None:
 
 
 def _stringify_auto_scale(offer: ThroughputProperties) -> str:
-    auto_scale_params: Optional[Dict[str, Union[None, int, Dict[str, Any]]]] = None
+    auto_scale_params: Optional[dict[str, Union[None, int, dict[str, Any]]]] = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
     auto_scale_params = {"maxThroughput": max_throughput}
@@ -802,7 +818,7 @@ def _stringify_auto_scale(offer: ThroughputProperties) -> str:
     return auto_scale_settings
 
 
-def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: Dict[str, Any]) -> None:
+def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: dict[str, Any]) -> None:
     if isinstance(offer, int):
         request_options["offerThroughput"] = offer
     elif offer is not None:
@@ -821,9 +837,9 @@ def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], r
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
 
-def _deserialize_throughput(throughput: List[Dict[str, Dict[str, Any]]]) -> ThroughputProperties:
+def _deserialize_throughput(throughput: list[dict[str, dict[str, Any]]]) -> ThroughputProperties:
     properties = throughput[0]
-    offer_autopilot: Optional[Dict[str, Any]] = properties['content'].get('offerAutopilotSettings')
+    offer_autopilot: Optional[dict[str, Any]] = properties['content'].get('offerAutopilotSettings')
     if offer_autopilot and 'autoUpgradePolicy' in offer_autopilot:
         return ThroughputProperties(
             properties=properties,
@@ -843,7 +859,7 @@ def _deserialize_throughput(throughput: List[Dict[str, Dict[str, Any]]]) -> Thro
 
 def _replace_throughput(
     throughput: Union[int, ThroughputProperties],
-    new_throughput_properties: Dict[str, Any]
+    new_throughput_properties: dict[str, Any]
 ) -> None:
     if isinstance(throughput, int):
         new_throughput_properties["content"]["offerThroughput"] = throughput
@@ -874,15 +890,15 @@ def _internal_resourcetype(resource_type: str) -> str:
     return resource_type
 
 
-def _populate_batch_headers(current_headers: Dict[str, Any]) -> None:
+def _populate_batch_headers(current_headers: dict[str, Any]) -> None:
     current_headers[http_constants.HttpHeaders.IsBatchRequest] = True
     current_headers[http_constants.HttpHeaders.IsBatchAtomic] = True
     current_headers[http_constants.HttpHeaders.ShouldBatchContinueOnError] = False
 
 
 def _format_batch_operations(
-    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
-) -> List[Dict[str, Any]]:
+    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]]
+) -> list[dict[str, Any]]:
     final_operations = []
     for index, batch_operation in enumerate(operations):
         try:
@@ -937,8 +953,22 @@ def _format_batch_operations(
     return final_operations
 
 
-def _build_properties_cache(properties: Dict[str, Any], container_link: str) -> Dict[str, Any]:
+def _build_properties_cache(properties: dict[str, Any], container_link: str) -> dict[str, Any]:
     return {
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
+
+def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
+    """Formats the partition key range options to be used internally from the query ones.
+    :param dict query_options: The query options being used.
+    :return: The relevant partition key range options.
+    :rtype: dict
+    """
+    pk_range_options: dict[str, Any] = {}
+    if query_options is not None:
+        if "containerRID" in query_options:
+            pk_range_options["containerRID"] = query_options["containerRID"]
+        if "excludedLocations" in query_options:
+            pk_range_options["excludedLocations"] = query_options["excludedLocations"]
+    return pk_range_options

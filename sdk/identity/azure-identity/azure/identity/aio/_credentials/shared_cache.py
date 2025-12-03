@@ -8,6 +8,7 @@ from ..._internal.aad_client import AadClientBase
 from ... import CredentialUnavailableError
 from ..._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
+from ..._internal.utils import within_dac
 from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token_async
@@ -143,11 +144,17 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account, is_cae=is_cae):
-            token = await cast(AadClient, self._client).obtain_token_by_refresh_token(
-                scopes, refresh_token, claims=claims, tenant_id=tenant_id, enable_cae=is_cae, **kwargs
-            )
-            return token
-
+            try:
+                token = await cast(AadClient, self._client).obtain_token_by_refresh_token(
+                    scopes, refresh_token, claims=claims, tenant_id=tenant_id, enable_cae=is_cae, **kwargs
+                )
+                return token
+            except Exception as e:  # pylint: disable=broad-except
+                if within_dac.get():
+                    raise CredentialUnavailableError(
+                        message=getattr(e, "message", str(e)), response=getattr(e, "response", None)
+                    ) from e
+                raise
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
     def _get_auth_client(self, **kwargs: Any) -> AadClientBase:

@@ -8,8 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Literal, Optional, TypeVar, Union, overload
-import urllib.parse
+from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -32,7 +31,8 @@ from .._configuration import SqlManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -44,7 +44,7 @@ def build_list_by_database_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,7 +77,7 @@ def build_get_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -111,7 +111,7 @@ def build_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -181,7 +181,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
         cls: ClsType[_models.ExtendedDatabaseBlobAuditingPolicyListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -207,18 +207,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -241,8 +230,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -277,7 +265,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
         cls: ClsType[_models.ExtendedDatabaseBlobAuditingPolicy] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -301,8 +289,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ExtendedDatabaseBlobAuditingPolicy", pipeline_response.http_response)
 
@@ -408,7 +395,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExtendedDatabaseBlobAuditingPolicy] = kwargs.pop("cls", None)
 
@@ -444,8 +431,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ExtendedDatabaseBlobAuditingPolicy", pipeline_response.http_response)
 

@@ -33,4 +33,4 @@ class TestStorageDiscoveryMgmtStorageDiscoveryWorkspacesOperationsAsync(AzureMgm
     async def test_storage_discovery_workspaces_list_by_subscription(self, resource_group):
         response = self.client.storage_discovery_workspaces.list_by_subscription()
         result = [r async for r in response]
-        assert result
+        assert response

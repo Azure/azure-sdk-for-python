@@ -343,7 +343,7 @@ def test_multitenant_authentication_not_allowed(get_token_method):
 def test_claims_challenge_raises_error(get_token_method):
     """The credential should raise CredentialUnavailableError when claims challenge is provided"""
 
-    claims = "test-claims-challenge"
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
     credential = AzureDeveloperCliCredential()
 
     expected_message = "Suggestion: re-authentication required, run `azd auth login` to acquire a new token."
@@ -405,7 +405,8 @@ def test_empty_claims_does_not_raise_error(get_token_method):
 def test_claims_command_line_argument(get_token_method):
     """The credential should pass claims as --claims argument to azd command"""
 
-    claims = "test-claims-challenge"
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    expected_encoded_claims = "eyJhY2Nlc3NfdG9rZW4iOnsiYWNycyI6eyJlc3NlbnRpYWwiOnRydWUsInZhbHVlcyI6WyJwMSJdfX19"
     access_token = "access token"
     expected_expires_on = 1602015811
 
@@ -413,7 +414,7 @@ def test_claims_command_line_argument(get_token_method):
         # Verify that claims are passed as --claims argument
         assert "--claims" in command_line
         claims_index = command_line.index("--claims")
-        assert command_line[claims_index + 1] == claims
+        assert command_line[claims_index + 1] == expected_encoded_claims
 
         return json.dumps(
             {

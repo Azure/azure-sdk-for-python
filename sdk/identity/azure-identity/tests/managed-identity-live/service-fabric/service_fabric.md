@@ -217,8 +217,8 @@ Import the certificate into your Personal store.
 If you're using a corporate VPN and your browser can't connect to the Explorer endpoint because your request times out,
 you may have to add a security rule to the network security group resource in your resource group (its name should
 begin with "NRMS"). Be sure to first comply with
-[security rules for ARM subnets](https://strikecommunity.azurewebsites.net/articles/3427/faq-simply-secure-network-security-rules-for-new-a.html).
-[Here](https://strikecommunity.azurewebsites.net/articles/4889/can-not-access-my-non-production-resources-from-so-1.html)
+[security rules for ARM subnets](https://strikecommunity.microsoft.com/articles/3427/faq-simply-secure-network-security-rules-for-new-a.html).
+[Here](https://strikecommunity.microsoft.com/articles/4889/can-not-access-my-non-production-resources-from-so-1.html)
 is a page that discusses the known issue with VPN access to some resources.
 
 To add a security rule, open the resource in the Azure Portal, and then go to the "Inbound security rules" page in the

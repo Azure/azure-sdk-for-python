@@ -89,14 +89,14 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist ${{ parameters.AdditionalTestArgs }}'
+     arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist ${{ parameters.AdditionalTestArgs }}'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl ${{ parameters.AdditionalTestArgs }}'
+     arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl ${{ parameters.AdditionalTestArgs }}'
 
   - template: run_mypy.yml
     parameters:
@@ -122,8 +122,12 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Keyword Validation Check'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords ${{ parameters.AdditionalTestArgs }}'
+      scriptPath: 'eng/scripts/dispatch_checks.py'
+      arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --checks=verify_keywords ${{ parameters.AdditionalTestArgs }}'
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
     condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
 
   - template: ../steps/run_bandit.yml
@@ -156,7 +160,6 @@ steps:
   - template: /eng/common/pipelines/templates/steps/validate-all-packages.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
-      ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 

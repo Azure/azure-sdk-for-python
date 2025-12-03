@@ -17,7 +17,7 @@ from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOpt
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
+from .._internal import encode_base64, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 from .._internal.decorators import log_get_token
 
 
@@ -184,7 +184,7 @@ class AzureDeveloperCliCredential:
         if tenant:
             command_args += ["--tenant-id", tenant]
         if claims:
-            command_args += ["--claims", claims]
+            command_args += ["--claims", encode_base64(claims)]
         output = _run_command(command_args, self._process_timeout)
 
         token = parse_token(output)

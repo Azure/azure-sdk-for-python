@@ -4,6 +4,8 @@ import logging
 import functools
 import json
 import datetime
+import os
+import base64
 from devtools_testutils import (
     AzureRecordedTestCase,
     EnvironmentVariableLoader,
@@ -73,6 +75,26 @@ def fetch_current_datetime_recordings():
     """
     time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
     return time_json
+
+
+def image_to_base64(image_path: str) -> str:
+    """
+    Convert an image file to a Base64-encoded string.
+
+    :param image_path: The path to the image file (e.g. 'image_file.png')
+    :return: A Base64-encoded string representing the image.
+    :raises FileNotFoundError: If the provided file path does not exist.
+    :raises OSError: If there's an error reading the file.
+    """
+    if not os.path.isfile(image_path):
+        raise FileNotFoundError(f"File not found at: {image_path}")
+
+    try:
+        with open(image_path, "rb") as image_file:
+            file_data = image_file.read()
+        return base64.b64encode(file_data).decode("utf-8")
+    except Exception as exc:
+        raise OSError(f"Error reading file '{image_path}'") from exc
 
 
 class TestAgentClientBase(AzureRecordedTestCase):

@@ -5,9 +5,7 @@
 import os
 
 import pytest
-from azure.keyvault.administration import ApiVersion
 from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
-from azure.identity.aio import ManagedIdentityCredential
 from devtools_testutils import AzureRecordedTestCase
 
 
@@ -133,10 +131,3 @@ class KeyVaultSettingsClientPreparer(BaseClientPreparer):
         return self.create_client_from_credential(
             KeyVaultSettingsClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
-
-
-def get_decorator(**kwargs):
-    """returns a test decorator for test parameterization"""
-    versions = kwargs.pop("api_versions", None) or ApiVersion
-    params = [pytest.param(api_version) for api_version in versions]
-    return params

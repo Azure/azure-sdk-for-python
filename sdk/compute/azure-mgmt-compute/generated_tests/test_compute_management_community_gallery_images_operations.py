@@ -20,25 +20,25 @@ class TestComputeManagementCommunityGalleryImagesOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_community_gallery_images_get(self, resource_group):
-        response = self.client.community_gallery_images.get(
+    def test_community_gallery_images_list(self, resource_group):
+        response = self.client.community_gallery_images.list(
             location="str",
             public_gallery_name="str",
-            gallery_image_name="str",
-            api_version="2023-07-03",
+            api_version="2024-03-03",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_community_gallery_images_list(self, resource_group):
-        response = self.client.community_gallery_images.list(
+    def test_community_gallery_images_get(self, resource_group):
+        response = self.client.community_gallery_images.get(
             location="str",
             public_gallery_name="str",
-            api_version="2023-07-03",
+            gallery_image_name="str",
+            api_version="2024-03-03",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...

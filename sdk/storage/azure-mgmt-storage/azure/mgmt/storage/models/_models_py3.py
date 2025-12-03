@@ -7,13 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
+from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class AccessPolicy(_serialization.Model):
@@ -335,32 +337,47 @@ class AccountUsageElements(_serialization.Model):
 class ActiveDirectoryProperties(_serialization.Model):
     """Settings properties for Active Directory (AD).
 
-    All required parameters must be populated in order to send to server.
-
     :ivar domain_name: Specifies the primary domain that the AD DNS server is authoritative for.
-     Required.
+     This property is required if directoryServiceOptions is set to AD (AD DS authentication). If
+     directoryServiceOptions is set to AADDS (Entra DS authentication), providing this property is
+     optional, as it will be inferred automatically if omitted. If directoryServiceOptions is set to
+     AADKERB (Entra authentication), this property is optional; it is needed to support
+     configuration of directory- and file-level permissions via Windows File Explorer, but is not
+     required for authentication.
     :vartype domain_name: str
-    :ivar net_bios_domain_name: Specifies the NetBIOS domain name.
+    :ivar net_bios_domain_name: Specifies the NetBIOS domain name. If directoryServiceOptions is
+     set to AD (AD DS authentication), this property is required. Otherwise, it can be omitted.
     :vartype net_bios_domain_name: str
-    :ivar forest_name: Specifies the Active Directory forest to get.
+    :ivar forest_name: Specifies the Active Directory forest to get. If directoryServiceOptions is
+     set to AD (AD DS authentication), this property is required. Otherwise, it can be omitted.
     :vartype forest_name: str
-    :ivar domain_guid: Specifies the domain GUID. Required.
+    :ivar domain_guid: Specifies the domain GUID. If directoryServiceOptions is set to AD (AD DS
+     authentication), this property is required. If directoryServiceOptions is set to AADDS (Entra
+     DS authentication), this property can be omitted. If directoryServiceOptions is set to AADKERB
+     (Entra authentication), this property is optional; it is needed to support configuration of
+     directory- and file-level permissions via Windows File Explorer, but is not required for
+     authentication.
     :vartype domain_guid: str
-    :ivar domain_sid: Specifies the security identifier (SID).
+    :ivar domain_sid: Specifies the security identifier (SID) of the AD domain. If
+     directoryServiceOptions is set to AD (AD DS authentication), this property is required.
+     Otherwise, it can be omitted.
     :vartype domain_sid: str
-    :ivar azure_storage_sid: Specifies the security identifier (SID) for Azure Storage.
+    :ivar azure_storage_sid: Specifies the security identifier (SID) for Azure Storage. If
+     directoryServiceOptions is set to AD (AD DS authentication), this property is required.
+     Otherwise, it can be omitted.
     :vartype azure_storage_sid: str
-    :ivar sam_account_name: Specifies the Active Directory SAMAccountName for Azure Storage.
+    :ivar sam_account_name: Specifies the Active Directory SAMAccountName for Azure Storage. If
+     directoryServiceOptions is set to AD (AD DS authentication), this property is optional. If
+     provided, accountType should also be provided. For directoryServiceOptions AADDS (Entra DS
+     authentication) or AADKERB (Entra authentication), this property can be omitted.
     :vartype sam_account_name: str
-    :ivar account_type: Specifies the Active Directory account type for Azure Storage. Known values
+    :ivar account_type: Specifies the Active Directory account type for Azure Storage. If
+     directoryServiceOptions is set to AD (AD DS authentication), this property is optional. If
+     provided, samAccountName should also be provided. For directoryServiceOptions AADDS (Entra DS
+     authentication) or AADKERB (Entra authentication), this property can be omitted. Known values
      are: "User" and "Computer".
     :vartype account_type: str or ~azure.mgmt.storage.models.AccountType
     """
-
-    _validation = {
-        "domain_name": {"required": True},
-        "domain_guid": {"required": True},
-    }
 
     _attribute_map = {
         "domain_name": {"key": "domainName", "type": "str"},
@@ -376,10 +393,10 @@ class ActiveDirectoryProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        domain_name: str,
-        domain_guid: str,
+        domain_name: Optional[str] = None,
         net_bios_domain_name: Optional[str] = None,
         forest_name: Optional[str] = None,
+        domain_guid: Optional[str] = None,
         domain_sid: Optional[str] = None,
         azure_storage_sid: Optional[str] = None,
         sam_account_name: Optional[str] = None,
@@ -388,22 +405,44 @@ class ActiveDirectoryProperties(_serialization.Model):
     ) -> None:
         """
         :keyword domain_name: Specifies the primary domain that the AD DNS server is authoritative for.
-         Required.
+         This property is required if directoryServiceOptions is set to AD (AD DS authentication). If
+         directoryServiceOptions is set to AADDS (Entra DS authentication), providing this property is
+         optional, as it will be inferred automatically if omitted. If directoryServiceOptions is set to
+         AADKERB (Entra authentication), this property is optional; it is needed to support
+         configuration of directory- and file-level permissions via Windows File Explorer, but is not
+         required for authentication.
         :paramtype domain_name: str
-        :keyword net_bios_domain_name: Specifies the NetBIOS domain name.
+        :keyword net_bios_domain_name: Specifies the NetBIOS domain name. If directoryServiceOptions is
+         set to AD (AD DS authentication), this property is required. Otherwise, it can be omitted.
         :paramtype net_bios_domain_name: str
-        :keyword forest_name: Specifies the Active Directory forest to get.
+        :keyword forest_name: Specifies the Active Directory forest to get. If directoryServiceOptions
+         is set to AD (AD DS authentication), this property is required. Otherwise, it can be omitted.
         :paramtype forest_name: str
-        :keyword domain_guid: Specifies the domain GUID. Required.
+        :keyword domain_guid: Specifies the domain GUID. If directoryServiceOptions is set to AD (AD DS
+         authentication), this property is required. If directoryServiceOptions is set to AADDS (Entra
+         DS authentication), this property can be omitted. If directoryServiceOptions is set to AADKERB
+         (Entra authentication), this property is optional; it is needed to support configuration of
+         directory- and file-level permissions via Windows File Explorer, but is not required for
+         authentication.
         :paramtype domain_guid: str
-        :keyword domain_sid: Specifies the security identifier (SID).
+        :keyword domain_sid: Specifies the security identifier (SID) of the AD domain. If
+         directoryServiceOptions is set to AD (AD DS authentication), this property is required.
+         Otherwise, it can be omitted.
         :paramtype domain_sid: str
-        :keyword azure_storage_sid: Specifies the security identifier (SID) for Azure Storage.
+        :keyword azure_storage_sid: Specifies the security identifier (SID) for Azure Storage. If
+         directoryServiceOptions is set to AD (AD DS authentication), this property is required.
+         Otherwise, it can be omitted.
         :paramtype azure_storage_sid: str
-        :keyword sam_account_name: Specifies the Active Directory SAMAccountName for Azure Storage.
+        :keyword sam_account_name: Specifies the Active Directory SAMAccountName for Azure Storage. If
+         directoryServiceOptions is set to AD (AD DS authentication), this property is optional. If
+         provided, accountType should also be provided. For directoryServiceOptions AADDS (Entra DS
+         authentication) or AADKERB (Entra authentication), this property can be omitted.
         :paramtype sam_account_name: str
-        :keyword account_type: Specifies the Active Directory account type for Azure Storage. Known
-         values are: "User" and "Computer".
+        :keyword account_type: Specifies the Active Directory account type for Azure Storage. If
+         directoryServiceOptions is set to AD (AD DS authentication), this property is optional. If
+         provided, samAccountName should also be provided. For directoryServiceOptions AADDS (Entra DS
+         authentication) or AADKERB (Entra authentication), this property can be omitted. Known values
+         are: "User" and "Computer".
         :paramtype account_type: str or ~azure.mgmt.storage.models.AccountType
         """
         super().__init__(**kwargs)
@@ -497,14 +536,17 @@ class AzureFilesIdentityBasedAuthentication(_serialization.Model):
     :ivar directory_service_options: Indicates the directory service used. Note that this enum may
      be extended in the future. Required. Known values are: "None", "AADDS", "AD", and "AADKERB".
     :vartype directory_service_options: str or ~azure.mgmt.storage.models.DirectoryServiceOptions
-    :ivar active_directory_properties: Required if directoryServiceOptions are AD, optional if they
-     are AADKERB.
+    :ivar active_directory_properties: Additional information about the directory service. Required
+     if directoryServiceOptions is AD (AD DS authentication). Optional for directoryServiceOptions
+     AADDS (Entra DS authentication) and AADKERB (Entra authentication).
     :vartype active_directory_properties: ~azure.mgmt.storage.models.ActiveDirectoryProperties
     :ivar default_share_permission: Default share permission for users using Kerberos
      authentication if RBAC role is not assigned. Known values are: "None",
      "StorageFileDataSmbShareReader", "StorageFileDataSmbShareContributor", and
      "StorageFileDataSmbShareElevatedContributor".
     :vartype default_share_permission: str or ~azure.mgmt.storage.models.DefaultSharePermission
+    :ivar smb_o_auth_settings: Required for Managed Identities access using OAuth over SMB.
+    :vartype smb_o_auth_settings: ~azure.mgmt.storage.models.SmbOAuthSettings
     """
 
     _validation = {
@@ -515,6 +557,7 @@ class AzureFilesIdentityBasedAuthentication(_serialization.Model):
         "directory_service_options": {"key": "directoryServiceOptions", "type": "str"},
         "active_directory_properties": {"key": "activeDirectoryProperties", "type": "ActiveDirectoryProperties"},
         "default_share_permission": {"key": "defaultSharePermission", "type": "str"},
+        "smb_o_auth_settings": {"key": "smbOAuthSettings", "type": "SmbOAuthSettings"},
     }
 
     def __init__(
@@ -523,6 +566,7 @@ class AzureFilesIdentityBasedAuthentication(_serialization.Model):
         directory_service_options: Union[str, "_models.DirectoryServiceOptions"],
         active_directory_properties: Optional["_models.ActiveDirectoryProperties"] = None,
         default_share_permission: Optional[Union[str, "_models.DefaultSharePermission"]] = None,
+        smb_o_auth_settings: Optional["_models.SmbOAuthSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -530,19 +574,23 @@ class AzureFilesIdentityBasedAuthentication(_serialization.Model):
          may be extended in the future. Required. Known values are: "None", "AADDS", "AD", and
          "AADKERB".
         :paramtype directory_service_options: str or ~azure.mgmt.storage.models.DirectoryServiceOptions
-        :keyword active_directory_properties: Required if directoryServiceOptions are AD, optional if
-         they are AADKERB.
+        :keyword active_directory_properties: Additional information about the directory service.
+         Required if directoryServiceOptions is AD (AD DS authentication). Optional for
+         directoryServiceOptions AADDS (Entra DS authentication) and AADKERB (Entra authentication).
         :paramtype active_directory_properties: ~azure.mgmt.storage.models.ActiveDirectoryProperties
         :keyword default_share_permission: Default share permission for users using Kerberos
          authentication if RBAC role is not assigned. Known values are: "None",
          "StorageFileDataSmbShareReader", "StorageFileDataSmbShareContributor", and
          "StorageFileDataSmbShareElevatedContributor".
         :paramtype default_share_permission: str or ~azure.mgmt.storage.models.DefaultSharePermission
+        :keyword smb_o_auth_settings: Required for Managed Identities access using OAuth over SMB.
+        :paramtype smb_o_auth_settings: ~azure.mgmt.storage.models.SmbOAuthSettings
         """
         super().__init__(**kwargs)
         self.directory_service_options = directory_service_options
         self.active_directory_properties = active_directory_properties
         self.default_share_permission = default_share_permission
+        self.smb_o_auth_settings = smb_o_auth_settings
 
 
 class BlobContainer(AzureEntityResource):
@@ -668,7 +716,7 @@ class BlobContainer(AzureEntityResource):
         default_encryption_scope: Optional[str] = None,
         deny_encryption_scope_override: Optional[bool] = None,
         public_access: Optional[Union[str, "_models.PublicAccess"]] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         immutable_storage_with_versioning: Optional["_models.ImmutableStorageWithVersioning"] = None,
         enable_nfs_v3_root_squash: Optional[bool] = None,
         enable_nfs_v3_all_squash: Optional[bool] = None,
@@ -855,7 +903,7 @@ class BlobInventoryPolicyDefinition(_serialization.Model):
         format: Union[str, "_models.Format"],
         schedule: Union[str, "_models.Schedule"],
         object_type: Union[str, "_models.ObjectType"],
-        schema_fields: List[str],
+        schema_fields: list[str],
         filters: Optional["_models.BlobInventoryPolicyFilter"] = None,
         **kwargs: Any
     ) -> None:
@@ -949,9 +997,9 @@ class BlobInventoryPolicyFilter(_serialization.Model):
     def __init__(
         self,
         *,
-        prefix_match: Optional[List[str]] = None,
-        exclude_prefix: Optional[List[str]] = None,
-        blob_types: Optional[List[str]] = None,
+        prefix_match: Optional[list[str]] = None,
+        exclude_prefix: Optional[list[str]] = None,
+        blob_types: Optional[list[str]] = None,
         include_blob_versions: Optional[bool] = None,
         include_snapshots: Optional[bool] = None,
         include_deleted: Optional[bool] = None,
@@ -1095,7 +1143,7 @@ class BlobInventoryPolicySchema(_serialization.Model):
         *,
         enabled: bool,
         type: Union[str, "_models.InventoryRuleType"],
-        rules: List["_models.BlobInventoryPolicyRule"],
+        rules: list["_models.BlobInventoryPolicyRule"],
         **kwargs: Any
     ) -> None:
         """
@@ -1136,7 +1184,7 @@ class BlobRestoreParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, time_to_restore: datetime.datetime, blob_ranges: List["_models.BlobRestoreRange"], **kwargs: Any
+        self, *, time_to_restore: datetime.datetime, blob_ranges: list["_models.BlobRestoreRange"], **kwargs: Any
     ) -> None:
         """
         :keyword time_to_restore: Restore blob to the specified time. Required.
@@ -1243,7 +1291,7 @@ class BlobServiceItems(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.BlobServiceProperties"]] = None
+        self.value: Optional[list["_models.BlobServiceProperties"]] = None
 
 
 class BlobServiceProperties(Resource):
@@ -1509,7 +1557,7 @@ class CloudErrorBody(_serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
+        details: Optional[list["_models.CloudErrorBody"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1573,11 +1621,11 @@ class CorsRule(_serialization.Model):
     def __init__(
         self,
         *,
-        allowed_origins: List[str],
-        allowed_methods: List[Union[str, "_models.AllowedMethods"]],
+        allowed_origins: list[str],
+        allowed_methods: list[Union[str, "_models.AllowedMethods"]],
         max_age_in_seconds: int,
-        exposed_headers: List[str],
-        allowed_headers: List[str],
+        exposed_headers: list[str],
+        allowed_headers: list[str],
         **kwargs: Any
     ) -> None:
         """
@@ -1617,7 +1665,7 @@ class CorsRules(_serialization.Model):
         "cors_rules": {"key": "corsRules", "type": "[CorsRule]"},
     }
 
-    def __init__(self, *, cors_rules: Optional[List["_models.CorsRule"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, cors_rules: Optional[list["_models.CorsRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword cors_rules: The List of CORS rules. You can include up to five CorsRule elements in
          the request.
@@ -1880,7 +1928,7 @@ class DeletedAccountListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.DeletedAccount"]] = None
+        self.value: Optional[list["_models.DeletedAccount"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -1996,6 +2044,28 @@ class Dimension(_serialization.Model):
         self.display_name = display_name
 
 
+class DualStackEndpointPreference(_serialization.Model):
+    """Dual-stack endpoint preference defines whether IPv6 endpoints are going to be published.
+
+    :ivar publish_ipv6_endpoint: A boolean flag which indicates whether IPv6 storage endpoints are
+     to be published.
+    :vartype publish_ipv6_endpoint: bool
+    """
+
+    _attribute_map = {
+        "publish_ipv6_endpoint": {"key": "publishIpv6Endpoint", "type": "bool"},
+    }
+
+    def __init__(self, *, publish_ipv6_endpoint: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword publish_ipv6_endpoint: A boolean flag which indicates whether IPv6 storage endpoints
+         are to be published.
+        :paramtype publish_ipv6_endpoint: bool
+        """
+        super().__init__(**kwargs)
+        self.publish_ipv6_endpoint = publish_ipv6_endpoint
+
+
 class Encryption(_serialization.Model):
     """The encryption settings on the storage account.
 
@@ -2091,6 +2161,26 @@ class EncryptionIdentity(_serialization.Model):
         super().__init__(**kwargs)
         self.encryption_user_assigned_identity = encryption_user_assigned_identity
         self.encryption_federated_identity_client_id = encryption_federated_identity_client_id
+
+
+class EncryptionInTransit(_serialization.Model):
+    """Encryption in transit setting.
+
+    :ivar required: Indicates whether encryption in transit is required.
+    :vartype required: bool
+    """
+
+    _attribute_map = {
+        "required": {"key": "required", "type": "bool"},
+    }
+
+    def __init__(self, *, required: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword required: Indicates whether encryption in transit is required.
+        :paramtype required: bool
+        """
+        super().__init__(**kwargs)
+        self.required = required
 
 
 class EncryptionScope(Resource):
@@ -2246,7 +2336,7 @@ class EncryptionScopeListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.EncryptionScope"]] = None
+        self.value: Optional[list["_models.EncryptionScope"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -2363,6 +2453,8 @@ class Endpoints(_serialization.Model):
     :vartype microsoft_endpoints: ~azure.mgmt.storage.models.StorageAccountMicrosoftEndpoints
     :ivar internet_endpoints: Gets the internet routing storage endpoints.
     :vartype internet_endpoints: ~azure.mgmt.storage.models.StorageAccountInternetEndpoints
+    :ivar ipv6_endpoints: Gets the IPv6 storage endpoints.
+    :vartype ipv6_endpoints: ~azure.mgmt.storage.models.StorageAccountIpv6Endpoints
     """
 
     _validation = {
@@ -2383,6 +2475,7 @@ class Endpoints(_serialization.Model):
         "dfs": {"key": "dfs", "type": "str"},
         "microsoft_endpoints": {"key": "microsoftEndpoints", "type": "StorageAccountMicrosoftEndpoints"},
         "internet_endpoints": {"key": "internetEndpoints", "type": "StorageAccountInternetEndpoints"},
+        "ipv6_endpoints": {"key": "ipv6Endpoints", "type": "StorageAccountIpv6Endpoints"},
     }
 
     def __init__(
@@ -2390,6 +2483,7 @@ class Endpoints(_serialization.Model):
         *,
         microsoft_endpoints: Optional["_models.StorageAccountMicrosoftEndpoints"] = None,
         internet_endpoints: Optional["_models.StorageAccountInternetEndpoints"] = None,
+        ipv6_endpoints: Optional["_models.StorageAccountIpv6Endpoints"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2397,6 +2491,8 @@ class Endpoints(_serialization.Model):
         :paramtype microsoft_endpoints: ~azure.mgmt.storage.models.StorageAccountMicrosoftEndpoints
         :keyword internet_endpoints: Gets the internet routing storage endpoints.
         :paramtype internet_endpoints: ~azure.mgmt.storage.models.StorageAccountInternetEndpoints
+        :keyword ipv6_endpoints: Gets the IPv6 storage endpoints.
+        :paramtype ipv6_endpoints: ~azure.mgmt.storage.models.StorageAccountIpv6Endpoints
         """
         super().__init__(**kwargs)
         self.blob: Optional[str] = None
@@ -2407,6 +2503,7 @@ class Endpoints(_serialization.Model):
         self.dfs: Optional[str] = None
         self.microsoft_endpoints = microsoft_endpoints
         self.internet_endpoints = internet_endpoints
+        self.ipv6_endpoints = ipv6_endpoints
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -2476,8 +2573,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -2569,7 +2666,7 @@ class ExecutionTarget(_serialization.Model):
     }
 
     def __init__(
-        self, *, prefix: Optional[List[str]] = None, exclude_prefix: Optional[List[str]] = None, **kwargs: Any
+        self, *, prefix: Optional[list[str]] = None, exclude_prefix: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword prefix: Required list of object prefixes to be included for task execution.
@@ -2707,7 +2804,7 @@ class FileServiceItems(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.FileServiceProperties"]] = None
+        self.value: Optional[list["_models.FileServiceProperties"]] = None
 
 
 class FileServiceProperties(Resource):
@@ -2892,7 +2989,7 @@ class FileServiceUsages(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.FileServiceUsage"]] = None
+        self.value: Optional[list["_models.FileServiceUsage"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -3059,14 +3156,14 @@ class FileShare(AzureEntityResource):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         share_quota: Optional[int] = None,
         provisioned_iops: Optional[int] = None,
         provisioned_bandwidth_mibps: Optional[int] = None,
         enabled_protocols: Optional[Union[str, "_models.EnabledProtocols"]] = None,
         root_squash: Optional[Union[str, "_models.RootSquashType"]] = None,
         access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
-        signed_identifiers: Optional[List["_models.SignedIdentifier"]] = None,
+        signed_identifiers: Optional[list["_models.SignedIdentifier"]] = None,
         file_share_paid_bursting: Optional["_models.FileSharePropertiesFileSharePaidBursting"] = None,
         **kwargs: Any
     ) -> None:
@@ -3295,14 +3392,14 @@ class FileShareItem(AzureEntityResource):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         share_quota: Optional[int] = None,
         provisioned_iops: Optional[int] = None,
         provisioned_bandwidth_mibps: Optional[int] = None,
         enabled_protocols: Optional[Union[str, "_models.EnabledProtocols"]] = None,
         root_squash: Optional[Union[str, "_models.RootSquashType"]] = None,
         access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
-        signed_identifiers: Optional[List["_models.SignedIdentifier"]] = None,
+        signed_identifiers: Optional[list["_models.SignedIdentifier"]] = None,
         file_share_paid_bursting: Optional["_models.FileSharePropertiesFileSharePaidBursting"] = None,
         **kwargs: Any
     ) -> None:
@@ -3394,7 +3491,7 @@ class FileShareItems(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.FileShareItem"]] = None
+        self.value: Optional[list["_models.FileShareItem"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -3545,6 +3642,28 @@ class FileShareRecommendations(_serialization.Model):
         self.bandwidth_scalar: Optional[float] = None
 
 
+class GeoPriorityReplicationStatus(_serialization.Model):
+    """Geo Priority Replication enablement status for the storage account.
+
+    :ivar is_blob_enabled: Indicates whether Blob Geo Priority Replication is enabled for the
+     storage account.
+    :vartype is_blob_enabled: bool
+    """
+
+    _attribute_map = {
+        "is_blob_enabled": {"key": "isBlobEnabled", "type": "bool"},
+    }
+
+    def __init__(self, *, is_blob_enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword is_blob_enabled: Indicates whether Blob Geo Priority Replication is enabled for the
+         storage account.
+        :paramtype is_blob_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.is_blob_enabled = is_blob_enabled
+
+
 class GeoReplicationStats(_serialization.Model):
     """Statistics related to replication for storage account's Blob, Table, Queue and File services.
     It is only available when geo-redundant replication is enabled for the storage account.
@@ -3644,7 +3763,7 @@ class Identity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.IdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3831,7 +3950,7 @@ class ImmutabilityPolicyProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.etag: Optional[str] = None
-        self.update_history: Optional[List["_models.UpdateHistoryProperty"]] = None
+        self.update_history: Optional[list["_models.UpdateHistoryProperty"]] = None
         self.immutability_period_since_creation_in_days = immutability_period_since_creation_in_days
         self.state: Optional[Union[str, "_models.ImmutabilityPolicyState"]] = None
         self.allow_protected_append_writes = allow_protected_append_writes
@@ -3924,8 +4043,7 @@ class IPRule(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar ip_address_or_range: Specifies the IP or IP range in CIDR format. Only IPV4 address is
-     allowed. Required.
+    :ivar ip_address_or_range: Specifies the IP or IP range in CIDR format. Required.
     :vartype ip_address_or_range: str
     :ivar action: The action of IP ACL rule. Default value is "Allow".
     :vartype action: str
@@ -3942,8 +4060,7 @@ class IPRule(_serialization.Model):
 
     def __init__(self, *, ip_address_or_range: str, action: Optional[Literal["Allow"]] = None, **kwargs: Any) -> None:
         """
-        :keyword ip_address_or_range: Specifies the IP or IP range in CIDR format. Only IPV4 address is
-         allowed. Required.
+        :keyword ip_address_or_range: Specifies the IP or IP range in CIDR format. Required.
         :paramtype ip_address_or_range: str
         :keyword action: The action of IP ACL rule. Default value is "Allow".
         :paramtype action: str
@@ -4107,7 +4224,7 @@ class LastAccessTimeTrackingPolicy(_serialization.Model):
         enable: bool,
         name: Optional[Union[str, "_models.Name"]] = None,
         tracking_granularity_in_days: Optional[int] = None,
-        blob_type: Optional[List[str]] = None,
+        blob_type: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4358,7 +4475,7 @@ class LegalHold(_serialization.Model):
     }
 
     def __init__(
-        self, *, tags: List[str], allow_protected_append_writes_all: Optional[bool] = None, **kwargs: Any
+        self, *, tags: list[str], allow_protected_append_writes_all: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """
         :keyword tags: Each tag should be 3 to 23 alphanumeric characters and is normalized to lower
@@ -4408,7 +4525,7 @@ class LegalHoldProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[List["_models.TagProperty"]] = None,
+        tags: Optional[list["_models.TagProperty"]] = None,
         protected_append_writes_history: Optional["_models.ProtectedAppendWritesHistory"] = None,
         **kwargs: Any
     ) -> None:
@@ -4468,7 +4585,7 @@ class ListBlobInventoryPolicy(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.BlobInventoryPolicy"]] = None
+        self.value: Optional[list["_models.BlobInventoryPolicy"]] = None
 
 
 class ListContainerItem(AzureEntityResource):
@@ -4594,7 +4711,7 @@ class ListContainerItem(AzureEntityResource):
         default_encryption_scope: Optional[str] = None,
         deny_encryption_scope_override: Optional[bool] = None,
         public_access: Optional[Union[str, "_models.PublicAccess"]] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         immutable_storage_with_versioning: Optional["_models.ImmutableStorageWithVersioning"] = None,
         enable_nfs_v3_root_squash: Optional[bool] = None,
         enable_nfs_v3_all_squash: Optional[bool] = None,
@@ -4670,7 +4787,7 @@ class ListContainerItems(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.ListContainerItem"]] = None
+        self.value: Optional[list["_models.ListContainerItem"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -4704,7 +4821,7 @@ class ListQueue(Resource):
         "metadata": {"key": "properties.metadata", "type": "{str}"},
     }
 
-    def __init__(self, *, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, metadata: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword metadata: A name-value pair that represents queue metadata.
         :paramtype metadata: dict[str, str]
@@ -4737,7 +4854,7 @@ class ListQueueResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.ListQueue"]] = None
+        self.value: Optional[list["_models.ListQueue"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -4761,7 +4878,7 @@ class ListQueueServices(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.QueueServiceProperties"]] = None
+        self.value: Optional[list["_models.QueueServiceProperties"]] = None
 
 
 class ListServiceSasResponse(_serialization.Model):
@@ -4811,7 +4928,7 @@ class ListTableResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Table"]] = None
+        self.value: Optional[list["_models.Table"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -4835,7 +4952,7 @@ class ListTableServices(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.TableServiceProperties"]] = None
+        self.value: Optional[list["_models.TableServiceProperties"]] = None
 
 
 class LocalUser(Resource):
@@ -4915,15 +5032,15 @@ class LocalUser(Resource):
     def __init__(
         self,
         *,
-        permission_scopes: Optional[List["_models.PermissionScope"]] = None,
+        permission_scopes: Optional[list["_models.PermissionScope"]] = None,
         home_directory: Optional[str] = None,
-        ssh_authorized_keys: Optional[List["_models.SshPublicKey"]] = None,
+        ssh_authorized_keys: Optional[list["_models.SshPublicKey"]] = None,
         has_shared_key: Optional[bool] = None,
         has_ssh_key: Optional[bool] = None,
         has_ssh_password: Optional[bool] = None,
         group_id: Optional[int] = None,
         allow_acl_authorization: Optional[bool] = None,
-        extended_groups: Optional[List[int]] = None,
+        extended_groups: Optional[list[int]] = None,
         is_nf_sv3_enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -4991,7 +5108,7 @@ class LocalUserKeys(_serialization.Model):
         "shared_key": {"key": "sharedKey", "type": "str"},
     }
 
-    def __init__(self, *, ssh_authorized_keys: Optional[List["_models.SshPublicKey"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, ssh_authorized_keys: Optional[list["_models.SshPublicKey"]] = None, **kwargs: Any) -> None:
         """
         :keyword ssh_authorized_keys: Optional, local user ssh authorized keys for SFTP.
         :paramtype ssh_authorized_keys: list[~azure.mgmt.storage.models.SshPublicKey]
@@ -5047,7 +5164,7 @@ class LocalUsers(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.LocalUser"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.LocalUser"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of local users associated with the storage account.
         :paramtype value: list[~azure.mgmt.storage.models.LocalUser]
@@ -5275,9 +5392,9 @@ class ManagementPolicyFilter(_serialization.Model):
     def __init__(
         self,
         *,
-        blob_types: List[str],
-        prefix_match: Optional[List[str]] = None,
-        blob_index_match: Optional[List["_models.TagFilter"]] = None,
+        blob_types: list[str],
+        prefix_match: Optional[list[str]] = None,
+        blob_index_match: Optional[list["_models.TagFilter"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5371,7 +5488,7 @@ class ManagementPolicySchema(_serialization.Model):
         "rules": {"key": "rules", "type": "[ManagementPolicyRule]"},
     }
 
-    def __init__(self, *, rules: List["_models.ManagementPolicyRule"], **kwargs: Any) -> None:
+    def __init__(self, *, rules: list["_models.ManagementPolicyRule"], **kwargs: Any) -> None:
         """
         :keyword rules: The Storage Account ManagementPolicies Rules. See more details in:
          https://learn.microsoft.com/azure/storage/blobs/lifecycle-management-overview. Required.
@@ -5533,7 +5650,7 @@ class MetricSpecification(_serialization.Model):
         display_name: Optional[str] = None,
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
-        dimensions: Optional[List["_models.Dimension"]] = None,
+        dimensions: Optional[list["_models.Dimension"]] = None,
         aggregation_type: Optional[str] = None,
         fill_gap_with_zero: Optional[bool] = None,
         category: Optional[str] = None,
@@ -5608,6 +5725,8 @@ class NetworkRuleSet(_serialization.Model):
     :vartype virtual_network_rules: list[~azure.mgmt.storage.models.VirtualNetworkRule]
     :ivar ip_rules: Sets the IP ACL rules.
     :vartype ip_rules: list[~azure.mgmt.storage.models.IPRule]
+    :ivar ipv6_rules: Sets the IPv6 ACL rules.
+    :vartype ipv6_rules: list[~azure.mgmt.storage.models.IPRule]
     :ivar default_action: Specifies the default action of allow or deny when no other rules match.
      Known values are: "Allow" and "Deny".
     :vartype default_action: str or ~azure.mgmt.storage.models.DefaultAction
@@ -5622,6 +5741,7 @@ class NetworkRuleSet(_serialization.Model):
         "resource_access_rules": {"key": "resourceAccessRules", "type": "[ResourceAccessRule]"},
         "virtual_network_rules": {"key": "virtualNetworkRules", "type": "[VirtualNetworkRule]"},
         "ip_rules": {"key": "ipRules", "type": "[IPRule]"},
+        "ipv6_rules": {"key": "ipv6Rules", "type": "[IPRule]"},
         "default_action": {"key": "defaultAction", "type": "str"},
     }
 
@@ -5630,9 +5750,10 @@ class NetworkRuleSet(_serialization.Model):
         *,
         default_action: Union[str, "_models.DefaultAction"] = "Allow",
         bypass: Union[str, "_models.Bypass"] = "AzureServices",
-        resource_access_rules: Optional[List["_models.ResourceAccessRule"]] = None,
-        virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
-        ip_rules: Optional[List["_models.IPRule"]] = None,
+        resource_access_rules: Optional[list["_models.ResourceAccessRule"]] = None,
+        virtual_network_rules: Optional[list["_models.VirtualNetworkRule"]] = None,
+        ip_rules: Optional[list["_models.IPRule"]] = None,
+        ipv6_rules: Optional[list["_models.IPRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5647,6 +5768,8 @@ class NetworkRuleSet(_serialization.Model):
         :paramtype virtual_network_rules: list[~azure.mgmt.storage.models.VirtualNetworkRule]
         :keyword ip_rules: Sets the IP ACL rules.
         :paramtype ip_rules: list[~azure.mgmt.storage.models.IPRule]
+        :keyword ipv6_rules: Sets the IPv6 ACL rules.
+        :paramtype ipv6_rules: list[~azure.mgmt.storage.models.IPRule]
         :keyword default_action: Specifies the default action of allow or deny when no other rules
          match. Known values are: "Allow" and "Deny".
         :paramtype default_action: str or ~azure.mgmt.storage.models.DefaultAction
@@ -5656,6 +5779,7 @@ class NetworkRuleSet(_serialization.Model):
         self.resource_access_rules = resource_access_rules
         self.virtual_network_rules = virtual_network_rules
         self.ip_rules = ip_rules
+        self.ipv6_rules = ipv6_rules
         self.default_action = default_action
 
 
@@ -5827,7 +5951,7 @@ class NetworkSecurityPerimeterConfiguration(ProxyResourceAutoGenerated):
         self.provisioning_state: Optional[
             Union[str, "_models.NetworkSecurityPerimeterConfigurationProvisioningState"]
         ] = None
-        self.provisioning_issues: Optional[List["_models.ProvisioningIssue"]] = None
+        self.provisioning_issues: Optional[list["_models.ProvisioningIssue"]] = None
         self.network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = None
         self.resource_association: Optional[
             "_models.NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation"
@@ -5861,7 +5985,7 @@ class NetworkSecurityPerimeterConfigurationList(_serialization.Model):  # pylint
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.NetworkSecurityPerimeterConfiguration"]] = None
+        self.value: Optional[list["_models.NetworkSecurityPerimeterConfiguration"]] = None
         self.next_link = next_link
 
 
@@ -5893,9 +6017,9 @@ class NetworkSecurityPerimeterConfigurationPropertiesProfile(_serialization.Mode
         *,
         name: Optional[str] = None,
         access_rules_version: Optional[float] = None,
-        access_rules: Optional[List["_models.NspAccessRule"]] = None,
+        access_rules: Optional[list["_models.NspAccessRule"]] = None,
         diagnostic_settings_version: Optional[float] = None,
-        enabled_log_categories: Optional[List[str]] = None,
+        enabled_log_categories: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5952,6 +6076,26 @@ class NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation(
         super().__init__(**kwargs)
         self.name = name
         self.access_mode = access_mode
+
+
+class NfsSetting(_serialization.Model):
+    """Setting for NFS protocol.
+
+    :ivar encryption_in_transit: Encryption in transit setting.
+    :vartype encryption_in_transit: ~azure.mgmt.storage.models.EncryptionInTransit
+    """
+
+    _attribute_map = {
+        "encryption_in_transit": {"key": "encryptionInTransit", "type": "EncryptionInTransit"},
+    }
+
+    def __init__(self, *, encryption_in_transit: Optional["_models.EncryptionInTransit"] = None, **kwargs: Any) -> None:
+        """
+        :keyword encryption_in_transit: Encryption in transit setting.
+        :paramtype encryption_in_transit: ~azure.mgmt.storage.models.EncryptionInTransit
+        """
+        super().__init__(**kwargs)
+        self.encryption_in_transit = encryption_in_transit
 
 
 class NspAccessRule(_serialization.Model):
@@ -6019,8 +6163,8 @@ class NspAccessRuleProperties(_serialization.Model):
         self,
         *,
         direction: Optional[Union[str, "_models.NspAccessRuleDirection"]] = None,
-        address_prefixes: Optional[List[str]] = None,
-        subscriptions: Optional[List["_models.NspAccessRulePropertiesSubscriptionsItem"]] = None,
+        address_prefixes: Optional[list[str]] = None,
+        subscriptions: Optional[list["_models.NspAccessRulePropertiesSubscriptionsItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6036,8 +6180,8 @@ class NspAccessRuleProperties(_serialization.Model):
         self.direction = direction
         self.address_prefixes = address_prefixes
         self.subscriptions = subscriptions
-        self.network_security_perimeters: Optional[List["_models.NetworkSecurityPerimeter"]] = None
-        self.fully_qualified_domain_names: Optional[List[str]] = None
+        self.network_security_perimeters: Optional[list["_models.NetworkSecurityPerimeter"]] = None
+        self.fully_qualified_domain_names: Optional[list[str]] = None
 
 
 class NspAccessRulePropertiesSubscriptionsItem(_serialization.Model):
@@ -6071,7 +6215,7 @@ class ObjectReplicationPolicies(_serialization.Model):
         "value": {"key": "value", "type": "[ObjectReplicationPolicy]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ObjectReplicationPolicy"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ObjectReplicationPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The replication policy between two storage accounts.
         :paramtype value: list[~azure.mgmt.storage.models.ObjectReplicationPolicy]
@@ -6108,6 +6252,10 @@ class ObjectReplicationPolicy(Resource):
     :vartype rules: list[~azure.mgmt.storage.models.ObjectReplicationPolicyRule]
     :ivar metrics: Optional. The object replication policy metrics feature options.
     :vartype metrics: ~azure.mgmt.storage.models.ObjectReplicationPolicyPropertiesMetrics
+    :ivar priority_replication: Optional. The object replication policy priority replication
+     feature options.
+    :vartype priority_replication:
+     ~azure.mgmt.storage.models.ObjectReplicationPolicyPropertiesPriorityReplication
     """
 
     _validation = {
@@ -6128,6 +6276,10 @@ class ObjectReplicationPolicy(Resource):
         "destination_account": {"key": "properties.destinationAccount", "type": "str"},
         "rules": {"key": "properties.rules", "type": "[ObjectReplicationPolicyRule]"},
         "metrics": {"key": "properties.metrics", "type": "ObjectReplicationPolicyPropertiesMetrics"},
+        "priority_replication": {
+            "key": "properties.priorityReplication",
+            "type": "ObjectReplicationPolicyPropertiesPriorityReplication",
+        },
     }
 
     def __init__(
@@ -6135,8 +6287,9 @@ class ObjectReplicationPolicy(Resource):
         *,
         source_account: Optional[str] = None,
         destination_account: Optional[str] = None,
-        rules: Optional[List["_models.ObjectReplicationPolicyRule"]] = None,
+        rules: Optional[list["_models.ObjectReplicationPolicyRule"]] = None,
         metrics: Optional["_models.ObjectReplicationPolicyPropertiesMetrics"] = None,
+        priority_replication: Optional["_models.ObjectReplicationPolicyPropertiesPriorityReplication"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6150,6 +6303,10 @@ class ObjectReplicationPolicy(Resource):
         :paramtype rules: list[~azure.mgmt.storage.models.ObjectReplicationPolicyRule]
         :keyword metrics: Optional. The object replication policy metrics feature options.
         :paramtype metrics: ~azure.mgmt.storage.models.ObjectReplicationPolicyPropertiesMetrics
+        :keyword priority_replication: Optional. The object replication policy priority replication
+         feature options.
+        :paramtype priority_replication:
+         ~azure.mgmt.storage.models.ObjectReplicationPolicyPropertiesPriorityReplication
         """
         super().__init__(**kwargs)
         self.policy_id: Optional[str] = None
@@ -6158,6 +6315,7 @@ class ObjectReplicationPolicy(Resource):
         self.destination_account = destination_account
         self.rules = rules
         self.metrics = metrics
+        self.priority_replication = priority_replication
 
 
 class ObjectReplicationPolicyFilter(_serialization.Model):
@@ -6179,7 +6337,7 @@ class ObjectReplicationPolicyFilter(_serialization.Model):
     }
 
     def __init__(
-        self, *, prefix_match: Optional[List[str]] = None, min_creation_time: Optional[str] = None, **kwargs: Any
+        self, *, prefix_match: Optional[list[str]] = None, min_creation_time: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword prefix_match: Optional. Filters the results to replicate only blobs whose names begin
@@ -6209,6 +6367,28 @@ class ObjectReplicationPolicyPropertiesMetrics(_serialization.Model):
         """
         :keyword enabled: Indicates whether object replication metrics feature is enabled for the
          policy.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+
+
+class ObjectReplicationPolicyPropertiesPriorityReplication(_serialization.Model):  # pylint: disable=name-too-long
+    """Optional. The object replication policy priority replication feature options.
+
+    :ivar enabled: Indicates whether object replication priority replication feature is enabled for
+     the policy.
+    :vartype enabled: bool
+    """
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+    }
+
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword enabled: Indicates whether object replication priority replication feature is enabled
+         for the policy.
         :paramtype enabled: bool
         """
         super().__init__(**kwargs)
@@ -6374,7 +6554,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Storage operations supported by the Storage resource provider.
         :paramtype value: list[~azure.mgmt.storage.models.Operation]
@@ -6427,6 +6607,30 @@ class PermissionScope(_serialization.Model):
         self.permissions = permissions
         self.service = service
         self.resource_name = resource_name
+
+
+class Placement(_serialization.Model):
+    """The complex type of the zonal placement details.
+
+    :ivar zone_placement_policy: The availability zone pinning policy for the storage account.
+     Known values are: "Any" and "None".
+    :vartype zone_placement_policy: str or ~azure.mgmt.storage.models.ZonePlacementPolicy
+    """
+
+    _attribute_map = {
+        "zone_placement_policy": {"key": "zonePlacementPolicy", "type": "str"},
+    }
+
+    def __init__(
+        self, *, zone_placement_policy: Optional[Union[str, "_models.ZonePlacementPolicy"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword zone_placement_policy: The availability zone pinning policy for the storage account.
+         Known values are: "Any" and "None".
+        :paramtype zone_placement_policy: str or ~azure.mgmt.storage.models.ZonePlacementPolicy
+        """
+        super().__init__(**kwargs)
+        self.zone_placement_policy = zone_placement_policy
 
 
 class PrivateEndpoint(_serialization.Model):
@@ -6528,7 +6732,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.storage.models.PrivateEndpointConnection]
@@ -6575,14 +6779,14 @@ class PrivateLinkResource(Resource):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
         self.group_id: Optional[str] = None
-        self.required_members: Optional[List[str]] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -6597,7 +6801,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.storage.models.PrivateLinkResource]
@@ -6689,19 +6893,27 @@ class ProtocolSettings(_serialization.Model):
 
     :ivar smb: Setting for SMB protocol.
     :vartype smb: ~azure.mgmt.storage.models.SmbSetting
+    :ivar nfs: Setting for NFS protocol.
+    :vartype nfs: ~azure.mgmt.storage.models.NfsSetting
     """
 
     _attribute_map = {
         "smb": {"key": "smb", "type": "SmbSetting"},
+        "nfs": {"key": "nfs", "type": "NfsSetting"},
     }
 
-    def __init__(self, *, smb: Optional["_models.SmbSetting"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, smb: Optional["_models.SmbSetting"] = None, nfs: Optional["_models.NfsSetting"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword smb: Setting for SMB protocol.
         :paramtype smb: ~azure.mgmt.storage.models.SmbSetting
+        :keyword nfs: Setting for NFS protocol.
+        :paramtype nfs: ~azure.mgmt.storage.models.NfsSetting
         """
         super().__init__(**kwargs)
         self.smb = smb
+        self.nfs = nfs
 
 
 class ProvisioningIssue(_serialization.Model):
@@ -6929,7 +7141,7 @@ class Restriction(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type: Optional[str] = None
-        self.values: Optional[List[str]] = None
+        self.values: Optional[list[str]] = None
         self.reason_code = reason_code
 
 
@@ -7201,7 +7413,7 @@ class ServiceSpecification(_serialization.Model):
     }
 
     def __init__(
-        self, *, metric_specifications: Optional[List["_models.MetricSpecification"]] = None, **kwargs: Any
+        self, *, metric_specifications: Optional[list["_models.MetricSpecification"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword metric_specifications: Metric specifications of operation.
@@ -7339,6 +7551,8 @@ class SkuInformation(_serialization.Model):
     :ivar locations: The set of locations that the SKU is available. This will be supported and
      registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.).
     :vartype locations: list[str]
+    :ivar location_info:
+    :vartype location_info: list[~azure.mgmt.storage.models.SkuInformationLocationInfoItem]
     :ivar capabilities: The capability information in the specified SKU, including file encryption,
      network ACLs, change notification, etc.
     :vartype capabilities: list[~azure.mgmt.storage.models.SKUCapability]
@@ -7362,6 +7576,7 @@ class SkuInformation(_serialization.Model):
         "resource_type": {"key": "resourceType", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
         "locations": {"key": "locations", "type": "[str]"},
+        "location_info": {"key": "locationInfo", "type": "[SkuInformationLocationInfoItem]"},
         "capabilities": {"key": "capabilities", "type": "[SKUCapability]"},
         "restrictions": {"key": "restrictions", "type": "[Restriction]"},
     }
@@ -7370,7 +7585,8 @@ class SkuInformation(_serialization.Model):
         self,
         *,
         name: Union[str, "_models.SkuName"],
-        restrictions: Optional[List["_models.Restriction"]] = None,
+        location_info: Optional[list["_models.SkuInformationLocationInfoItem"]] = None,
+        restrictions: Optional[list["_models.Restriction"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7380,6 +7596,8 @@ class SkuInformation(_serialization.Model):
          "Standard_GZRS", "Standard_RAGZRS", "StandardV2_LRS", "StandardV2_GRS", "StandardV2_ZRS",
          "StandardV2_GZRS", "PremiumV2_LRS", and "PremiumV2_ZRS".
         :paramtype name: str or ~azure.mgmt.storage.models.SkuName
+        :keyword location_info:
+        :paramtype location_info: list[~azure.mgmt.storage.models.SkuInformationLocationInfoItem]
         :keyword restrictions: The restrictions because of which SKU cannot be used. This is empty if
          there are no restrictions.
         :paramtype restrictions: list[~azure.mgmt.storage.models.Restriction]
@@ -7389,9 +7607,62 @@ class SkuInformation(_serialization.Model):
         self.tier: Optional[Union[str, "_models.SkuTier"]] = None
         self.resource_type: Optional[str] = None
         self.kind: Optional[Union[str, "_models.Kind"]] = None
-        self.locations: Optional[List[str]] = None
-        self.capabilities: Optional[List["_models.SKUCapability"]] = None
+        self.locations: Optional[list[str]] = None
+        self.location_info = location_info
+        self.capabilities: Optional[list["_models.SKUCapability"]] = None
         self.restrictions = restrictions
+
+
+class SkuInformationLocationInfoItem(_serialization.Model):
+    """SkuInformationLocationInfoItem.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar location: Describes the location for the product where storage account resource can be
+     created.
+    :vartype location: str
+    :ivar zones: Describes the available zones for the product where storage account resource can
+     be created.
+    :vartype zones: list[str]
+    """
+
+    _validation = {
+        "location": {"readonly": True},
+        "zones": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.location: Optional[str] = None
+        self.zones: Optional[list[str]] = None
+
+
+class SmbOAuthSettings(_serialization.Model):
+    """Setting property for Managed Identity access over SMB using OAuth.
+
+    :ivar is_smb_o_auth_enabled: Specifies if managed identities can access SMB shares using OAuth.
+     The default interpretation is false for this property.
+    :vartype is_smb_o_auth_enabled: bool
+    """
+
+    _attribute_map = {
+        "is_smb_o_auth_enabled": {"key": "isSmbOAuthEnabled", "type": "bool"},
+    }
+
+    def __init__(self, *, is_smb_o_auth_enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword is_smb_o_auth_enabled: Specifies if managed identities can access SMB shares using
+         OAuth. The default interpretation is false for this property.
+        :paramtype is_smb_o_auth_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.is_smb_o_auth_enabled = is_smb_o_auth_enabled
 
 
 class SmbSetting(_serialization.Model):
@@ -7411,6 +7682,8 @@ class SmbSetting(_serialization.Model):
     :ivar channel_encryption: SMB channel encryption supported by server. Valid values are
      AES-128-CCM, AES-128-GCM, AES-256-GCM. Should be passed as a string with delimiter ';'.
     :vartype channel_encryption: str
+    :ivar encryption_in_transit: Encryption in transit setting.
+    :vartype encryption_in_transit: ~azure.mgmt.storage.models.EncryptionInTransit
     """
 
     _attribute_map = {
@@ -7419,6 +7692,7 @@ class SmbSetting(_serialization.Model):
         "authentication_methods": {"key": "authenticationMethods", "type": "str"},
         "kerberos_ticket_encryption": {"key": "kerberosTicketEncryption", "type": "str"},
         "channel_encryption": {"key": "channelEncryption", "type": "str"},
+        "encryption_in_transit": {"key": "encryptionInTransit", "type": "EncryptionInTransit"},
     }
 
     def __init__(
@@ -7429,6 +7703,7 @@ class SmbSetting(_serialization.Model):
         authentication_methods: Optional[str] = None,
         kerberos_ticket_encryption: Optional[str] = None,
         channel_encryption: Optional[str] = None,
+        encryption_in_transit: Optional["_models.EncryptionInTransit"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7446,6 +7721,8 @@ class SmbSetting(_serialization.Model):
         :keyword channel_encryption: SMB channel encryption supported by server. Valid values are
          AES-128-CCM, AES-128-GCM, AES-256-GCM. Should be passed as a string with delimiter ';'.
         :paramtype channel_encryption: str
+        :keyword encryption_in_transit: Encryption in transit setting.
+        :paramtype encryption_in_transit: ~azure.mgmt.storage.models.EncryptionInTransit
         """
         super().__init__(**kwargs)
         self.multichannel = multichannel
@@ -7453,6 +7730,7 @@ class SmbSetting(_serialization.Model):
         self.authentication_methods = authentication_methods
         self.kerberos_ticket_encryption = kerberos_ticket_encryption
         self.channel_encryption = channel_encryption
+        self.encryption_in_transit = encryption_in_transit
 
 
 class SshPublicKey(_serialization.Model):
@@ -7520,7 +7798,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -7560,6 +7838,11 @@ class StorageAccount(TrackedResource):
     :vartype identity: ~azure.mgmt.storage.models.Identity
     :ivar extended_location: The extendedLocation of the resource.
     :vartype extended_location: ~azure.mgmt.storage.models.ExtendedLocation
+    :ivar zones: Optional. Gets or sets the pinned logical availability zone for the storage
+     account.
+    :vartype zones: list[str]
+    :ivar placement: Optional. Gets or sets the zonal placement details for the storage account.
+    :vartype placement: ~azure.mgmt.storage.models.Placement
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
      called. Known values are: "Creating", "ResolvingDNS", "Succeeded",
      "ValidateSubscriptionQuotaBegin", "ValidateSubscriptionQuotaEnd", "Accepted", "Deleting",
@@ -7640,6 +7923,9 @@ class StorageAccount(TrackedResource):
     :ivar routing_preference: Maintains information about the network routing choice opted by the
      user for data transfer.
     :vartype routing_preference: ~azure.mgmt.storage.models.RoutingPreference
+    :ivar dual_stack_endpoint_preference: Maintains information about the Internet protocol opted
+     by the user.
+    :vartype dual_stack_endpoint_preference: ~azure.mgmt.storage.models.DualStackEndpointPreference
     :ivar blob_restore_status: Blob restore status.
     :vartype blob_restore_status: ~azure.mgmt.storage.models.BlobRestoreStatus
     :ivar allow_blob_public_access: Allow or disallow public access to all blobs or containers in
@@ -7690,6 +7976,10 @@ class StorageAccount(TrackedResource):
     :ivar account_migration_in_progress: If customer initiated account migration is in progress,
      the value will be true else it will be null.
     :vartype account_migration_in_progress: bool
+    :ivar geo_priority_replication_status: Status indicating whether Geo Priority Replication is
+     enabled for the account.
+    :vartype geo_priority_replication_status:
+     ~azure.mgmt.storage.models.GeoPriorityReplicationStatus
     """
 
     _validation = {
@@ -7733,6 +8023,8 @@ class StorageAccount(TrackedResource):
         "kind": {"key": "kind", "type": "str"},
         "identity": {"key": "identity", "type": "Identity"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "placement": {"key": "placement", "type": "Placement"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "primary_endpoints": {"key": "properties.primaryEndpoints", "type": "Endpoints"},
         "primary_location": {"key": "properties.primaryLocation", "type": "str"},
@@ -7766,6 +8058,10 @@ class StorageAccount(TrackedResource):
             "type": "[PrivateEndpointConnection]",
         },
         "routing_preference": {"key": "properties.routingPreference", "type": "RoutingPreference"},
+        "dual_stack_endpoint_preference": {
+            "key": "properties.dualStackEndpointPreference",
+            "type": "DualStackEndpointPreference",
+        },
         "blob_restore_status": {"key": "properties.blobRestoreStatus", "type": "BlobRestoreStatus"},
         "allow_blob_public_access": {"key": "properties.allowBlobPublicAccess", "type": "bool"},
         "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
@@ -7786,15 +8082,21 @@ class StorageAccount(TrackedResource):
         "dns_endpoint_type": {"key": "properties.dnsEndpointType", "type": "str"},
         "is_sku_conversion_blocked": {"key": "properties.isSkuConversionBlocked", "type": "bool"},
         "account_migration_in_progress": {"key": "properties.accountMigrationInProgress", "type": "bool"},
+        "geo_priority_replication_status": {
+            "key": "properties.geoPriorityReplicationStatus",
+            "type": "GeoPriorityReplicationStatus",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.Identity"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
+        zones: Optional[list[str]] = None,
+        placement: Optional["_models.Placement"] = None,
         azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = None,
         enable_https_traffic_only: Optional[bool] = None,
         is_sftp_enabled: Optional[bool] = None,
@@ -7803,6 +8105,7 @@ class StorageAccount(TrackedResource):
         is_hns_enabled: Optional[bool] = None,
         large_file_shares_state: Optional[Union[str, "_models.LargeFileSharesState"]] = None,
         routing_preference: Optional["_models.RoutingPreference"] = None,
+        dual_stack_endpoint_preference: Optional["_models.DualStackEndpointPreference"] = None,
         allow_blob_public_access: Optional[bool] = None,
         minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         allow_shared_key_access: Optional[bool] = None,
@@ -7814,6 +8117,7 @@ class StorageAccount(TrackedResource):
         allowed_copy_scope: Optional[Union[str, "_models.AllowedCopyScope"]] = None,
         storage_account_sku_conversion_status: Optional["_models.StorageAccountSkuConversionStatus"] = None,
         dns_endpoint_type: Optional[Union[str, "_models.DnsEndpointType"]] = None,
+        geo_priority_replication_status: Optional["_models.GeoPriorityReplicationStatus"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7825,6 +8129,11 @@ class StorageAccount(TrackedResource):
         :paramtype identity: ~azure.mgmt.storage.models.Identity
         :keyword extended_location: The extendedLocation of the resource.
         :paramtype extended_location: ~azure.mgmt.storage.models.ExtendedLocation
+        :keyword zones: Optional. Gets or sets the pinned logical availability zone for the storage
+         account.
+        :paramtype zones: list[str]
+        :keyword placement: Optional. Gets or sets the zonal placement details for the storage account.
+        :paramtype placement: ~azure.mgmt.storage.models.Placement
         :keyword azure_files_identity_based_authentication: Provides the identity based authentication
          settings for Azure Files.
         :paramtype azure_files_identity_based_authentication:
@@ -7847,6 +8156,10 @@ class StorageAccount(TrackedResource):
         :keyword routing_preference: Maintains information about the network routing choice opted by
          the user for data transfer.
         :paramtype routing_preference: ~azure.mgmt.storage.models.RoutingPreference
+        :keyword dual_stack_endpoint_preference: Maintains information about the Internet protocol
+         opted by the user.
+        :paramtype dual_stack_endpoint_preference:
+         ~azure.mgmt.storage.models.DualStackEndpointPreference
         :keyword allow_blob_public_access: Allow or disallow public access to all blobs or containers
          in the storage account. The default interpretation is false for this property.
         :paramtype allow_blob_public_access: bool
@@ -7890,12 +8203,18 @@ class StorageAccount(TrackedResource):
          accounts in an Azure DNS Zone and the endpoint URL will have an alphanumeric DNS Zone
          identifier. Known values are: "Standard" and "AzureDnsZone".
         :paramtype dns_endpoint_type: str or ~azure.mgmt.storage.models.DnsEndpointType
+        :keyword geo_priority_replication_status: Status indicating whether Geo Priority Replication is
+         enabled for the account.
+        :paramtype geo_priority_replication_status:
+         ~azure.mgmt.storage.models.GeoPriorityReplicationStatus
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.sku: Optional["_models.Sku"] = None
         self.kind: Optional[Union[str, "_models.Kind"]] = None
         self.identity = identity
         self.extended_location = extended_location
+        self.zones = zones
+        self.placement = placement
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.primary_endpoints: Optional["_models.Endpoints"] = None
         self.primary_location: Optional[str] = None
@@ -7921,8 +8240,9 @@ class StorageAccount(TrackedResource):
         self.geo_replication_stats: Optional["_models.GeoReplicationStats"] = None
         self.failover_in_progress: Optional[bool] = None
         self.large_file_shares_state = large_file_shares_state
-        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
         self.routing_preference = routing_preference
+        self.dual_stack_endpoint_preference = dual_stack_endpoint_preference
         self.blob_restore_status: Optional["_models.BlobRestoreStatus"] = None
         self.allow_blob_public_access = allow_blob_public_access
         self.minimum_tls_version = minimum_tls_version
@@ -7937,6 +8257,7 @@ class StorageAccount(TrackedResource):
         self.dns_endpoint_type = dns_endpoint_type
         self.is_sku_conversion_blocked: Optional[bool] = None
         self.account_migration_in_progress: Optional[bool] = None
+        self.geo_priority_replication_status = geo_priority_replication_status
 
 
 class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):  # pylint: disable=name-too-long
@@ -7993,6 +8314,11 @@ class StorageAccountCreateParameters(_serialization.Model):
      storage account will be created in Azure main region. Otherwise it will be created in the
      specified extended location.
     :vartype extended_location: ~azure.mgmt.storage.models.ExtendedLocation
+    :ivar zones: Optional. Gets or sets the pinned logical availability zone for the storage
+     account.
+    :vartype zones: list[str]
+    :ivar placement: Optional. Gets or sets the zonal placement details for the storage account.
+    :vartype placement: ~azure.mgmt.storage.models.Placement
     :ivar tags: Gets or sets a list of key value pairs that describe the resource. These tags can
      be used for viewing and grouping this resource (across resource groups). A maximum of 15 tags
      can be provided for a resource. Each tag must have a key with a length no greater than 128
@@ -8048,6 +8374,9 @@ class StorageAccountCreateParameters(_serialization.Model):
     :ivar routing_preference: Maintains information about the network routing choice opted by the
      user for data transfer.
     :vartype routing_preference: ~azure.mgmt.storage.models.RoutingPreference
+    :ivar dual_stack_endpoint_preference: Maintains information about the Internet protocol opted
+     by the user.
+    :vartype dual_stack_endpoint_preference: ~azure.mgmt.storage.models.DualStackEndpointPreference
     :ivar allow_blob_public_access: Allow or disallow public access to all blobs or containers in
      the storage account. The default interpretation is false for this property.
     :vartype allow_blob_public_access: bool
@@ -8079,6 +8408,10 @@ class StorageAccountCreateParameters(_serialization.Model):
      Azure DNS Zone and the endpoint URL will have an alphanumeric DNS Zone identifier. Known values
      are: "Standard" and "AzureDnsZone".
     :vartype dns_endpoint_type: str or ~azure.mgmt.storage.models.DnsEndpointType
+    :ivar geo_priority_replication_status: Status indicating whether Geo Priority Replication is
+     enabled for the account.
+    :vartype geo_priority_replication_status:
+     ~azure.mgmt.storage.models.GeoPriorityReplicationStatus
     """
 
     _validation = {
@@ -8092,6 +8425,8 @@ class StorageAccountCreateParameters(_serialization.Model):
         "kind": {"key": "kind", "type": "str"},
         "location": {"key": "location", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "placement": {"key": "placement", "type": "Placement"},
         "tags": {"key": "tags", "type": "{str}"},
         "identity": {"key": "identity", "type": "Identity"},
         "allowed_copy_scope": {"key": "properties.allowedCopyScope", "type": "str"},
@@ -8113,6 +8448,10 @@ class StorageAccountCreateParameters(_serialization.Model):
         "is_hns_enabled": {"key": "properties.isHnsEnabled", "type": "bool"},
         "large_file_shares_state": {"key": "properties.largeFileSharesState", "type": "str"},
         "routing_preference": {"key": "properties.routingPreference", "type": "RoutingPreference"},
+        "dual_stack_endpoint_preference": {
+            "key": "properties.dualStackEndpointPreference",
+            "type": "DualStackEndpointPreference",
+        },
         "allow_blob_public_access": {"key": "properties.allowBlobPublicAccess", "type": "bool"},
         "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
         "allow_shared_key_access": {"key": "properties.allowSharedKeyAccess", "type": "bool"},
@@ -8124,6 +8463,10 @@ class StorageAccountCreateParameters(_serialization.Model):
             "type": "ImmutableStorageAccount",
         },
         "dns_endpoint_type": {"key": "properties.dnsEndpointType", "type": "str"},
+        "geo_priority_replication_status": {
+            "key": "properties.geoPriorityReplicationStatus",
+            "type": "GeoPriorityReplicationStatus",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -8133,7 +8476,9 @@ class StorageAccountCreateParameters(_serialization.Model):
         kind: Union[str, "_models.Kind"],
         location: str,
         extended_location: Optional["_models.ExtendedLocation"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
+        placement: Optional["_models.Placement"] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.Identity"] = None,
         allowed_copy_scope: Optional[Union[str, "_models.AllowedCopyScope"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
@@ -8151,6 +8496,7 @@ class StorageAccountCreateParameters(_serialization.Model):
         is_hns_enabled: Optional[bool] = None,
         large_file_shares_state: Optional[Union[str, "_models.LargeFileSharesState"]] = None,
         routing_preference: Optional["_models.RoutingPreference"] = None,
+        dual_stack_endpoint_preference: Optional["_models.DualStackEndpointPreference"] = None,
         allow_blob_public_access: Optional[bool] = None,
         minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         allow_shared_key_access: Optional[bool] = None,
@@ -8159,6 +8505,7 @@ class StorageAccountCreateParameters(_serialization.Model):
         default_to_o_auth_authentication: Optional[bool] = None,
         immutable_storage_with_versioning: Optional["_models.ImmutableStorageAccount"] = None,
         dns_endpoint_type: Optional[Union[str, "_models.DnsEndpointType"]] = None,
+        geo_priority_replication_status: Optional["_models.GeoPriorityReplicationStatus"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8176,6 +8523,11 @@ class StorageAccountCreateParameters(_serialization.Model):
          the storage account will be created in Azure main region. Otherwise it will be created in the
          specified extended location.
         :paramtype extended_location: ~azure.mgmt.storage.models.ExtendedLocation
+        :keyword zones: Optional. Gets or sets the pinned logical availability zone for the storage
+         account.
+        :paramtype zones: list[str]
+        :keyword placement: Optional. Gets or sets the zonal placement details for the storage account.
+        :paramtype placement: ~azure.mgmt.storage.models.Placement
         :keyword tags: Gets or sets a list of key value pairs that describe the resource. These tags
          can be used for viewing and grouping this resource (across resource groups). A maximum of 15
          tags can be provided for a resource. Each tag must have a key with a length no greater than 128
@@ -8231,6 +8583,10 @@ class StorageAccountCreateParameters(_serialization.Model):
         :keyword routing_preference: Maintains information about the network routing choice opted by
          the user for data transfer.
         :paramtype routing_preference: ~azure.mgmt.storage.models.RoutingPreference
+        :keyword dual_stack_endpoint_preference: Maintains information about the Internet protocol
+         opted by the user.
+        :paramtype dual_stack_endpoint_preference:
+         ~azure.mgmt.storage.models.DualStackEndpointPreference
         :keyword allow_blob_public_access: Allow or disallow public access to all blobs or containers
          in the storage account. The default interpretation is false for this property.
         :paramtype allow_blob_public_access: bool
@@ -8263,12 +8619,18 @@ class StorageAccountCreateParameters(_serialization.Model):
          accounts in an Azure DNS Zone and the endpoint URL will have an alphanumeric DNS Zone
          identifier. Known values are: "Standard" and "AzureDnsZone".
         :paramtype dns_endpoint_type: str or ~azure.mgmt.storage.models.DnsEndpointType
+        :keyword geo_priority_replication_status: Status indicating whether Geo Priority Replication is
+         enabled for the account.
+        :paramtype geo_priority_replication_status:
+         ~azure.mgmt.storage.models.GeoPriorityReplicationStatus
         """
         super().__init__(**kwargs)
         self.sku = sku
         self.kind = kind
         self.location = location
         self.extended_location = extended_location
+        self.zones = zones
+        self.placement = placement
         self.tags = tags
         self.identity = identity
         self.allowed_copy_scope = allowed_copy_scope
@@ -8287,6 +8649,7 @@ class StorageAccountCreateParameters(_serialization.Model):
         self.is_hns_enabled = is_hns_enabled
         self.large_file_shares_state = large_file_shares_state
         self.routing_preference = routing_preference
+        self.dual_stack_endpoint_preference = dual_stack_endpoint_preference
         self.allow_blob_public_access = allow_blob_public_access
         self.minimum_tls_version = minimum_tls_version
         self.allow_shared_key_access = allow_shared_key_access
@@ -8295,6 +8658,7 @@ class StorageAccountCreateParameters(_serialization.Model):
         self.default_to_o_auth_authentication = default_to_o_auth_authentication
         self.immutable_storage_with_versioning = immutable_storage_with_versioning
         self.dns_endpoint_type = dns_endpoint_type
+        self.geo_priority_replication_status = geo_priority_replication_status
 
 
 class StorageAccountInternetEndpoints(_serialization.Model):
@@ -8334,6 +8698,74 @@ class StorageAccountInternetEndpoints(_serialization.Model):
         self.file: Optional[str] = None
         self.web: Optional[str] = None
         self.dfs: Optional[str] = None
+
+
+class StorageAccountIpv6Endpoints(_serialization.Model):
+    """The URIs that are used to perform a retrieval of a public blob, queue, table, web or dfs object
+    via an IPv6 endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar blob: Gets the blob endpoint.
+    :vartype blob: str
+    :ivar queue: Gets the queue endpoint.
+    :vartype queue: str
+    :ivar table: Gets the table endpoint.
+    :vartype table: str
+    :ivar file: Gets the file endpoint.
+    :vartype file: str
+    :ivar web: Gets the web endpoint.
+    :vartype web: str
+    :ivar dfs: Gets the dfs endpoint.
+    :vartype dfs: str
+    :ivar microsoft_endpoints: Gets the microsoft routing storage endpoints.
+    :vartype microsoft_endpoints: ~azure.mgmt.storage.models.StorageAccountMicrosoftEndpoints
+    :ivar internet_endpoints: Gets the internet routing storage endpoints.
+    :vartype internet_endpoints: ~azure.mgmt.storage.models.StorageAccountInternetEndpoints
+    """
+
+    _validation = {
+        "blob": {"readonly": True},
+        "queue": {"readonly": True},
+        "table": {"readonly": True},
+        "file": {"readonly": True},
+        "web": {"readonly": True},
+        "dfs": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "blob": {"key": "blob", "type": "str"},
+        "queue": {"key": "queue", "type": "str"},
+        "table": {"key": "table", "type": "str"},
+        "file": {"key": "file", "type": "str"},
+        "web": {"key": "web", "type": "str"},
+        "dfs": {"key": "dfs", "type": "str"},
+        "microsoft_endpoints": {"key": "microsoftEndpoints", "type": "StorageAccountMicrosoftEndpoints"},
+        "internet_endpoints": {"key": "internetEndpoints", "type": "StorageAccountInternetEndpoints"},
+    }
+
+    def __init__(
+        self,
+        *,
+        microsoft_endpoints: Optional["_models.StorageAccountMicrosoftEndpoints"] = None,
+        internet_endpoints: Optional["_models.StorageAccountInternetEndpoints"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword microsoft_endpoints: Gets the microsoft routing storage endpoints.
+        :paramtype microsoft_endpoints: ~azure.mgmt.storage.models.StorageAccountMicrosoftEndpoints
+        :keyword internet_endpoints: Gets the internet routing storage endpoints.
+        :paramtype internet_endpoints: ~azure.mgmt.storage.models.StorageAccountInternetEndpoints
+        """
+        super().__init__(**kwargs)
+        self.blob: Optional[str] = None
+        self.queue: Optional[str] = None
+        self.table: Optional[str] = None
+        self.file: Optional[str] = None
+        self.web: Optional[str] = None
+        self.dfs: Optional[str] = None
+        self.microsoft_endpoints = microsoft_endpoints
+        self.internet_endpoints = internet_endpoints
 
 
 class StorageAccountKey(_serialization.Model):
@@ -8396,7 +8828,7 @@ class StorageAccountListKeysResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.keys: Optional[List["_models.StorageAccountKey"]] = None
+        self.keys: Optional[list["_models.StorageAccountKey"]] = None
 
 
 class StorageAccountListResult(_serialization.Model):
@@ -8424,7 +8856,7 @@ class StorageAccountListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.StorageAccount"]] = None
+        self.value: Optional[list["_models.StorageAccount"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -8646,6 +9078,11 @@ class StorageAccountUpdateParameters(_serialization.Model):
      supported by server. Known values are: "Storage", "StorageV2", "BlobStorage", "FileStorage",
      and "BlockBlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.models.Kind
+    :ivar zones: Optional. Gets or sets the pinned logical availability zone for the storage
+     account.
+    :vartype zones: list[str]
+    :ivar placement: Optional. Gets or sets the zonal placement details for the storage account.
+    :vartype placement: ~azure.mgmt.storage.models.Placement
     :ivar custom_domain: Custom domain assigned to the storage account by the user. Name is the
      CNAME source. Only one custom domain is supported per storage account at this time. To clear
      the existing custom domain, use an empty string for the custom domain name property.
@@ -8683,6 +9120,9 @@ class StorageAccountUpdateParameters(_serialization.Model):
     :ivar routing_preference: Maintains information about the network routing choice opted by the
      user for data transfer.
     :vartype routing_preference: ~azure.mgmt.storage.models.RoutingPreference
+    :ivar dual_stack_endpoint_preference: Maintains information about the Internet protocol opted
+     by the user.
+    :vartype dual_stack_endpoint_preference: ~azure.mgmt.storage.models.DualStackEndpointPreference
     :ivar allow_blob_public_access: Allow or disallow public access to all blobs or containers in
      the storage account. The default interpretation is false for this property.
     :vartype allow_blob_public_access: bool
@@ -8720,6 +9160,10 @@ class StorageAccountUpdateParameters(_serialization.Model):
      Azure DNS Zone and the endpoint URL will have an alphanumeric DNS Zone identifier. Known values
      are: "Standard" and "AzureDnsZone".
     :vartype dns_endpoint_type: str or ~azure.mgmt.storage.models.DnsEndpointType
+    :ivar geo_priority_replication_status: Status indicating whether Geo Priority Replication is
+     enabled for the account.
+    :vartype geo_priority_replication_status:
+     ~azure.mgmt.storage.models.GeoPriorityReplicationStatus
     """
 
     _attribute_map = {
@@ -8727,6 +9171,8 @@ class StorageAccountUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
         "identity": {"key": "identity", "type": "Identity"},
         "kind": {"key": "kind", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "placement": {"key": "placement", "type": "Placement"},
         "custom_domain": {"key": "properties.customDomain", "type": "CustomDomain"},
         "encryption": {"key": "properties.encryption", "type": "Encryption"},
         "sas_policy": {"key": "properties.sasPolicy", "type": "SasPolicy"},
@@ -8743,6 +9189,10 @@ class StorageAccountUpdateParameters(_serialization.Model):
         "network_rule_set": {"key": "properties.networkAcls", "type": "NetworkRuleSet"},
         "large_file_shares_state": {"key": "properties.largeFileSharesState", "type": "str"},
         "routing_preference": {"key": "properties.routingPreference", "type": "RoutingPreference"},
+        "dual_stack_endpoint_preference": {
+            "key": "properties.dualStackEndpointPreference",
+            "type": "DualStackEndpointPreference",
+        },
         "allow_blob_public_access": {"key": "properties.allowBlobPublicAccess", "type": "bool"},
         "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
         "allow_shared_key_access": {"key": "properties.allowSharedKeyAccess", "type": "bool"},
@@ -8755,15 +9205,21 @@ class StorageAccountUpdateParameters(_serialization.Model):
         },
         "allowed_copy_scope": {"key": "properties.allowedCopyScope", "type": "str"},
         "dns_endpoint_type": {"key": "properties.dnsEndpointType", "type": "str"},
+        "geo_priority_replication_status": {
+            "key": "properties.geoPriorityReplicationStatus",
+            "type": "GeoPriorityReplicationStatus",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         sku: Optional["_models.Sku"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.Identity"] = None,
         kind: Optional[Union[str, "_models.Kind"]] = None,
+        zones: Optional[list[str]] = None,
+        placement: Optional["_models.Placement"] = None,
         custom_domain: Optional["_models.CustomDomain"] = None,
         encryption: Optional["_models.Encryption"] = None,
         sas_policy: Optional["_models.SasPolicy"] = None,
@@ -8777,6 +9233,7 @@ class StorageAccountUpdateParameters(_serialization.Model):
         network_rule_set: Optional["_models.NetworkRuleSet"] = None,
         large_file_shares_state: Optional[Union[str, "_models.LargeFileSharesState"]] = None,
         routing_preference: Optional["_models.RoutingPreference"] = None,
+        dual_stack_endpoint_preference: Optional["_models.DualStackEndpointPreference"] = None,
         allow_blob_public_access: Optional[bool] = None,
         minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         allow_shared_key_access: Optional[bool] = None,
@@ -8786,6 +9243,7 @@ class StorageAccountUpdateParameters(_serialization.Model):
         immutable_storage_with_versioning: Optional["_models.ImmutableStorageAccount"] = None,
         allowed_copy_scope: Optional[Union[str, "_models.AllowedCopyScope"]] = None,
         dns_endpoint_type: Optional[Union[str, "_models.DnsEndpointType"]] = None,
+        geo_priority_replication_status: Optional["_models.GeoPriorityReplicationStatus"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8804,6 +9262,11 @@ class StorageAccountUpdateParameters(_serialization.Model):
          supported by server. Known values are: "Storage", "StorageV2", "BlobStorage", "FileStorage",
          and "BlockBlobStorage".
         :paramtype kind: str or ~azure.mgmt.storage.models.Kind
+        :keyword zones: Optional. Gets or sets the pinned logical availability zone for the storage
+         account.
+        :paramtype zones: list[str]
+        :keyword placement: Optional. Gets or sets the zonal placement details for the storage account.
+        :paramtype placement: ~azure.mgmt.storage.models.Placement
         :keyword custom_domain: Custom domain assigned to the storage account by the user. Name is the
          CNAME source. Only one custom domain is supported per storage account at this time. To clear
          the existing custom domain, use an empty string for the custom domain name property.
@@ -8842,6 +9305,10 @@ class StorageAccountUpdateParameters(_serialization.Model):
         :keyword routing_preference: Maintains information about the network routing choice opted by
          the user for data transfer.
         :paramtype routing_preference: ~azure.mgmt.storage.models.RoutingPreference
+        :keyword dual_stack_endpoint_preference: Maintains information about the Internet protocol
+         opted by the user.
+        :paramtype dual_stack_endpoint_preference:
+         ~azure.mgmt.storage.models.DualStackEndpointPreference
         :keyword allow_blob_public_access: Allow or disallow public access to all blobs or containers
          in the storage account. The default interpretation is false for this property.
         :paramtype allow_blob_public_access: bool
@@ -8880,12 +9347,18 @@ class StorageAccountUpdateParameters(_serialization.Model):
          accounts in an Azure DNS Zone and the endpoint URL will have an alphanumeric DNS Zone
          identifier. Known values are: "Standard" and "AzureDnsZone".
         :paramtype dns_endpoint_type: str or ~azure.mgmt.storage.models.DnsEndpointType
+        :keyword geo_priority_replication_status: Status indicating whether Geo Priority Replication is
+         enabled for the account.
+        :paramtype geo_priority_replication_status:
+         ~azure.mgmt.storage.models.GeoPriorityReplicationStatus
         """
         super().__init__(**kwargs)
         self.sku = sku
         self.tags = tags
         self.identity = identity
         self.kind = kind
+        self.zones = zones
+        self.placement = placement
         self.custom_domain = custom_domain
         self.encryption = encryption
         self.sas_policy = sas_policy
@@ -8899,6 +9372,7 @@ class StorageAccountUpdateParameters(_serialization.Model):
         self.network_rule_set = network_rule_set
         self.large_file_shares_state = large_file_shares_state
         self.routing_preference = routing_preference
+        self.dual_stack_endpoint_preference = dual_stack_endpoint_preference
         self.allow_blob_public_access = allow_blob_public_access
         self.minimum_tls_version = minimum_tls_version
         self.allow_shared_key_access = allow_shared_key_access
@@ -8908,6 +9382,7 @@ class StorageAccountUpdateParameters(_serialization.Model):
         self.immutable_storage_with_versioning = immutable_storage_with_versioning
         self.allowed_copy_scope = allowed_copy_scope
         self.dns_endpoint_type = dns_endpoint_type
+        self.geo_priority_replication_status = geo_priority_replication_status
 
 
 class StorageQueue(Resource):
@@ -8946,7 +9421,7 @@ class StorageQueue(Resource):
         "approximate_message_count": {"key": "properties.approximateMessageCount", "type": "int"},
     }
 
-    def __init__(self, *, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, metadata: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword metadata: A name-value pair that represents queue metadata.
         :paramtype metadata: dict[str, str]
@@ -8976,7 +9451,7 @@ class StorageSkuListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SkuInformation"]] = None
+        self.value: Optional[list["_models.SkuInformation"]] = None
 
 
 class StorageTaskAssignment(Resource):
@@ -9187,7 +9662,7 @@ class StorageTaskAssignmentsList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.StorageTaskAssignment"]] = None
+        self.value: Optional[list["_models.StorageTaskAssignment"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -9514,7 +9989,7 @@ class StorageTaskReportSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.StorageTaskReportInstance"]] = None
+        self.value: Optional[list["_models.StorageTaskReportInstance"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -9617,7 +10092,7 @@ class Table(Resource):
     }
 
     def __init__(
-        self, *, signed_identifiers: Optional[List["_models.TableSignedIdentifier"]] = None, **kwargs: Any
+        self, *, signed_identifiers: Optional[list["_models.TableSignedIdentifier"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword signed_identifiers: List of stored access policies specified on the table.
@@ -9856,8 +10331,8 @@ class TriggerParameters(_serialization.Model):
     :vartype interval: int
     :ivar interval_unit: Run interval unit of task execution. This is a required field when
      ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
-     ExecutionTrigger.properties.type is 'RunOnce'. Default value is "Days".
-    :vartype interval_unit: str
+     ExecutionTrigger.properties.type is 'RunOnce'. "Days"
+    :vartype interval_unit: str or ~azure.mgmt.storage.models.IntervalUnit
     :ivar end_by: When to end task execution. This is a required field when
      ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
      ExecutionTrigger.properties.type is 'RunOnce'.
@@ -9885,7 +10360,7 @@ class TriggerParameters(_serialization.Model):
         *,
         start_from: Optional[datetime.datetime] = None,
         interval: Optional[int] = None,
-        interval_unit: Optional[Literal["Days"]] = None,
+        interval_unit: Optional[Union[str, "_models.IntervalUnit"]] = None,
         end_by: Optional[datetime.datetime] = None,
         start_on: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -9901,8 +10376,8 @@ class TriggerParameters(_serialization.Model):
         :paramtype interval: int
         :keyword interval_unit: Run interval unit of task execution. This is a required field when
          ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
-         ExecutionTrigger.properties.type is 'RunOnce'. Default value is "Days".
-        :paramtype interval_unit: str
+         ExecutionTrigger.properties.type is 'RunOnce'. "Days"
+        :paramtype interval_unit: str or ~azure.mgmt.storage.models.IntervalUnit
         :keyword end_by: When to end task execution. This is a required field when
          ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
          ExecutionTrigger.properties.type is 'RunOnce'.
@@ -9933,8 +10408,8 @@ class TriggerParametersUpdate(_serialization.Model):
     :vartype interval: int
     :ivar interval_unit: Run interval unit of task execution. This is a mutable field when
      ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
-     ExecutionTrigger.properties.type is 'RunOnce'. Default value is "Days".
-    :vartype interval_unit: str
+     ExecutionTrigger.properties.type is 'RunOnce'. "Days"
+    :vartype interval_unit: str or ~azure.mgmt.storage.models.IntervalUnit
     :ivar end_by: When to end task execution. This is a mutable field when
      ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
      ExecutionTrigger.properties.type is 'RunOnce'.
@@ -9962,7 +10437,7 @@ class TriggerParametersUpdate(_serialization.Model):
         *,
         start_from: Optional[datetime.datetime] = None,
         interval: Optional[int] = None,
-        interval_unit: Optional[Literal["Days"]] = None,
+        interval_unit: Optional[Union[str, "_models.IntervalUnit"]] = None,
         end_by: Optional[datetime.datetime] = None,
         start_on: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -9978,8 +10453,8 @@ class TriggerParametersUpdate(_serialization.Model):
         :paramtype interval: int
         :keyword interval_unit: Run interval unit of task execution. This is a mutable field when
          ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
-         ExecutionTrigger.properties.type is 'RunOnce'. Default value is "Days".
-        :paramtype interval_unit: str
+         ExecutionTrigger.properties.type is 'RunOnce'. "Days"
+        :paramtype interval_unit: str or ~azure.mgmt.storage.models.IntervalUnit
         :keyword end_by: When to end task execution. This is a mutable field when
          ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
          ExecutionTrigger.properties.type is 'RunOnce'.
@@ -10135,7 +10610,7 @@ class UsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Usage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Gets or sets the list of Storage Resource Usages.
         :paramtype value: list[~azure.mgmt.storage.models.Usage]

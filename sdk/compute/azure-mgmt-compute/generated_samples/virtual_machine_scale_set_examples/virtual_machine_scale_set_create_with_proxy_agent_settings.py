@@ -61,17 +61,24 @@ def main():
                             }
                         ]
                     },
-                    "osProfile": {
-                        "adminPassword": "{your-password}",
-                        "adminUsername": "{your-username}",
-                        "computerNamePrefix": "{vmss-name}",
+                    "osProfile": {"adminUsername": "{your-username}", "computerNamePrefix": "{vmss-name}"},
+                    "securityProfile": {
+                        "proxyAgentSettings": {
+                            "addProxyAgentExtension": True,
+                            "enabled": True,
+                            "imds": {
+                                "inVMAccessControlProfileReferenceId": "/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Compute/galleries/{gallery-name}/inVMAccessControlProfiles/{profile-name}/versions/{version}"
+                            },
+                            "wireServer": {
+                                "inVMAccessControlProfileReferenceId": "/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Compute/galleries/{gallery-name}/inVMAccessControlProfiles/{profile-name}/versions/{version}"
+                            },
+                        }
                     },
-                    "securityProfile": {"proxyAgentSettings": {"enabled": True}},
                     "storageProfile": {
                         "imageReference": {
-                            "offer": "WindowsServer",
-                            "publisher": "MicrosoftWindowsServer",
-                            "sku": "2019-Datacenter",
+                            "offer": "0001-com-ubuntu-server-jammy",
+                            "publisher": "Canonical",
+                            "sku": "22_04-lts-gen2",
                             "version": "latest",
                         },
                         "osDisk": {
@@ -88,6 +95,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-11-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithProxyAgentSettings.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2025-04-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithProxyAgentSettings.json
 if __name__ == "__main__":
     main()

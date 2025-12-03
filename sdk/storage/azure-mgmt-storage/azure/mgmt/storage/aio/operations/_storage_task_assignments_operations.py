@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -43,7 +43,8 @@ from ...operations._storage_task_assignments_operations import (
 from .._configuration import StorageManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class StorageTaskAssignmentsOperations:
@@ -129,6 +130,9 @@ class StorageTaskAssignmentsOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -365,6 +369,9 @@ class StorageTaskAssignmentsOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -637,6 +644,9 @@ class StorageTaskAssignmentsOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -713,7 +723,7 @@ class StorageTaskAssignmentsOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, account_name: str, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, resource_group_name: str, account_name: str, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.StorageTaskAssignment"]:
         """List all the storage task assignments in an account.
 
@@ -724,9 +734,9 @@ class StorageTaskAssignmentsOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param maxpagesize: Optional, specifies the maximum number of storage task assignment Ids to be
+        :param top: Optional, specifies the maximum number of storage task assignment Ids to be
          included in the list response. Default value is None.
-        :type maxpagesize: int
+        :type top: int
         :return: An iterator like instance of either StorageTaskAssignment or the result of
          cls(response)
         :rtype:
@@ -754,7 +764,7 @@ class StorageTaskAssignmentsOperations:
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     subscription_id=self._config.subscription_id,
-                    maxpagesize=maxpagesize,
+                    top=top,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,

@@ -57,6 +57,9 @@ def sample_authentication_with_azure_active_directory():
     clu_client = ConversationAnalysisClient(endpoint, credential=credential)
 
 
-if __name__ == '__main__':
+def main():
     sample_authentication_api_key()
-    sample_authentication_with_azure_active_directory()
+
+
+if __name__ == "__main__":
+    main()

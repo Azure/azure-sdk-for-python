@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class Resource(_serialization.Model):
@@ -30,7 +24,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -59,10 +53,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class TrackedResource(Resource):
@@ -74,7 +68,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -107,7 +101,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -119,7 +113,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class AmlFilesystem(TrackedResource):
     """An AML file system instance. Follows Azure Resource Manager standards:
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
 
@@ -128,7 +122,7 @@ class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attri
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -217,10 +211,10 @@ class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attri
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.AmlFilesystemIdentity"] = None,
         sku: Optional["_models.SkuName"] = None,
-        zones: Optional[List[str]] = None,
+        zones: Optional[list[str]] = None,
         storage_capacity_ti_b: Optional[float] = None,
         filesystem_subnet: Optional[str] = None,
         encryption_settings: Optional["_models.AmlFilesystemEncryptionSettings"] = None,
@@ -263,11 +257,11 @@ class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attri
         self.sku = sku
         self.zones = zones
         self.storage_capacity_ti_b = storage_capacity_ti_b
-        self.health = None
-        self.provisioning_state = None
+        self.health: Optional["_models.AmlFilesystemHealth"] = None
+        self.provisioning_state: Optional[Union[str, "_models.AmlFilesystemProvisioningStateType"]] = None
         self.filesystem_subnet = filesystem_subnet
-        self.client_info = None
-        self.throughput_provisioned_m_bps = None
+        self.client_info: Optional["_models.AmlFilesystemClientInfo"] = None
+        self.throughput_provisioned_m_bps: Optional[int] = None
         self.encryption_settings = encryption_settings
         self.maintenance_window = maintenance_window
         self.hsm = hsm
@@ -299,8 +293,8 @@ class AmlFilesystemArchive(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.filesystem_path = None
-        self.status = None
+        self.filesystem_path: Optional[str] = None
+        self.status: Optional["_models.AmlFilesystemArchiveStatus"] = None
 
 
 class AmlFilesystemArchiveInfo(_serialization.Model):
@@ -366,12 +360,12 @@ class AmlFilesystemArchiveStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.state = None
-        self.last_completion_time = None
-        self.last_started_time = None
-        self.percent_complete = None
-        self.error_code = None
-        self.error_message = None
+        self.state: Optional[Union[str, "_models.ArchiveStatusType"]] = None
+        self.last_completion_time: Optional[datetime.datetime] = None
+        self.last_started_time: Optional[datetime.datetime] = None
+        self.percent_complete: Optional[int] = None
+        self.error_code: Optional[str] = None
+        self.error_message: Optional[str] = None
 
 
 class AmlFilesystemCheckSubnetError(_serialization.Model):
@@ -473,10 +467,10 @@ class AmlFilesystemClientInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.mgs_address = None
-        self.mount_command = None
-        self.lustre_version = None
-        self.container_storage_interface = None
+        self.mgs_address: Optional[str] = None
+        self.mount_command: Optional[str] = None
+        self.lustre_version: Optional[str] = None
+        self.container_storage_interface: Optional["_models.AmlFilesystemContainerStorageInterface"] = None
 
 
 class AmlFilesystemContainerStorageInterface(_serialization.Model):
@@ -509,9 +503,9 @@ class AmlFilesystemContainerStorageInterface(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.persistent_volume_claim = None
-        self.persistent_volume = None
-        self.storage_class = None
+        self.persistent_volume_claim: Optional[str] = None
+        self.persistent_volume: Optional[str] = None
+        self.storage_class: Optional[str] = None
 
 
 class AmlFilesystemEncryptionSettings(_serialization.Model):
@@ -619,7 +613,7 @@ class AmlFilesystemHsmSettings(_serialization.Model):
         container: str,
         logging_container: str,
         import_prefix: str = "/",
-        import_prefixes_initial: Optional[List[str]] = None,
+        import_prefixes_initial: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -683,7 +677,7 @@ class AmlFilesystemIdentity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.AmlFilesystemIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -696,8 +690,8 @@ class AmlFilesystemIdentity(_serialization.Model):
          ~azure.mgmt.storagecache.models.UserAssignedIdentitiesValue]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -729,7 +723,7 @@ class AmlFilesystemPropertiesHsm(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.settings = settings
-        self.archive_status = None
+        self.archive_status: Optional[list["_models.AmlFilesystemArchive"]] = None
 
 
 class AmlFilesystemPropertiesMaintenanceWindow(_serialization.Model):
@@ -833,7 +827,7 @@ class AmlFilesystemRootSquashSettings(_serialization.Model):
         self.no_squash_nid_lists = no_squash_nid_lists
         self.squash_uid = squash_uid
         self.squash_gid = squash_gid
-        self.status = None
+        self.status: Optional[str] = None
 
 
 class AmlFilesystemsListResult(_serialization.Model):
@@ -852,7 +846,7 @@ class AmlFilesystemsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.AmlFilesystem"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.AmlFilesystem"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: URL to get the next set of AML file system list results, if there are any.
@@ -940,7 +934,7 @@ class AmlFilesystemUpdate(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         encryption_settings: Optional["_models.AmlFilesystemEncryptionSettings"] = None,
         maintenance_window: Optional["_models.AmlFilesystemUpdatePropertiesMaintenanceWindow"] = None,
         root_squash_settings: Optional["_models.AmlFilesystemRootSquashSettings"] = None,
@@ -1126,7 +1120,7 @@ class ApiOperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ApiOperation"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.ApiOperation"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: URL to get the next set of operation list results if there are any.
@@ -1157,8 +1151,8 @@ class ApiOperationPropertiesServiceSpecification(_serialization.Model):  # pylin
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
-        log_specifications: Optional[List["_models.LogSpecification"]] = None,
+        metric_specifications: Optional[list["_models.MetricSpecification"]] = None,
+        log_specifications: Optional[list["_models.LogSpecification"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1210,7 +1204,7 @@ class AscOperation(_serialization.Model):
         end_time: Optional[str] = None,
         status: Optional[str] = None,
         error: Optional["_models.AscOperationErrorResponse"] = None,
-        output: Optional[Dict[str, JSON]] = None,
+        output: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1265,6 +1259,644 @@ class AscOperationErrorResponse(_serialization.Model):
         self.message = message
 
 
+class AutoExportJob(TrackedResource):
+    """An auto export job instance. Follows Azure Resource Manager standards:
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
+     "Creating", "Deleting", "Updating", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.storagecache.models.AutoExportJobProvisioningStateType
+    :ivar admin_status: The administrative status of the auto export job. Possible values:
+     'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
+     export job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+    :vartype admin_status: str or ~azure.mgmt.storagecache.models.AutoExportJobAdminStatus
+    :ivar auto_export_prefixes: An array of blob paths/prefixes that get auto exported to the
+     cluster namespace. It has '/' as the default value. Number of maximum allowed paths for now is
+     1.
+    :vartype auto_export_prefixes: list[str]
+    :ivar state: The operational state of auto export. InProgress indicates the export is running.
+     Disabling indicates the user has requested to disable the export but the disabling is still in
+     progress. Disabled indicates auto export has been disabled.  DisableFailed indicates the
+     disabling has failed.  Failed means the export was unable to continue, due to a fatal error.
+     Known values are: "InProgress", "Disabling", "Disabled", "DisableFailed", and "Failed".
+    :vartype state: str or ~azure.mgmt.storagecache.models.AutoExportStatusType
+    :ivar status_code: Server-defined status code for auto export job.
+    :vartype status_code: str
+    :ivar status_message: Server-defined status message for auto export job.
+    :vartype status_message: str
+    :ivar total_files_exported: Total files exported since the start of the export. This is
+     accumulative, some files may be counted repeatedly.
+    :vartype total_files_exported: int
+    :ivar total_mi_b_exported: Total data (in MiB) exported since the start of the export. This is
+     accumulative, some files may be counted repeatedly.
+    :vartype total_mi_b_exported: int
+    :ivar total_files_failed: Total files failed to be export since the last successfully completed
+     iteration. This is accumulative, some files may be counted repeatedly.
+    :vartype total_files_failed: int
+    :ivar export_iteration_count: Number of iterations completed since the start of the export.
+    :vartype export_iteration_count: int
+    :ivar last_successful_iteration_completion_time_utc: Time (in UTC) of the last successfully
+     completed export iteration. Look at logging container for details.
+    :vartype last_successful_iteration_completion_time_utc: ~datetime.datetime
+    :ivar current_iteration_files_discovered: Files discovered for export in current iteration. It
+     may increase while more export items are found.
+    :vartype current_iteration_files_discovered: int
+    :ivar current_iteration_mi_b_discovered: Data (in MiB) discovered for export in current
+     iteration. It may increase while more export items are found.
+    :vartype current_iteration_mi_b_discovered: int
+    :ivar current_iteration_files_exported: Files that have been exported in current iteration.
+    :vartype current_iteration_files_exported: int
+    :ivar current_iteration_mi_b_exported: Data (in MiB) that have been exported in current
+     iteration.
+    :vartype current_iteration_mi_b_exported: int
+    :ivar current_iteration_files_failed: Files failed to export in current iteration.
+    :vartype current_iteration_files_failed: int
+    :ivar last_started_time_utc: The time (in UTC) the latest auto export job started.
+    :vartype last_started_time_utc: ~datetime.datetime
+    :ivar last_completion_time_utc: The time (in UTC) of the last completed auto export job.
+    :vartype last_completion_time_utc: ~datetime.datetime
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "status_code": {"readonly": True},
+        "status_message": {"readonly": True},
+        "total_files_exported": {"readonly": True},
+        "total_mi_b_exported": {"readonly": True},
+        "total_files_failed": {"readonly": True},
+        "export_iteration_count": {"readonly": True},
+        "last_successful_iteration_completion_time_utc": {"readonly": True},
+        "current_iteration_files_discovered": {"readonly": True},
+        "current_iteration_mi_b_discovered": {"readonly": True},
+        "current_iteration_files_exported": {"readonly": True},
+        "current_iteration_mi_b_exported": {"readonly": True},
+        "current_iteration_files_failed": {"readonly": True},
+        "last_started_time_utc": {"readonly": True},
+        "last_completion_time_utc": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "admin_status": {"key": "properties.adminStatus", "type": "str"},
+        "auto_export_prefixes": {"key": "properties.autoExportPrefixes", "type": "[str]"},
+        "state": {"key": "properties.status.state", "type": "str"},
+        "status_code": {"key": "properties.status.statusCode", "type": "str"},
+        "status_message": {"key": "properties.status.statusMessage", "type": "str"},
+        "total_files_exported": {"key": "properties.status.totalFilesExported", "type": "int"},
+        "total_mi_b_exported": {"key": "properties.status.totalMiBExported", "type": "int"},
+        "total_files_failed": {"key": "properties.status.totalFilesFailed", "type": "int"},
+        "export_iteration_count": {"key": "properties.status.exportIterationCount", "type": "int"},
+        "last_successful_iteration_completion_time_utc": {
+            "key": "properties.status.lastSuccessfulIterationCompletionTimeUTC",
+            "type": "iso-8601",
+        },
+        "current_iteration_files_discovered": {
+            "key": "properties.status.currentIterationFilesDiscovered",
+            "type": "int",
+        },
+        "current_iteration_mi_b_discovered": {"key": "properties.status.currentIterationMiBDiscovered", "type": "int"},
+        "current_iteration_files_exported": {"key": "properties.status.currentIterationFilesExported", "type": "int"},
+        "current_iteration_mi_b_exported": {"key": "properties.status.currentIterationMiBExported", "type": "int"},
+        "current_iteration_files_failed": {"key": "properties.status.currentIterationFilesFailed", "type": "int"},
+        "last_started_time_utc": {"key": "properties.status.lastStartedTimeUTC", "type": "iso-8601"},
+        "last_completion_time_utc": {"key": "properties.status.lastCompletionTimeUTC", "type": "iso-8601"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        admin_status: Optional[Union[str, "_models.AutoExportJobAdminStatus"]] = None,
+        auto_export_prefixes: Optional[list[str]] = None,
+        state: Optional[Union[str, "_models.AutoExportStatusType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword admin_status: The administrative status of the auto export job. Possible values:
+         'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
+         export job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+        :paramtype admin_status: str or ~azure.mgmt.storagecache.models.AutoExportJobAdminStatus
+        :keyword auto_export_prefixes: An array of blob paths/prefixes that get auto exported to the
+         cluster namespace. It has '/' as the default value. Number of maximum allowed paths for now is
+         1.
+        :paramtype auto_export_prefixes: list[str]
+        :keyword state: The operational state of auto export. InProgress indicates the export is
+         running.  Disabling indicates the user has requested to disable the export but the disabling is
+         still in progress. Disabled indicates auto export has been disabled.  DisableFailed indicates
+         the disabling has failed.  Failed means the export was unable to continue, due to a fatal
+         error. Known values are: "InProgress", "Disabling", "Disabled", "DisableFailed", and "Failed".
+        :paramtype state: str or ~azure.mgmt.storagecache.models.AutoExportStatusType
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.provisioning_state: Optional[Union[str, "_models.AutoExportJobProvisioningStateType"]] = None
+        self.admin_status = admin_status
+        self.auto_export_prefixes = auto_export_prefixes
+        self.state = state
+        self.status_code: Optional[str] = None
+        self.status_message: Optional[str] = None
+        self.total_files_exported: Optional[int] = None
+        self.total_mi_b_exported: Optional[int] = None
+        self.total_files_failed: Optional[int] = None
+        self.export_iteration_count: Optional[int] = None
+        self.last_successful_iteration_completion_time_utc: Optional[datetime.datetime] = None
+        self.current_iteration_files_discovered: Optional[int] = None
+        self.current_iteration_mi_b_discovered: Optional[int] = None
+        self.current_iteration_files_exported: Optional[int] = None
+        self.current_iteration_mi_b_exported: Optional[int] = None
+        self.current_iteration_files_failed: Optional[int] = None
+        self.last_started_time_utc: Optional[datetime.datetime] = None
+        self.last_completion_time_utc: Optional[datetime.datetime] = None
+
+
+class AutoExportJobsListResult(_serialization.Model):
+    """Result of the request to list auto export jobs. It contains a list of auto export jobs and a
+    URL link to get the next set of results.
+
+    :ivar next_link: URL to get the next set of auto export job list results, if there are any.
+    :vartype next_link: str
+    :ivar value: List of auto export jobs.
+    :vartype value: list[~azure.mgmt.storagecache.models.AutoExportJob]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[AutoExportJob]"},
+    }
+
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.AutoExportJob"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: URL to get the next set of auto export job list results, if there are any.
+        :paramtype next_link: str
+        :keyword value: List of auto export jobs.
+        :paramtype value: list[~azure.mgmt.storagecache.models.AutoExportJob]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class AutoExportJobUpdate(_serialization.Model):
+    """An auto export job update instance.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar admin_status: The administrative status of the auto export job. Possible values:
+     'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
+     export job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+    :vartype admin_status: str or ~azure.mgmt.storagecache.models.AutoExportJobAdminStatus
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "admin_status": {"key": "properties.adminStatus", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        admin_status: Optional[Union[str, "_models.AutoExportJobAdminStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword admin_status: The administrative status of the auto export job. Possible values:
+         'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
+         export job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+        :paramtype admin_status: str or ~azure.mgmt.storagecache.models.AutoExportJobAdminStatus
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.admin_status = admin_status
+
+
+class AutoImportJob(TrackedResource):
+    """An auto import job instance. Follows Azure Resource Manager standards:
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
+     "Creating", "Deleting", "Updating", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.storagecache.models.AutoImportJobPropertiesProvisioningState
+    :ivar admin_status: The administrative status of the auto import job. Possible values:
+     'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
+     import job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+    :vartype admin_status: str or
+     ~azure.mgmt.storagecache.models.AutoImportJobPropertiesAdminStatus
+    :ivar auto_import_prefixes: An array of blob paths/prefixes that get auto imported to the
+     cluster namespace. It has '/' as the default value. Number of maximum allowed paths is 100.
+    :vartype auto_import_prefixes: list[str]
+    :ivar conflict_resolution_mode: How the auto import job will handle conflicts. For example, if
+     the auto import job is trying to bring in a directory, but a file is at that path, how it
+     handles it. Fail indicates that the auto import job should stop immediately and not do anything
+     with the conflict. Skip indicates that it should pass over the conflict. OverwriteIfDirty
+     causes the auto import job to delete and re-import the file or directory if it is a conflicting
+     type, is dirty, or is currently released. OverwriteAlways extends OverwriteIfDirty to include
+     releasing files that had been restored but were not dirty. Please reference
+     https://learn.microsoft.com/en-us/azure/azure-managed-lustre/blob-integration#conflict-resolution-mode
+     for a thorough explanation of these resolution modes. Known values are: "Fail", "Skip",
+     "OverwriteIfDirty", and "OverwriteAlways".
+    :vartype conflict_resolution_mode: str or
+     ~azure.mgmt.storagecache.models.ConflictResolutionMode
+    :ivar enable_deletions: Whether or not to enable deletions during auto import. This only
+     affects overwrite-dirty.
+    :vartype enable_deletions: bool
+    :ivar maximum_errors: Total non-conflict-oriented errors (e.g., OS errors) Import will tolerate
+     before exiting with failure. -1 means infinite. 0 means exit immediately on any error.
+    :vartype maximum_errors: int
+    :ivar state: The state of the auto import operation. Known values are: "InProgress", "Failed",
+     "Disabling", and "Disabled".
+    :vartype state: str or ~azure.mgmt.storagecache.models.AutoImportJobState
+    :ivar status_code: Server-defined status code for auto import job.
+    :vartype status_code: str
+    :ivar status_message: Server-defined status message for auto import job.
+    :vartype status_message: str
+    :ivar scan_start_time: Date and time of when the currently running full scan began.
+    :vartype scan_start_time: ~datetime.datetime
+    :ivar scan_end_time: Date and time of when the full scan ended.
+    :vartype scan_end_time: ~datetime.datetime
+    :ivar total_blobs_walked: Total number of blobs walked during full scan.
+    :vartype total_blobs_walked: int
+    :ivar rate_of_blob_walk: Rate of blobs walked during full scan.
+    :vartype rate_of_blob_walk: int
+    :ivar total_blobs_imported: Total number of blobs imported during full scan.
+    :vartype total_blobs_imported: int
+    :ivar rate_of_blob_import: Rate of blob import during full scan.
+    :vartype rate_of_blob_import: int
+    :ivar imported_files: Number of files imported during full scan.
+    :vartype imported_files: int
+    :ivar imported_directories: Number of directories imported during full scan.
+    :vartype imported_directories: int
+    :ivar imported_symlinks: Number of symlinks imported during full scan.
+    :vartype imported_symlinks: int
+    :ivar preexisting_files: Number of preexisting files during full scan.
+    :vartype preexisting_files: int
+    :ivar preexisting_directories: Number of preexisting directories during full scan.
+    :vartype preexisting_directories: int
+    :ivar preexisting_symlinks: Number of preexisting symlinks during full scan.
+    :vartype preexisting_symlinks: int
+    :ivar total_errors: Total errors encountered during full scan.
+    :vartype total_errors: int
+    :ivar total_conflicts: Total conflicts encountered during full scan.
+    :vartype total_conflicts: int
+    :ivar blob_sync_events: The storage account blob change feed status of the auto import job.
+    :vartype blob_sync_events:
+     ~azure.mgmt.storagecache.models.AutoImportJobPropertiesStatusBlobSyncEvents
+    :ivar last_started_time_utc: The time (in UTC) the latest auto import job started.
+    :vartype last_started_time_utc: ~datetime.datetime
+    :ivar last_completion_time_utc: The time (in UTC) of the last completed auto import job.
+    :vartype last_completion_time_utc: ~datetime.datetime
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "status_code": {"readonly": True},
+        "status_message": {"readonly": True},
+        "scan_start_time": {"readonly": True},
+        "scan_end_time": {"readonly": True},
+        "total_blobs_walked": {"readonly": True},
+        "rate_of_blob_walk": {"readonly": True},
+        "total_blobs_imported": {"readonly": True},
+        "rate_of_blob_import": {"readonly": True},
+        "imported_files": {"readonly": True},
+        "imported_directories": {"readonly": True},
+        "imported_symlinks": {"readonly": True},
+        "preexisting_files": {"readonly": True},
+        "preexisting_directories": {"readonly": True},
+        "preexisting_symlinks": {"readonly": True},
+        "total_errors": {"readonly": True},
+        "total_conflicts": {"readonly": True},
+        "blob_sync_events": {"readonly": True},
+        "last_started_time_utc": {"readonly": True},
+        "last_completion_time_utc": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "admin_status": {"key": "properties.adminStatus", "type": "str"},
+        "auto_import_prefixes": {"key": "properties.autoImportPrefixes", "type": "[str]"},
+        "conflict_resolution_mode": {"key": "properties.conflictResolutionMode", "type": "str"},
+        "enable_deletions": {"key": "properties.enableDeletions", "type": "bool"},
+        "maximum_errors": {"key": "properties.maximumErrors", "type": "int"},
+        "state": {"key": "properties.status.state", "type": "str"},
+        "status_code": {"key": "properties.status.statusCode", "type": "str"},
+        "status_message": {"key": "properties.status.statusMessage", "type": "str"},
+        "scan_start_time": {"key": "properties.status.scanStartTime", "type": "iso-8601"},
+        "scan_end_time": {"key": "properties.status.scanEndTime", "type": "iso-8601"},
+        "total_blobs_walked": {"key": "properties.status.totalBlobsWalked", "type": "int"},
+        "rate_of_blob_walk": {"key": "properties.status.rateOfBlobWalk", "type": "int"},
+        "total_blobs_imported": {"key": "properties.status.totalBlobsImported", "type": "int"},
+        "rate_of_blob_import": {"key": "properties.status.rateOfBlobImport", "type": "int"},
+        "imported_files": {"key": "properties.status.importedFiles", "type": "int"},
+        "imported_directories": {"key": "properties.status.importedDirectories", "type": "int"},
+        "imported_symlinks": {"key": "properties.status.importedSymlinks", "type": "int"},
+        "preexisting_files": {"key": "properties.status.preexistingFiles", "type": "int"},
+        "preexisting_directories": {"key": "properties.status.preexistingDirectories", "type": "int"},
+        "preexisting_symlinks": {"key": "properties.status.preexistingSymlinks", "type": "int"},
+        "total_errors": {"key": "properties.status.totalErrors", "type": "int"},
+        "total_conflicts": {"key": "properties.status.totalConflicts", "type": "int"},
+        "blob_sync_events": {
+            "key": "properties.status.blobSyncEvents",
+            "type": "AutoImportJobPropertiesStatusBlobSyncEvents",
+        },
+        "last_started_time_utc": {"key": "properties.status.lastStartedTimeUTC", "type": "iso-8601"},
+        "last_completion_time_utc": {"key": "properties.status.lastCompletionTimeUTC", "type": "iso-8601"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        admin_status: Union[str, "_models.AutoImportJobPropertiesAdminStatus"] = "Enable",
+        auto_import_prefixes: Optional[list[str]] = None,
+        conflict_resolution_mode: Optional[Union[str, "_models.ConflictResolutionMode"]] = None,
+        enable_deletions: bool = False,
+        maximum_errors: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword admin_status: The administrative status of the auto import job. Possible values:
+         'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
+         import job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+        :paramtype admin_status: str or
+         ~azure.mgmt.storagecache.models.AutoImportJobPropertiesAdminStatus
+        :keyword auto_import_prefixes: An array of blob paths/prefixes that get auto imported to the
+         cluster namespace. It has '/' as the default value. Number of maximum allowed paths is 100.
+        :paramtype auto_import_prefixes: list[str]
+        :keyword conflict_resolution_mode: How the auto import job will handle conflicts. For example,
+         if the auto import job is trying to bring in a directory, but a file is at that path, how it
+         handles it. Fail indicates that the auto import job should stop immediately and not do anything
+         with the conflict. Skip indicates that it should pass over the conflict. OverwriteIfDirty
+         causes the auto import job to delete and re-import the file or directory if it is a conflicting
+         type, is dirty, or is currently released. OverwriteAlways extends OverwriteIfDirty to include
+         releasing files that had been restored but were not dirty. Please reference
+         https://learn.microsoft.com/en-us/azure/azure-managed-lustre/blob-integration#conflict-resolution-mode
+         for a thorough explanation of these resolution modes. Known values are: "Fail", "Skip",
+         "OverwriteIfDirty", and "OverwriteAlways".
+        :paramtype conflict_resolution_mode: str or
+         ~azure.mgmt.storagecache.models.ConflictResolutionMode
+        :keyword enable_deletions: Whether or not to enable deletions during auto import. This only
+         affects overwrite-dirty.
+        :paramtype enable_deletions: bool
+        :keyword maximum_errors: Total non-conflict-oriented errors (e.g., OS errors) Import will
+         tolerate before exiting with failure. -1 means infinite. 0 means exit immediately on any error.
+        :paramtype maximum_errors: int
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.provisioning_state: Optional[Union[str, "_models.AutoImportJobPropertiesProvisioningState"]] = None
+        self.admin_status = admin_status
+        self.auto_import_prefixes = auto_import_prefixes
+        self.conflict_resolution_mode = conflict_resolution_mode
+        self.enable_deletions = enable_deletions
+        self.maximum_errors = maximum_errors
+        self.state: Optional[Union[str, "_models.AutoImportJobState"]] = None
+        self.status_code: Optional[str] = None
+        self.status_message: Optional[str] = None
+        self.scan_start_time: Optional[datetime.datetime] = None
+        self.scan_end_time: Optional[datetime.datetime] = None
+        self.total_blobs_walked: Optional[int] = None
+        self.rate_of_blob_walk: Optional[int] = None
+        self.total_blobs_imported: Optional[int] = None
+        self.rate_of_blob_import: Optional[int] = None
+        self.imported_files: Optional[int] = None
+        self.imported_directories: Optional[int] = None
+        self.imported_symlinks: Optional[int] = None
+        self.preexisting_files: Optional[int] = None
+        self.preexisting_directories: Optional[int] = None
+        self.preexisting_symlinks: Optional[int] = None
+        self.total_errors: Optional[int] = None
+        self.total_conflicts: Optional[int] = None
+        self.blob_sync_events: Optional["_models.AutoImportJobPropertiesStatusBlobSyncEvents"] = None
+        self.last_started_time_utc: Optional[datetime.datetime] = None
+        self.last_completion_time_utc: Optional[datetime.datetime] = None
+
+
+class AutoImportJobPropertiesStatusBlobSyncEvents(_serialization.Model):  # pylint: disable=name-too-long
+    """The storage account blob change feed status of the auto import job.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar imported_files: Number of files imported during auto import.
+    :vartype imported_files: int
+    :ivar imported_directories: Number of directories imported during auto import.
+    :vartype imported_directories: int
+    :ivar imported_symlinks: Number of symlinks imported during auto import.
+    :vartype imported_symlinks: int
+    :ivar preexisting_files: Number of preexisting files during auto import.
+    :vartype preexisting_files: int
+    :ivar preexisting_directories: Number of preexisting directories during auto import.
+    :vartype preexisting_directories: int
+    :ivar preexisting_symlinks: Number of preexisting symlinks during auto import.
+    :vartype preexisting_symlinks: int
+    :ivar total_blobs_imported: Total number of blobs imported during auto import.
+    :vartype total_blobs_imported: int
+    :ivar rate_of_blob_import: Rate of blob import per second during auto import.
+    :vartype rate_of_blob_import: int
+    :ivar total_errors: Total errors encountered during auto import.
+    :vartype total_errors: int
+    :ivar total_conflicts: Total conflicts encountered during auto import.
+    :vartype total_conflicts: int
+    :ivar deletions: Number of deletions during auto import.
+    :vartype deletions: int
+    :ivar last_change_feed_event_consumed_time: Date and time of the last Change Feed event
+     consumed.
+    :vartype last_change_feed_event_consumed_time: ~datetime.datetime
+    :ivar last_time_fully_synchronized: Date and time when last fully synchronized.
+    :vartype last_time_fully_synchronized: ~datetime.datetime
+    """
+
+    _validation = {
+        "imported_files": {"readonly": True},
+        "imported_directories": {"readonly": True},
+        "imported_symlinks": {"readonly": True},
+        "preexisting_files": {"readonly": True},
+        "preexisting_directories": {"readonly": True},
+        "preexisting_symlinks": {"readonly": True},
+        "total_blobs_imported": {"readonly": True},
+        "rate_of_blob_import": {"readonly": True},
+        "total_errors": {"readonly": True},
+        "total_conflicts": {"readonly": True},
+        "deletions": {"readonly": True},
+        "last_change_feed_event_consumed_time": {"readonly": True},
+        "last_time_fully_synchronized": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "imported_files": {"key": "importedFiles", "type": "int"},
+        "imported_directories": {"key": "importedDirectories", "type": "int"},
+        "imported_symlinks": {"key": "importedSymlinks", "type": "int"},
+        "preexisting_files": {"key": "preexistingFiles", "type": "int"},
+        "preexisting_directories": {"key": "preexistingDirectories", "type": "int"},
+        "preexisting_symlinks": {"key": "preexistingSymlinks", "type": "int"},
+        "total_blobs_imported": {"key": "totalBlobsImported", "type": "int"},
+        "rate_of_blob_import": {"key": "rateOfBlobImport", "type": "int"},
+        "total_errors": {"key": "totalErrors", "type": "int"},
+        "total_conflicts": {"key": "totalConflicts", "type": "int"},
+        "deletions": {"key": "deletions", "type": "int"},
+        "last_change_feed_event_consumed_time": {"key": "lastChangeFeedEventConsumedTime", "type": "iso-8601"},
+        "last_time_fully_synchronized": {"key": "lastTimeFullySynchronized", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.imported_files: Optional[int] = None
+        self.imported_directories: Optional[int] = None
+        self.imported_symlinks: Optional[int] = None
+        self.preexisting_files: Optional[int] = None
+        self.preexisting_directories: Optional[int] = None
+        self.preexisting_symlinks: Optional[int] = None
+        self.total_blobs_imported: Optional[int] = None
+        self.rate_of_blob_import: Optional[int] = None
+        self.total_errors: Optional[int] = None
+        self.total_conflicts: Optional[int] = None
+        self.deletions: Optional[int] = None
+        self.last_change_feed_event_consumed_time: Optional[datetime.datetime] = None
+        self.last_time_fully_synchronized: Optional[datetime.datetime] = None
+
+
+class AutoImportJobsListResult(_serialization.Model):
+    """Result of the request to list auto import jobs. It contains a list of auto import jobs and a
+    URL link to get the next set of results.
+
+    :ivar value: List of auto import jobs.
+    :vartype value: list[~azure.mgmt.storagecache.models.AutoImportJob]
+    :ivar next_link: URL to get the next set of auto import job list results, if there are any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[AutoImportJob]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.AutoImportJob"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of auto import jobs.
+        :paramtype value: list[~azure.mgmt.storagecache.models.AutoImportJob]
+        :keyword next_link: URL to get the next set of auto import job list results, if there are any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class AutoImportJobUpdate(_serialization.Model):
+    """An auto import job update instance.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar admin_status: The administrative status of the auto import job. Possible values:
+     'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
+     import job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+    :vartype admin_status: str or
+     ~azure.mgmt.storagecache.models.AutoImportJobUpdatePropertiesAdminStatus
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "admin_status": {"key": "properties.adminStatus", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        admin_status: Optional[Union[str, "_models.AutoImportJobUpdatePropertiesAdminStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword admin_status: The administrative status of the auto import job. Possible values:
+         'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
+         import job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+        :paramtype admin_status: str or
+         ~azure.mgmt.storagecache.models.AutoImportJobUpdatePropertiesAdminStatus
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.admin_status = admin_status
+
+
 class BlobNfsTarget(_serialization.Model):
     """Properties pertaining to the BlobNfsTarget.
 
@@ -1316,7 +1948,7 @@ class BlobNfsTarget(_serialization.Model):
         self.write_back_timer = write_back_timer
 
 
-class Cache(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class Cache(_serialization.Model):
     """A cache instance. Follows Azure Resource Manager standards:
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
 
@@ -1416,7 +2048,7 @@ class Cache(_serialization.Model):  # pylint: disable=too-many-instance-attribut
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
         identity: Optional["_models.CacheIdentity"] = None,
         sku: Optional["_models.CacheSku"] = None,
@@ -1427,7 +2059,7 @@ class Cache(_serialization.Model):  # pylint: disable=too-many-instance-attribut
         encryption_settings: Optional["_models.CacheEncryptionSettings"] = None,
         security_settings: Optional["_models.CacheSecuritySettings"] = None,
         directory_services_settings: Optional["_models.CacheDirectorySettings"] = None,
-        zones: Optional[List[str]] = None,
+        zones: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1459,27 +2091,27 @@ class Cache(_serialization.Model):  # pylint: disable=too-many-instance-attribut
         """
         super().__init__(**kwargs)
         self.tags = tags
-        self.id = None
+        self.id: Optional[str] = None
         self.location = location
-        self.name = None
-        self.type = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.identity = identity
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.sku = sku
         self.cache_size_gb = cache_size_gb
-        self.health = None
-        self.mount_addresses = None
-        self.provisioning_state = None
+        self.health: Optional["_models.CacheHealth"] = None
+        self.mount_addresses: Optional[list[str]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningStateType"]] = None
         self.subnet = subnet
-        self.upgrade_status = None
+        self.upgrade_status: Optional["_models.CacheUpgradeStatus"] = None
         self.upgrade_settings = upgrade_settings
         self.network_settings = network_settings
         self.encryption_settings = encryption_settings
         self.security_settings = security_settings
         self.directory_services_settings = directory_services_settings
         self.zones = zones
-        self.priming_jobs = None
-        self.space_allocation = None
+        self.priming_jobs: Optional[list["_models.PrimingJob"]] = None
+        self.space_allocation: Optional[list["_models.StorageTargetSpaceAllocation"]] = None
 
 
 class CacheActiveDirectorySettings(_serialization.Model):
@@ -1566,7 +2198,7 @@ class CacheActiveDirectorySettings(_serialization.Model):
         self.domain_name = domain_name
         self.domain_net_bios_name = domain_net_bios_name
         self.cache_net_bios_name = cache_net_bios_name
-        self.domain_joined = None
+        self.domain_joined: Optional[Union[str, "_models.DomainJoinedType"]] = None
         self.credentials = credentials
 
 
@@ -1728,7 +2360,7 @@ class CacheHealth(_serialization.Model):
         super().__init__(**kwargs)
         self.state = state
         self.status_description = status_description
-        self.conditions = None
+        self.conditions: Optional[list["_models.Condition"]] = None
 
 
 class CacheIdentity(_serialization.Model):
@@ -1768,7 +2400,7 @@ class CacheIdentity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.CacheIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValueAutoGenerated"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentitiesValueAutoGenerated"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1781,8 +2413,8 @@ class CacheIdentity(_serialization.Model):
          ~azure.mgmt.storagecache.models.UserAssignedIdentitiesValueAutoGenerated]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -1823,7 +2455,7 @@ class CacheNetworkSettings(_serialization.Model):
         self,
         *,
         mtu: int = 1500,
-        dns_servers: Optional[List[str]] = None,
+        dns_servers: Optional[list[str]] = None,
         dns_search_domain: Optional[str] = None,
         ntp_server: str = "time.windows.com",
         **kwargs: Any
@@ -1842,7 +2474,7 @@ class CacheNetworkSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.mtu = mtu
-        self.utility_addresses = None
+        self.utility_addresses: Optional[list[str]] = None
         self.dns_servers = dns_servers
         self.dns_search_domain = dns_search_domain
         self.ntp_server = ntp_server
@@ -1859,7 +2491,7 @@ class CacheSecuritySettings(_serialization.Model):
         "access_policies": {"key": "accessPolicies", "type": "[NfsAccessPolicy]"},
     }
 
-    def __init__(self, *, access_policies: Optional[List["_models.NfsAccessPolicy"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, access_policies: Optional[list["_models.NfsAccessPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword access_policies: NFS access policies defined for this cache.
         :paramtype access_policies: list[~azure.mgmt.storagecache.models.NfsAccessPolicy]
@@ -1904,7 +2536,7 @@ class CachesListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Cache"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.Cache"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: URL to get the next set of cache list results, if there are any.
@@ -1998,14 +2630,14 @@ class CacheUpgradeStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.current_firmware_version = None
-        self.firmware_update_status = None
-        self.firmware_update_deadline = None
-        self.last_firmware_update = None
-        self.pending_firmware_version = None
+        self.current_firmware_version: Optional[str] = None
+        self.firmware_update_status: Optional[Union[str, "_models.FirmwareStatusType"]] = None
+        self.firmware_update_deadline: Optional[datetime.datetime] = None
+        self.last_firmware_update: Optional[datetime.datetime] = None
+        self.pending_firmware_version: Optional[str] = None
 
 
-class CacheUsernameDownloadSettings(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class CacheUsernameDownloadSettings(_serialization.Model):
     """Settings for Extended Groups username and group download.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2120,7 +2752,7 @@ class CacheUsernameDownloadSettings(_serialization.Model):  # pylint: disable=to
         self.require_valid_certificate = require_valid_certificate
         self.auto_download_certificate = auto_download_certificate
         self.ca_certificate_uri = ca_certificate_uri
-        self.username_downloaded = None
+        self.username_downloaded: Optional[Union[str, "_models.UsernameDownloadedType"]] = None
         self.credentials = credentials
 
 
@@ -2201,7 +2833,7 @@ class CloudErrorBody(_serialization.Model):
         self,
         *,
         code: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
+        details: Optional[list["_models.CloudErrorBody"]] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
         **kwargs: Any
@@ -2250,8 +2882,8 @@ class Condition(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.timestamp = None
-        self.message = None
+        self.timestamp: Optional[datetime.datetime] = None
+        self.message: Optional[str] = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -2278,8 +2910,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -2318,11 +2950,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -2346,7 +2978,7 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class ImportJob(TrackedResource):
     """An import job instance. Follows Azure Resource Manager standards:
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
 
@@ -2355,7 +2987,7 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2373,6 +3005,10 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
      "Creating", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.storagecache.models.ImportJobProvisioningStateType
+    :ivar admin_status: The administrative status of the import job. Possible values: 'Active',
+     'Cancel'. Passing in a value of 'Cancel' will cancel the current active import job. By default
+     it is set to 'Active'. Known values are: "Active" and "Cancel".
+    :vartype admin_status: str or ~azure.mgmt.storagecache.models.ImportJobAdminStatus
     :ivar import_prefixes: An array of blob paths/prefixes that get imported into the cluster
      namespace. It has '/' as the default value.
     :vartype import_prefixes: list[str]
@@ -2391,13 +3027,13 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :ivar maximum_errors: Total non-conflict oriented errors the import job will tolerate before
      exiting with failure. -1 means infinite. 0 means exit immediately and is the default.
     :vartype maximum_errors: int
-    :ivar state: The state of the import job. InProgress indicates the import is still running.
-     Canceled indicates it has been canceled by the user. Completed indicates import finished,
-     successfully importing all discovered blobs into the Lustre namespace. CompletedPartial
-     indicates the import finished but some blobs either were found to be conflicting and could not
-     be imported or other errors were encountered. Failed means the import was unable to complete
-     due to a fatal error. Known values are: "InProgress", "Cancelling", "Canceled", "Completed",
-     "CompletedPartial", and "Failed".
+    :ivar state: The operational state of the import job. InProgress indicates the import is still
+     running. Canceled indicates it has been canceled by the user. Completed indicates import
+     finished, successfully importing all discovered blobs into the Lustre namespace.
+     CompletedPartial indicates the import finished but some blobs either were found to be
+     conflicting and could not be imported or other errors were encountered. Failed means the import
+     was unable to complete due to a fatal error. Known values are: "InProgress", "Cancelling",
+     "Canceled", "Completed", "CompletedPartial", and "Failed".
     :vartype state: str or ~azure.mgmt.storagecache.models.ImportStatusType
     :ivar status_message: The status message of the import job.
     :vartype status_message: str
@@ -2407,12 +3043,27 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :vartype blobs_walked_per_second: int
     :ivar total_blobs_imported: The total blobs that have been imported since import began.
     :vartype total_blobs_imported: int
+    :ivar imported_files: New or modified files that have been imported into the filesystem.
+    :vartype imported_files: int
+    :ivar imported_directories: New or modified directories that have been imported into the
+     filesystem.
+    :vartype imported_directories: int
+    :ivar imported_symlinks: Newly added symbolic links into the filesystem.
+    :vartype imported_symlinks: int
+    :ivar preexisting_files: Files that already exist in the filesystem and have not been modified.
+    :vartype preexisting_files: int
+    :ivar preexisting_directories: Directories that already exist in the filesystem and have not
+     been modified.
+    :vartype preexisting_directories: int
+    :ivar preexisting_symlinks: Symbolic links that already exist in the filesystem and have not
+     been modified.
+    :vartype preexisting_symlinks: int
     :ivar blobs_imported_per_second: A recent and frequently updated rate of total files,
      directories, and symlinks imported per second.
     :vartype blobs_imported_per_second: int
-    :ivar last_completion_time: The time of the last completed archive operation.
+    :ivar last_completion_time: The time (in UTC) of the last completed import job.
     :vartype last_completion_time: ~datetime.datetime
-    :ivar last_started_time: The time the latest archive operation started.
+    :ivar last_started_time: The time (in UTC) the latest import job started.
     :vartype last_started_time: ~datetime.datetime
     :ivar total_errors: Number of errors in the import job.
     :vartype total_errors: int
@@ -2432,6 +3083,12 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
         "total_blobs_walked": {"readonly": True},
         "blobs_walked_per_second": {"readonly": True},
         "total_blobs_imported": {"readonly": True},
+        "imported_files": {"readonly": True},
+        "imported_directories": {"readonly": True},
+        "imported_symlinks": {"readonly": True},
+        "preexisting_files": {"readonly": True},
+        "preexisting_directories": {"readonly": True},
+        "preexisting_symlinks": {"readonly": True},
         "blobs_imported_per_second": {"readonly": True},
         "last_completion_time": {"readonly": True},
         "last_started_time": {"readonly": True},
@@ -2447,6 +3104,7 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "admin_status": {"key": "properties.adminStatus", "type": "str"},
         "import_prefixes": {"key": "properties.importPrefixes", "type": "[str]"},
         "conflict_resolution_mode": {"key": "properties.conflictResolutionMode", "type": "str"},
         "maximum_errors": {"key": "properties.maximumErrors", "type": "int"},
@@ -2455,6 +3113,12 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
         "total_blobs_walked": {"key": "properties.status.totalBlobsWalked", "type": "int"},
         "blobs_walked_per_second": {"key": "properties.status.blobsWalkedPerSecond", "type": "int"},
         "total_blobs_imported": {"key": "properties.status.totalBlobsImported", "type": "int"},
+        "imported_files": {"key": "properties.status.importedFiles", "type": "int"},
+        "imported_directories": {"key": "properties.status.importedDirectories", "type": "int"},
+        "imported_symlinks": {"key": "properties.status.importedSymlinks", "type": "int"},
+        "preexisting_files": {"key": "properties.status.preexistingFiles", "type": "int"},
+        "preexisting_directories": {"key": "properties.status.preexistingDirectories", "type": "int"},
+        "preexisting_symlinks": {"key": "properties.status.preexistingSymlinks", "type": "int"},
         "blobs_imported_per_second": {"key": "properties.status.blobsImportedPerSecond", "type": "int"},
         "last_completion_time": {"key": "properties.status.lastCompletionTime", "type": "iso-8601"},
         "last_started_time": {"key": "properties.status.lastStartedTime", "type": "iso-8601"},
@@ -2462,13 +3126,14 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
         "total_conflicts": {"key": "properties.status.totalConflicts", "type": "int"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
-        import_prefixes: Optional[List[str]] = None,
-        conflict_resolution_mode: Union[str, "_models.ConflictResolutionMode"] = "Fail",
+        tags: Optional[dict[str, str]] = None,
+        admin_status: Optional[Union[str, "_models.ImportJobAdminStatus"]] = None,
+        import_prefixes: Optional[list[str]] = None,
+        conflict_resolution_mode: Optional[Union[str, "_models.ConflictResolutionMode"]] = None,
         maximum_errors: int = 0,
         **kwargs: Any
     ) -> None:
@@ -2477,6 +3142,10 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword admin_status: The administrative status of the import job. Possible values: 'Active',
+         'Cancel'. Passing in a value of 'Cancel' will cancel the current active import job. By default
+         it is set to 'Active'. Known values are: "Active" and "Cancel".
+        :paramtype admin_status: str or ~azure.mgmt.storagecache.models.ImportJobAdminStatus
         :keyword import_prefixes: An array of blob paths/prefixes that get imported into the cluster
          namespace. It has '/' as the default value.
         :paramtype import_prefixes: list[str]
@@ -2497,20 +3166,27 @@ class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attribute
         :paramtype maximum_errors: int
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ImportJobProvisioningStateType"]] = None
+        self.admin_status = admin_status
         self.import_prefixes = import_prefixes
         self.conflict_resolution_mode = conflict_resolution_mode
         self.maximum_errors = maximum_errors
-        self.state = None
-        self.status_message = None
-        self.total_blobs_walked = None
-        self.blobs_walked_per_second = None
-        self.total_blobs_imported = None
-        self.blobs_imported_per_second = None
-        self.last_completion_time = None
-        self.last_started_time = None
-        self.total_errors = None
-        self.total_conflicts = None
+        self.state: Optional[Union[str, "_models.ImportStatusType"]] = None
+        self.status_message: Optional[str] = None
+        self.total_blobs_walked: Optional[int] = None
+        self.blobs_walked_per_second: Optional[int] = None
+        self.total_blobs_imported: Optional[int] = None
+        self.imported_files: Optional[int] = None
+        self.imported_directories: Optional[int] = None
+        self.imported_symlinks: Optional[int] = None
+        self.preexisting_files: Optional[int] = None
+        self.preexisting_directories: Optional[int] = None
+        self.preexisting_symlinks: Optional[int] = None
+        self.blobs_imported_per_second: Optional[int] = None
+        self.last_completion_time: Optional[datetime.datetime] = None
+        self.last_started_time: Optional[datetime.datetime] = None
+        self.total_errors: Optional[int] = None
+        self.total_conflicts: Optional[int] = None
 
 
 class ImportJobsListResult(_serialization.Model):
@@ -2529,7 +3205,7 @@ class ImportJobsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ImportJob"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.ImportJob"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: URL to get the next set of import job list results, if there are any.
@@ -2547,19 +3223,35 @@ class ImportJobUpdate(_serialization.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar admin_status: The administrative status of the import job. Possible values: 'Active',
+     'Cancel'. Passing in a value of 'Cancel' will cancel the current active import job. Known
+     values are: "Active" and "Cancel".
+    :vartype admin_status: str or ~azure.mgmt.storagecache.models.ImportJobAdminStatus
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
+        "admin_status": {"key": "properties.adminStatus", "type": "str"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        admin_status: Optional[Union[str, "_models.ImportJobAdminStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword admin_status: The administrative status of the import job. Possible values: 'Active',
+         'Cancel'. Passing in a value of 'Cancel' will cancel the current active import job. Known
+         values are: "Active" and "Cancel".
+        :paramtype admin_status: str or ~azure.mgmt.storagecache.models.ImportJobAdminStatus
         """
         super().__init__(**kwargs)
         self.tags = tags
+        self.admin_status = admin_status
 
 
 class KeyVaultKeyReference(_serialization.Model):
@@ -2728,9 +3420,9 @@ class MetricSpecification(_serialization.Model):
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
         aggregation_type: Optional[str] = None,
-        supported_aggregation_types: Optional[List[Union[str, "_models.MetricAggregationType"]]] = None,
+        supported_aggregation_types: Optional[list[Union[str, "_models.MetricAggregationType"]]] = None,
         metric_class: Optional[str] = None,
-        dimensions: Optional[List["_models.MetricDimension"]] = None,
+        dimensions: Optional[list["_models.MetricDimension"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2886,7 +3578,7 @@ class NfsAccessPolicy(_serialization.Model):
         "access_rules": {"key": "accessRules", "type": "[NfsAccessRule]"},
     }
 
-    def __init__(self, *, name: str, access_rules: List["_models.NfsAccessRule"], **kwargs: Any) -> None:
+    def __init__(self, *, name: str, access_rules: list["_models.NfsAccessRule"], **kwargs: Any) -> None:
         """
         :keyword name: Name identifying this policy. Access Policy names are not case sensitive.
          Required.
@@ -3057,11 +3749,11 @@ class PrimingJob(_serialization.Model):
         super().__init__(**kwargs)
         self.priming_job_name = priming_job_name
         self.priming_manifest_url = priming_manifest_url
-        self.priming_job_id = None
-        self.priming_job_state = None
-        self.priming_job_status = None
-        self.priming_job_details = None
-        self.priming_job_percent_complete = None
+        self.priming_job_id: Optional[str] = None
+        self.priming_job_state: Optional[Union[str, "_models.PrimingJobState"]] = None
+        self.priming_job_status: Optional[str] = None
+        self.priming_job_details: Optional[str] = None
+        self.priming_job_percent_complete: Optional[float] = None
 
 
 class PrimingJobIdParameter(_serialization.Model):
@@ -3180,10 +3872,10 @@ class ResourceSku(_serialization.Model):
     def __init__(
         self,
         *,
-        capabilities: Optional[List["_models.ResourceSkuCapabilities"]] = None,
-        location_info: Optional[List["_models.ResourceSkuLocationInfo"]] = None,
+        capabilities: Optional[list["_models.ResourceSkuCapabilities"]] = None,
+        location_info: Optional[list["_models.ResourceSkuLocationInfo"]] = None,
         name: Optional[str] = None,
-        restrictions: Optional[List["_models.Restriction"]] = None,
+        restrictions: Optional[list["_models.Restriction"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3198,9 +3890,9 @@ class ResourceSku(_serialization.Model):
         :paramtype restrictions: list[~azure.mgmt.storagecache.models.Restriction]
         """
         super().__init__(**kwargs)
-        self.resource_type = None
+        self.resource_type: Optional[str] = None
         self.capabilities = capabilities
-        self.locations = None
+        self.locations: Optional[list[str]] = None
         self.location_info = location_info
         self.name = name
         self.restrictions = restrictions
@@ -3246,7 +3938,7 @@ class ResourceSkuLocationInfo(_serialization.Model):
         "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, zones: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, zones: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location where this SKU is available.
         :paramtype location: str
@@ -3285,7 +3977,7 @@ class ResourceSkusResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.next_link = next_link
-        self.value = None
+        self.value: Optional[list["_models.ResourceSku"]] = None
 
 
 class ResourceUsage(_serialization.Model):
@@ -3320,10 +4012,10 @@ class ResourceUsage(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.limit = None
-        self.unit = None
-        self.current_value = None
-        self.name = None
+        self.limit: Optional[int] = None
+        self.unit: Optional[str] = None
+        self.current_value: Optional[int] = None
+        self.name: Optional["_models.ResourceUsageName"] = None
 
 
 class ResourceUsageName(_serialization.Model):
@@ -3378,8 +4070,8 @@ class ResourceUsagesListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.ResourceUsage"]] = None
 
 
 class Restriction(_serialization.Model):
@@ -3420,8 +4112,8 @@ class Restriction(_serialization.Model):
         :paramtype reason_code: str or ~azure.mgmt.storagecache.models.ReasonCode
         """
         super().__init__(**kwargs)
-        self.type = None
-        self.values = None
+        self.type: Optional[str] = None
+        self.values: Optional[list[str]] = None
         self.reason_code = reason_code
 
 
@@ -3481,14 +4173,14 @@ class StorageTargetResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.id = None
-        self.type = None
-        self.location = None
-        self.system_data = None
+        self.name: Optional[str] = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
-class StorageTarget(StorageTargetResource):  # pylint: disable=too-many-instance-attributes
+class StorageTarget(StorageTargetResource):
     """Type of the Storage Target.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3557,7 +4249,7 @@ class StorageTarget(StorageTargetResource):  # pylint: disable=too-many-instance
     def __init__(
         self,
         *,
-        junctions: Optional[List["_models.NamespaceJunction"]] = None,
+        junctions: Optional[list["_models.NamespaceJunction"]] = None,
         target_type: Optional[Union[str, "_models.StorageTargetType"]] = None,
         state: Optional[Union[str, "_models.OperationalStateType"]] = None,
         nfs3: Optional["_models.Nfs3Target"] = None,
@@ -3587,13 +4279,13 @@ class StorageTarget(StorageTargetResource):  # pylint: disable=too-many-instance
         super().__init__(**kwargs)
         self.junctions = junctions
         self.target_type = target_type
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningStateType"]] = None
         self.state = state
         self.nfs3 = nfs3
         self.clfs = clfs
         self.unknown = unknown
         self.blob_nfs = blob_nfs
-        self.allocation_percentage = None
+        self.allocation_percentage: Optional[int] = None
 
 
 class StorageTargetSpaceAllocation(_serialization.Model):
@@ -3645,7 +4337,7 @@ class StorageTargetsResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.StorageTarget"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.StorageTarget"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The URI to fetch the next page of Storage Targets.
@@ -3734,7 +4426,7 @@ class UnknownTarget(_serialization.Model):
         "attributes": {"key": "attributes", "type": "{str}"},
     }
 
-    def __init__(self, *, attributes: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, attributes: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword attributes: Dictionary of string->string pairs containing information about the
          Storage Target.
@@ -3820,7 +4512,7 @@ class UsageModelsResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.UsageModel"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.UsageModel"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The URI to fetch the next page of cache usage models.
@@ -3857,8 +4549,8 @@ class UserAssignedIdentitiesValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class UserAssignedIdentitiesValueAutoGenerated(_serialization.Model):
@@ -3885,5 +4577,5 @@ class UserAssignedIdentitiesValueAutoGenerated(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None

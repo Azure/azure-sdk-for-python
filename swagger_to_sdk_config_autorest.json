@@ -2,14 +2,14 @@
   "meta": {
     "autorest_options": {
       "version": "3.10.2",
-      "use": ["@autorest/python@6.38.2", "@autorest/modelerfour@4.27.0"],
+      "use": ["@autorest/python@6.43.0", "@autorest/modelerfour@4.27.0"],
       "python": "",
       "sdkrel:python-sdks-folder": "./sdk/.",
       "version-tolerant": false,
       "include-x-ms-examples-original-file": true,
       "generate-sample": true,
       "generate-test": true,
-      "keep-setup-py": true
+      "package-mode": "azure-mgmt"
     },
     "advanced_options": {
       "create_sdk_pull_requests": true,

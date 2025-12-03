@@ -203,7 +203,7 @@ class InteractiveCredential(MsalCredential, ABC):
             return token
         except Exception as ex:  # pylint:disable=broad-except
             if not (isinstance(ex, AuthenticationRequiredError) and allow_prompt):
-                _LOGGER.warning(
+                _LOGGER.warning(  # pylint: disable=do-not-log-raised-errors
                     "%s.%s failed: %s",
                     self.__class__.__name__,
                     base_method_name,
@@ -225,7 +225,7 @@ class InteractiveCredential(MsalCredential, ABC):
             # this may be the first authentication, or the user may have authenticated a different identity
             self._auth_record = _build_auth_record(result)
         except Exception as ex:
-            _LOGGER.warning(
+            _LOGGER.warning(  # pylint: disable=do-not-log-raised-errors
                 "%s.%s failed: %s",
                 self.__class__.__name__,
                 base_method_name,
@@ -244,7 +244,13 @@ class InteractiveCredential(MsalCredential, ABC):
         )
 
     def authenticate(
-        self, *, scopes: Optional[Iterable[str]] = None, claims: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        scopes: Optional[Iterable[str]] = None,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
     ) -> AuthenticationRecord:
         """Interactively authenticate a user. This method will always generate a challenge to the user.
 
@@ -253,6 +259,10 @@ class InteractiveCredential(MsalCredential, ABC):
           for these scopes.
         :keyword str claims: additional claims required in the token, such as those provided by
           :func:`AuthenticationRequiredError.claims`
+        :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Access tokens retrieved with CAE enabled will be cached separately from other tokens.
+            Defaults to False.
         :return: An AuthenticationRecord containing the authenticated user's information.
         :rtype: ~azure.identity.AuthenticationRecord
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -268,7 +278,9 @@ class InteractiveCredential(MsalCredential, ABC):
 
             scopes = _DEFAULT_AUTHENTICATE_SCOPES[self._authority]
 
-        _ = self.get_token(*scopes, _allow_prompt=True, claims=claims, **kwargs)
+        _ = self.get_token(
+            *scopes, _allow_prompt=True, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+        )
         return self._auth_record  # type: ignore
 
     @wrap_exceptions

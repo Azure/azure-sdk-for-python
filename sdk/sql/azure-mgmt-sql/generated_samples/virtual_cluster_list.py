@@ -28,7 +28,7 @@ from azure.mgmt.sql import SqlManagementClient
 def main():
     client = SqlManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444b",
+        subscription_id="20d7082a-0fc7-4468-82bd-542694d5042b",
     )
 
     response = client.virtual_clusters.list()
@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/VirtualClusterList.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-05-01-preview/examples/VirtualClusterList.json
 if __name__ == "__main__":
     main()

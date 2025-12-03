@@ -1,7 +1,9 @@
+import re
+import sys
 import os
 import ast
-import time
 import shutil
+from importlib.util import find_spec
 
 try:
     # py 311 adds this library natively
@@ -10,28 +12,21 @@ except:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 import tomli_w as tomlw
-from typing import Optional, Tuple, Dict, Any, List
+from typing import Optional, Tuple, Any, List
 from pathlib import Path
 import logging
 from subprocess import check_call, CalledProcessError, getoutput
 from .generate_utils import return_origin_path
-from packaging.version import Version
 from . import build_packaging
 from .change_log import main as change_log_main
-
-DEFAULT_DEST_FOLDER = "./dist"
 
 _LOGGER = logging.getLogger(__name__)
 
 
 # prefolder: "sdk/compute"; name: "azure-mgmt-compute"
-def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
+def create_package(prefolder, name):
     absdirpath = Path(prefolder, name).absolute()
-    check_call(["python", "setup.py", "bdist_wheel", "-d", dest_folder], cwd=absdirpath)
-    check_call(
-        ["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder],
-        cwd=absdirpath,
-    )
+    check_call([sys.executable, "-m", "build"], cwd=absdirpath)
 
 
 @return_origin_path
@@ -69,7 +64,8 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
             last_version = str(last_stable_release) if last_stable_release else str(last_release)
         else:
             last_version = str(last_release)
-    except:
+    except Exception as e:
+        _LOGGER.warning(f"Failed to get version info from PyPI for {package_name}: {e}")
         last_version = ""
         last_stable_release = ""
     return last_version, str(last_stable_release)
@@ -82,13 +78,16 @@ def change_log_generate(
     *,
     last_stable_release: Optional[str] = None,
     prefolder: Optional[str] = None,
-    is_multiapi: bool = False,
 ):
+    """
+    For first release, will return a default changelog content "### Other Changes\n\n  - Initial version".
+    """
+
     if not last_version:
         return "### Other Changes\n\n  - Initial version"
 
     # try new changelog tool
-    if prefolder and not is_multiapi:
+    if prefolder:
         try:
             tox_cache_path = Path(prefolder, package_name, ".tox")
             if tox_cache_path.exists():
@@ -100,6 +99,14 @@ def change_log_generate(
 
     # fallback to old changelog tool
     _LOGGER.info("Fallback to old changelog tool")
+    module_name = package_name.replace("-", ".")
+    if find_spec(module_name) is None and prefolder:
+        _LOGGER.info(f"Module {module_name} not found, try to install it first.")
+        try:
+            check_call([sys.executable, "-m", "pip", "install", "-e", "."], cwd=Path(prefolder) / package_name)
+        except CalledProcessError as e:
+            _LOGGER.warning(f"Failed to install {package_name}: {e}")
+
     return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
 
 
@@ -120,22 +127,6 @@ def extract_breaking_change(changelog):
     return sorted([x.replace("  - ", "") for x in breaking_change])
 
 
-def current_time() -> str:
-    date = time.localtime(time.time())
-    return "{}-{:02d}-{:02d}".format(date.tm_year, date.tm_mon, date.tm_mday)
-
-
-# find all the files of one folder, including files in subdirectory
-def all_files(path: str, files: List[str]):
-    all_folder = os.listdir(path)
-    for item in all_folder:
-        folder = str(Path(f"{path}/{item}"))
-        if os.path.isdir(folder):
-            all_files(folder, files)
-        else:
-            files.append(folder)
-
-
 def modify_file(file_path: str, func: Any):
     with open(file_path, "r") as file_in:
         content = file_in.readlines()
@@ -144,64 +135,26 @@ def modify_file(file_path: str, func: Any):
         file_out.writelines(content)
 
 
-def preview_version_plus(preview_label: str, last_version: str) -> str:
-    num = last_version.split(preview_label)
-    num[1] = str(int(num[1]) + 1)
-    return f"{num[0]}{preview_label}{num[1]}"
-
-
-def stable_version_plus(changelog: str, last_version: str):
-    flag = [False, False, False]  # breaking, feature, bugfix
-    flag[0] = "### Breaking Changes" in changelog
-    flag[1] = "### Features Added" in changelog
-    flag[2] = "### Bugs Fixed" in changelog
-
-    num = last_version.split(".")
-    if flag[0]:
-        return f"{int(num[0]) + 1}.0.0"
-    elif flag[1]:
-        return f"{num[0]}.{int(num[1]) + 1}.0"
-    elif flag[2]:
-        return f"{num[0]}.{num[1]}.{int(num[2]) + 1}"
-    else:
-        return "0.0.0"
-
-
 class CheckFile:
 
-    def __init__(self, package_info: Dict[str, Any]):
-        self.package_info = package_info
-        self.whole_package_name = package_info["packageName"]
-        self.package_name = self.whole_package_name.split("-", 2)[-1]
-        self.sdk_folder = package_info["path"][0].split("/")[-1]
-        self.tag_is_stable = package_info["tagIsStable"]
-        self.target_release_date = package_info["targetReleaseDate"] or current_time()
-        self.allow_invalid_next_version = package_info["allowInvalidNextVersion"]
-        self._next_version = None
-        self.version_suggestion = ""
+    def __init__(self, package_path: Path):
+        self.package_path = package_path
+        self.package_name = package_path.name
+        self.package_name_last_part = self.package_name.split("-", 2)[-1]
 
     @property
     def pprint_name(self) -> str:
-        return " ".join([word.capitalize() for word in self.package_name.split("-")])
-
-    @property
-    def next_version(self) -> str:
-        if self._next_version is None:
-            self._next_version = self.calculate_next_version()
-        return self._next_version
+        return " ".join([word.capitalize() for word in self.package_name_last_part.split("-")])
 
     @property
     def extract_client_title_from_init(self) -> str:
         """
         Extract the client title from a package's __init__.py file.
 
-        Args:
-            package_name (str): The package name (e.g., "azure-mgmt-compute")
-
         Returns:
             str: The client title if found, empty string otherwise
         """
-        init_file = Path(self.whole_package_name) / self.whole_package_name.replace("-", "/") / "__init__.py"
+        init_file = Path(self.package_name) / self.package_name.replace("-", "/") / "__init__.py"
         try:
             with open(init_file, "r") as f:
                 content = f.read()
@@ -221,18 +174,43 @@ class CheckFile:
 
         return ""
 
+    def version_from_changelog(self) -> str:
+        changelog_file = self.package_path / "CHANGELOG.md"
+        if not changelog_file.exists():
+            _LOGGER.info(f"{changelog_file} does not exist.")
+            return ""
+
+        try:
+            with open(changelog_file, "r") as f:
+                for line in f:
+                    # use regex to extract version "1.2.3" from lines like "## 1.2.3 (2024-01-01)" or
+                    # "1.2.3b1" from "## 1.2.3b1 (2025-01-01)"
+                    match = re.match(r"## (\d+\.\d+\.\d+(?:b\d+)?)\s+\((\d{4}-\d{2}-\d{2})\)", line)
+                    if match:
+                        return match.group(1)
+        except Exception as e:
+            _LOGGER.info(f"Failed to extract version from {changelog_file}: {e}")
+
+        return ""
+
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
 
-        os.chdir(Path(f"sdk/{self.sdk_folder}"))
+        os.chdir(self.package_path.parent)
         title = self.extract_client_title_from_init
 
         if not title:
-            _LOGGER.info(f"Can not find the title for {self.whole_package_name}")
+            _LOGGER.info(f"Can not find the title for {self.package_name}")
 
         # add `title` and update `is_stable` in pyproject.toml
-        pyproject_toml = Path(self.whole_package_name) / "pyproject.toml"
+        pyproject_toml = Path(self.package_name) / "pyproject.toml"
+
+        version = self.version_from_changelog()
+        if not version:
+            _LOGGER.info(f"Can not find the version from CHANGELOG.md for {self.package_name}")
+
+        is_stable = "b" not in version
         if pyproject_toml.exists():
             with open(pyproject_toml, "rb") as fd:
                 toml_data = toml.load(fd)
@@ -240,18 +218,38 @@ class CheckFile:
                 toml_data["packaging"] = {}
             if title and not toml_data["packaging"].get("title"):
                 toml_data["packaging"]["title"] = title
-            toml_data["packaging"]["is_stable"] = self.tag_is_stable and self.next_version != "1.0.0b1"
+            toml_data["packaging"]["is_stable"] = is_stable
             with open(pyproject_toml, "wb") as fd:
                 tomlw.dump(toml_data, fd)
             _LOGGER.info(f"Update {pyproject_toml} successfully")
         else:
             _LOGGER.info(f"{os.getcwd()}/{pyproject_toml} does not exist")
 
-        build_packaging(output_folder=".", packages=[self.whole_package_name], build_conf=True)
+        build_packaging(
+            output_folder=".",
+            packages=[self.package_name],
+            build_conf=True,
+            template_names=["README.md", "__init__.py"],
+        )
         _LOGGER.info("packaging_tools --build-conf successfully")
 
-    def sdk_code_path(self) -> str:
-        return str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}"))
+        if pyproject_toml.exists():
+            stable_classifier = "Development Status :: 5 - Production/Stable"
+            beta_classifier = "Development Status :: 4 - Beta"
+
+            def edit_file(content: List[str]):
+                for i in range(0, len(content)):
+                    if "Development Status" in content[i]:
+                        if is_stable and beta_classifier in content[i]:
+                            content[i] = content[i].replace(beta_classifier, stable_classifier)
+                            _LOGGER.info(f"Replace '{beta_classifier}' with '{stable_classifier}' in {pyproject_toml}")
+                        if (not is_stable) and stable_classifier in content[i]:
+                            content[i] = content[i].replace(stable_classifier, beta_classifier)
+                            _LOGGER.info(f"Replace '{stable_classifier}' with '{beta_classifier}' in {pyproject_toml}")
+                        break
+
+            modify_file(str(pyproject_toml), edit_file)
+            _LOGGER.info(f"Check {pyproject_toml} for classifiers successfully")
 
     def check_pprint_name(self):
 
@@ -259,14 +257,14 @@ class CheckFile:
             for i in range(0, len(content)):
                 content[i] = content[i].replace("MyService", self.pprint_name)
 
-        for file in os.listdir(self.sdk_code_path()):
-            file_path = str(Path(self.sdk_code_path()) / file)
+        for file in os.listdir(str(self.package_path)):
+            file_path = str(self.package_path / file)
             if os.path.isfile(file_path):
                 modify_file(file_path, edit_file_for_pprint_name)
         _LOGGER.info(f' replace "MyService" with "{self.pprint_name}" successfully ')
 
     def check_sdk_readme(self):
-        sdk_readme = str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}/README.md"))
+        sdk_readme = str(Path(self.package_path) / "README.md")
 
         def edit_sdk_readme(content: List[str]):
             for i in range(0, len(content)):
@@ -275,95 +273,8 @@ class CheckFile:
 
         modify_file(sdk_readme, edit_sdk_readme)
 
-    def get_last_release_version(self) -> str:
-        last_version = self.package_info["version"]
-        try:
-            return str(Version(last_version))
-        except:
-            return ""
-
-    def get_changelog(self) -> str:
-        return self.package_info["changelog"]["content"]
-
-    def calculate_next_version_proc(self, last_version: str) -> str:
-        preview_tag = not self.tag_is_stable
-        changelog = self.get_changelog()
-        if changelog == "":
-            self.version_suggestion = "(it should be stable)" if self.tag_is_stable else "(it should be perview)"
-            return "0.0.0"
-        preview_version = "rc" in last_version or "b" in last_version
-        #                                           |   preview tag                     | stable tag
-        # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0
-        # stable  version (1.0.0) (breaking change) | 2.0.0rc1(track1)/2.0.0b1(track2)  |  2.0.0
-        # stable  version (1.0.0) (feature)         | 1.1.0rc1(track1)/1.1.0b1(track2)  |  1.1.0
-        # stable  version (1.0.0) (bugfix)          | 1.0.1rc1(track1)/1.0.1b1(track2)  |  1.0.1
-        preview_label = "b"
-        if preview_version and preview_tag:
-            next_version = preview_version_plus(preview_label, last_version)
-        elif preview_version and not preview_tag:
-            next_version = last_version.split(preview_label)[0]
-        elif not preview_version and preview_tag:
-            next_version = stable_version_plus(changelog, last_version) + preview_label + "1"
-        else:
-            next_version = stable_version_plus(changelog, last_version)
-
-        return next_version
-
-    def calculate_next_version(self) -> str:
-        last_version = self.get_last_release_version()
-        if last_version:
-            return self.calculate_next_version_proc(last_version)
-        return "1.0.0b1"
-
-    def get_all_files_under_package_folder(self) -> List[str]:
-        files = []
-        all_files(self.sdk_code_path(), files)
-        return files
-
-    def edit_all_version_file(self):
-        files = self.get_all_files_under_package_folder()
-
-        def edit_version_file(content: List[str]):
-            for i in range(0, len(content)):
-                if content[i].find("VERSION") > -1:
-                    content[i] = f'VERSION = "{self.next_version}"\n'
-                    break
-
-        for file in files:
-            if Path(file).name == "_version.py":
-                modify_file(file, edit_version_file)
-
-    @property
-    def has_invalid_next_version(self) -> bool:
-        return self.next_version == "0.0.0"
-
-    def check_version(self):
-        if self.has_invalid_next_version and not self.allow_invalid_next_version:
-            _LOGGER.info(f"next version is invalid, skip check _version.py")
-            return
-        self.edit_all_version_file()
-
-    def check_changelog_file(self):
-        if self.has_invalid_next_version and not self.allow_invalid_next_version:
-            _LOGGER.info(f"next version is invalid, skip check CHANGELOG.md")
-            return
-
-        def edit_changelog_proc(content: List[str]):
-            next_version = self.next_version
-            if next_version == "1.0.0b1":
-                content.clear()
-                content.append("# Release History\n")
-            content[1:1] = [
-                "\n",
-                f"## {next_version}{self.version_suggestion} ({self.target_release_date})\n\n",
-                self.get_changelog(),
-                "\n",
-            ]
-
-        modify_file(str(Path(self.sdk_code_path()) / "CHANGELOG.md"), edit_changelog_proc)
-
     def check_dev_requirement(self):
-        file = Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}/dev_requirements.txt")
+        file = self.package_path / "dev_requirements.txt"
         content = ["-e ../../../eng/tools/azure-sdk-tools\n", "-e ../../identity/azure-identity\naiohttp\n"]
         if not file.exists():
             with open(file, "w") as file_out:
@@ -371,7 +282,7 @@ class CheckFile:
 
     @return_origin_path
     def check_pyproject_toml(self):
-        os.chdir(Path("sdk") / self.sdk_folder / self.whole_package_name)
+        os.chdir(self.package_path)
         # Configure and ensure pyproject.toml exists with required settings
         toml_path = Path("pyproject.toml")
 
@@ -425,14 +336,10 @@ class CheckFile:
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
         self.check_sdk_readme()
-        self.check_version()
-        self.check_changelog_file()
         self.check_dev_requirement()
         self.check_pyproject_toml()
 
 
-def check_file(package: Dict[str, Any]):
-    client = CheckFile(package)
+def check_file(package_path: Path):
+    client = CheckFile(package_path)
     client.run()
-    if not client.has_invalid_next_version:
-        package["version"] = client.next_version

@@ -79,9 +79,10 @@ class TestTimeoutRetryPolicy:
 
         created_document = setup[COLLECTION].create_item(body=document_definition)
         self.original_execute_function = _retry_utility.ExecuteFunction
+        num_exceptions = max(2, len(setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts))
         try:
-            # should retry once and then fail
-            mf = self.MockExecuteFunction(self.original_execute_function, 2, error_code)
+            # should retry and then fail
+            mf = self.MockExecuteFunction(self.original_execute_function, num_exceptions, error_code)
             _retry_utility.ExecuteFunction = mf
             setup[COLLECTION].read_item(item=created_document['id'],
                                               partition_key=created_document['pk'])
@@ -99,9 +100,11 @@ class TestTimeoutRetryPolicy:
                                'key': 'value'}
 
         self.original_execute_function = _retry_utility.ExecuteFunction
+        num_exceptions_503 = max(2, len(setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.write_regional_routing_contexts))
         try:
-            # timeouts should fail immediately for writes
-            mf = self.MockExecuteFunction(self.original_execute_function,0, error_code)
+            # timeouts should fail immediately for writes - except for 503s, which should retry on every preferred location
+            num_exceptions = num_exceptions_503 if error_code == 503 else 0
+            mf = self.MockExecuteFunction(self.original_execute_function, num_exceptions, error_code)
             _retry_utility.ExecuteFunction = mf
             try:
                 setup[COLLECTION].create_item(body=document_definition)
@@ -127,8 +130,8 @@ class TestTimeoutRetryPolicy:
         fake_endpoint = "other-region"
         region_1 = "East US"
         region_2 = "West US"
-        regional_routing_context = RegionalRoutingContext(self.host, self.host)
-        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint, fake_endpoint)
+        regional_routing_context = RegionalRoutingContext(self.host)
+        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint)
         original_location_cache.account_read_locations = [region_1, region_2]
         original_location_cache.account_read_regional_routing_contexts_by_location = {region_1: regional_routing_context,
                                                                                   region_2: regional_routing_context_2

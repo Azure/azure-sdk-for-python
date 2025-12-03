@@ -221,7 +221,7 @@ class _PerfTestBase(_PerfTestABC):
         if not value:
             raise ValueError("Undefined environment variable {}".format(variable))
         return value
-    
+
     @staticmethod
     def get_credential(is_async: bool = False) -> "TokenCredential":
         # If AzurePipelinesCredential is detected, use it.
@@ -249,7 +249,6 @@ class _PerfTestBase(_PerfTestABC):
             from azure.identity import DefaultAzureCredential
 
         return DefaultAzureCredential(exclude_managed_identity_credential=True)
-
 
     def _save_profile(self, sync: str, output_path: Optional[str] = None) -> None:
         """

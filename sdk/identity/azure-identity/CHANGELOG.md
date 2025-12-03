@@ -1,18 +1,47 @@
 # Release History
 
-## 1.24.1 (Unreleased)
+## 1.26.0b2 (Unreleased)
 
 ### Features Added
 
-- `AzureDeveloperCliCredential` now supports `claims` in `get_token` and `get_token_info`.  ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
-
 ### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.25.1.
+> Only code written against beta version 1.26.0b1 is affected.
+- Renamed `use_token_proxy` keyword argument to `enable_azure_proxy` in `WorkloadIdentityCredential` to better reflect its purpose. ([#44147](https://github.com/Azure/azure-sdk-for-python/pull/44147))
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.26.0b1 (2025-11-07)
+
+### Features Added
+
+- Added support for `WorkloadIdentityCredential` identity binding mode in AKS environments. This feature addresses Entra's limitation on the number of federated identity credentials (FICs) per managed identity by utilizing an AKS proxy that handles FIC exchanges on behalf of pods. ([#43287](https://github.com/Azure/azure-sdk-for-python/pull/43287))
+
+## 1.25.1 (2025-10-06)
+
+### Other Changes
+
+- When `AZURE_TOKEN_CREDENTIALS` is set to `ManagedIdentityCredential`, `DefaultAzureCredential` now skips the IMDS endpoint probe request and directly attempts token acquisition with full retry logic, matching the behavior of using `ManagedIdentityCredential` standalone. ([#43080](https://github.com/Azure/azure-sdk-for-python/pull/43080))
+- Improved error messages from `ManagedIdentityCredential` to include the full error response from managed identity endpoints for better troubleshooting. ([#43231](https://github.com/Azure/azure-sdk-for-python/pull/43231))
+
+## 1.25.0 (2025-09-11)
+
+### Features Added
+
+- `AzureDeveloperCliCredential` now supports `claims` in `get_token` and `get_token_info`. ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
+- Added new keyword argument `require_envvar` to `DefaultAzureCredential` to enforce the presence of the `AZURE_TOKEN_CREDENTIALS` environment variable. ([#42660](https://github.com/Azure/azure-sdk-for-python/pull/42660))
 
 ### Bugs Fixed
 
 - Fixed an issue where `AzureDeveloperCliCredential` would time out during token requests when `azd` prompts for user interaction. This issue commonly occurred in environments where the `AZD_DEBUG` environment variable was set, causing the Azure Developer CLI to display additional prompts that interfered with automated token acquisition. ([#42535](https://github.com/Azure/azure-sdk-for-python/pull/42535))
+- Fixed an issue where credentials configured with a default tenant ID of "organizations" (such as `InteractiveBrowserCredential` and `DeviceCodeCredential`) would fail authentication when a specific tenant ID was provided in `get_token` or `get_token_info` method calls. ([#42721](https://github.com/Azure/azure-sdk-for-python/pull/42721))
 
 ### Other Changes
+
+- Updated `SharedTokenCacheCredential` to raise `CredentialUnavailableError` instead of `ClientAuthenticationError` during token refresh failures when within the context of `DefaultAzureCredential`. ([#42934](https://github.com/Azure/azure-sdk-for-python/pull/42934))
 
 ## 1.24.0 (2025-08-07)
 

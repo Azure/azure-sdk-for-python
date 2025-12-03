@@ -339,12 +339,12 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
 async def test_claims_challenge_raises_error(get_token_method):
     """The credential should raise CredentialUnavailableError when claims challenge is provided"""
 
-    claims = "test-claims-challenge"
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
     credential = AzureDeveloperCliCredential()
 
     expected_message = "Suggestion: re-authentication required, run `azd auth login` to acquire a new token."
     error_output = """\
-{"data":{"message":"\\nERROR: fetching token: AADSTS50076: Due to a configuration change made by your administrator, or because you moved to a new location, you must use multi-factor authentication to access '797f4846-ba00-4fd7-ba43-dac1f8f63013'. Trace ID: 2039f8fa-554b-4f18-9ee5-b59ba6a69801 Correlation ID: c13395dd-4409-4abf-835c-5be43cd98cbc Timestamp: 2025-08-18 22:08:14Z\\n"}}
+{"data":{"message":"\\nERROR: fetching token: AADSTS50076: Due to a configuration change made by your administrator, or because you moved to a new location, you must use multi-factor authentication to access 'tenant-id'. Trace ID: trace-id Correlation ID: correlation-id Timestamp: 2025-08-18 22:08:14Z\\n"}}
 {"data":{"message":"Suggestion: re-authentication required, run `azd auth login` to acquire a new token.\\n"}}"""
 
     def fake_exec(*args, **kwargs):
@@ -410,7 +410,8 @@ async def test_empty_claims_does_not_raise_error(get_token_method):
 async def test_claims_command_line_argument(get_token_method):
     """The credential should pass claims as --claims argument to azd command"""
 
-    claims = "test-claims-challenge"
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    expected_encoded_claims = "eyJhY2Nlc3NfdG9rZW4iOnsiYWNycyI6eyJlc3NlbnRpYWwiOnRydWUsInZhbHVlcyI6WyJwMSJdfX19"
     access_token = "access token"
     expected_expires_on = 1602015811
 
@@ -420,7 +421,7 @@ async def test_claims_command_line_argument(get_token_method):
         # Verify that claims are passed as --claims argument
         assert "--claims" in command_line
         claims_index = command_line.index("--claims")
-        assert command_line[claims_index + 1] == claims
+        assert command_line[claims_index + 1] == expected_encoded_claims
 
         output = json.dumps(
             {

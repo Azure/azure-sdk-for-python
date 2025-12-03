@@ -10,10 +10,8 @@
 # can be successfully tested from within a tox environment.
 
 import argparse
-import logging
 
-logging.getLogger().setLevel(logging.INFO)
-
+from ci_tools.logging import configure_logging
 from ci_tools.scenario.generation import create_package_and_install
 
 if __name__ == "__main__":
@@ -82,6 +80,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # none of the args will apply to logging, but the LOGLEVEL env var will
+    # so we can just pass the args object directly to configure_logging to meet the needs of the function
+    configure_logging(args)
+
     create_package_and_install(
         distribution_directory=args.distribution_directory,
         target_setup=args.target_setup,
@@ -94,4 +96,4 @@ if __name__ == "__main__":
     )
 
 
-    
+

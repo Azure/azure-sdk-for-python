@@ -24,7 +24,7 @@ class TestSqlManagementServerAdvancedThreatProtectionSettingsOperations(AzureMgm
         response = self.client.server_advanced_threat_protection_settings.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementServerAdvancedThreatProtectionSettingsOperations(AzureMgm
             resource_group_name=resource_group.name,
             server_name="str",
             advanced_threat_protection_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestSqlManagementServerAdvancedThreatProtectionSettingsOperations(AzureMgm
                 },
                 "type": "str",
             },
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

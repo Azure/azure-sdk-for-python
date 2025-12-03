@@ -151,9 +151,11 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
     guide_link = (
         "[Pylint Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)"
         if check_type == "pylint"
-        else "[Sphinx and docstring checker](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#sphinx-and-docstring-checker)"
-        if check_type == "sphinx"
-        else "[Typing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking.md#run-mypy)"
+        else (
+            "[Sphinx and docstring checker](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#sphinx-and-docstring-checker)"
+            if check_type == "sphinx"
+            else "[Typing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking.md#run-mypy)"
+        )
     )
 
     title = f"{package_name} needs {error_type} updates for {check_type} version {version}"

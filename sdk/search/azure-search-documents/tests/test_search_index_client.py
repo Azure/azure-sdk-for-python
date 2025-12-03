@@ -46,13 +46,15 @@ class TestSearchIndexClient:
 
     def test_get_search_client_inherit_api_version(self):
         credential = AzureKeyCredential(key="old_api_key")
-        client = SearchIndexClient("endpoint", credential, api_version=ApiVersion.V2020_06_30)
+        client = SearchIndexClient(
+            "endpoint", credential, api_version=ApiVersion.V2020_06_30
+        )
         search_client = client.get_search_client("index")
         assert isinstance(search_client, SearchClient)
         assert search_client._api_version == ApiVersion.V2020_06_30
 
     @mock.patch(
-        "azure.search.documents.indexes._generated.operations._search_service_client_operations.SearchServiceClientOperationsMixin.get_service_statistics"
+        "azure.search.documents.indexes._generated.operations._search_service_client_operations._SearchServiceClientOperationsMixin.get_service_statistics"
     )
     def test_get_service_statistics(self, mock_get_stats):
         client = SearchIndexClient("endpoint", CREDENTIAL)
@@ -62,10 +64,12 @@ class TestSearchIndexClient:
         assert mock_get_stats.call_args[1] == {"headers": client._headers}
 
     @mock.patch(
-        "azure.search.documents.indexes._generated.operations._search_service_client_operations.SearchServiceClientOperationsMixin.get_service_statistics"
+        "azure.search.documents.indexes._generated.operations._search_service_client_operations._SearchServiceClientOperationsMixin.get_service_statistics"
     )
     def test_get_service_statistics_v2020_06_30(self, mock_get_stats):
-        client = SearchIndexClient("endpoint", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
+        client = SearchIndexClient(
+            "endpoint", CREDENTIAL, api_version=ApiVersion.V2020_06_30
+        )
         client.get_service_statistics()
         assert mock_get_stats.called
         assert mock_get_stats.call_args[0] == ()
@@ -127,4 +131,6 @@ class TestSearchIndexerClient:
             name="test", type="azureblob", connection_string="", container=container
         )
         packed_data_source_connection = data_source_connection._to_generated()
-        assert packed_data_source_connection.credentials.connection_string == "<unchanged>"
+        assert (
+            packed_data_source_connection.credentials.connection_string == "<unchanged>"
+        )

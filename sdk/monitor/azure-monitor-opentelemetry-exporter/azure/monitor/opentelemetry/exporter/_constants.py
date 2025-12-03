@@ -9,8 +9,6 @@ from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
     HTTP_SERVER_REQUEST_DURATION,
 )
-# pylint:disable=no-name-in-module
-from fixedint import Int32
 from azure.core import CaseInsensitiveEnumMeta
 
 
@@ -79,7 +77,9 @@ _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 
 # ONE SETTINGS
+_APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED = "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"
 _ONE_SETTINGS_PYTHON_KEY = "python"
+_ONE_SETTINGS_PYTHON_TARGETING = {"namespaces": _ONE_SETTINGS_PYTHON_KEY}
 _ONE_SETTINGS_CHANGE_VERSION_KEY = "CHANGE_VERSION"
 _ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
 _ONE_SETTINGS_PATH = "/AzMonSDKDynamicConfiguration"
@@ -88,16 +88,26 @@ _ONE_SETTINGS_CONFIG_URL = _ONE_SETTINGS_CNAME + _ONE_SETTINGS_PATH
 _ONE_SETTINGS_CHANGE_URL = _ONE_SETTINGS_CNAME + _ONE_SETTINGS_CHANGE_PATH
 _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS = 3600  # 60 minutes
 
+## ONE SETTINGS CONFIGS
+_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY = "DEFAULT_STATS_CONNECTION_STRING"
+_ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY = "SUPPORTED_DATA_BOUNDARIES"
+_ONE_SETTINGS_FEATURE_LOCAL_STORAGE = "FEATURE_LOCAL_STORAGE"
+_ONE_SETTINGS_FEATURE_LIVE_METRICS = "FEATURE_LIVE_METRICS"
+_ONE_SETTINGS_FEATURE_SDK_STATS = "FEATURE_SDK_STATS"
+# Maximum refresh interval cap (24 hours in seconds)
+_ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS = 24 * 60 * 60  # 86,400 seconds
+
 # Statsbeat
 # (OpenTelemetry metric name, Statsbeat metric name)
+# Note: OpenTelemetry SDK normalizes metric names to lowercase, so first element should be lowercase
 _ATTACH_METRIC_NAME = ("attach", "Attach")
 _FEATURE_METRIC_NAME = ("feature", "Feature")
-_REQ_EXCEPTION_NAME = ("statsbeat_exception_count", "Exception_Count")
-_REQ_DURATION_NAME = ("statsbeat_duration", "Request_Duration")
-_REQ_FAILURE_NAME = ("statsbeat_failure_count", "Request_Failure_Count")
-_REQ_RETRY_NAME = ("statsbeat_retry_count", "Retry_Count")
-_REQ_SUCCESS_NAME = ("statsbeat_success_count", "Request_Success_Count")
-_REQ_THROTTLE_NAME = ("statsbeat_throttle_count", "Throttle_Count")
+_REQ_EXCEPTION_NAME = ("exception_count", "Exception_Count")
+_REQ_DURATION_NAME = ("request_duration", "Request_Duration")
+_REQ_FAILURE_NAME = ("request_failure_count", "Request_Failure_Count")
+_REQ_RETRY_NAME = ("retry_count", "Retry_Count")
+_REQ_SUCCESS_NAME = ("request_success_count", "Request_Success_Count")
+_REQ_THROTTLE_NAME = ("throttle_count", "Throttle_Count")
 
 _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
     [
@@ -117,8 +127,8 @@ _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME = "APPLICATIONINSIGHTS_
 # pylint: disable=line-too-long
 _DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
 _DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
-_DEFAULT_STATS_SHORT_EXPORT_INTERVAL = 900  # 15 minutes
-_DEFAULT_STATS_LONG_EXPORT_INTERVAL = 86400  # 24 hours
+_DEFAULT_STATS_SHORT_EXPORT_INTERVAL = 15 * 60  # 15 minutes in s
+_DEFAULT_STATS_LONG_EXPORT_INTERVAL = 24 * 60 * 60  # 24 hours in s
 _EU_ENDPOINTS = [
     "westeurope",
     "northeurope",
@@ -147,6 +157,7 @@ _TRACE = "TRACE"
 _UNKNOWN = "UNKNOWN"
 
 # Customer Facing SDKStats
+
 _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
 _CUSTOMER_SDKSTATS_LANGUAGE = "python"
@@ -172,27 +183,25 @@ class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_DROP_COUNT = "preview.item.dropped.count"
     ITEM_RETRY_COUNT = "preview.item.retry.count"
 
-class CustomerSdkStatsProperties:
-    language: str
-    version: str
-    compute_type: str
-    def __init__(self, language: str, version: str, compute_type: str):
-        self.language = language
-        self.version = version
-        self.compute_type = compute_type
-
-## Map from Azure Monitor envelope names to TelemetryType
+## Map from Azure Monitor envelope base_types to TelemetryType
 _TYPE_MAP = {
-                _EVENT_ENVELOPE_NAME: _CUSTOM_EVENT,
-                _METRIC_ENVELOPE_NAME: _CUSTOM_METRIC,
-                _REMOTE_DEPENDENCY_ENVELOPE_NAME: _DEPENDENCY,
-                _EXCEPTION_ENVELOPE_NAME: _EXCEPTION,
-                _PAGE_VIEW_ENVELOPE_NAME: _PAGE_VIEW,
-                _MESSAGE_ENVELOPE_NAME: _TRACE,
-                _REQUEST_ENVELOPE_NAME: _REQUEST,
-                _PERFORMANCE_COUNTER_ENVELOPE_NAME: _PERFORMANCE_COUNTER,
-                _AVAILABILITY_ENVELOPE_NAME: _AVAILABILITY,
-            }
+    "EventData": _CUSTOM_EVENT,
+    "MetricData": _CUSTOM_METRIC,
+    "RemoteDependencyData": _DEPENDENCY,
+    "ExceptionData": _EXCEPTION,
+    "PageViewData": _PAGE_VIEW,
+    "MessageData": _TRACE,
+    "RequestData": _REQUEST,
+    "PerformanceCounterData": _PERFORMANCE_COUNTER,
+    "AvailabilityData": _AVAILABILITY,
+}
+
+# Exception categories
+class _exception_categories(Enum):
+    CLIENT_EXCEPTION = "Client exception"
+    STORAGE_EXCEPTION = "Storage exception"
+    NETWORK_EXCEPTION = "Network exception"
+    TIMEOUT_EXCEPTION = "Timeout exception"
 
 # Map RP names
 class _RP_Names(Enum):
@@ -308,11 +317,14 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
 _SAMPLING_HASH = 5381
-_INTEGER_MAX: int = Int32.maxval
-_INTEGER_MIN: int = Int32.minval
+_INT32_MAX: int = 2**31 - 1   # 2147483647
+_INT32_MIN: int = -2**31      # -2147483648
 
 # AAD Auth
 
 _DEFAULT_AAD_SCOPE = "https://monitor.azure.com//.default"
+
+# Default message for messages(MessageData) with empty body
+_DEFAULT_LOG_MESSAGE = "n/a"
 
 # cSpell:disable

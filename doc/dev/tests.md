@@ -578,11 +578,11 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md
 [azure_cli_service_principal]: https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az-ad-sp-create-for-rbac
 [azure_portal]: https://portal.azure.com/
-[azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44
+[azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py
 [central_conftest]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/conftest.py
 [env_var_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
-[get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/20cf5b0bd9b87f90bd5ad4fd36358d3b257f95c5/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L96
+[get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L78
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json
 [kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255

@@ -29,7 +29,9 @@ from ..models import (
     AnalyzeResult,
     AnalyzeTextOptions,
     IndexStatisticsSummary,
-    KnowledgeAgent,
+    KnowledgeBase,
+    KnowledgeSource,
+    KnowledgeSourceStatus,
 )
 
 
@@ -646,60 +648,161 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return await self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def delete_agent(
+    async def delete_knowledge_base(
         self,
-        agent: Union[str, KnowledgeAgent],
+        knowledge_base: Union[str, KnowledgeBase],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
-        """Deletes an existing agent.
+        """Deletes an existing knowledge base.
 
-        :param agent: The agent name or object to delete.
-        :type agent: str or ~azure.search.documents.indexes.models.KnowledgeAgent
+        :param knowledge_base: The knowledge base name or object to delete.
+        :type knowledge_base: str or ~azure.search.documents.indexes.models.KnowledgeBase
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(agent, match_condition)
+        error_map, access_condition = get_access_conditions(knowledge_base, match_condition)
         kwargs.update(access_condition)
         try:
-            agent_name = agent.name  # type: ignore
+            knowledge_base_name = knowledge_base.name  # type: ignore
         except AttributeError:
-            agent_name = agent
-        await self._client.knowledge_agents.delete(agent_name=agent_name, error_map=error_map, **kwargs)
+            knowledge_base_name = knowledge_base
+        await self._client.knowledge_bases.delete(
+            knowledge_base_name=knowledge_base_name, error_map=error_map, **kwargs
+        )
 
     @distributed_trace_async
-    async def create_agent(self, agent: KnowledgeAgent, **kwargs: Any) -> KnowledgeAgent:
-        """Creates a new knowledge agent.
+    async def create_knowledge_base(self, knowledge_base: KnowledgeBase, **kwargs: Any) -> KnowledgeBase:
+        """Creates a new knowledge base.
 
-        :param agent: The agent object.
-        :type agent: ~azure.search.documents.indexes.models.KnowledgeAgent
-        :return: The agent created
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :param knowledge_base: The knowledge base object.
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase
+        :return: The knowledge base created
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_agents.create(agent, **kwargs)
+        result = await self._client.knowledge_bases.create(knowledge_base, **kwargs)
         return result
 
     @distributed_trace_async
-    async def create_or_update_agent(
+    async def create_or_update_knowledge_base(
         self,
-        agent: KnowledgeAgent,
+        knowledge_base: KnowledgeBase,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
-    ) -> KnowledgeAgent:
-        """Creates a new knowledge agent or updates an agent if it already exists.
+    ) -> KnowledgeBase:
+        """Creates a new knowledge base or updates one if it already exists.
 
-        :param agent: The agent object.
-        :type agent: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :param knowledge_base: The knowledge base object.
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: The index created or updated
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :return: The knowledge base created or updated
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the knowledge base doesn't exist.
+        :raises ~azure.core.exceptions.ResourceModifiedError: If the knowledge base has been modified on the server.
+        :raises ~azure.core.exceptions.ResourceNotModifiedError: If the knowledge base hasn't been 
+            modified on the server.
+        :raises ~azure.core.exceptions.ResourceExistsError: If the knowledge base already exists.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(knowledge_base, match_condition)
+        kwargs.update(access_condition)
+        result = await self._client.knowledge_bases.create_or_update(
+            knowledge_base_name=knowledge_base.name,
+            knowledge_base=knowledge_base,
+            prefer="return=representation",
+            error_map=error_map,
+            **kwargs
+        )
+        return result
+
+    @distributed_trace_async
+    async def get_knowledge_base(self, name: str, **kwargs: Any) -> KnowledgeBase:
+        """Gets a knowledge base definition.
+
+        :param name: The name of the knowledge base to retrieve.
+        :type name: str
+        :return: KnowledgeBase object
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.knowledge_bases.get(knowledge_base_name=name, **kwargs)
+        return result
+
+    @distributed_trace
+    def list_knowledge_bases(self, **kwargs: Any) -> AsyncItemPaged[KnowledgeBase]:
+        """List the knowledge bases in an Azure Search service.
+
+        :return: List of knowledge bases
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeBase]
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        # pylint:disable=protected-access
+        return cast(AsyncItemPaged[KnowledgeBase], self._client.knowledge_bases.list(**kwargs))
+
+    @distributed_trace_async
+    async def delete_knowledge_source(
+        self,
+        knowledge_source: Union[str, KnowledgeSource],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> None:
+        """Deletes an existing knowledge source.
+
+        :param knowledge_source: The knowledge source name or object to delete.
+        :type knowledge_source: str or ~azure.search.documents.indexes.models.KnowledgeSource
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(knowledge_source, match_condition)
+        kwargs.update(access_condition)
+        try:
+            source_name = knowledge_source.name  # type: ignore
+        except AttributeError:
+            source_name = knowledge_source
+        await self._client.knowledge_sources.delete(source_name=source_name, error_map=error_map, **kwargs)
+
+    @distributed_trace_async
+    async def create_knowledge_source(self, knowledge_source: KnowledgeSource, **kwargs: Any) -> KnowledgeSource:
+        """Creates a new knowledge source.
+
+        :param knowledge_source: The knowledge source object.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
+        :return: The knowledge source created
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.knowledge_sources.create(knowledge_source, **kwargs)
+        return result
+
+    @distributed_trace_async
+    async def create_or_update_knowledge_source(
+        self,
+        knowledge_source: KnowledgeSource,
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> KnowledgeSource:
+        """Creates a new knowledge source or updates an existing one.
+
+        :param knowledge_source: The knowledge source object.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: The knowledge source created or updated
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.ResourceNotFoundError: If the index doesn't exist.
         :raises ~azure.core.exceptions.ResourceModifiedError: If the index has been modified in the server.
         :raises ~azure.core.exceptions.ResourceNotModifiedError: If the index hasn't been modified in the server.
@@ -707,35 +810,53 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.ResourceExistsError: If the index already exists.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(agent, match_condition)
+        error_map, access_condition = get_access_conditions(knowledge_source, match_condition)
         kwargs.update(access_condition)
-        result = await self._client.knowledge_agents.create_or_update(
-            agent_name=agent.name, knowledge_agent=agent, prefer="return=representation", error_map=error_map, **kwargs
+        result = await self._client.knowledge_sources.create_or_update(
+            source_name=knowledge_source.name,
+            knowledge_source=knowledge_source,
+            prefer="return=representation",
+            error_map=error_map,
+            **kwargs
         )
         return result
 
     @distributed_trace_async
-    async def get_agent(self, name: str, **kwargs: Any) -> KnowledgeAgent:
+    async def get_knowledge_source(self, name: str, **kwargs: Any) -> KnowledgeSource:
         """
 
-        :param name: The name of the agent to retrieve.
+        :param name: The name of the knowledge source to retrieve.
         :type name: str
-        :return: KnowledgeAgent object
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :return: KnowledgeSource object
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_agents.get(name, **kwargs)
+        result = await self._client.knowledge_sources.get(name, **kwargs)
+        return result
+
+    @distributed_trace_async
+    async def get_knowledge_source_status(self, name: str, **kwargs: Any) -> KnowledgeSourceStatus:
+        """Returns the current status and synchronization history of a knowledge source.
+
+        :param name: The name of the knowledge source for which to retrieve status.
+        :type name: str
+        :return: KnowledgeSourceStatus object
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceStatus
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.knowledge_sources.get_status(source_name=name, **kwargs)
         return result
 
     @distributed_trace
-    def list_agents(self, **kwargs) -> AsyncItemPaged[KnowledgeAgent]:
-        """List the agents in an Azure Search service.
+    def list_knowledge_sources(self, **kwargs: Any) -> AsyncItemPaged[KnowledgeSource]:
+        """List the knowledge sources in an Azure Search service.
 
-        :return: List of Knowledge Agents
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeAgent]
+        :return: List of Knowledge Sources
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeSource]
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         # pylint:disable=protected-access
-        return cast(AsyncItemPaged[KnowledgeAgent], self._client.knowledge_agents.list(**kwargs))
+        return cast(AsyncItemPaged[KnowledgeSource], self._client.knowledge_sources.list(**kwargs))

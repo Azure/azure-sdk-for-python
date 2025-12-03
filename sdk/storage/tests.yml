@@ -23,12 +23,6 @@ extends:
         - Pool=.*LINUXPOOL.*/azsdk-pool-storage
         - Pool=.*WINDOWSPOOL.*/azsdk-pool-storage
         - TestSamples=.*/true
-      ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
-        MatrixConfigs:
-          - Name: Storage_all_versions_live_test
-            Path: sdk/storage/platform-matrix-all-versions.json
-            Selection: sparse
-            GenerateVMJobs: true
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'

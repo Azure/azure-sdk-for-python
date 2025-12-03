@@ -150,9 +150,12 @@
     "conda/conda-recipes/msrest/meta.yaml",
     "conda/conda-recipes/uamqp/meta.yaml",
     "conda/conda-releaselogs/azure-mgmt.md",
-    ".github/workflows/azure-sdk-tools.yml"
+    ".github/workflows/azure-sdk-tools.yml",
+    "sdk/ai/azure-ai-voicelive/azure/ai/voicelive/models/_*.py",
+    "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "qnas",
     "msedge",
     "spinup",
     "cibuildwheel",
@@ -195,6 +198,8 @@
     "avroencoder",
     "Avs",
     "azcmagent",
+    "azpysdk",
+    "pyenv",
     "azsdk",
     "azurecr",
     "azuremgmtcore",
@@ -243,6 +248,7 @@
     "dpkg",
     "dtlk",
     "dtlksd",
+    "duckdb",
     "DWORD",
     "eastus",
     "Easm",
@@ -351,6 +357,7 @@
     "nbsp",
     "noarch",
     "NOPERM",
+    "norecursedirs",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -515,7 +522,17 @@
     "WINDOWSVMIMAGE",
     "LINUXVMIMAGE",
     "MACVMIMAGE",
-    "myuseragent"
+    "myuseragent",
+    "viseme",
+    "Viseme",
+    "VISEME",
+    "ulaw",
+    "ULAW",
+    "logprobs",
+    "pyaudio",
+    "PyAudio",
+    "libasound",
+    "ingraph"
   ],
   "overrides": [
     {
@@ -631,7 +648,8 @@
     {
       "filename": "sdk/identity/azure-identity/tests/*.py",
       "words": [
-        "infile"
+        "infile",
+        "acrs"
       ]
     },
     {
@@ -805,8 +823,76 @@
       "words": [ "ctxt", "somethingstuid" ]
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics/**",
+      "words": [
+        "fhir",
+        "BRCPF",
+        "IDRG",
+        "EUGPS",
+        "PLREGON",
+        "REGON",
+        "ESDNI",
+        "USUK",
+        "ARMN",
+        "Bangla",
+        "ETHI",
+        "Ethi",
+        "GEOR",
+        "Geor",
+        "GREK",
+        "Grek",
+        "GUJR",
+        "Gujr",
+        "HANI",
+        "Hani",
+        "HEBR",
+        "Hebr",
+        "JPAN",
+        "Jpan",
+        "KHMR",
+        "Khmr",
+        "KNDA",
+        "Knda",
+        "LAOO",
+        "Laoo",
+        "MLYM",
+        "Mlym",
+        "MTEI",
+        "Mtei",
+        "Meitei",
+        "MYMR",
+        "Mymr",
+        "OLCK",
+        "Olck",
+        "ORYA",
+        "Orya",
+        "SHRD",
+        "Shrd",
+        "Sharada",
+        "TAML",
+        "Taml",
+        "TELU",
+        "Telu",
+        "THAA",
+        "Thaa",
+        "Thaana",
+        "TIBT",
+        "Tibt",
+        "UMLS",
+        "Effile",
+        "gont",
+        "mundo",
+        "naam",
+        "DBAUTH",
+        "Kelvey",
+        "CMLC",
+        "Absractive"
+      ],
+      "caseSensitive": false
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": [ "conv", "summ" ],
+      "words": [ "conv", "summ", "Enviar", "presentación", "CLU's"],
       "caseSensitive": false
     },
     {
@@ -818,8 +904,17 @@
       "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics-authoring/**",
+      "words": [ "unassigning", "Customtextummarization", "cmatrix", "accb" ]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
+      "words": [ "unassigning", "unassignment" ],
+      "caseSensitive": false
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO" ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram" ],
       "caseSensitive": false
     },
     {
@@ -1080,7 +1175,12 @@
         "nbconvert",
         "rollupby",
         "milli",
-        "resourceid"
+        "resourceid",
+        "Exceps",
+        "processiorate",
+        "processiobytessec",
+        "iowait",
+        "softirq"
       ]
     },
     {
@@ -1100,7 +1200,8 @@
         "psutil",
         "psycopg",
         "uninstrument",
-        "uninstrumented"
+        "uninstrumented",
+        "scputimes"
       ]
     },
     {
@@ -1110,6 +1211,8 @@
         "ikey",
         "msecs",
         "mycontainer",
+        "pclp",
+        "pcsp",
         "semconv",
         "updown",
         "uvicorn"
@@ -1575,7 +1678,26 @@
         "getopenidmetadata",
         "getopenidmetadataasync",
         "aikcert",
-        "shareduks"
+        "shareduks",
+        "PKIX",
+        "tcbbaselines",
+        "Iiwg",
+        "Ijog",
+        "Ghvc",
+        "MCIs",
+        "Mdxl",
+        "Dxxf",
+        "PYSN",
+        "Aiandr",
+        "Ijoic",
+        "Jjcn",
+        "QLTI",
+        "Hhnc",
+        "Mkxzellr",
+        "Sjhual",
+        "Inki",
+        "NGZZN",
+        "Igog",
       ]
     },
     {
@@ -1770,6 +1892,14 @@
         "moduleid",
         "onvif",
         "Onvif"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/**",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify"
       ]
     },
     {
@@ -2054,6 +2184,10 @@
         "TPEG",
         "Hundredkm"
       ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-voicelive/**",
+      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
     }
   ],
   "allowCompoundWords": true

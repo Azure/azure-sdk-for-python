@@ -28,7 +28,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
                 connection_name="str",
-                api_version="2024-07-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -76,6 +76,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                 "type": "str",
                             }
                         ],
+                        "ipVersionType": "IPv4",
                         "location": "str",
                         "manualPrivateLinkServiceConnections": [
                             {
@@ -362,6 +363,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -742,6 +744,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -1067,6 +1070,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -1454,6 +1458,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -1718,6 +1723,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                             "location": "str",
                                             "name": "str",
                                             "provisioningState": "str",
+                                            "recordTypes": "str",
                                             "retentionPolicy": {"days": 0, "enabled": False},
                                             "storageId": "str",
                                             "tags": {"str": "str"},
@@ -1993,6 +1999,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                 "primary": bool,
                                 "privateEndpoint": ...,
                                 "privateLinkService": {
+                                    "accessMode": "str",
                                     "alias": "str",
                                     "autoApproval": {"subscriptions": ["str"]},
                                     "destinationIPAddress": "str",
@@ -2197,6 +2204,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
+                                                            "recordTypes": "str",
                                                             "retentionPolicy": {"days": 0, "enabled": False},
                                                             "storageId": "str",
                                                             "tags": {"str": "str"},
@@ -2523,6 +2531,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -2904,6 +2913,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
+                                                            "recordTypes": "str",
                                                             "retentionPolicy": {"days": 0, "enabled": False},
                                                             "storageId": "str",
                                                             "tags": {"str": "str"},
@@ -3266,6 +3276,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -3650,6 +3661,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -4065,6 +4077,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -4448,6 +4461,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -4825,6 +4839,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                         "location": "str",
                                         "name": "str",
                                         "provisioningState": "str",
+                                        "recordTypes": "str",
                                         "retentionPolicy": {"days": 0, "enabled": False},
                                         "storageId": "str",
                                         "tags": {"str": "str"},
@@ -5140,6 +5155,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                         "primary": bool,
                                         "privateEndpoint": ...,
                                         "privateLinkService": {
+                                            "accessMode": "str",
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
                                             "destinationIPAddress": "str",
@@ -5710,7 +5726,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5724,7 +5740,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             connection_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5736,7 +5752,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
         response = self.client.application_gateway_private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

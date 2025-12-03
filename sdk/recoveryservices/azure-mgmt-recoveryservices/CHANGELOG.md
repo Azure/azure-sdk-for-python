@@ -1,5 +1,45 @@
 # Release History
 
+## 4.0.0 (2025-10-27)
+### Features Added
+
+  - Model `RecoveryServicesClient` added parameter `cloud_setting` in method `__init__`
+  - Client `RecoveryServicesClient` added method `send_request`
+  - Client `RecoveryServicesClient` added operation group `deleted_vaults`
+  - Model `PatchTrackedResource` added property `system_data`
+  - Model `PatchVault` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Model `VaultExtendedInfoResource` added property `properties`
+  - Model `VaultExtendedInfoResource` added property `system_data`
+  - Added model `CloudError`
+  - Added model `DeletedVault`
+  - Added model `DeletedVaultProperties`
+  - Added model `DeletedVaultUndeleteInput`
+  - Added model `DeletedVaultUndeleteInputProperties`
+  - Added model `ProxyResource`
+  - Added model `VaultExtendedInfo`
+  - Added operation group `DeletedVaultsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `Resource` deleted or renamed its instance variable `etag`
+  - Model `TrackedResource` deleted or renamed its instance variable `etag`
+  - Model `VaultExtendedInfoResource` deleted or renamed its instance variable `integrity_key`
+  - Model `VaultExtendedInfoResource` deleted or renamed its instance variable `encryption_key`
+  - Model `VaultExtendedInfoResource` deleted or renamed its instance variable `encryption_key_thumbprint`
+  - Model `VaultExtendedInfoResource` deleted or renamed its instance variable `algorithm`
+  - Deleted or renamed model `ClientDiscoveryResponse`
+  - Deleted or renamed model `PrivateLinkResources`
+  - Deleted or renamed model `ReplicationUsageList`
+  - Deleted or renamed model `VaultList`
+  - Deleted or renamed model `VaultUsageList`
+  - Method `VaultsOperations.begin_create_or_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `VaultsOperations.begin_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed operation group `RecoveryServicesClientOperationsMixin`
+
 ## 3.1.0 (2025-06-03)
 
 ### Features Added

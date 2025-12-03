@@ -61,11 +61,19 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_INTENT_RESOLUTION_THRESHOLD, **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_INTENT_RESOLUTION_THRESHOLD, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            threshold=threshold,
+            credential=credential,
+            _higher_is_better=True,
+            **kwargs,
+        )
 
     @overload
     def __call__(
@@ -139,8 +147,10 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
 
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = prompty_output_dict["llm_output"]
         # llm_output should always be a dictionary because the response_format of prompty is set to json_object, but checking anyway
+        score = math.nan
         if isinstance(llm_output, dict):
             score = llm_output.get("score", math.nan)
             if not check_score_is_valid(
@@ -156,16 +166,31 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
             reason = llm_output.get("explanation", "")
             score = float(score)
-            score_result = "pass" if score >= self.threshold else "fail"
+            score_result = "pass" if score >= self._threshold else "fail"
 
             response_dict = {
                 f"{self._result_key}": score,
+                f"gpt_{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
+                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
             return response_dict
         # If llm_output is not a dictionary, return NaN for the score. This should never happen
         if logger:
             logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-        return {self._result_key: math.nan}
+
+        binary_result = self._get_binary_result(score)
+        return {
+            self._result_key: float(score),
+            f"gpt_{self._result_key}": float(score),
+            f"{self._result_key}_result": binary_result,
+            f"{self._result_key}_threshold": self._threshold,
+        }

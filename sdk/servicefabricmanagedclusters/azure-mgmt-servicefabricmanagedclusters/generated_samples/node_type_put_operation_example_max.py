@@ -98,6 +98,7 @@ def main():
                         "loadBalancerInboundNatPoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resRg/providers/Microsoft.Network/loadBalancers/test-LB/inboundNatPools/LoadBalancerNATPool",
                     }
                 ],
+                "isOutboundOnly": True,
                 "isPrimary": False,
                 "isSpotVM": True,
                 "isStateless": True,
@@ -169,6 +170,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/NodeTypePutOperation_example_max.json
+# x-ms-original-file: 2025-10-01-preview/NodeTypePutOperation_example_max.json
 if __name__ == "__main__":
     main()

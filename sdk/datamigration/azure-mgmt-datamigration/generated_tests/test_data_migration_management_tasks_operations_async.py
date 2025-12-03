@@ -26,7 +26,7 @@ class TestDataMigrationManagementTasksOperationsAsync(AzureMgmtRecordedTestCase)
             group_name="str",
             service_name="str",
             project_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestDataMigrationManagementTasksOperationsAsync(AzureMgmtRecordedTestCase)
                 },
                 "type": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestDataMigrationManagementTasksOperationsAsync(AzureMgmtRecordedTestCase)
             service_name="str",
             project_name="str",
             task_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestDataMigrationManagementTasksOperationsAsync(AzureMgmtRecordedTestCase)
             service_name="str",
             project_name="str",
             task_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -112,7 +112,7 @@ class TestDataMigrationManagementTasksOperationsAsync(AzureMgmtRecordedTestCase)
                 },
                 "type": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -126,7 +126,7 @@ class TestDataMigrationManagementTasksOperationsAsync(AzureMgmtRecordedTestCase)
             service_name="str",
             project_name="str",
             task_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -158,7 +158,7 @@ class TestDataMigrationManagementTasksOperationsAsync(AzureMgmtRecordedTestCase)
                 },
                 "state": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself

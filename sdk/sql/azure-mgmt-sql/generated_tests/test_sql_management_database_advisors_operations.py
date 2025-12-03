@@ -25,7 +25,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             advisor_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
                 "recommendationsStatus": "str",
                 "recommendedActions": [
                     {
-                        "details": {"str": "str"},
+                        "details": {"str": {}},
                         "errorDetails": {"errorCode": "str", "isRetryable": "str"},
                         "estimatedImpact": [
                             {
@@ -76,7 +76,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
                                 "unit": "str",
                             }
                         ],
-                        "executeActionDuration": "1 day, 0:00:00",
+                        "executeActionDuration": "str",
                         "executeActionInitiatedBy": "str",
                         "executeActionInitiatedTime": "2020-02-20 00:00:00",
                         "executeActionStartTime": "2020-02-20 00:00:00",
@@ -100,7 +100,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
                             }
                         ],
                         "recommendationReason": "str",
-                        "revertActionDuration": "1 day, 0:00:00",
+                        "revertActionDuration": "str",
                         "revertActionInitiatedBy": "str",
                         "revertActionInitiatedTime": "2020-02-20 00:00:00",
                         "revertActionStartTime": "2020-02-20 00:00:00",
@@ -125,7 +125,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
                 ],
                 "type": "str",
             },
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -1,33 +1,23 @@
 parameters:
   ServiceDirectory: ''
   TestMarkArgument: ''
-  EnvVars: {}
   AdditionalTestArgs: ''
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.9'
-    inputs:
-     versionSpec: '3.9'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
-
-  - script: |
-      python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
-
+  # this step should run on python 3.9.
+  # a previous step should have installed eng/ci_tools.txt to active venv
   - task: PythonScript@0
     displayName: 'Run Pylint'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      scriptPath: 'eng/scripts/dispatch_checks.py'
       arguments: >-
         "$(TargetingString)"
-        --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="pylint"
-        --disablecov
+        --checks="pylint"
+        --disable-compatibility-filter
         --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
-    env: ${{ parameters.EnvVars }}
+    env:
+      TOX_PIP_IMPL: "uv"
     condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))

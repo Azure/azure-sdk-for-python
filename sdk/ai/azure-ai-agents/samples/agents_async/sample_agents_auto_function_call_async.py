@@ -27,7 +27,7 @@ USAGE:
 import os, sys
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.agents.models import AsyncFunctionTool, AsyncToolSet
+from azure.ai.agents.models import AsyncFunctionTool, AsyncToolSet, ListSortOrder
 
 from utils.user_async_functions import user_async_functions
 
@@ -96,7 +96,7 @@ async def main() -> None:
         print("Deleted agent")
 
         # Fetch and log all messages
-        messages = agents_client.messages.list(thread_id=thread.id)
+        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
         async for msg in messages:
             if msg.text_messages:
                 last_text = msg.text_messages[-1]

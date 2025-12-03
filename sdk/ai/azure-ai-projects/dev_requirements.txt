@@ -2,5 +2,9 @@
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp
-azure.ai.inference
-openai
+python-dotenv
+opentelemetry-sdk
+azure-core-tracing-opentelemetry
+azure-monitor-opentelemetry
+azure-mgmt-cognitiveservices
+

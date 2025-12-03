@@ -20,9 +20,9 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_managed_cluster_snapshots_list(self, resource_group):
         response = self.client.managed_cluster_snapshots.list(
-            api_version="2022-02-02-preview",
+            api_version="2025-09-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_managed_cluster_snapshots_list_by_resource_group(self, resource_group):
         response = self.client.managed_cluster_snapshots.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-02-02-preview",
+            api_version="2025-09-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_managed_cluster_snapshots_get(self, resource_group):
         response = self.client.managed_cluster_snapshots.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2022-02-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_managed_cluster_snapshots_create_or_update(self, resource_group):
         response = self.client.managed_cluster_snapshots.create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -67,7 +67,8 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
                     "networkProfile": {
                         "loadBalancerSku": "str",
                         "networkMode": "str",
-                        "networkPlugin": "kubenet",
+                        "networkPlugin": "str",
+                        "networkPluginMode": "str",
                         "networkPolicy": "str",
                     },
                     "sku": {"name": "str", "tier": "str"},
@@ -85,7 +86,7 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2022-02-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -93,12 +94,12 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_managed_cluster_snapshots_update_tags(self, resource_group):
         response = self.client.managed_cluster_snapshots.update_tags(
             resource_group_name=resource_group.name,
             resource_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2022-02-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -106,11 +107,11 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_managed_cluster_snapshots_delete(self, resource_group):
         response = self.client.managed_cluster_snapshots.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2022-02-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself

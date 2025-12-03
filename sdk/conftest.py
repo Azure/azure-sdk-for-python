@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import os
 import pytest
 
 # In instances where packages do not require azure-sdk-tools we need to make sure that the following imports do not fail.
@@ -51,7 +50,7 @@ def pytest_runtest_setup(item):
     if is_playback_test_marked:
         from devtools_testutils import is_live
 
-        if is_live() and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "").lower() == "true":
+        if is_live():
             pytest.skip("playback test only")
 
 

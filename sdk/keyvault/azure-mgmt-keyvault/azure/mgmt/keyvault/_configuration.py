@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
@@ -14,6 +14,7 @@ from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLo
 from ._version import VERSION
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
@@ -28,13 +29,22 @@ class KeyVaultManagementClientConfiguration:  # pylint: disable=too-many-instanc
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2024-11-01". Note that overriding this
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :type cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-05-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-11-01")
+    def __init__(
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop("api_version", "2025-05-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -43,6 +53,7 @@ class KeyVaultManagementClientConfiguration:  # pylint: disable=too-many-instanc
 
         self.credential = credential
         self.subscription_id = subscription_id
+        self.cloud_setting = cloud_setting
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-keyvault/{}".format(VERSION))

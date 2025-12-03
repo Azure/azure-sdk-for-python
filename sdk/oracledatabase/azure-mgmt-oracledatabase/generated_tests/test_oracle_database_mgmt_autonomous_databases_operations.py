@@ -109,11 +109,9 @@ class TestOracleDatabaseMgmtAutonomousDatabasesOperations(AzureMgmtRecordedTestC
                     "peerDbId": "str",
                     "permissionLevel": "str",
                     "role": "str",
-                    "scheduledOperations": {
-                        "dayOfWeek": {"name": "str"},
-                        "scheduledStartTime": "str",
-                        "scheduledStopTime": "str",
-                    },
+                    "scheduledOperationsList": [
+                        {"dayOfWeek": {"name": "str"}, "scheduledStartTime": "str", "scheduledStopTime": "str"}
+                    ],
                     "whitelistedIps": ["str"],
                 },
                 "tags": {"str": "str"},
@@ -204,6 +202,18 @@ class TestOracleDatabaseMgmtAutonomousDatabasesOperations(AzureMgmtRecordedTestC
                 "isSnapshotStandby": bool,
                 "timeSnapshotStandbyEnabledTill": "2020-02-20 00:00:00",
             },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_autonomous_databases_begin_action(self, resource_group):
+        response = self.client.autonomous_databases.begin_action(
+            resource_group_name=resource_group.name,
+            autonomousdatabasename="str",
+            body={"action": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -27,27 +27,9 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import ListSortOrder
 
-import sys
-import logging
-
-# Enable detailed console logs across Azure libraries
-azure_logger = logging.getLogger("azure")
-azure_logger.setLevel(logging.DEBUG)
-azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-
-# Exclude details logs for network calls associated with getting Entra ID token
-identity_logger = logging.getLogger("azure.identity")
-identity_logger.setLevel(logging.ERROR)
-
-# Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
-# turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
-# (which are implemented as a separate logging policy)
-logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
-logger.setLevel(logging.ERROR)
-
-# Pass in 'logging_enable=True' to your client constructor for un-redacted logs
 project_client = AIProjectClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential(), logging_enable=True
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 with project_client:

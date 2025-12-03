@@ -26,7 +26,7 @@ class TestSqlManagementDatabaseEncryptionProtectorsOperations(AzureMgmtRecordedT
             server_name="str",
             database_name="str",
             encryption_protector_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementDatabaseEncryptionProtectorsOperations(AzureMgmtRecordedT
             server_name="str",
             database_name="str",
             encryption_protector_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

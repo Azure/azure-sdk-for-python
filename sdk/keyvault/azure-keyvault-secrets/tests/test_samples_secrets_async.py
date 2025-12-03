@@ -6,7 +6,7 @@ import asyncio
 
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from _async_test_case import AsyncSecretsClientPreparer

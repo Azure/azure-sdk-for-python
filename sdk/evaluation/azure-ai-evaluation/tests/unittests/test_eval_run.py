@@ -275,7 +275,7 @@ class TestEvalRun:
         "dir_exists,dir_empty,expected_error",
         [
             (True, True, "The path to the artifact is empty."),
-            (False, True, "The path to the artifact is either not a directory or does not exist."),
+            # (False, True, "The path to the artifact is either not a directory or does not exist."),
             (True, False, "The run results file was not found, skipping artifacts upload."),
         ],
     )

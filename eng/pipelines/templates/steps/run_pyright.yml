@@ -6,17 +6,8 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.9'
-    inputs:
-     versionSpec: '3.9'
-    condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
-
-  - script: |
-      python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
-    condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
-
+  # this step should run on python 3.9.
+  # a previous step should have installed eng/ci_tools.txt to active venv
   - task: PythonScript@0
     displayName: 'Run Pyright'
     inputs:
@@ -26,6 +17,7 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="pyright"
+        --disable-compatibility-filter
         --disablecov
         ${{ parameters.AdditionalTestArgs }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
@@ -39,6 +31,7 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="verifytypes"
+        --disable-compatibility-filter
         --disablecov
         ${{ parameters.AdditionalTestArgs }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Verifytypes'],'true'))

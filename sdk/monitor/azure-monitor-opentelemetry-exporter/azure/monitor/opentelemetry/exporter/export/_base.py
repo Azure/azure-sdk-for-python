@@ -1,12 +1,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import getpass
 import logging
 import os
 import tempfile
 import time
+import sys
+from pathlib import Path
 from enum import Enum
 from typing import List, Optional, Any
 from urllib.parse import urlparse
+import psutil
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import (
@@ -43,11 +47,14 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
     DropCode,
+    _exception_categories,
 )
-# from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
-from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
+from azure.monitor.opentelemetry.exporter._utils import (
+    _get_auth_policy,
+    _get_sha256_hash,
+)
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
     get_statsbeat_shutdown,
@@ -57,16 +64,21 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _update_requests_map,
-    _track_dropped_items,
-    _track_retry_items,
-    _track_successful_items,
-    _track_dropped_items_from_storage,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat.customer._utils import (
+    track_dropped_items_from_storage,
+    track_dropped_items,
+    track_retry_items,
+    track_successful_items,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+    get_customer_stats_manager,
 )
 
 
 logger = logging.getLogger(__name__)
 
-_AZURE_TEMPDIR_PREFIX = "Microsoft/AzureMonitor"
+_AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
 
@@ -95,17 +107,22 @@ class BaseExporter:
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
-        # TODO: Re-add this once all parts of OneSettings is finished
-        # self._configuration_manager = _ConfigurationManager()
+        # TODO: Uncomment configuration changes once testing is completed
+        # Get the configuration manager
+        # self._configuration_manager = get_configuration_manager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
+        # We do not need to use entra Id if this is a sdkStats exporter
         if self._is_stats_exporter():
             self._credential = None
         else:
+            # We use the credential on a regular exporter or customer sdkStats exporter
             self._credential = _get_authentication_credential(**kwargs)
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
+        self._connection_string = parsed_connection_string._connection_string
         self._endpoint = parsed_connection_string.endpoint
+        self._region = parsed_connection_string.region
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._aad_audience = parsed_connection_string.aad_audience
         self._storage_maintenance_period = kwargs.get(
@@ -117,13 +134,10 @@ class BaseExporter:
         self._storage_min_retry_interval = kwargs.get(
             "storage_min_retry_interval", 60
         )  # minimum retry interval in seconds
-        temp_suffix = self._instrumentation_key or ""
         if "storage_directory" in kwargs:
             self._storage_directory = kwargs.get("storage_directory")
         elif not self._disable_offline_storage:
-            self._storage_directory = os.path.join(
-                tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
-            )
+            self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
         else:
             self._storage_directory = None
         self._storage_retention_period = kwargs.get(
@@ -133,6 +147,8 @@ class BaseExporter:
         self._distro_version = kwargs.get(
             _AZURE_MONITOR_DISTRO_VERSION_ARG, ""
         )  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
+        # specifies whether current exporter is used for collection of instrumentation metrics
+        self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
@@ -152,34 +168,43 @@ class BaseExporter:
             config.http_logging_policy or HttpLoggingPolicy(**kwargs),
         ]
 
-        self.client = AzureMonitorClient(
+        self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
-        self.storage = None
+        # TODO: Uncomment configuration changes once testing is completed
+        # if self._configuration_manager:
+        #    self._configuration_manager.initialize(
+        #        os=_get_os(),
+        #        rp=_get_rp(),
+        #        attach=_get_attach_type(),
+        #        component="ext",
+        #        version=ext_version,
+        #        region=self._region,
+        #    )
+        self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
-            self.storage = LocalFileStorage(
-                path=self._storage_directory,
+            self.storage = LocalFileStorage(  # pyright: ignore
+                path=self._storage_directory,  # type: ignore
                 max_size=self._storage_max_size,
                 maintenance_period=self._storage_maintenance_period,
                 retention_period=self._storage_retention_period,
                 name="{} Storage".format(self.__class__.__name__),
                 lease_period=self._storage_min_retry_interval,
             )
-        # specifies whether current exporter is used for collection of instrumentation metrics
-        self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
 
         # statsbeat initialization
         if self._should_collect_stats():
-            # Import here to avoid circular dependencies
-            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
+            try:
+                # Import here to avoid circular dependencies
+                from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
+                collect_statsbeat_metrics(self)
+            except Exception as e:  # pylint: disable=broad-except
+                logger.warning("Failed to initialize statsbeat metrics: %s", e)
 
-            collect_statsbeat_metrics(self)
-
-        # Initialize customer sdkstats if enabled
-        self._customer_sdkstats_metrics = None
+        # customer sdkstats initialization
         if self._should_collect_customer_sdkstats():
 
-            from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import collect_customer_sdkstats
+            from azure.monitor.opentelemetry.exporter.statsbeat.customer import collect_customer_sdkstats
             # Collect customer sdkstats metrics
             collect_customer_sdkstats(self)
 
@@ -190,11 +215,16 @@ class BaseExporter:
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
-                envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob.get()]
-                result = self._transmit(envelopes)
-                if result == ExportResult.FAILED_RETRYABLE:
-                    blob.lease(1)
+                blob_data = blob.get()
+                if blob_data is not None:
+                    envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob_data]
+                    result = self._transmit(envelopes)
+                    if result == ExportResult.FAILED_RETRYABLE:
+                        blob.lease(1)
+                    else:
+                        blob.delete()
                 else:
+                    # If blob.get() returns None, delete the corrupted blob
                     blob.delete()
 
 
@@ -203,16 +233,16 @@ class BaseExporter:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
                 result_from_storage_put = self.storage.put(envelopes_to_store)
-                if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                    _track_dropped_items_from_storage(self._customer_sdkstats_metrics, result_from_storage_put, envelopes)
+                if self._should_collect_customer_sdkstats():
+                    track_dropped_items_from_storage(result_from_storage_put, envelopes)
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
 
         else:
             # Track items that would have been retried but are dropped since client has local storage disabled
-            if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                _track_dropped_items(self._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+            if self._should_collect_customer_sdkstats():
+                track_dropped_items(envelopes, DropCode.CLIENT_STORAGE_DISABLED)
 
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
@@ -234,6 +264,7 @@ class BaseExporter:
             # Currently only used for statsbeat exporter to detect shutdown cases
             reach_ingestion = False
             start_time = time.time()
+            final_result = None
             try:
                 track_response = self.client.track(envelopes)
                 if not track_response.errors:  # 200
@@ -250,8 +281,8 @@ class BaseExporter:
                     result = ExportResult.SUCCESS
 
                     # Track successful items in customer sdkstats
-                    if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                        _track_successful_items(self._customer_sdkstats_metrics, envelopes)
+                    if self._should_collect_customer_sdkstats():
+                        track_successful_items(envelopes)
                 else:  # 206
                     reach_ingestion = True
                     resend_envelopes = []
@@ -259,14 +290,14 @@ class BaseExporter:
                         if _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
                             # Track retried items in customer sdkstats
-                            if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                                _track_retry_items(self._customer_sdkstats_metrics, resend_envelopes, error)
+                            if self._should_collect_customer_sdkstats():
+                                track_retry_items(resend_envelopes, error)
                         else:
                             if not self._is_stats_exporter():
                                 # Track dropped items in customer sdkstats, non-retryable scenario
-                                if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                                    if error is not None and hasattr(error, "index") and error.index is not None:
-                                        _track_dropped_items(self._customer_sdkstats_metrics, [envelopes[error.index]], error.status_code)
+                                if self._should_collect_customer_sdkstats():
+                                    if error is not None and hasattr(error, "index") and error.index is not None and isinstance(error.status_code, int):
+                                        track_dropped_items([envelopes[error.index]], error.status_code)
                                 logger.error(
                                     "Data drop %s: %s %s.",
                                     error.status_code,
@@ -276,13 +307,13 @@ class BaseExporter:
                     if self.storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                         result_from_storage = self.storage.put(envelopes_to_store, 0)
-                        if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                            _track_dropped_items_from_storage(self._customer_sdkstats_metrics, result_from_storage, resend_envelopes)
+                        if self._should_collect_customer_sdkstats():
+                            track_dropped_items_from_storage(result_from_storage, resend_envelopes)
                         self._consecutive_redirects = 0
                     elif resend_envelopes:
                         # Track items that would have been retried but are dropped since client has local storage disabled
-                        if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                            _track_dropped_items(self._customer_sdkstats_metrics, resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+                        if self._should_collect_customer_sdkstats():
+                            track_dropped_items(resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
                     # Mark as not retryable because we already write to storage here
                     result = ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
@@ -295,8 +326,8 @@ class BaseExporter:
                     result = ExportResult.FAILED_RETRYABLE
                     # Log error for 401: Unauthorized, 403: Forbidden to assist with customer troubleshooting
                     if not self._is_stats_exporter():
-                        if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                            _track_retry_items(self._customer_sdkstats_metrics, envelopes, response_error)
+                        if self._should_collect_customer_sdkstats():
+                            track_retry_items(envelopes, response_error)
                         if response_error.status_code == 401:
                             logger.error(
                                 "Retryable server side error: %s. " \
@@ -305,8 +336,6 @@ class BaseExporter:
                                 response_error.message,
                             )
                         elif response_error.status_code == 403:
-                            if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                                _track_retry_items(self._customer_sdkstats_metrics, envelopes, response_error)
                             logger.error(
                                 "Retryable server side error: %s. " \
                                 "Your application may be configured with a token credential " \
@@ -321,8 +350,8 @@ class BaseExporter:
                     result = ExportResult.FAILED_NOT_RETRYABLE
 
                     if not self._is_stats_exporter():
-                        if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                            _track_dropped_items(self._customer_sdkstats_metrics, envelopes, response_error.status_code)
+                        if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
+                            track_dropped_items(envelopes, response_error.status_code)
                 elif _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
                     # pylint: disable=W0212
@@ -340,8 +369,8 @@ class BaseExporter:
                             result = self._transmit(envelopes)
                         else:
                             if not self._is_stats_exporter():
-                                if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                                    _track_dropped_items(self._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, "Error parsing redirect information.")
+                                if self._should_collect_customer_sdkstats():
+                                    track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
                                 logger.error(
                                     "Error parsing redirect information.",
                                 )
@@ -349,12 +378,11 @@ class BaseExporter:
                     else:
                         if not self._is_stats_exporter():
                             # Track dropped items in customer sdkstats, non-retryable scenario
-                            if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                                _track_dropped_items(
-                                    self._customer_sdkstats_metrics,
+                            if self._should_collect_customer_sdkstats():
+                                track_dropped_items(
                                     envelopes,
                                     DropCode.CLIENT_EXCEPTION,
-                                    "Error sending telemetry because of circular redirects. Please check the integrity of your connection string."
+                                    _exception_categories.CLIENT_EXCEPTION.value
                                 )
                             logger.error(
                                 "Error sending telemetry because of circular redirects. "
@@ -376,15 +404,15 @@ class BaseExporter:
                             response_error.message,
                         )
                         # Track dropped items in customer sdkstats, non-retryable scenario
-                        if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                            _track_dropped_items(self._customer_sdkstats_metrics, envelopes, response_error.status_code)
+                        if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
+                            track_dropped_items(envelopes, response_error.status_code)
                         if _is_invalid_code(response_error.status_code):
                             # Shutdown statsbeat on invalid code from customer endpoint
                             # Import here to avoid circular dependencies
                             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
                                 shutdown_statsbeat_metrics,
                             )
-                            from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import (
+                            from azure.monitor.opentelemetry.exporter.statsbeat.customer import (
                                 shutdown_customer_sdkstats_metrics,
                             )
 
@@ -399,8 +427,8 @@ class BaseExporter:
                 logger.warning("Retrying due to server request error: %s.", request_error.message)
 
                 # Track retry items in customer sdkstats for client-side exceptions
-                if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                    _track_retry_items(self._customer_sdkstats_metrics, envelopes, request_error)
+                if self._should_collect_customer_sdkstats():
+                    track_retry_items(envelopes, request_error)
 
                 if self._should_collect_stats():
                     exc_type = request_error.exc_type
@@ -412,8 +440,8 @@ class BaseExporter:
                 logger.exception("Envelopes could not be exported and are not retryable: %s.", ex)  # pylint: disable=C4769
 
                 # Track dropped items in customer sdkstats for general exceptions
-                if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                    _track_dropped_items(self._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, str(ex))
+                if self._should_collect_customer_sdkstats():
+                    track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
 
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
@@ -437,11 +465,11 @@ class BaseExporter:
                             )
 
                             shutdown_statsbeat_metrics()
+                            final_result = ExportResult.FAILED_NOT_RETRYABLE
 
-                            # pylint: disable=lost-exception
-                            return ExportResult.FAILED_NOT_RETRYABLE  # pylint: disable=W0134
-                # pylint: disable=lost-exception
-                return result  # pylint: disable=W0134
+                if final_result is None:
+                    final_result = result
+            return final_result
 
         # No spans to export
         self._consecutive_redirects = 0
@@ -453,21 +481,18 @@ class BaseExporter:
             is_statsbeat_enabled()
             and not get_statsbeat_shutdown()
             and not self._is_stats_exporter()
+            and not self._is_customer_sdkstats_exporter()
             and not self._instrumentation_collection
         )
 
 
     # check to see whether its the case of customer sdkstats collection
     def _should_collect_customer_sdkstats(self):
-        # Import here to avoid circular dependencies
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import get_customer_sdkstats_shutdown
-
-        env_value = os.environ.get("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", "")
-        is_customer_sdkstats_enabled = env_value.lower() == "true"
-        # Don't collect customer sdkstats for instrumentation collection or customer sdkstats exporter
+        manager = get_customer_stats_manager()
         return (
-            is_customer_sdkstats_enabled
-            and not get_customer_sdkstats_shutdown()
+            manager.is_enabled
+            and not manager.is_shutdown
+            and not self._is_stats_exporter()
             and not self._is_customer_sdkstats_exporter()
             and not self._instrumentation_collection
         )
@@ -477,7 +502,7 @@ class BaseExporter:
         return self._is_stats_exporter() and not get_statsbeat_shutdown() and not get_statsbeat_initial_success()
 
     def _is_stats_exporter(self):
-        return self.__class__.__name__ == "_StatsBeatExporter"
+        return getattr(self, "_is_sdkstats", False)
 
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, '_is_customer_sdkstats', False)
@@ -579,3 +604,61 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
     except Exception as e:
         logger.error("Failed to get authentication credential and enable AAD: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
     return None
+
+def _get_storage_directory(instrumentation_key: str) -> str:
+    """Return the deterministic local storage path for a given instrumentation key.
+
+    On shared Linux hosts the first user to create ``/tmp/Microsoft/AzureMonitor`` can
+    block others because the directory inherits that user's ``umask``. This is avoided by
+    inserting a hash of the instrumentation key, user name, process name, and
+    application directory, giving each user their own subdirectory, e.g.
+    ``/tmp/Microsoft-AzureMonitor-1234...../opentelemetry-python-<ikey>``.
+
+    :param str instrumentation_key: Application Insights instrumentation key.
+    :return: Absolute path to the storage directory.
+    :rtype: str
+    """
+
+    def _safe_psutil_call(func, default=""):
+        try:
+            return func() or default
+        except psutil.Error:
+            return default
+
+    shared_root = tempfile.gettempdir()
+
+    process = None
+    try:
+        process = psutil.Process()
+    except psutil.Error:
+        pass
+
+    process_name = _safe_psutil_call(process.name) if process else ""
+    candidate_path = _safe_psutil_call(process.cwd) if process else ""
+
+    if not candidate_path:
+        candidate_path = sys.argv[0] if sys.argv else ""
+
+    try:
+        application_directory = Path(candidate_path or ".").resolve()
+    except Exception:
+        application_directory = Path(shared_root)
+
+    try:
+        user_segment = getpass.getuser()
+    except Exception:
+        user_segment = ""
+
+    hash_input = ";".join(
+        [
+            instrumentation_key,
+            user_segment,
+            process_name,
+            os.fspath(application_directory), # cspell:disable-line
+        ]
+    )
+    subdirectory = _get_sha256_hash(hash_input)
+    storage_directory = os.path.join(
+        shared_root, _AZURE_TEMPDIR_PREFIX + subdirectory, _TEMPDIR_PREFIX + instrumentation_key
+    )
+    return storage_directory

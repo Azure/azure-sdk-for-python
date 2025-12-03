@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -52,7 +52,7 @@ class ArmIdentity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.ArmUserIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.ArmUserIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -185,7 +185,7 @@ class CertificateListDescription(_serialization.Model):
         "value": {"key": "value", "type": "[CertificateDescription]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.CertificateDescription"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.CertificateDescription"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of Certificate objects.
         :paramtype value: list[~azure.mgmt.iothub.models.CertificateDescription]
@@ -213,6 +213,8 @@ class CertificateProperties(_serialization.Model):
     :vartype updated: ~datetime.datetime
     :ivar certificate: The certificate content.
     :vartype certificate: str
+    :ivar policy_resource_id: The reference to policy stored in Azure Device Registry (ADR).
+    :vartype policy_resource_id: str
     """
 
     _validation = {
@@ -231,14 +233,24 @@ class CertificateProperties(_serialization.Model):
         "created": {"key": "created", "type": "rfc-1123"},
         "updated": {"key": "updated", "type": "rfc-1123"},
         "certificate": {"key": "certificate", "type": "str"},
+        "policy_resource_id": {"key": "policyResourceId", "type": "str"},
     }
 
-    def __init__(self, *, is_verified: Optional[bool] = None, certificate: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        is_verified: Optional[bool] = None,
+        certificate: Optional[str] = None,
+        policy_resource_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_verified: Determines whether certificate has been verified.
         :paramtype is_verified: bool
         :keyword certificate: The certificate content.
         :paramtype certificate: str
+        :keyword policy_resource_id: The reference to policy stored in Azure Device Registry (ADR).
+        :paramtype policy_resource_id: str
         """
         super().__init__(**kwargs)
         self.subject: Optional[str] = None
@@ -248,6 +260,7 @@ class CertificateProperties(_serialization.Model):
         self.created: Optional[datetime.datetime] = None
         self.updated: Optional[datetime.datetime] = None
         self.certificate = certificate
+        self.policy_resource_id = policy_resource_id
 
 
 class CertificatePropertiesWithNonce(_serialization.Model):
@@ -273,6 +286,8 @@ class CertificatePropertiesWithNonce(_serialization.Model):
     :vartype verification_code: str
     :ivar certificate: The certificate content.
     :vartype certificate: str
+    :ivar policy_resource_id: The reference to policy stored in Azure Device Registry (ADR).
+    :vartype policy_resource_id: str
     """
 
     _validation = {
@@ -295,10 +310,14 @@ class CertificatePropertiesWithNonce(_serialization.Model):
         "updated": {"key": "updated", "type": "rfc-1123"},
         "verification_code": {"key": "verificationCode", "type": "str"},
         "certificate": {"key": "certificate", "type": "str"},
+        "policy_resource_id": {"key": "policyResourceId", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, policy_resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword policy_resource_id: The reference to policy stored in Azure Device Registry (ADR).
+        :paramtype policy_resource_id: str
+        """
         super().__init__(**kwargs)
         self.subject: Optional[str] = None
         self.expiry: Optional[datetime.datetime] = None
@@ -308,6 +327,7 @@ class CertificatePropertiesWithNonce(_serialization.Model):
         self.updated: Optional[datetime.datetime] = None
         self.verification_code: Optional[str] = None
         self.certificate: Optional[str] = None
+        self.policy_resource_id = policy_resource_id
 
 
 class CertificateVerificationDescription(_serialization.Model):
@@ -430,6 +450,37 @@ class CloudToDeviceProperties(_serialization.Model):
         self.feedback = feedback
 
 
+class DeviceRegistry(_serialization.Model):
+    """Represents properties related to the Azure Device Registry (ADR).
+
+    :ivar namespace_resource_id: The identifier of the Azure Device Registry namespace associated
+     with the GEN2 SKU hub.
+    :vartype namespace_resource_id: str
+    :ivar identity_resource_id: The identity used to manage the ADR namespace from the data plane.
+    :vartype identity_resource_id: str
+    """
+
+    _attribute_map = {
+        "namespace_resource_id": {"key": "namespaceResourceId", "type": "str"},
+        "identity_resource_id": {"key": "identityResourceId", "type": "str"},
+    }
+
+    def __init__(
+        self, *, namespace_resource_id: Optional[str] = None, identity_resource_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword namespace_resource_id: The identifier of the Azure Device Registry namespace
+         associated with the GEN2 SKU hub.
+        :paramtype namespace_resource_id: str
+        :keyword identity_resource_id: The identity used to manage the ADR namespace from the data
+         plane.
+        :paramtype identity_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.namespace_resource_id = namespace_resource_id
+        self.identity_resource_id = identity_resource_id
+
+
 class EncryptionPropertiesDescription(_serialization.Model):
     """The encryption properties for the IoT hub.
 
@@ -448,7 +499,7 @@ class EncryptionPropertiesDescription(_serialization.Model):
         self,
         *,
         key_source: Optional[str] = None,
-        key_vault_properties: Optional[List["_models.KeyVaultKeyProperties"]] = None,
+        key_vault_properties: Optional[list["_models.KeyVaultKeyProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -563,7 +614,7 @@ class EndpointHealthDataListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.EndpointHealthData"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.EndpointHealthData"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: JSON-serialized array of Endpoint health data.
         :paramtype value: list[~azure.mgmt.iothub.models.EndpointHealthData]
@@ -599,7 +650,7 @@ class EnrichmentProperties(_serialization.Model):
         "endpoint_names": {"key": "endpointNames", "type": "[str]"},
     }
 
-    def __init__(self, *, key: str, value: str, endpoint_names: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, key: str, value: str, endpoint_names: list[str], **kwargs: Any) -> None:
         """
         :keyword key: The key or name for the enrichment property. Required.
         :paramtype key: str
@@ -711,7 +762,7 @@ class EventHubConsumerGroupInfo(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, properties: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, properties: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The tags.
         :paramtype properties: dict[str, any]
@@ -770,7 +821,7 @@ class EventHubConsumerGroupsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.EventHubConsumerGroupInfo"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.EventHubConsumerGroupInfo"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of consumer groups objects.
         :paramtype value: list[~azure.mgmt.iothub.models.EventHubConsumerGroupInfo]
@@ -829,7 +880,7 @@ class EventHubProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.retention_time_in_days = retention_time_in_days
         self.partition_count = partition_count
-        self.partition_ids: Optional[List[str]] = None
+        self.partition_ids: Optional[list[str]] = None
         self.path: Optional[str] = None
         self.endpoint: Optional[str] = None
 
@@ -987,7 +1038,7 @@ class FallbackRouteProperties(_serialization.Model):
         self,
         *,
         source: Union[str, "_models.RoutingSource"],
-        endpoint_names: List[str],
+        endpoint_names: list[str],
         is_enabled: bool,
         name: Optional[str] = None,
         condition: Optional[str] = None,
@@ -1137,8 +1188,8 @@ class GroupIdInformationProperties(_serialization.Model):
         self,
         *,
         group_id: Optional[str] = None,
-        required_members: Optional[List[str]] = None,
-        required_zone_names: Optional[List[str]] = None,
+        required_members: Optional[list[str]] = None,
+        required_zone_names: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1316,7 +1367,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
@@ -1388,7 +1439,7 @@ class IotHubDescription(Resource):
         *,
         location: str,
         sku: "_models.IotHubSkuInfo",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         properties: Optional["_models.IotHubProperties"] = None,
         identity: Optional["_models.ArmIdentity"] = None,
@@ -1437,7 +1488,7 @@ class IotHubDescriptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.IotHubDescription"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.IotHubDescription"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of IotHubDescription objects.
         :paramtype value: list[~azure.mgmt.iothub.models.IotHubDescription]
@@ -1602,6 +1653,8 @@ class IotHubProperties(_serialization.Model):
     :ivar ip_version: This property specifies the IP Version the hub is currently utilizing. Known
      values are: "ipv4", "ipv6", and "ipv4ipv6".
     :vartype ip_version: str or ~azure.mgmt.iothub.models.IpVersion
+    :ivar device_registry: Represents properties related to the Azure Device Registry (ADR).
+    :vartype device_registry: ~azure.mgmt.iothub.models.DeviceRegistry
     """
 
     _validation = {
@@ -1640,26 +1693,27 @@ class IotHubProperties(_serialization.Model):
         "enable_data_residency": {"key": "enableDataResidency", "type": "bool"},
         "root_certificate": {"key": "rootCertificate", "type": "RootCertificateProperties"},
         "ip_version": {"key": "ipVersion", "type": "str"},
+        "device_registry": {"key": "deviceRegistry", "type": "DeviceRegistry"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        authorization_policies: Optional[List["_models.SharedAccessSignatureAuthorizationRule"]] = None,
+        authorization_policies: Optional[list["_models.SharedAccessSignatureAuthorizationRule"]] = None,
         disable_local_auth: Optional[bool] = None,
         disable_device_sas: Optional[bool] = None,
         disable_module_sas: Optional[bool] = None,
         restrict_outbound_network_access: Optional[bool] = None,
-        allowed_fqdn_list: Optional[List[str]] = None,
+        allowed_fqdn_list: Optional[list[str]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-        ip_filter_rules: Optional[List["_models.IpFilterRule"]] = None,
+        ip_filter_rules: Optional[list["_models.IpFilterRule"]] = None,
         network_rule_sets: Optional["_models.NetworkRuleSetProperties"] = None,
         min_tls_version: Optional[str] = None,
-        private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None,
-        event_hub_endpoints: Optional[Dict[str, "_models.EventHubProperties"]] = None,
+        private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None,
+        event_hub_endpoints: Optional[dict[str, "_models.EventHubProperties"]] = None,
         routing: Optional["_models.RoutingProperties"] = None,
-        storage_endpoints: Optional[Dict[str, "_models.StorageEndpointProperties"]] = None,
-        messaging_endpoints: Optional[Dict[str, "_models.MessagingEndpointProperties"]] = None,
+        storage_endpoints: Optional[dict[str, "_models.StorageEndpointProperties"]] = None,
+        messaging_endpoints: Optional[dict[str, "_models.MessagingEndpointProperties"]] = None,
         enable_file_upload_notifications: Optional[bool] = None,
         cloud_to_device: Optional["_models.CloudToDeviceProperties"] = None,
         comments: Optional[str] = None,
@@ -1669,6 +1723,7 @@ class IotHubProperties(_serialization.Model):
         enable_data_residency: Optional[bool] = None,
         root_certificate: Optional["_models.RootCertificateProperties"] = None,
         ip_version: Optional[Union[str, "_models.IpVersion"]] = None,
+        device_registry: Optional["_models.DeviceRegistry"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1742,6 +1797,8 @@ class IotHubProperties(_serialization.Model):
         :keyword ip_version: This property specifies the IP Version the hub is currently utilizing.
          Known values are: "ipv4", "ipv6", and "ipv4ipv6".
         :paramtype ip_version: str or ~azure.mgmt.iothub.models.IpVersion
+        :keyword device_registry: Represents properties related to the Azure Device Registry (ADR).
+        :paramtype device_registry: ~azure.mgmt.iothub.models.DeviceRegistry
         """
         super().__init__(**kwargs)
         self.authorization_policies = authorization_policies
@@ -1768,10 +1825,11 @@ class IotHubProperties(_serialization.Model):
         self.device_streams = device_streams
         self.features = features
         self.encryption = encryption
-        self.locations: Optional[List["_models.IotHubLocationDescription"]] = None
+        self.locations: Optional[list["_models.IotHubLocationDescription"]] = None
         self.enable_data_residency = enable_data_residency
         self.root_certificate = root_certificate
         self.ip_version = ip_version
+        self.device_registry = device_registry
 
 
 class IotHubPropertiesDeviceStreams(_serialization.Model):
@@ -1785,7 +1843,7 @@ class IotHubPropertiesDeviceStreams(_serialization.Model):
         "streaming_endpoints": {"key": "streamingEndpoints", "type": "[str]"},
     }
 
-    def __init__(self, *, streaming_endpoints: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, streaming_endpoints: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword streaming_endpoints: List of Device Streams Endpoints.
         :paramtype streaming_endpoints: list[str]
@@ -1847,7 +1905,7 @@ class IotHubQuotaMetricInfoListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.IotHubQuotaMetricInfo"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.IotHubQuotaMetricInfo"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of quota metrics objects.
         :paramtype value: list[~azure.mgmt.iothub.models.IotHubQuotaMetricInfo]
@@ -1917,7 +1975,7 @@ class IotHubSkuDescriptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.IotHubSkuDescription"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.IotHubSkuDescription"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of IotHubSkuDescription.
         :paramtype value: list[~azure.mgmt.iothub.models.IotHubSkuDescription]
@@ -1935,10 +1993,10 @@ class IotHubSkuInfo(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the SKU. Required. Known values are: "F1", "S1", "S2", "S3", "B1",
-     "B2", and "B3".
+     "B2", "B3", and "GEN2".
     :vartype name: str or ~azure.mgmt.iothub.models.IotHubSku
-    :ivar tier: The billing tier for the IoT hub. Known values are: "Free", "Standard", and
-     "Basic".
+    :ivar tier: The billing tier for the IoT hub. Known values are: "Free", "Standard", "Basic",
+     and "Generation2".
     :vartype tier: str or ~azure.mgmt.iothub.models.IotHubSkuTier
     :ivar capacity: The number of provisioned IoT Hub units. See:
      https://docs.microsoft.com/azure/azure-subscription-service-limits#iot-hub-limits.
@@ -1959,7 +2017,7 @@ class IotHubSkuInfo(_serialization.Model):
     def __init__(self, *, name: Union[str, "_models.IotHubSku"], capacity: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the SKU. Required. Known values are: "F1", "S1", "S2", "S3", "B1",
-         "B2", and "B3".
+         "B2", "B3", and "GEN2".
         :paramtype name: str or ~azure.mgmt.iothub.models.IotHubSku
         :keyword capacity: The number of provisioned IoT Hub units. See:
          https://docs.microsoft.com/azure/azure-subscription-service-limits#iot-hub-limits.
@@ -2098,7 +2156,7 @@ class JobResponseListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.JobResponse"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.JobResponse"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of JobResponse objects.
         :paramtype value: list[~azure.mgmt.iothub.models.JobResponse]
@@ -2335,7 +2393,7 @@ class NetworkRuleSetProperties(_serialization.Model):
         self,
         *,
         apply_to_built_in_event_hub_endpoint: bool,
-        ip_rules: List["_models.NetworkRuleSetIpRule"],
+        ip_rules: list["_models.NetworkRuleSetIpRule"],
         default_action: Union[str, "_models.DefaultAction"] = "Deny",
         **kwargs: Any
     ) -> None:
@@ -2474,7 +2532,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Operation"]] = None
+        self.value: Optional[list["_models.Operation"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -2600,7 +2658,7 @@ class PrivateLinkResources(_serialization.Model):
         "value": {"key": "value", "type": "[GroupIdInformation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.GroupIdInformation"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.GroupIdInformation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of available private link resources for an IotHub.
         :paramtype value: list[~azure.mgmt.iothub.models.GroupIdInformation]
@@ -2865,7 +2923,7 @@ class RouteProperties(_serialization.Model):
         *,
         name: str,
         source: Union[str, "_models.RoutingSource"],
-        endpoint_names: List[str],
+        endpoint_names: list[str],
         is_enabled: bool,
         condition: Optional[str] = None,
         **kwargs: Any
@@ -2900,6 +2958,8 @@ class RouteProperties(_serialization.Model):
 
 class RoutingCosmosDBSqlApiProperties(_serialization.Model):
     """The properties related to a cosmos DB sql container endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
@@ -2944,6 +3004,7 @@ class RoutingCosmosDBSqlApiProperties(_serialization.Model):
 
     _validation = {
         "name": {"required": True, "pattern": r"^[A-Za-z0-9-._]{1,64}$"},
+        "id": {"readonly": True},
         "endpoint_uri": {"required": True},
         "database_name": {"required": True},
         "container_name": {"required": True},
@@ -2972,7 +3033,6 @@ class RoutingCosmosDBSqlApiProperties(_serialization.Model):
         endpoint_uri: str,
         database_name: str,
         container_name: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
         authentication_type: Optional[Union[str, "_models.AuthenticationType"]] = None,
@@ -2989,8 +3049,6 @@ class RoutingCosmosDBSqlApiProperties(_serialization.Model):
          following names are reserved:  events, fileNotifications, $default. Endpoint names must be
          unique across endpoint types. Required.
         :paramtype name: str
-        :keyword id: Id of the cosmos DB sql container endpoint.
-        :paramtype id: str
         :keyword subscription_id: The subscription identifier of the cosmos DB account.
         :paramtype subscription_id: str
         :keyword resource_group: The name of the resource group of the cosmos DB account.
@@ -3024,7 +3082,7 @@ class RoutingCosmosDBSqlApiProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.id = id
+        self.id: Optional[str] = None
         self.subscription_id = subscription_id
         self.resource_group = resource_group
         self.endpoint_uri = endpoint_uri
@@ -3074,11 +3132,11 @@ class RoutingEndpoints(_serialization.Model):
     def __init__(
         self,
         *,
-        service_bus_queues: Optional[List["_models.RoutingServiceBusQueueEndpointProperties"]] = None,
-        service_bus_topics: Optional[List["_models.RoutingServiceBusTopicEndpointProperties"]] = None,
-        event_hubs: Optional[List["_models.RoutingEventHubProperties"]] = None,
-        storage_containers: Optional[List["_models.RoutingStorageContainerProperties"]] = None,
-        cosmos_db_sql_containers: Optional[List["_models.RoutingCosmosDBSqlApiProperties"]] = None,
+        service_bus_queues: Optional[list["_models.RoutingServiceBusQueueEndpointProperties"]] = None,
+        service_bus_topics: Optional[list["_models.RoutingServiceBusTopicEndpointProperties"]] = None,
+        event_hubs: Optional[list["_models.RoutingEventHubProperties"]] = None,
+        storage_containers: Optional[list["_models.RoutingStorageContainerProperties"]] = None,
+        cosmos_db_sql_containers: Optional[list["_models.RoutingCosmosDBSqlApiProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3226,8 +3284,8 @@ class RoutingMessage(_serialization.Model):
         self,
         *,
         body: Optional[str] = None,
-        app_properties: Optional[Dict[str, str]] = None,
-        system_properties: Optional[Dict[str, str]] = None,
+        app_properties: Optional[dict[str, str]] = None,
+        system_properties: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3278,9 +3336,9 @@ class RoutingProperties(_serialization.Model):
         self,
         *,
         endpoints: Optional["_models.RoutingEndpoints"] = None,
-        routes: Optional[List["_models.RouteProperties"]] = None,
+        routes: Optional[list["_models.RouteProperties"]] = None,
         fallback_route: Optional["_models.FallbackRouteProperties"] = None,
-        enrichments: Optional[List["_models.EnrichmentProperties"]] = None,
+        enrichments: Optional[list["_models.EnrichmentProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3788,7 +3846,7 @@ class SharedAccessSignatureAuthorizationRuleListResult(_serialization.Model):  #
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SharedAccessSignatureAuthorizationRule"]] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.SharedAccessSignatureAuthorizationRule"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of shared access policies.
@@ -3945,7 +4003,7 @@ class TagsResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -4008,7 +4066,7 @@ class TestAllRoutesResult(_serialization.Model):
         "routes": {"key": "routes", "type": "[MatchedRoute]"},
     }
 
-    def __init__(self, *, routes: Optional[List["_models.MatchedRoute"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, routes: Optional[list["_models.MatchedRoute"]] = None, **kwargs: Any) -> None:
         """
         :keyword routes: JSON-serialized array of matched routes.
         :paramtype routes: list[~azure.mgmt.iothub.models.MatchedRoute]
@@ -4106,7 +4164,7 @@ class TestRouteResultDetails(_serialization.Model):
     }
 
     def __init__(
-        self, *, compilation_errors: Optional[List["_models.RouteCompilationError"]] = None, **kwargs: Any
+        self, *, compilation_errors: Optional[list["_models.RouteCompilationError"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword compilation_errors: JSON-serialized list of route compilation errors.
@@ -4196,7 +4254,7 @@ class UserSubscriptionQuotaListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.UserSubscriptionQuota"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.UserSubscriptionQuota"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.iothub.models.UserSubscriptionQuota]

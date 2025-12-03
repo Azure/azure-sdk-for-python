@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-06-01",
+  "commit": "14849ffc5bc0c78ba942bcafa05e19e6162bb089",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/edge/Microsoft.Edge.Sites.Management",
+  "emitterVersion": "0.49.0"
+}

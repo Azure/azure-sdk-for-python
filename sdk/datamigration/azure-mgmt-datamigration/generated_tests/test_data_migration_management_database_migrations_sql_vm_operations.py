@@ -25,7 +25,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlVmOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             sql_virtual_machine_name="str",
             target_db_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -180,7 +180,20 @@ class TestDataMigrationManagementDatabaseMigrationsSqlVmOperations(AzureMgmtReco
                 },
                 "type": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_database_migrations_sql_vm_begin_delete(self, resource_group):
+        response = self.client.database_migrations_sql_vm.begin_delete(
+            resource_group_name=resource_group.name,
+            sql_virtual_machine_name="str",
+            target_db_name="str",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -194,7 +207,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlVmOperations(AzureMgmtReco
             sql_virtual_machine_name="str",
             target_db_name="str",
             parameters={"migrationOperationId": "str"},
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -208,7 +221,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlVmOperations(AzureMgmtReco
             sql_virtual_machine_name="str",
             target_db_name="str",
             parameters={"migrationOperationId": "str"},
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

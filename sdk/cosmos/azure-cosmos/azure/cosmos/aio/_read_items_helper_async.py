@@ -21,29 +21,16 @@
 
 import logging
 import asyncio # pylint: disable=C4763  # Used for Semaphore and gather, not for sleep
-from typing import (
-    Dict,
-    List,
-    Tuple,
-    Any,
-    Sequence,
-    Optional,
-    TYPE_CHECKING, Union, Mapping
-)
+from typing import Tuple, Any, Sequence, Optional, TYPE_CHECKING, Mapping
 
 from azure.cosmos import _base, exceptions
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
-from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, \
-    NonePartitionKeyValue, _Empty, _Undefined
+from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, PartitionKeyType
 from azure.cosmos import CosmosList
 
 if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
-    PartitionKeyType = Union[
-        bool, float, int, str, type[NonePartitionKeyValue], _Empty, _Undefined, None,
-        Sequence[Union[bool, float, int, str, type[NonePartitionKeyValue], _Empty, _Undefined, None]]
-    ]
 
 class ReadItemsHelperAsync:
     """Helper class for handling read many items operations.
@@ -58,10 +45,10 @@ class ReadItemsHelperAsync:
             self,
             client: 'CosmosClientConnection',
             collection_link: str,
-            items: Sequence[Tuple[str, "PartitionKeyType"]],
+            items: Sequence[Tuple[str, PartitionKeyType]],
             options: Optional[Mapping[str, Any]],
-            partition_key_definition: Dict[str, Any],
-            max_concurrency: int = 10,
+            partition_key_definition: dict[str, Any],
+            max_concurrency: int = 5,
             **kwargs: Any
     ):
         self.client = client
@@ -70,7 +57,7 @@ class ReadItemsHelperAsync:
         self.options = dict(options) if options is not None else {}
         self.partition_key_definition = partition_key_definition
         self.kwargs = kwargs
-        self.max_concurrency = max_concurrency
+        self.max_concurrency = max_concurrency if max_concurrency and max_concurrency > 0 else 5
         self.max_items_per_query = 1000
 
     async def read_items(self) -> 'CosmosList':
@@ -99,7 +86,7 @@ class ReadItemsHelperAsync:
 
         return cosmos_list
 
-    async def _partition_items_by_range(self) -> Dict[str, List[Tuple[int, str, "PartitionKeyType"]]]:
+    async def _partition_items_by_range(self) -> dict[str, list[Tuple[int, str, "PartitionKeyType"]]]:
         # pylint: disable=protected-access
         """
         Groups items by their partition key range ID efficiently while preserving original order.
@@ -110,9 +97,9 @@ class ReadItemsHelperAsync:
         """
         collection_rid = _base.GetResourceIdOrFullNameFromLink(self.collection_link)
         partition_key = _get_partition_key_from_partition_key_definition(self.partition_key_definition)
-        items_by_partition: Dict[str, List[Tuple[int, str, "PartitionKeyType"]]] = {}
+        items_by_partition: dict[str, list[Tuple[int, str, "PartitionKeyType"]]] = {}
 
-        items_by_pk_value: Dict[Any, List[Tuple[int, str, "PartitionKeyType"]]] = {}
+        items_by_pk_value: dict[Any, list[Tuple[int, str, "PartitionKeyType"]]] = {}
         for idx, (item_id, pk_value) in enumerate(self.items):
             key = tuple(pk_value) if isinstance(pk_value, list) else pk_value
             if key not in items_by_pk_value:
@@ -135,8 +122,8 @@ class ReadItemsHelperAsync:
 
     def _create_query_chunks(
             self,
-            items_by_partition: Dict[str, List[Tuple[int, str, "PartitionKeyType"]]]
-    ) -> List[Dict[str, List[Tuple[int, str, "PartitionKeyType"]]]]:
+            items_by_partition: dict[str, list[Tuple[int, str, "PartitionKeyType"]]]
+    ) -> list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]]:
 
         """
         Create query chunks for concurrency control while preserving original indices.
@@ -156,8 +143,8 @@ class ReadItemsHelperAsync:
 
     async def _execute_queries_concurrently(
             self,
-            query_chunks: List[Dict[str, List[Tuple[int, str, "PartitionKeyType"]]]],
-    ) -> Tuple[List[Tuple[int, Any]], CaseInsensitiveDict]:
+            query_chunks: list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]],
+    ) -> Tuple[list[Tuple[int, Any]], CaseInsensitiveDict]:
         """
         Execute query chunks concurrently and return aggregated results with original indices.
 
@@ -233,7 +220,7 @@ class ReadItemsHelperAsync:
             self,
             item_id: str,
             pk_value: "PartitionKeyType",
-            request_kwargs: Dict[str, Any]
+            request_kwargs: dict[str, Any]
     ) -> Tuple[Optional[Any], CaseInsensitiveDict]:
         """
         Executes a point read for a single item.
@@ -269,9 +256,9 @@ class ReadItemsHelperAsync:
             self,
             partition_id: str,
             items_for_query: Sequence[Tuple[str, "PartitionKeyType"]],
-            id_to_idx: Dict[str, int],
-            request_kwargs: Dict[str, Any]
-    ) -> Tuple[List[Tuple[int, Any]], CaseInsensitiveDict]:
+            id_to_idx: dict[str, int],
+            request_kwargs: dict[str, Any]
+    ) -> Tuple[list[Tuple[int, Any]], CaseInsensitiveDict]:
         """
         Builds and executes a query for a chunk of items.
 

@@ -8,6 +8,7 @@ from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root, get_artifact_directory
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
+from ci_tools.logging import logger, configure_logging, run_logged
 
 
 def build_package() -> None:
@@ -39,6 +40,7 @@ def build_package() -> None:
     )
 
     args = parser.parse_args()
+    configure_logging(args)
 
     target_package = ParsedSetup.from_path(args.package_folder)
     artifact_directory = get_artifact_directory(args.distribution_directory)
@@ -52,14 +54,8 @@ def build_package() -> None:
     if args.package_type == "whl":
         enable_sdist = False
 
-    build_packages(
-        [target_package.folder],
-        artifact_directory,
-        False,
-        DEFAULT_BUILD_ID,
-        enable_wheel,
-        enable_sdist
-    )
+    build_packages([target_package.folder], artifact_directory, False, DEFAULT_BUILD_ID, enable_wheel, enable_sdist)
+
 
 def build() -> None:
     parser = argparse.ArgumentParser(
@@ -146,6 +142,8 @@ def build() -> None:
 
     args = parser.parse_args()
 
+    configure_logging(args)
+
     repo_root = discover_repo_root(args.repo)
 
     if args.service and args.service != "auto":
@@ -154,7 +152,7 @@ def build() -> None:
     else:
         target_dir = repo_root
 
-    logging.debug(
+    logger.debug(
         f"Searching for packages starting from {target_dir} with glob string {args.glob_string} and package filter {args.package_filter_string}"
     )
 
@@ -163,7 +161,7 @@ def build() -> None:
         target_dir,
         args.package_filter_string,
         filter_type="Build",
-        compatibility_filter=True,
+        compatibility_filter=False,
         include_inactive=args.inactive,
     )
 
@@ -171,14 +169,7 @@ def build() -> None:
 
     build_id = format_build_id(args.build_id or DEFAULT_BUILD_ID)
 
-    build_packages(
-        targeted_packages,
-        artifact_directory,
-        str_to_bool(args.is_dev_build),
-        build_id,
-        True,
-        True
-    )
+    build_packages(targeted_packages, artifact_directory, str_to_bool(args.is_dev_build), build_id, True, True)
 
 
 def cleanup_build_artifacts(build_folder):
@@ -200,9 +191,9 @@ def build_packages(
     is_dev_build: bool = False,
     build_id: str = "",
     enable_wheel: bool = True,
-    enable_sdist: bool = True
+    enable_sdist: bool = True,
 ):
-    logging.log(level=logging.INFO, msg=f"Generating {targeted_packages} using python{sys.version}")
+    logger.info(f"Generating {targeted_packages} using python{sys.version}")
 
     for package_root in targeted_packages:
         setup_parsed = ParsedSetup.from_path(package_root)
@@ -218,7 +209,7 @@ def build_packages(
 
             new_version = get_dev_version(setup_parsed.version, build_id)
 
-            logging.log(level=logging.DEBUG, msg=f"{setup_parsed.name}: {setup_parsed.version} -> {new_version}")
+            logger.debug(f"{setup_parsed.name}: {setup_parsed.version} -> {new_version}")
 
             set_version_py(setup_parsed.setup_filename, new_version)
             set_dev_classifier(setup_parsed.setup_filename, new_version)
@@ -237,6 +228,8 @@ def create_package(
     dist = get_artifact_directory(dest_folder)
     setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
+    should_log_build_output = logger.getEffectiveLevel() <= logging.DEBUG
+
     if setup_parsed.is_pyproject:
         # when building with pyproject, we will use `python -m build` to build the package
         # -n argument will not use an isolated environment, which means the current environment must have all the dependencies of the package installed, to successfully
@@ -246,15 +239,49 @@ def create_package(
         # given the additional requirements of the package, we should install them in the current environment before attempting to build the package
         # we assume the presence of `wheel`, `build`, `setuptools>=61.0.0`
         pip_output = get_pip_list_output(sys.executable)
-        necessary_install_requirements = [req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()]
-        run([sys.executable, "-m", "pip", "install", *necessary_install_requirements], cwd=setup_parsed.folder)
-        run([sys.executable, "-m", "build", f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}", "-o", dist], cwd=setup_parsed.folder, check=True)
+        necessary_install_requirements = [
+            req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()
+        ]
+        run_logged(
+            [sys.executable, "-m", "pip", "install", *necessary_install_requirements],
+            cwd=setup_parsed.folder,
+            check=False,
+            should_stream_to_console=should_log_build_output,
+        )
+        run_logged(
+            [
+                sys.executable,
+                "-m",
+                "build",
+                f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}",
+                "-o",
+                dist,
+            ],
+            cwd=setup_parsed.folder,
+            check=True,
+            should_stream_to_console=should_log_build_output,
+        )
     else:
         if enable_wheel:
             if setup_parsed.ext_modules:
-                run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
+                run_logged(
+                    [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
+                    cwd=setup_parsed.folder,
+                    check=True,
+                    should_stream_to_console=should_log_build_output,
+                )
             else:
-                run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_parsed.folder, check=True)
+                run_logged(
+                    [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
+                    cwd=setup_parsed.folder,
+                    check=True,
+                    should_stream_to_console=should_log_build_output,
+                )
 
         if enable_sdist:
-            run([sys.executable, "setup.py", "sdist", "-d", dist], cwd=setup_parsed.folder, check=True)
+            run_logged(
+                [sys.executable, "setup.py", "sdist", "-d", dist],
+                cwd=setup_parsed.folder,
+                check=True,
+                should_stream_to_console=should_log_build_output,
+            )

@@ -36,6 +36,8 @@ from azure.cosmos.http_constants import HttpHeaders
 if TYPE_CHECKING:
     from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 
+#cspell:ignore ppcb
+
 class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
     """
     This internal class implements the logic for partition endpoint management for
@@ -68,8 +70,8 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
         options = {}
         if request.excluded_locations:
             options[_Constants.Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
-        if HttpHeaders.PartitionKey in request.headers:
-            partition_key_value = request.headers[HttpHeaders.PartitionKey]
+        if request.pk_val:
+            partition_key_value = request.pk_val
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)] # pylint: disable=protected-access
             partition_ranges = (self.client._routing_map_provider # pylint: disable=protected-access
@@ -93,16 +95,17 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
 
         return PartitionKeyRangeWrapper(partition_range, container_rid)
 
-    def record_failure(
+    def record_ppcb_failure(
             self,
-            request: RequestObject
-    ) -> None:
+            request: RequestObject,
+            pk_range_wrapper: Optional[PartitionKeyRangeWrapper] = None)-> None:
         if self.is_circuit_breaker_applicable(request):
-            pk_range_wrapper = self.create_pk_range_wrapper(request)
+            if pk_range_wrapper is None:
+                pk_range_wrapper = self.create_pk_range_wrapper(request)
             if pk_range_wrapper:
                 self.global_partition_endpoint_manager_core.record_failure(request, pk_range_wrapper)
 
-    def resolve_service_endpoint_for_partition(
+    def _resolve_service_endpoint_for_partition_circuit_breaker(
             self,
             request: RequestObject,
             pk_range_wrapper: Optional[PartitionKeyRangeWrapper]
@@ -113,11 +116,12 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
                                                                                                     pk_range_wrapper)
         return self._resolve_service_endpoint(request)
 
-    def record_success(
+    def record_ppcb_success(
             self,
-            request: RequestObject
-    ) -> None:
-        if self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request):
-            pk_range_wrapper = self.create_pk_range_wrapper(request)
+            request: RequestObject,
+            pk_range_wrapper: Optional[PartitionKeyRangeWrapper] = None) -> None:
+        if self.is_circuit_breaker_applicable(request):
+            if pk_range_wrapper is None:
+                pk_range_wrapper = self.create_pk_range_wrapper(request)
             if pk_range_wrapper:
                 self.global_partition_endpoint_manager_core.record_success(request, pk_range_wrapper)

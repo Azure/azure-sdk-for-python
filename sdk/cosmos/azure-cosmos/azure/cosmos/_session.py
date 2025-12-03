@@ -26,7 +26,7 @@ import logging
 import sys
 import traceback
 import threading
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from . import _base
 from . import http_constants
@@ -50,10 +50,10 @@ class SessionContainer(object):
             self,
             resource_path: str,
             pk_value: Any,
-            container_properties_cache: Dict[str, Dict[str, Any]],
+            container_properties_cache: dict[str, dict[str, Any]],
             routing_map_provider: SmartRoutingMapProvider,
             partition_key_range_id: Optional[int],
-            options: Dict[str, Any]
+            options: dict[str, Any]
     ) -> str:
         """Get Session Token for the given collection and partition key information.
 
@@ -62,10 +62,10 @@ class SessionContainer(object):
             information, such as partition key ranges for a given collection
         :param Any pk_value: The partition key value being used for the operation
         :param container_properties_cache: Container properties cache used to fetch partition key definitions
-        :type container_properties_cache: Dict[str, Dict[str, Any]]
+        :type container_properties_cache: dict[str, dict[str, Any]]
         :param int partition_key_range_id: The partition key range ID used for the operation
         :param options: Options for the operation calling this method
-        :type options: Dict[str, Any]
+        :type options: dict[str, Any]
         :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
         does not require a session token (single master write operations).
         :rtype: str
@@ -143,10 +143,10 @@ class SessionContainer(object):
             self,
             resource_path: str,
             pk_value: Any,
-            container_properties_cache: Dict[str, Dict[str, Any]],
+            container_properties_cache: dict[str, dict[str, Any]],
             routing_map_provider: SmartRoutingMapProviderAsync,
             partition_key_range_id: Optional[str],
-            options: Dict[str, Any]
+            options: dict[str, Any]
     ) -> str:
         """Get Session Token for the given collection and partition key information.
 
@@ -155,11 +155,11 @@ class SessionContainer(object):
             information, such as partition key ranges for a given collection
         :param Any pk_value: The partition key value being used for the operation
         :param container_properties_cache: Container properties cache used to fetch partition key definitions
-        :type container_properties_cache: Dict[str, Dict[str, Any]]
+        :type container_properties_cache: dict[str, dict[str, Any]]
         :param Any routing_map_provider: The routing map provider containing the partition key range cache logic
         :param str partition_key_range_id: The partition key range ID used for the operation
         :param options: Options for the operation calling this method
-        :type options: Dict[str, Any]
+        :type options: dict[str, Any]
         :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
         does not require a session token (single master write operations).
         :rtype: str

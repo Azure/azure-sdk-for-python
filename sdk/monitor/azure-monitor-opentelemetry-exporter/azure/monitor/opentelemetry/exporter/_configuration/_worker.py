@@ -4,7 +4,7 @@
 import logging
 import threading
 import random
-from azure.monitor.opentelemetry.exporter._configuration import _update_configuration_and_get_refresh_interval
+from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_PYTHON_TARGETING
 
 logger = logging.getLogger(__name__)
 
@@ -20,15 +20,14 @@ class _ConfigurationWorker:
 
     Attributes:
         _default_refresh_interval (int): Default refresh interval (3600 seconds/1 hour)
-        _interval_lock (threading.Lock): Thread lock for refresh interval access
-        _state_lock (threading.Lock): Thread lock for worker state management
+        _lock (threading.Lock): Thread lock for worker state management
         _shutdown_event (threading.Event): Event for coordinating graceful shutdown
         _refresh_thread (threading.Thread): Background daemon thread for configuration refresh
         _refresh_interval (int): Current refresh interval in seconds
         _running (bool): Flag indicating if the worker is currently running
     """
 
-    def __init__(self, refresh_interval=None) -> None:
+    def __init__(self, configuration_manager, refresh_interval=None) -> None:
         """Initialize and start the configuration worker thread.
 
         Creates and starts a background daemon thread that will periodically refresh
@@ -36,6 +35,7 @@ class _ConfigurationWorker:
         with a random startup delay to prevent thundering herd issues.
 
         Args:
+            configuration_manager: The ConfigurationManager instance to update
             refresh_interval (Optional[int]): Initial refresh interval in seconds.
                 If None, defaults to 3600 seconds (1 hour).
 
@@ -44,9 +44,9 @@ class _ConfigurationWorker:
             0-15 second startup delay to stagger configuration requests across multiple
             SDK instances during startup or recovery from outages.
         """
+        self._configuration_manager = configuration_manager
         self._default_refresh_interval = 3600  # Default to 60 minutes in seconds
-        self._interval_lock = threading.Lock()
-        self._state_lock = threading.Lock()
+        self._lock = threading.Lock()  # Single lock for all worker state
 
         self._shutdown_event = threading.Event()
         self._refresh_thread = threading.Thread(
@@ -74,14 +74,19 @@ class _ConfigurationWorker:
             If the thread is in the middle of a configuration refresh, it will
             complete that operation before shutting down.
         """
-        with self._state_lock:
+        thread_to_join = None
+        with self._lock:
             if not self._running:
                 return
 
             self._running = False
             self._shutdown_event.set()
             if self._refresh_thread and self._refresh_thread.is_alive():
-                self._refresh_thread.join()
+                thread_to_join = self._refresh_thread
+
+        # Join outside the lock to prevent deadlock
+        if thread_to_join:
+            thread_to_join.join()
 
     def get_refresh_interval(self) -> int:
         """Get the current configuration refresh interval.
@@ -96,7 +101,7 @@ class _ConfigurationWorker:
         Note:
             This method is thread-safe and can be called from any thread.
         """
-        with self._interval_lock:
+        with self._lock:
             return self._refresh_interval
 
     def _get_configuration(self) -> None:
@@ -122,9 +127,9 @@ class _ConfigurationWorker:
             - Uses _shutdown_event.wait() for interruptible sleep periods
             - Exits cleanly when shutdown is requested
         """
-        # Add random startup delay (0-15 seconds) to stagger configuration requests
+        # Add random startup delay (5-15 seconds) to stagger configuration requests
         # This prevents thundering herd when many SDKs start simultaneously
-        startup_delay = random.uniform(0.0, 15.0)
+        startup_delay = random.uniform(5.0, 15.0)
 
         if self._shutdown_event.wait(startup_delay):
             # Shutdown requested during startup delay
@@ -132,11 +137,14 @@ class _ConfigurationWorker:
 
         while not self._shutdown_event.is_set():
             try:
-                # Perform the refresh operation
-                with self._interval_lock:
-                    self._refresh_interval = _update_configuration_and_get_refresh_interval()
+                with self._lock:
+                    self._refresh_interval = \
+                    self._configuration_manager.get_configuration_and_refresh_interval(_ONE_SETTINGS_PYTHON_TARGETING)
+                    # Capture interval while we have the lock
+                    interval = self._refresh_interval
             except Exception as ex:  # pylint: disable=broad-exception-caught
                 logger.warning("Configuration refresh failed: %s", ex)
+                # Use current interval on error
+                interval = self.get_refresh_interval()
 
-            # Wait until next refresh or shutdown
-            self._shutdown_event.wait(self.get_refresh_interval())
+            self._shutdown_event.wait(interval)

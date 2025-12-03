@@ -24,7 +24,8 @@ from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from _async_test_case import AsyncKeysClientPreparer, get_decorator
+from _async_test_case import AsyncKeysClientPreparer
+from _test_case import get_decorator
 from _shared.helpers import Request, mock_response
 from _shared.helpers_async import async_validating_transport
 from _shared.test_case_async import KeyVaultTestCase

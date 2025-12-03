@@ -2,32 +2,25 @@ parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   TestMarkArgument: ''
-  EnvVars: {}
   AdditionalTestArgs: ''
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.9'
-    inputs:
-     versionSpec: '3.9'
-    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
-
-  - script: |
-      python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
-    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
-
+  # this step should run on python 3.9.
+  # a previous step should have installed eng/ci_tools.txt to active venv
   - task: PythonScript@0
     displayName: 'Run MyPy'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      scriptPath: 'eng/scripts/dispatch_checks.py'
       arguments: >-
         "$(TargetingString)"
-        --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="mypy"
+        --checks="mypy"
         --disablecov
+        --disable-compatibility-filter
         ${{ parameters.AdditionalTestArgs }}
-    env: ${{ parameters.EnvVars }}
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))

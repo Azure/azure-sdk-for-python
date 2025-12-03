@@ -23,6 +23,13 @@ stages:
       - job: ValidateDependencies
         timeoutInMinutes: 120
         steps:
+          - task: UsePythonVersion@0
+            displayName: 'Use Python $(PythonVersion)'
+            condition: succeededOrFailed()
+            inputs:
+              versionSpec: '$(PythonVersion)'
+
+          - template: /eng/pipelines/templates/steps/use-venv.yml
 
           - template: /eng/pipelines/templates/steps/analyze_dependency.yml
             parameters:

@@ -395,8 +395,9 @@ def test_multitenant_authentication_not_allowed(get_token_method):
 def test_claims_challenge_error(get_token_method):
     """The credential should raise CredentialUnavailableError when claims challenge is provided"""
 
-    claims = "some-claims"
-    expected_message = f"Connect-AzAccount -ClaimsChallenge {claims}"
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    expected_encoded_claims = "eyJhY2Nlc3NfdG9rZW4iOnsiYWNycyI6eyJlc3NlbnRpYWwiOnRydWUsInZhbHVlcyI6WyJwMSJdfX19"
+    expected_message = f"Connect-AzAccount -ClaimsChallenge {expected_encoded_claims}"
 
     credential = AzurePowerShellCredential()
     with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
@@ -442,9 +443,10 @@ def test_empty_claims_no_error(get_token_method):
 def test_claims_challenge_with_tenant(get_token_method):
     """The credential should include tenant in the error message when claims and tenant are provided"""
 
-    claims = "test-claims-challenge"
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    expected_encoded_claims = "eyJhY2Nlc3NfdG9rZW4iOnsiYWNycyI6eyJlc3NlbnRpYWwiOnRydWUsInZhbHVlcyI6WyJwMSJdfX19"
     tenant_id = "test-tenant-id"
-    expected_message = f"Connect-AzAccount -ClaimsChallenge {claims} -Tenant {tenant_id}"
+    expected_message = f"Connect-AzAccount -ClaimsChallenge {expected_encoded_claims} -Tenant {tenant_id}"
 
     credential = AzurePowerShellCredential()
     with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):

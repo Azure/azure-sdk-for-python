@@ -5,6 +5,7 @@ import re
 from typing import Dict, List
 
 from ci_tools.parsing import ParsedSetup
+from ci_tools.functions import PATHS_EXCLUDED_FROM_DISCOVERY
 
 additional_pr_triggers: Dict[str, List[str]] = {
     "azure-core":[
@@ -51,6 +52,13 @@ if __name__ == "__main__":
                 try:
                     parsed = ParsedSetup.from_path(root)
 
+                    # Remove any packages excluded from discovery
+                    # Skip packages whose folder path matches any entry in PATHS_EXCLUDED_FROM_DISCOVERY.
+                    # PATHS_EXCLUDED_FROM_DISCOVERY contains subpaths (eg. "sdk/foo/bar") relative to repo root.
+                    parsed_folder_norm = parsed.folder.replace("\\", "/")
+                    if any(excluded_path in parsed_folder_norm for excluded_path in PATHS_EXCLUDED_FROM_DISCOVERY):
+                        continue
+                    
                     dependent_packages = ""
                     if parsed.name in additional_pr_triggers:
                         dependent_packages = ",".join(additional_pr_triggers[parsed.name])

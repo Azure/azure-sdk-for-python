@@ -1,77 +1,67 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-import threading
+import logging
+from typing import Dict, TYPE_CHECKING
 
-from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
-from opentelemetry.sdk.resources import Resource
-
-from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
-from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _STATSBEAT_STATE,
-    _STATSBEAT_STATE_LOCK,
+from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
+    StatsbeatConfig,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
-    _get_stats_connection_string,
-    _get_stats_long_export_interval,
-    _get_stats_short_export_interval,
-)
+from azure.monitor.opentelemetry.exporter.statsbeat._state import get_statsbeat_manager
+from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
+from azure.monitor.opentelemetry.exporter._configuration._utils import evaluate_feature
+from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_FEATURE_SDK_STATS
+
+if TYPE_CHECKING:
+    from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
 
 
-_STATSBEAT_METRICS = None
-_STATSBEAT_LOCK = threading.Lock()
+logger = logging.getLogger(__name__)
+
+# pyright: ignore
+def collect_statsbeat_metrics(exporter: "BaseExporter") -> None:  # pyright: ignore
+    config = StatsbeatConfig.from_exporter(exporter)
+    if config:
+        manager = get_statsbeat_manager()
+        initialized = manager.initialize(config)
+        if initialized:
+            # Register the callback that will be invoked on configuration changes to statsbeat
+            # Is a NoOp if _ConfigurationManager not initialized
+            config_manager = get_configuration_manager()
+            # config_manager would be `None` if control plane is disabled
+            if config_manager:
+                config_manager.register_callback(get_statsbeat_configuration_callback)
 
 
-# pylint: disable=global-statement
-# pylint: disable=protected-access
-def collect_statsbeat_metrics(exporter) -> None:
-    global _STATSBEAT_METRICS
-    # Only start statsbeat if did not exist before
-    if _STATSBEAT_METRICS is None:
-        with _STATSBEAT_LOCK:
-            statsbeat_exporter = _StatsBeatExporter(
-                connection_string=_get_stats_connection_string(exporter._endpoint),
-                disable_offline_storage=exporter._disable_offline_storage,
-            )
-            reader = PeriodicExportingMetricReader(
-                statsbeat_exporter,
-                export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
-            )
-            mp = MeterProvider(
-                metric_readers=[reader],
-                resource=Resource.get_empty(),
-            )
-            # long_interval_threshold represents how many collects for short interval
-            # should have passed before a long interval collect
-            long_interval_threshold = _get_stats_long_export_interval() // _get_stats_short_export_interval()
-            _STATSBEAT_METRICS = _StatsbeatMetrics(
-                mp,
-                exporter._instrumentation_key,
-                exporter._endpoint,
-                exporter._disable_offline_storage,
-                long_interval_threshold,
-                exporter._credential is not None,
-                exporter._distro_version,
-            )
-        # Export some initial stats on program start
-        mp.force_flush()
-        # initialize non-initial stats
-        _STATSBEAT_METRICS.init_non_initial_metrics()
+def get_statsbeat_configuration_callback(settings: Dict[str, str]):
+    """Callback function invoked when configuration changes.
+
+    This function handles dynamic enabling/disabling of statbeat based on configuration.
+    Also updates statsbeat config if ingestion endpoint changes.
+
+    :param settings: Configuration settings from onesettings
+    :type settings: Dict[str, str]
+    """
+    manager = get_statsbeat_manager()
+
+    # Check if SDK stats should be enabled based on configuration
+    sdk_stats_enabled = evaluate_feature(
+        _ONE_SETTINGS_FEATURE_SDK_STATS,
+        settings
+    )
+    if sdk_stats_enabled:
+        current_config = manager.get_current_config()
+        # Since config is preserved between shutdowns,
+        # It will only be None if never initialized
+        if not current_config:
+            return
+        # Get updated config from settings
+        updated_config = StatsbeatConfig.from_config(current_config, settings)
+        if updated_config:
+            manager.initialize(updated_config)
+    else:
+        # Disable statsbeat
+        manager.shutdown()
 
 
-def shutdown_statsbeat_metrics() -> None:
-    global _STATSBEAT_METRICS
-    shutdown_success = False
-    if _STATSBEAT_METRICS is not None:
-        with _STATSBEAT_LOCK:
-            try:
-                if _STATSBEAT_METRICS._meter_provider is not None:
-                    _STATSBEAT_METRICS._meter_provider.shutdown()
-                    _STATSBEAT_METRICS = None
-                    shutdown_success = True
-            except:  # pylint: disable=bare-except
-                pass
-        if shutdown_success:
-            with _STATSBEAT_STATE_LOCK:
-                _STATSBEAT_STATE["SHUTDOWN"] = True
+def shutdown_statsbeat_metrics() -> bool:
+    return get_statsbeat_manager().shutdown()

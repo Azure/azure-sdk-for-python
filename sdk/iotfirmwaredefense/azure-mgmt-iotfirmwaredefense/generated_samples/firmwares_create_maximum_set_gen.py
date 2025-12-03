@@ -36,20 +36,20 @@ def main():
         firmware_id="00000000-0000-0000-0000-000000000000",
         resource={
             "properties": {
-                "description": "sqt",
-                "fileName": "dmnqhyxssutvnewntlb",
+                "description": "User provided description of the firmware.",
+                "fileName": "NameOfFirmwareFile.bin",
                 "fileSize": 30,
-                "model": "wmyfbyjsggbvxcuin",
+                "model": "ExampleModelOfDevice",
                 "status": "Pending",
-                "statusMessages": [{"errorCode": 20, "message": "edtylkjvj"}],
-                "vendor": "hymojocxpxqhtblioaavylnzyg",
-                "version": "nhtxzslgcbtptu",
+                "statusMessages": [{"errorCode": 200, "message": "What would this message say?"}],
+                "vendor": "ExampleVendorName",
+                "version": "1.0.0",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/Firmwares_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Firmwares_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

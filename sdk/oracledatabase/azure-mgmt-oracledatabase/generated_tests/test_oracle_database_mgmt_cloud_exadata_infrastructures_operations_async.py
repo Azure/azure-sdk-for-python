@@ -62,6 +62,7 @@ class TestOracleDatabaseMgmtCloudExadataInfrastructuresOperationsAsync(AzureMgmt
                             "estimatedStorageServerPatchingTime": 0,
                             "totalEstimatedPatchingTime": 0,
                         },
+                        "exascaleConfig": {"totalStorageInGbs": 0, "availableStorageInGbs": 0},
                         "lastMaintenanceRunId": "str",
                         "lifecycleDetails": "str",
                         "lifecycleState": "str",
@@ -187,6 +188,20 @@ class TestOracleDatabaseMgmtCloudExadataInfrastructuresOperationsAsync(AzureMgmt
             await self.client.cloud_exadata_infrastructures.begin_add_storage_capacity(
                 resource_group_name=resource_group.name,
                 cloudexadatainfrastructurename="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cloud_exadata_infrastructures_begin_configure_exascale(self, resource_group):
+        response = await (
+            await self.client.cloud_exadata_infrastructures.begin_configure_exascale(
+                resource_group_name=resource_group.name,
+                cloudexadatainfrastructurename="str",
+                body={"totalStorageInGbs": 0},
             )
         ).result()  # call '.result()' to poll until service return final result
 

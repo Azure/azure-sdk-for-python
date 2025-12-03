@@ -4,12 +4,8 @@ parameters:
     default: ''
 
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.9'
-    inputs:
-      versionSpec: '3.9'
-    condition: succeededOrFailed()
-
+  # this step should run on python 3.9.
+  # a previous step should have installed eng/ci_tools.txt to active venv
   - pwsh: |
       $failed = $false
 

@@ -26,7 +26,7 @@ async def exception():
     raise Exception("Hit an exception")
 
 
-# Set the OTEL_PYTHON_EXCLUDE_URLS environment variable to "http://127.0.0.1:8000/exclude"
+# Set the OTEL_PYTHON_EXCLUDED_URLS environment variable to "http://127.0.0.1:8000/exclude"
 # Telemetry from this endpoint will not be captured due to excluded_urls config above
 @app.get("/exclude")
 async def exclude():
