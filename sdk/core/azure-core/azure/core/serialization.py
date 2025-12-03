@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=protected-access
 import base64
 from functools import partial
 from json import JSONEncoder
@@ -19,6 +20,7 @@ __all__ = [
     "as_attribute_dict",
     "attribute_list",
     "TypeHandlerRegistry",
+    "get_old_attribute",
 ]
 TZ_UTC = timezone.utc
 
@@ -317,7 +319,7 @@ def _is_readonly(p: Any) -> bool:
     :rtype: bool
     """
     try:
-        return p._visibility == ["read"]  # pylint: disable=protected-access
+        return p._visibility == ["read"]
     except AttributeError:
         return False
 
@@ -330,6 +332,20 @@ def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
     if isinstance(v, dict):
         return {dk: _as_attribute_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
     return as_attribute_dict(v, exclude_readonly=exclude_readonly) if is_generated_model(v) else v
+
+
+def _get_backcompat_name(rest_field: Any, default_attr_name: str) -> str:
+    """Get the backcompat name for an attribute.
+
+    :param any rest_field: The rest field to get the backcompat name from.
+    :param str default_attr_name: The default attribute name to use if no backcompat name
+    :return: The backcompat name.
+    :rtype: str
+    """
+    try:
+        return rest_field._original_tsp_name or default_attr_name
+    except AttributeError:
+        return default_attr_name
 
 
 def _get_flattened_attribute(obj: Any) -> Optional[str]:
@@ -348,11 +364,9 @@ def _get_flattened_attribute(obj: Any) -> Optional[str]:
     if flattened_items is None:
         return None
 
-    for k, v in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+    for k, v in obj._attr_to_rest_field.items():
         try:
-            if set(v._class_type._attr_to_rest_field.keys()).intersection(  # pylint: disable=protected-access
-                set(flattened_items)
-            ):
+            if set(v._class_type._attr_to_rest_field.keys()).intersection(set(flattened_items)):
                 return k
         except AttributeError:
             # if the attribute does not have _class_type, it is not a typespec generated model
@@ -372,14 +386,14 @@ def attribute_list(obj: Any) -> List[str]:
         raise TypeError("Object is not a generated SDK model.")
     if hasattr(obj, "_attribute_map"):
         # msrest model
-        return list(obj._attribute_map.keys())  # pylint: disable=protected-access
+        return list(obj._attribute_map.keys())
     flattened_attribute = _get_flattened_attribute(obj)
     retval: List[str] = []
-    for attr_name, rest_field in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+    for attr_name, rest_field in obj._attr_to_rest_field.items():
         if flattened_attribute == attr_name:
-            retval.extend(attribute_list(rest_field._class_type))  # pylint: disable=protected-access
+            retval.extend(attribute_list(rest_field._class_type))
         else:
-            retval.append(attr_name)
+            retval.append(_get_backcompat_name(rest_field, attr_name))
     return retval
 
 
@@ -410,16 +424,16 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
         # create a reverse mapping from rest field name to attribute name
         rest_to_attr = {}
         flattened_attribute = _get_flattened_attribute(obj)
-        for attr_name, rest_field in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+        for attr_name, rest_field in obj._attr_to_rest_field.items():
 
             if exclude_readonly and _is_readonly(rest_field):
                 # if we're excluding readonly properties, we need to track them
-                readonly_props.add(rest_field._rest_name)  # pylint: disable=protected-access
+                readonly_props.add(rest_field._rest_name)
             if flattened_attribute == attr_name:
-                for fk, fv in rest_field._class_type._attr_to_rest_field.items():  # pylint: disable=protected-access
-                    rest_to_attr[fv._rest_name] = fk  # pylint: disable=protected-access
+                for fk, fv in rest_field._class_type._attr_to_rest_field.items():
+                    rest_to_attr[fv._rest_name] = _get_backcompat_name(fv, fk)
             else:
-                rest_to_attr[rest_field._rest_name] = attr_name  # pylint: disable=protected-access
+                rest_to_attr[rest_field._rest_name] = _get_backcompat_name(rest_field, attr_name)
         for k, v in obj.items():
             if exclude_readonly and k in readonly_props:  # pyright: ignore
                 continue
@@ -429,10 +443,8 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
             else:
                 is_multipart_file_input = False
                 try:
-                    is_multipart_file_input = next(  # pylint: disable=protected-access
-                        rf
-                        for rf in obj._attr_to_rest_field.values()  # pylint: disable=protected-access
-                        if rf._rest_name == k  # pylint: disable=protected-access
+                    is_multipart_file_input = next(
+                        rf for rf in obj._attr_to_rest_field.values() if rf._rest_name == k
                     )._is_multipart_file_input
                 except StopIteration:
                     pass
@@ -444,3 +456,35 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
     except AttributeError as exc:
         # not a typespec generated model
         raise TypeError("Object must be a generated model instance.") from exc
+
+
+def get_old_attribute(model: Any, field_name: str) -> Any:
+    """Get the value of an attribute using backcompat attribute access.
+
+    This function takes a field name that may be a backcompat name (original TSP name)
+    and returns the value from the corresponding actual attribute on the model.
+
+    :param any model: The model instance.
+    :param str field_name: The backcompat attribute name (from attribute_list).
+    :return: The value of the attribute.
+    :rtype: any
+    """
+    if not is_generated_model(model):
+        raise TypeError("Object must be a generated model instance.")
+
+    # Check if field_name is an original TSP name in the model
+    flattened_attribute = _get_flattened_attribute(model)
+    for attr_name, rest_field in model._attr_to_rest_field.items():
+        # Check if field_name matches this attribute's original TSP name (regardless of flattening)
+        if _get_backcompat_name(rest_field, attr_name) == field_name:
+            return getattr(model, attr_name)
+
+        # If this is a flattened attribute, check if field_name is an original TSP name inside it
+        if flattened_attribute == attr_name:
+            for fk, fv in rest_field._class_type._attr_to_rest_field.items():
+                if _get_backcompat_name(fv, fk) == field_name:
+                    # This is a flattened property - access the actual attribute name
+                    return getattr(model, fk)
+
+    # Fallback to direct attribute access
+    return getattr(model, field_name)
