@@ -11,6 +11,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
+    add_general_string_sanitizer,
 )
 
 if not load_dotenv(find_dotenv(), override=True):
@@ -99,12 +100,20 @@ def add_sanitizers(test_proxy, sanitized_values):
 
     sanitize_url_paths()
 
+    # Normalize Content-Type for CSV files in multipart form-data (varies by OS/Python version)
+    add_general_string_sanitizer(target="Content-Type: text/csv", value="Content-Type: application/vnd.ms-excel")
+
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
 
     # Sanitize SAS URI from Datasets get credential response
     add_body_key_sanitizer(json_path="blobReference.credential.sasUri", value="sanitized-sas-uri")
     add_body_key_sanitizer(json_path="blobReferenceForConsumption.credential.sasUri", value="sanitized-sas-uri")
+
+    add_body_key_sanitizer(
+        json_path="$..project_connection_id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/connector-name",
+    )
 
     # Remove Stainless headers from OpenAI client requests, since they include platform and OS specific info, which we can't have in recorded requests.
     # Here is an example of all the `x-stainless` headers from a Responses call:

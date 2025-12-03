@@ -92,7 +92,9 @@ with (
         with open(file_path, "wb") as f:
             f.write(base64.b64decode(image_data[0]))
         # [END download_image]
-        print(f"Image downloaded and saved to: {file_path}")
+
+        # Print result (should contain "file")
+        print(f"==> Result: Image downloaded and saved to file: {file_path}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

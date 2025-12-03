@@ -3,14 +3,208 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import csv
-import os
-import pytest
+import csv, os, pytest, re, inspect, sys
 import importlib.util
+import unittest.mock as mock
 from azure.core.exceptions import HttpResponseError
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, RecordedTransport
+from test_base import servicePreparer
+from pytest import MonkeyPatch
+from azure.ai.projects import AIProjectClient
 
 
-class TestSamples:
+class SampleExecutor:
+    """Helper class for executing sample files with proper environment setup and credential mocking."""
+
+    def __init__(
+        self, test_instance: "AzureRecordedTestCase", sample_path: str, env_var_mapping: dict[str, str], **kwargs
+    ):
+        self.test_instance = test_instance
+        self.sample_path = sample_path
+        self.print_calls: list[str] = []
+        self._original_print = print
+
+        # Prepare environment variables
+        self.env_vars = {}
+        for sample_var, test_var in env_var_mapping.items():
+            value = kwargs.pop(test_var, None)
+            if value is not None:
+                self.env_vars[sample_var] = value
+        self.env_vars["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = "gpt-4o"
+
+        # Add the sample's directory to sys.path so it can import local modules
+        self.sample_dir = os.path.dirname(sample_path)
+        if self.sample_dir not in sys.path:
+            sys.path.insert(0, self.sample_dir)
+
+        # Create module spec for dynamic import
+        module_name = os.path.splitext(os.path.basename(self.sample_path))[0]
+        spec = importlib.util.spec_from_file_location(module_name, self.sample_path)
+        if spec is None or spec.loader is None:
+            raise ImportError(f"Could not load module {module_name} from {self.sample_path}")
+
+        self.module = importlib.util.module_from_spec(spec)
+        self.spec = spec
+
+    def _capture_print(self, *args, **kwargs):
+        """Capture print calls while still outputting to console."""
+        self.print_calls.append(" ".join(str(arg) for arg in args))
+        self._original_print(*args, **kwargs)
+
+    def execute(self):
+        """Execute a synchronous sample with proper mocking and environment setup."""
+        with (
+            MonkeyPatch.context() as mp,
+            mock.patch("builtins.print", side_effect=self._capture_print),
+            mock.patch("azure.identity.DefaultAzureCredential") as mock_credential,
+        ):
+            for var_name, var_value in self.env_vars.items():
+                mp.setenv(var_name, var_value)
+            credential_instance = self.test_instance.get_credential(AIProjectClient, is_async=False)
+            credential_mock = mock.MagicMock()
+            credential_mock.__enter__.return_value = credential_instance
+            credential_mock.__exit__.return_value = False
+            mock_credential.return_value = credential_mock
+            if self.spec.loader is None:
+                raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
+            self.spec.loader.exec_module(self.module)
+
+        self._validate_output()
+
+    async def execute_async(self):
+        """Execute an asynchronous sample with proper mocking and environment setup."""
+        with (
+            MonkeyPatch.context() as mp,
+            mock.patch("builtins.print", side_effect=self._capture_print),
+            mock.patch("azure.identity.aio.DefaultAzureCredential") as mock_credential,
+        ):
+            for var_name, var_value in self.env_vars.items():
+                mp.setenv(var_name, var_value)
+
+            # Create a mock credential that supports async context manager protocol
+            credential_instance = self.test_instance.get_credential(AIProjectClient, is_async=True)
+            credential_mock = mock.AsyncMock()
+            credential_mock.__aenter__.return_value = credential_instance
+            credential_mock.__aexit__.return_value = False
+            mock_credential.return_value = credential_mock
+            if self.spec.loader is None:
+                raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
+            self.spec.loader.exec_module(self.module)
+            await self.module.main()
+
+        self._validate_output()
+
+    def _validate_output(self):
+        """
+        Validates:
+        * Sample output contains the marker '==> Result: <content>'
+        * If the sample includes a comment '# Print result (should contain "<keyword>")',
+          the result must include that keyword (case-insensitive)
+        * If no keyword is specified, the result must be at least 200 characters long
+        """
+        # Find content after ==> Result: marker in print_calls array
+        result_line = None
+        for call in self.print_calls:
+            if call.startswith("==> Result:"):
+                result_line = call
+                break
+
+        if not result_line:
+            assert False, "Expected to find '==> Result:' in print calls."
+
+        # Extract content after ==> Result:
+        arrow_match = re.search(r"==> Result:(.*)", result_line, re.IGNORECASE | re.DOTALL)
+        if not arrow_match:
+            assert False, f"Expected to find '==> Result:' in line: {result_line}"
+
+        content_after_arrow = arrow_match.group(1).strip()
+
+        # Read the sample file to check for expected output comment
+        with open(self.sample_path) as f:
+            sample_code = f.read()
+
+        # Verify pattern: # Print result (should contain '...') if exist
+        match = re.search(r"# Print result \(should contain ['\"](.+?)['\"]\)", sample_code)
+        if match:
+            # Decode Unicode escape sequences like \u00b0F to actual characters
+            expected_contain = match.group(1).encode().decode("unicode_escape")
+            assert (
+                expected_contain.lower() in content_after_arrow.lower()
+            ), f"Expected to find '{expected_contain}' after '==> Result:', but got: {content_after_arrow}"
+        else:
+            result_len = len(content_after_arrow)
+            assert result_len > 200, f"Expected 200 characters after '==> Result:', but got {result_len} characters"
+
+
+class SamplePathPasser:
+    def __call__(self, fn):
+        if inspect.iscoroutinefunction(fn):
+
+            async def _wrapper_async(test_class, sample_path, **kwargs):
+                return await fn(test_class, sample_path, **kwargs)
+
+            return _wrapper_async
+        else:
+
+            def _wrapper_sync(test_class, sample_path, **kwargs):
+                return fn(test_class, sample_path, **kwargs)
+
+            return _wrapper_sync
+
+
+def _get_tools_sample_paths():
+    # Get the path to the samples folder
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    samples_folder_path = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir))
+    tools_folder = os.path.join(samples_folder_path, "samples", "agents", "tools")
+
+    tools_samples_to_skip = [
+        "sample_agent_bing_custom_search.py",
+        "sample_agent_bing_grounding.py",
+        "sample_agent_browser_automation.py",
+        "sample_agent_code_interpreter.py",
+        "sample_agent_fabric.py",
+        "sample_agent_mcp_with_project_connection.py",
+        "sample_agent_memory_search.py",
+        "sample_agent_openapi_with_project_connection.py",
+        "sample_agent_to_agent.py",
+    ]
+    samples = []
+
+    for filename in sorted(os.listdir(tools_folder)):
+        # Only include .py files, exclude __pycache__ and utility files
+        if "sample_" in filename and "_async" not in filename and filename not in tools_samples_to_skip:
+            sample_path = os.path.join(tools_folder, filename)
+            samples.append(pytest.param(sample_path, id=filename.replace(".py", "")))
+
+    return samples
+
+
+def _get_tools_sample_paths_async():
+    # Get the path to the samples folder
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    samples_folder_path = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir))
+    tools_folder = os.path.join(samples_folder_path, "samples", "agents", "tools")
+
+    # Skip async samples that are not yet ready for testing
+    tools_samples_to_skip = [
+        "sample_agent_code_interpreter_async.py",
+        "sample_agent_mcp_with_project_connection_async.py",
+        "sample_agent_memory_search_async.py",
+    ]
+    samples = []
+
+    for filename in sorted(os.listdir(tools_folder)):
+        # Only include async .py files, exclude __pycache__ and utility files
+        if "sample_" in filename and "_async" in filename and filename not in tools_samples_to_skip:
+            sample_path = os.path.join(tools_folder, filename)
+            samples.append(pytest.param(sample_path, id=filename.replace(".py", "")))
+
+    return samples
+
+
+class TestSamples(AzureRecordedTestCase):
     _samples_folder_path: str
     _results: dict[str, tuple[bool, str]]
 
@@ -22,8 +216,8 @@ class TestSamples:
     * set AZURE_AI_PROJECT_ENDPOINT=<your-project-endpoint> - Define your Microsoft Foundry project endpoint used by the test.
     * set AZURE_AI_PROJECTS_CONSOLE_LOGGING=false - to make sure logging is not enabled in the test, to reduce console spew.
     * Uncomment the two lines that start with "@pytest.mark.skip" below.
-    * Run:  pytest tests\samples\test_samples.py::TestSamples
-    * Load the resulting report in Excel: tests\samples\samples_report.csv
+    * Run:  pytest tests\\samples\\test_samples.py::TestSamples
+    * Load the resulting report in Excel: tests\\samples\\samples_report.csv
     """
 
     @classmethod
@@ -307,3 +501,31 @@ class TestSamples:
             },
         )
         await TestSamples._run_sample_async(sample_name)
+
+    @servicePreparer()
+    @pytest.mark.parametrize("sample_path", _get_tools_sample_paths())
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_tools_samples(self, sample_path: str, **kwargs) -> None:
+        env_var_mapping = self._get_sample_environment_variables_map()
+        executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
+        executor.execute()
+
+    @servicePreparer()
+    @pytest.mark.parametrize("sample_path", _get_tools_sample_paths_async())
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_tools_samples_async(self, sample_path: str, **kwargs) -> None:
+        env_var_mapping = self._get_sample_environment_variables_map()
+        executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
+        await executor.execute_async()
+
+    def _get_sample_environment_variables_map(self) -> dict[str, str]:
+        return {
+            "AZURE_AI_PROJECT_ENDPOINT": "azure_ai_projects_tests_project_endpoint",
+            "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
+            "AI_SEARCH_INDEX_NAME": "azure_ai_projects_tests_ai_search_index_name",
+            "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",
+            "SHAREPOINT_USER_INPUT": "azure_ai_projects_tests_sharepoint_user_input",
+            "SHAREPOINT_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_sharepoint_project_connection_id",
+        }
