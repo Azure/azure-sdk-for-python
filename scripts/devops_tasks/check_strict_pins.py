@@ -18,10 +18,16 @@ import os
 import re
 import subprocess
 import sys
-from typing import Dict, List
+from typing import List
+from github import Github, Auth
 
 from ci_tools.parsing import ParsedSetup
 
+# Github
+GIT_TOKEN = os.environ["GH_TOKEN"]
+auth = Auth.Token(GIT_TOKEN)
+github = Github(auth=auth)
+repo = github.get_repo("Azure/azure-sdk-for-python")
 
 ARCHITECTS = {'kashifkhan', 'annatisch', 'johanste'}
 STRICT_PIN_PATTERN = re.compile(r'^([a-zA-Z0-9\-_.]+)==[\d.]+')
@@ -74,20 +80,9 @@ def check_for_new_strict_pins(filepath: str, diff_output: str) -> List[str]:
 
 def check_architect_approval_via_cli(pr_number: str) -> bool:
     """Check if any architects have approved the PR using Azure CLI."""
-    result = subprocess.run(
-        ['az', 'repos', 'pr', 'reviewer', 'list', 
-         '--id', pr_number,
-         '--query', "[?vote==`10`].displayName",
-         '--output', 'json'],
-        capture_output=True,
-        text=True,
-        check=False
-    )
-    
-    if result.returncode != 0:
-        return False
-    
-    approvers = json.loads(result.stdout) if result.stdout else []
+    reviews = repo.get_pull(int(pr_number)).get_reviews()
+    approvers = {review.user.login for review in reviews if review.state == "APPROVED"}
+
     return any(
         any(architect.lower() in approver.lower() for architect in ARCHITECTS)
         for approver in approvers
