@@ -55,7 +55,7 @@ class whl(Check):
             logger.warning("No target packages discovered for whl check.")
             return 0
 
-        overall_result = 0
+        results = []
 
         for parsed in targeted:
             package_dir = parsed.folder
@@ -69,7 +69,7 @@ class whl(Check):
                 self.install_dev_reqs(executable, args, package_dir)
             except CalledProcessError as exc:
                 logger.error(f"Failed to install dependencies for {package_name}: {exc}")
-                overall_result = max(overall_result, exc.returncode or 1)
+                results.append(exc.returncode)
                 continue
 
             try:
@@ -86,7 +86,7 @@ class whl(Check):
                 )
             except CalledProcessError as exc:
                 logger.error(f"Failed to build/install wheel for {package_name}: {exc}")
-                overall_result = max(overall_result, exc.returncode or 1)
+                results.append(1)
                 continue
 
             pytest_args = self._build_pytest_args(package_dir, args)
@@ -101,9 +101,10 @@ class whl(Check):
                     )
                     # Align with tox: skip coverage when tests are skipped entirely
                     continue
-                logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
-                overall_result = max(overall_result, pytest_result.returncode or 1)
-                continue
+                else:
+                    results.append(pytest_result.returncode)
+                    logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
+                    continue
 
             coverage_command = [
                 os.path.join(REPO_ROOT, "eng/tox/run_coverage.py"),
@@ -121,9 +122,9 @@ class whl(Check):
                     logger.error(coverage_result.stdout)
                 if coverage_result.stderr:
                     logger.error(coverage_result.stderr)
-                overall_result = max(overall_result, coverage_result.returncode)
+                results.append(coverage_result.returncode)
 
-        return overall_result
+        return max(results) if results else 0
 
     def _install_common_requirements(self, executable: str, package_dir: str) -> None:
         install_into_venv(executable, PACKAGING_REQUIREMENTS, package_dir)
