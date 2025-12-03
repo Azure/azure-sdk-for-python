@@ -155,6 +155,7 @@ class PoolPreparer(AzureMgmtPreparer):
         disable_recording=True,
         playback_fake_resource=None,
         client_kwargs=None,
+        pool_name=None,
     ):
         super(PoolPreparer, self).__init__(
             name_prefix,
@@ -169,6 +170,7 @@ class PoolPreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.batch_account_parameter_name = batch_account_parameter_name
         self.parameter_name = parameter_name
+        self.pool_name = pool_name
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -192,6 +194,10 @@ class PoolPreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
+
+            if self.pool_name:
+                name = self.pool_name
+
             self.client = self.create_mgmt_client(azure.mgmt.batch.BatchManagementClient, base_url=AZURE_ARM_ENDPOINT)
             group = self._get_resource_group(**kwargs)
             batch_account = self._get_batch_account(**kwargs)

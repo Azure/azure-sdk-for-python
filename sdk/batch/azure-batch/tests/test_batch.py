@@ -525,7 +525,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @PoolPreparer(location=AZURE_LOCATION)
+    @PoolPreparer(location=AZURE_LOCATION, pool_name="scalepool")
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
@@ -745,7 +745,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @PoolPreparer(location=AZURE_LOCATION, size=2, config="iaas")
+    @PoolPreparer(location=AZURE_LOCATION, size=2, config="iaas", pool_name="computenodepool")
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
@@ -913,7 +913,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @PoolPreparer(location=AZURE_LOCATION, size=1)
+    @PoolPreparer(location=AZURE_LOCATION, size=1, pool_name="nodeuserpool")
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
@@ -950,7 +950,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @PoolPreparer(location=AZURE_LOCATION, size=1, config="paas")
+    @PoolPreparer(location=AZURE_LOCATION, size=1, config="paas", pool_name="remotedesktoppool")
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
@@ -977,7 +977,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         batch_environment=BATCH_ENVIRONMENT,
         name_prefix="batch4",
     )
-    @PoolPreparer(os="Windows", size=1)
+    @PoolPreparer(os="Windows", size=1, pool_name="filepool")
     @JobPreparer()
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
