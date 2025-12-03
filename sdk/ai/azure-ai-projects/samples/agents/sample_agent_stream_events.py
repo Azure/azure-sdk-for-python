@@ -53,7 +53,7 @@ with (
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     conversation = openai_client.conversations.create(
-        items=[{"type": "message", "role": "user", "content": "Give me 5 good reasons why I should exercise daily."}],
+        items=[{"type": "message", "role": "user", "content": "Tell me about the capital city of France"}],
     )
     print(f"Created conversation with initial user message (id: {conversation.id})")
 

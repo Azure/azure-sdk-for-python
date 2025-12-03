@@ -44,7 +44,7 @@ with (
     with openai_client.responses.stream(
         model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
         input=[
-            {"role": "user", "content": "Give me 5 good reasons why I should exercise daily."},
+            {"role": "user", "content": "Tell me about the capital city of France"},
         ],
     ) as response_stream_manager:
 
