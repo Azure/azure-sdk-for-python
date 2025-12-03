@@ -57,7 +57,7 @@ class KnowledgeBaseRetrievalClient(HeadersMixin):
                 knowledge_base_name=knowledge_base_name,
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
-                **kwargs
+                **kwargs,
             )
         else:
             self._aad = True
@@ -68,7 +68,7 @@ class KnowledgeBaseRetrievalClient(HeadersMixin):
                 authentication_policy=authentication_policy,
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
-                **kwargs
+                **kwargs,
             )
         self.knowledge_retrieval = self._client.knowledge_retrieval
 
@@ -91,12 +91,12 @@ class KnowledgeBaseRetrievalClient(HeadersMixin):
         retrieval_request: Union[KnowledgeBaseRetrievalRequest, IO[bytes]],
         x_ms_query_source_authorization: Optional[str] = None,
         request_options: Optional[RequestOptions] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> KnowledgeBaseRetrievalResponse:
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return await self._client.knowledge_retrieval.retrieve(
             retrieval_request=retrieval_request,
             x_ms_query_source_authorization=x_ms_query_source_authorization,
             request_options=request_options,
-            **kwargs
+            **kwargs,
         )

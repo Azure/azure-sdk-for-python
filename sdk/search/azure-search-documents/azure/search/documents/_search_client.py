@@ -315,7 +315,7 @@ class SearchClient(HeadersMixin):
             executed. This token is used to enforce security restrictions on documents. Default value is
             None.
         :paramtype x_ms_query_source_authorization: str
-        :keyword x_ms_enable_elevated_read: A value that enables elevated read that bypass document level 
+        :keyword x_ms_enable_elevated_read: A value that enables elevated read that bypass document level
             permission checks for the query operation. Default value is None.
         :paramtype x_ms_enable_elevated_read: bool
         :return: List of search results.

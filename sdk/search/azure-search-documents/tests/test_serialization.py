@@ -26,9 +26,7 @@ def test_serialize_search_index():
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(
-            name="description", type=SearchFieldDataType.String, collection=True
-        ),
+        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
         ComplexField(
             name="address",
@@ -59,9 +57,7 @@ def test_serialize_search_indexer_skillset():
     COGNITIVE_KEY = ...
     COGNITIVE_DESCRIPTION = ...
 
-    cognitive_services_account = CognitiveServicesAccountKey(
-        key=COGNITIVE_KEY, description=COGNITIVE_DESCRIPTION
-    )
+    cognitive_services_account = CognitiveServicesAccountKey(key=COGNITIVE_KEY, description=COGNITIVE_DESCRIPTION)
 
     inputs = [InputFieldMappingEntry(name="text", source="/document/content")]
 
@@ -93,9 +89,7 @@ def test_serialize_search_index_dict():
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(
-            name="description", type=SearchFieldDataType.String, collection=True
-        ),
+        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
         ComplexField(
             name="address",

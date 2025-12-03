@@ -94,9 +94,7 @@ class TestKnowledgeBaseConfigurationLiveAsync(AzureRecordedTestCase):
                 pass
             raise
 
-        return _AsyncTestContext(
-            index_client, source_name, created_source, base_name, created_base
-        )
+        return _AsyncTestContext(index_client, source_name, created_source, base_name, created_base)
 
     async def _cleanup(self, ctx: "_AsyncTestContext") -> None:
         try:

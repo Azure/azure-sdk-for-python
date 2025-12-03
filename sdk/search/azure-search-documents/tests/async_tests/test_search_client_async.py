@@ -51,10 +51,7 @@ class TestSearchClientAsync:
 
         assert mock_search_post.called
         assert mock_search_post.call_args[1]["x_ms_enable_elevated_read"] is True
-        assert (
-            mock_search_post.call_args[1]["x_ms_query_source_authorization"]
-            == "aad:fake-user"
-        )
+        assert mock_search_post.call_args[1]["x_ms_query_source_authorization"] == "aad:fake-user"
 
     @await_prepared_test
     @mock.patch(

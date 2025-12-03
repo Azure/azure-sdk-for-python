@@ -152,14 +152,10 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            client.create_or_update_index(
-                index, match_condition=MatchConditions.IfNotModified
-            )
+            client.create_or_update_index(index, match_condition=MatchConditions.IfNotModified)
 
     def _test_analyze_text(self, client, index_name):
-        analyze_request = AnalyzeTextOptions(
-            text="One's <two/>", analyzer_name="standard.lucene"
-        )
+        analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
         result = client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
 
@@ -245,9 +241,7 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
     @SearchEnvVarPreparer()
     @recorded_by_proxy
-    def test_scoring_profile_product_aggregation(
-        self, search_service_endpoint, search_service_name
-    ):
+    def test_scoring_profile_product_aggregation(self, search_service_endpoint, search_service_name):
         del search_service_name  # unused
         endpoint = search_service_endpoint
         client = SearchIndexClient(endpoint, get_credential(), retry_backoff_factor=60)
@@ -268,39 +262,24 @@ class TestSearchIndexClient(AzureRecordedTestCase):
                 FreshnessScoringFunction(
                     field_name="lastUpdated",
                     boost=2.5,
-                    parameters=FreshnessScoringParameters(
-                        boosting_duration=timedelta(days=7)
-                    ),
+                    parameters=FreshnessScoringParameters(boosting_duration=timedelta(days=7)),
                 )
             ],
         )
-        index = SearchIndex(
-            name=index_name, fields=fields, scoring_profiles=[scoring_profile]
-        )
+        index = SearchIndex(name=index_name, fields=fields, scoring_profiles=[scoring_profile])
 
         created = client.create_index(index)
         try:
-            assert (
-                created.scoring_profiles[0].function_aggregation
-                == ScoringFunctionAggregation.PRODUCT
-            )
+            assert created.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.PRODUCT
 
             fetched = client.get_index(index_name)
-            assert (
-                fetched.scoring_profiles[0].function_aggregation
-                == ScoringFunctionAggregation.PRODUCT
-            )
+            assert fetched.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.PRODUCT
 
-            fetched.scoring_profiles[0].function_aggregation = (
-                ScoringFunctionAggregation.SUM
-            )
+            fetched.scoring_profiles[0].function_aggregation = ScoringFunctionAggregation.SUM
             client.create_or_update_index(index=fetched)
 
             updated = client.get_index(index_name)
-            assert (
-                updated.scoring_profiles[0].function_aggregation
-                == ScoringFunctionAggregation.SUM
-            )
+            assert updated.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.SUM
         finally:
             try:
                 client.delete_index(index_name)

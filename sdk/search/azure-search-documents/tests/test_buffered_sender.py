@@ -16,18 +16,14 @@ CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 class TestSearchBatchingClient:
     def test_search_indexing_buffered_sender_kwargs(self):
-        with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, window=100
-        ) as client:
+        with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, window=100) as client:
             assert client._batch_action_count == 512
             assert client._max_retries_per_action == 3
             assert client._auto_flush_interval == 60
             assert client._auto_flush
 
     def test_batch_queue(self):
-        with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, auto_flush=False
-        ) as client:
+        with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
             assert client._index_documents_batch
             client.upload_documents(["upload1"])
             client.delete_documents(["delete1", "delete2"])
@@ -48,20 +44,14 @@ class TestSearchBatchingClient:
         "azure.search.documents._search_indexing_buffered_sender.SearchIndexingBufferedSender._process_if_needed"
     )
     def test_process_if_needed(self, mock_process_if_needed):
-        with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL
-        ) as client:
+        with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL) as client:
             client.upload_documents(["upload1"])
             client.delete_documents(["delete1", "delete2"])
         assert mock_process_if_needed.called
 
-    @mock.patch(
-        "azure.search.documents._search_indexing_buffered_sender.SearchIndexingBufferedSender._cleanup"
-    )
+    @mock.patch("azure.search.documents._search_indexing_buffered_sender.SearchIndexingBufferedSender._cleanup")
     def test_context_manager(self, mock_cleanup):
-        with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, auto_flush=False
-        ) as client:
+        with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
             client.upload_documents(["upload1"])
             client.delete_documents(["delete1", "delete2"])
         assert mock_cleanup.called
@@ -79,9 +69,7 @@ class TestSearchBatchingClient:
             "_index_documents_actions",
             side_effect=HttpResponseError("Error"),
         ):
-            with SearchIndexingBufferedSender(
-                "endpoint", "index name", CREDENTIAL, auto_flush=False
-            ) as client:
+            with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
                 client._index_key = "hotelId"
                 client.upload_documents([DOCUMENT])
                 client.flush()

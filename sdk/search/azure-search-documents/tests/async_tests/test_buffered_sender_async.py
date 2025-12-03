@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -18,9 +19,7 @@ CREDENTIAL = AzureKeyCredential(key="test_api_key")
 class TestSearchBatchingClientAsync:
     @await_prepared_test
     async def test_search_indexing_buffered_sender_kwargs(self):
-        async with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, window=100
-        ) as client:
+        async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, window=100) as client:
             assert client._batch_action_count == 512
             assert client._max_retries_per_action == 3
             assert client._auto_flush_interval == 60
@@ -28,9 +27,7 @@ class TestSearchBatchingClientAsync:
 
     @await_prepared_test
     async def test_batch_queue(self):
-        async with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, auto_flush=False
-        ) as client:
+        async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
             assert client._index_documents_batch
             await client.upload_documents(["upload1"])
             await client.delete_documents(["delete1", "delete2"])
@@ -47,9 +44,7 @@ class TestSearchBatchingClientAsync:
         "azure.search.documents.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._process_if_needed"
     )
     async def test_process_if_needed(self, mock_process_if_needed):
-        async with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL
-        ) as client:
+        async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL) as client:
             await client.upload_documents(["upload1"])
             await client.delete_documents(["delete1", "delete2"])
         assert mock_process_if_needed.called
@@ -59,9 +54,7 @@ class TestSearchBatchingClientAsync:
         "azure.search.documents.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._cleanup"
     )
     async def test_context_manager(self, mock_cleanup):
-        async with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, auto_flush=False
-        ) as client:
+        async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
             await client.upload_documents(["upload1"])
             await client.delete_documents(["delete1", "delete2"])
         assert mock_cleanup.called
@@ -80,9 +73,7 @@ class TestSearchBatchingClientAsync:
             "_index_documents_actions",
             side_effect=HttpResponseError("Error"),
         ):
-            async with SearchIndexingBufferedSender(
-                "endpoint", "index name", CREDENTIAL, auto_flush=False
-            ) as client:
+            async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
                 client._index_key = "hotelId"
                 await client.upload_documents([DOCUMENT])
                 await client.flush()

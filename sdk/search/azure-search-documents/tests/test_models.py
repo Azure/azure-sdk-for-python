@@ -54,9 +54,7 @@ def test_encryption_key_serialization():
         encryption_key=encryption_key,
     )
     packed_search_indexer = search_indexer._to_generated()
-    assert isinstance(
-        packed_search_indexer.encryption_key, SearchResourceEncryptionKeyGen
-    )
+    assert isinstance(packed_search_indexer.encryption_key, SearchResourceEncryptionKeyGen)
 
 
 def test_search_index_purview_enabled_round_trip():
@@ -127,10 +125,7 @@ def test_content_understanding_skill_payload_shape():
     payload = SearchIndexerSkillset(name="cu-skillset", skills=[skill]).serialize()
 
     skill_payload = payload["skills"][0]
-    assert (
-        skill_payload["@odata.type"]
-        == "#Microsoft.Skills.Util.ContentUnderstandingSkill"
-    )
+    assert skill_payload["@odata.type"] == "#Microsoft.Skills.Util.ContentUnderstandingSkill"
     assert skill_payload["chunkingProperties"]["unit"] == "characters"
 
 
@@ -146,15 +141,11 @@ def test_search_index_scoring_profile_product_round_trip():
             FreshnessScoringFunction(
                 field_name="lastUpdated",
                 boost=2.5,
-                parameters=FreshnessScoringParameters(
-                    boosting_duration=timedelta(days=7)
-                ),
+                parameters=FreshnessScoringParameters(boosting_duration=timedelta(days=7)),
             )
         ],
     )
-    index = SearchIndex(
-        name="scoring-index", fields=fields, scoring_profiles=[scoring_profile]
-    )
+    index = SearchIndex(name="scoring-index", fields=fields, scoring_profiles=[scoring_profile])
 
     generated = index._to_generated()
     assert generated.scoring_profiles[0].function_aggregation == "product"
@@ -178,9 +169,7 @@ def test_search_index_scoring_profile_product_payload():
             FreshnessScoringFunction(
                 field_name="lastUpdated",
                 boost=2.0,
-                parameters=FreshnessScoringParameters(
-                    boosting_duration=timedelta(days=3)
-                ),
+                parameters=FreshnessScoringParameters(boosting_duration=timedelta(days=3)),
             )
         ],
     )

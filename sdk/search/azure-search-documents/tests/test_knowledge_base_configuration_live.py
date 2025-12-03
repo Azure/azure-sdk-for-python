@@ -94,9 +94,7 @@ class TestKnowledgeBaseConfigurationLive(AzureRecordedTestCase):
                 pass
             raise
 
-        return _TestContext(
-            index_client, source_name, created_source, base_name, created_base
-        )
+        return _TestContext(index_client, source_name, created_source, base_name, created_base)
 
     def _cleanup(self, ctx: "_TestContext") -> None:
         try:

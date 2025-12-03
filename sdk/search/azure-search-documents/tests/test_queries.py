@@ -42,9 +42,7 @@ class TestAutocompleteQuery:
         query.filter("expr0")
         assert query.request.filter == "expr0"
 
-        query = AutocompleteQuery(
-            search_text="text", suggester_name="sg", filter="expr1"
-        )
+        query = AutocompleteQuery(search_text="text", suggester_name="sg", filter="expr1")
         assert query.request.filter == "expr1"
         query.filter("expr2")
         assert query.request.filter == "expr2"
