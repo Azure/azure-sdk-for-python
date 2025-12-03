@@ -85,8 +85,14 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         logger.debug("Transforming non-streaming response (messages=%d)", len(response.messages))
         self._ensure_response_started()
 
-        # Extract author_name from response, default to empty string if not present
-        author_name = getattr(response, "author_name", "") or ""
+        # Extract author_name from the first message that has one
+        author_name = ""
+        for message in response.messages:
+            msg_author_name = getattr(message, "author_name", None)
+            if msg_author_name:
+                author_name = msg_author_name
+                break
+        
         self._created_by = self._build_created_by(author_name)
 
         completed_items: List[dict] = []
