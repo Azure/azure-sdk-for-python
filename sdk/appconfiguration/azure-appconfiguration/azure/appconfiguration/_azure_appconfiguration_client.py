@@ -29,6 +29,7 @@ from ._generated.models import (
 from ._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPaged,
+    ConfigurationSettingPaged,
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
@@ -228,13 +229,17 @@ class AzureAppConfigurationClient:
         key_filter, kwargs = get_key_filter(*args, **kwargs)
         label_filter, kwargs = get_label_filter(*args, **kwargs)
         command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
-        return ItemPaged(
+        return ConfigurationSettingPaged(
             command,
             key=key_filter,
             label=label_filter,
             accept_datetime=accept_datetime,
             select=select,
             tags=tags,
+            client=self,
+            key_filter=key_filter,
+            label_filter=label_filter,
+            tags_filter=tags,
             page_iterator_class=ConfigurationSettingPropertiesPaged,
         )
 
@@ -751,110 +756,6 @@ class AzureAppConfigurationClient:
             cls=lambda objs: [ConfigurationSnapshot._from_generated(x) for x in objs],
             **kwargs,
         )
-
-    @distributed_trace
-    def check_configuration_settings(
-        self,
-        etags: List[str],
-        *,
-        key_filter: Optional[str] = None,
-        label_filter: Optional[str] = None,
-        tags_filter: Optional[List[str]] = None,
-        **kwargs: Any,
-    ) -> bool:
-        """Check if configuration settings have been modified using etags.
-        This method is useful for efficiently monitoring configuration changes without
-        fetching unchanged data. Returns True if any settings have changed, False if all are unchanged.
-
-        :param etags: A list of etags from a previous list operation to check against
-        :type etags: list[str]
-        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
-            of the filter.
-        :paramtype key_filter: str or None
-        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
-            of the filter.
-        :paramtype label_filter: str or None
-        :keyword tags_filter: Filter results based on their tags.
-        :paramtype tags_filter: list[str] or None
-        :return: True if any configuration settings have been modified, False if all are unchanged
-        :rtype: bool
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Example
-
-        .. code-block:: python
-
-            # Get initial etags
-            etags = []
-            items = client.list_configuration_settings(key_filter="mykey*")
-            iterator = items.by_page()
-            for page in iterator:
-                etag = iterator.etag
-                etags.append(etag)
-
-            # Check if configuration settings have changed
-            has_changes = client.check_configuration_settings(etags, key_filter="mykey*")
-            if has_changes:
-                print("Configuration settings have been modified")
-                # Fetch updated settings
-            else:
-                print("No changes detected")
-        """
-        # Build query parameters similar to list_configuration_settings
-        query_params: Dict[str, Union[str, List[str]]] = {"api-version": self._impl._config.api_version}
-
-        if key_filter:
-            query_params["key"] = key_filter
-
-        if label_filter:
-            query_params["label"] = label_filter
-
-        if tags_filter:
-            query_params["tags"] = tags_filter
-
-        # Construct the full URL with query parameters
-        query_string = urlencode(query_params, doseq=True)
-        full_url = f"{self._impl._client._base_url}/kv?{query_string}"
-
-        continuation_token = None
-
-        # Check each page with corresponding etag
-        for etag in etags:
-            if continuation_token is None:
-                # First page
-                request_url = full_url
-            else:
-                # Subsequent pages using continuation token
-                request_url = (
-                    f"{self._impl._client._base_url}{continuation_token}"
-                    if not continuation_token.startswith("http")
-                    else continuation_token
-                )
-
-            request = HttpRequest(
-                method="GET",
-                url=request_url,
-                headers={
-                    "If-None-Match": etag,
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
-            )
-            response = self.send_request(request, **kwargs)
-
-            # 200 means the page has changes
-            if response.status_code == 200:
-                return True
-
-            # Get continuation token for next iteration
-            link = response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-
-            # If no continuation token, no more pages to check
-            if continuation_token is None:
-                break
-
-        # All pages returned 304 (Not Modified)
-        return False
 
     def update_sync_token(self, token: str) -> None:
         """Add a sync token to the internal list of tokens.

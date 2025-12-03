@@ -1148,11 +1148,12 @@ class TestAppConfigurationClient(AppConfigTestCase):
                 etag = iterator.etag
                 page_etags.append(etag)
 
-            # monitor page updates without changes
-            has_changed = self.client.check_configuration_settings(
-                page_etags, key_filter="sample_key_*", label_filter="sample_label_*"
-            )
-            assert has_changed == False
+            # monitor page updates without changes - only changed pages will be yielded
+            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+            iterator = items.by_page(etags=page_etags)
+            changed_pages = list(iterator)
+            # No pages should be yielded since nothing changed
+            assert len(changed_pages) == 0
 
             # do some changes
             self.client.set_configuration_setting(
@@ -1173,14 +1174,14 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
             assert page_etags[0] == new_page_etags[0]
             assert page_etags[1] != new_page_etags[1]
-            assert page_etags[2] != new_page_etags[2]
+            assert len(new_page_etags) == 3
 
-            # monitor page after updates
-            has_changed = self.client.check_configuration_settings(
-                page_etags, key_filter="sample_key_*", label_filter="sample_label_*"
-            )
-            # True means at least one page has changes.
-            assert has_changed == True
+            # monitor pages after updates - only changed pages will be yielded
+            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+            iterator = items.by_page(etags=page_etags)
+            changed_pages = list(iterator)
+            # Should yield 2 pages (second page changed, third page is new)
+            assert len(changed_pages) == 2
 
             # clean up
             self.tear_down()
