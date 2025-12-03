@@ -120,9 +120,11 @@ def package_needs_update(
     )
 
     if not compareDate:
-        logger.warning(
+        logger.debug(
             f"Package {package_row.get(PACKAGE_COL)} missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}."
         )
+
+        logger.info(f"Checking {'new package' if is_new else 'outdated package'} for package {package_row.get(PACKAGE_COL)} with against date: {compareDate}")
 
         # TODO need to verify that this is the desired behavior / we're not skipping needed packages
 
@@ -151,14 +153,17 @@ def get_package_data_from_pypi(package_name: str, version: str) -> Tuple[Optiona
             
             # Get the latest version
             latest_version = data["info"]["version"]
-            
+            print("hello")
             # Construct download URL from releases data
             if version in data["releases"] and data["releases"][version]:
+                print("world")
+                print(data["releases"][version])
                 # Get the source distribution (sdist) if available, otherwise get the first file
                 files = data["releases"][version]
                 source_dist = next((f for f in files if f["packagetype"] == "sdist"), None)
                 if source_dist:
                     download_url = source_dist["url"]
+                    logger.info(f"Found download URL for {package_name}=={version}: {download_url}")
                     return latest_version, download_url
                 
     except Exception as e:
@@ -166,7 +171,7 @@ def get_package_data_from_pypi(package_name: str, version: str) -> Tuple[Optiona
     return None, None
 
 def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int]]:
-    """Build an index of package name -> (artifact_idx, checkout_idx) for fast lookups."""
+    """Build an index of package name -> (artifact_idx, checkout_idx) for fast lookups in conda-sdk-client.yml."""
     package_index = {}
     for artifact_idx, artifact in enumerate(conda_artifacts):
         if 'checkout' in artifact:
@@ -181,6 +186,7 @@ def update_package_versions(
 ) -> None:
     """
     Update outdated package versions in the conda-sdk-client.yml file
+
     :param packages: List of package rows from the CSV.
     :param prev_release_date: The date of the previous release in "mm/dd/yyyy" format.
     """
@@ -194,7 +200,7 @@ def update_package_versions(
         logger.info("No packages need version updates")
         return
         
-    logger.info(f"Detected {len(packages_to_update)} packages to update")
+    logger.info(f"Detected {len(packages_to_update)} outdated package versions to update")
 
     with open(CONDA_CLIENT_YAML_PATH, "r") as file:
         conda_client_data = yaml.safe_load(file)
@@ -209,24 +215,30 @@ def update_package_versions(
         if pkg_name in package_index:
             artifact_idx, checkout_idx = package_index[pkg_name]
             checkout_item = conda_artifacts[artifact_idx]['checkout'][checkout_idx]
-            old_version = checkout_item.get('version', '')
-            checkout_item['version'] = new_version
-            logger.info(f"Updated {pkg_name}: {old_version} -> {new_version}")
-            updated_count += 1
-
-            # update download_uri
-            if 'download_uri' in checkout_item:
+            
+            # Handle packages with version field
+            if 'version' in checkout_item:
+                old_version = checkout_item.get('version', '')
+                checkout_item['version'] = new_version
+                logger.info(f"Updated {pkg_name}: {old_version} -> {new_version}")
+                updated_count += 1
+            
+            # Handle packages with download_uri field  
+            elif 'download_uri' in checkout_item:
                 old_uri = checkout_item['download_uri']
                 pypi_version, new_uri = get_package_data_from_pypi(pkg_name, new_version)
 
                 if pypi_version != new_version:
-                    logger.error(f"Version mismatch for {pkg_name}: got {new_version} from CSV, but {pypi_version} from PyPi")
+                    logger.error(f"Version mismatch for {pkg_name}: got {new_version} from CSV, but {pypi_version} from PyPI")
                 
                 if new_uri:
                     checkout_item['download_uri'] = new_uri
                     logger.info(f"Updated download_uri for {pkg_name}: {old_uri} -> {new_uri}")
+                    updated_count += 1
                 else:
                     logger.warning(f"Could not fetch new download_uri for {pkg_name}, keeping existing URI")
+            else:
+                logger.warning(f"Package {pkg_name} has neither 'version' nor 'download_uri' field, skipping update")
         else:
             logger.warning(f"Package {pkg_name} not found in conda-sdk-client.yml, skipping update")
     if updated_count > 0:
@@ -276,13 +288,6 @@ if __name__ == "__main__":
     packages = [pkg for pkg in packages if pkg.get(VERSION_GA_COL)]
     logger.info(f"Filtered to {len(packages)} GA packages")
 
-    # testing
-    # for pkg in packages:
-    #     if not pkg.get(LATEST_GA_DATE_COL):
-    #         logger.warning(f"Package {pkg.get(PACKAGE_COL)} missing {LATEST_GA_DATE_COL}")
-    #     if not pkg.get(FIRST_GA_DATE_COL):
-    #         logger.warning(f"Package {pkg.get(PACKAGE_COL)} missing {FIRST_GA_DATE_COL}")
-
     # update existing package versions
     update_package_versions(packages, old_version)
 
@@ -301,5 +306,4 @@ if __name__ == "__main__":
     # update conda-sdk-client
 
     # add/update release logs
-
 
