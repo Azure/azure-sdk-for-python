@@ -56,7 +56,7 @@ with (
         openapi=OpenApiFunctionDefinition(
             name="get_weather",
             spec=openapi_weather,
-            description="Retrieve weather information for a location",
+            description="Retrieve weather information for a location.",
             auth=OpenApiAnonymousAuthDetails(),
         )
     )
@@ -73,10 +73,11 @@ with (
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     response = openai_client.responses.create(
-        input="What is the name and population of the country that uses currency with abbreviation THB?",
+        input="Use the OpenAPI tool to print out, what is the weather in Seattle, WA today.",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
-    print(f"Response created: {response.output_text}")
+    # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.
+    print(f"Response created: {response.output_text.encode().decode('ascii', errors='ignore')}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
