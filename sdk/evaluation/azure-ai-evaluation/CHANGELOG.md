@@ -4,11 +4,11 @@
 
 ### Breaking Changes
 
+### Features Added
+
 ### Bugs Fixed
 
 - Updated CodeVulnerability and UngroundedAttributes evaluators for RedTeam to use the binary true/false scoring pattern so their results align with service responses.
-
-### Features Added
 
 ### Other Changes
 
