@@ -569,7 +569,7 @@ class TestFullTextPolicy(unittest.TestCase):
                 )
                 results = list(container.query_items(query, enable_cross_partition_query=True))
                 assert len(results) > 0
-                assert any(results[0][f"abstract_{suffix}"] == self.language_abstracts[lang_code] for result in results)
+                assert results[0][f"abstract_{suffix}"] == self.language_abstracts[lang_code]
         finally:
             self.test_db.delete_container(container.id)
 
