@@ -27,6 +27,11 @@ LATEST_GA_DATE_COL = "LatestGADate"
 VERSION_GA_COL = "VersionGA"
 FIRST_GA_DATE_COL = "FirstGADate"
 
+# packages that should be shipped but are known to be missing from the csv
+PACKAGES_WITH_DOWNLOAD_URI = [
+    "msal",
+    "msal-extensions",
+]
 
 def update_conda_version() -> (
     Tuple[datetime, str]
@@ -144,7 +149,7 @@ def package_needs_update(
         )
         return False
 
-def get_package_data_from_pypi(package_name: str, version: str) -> Tuple[Optional[str], Optional[str]]:
+def get_package_data_from_pypi(package_name: str) -> Tuple[Optional[str], Optional[str]]:
     """Fetch the latest version and download URI for a package from PyPI."""
     pypi_url = f"https://pypi.org/pypi/{package_name}/json"
     try:
@@ -155,19 +160,19 @@ def get_package_data_from_pypi(package_name: str, version: str) -> Tuple[Optiona
             latest_version = data["info"]["version"]
             print("hello")
             # Construct download URL from releases data
-            if version in data["releases"] and data["releases"][version]:
+            if latest_version in data["releases"] and data["releases"][latest_version]:
                 print("world")
-                print(data["releases"][version])
+                print(data["releases"][latest_version])
                 # Get the source distribution (sdist) if available, otherwise get the first file
-                files = data["releases"][version]
+                files = data["releases"][latest_version]
                 source_dist = next((f for f in files if f["packagetype"] == "sdist"), None)
                 if source_dist:
                     download_url = source_dist["url"]
-                    logger.info(f"Found download URL for {package_name}=={version}: {download_url}")
+                    logger.info(f"Found download URL for {package_name}=={latest_version}: {download_url}")
                     return latest_version, download_url
                 
     except Exception as e:
-        logger.error(f"Failed to fetch download URI from PyPI for {package_name}=={version}: {e}")
+        logger.error(f"Failed to fetch download URI from PyPI for {package_name}: {e}")
     return None, None
 
 def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int]]:
@@ -216,31 +221,33 @@ def update_package_versions(
             artifact_idx, checkout_idx = package_index[pkg_name]
             checkout_item = conda_artifacts[artifact_idx]['checkout'][checkout_idx]
             
-            # Handle packages with version field
             if 'version' in checkout_item:
                 old_version = checkout_item.get('version', '')
                 checkout_item['version'] = new_version
                 logger.info(f"Updated {pkg_name}: {old_version} -> {new_version}")
                 updated_count += 1
-            
-            # Handle packages with download_uri field  
-            elif 'download_uri' in checkout_item:
-                old_uri = checkout_item['download_uri']
-                pypi_version, new_uri = get_package_data_from_pypi(pkg_name, new_version)
-
-                if pypi_version != new_version:
-                    logger.error(f"Version mismatch for {pkg_name}: got {new_version} from CSV, but {pypi_version} from PyPI")
-                
-                if new_uri:
-                    checkout_item['download_uri'] = new_uri
-                    logger.info(f"Updated download_uri for {pkg_name}: {old_uri} -> {new_uri}")
-                    updated_count += 1
-                else:
-                    logger.warning(f"Could not fetch new download_uri for {pkg_name}, keeping existing URI")
             else:
-                logger.warning(f"Package {pkg_name} has neither 'version' nor 'download_uri' field, skipping update")
+                logger.warning(f"Package {pkg_name} has no 'version' field, skipping update")
         else:
             logger.warning(f"Package {pkg_name} not found in conda-sdk-client.yml, skipping update")
+
+    # handle download_uri for packages known to be missing from the csv
+    for pkg_name in PACKAGES_WITH_DOWNLOAD_URI:
+        if pkg_name in package_index:
+            artifact_idx, checkout_idx = package_index[pkg_name]
+            checkout_item = conda_artifacts[artifact_idx]['checkout'][checkout_idx]
+
+            curr_download_uri = checkout_item.get('download_uri', '')
+            latest_version, download_uri = get_package_data_from_pypi(pkg_name)
+
+            # TODO is this right
+            if curr_download_uri != download_uri:
+                # version needs update 
+                logger.info(f"Package {pkg_name} download_uri mismatch with PyPi, updating {curr_download_uri} to {download_uri}")
+                checkout_item['download_uri'] = download_uri
+                logger.info(f"Updated download_uri for {pkg_name}: {download_uri}")
+                updated_count += 1
+
     if updated_count > 0:
         with open(CONDA_CLIENT_YAML_PATH, "w") as file:
             yaml.dump(conda_client_data, file, default_flow_style=False, sort_keys=False, width=float('inf'))
