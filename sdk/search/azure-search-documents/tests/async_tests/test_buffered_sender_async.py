@@ -96,7 +96,6 @@ class TestSearchBatchingClientAsync:
                 result.key = actions[0].get("id")
                 result.status_code = 400
                 result.succeeded = False
-                self.uploaded = self.uploaded + len(actions) - 1
                 return [result]
 
         on_error = mock.AsyncMock()
@@ -117,7 +116,6 @@ class TestSearchBatchingClientAsync:
                 result.key = actions[0].get("id")
                 result.status_code = 400
                 result.succeeded = False
-                self.uploaded = self.uploaded + len(actions) - 1
                 time.sleep(1)
                 return [result]
 
