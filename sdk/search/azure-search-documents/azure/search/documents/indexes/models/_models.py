@@ -1189,10 +1189,9 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
 class AzureOpenAiParameters(_Model):
     """Specifies the parameters for connecting to the Azure OpenAI resource.
 
-    :ivar resource_uri: The resource URI of the Azure OpenAI resource. Required.
+    :ivar resource_uri: The resource URI of the Azure OpenAI resource.
     :vartype resource_uri: str
     :ivar deployment_id: ID of the Azure OpenAI model deployment on the designated resource.
-     Required.
     :vartype deployment_id: str
     :ivar api_key: API key of the designated Azure OpenAI resource.
     :vartype api_key: str
@@ -1205,10 +1204,14 @@ class AzureOpenAiParameters(_Model):
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     """
 
-    resource_uri: str = rest_field(name="resourceUri", visibility=["read", "create", "update", "delete", "query"])
-    """The resource URI of the Azure OpenAI resource. Required."""
-    deployment_id: str = rest_field(name="deploymentId", visibility=["read", "create", "update", "delete", "query"])
-    """ID of the Azure OpenAI model deployment on the designated resource. Required."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource URI of the Azure OpenAI resource."""
+    deployment_id: Optional[str] = rest_field(
+        name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ID of the Azure OpenAI model deployment on the designated resource."""
     api_key: Optional[str] = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
     """API key of the designated Azure OpenAI resource."""
     auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
@@ -1227,8 +1230,8 @@ class AzureOpenAiParameters(_Model):
     def __init__(
         self,
         *,
-        resource_uri: str,
-        deployment_id: str,
+        resource_uri: Optional[str] = None,
+        deployment_id: Optional[str] = None,
         api_key: Optional[str] = None,
         auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = None,
