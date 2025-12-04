@@ -573,6 +573,48 @@ class TestFullTextPolicy(unittest.TestCase):
         finally:
             self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
+    def test_unsupported_language_in_full_text_policy(self):
+        # Create the container with English as the default language
+        full_text_policy = {
+            "defaultLanguage": "en-US",
+            "fullTextPaths": [
+                {
+                    "path": "/abstract",
+                    "language": "en-US"
+                }
+            ]
+        }
+        container = self.test_db.create_container(
+            id='full_text_container' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id"),
+            full_text_policy=full_text_policy
+        )
+        try:
+            # Replace the full-text policy with an unsupported language
+            updated_policy = {
+                "defaultLanguage": "en-US",
+                "fullTextPaths": [
+                    {
+                        "path": "/abstract",
+                        "language": "unsupported-LANG"
+                    }
+                ]
+            }
+            try:
+                self.test_db.replace_container(
+                    container=container.id,
+                    partition_key=PartitionKey(path="/id"),
+                    full_text_policy=updated_policy
+                )
+                pytest.fail("Container replacement should have failed for unsupported language.")
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400
+                assert "The Full Text Policy contains an unsupported language" in e.http_error_message
+        finally:
+            self.test_db.delete_container(container.id)
+
 
 if __name__ == '__main__':
     unittest.main()
