@@ -8,6 +8,7 @@ from .Check import Check, DEPENDENCY_TOOLS_REQUIREMENTS, PACKAGING_REQUIREMENTS,
 
 from ci_tools.functions import install_into_venv, is_error_code_5_allowed
 from ci_tools.scenario.generation import create_package_and_install
+from ci_tools.scenario.dependency_resolution import install_dependent_packages
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
 
@@ -64,28 +65,16 @@ class DependencyCheck(Check):
                 results.append(exc.returncode)
                 continue
 
-            install_script = os.path.join(REPO_ROOT, "eng/tox/install_depend_packages.py")
-            install_command = [
-                install_script,
-                "-t",
-                package_dir,
-                "-d",
-                self.dependency_type,
-                "-w",
-                staging_directory,
-            ]
-            install_result = self.run_venv_command(
-                executable,
-                install_command,
-                cwd=package_dir,
-                immediately_dump=True,
-            )
-
-            if install_result.returncode != 0:
-                logger.error(
-                    f"install_depend_packages.py failed for {package_name} with exit code {install_result.returncode}."
+            try:
+                install_dependent_packages(
+                    setup_py_file_path=package_dir,
+                    dependency_type=self.dependency_type,
+                    temp_dir=staging_directory,
+                    python_executable=executable,
                 )
-                results.append(install_result.returncode)
+            except Exception as exc:  # pragma: no cover - defensive logging
+                logger.error(f"Dependency resolution failed for {package_name}: {exc}")
+                results.append(1)
                 continue
 
             try:
