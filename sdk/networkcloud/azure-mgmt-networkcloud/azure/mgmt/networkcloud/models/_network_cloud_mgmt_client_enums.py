@@ -398,6 +398,7 @@ class CommandOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BARE_METAL_MACHINE_RUN_DATA_EXTRACTS = "BareMetalMachineRunDataExtracts"
     BARE_METAL_MACHINE_RUN_READ_COMMANDS = "BareMetalMachineRunReadCommands"
     STORAGE_RUN_READ_COMMANDS = "StorageRunReadCommands"
+    BARE_METAL_MACHINE_RUN_DATA_EXTRACTS_RESTRICTED = "BareMetalMachineRunDataExtractsRestricted"
 
 
 class ConsoleDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -441,9 +442,8 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DefaultGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The indicator of whether this is the default gateway.
-    Only one of the attached networks (including the CloudServicesNetwork attachment) for a single
-        machine may be specified as True.
+    """The indicator of whether this is the default gateway. Only one of the attached networks
+    (including the CloudServicesNetwork attachment) for a single machine may be specified as True.
     """
 
     TRUE = "True"
@@ -877,9 +877,8 @@ class VirtualMachineDeviceModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
 
 class VirtualMachineIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The IP allocation mechanism for the virtual machine.
-    Dynamic and Static are only valid for l3Network which may also specify Disabled.
-    Otherwise, Disabled is the only permitted value.
+    """The IP allocation mechanism for the virtual machine. Dynamic and Static are only valid for
+    l3Network which may also specify Disabled. Otherwise, Disabled is the only permitted value.
     """
 
     DYNAMIC = "Dynamic"
