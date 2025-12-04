@@ -1,5 +1,15 @@
 # Release History
 
+## 12.28.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.28.0b1 (2025-12-04)
 
 ### Features Added
