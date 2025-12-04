@@ -1,4 +1,4 @@
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, Union, Dict
 
 from azure.core.rest import HttpRequest, HttpResponse
 
@@ -27,11 +27,13 @@ class ServiceProviderFactory:
         request = HttpRequest("GET", full_url)
         return self.client._send_request(request, **kwargs)
 
-    def post(self, url: str, *, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
+    def post(self, url: str, *, model: Optional[Dict[str, Any]] = None, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
         """Send a POST request.
         
         :param url: The relative URL to send the request to. Can be absolute or relative to provider.
         :type url: str
+        :keyword model: Model data to send in the request body (takes precedence over json/data).
+        :type model: Optional[Dict[str, Any]]
         :keyword json: JSON data to send in the request body.
         :keyword data: Data to send in the request body.
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
@@ -40,17 +42,21 @@ class ServiceProviderFactory:
         """
         full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
         request = HttpRequest("POST", full_url)
-        if json is not None:
+        if model is not None:
+            request.set_json_body(model)
+        elif json is not None:
             request.set_json_body(json)
         elif data is not None:
             request.set_bytes_body(data)
         return self.client._send_request(request, **kwargs)
 
-    def put(self, url: str, *, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
+    def put(self, url: str, *, model: Optional[Dict[str, Any]] = None, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
         """Send a PUT request.
         
         :param url: The relative URL to send the request to. Can be absolute or relative to provider.
         :type url: str
+        :keyword model: Model data to send in the request body (takes precedence over json/data).
+        :type model: Optional[Dict[str, Any]]
         :keyword json: JSON data to send in the request body.
         :keyword data: Data to send in the request body.
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
@@ -59,17 +65,21 @@ class ServiceProviderFactory:
         """
         full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
         request = HttpRequest("PUT", full_url)
-        if json is not None:
+        if model is not None:
+            request.set_json_body(model)
+        elif json is not None:
             request.set_json_body(json)
         elif data is not None:
             request.set_bytes_body(data)
         return self.client._send_request(request, **kwargs)
 
-    def patch(self, url: str, *, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
+    def patch(self, url: str, *, model: Optional[Dict[str, Any]] = None, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
         """Send a PATCH request.
         
         :param url: The relative URL to send the request to. Can be absolute or relative to provider.
         :type url: str
+        :keyword model: Model data to send in the request body (takes precedence over json/data).
+        :type model: Optional[Dict[str, Any]]
         :keyword json: JSON data to send in the request body.
         :keyword data: Data to send in the request body.
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
@@ -78,7 +88,9 @@ class ServiceProviderFactory:
         """
         full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
         request = HttpRequest("PATCH", full_url)
-        if json is not None:
+        if model is not None:
+            request.set_json_body(model)
+        elif json is not None:
             request.set_json_body(json)
         elif data is not None:
             request.set_bytes_body(data)
@@ -143,7 +155,7 @@ class ServiceProviderFactory:
             url += f"/{resource_name}"
         return self.get(url, **kwargs)
     
-    def create_resource(self, resource_type: str, resource_name: str, resource_data: Any, resource_group: Optional[str] = None, **kwargs: Any) -> HttpResponse:
+    def create_resource(self, resource_type: str, resource_name: str, resource_data: Dict[str, Any], resource_group: Optional[str] = None, **kwargs: Any) -> HttpResponse:
         """Create a new resource.
         
         :param resource_type: The type of resource (e.g., 'virtualMachines')
@@ -151,6 +163,7 @@ class ServiceProviderFactory:
         :param resource_name: Name of the resource to create
         :type resource_name: str
         :param resource_data: Resource configuration data
+        :type resource_data: Dict[str, Any]
         :param resource_group: Optional resource group name for scoped resources
         :type resource_group: str
         """
@@ -158,9 +171,9 @@ class ServiceProviderFactory:
             url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/{self.service_provider}/{resource_type}/{resource_name}"
         else:
             url = f"{self.base_url}/{resource_type}/{resource_name}"
-        return self.put(url, json=resource_data, **kwargs)
+        return self.put(url, model=resource_data, **kwargs)
     
-    def update_resource(self, resource_type: str, resource_name: str, resource_data: Any, resource_group: Optional[str] = None, **kwargs: Any) -> HttpResponse:
+    def update_resource(self, resource_type: str, resource_name: str, resource_data: Dict[str, Any], resource_group: Optional[str] = None, **kwargs: Any) -> HttpResponse:
         """Update an existing resource.
         
         :param resource_type: The type of resource (e.g., 'virtualMachines')
@@ -168,6 +181,7 @@ class ServiceProviderFactory:
         :param resource_name: Name of the resource to update
         :type resource_name: str
         :param resource_data: Resource configuration data
+        :type resource_data: Dict[str, Any]
         :param resource_group: Optional resource group name for scoped resources
         :type resource_group: str
         """
@@ -175,7 +189,7 @@ class ServiceProviderFactory:
             url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/{self.service_provider}/{resource_type}/{resource_name}"
         else:
             url = f"{self.base_url}/{resource_type}/{resource_name}"
-        return self.patch(url, json=resource_data, **kwargs)
+        return self.patch(url, model=resource_data, **kwargs)
     
     def delete_resource(self, resource_type: str, resource_name: str, resource_group: Optional[str] = None, **kwargs: Any) -> HttpResponse:
         """Delete a resource.
