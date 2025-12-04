@@ -134,11 +134,12 @@ def validate_response(response: HttpResponse) -> None:
         raise HttpResponseError(response=response, message=failure_msg, error_format=ARMErrorFormat)
 
 
-def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
+def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestrator, credential: Optional[Any] = None) -> None:
     """Upload code, dependency, model dependencies. For BatchDeployment only register compute.
 
     :param Deployment deployment: Endpoint deployment object.
     :param OperationOrchestrator orchestrators: Operation Orchestrator.
+    :param credential: Optional credential for registry operations.
     """
 
     module_logger.debug("Uploading the dependencies for deployment %s", deployment.name)
@@ -166,6 +167,66 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
             if deployment.environment
             else None
         )
+    
+    # Check if model from registry has default_deployment_template
+    if credential and deployment.model and is_registry_id_for_resource(deployment.model):
+        try:
+            # Parse the registry model ID to extract registry name, model name and version
+            import re
+            from azure.ai.ml.constants._common import REGISTRY_VERSION_PATTERN
+            from azure.ai.ml.entities._assets._artifacts.model import Model
+            match = re.match(REGISTRY_VERSION_PATTERN, deployment.model, re.IGNORECASE)
+            if match:
+                registry_name = match.group(1)  # Extract registry name from URI
+                # asset_type = match.group(2)  # e.g., "models"
+                model_name = match.group(3)
+                model_version = match.group(4)
+                
+                try:
+                    # Use the v2021_10_01_dataplanepreview REST client to query the registry
+                    from azure.ai.ml._utils._registry_utils import get_registry_client
+                    
+
+                    # Get the registry client for the specific registry using the provided credential
+                    (
+                        service_client_10_2021_dataplanepreview,  # service_client with correct base_url
+                        resource_group_name,  # resource_group_name
+                        _,  # subscription_id (not needed)
+                        _,  # service_model_client (not needed here)
+                    ) = get_registry_client(
+                        credential=credential,
+                        registry_name=registry_name,
+                    )
+                    
+                    # Use the service_client returned by get_registry_client - it has the correct base_url
+                    # (the registry's dataplane endpoint, e.g., https://<region>.api.azureml.ms/mferp/managementfrontend)
+                    model_version_data = service_client_10_2021_dataplanepreview.model_versions.get(
+                        name=model_name,
+                        version=model_version,
+                        registry_name=registry_name,
+                        resource_group_name=resource_group_name,
+                    )
+                    # Convert REST object to Model entity
+                    model = Model._from_rest_object(model_version_data)
+                    
+                    if hasattr(model, 'default_deployment_template') and model.default_deployment_template:
+                        module_logger.info(
+                            "\nModel '%s' (version %s) from registry '%s' has a default deployment template configured.\n"
+                            "The deployment will use the default deployment template settings, "
+                            "and some deployment parameters may be ignored.\n"
+                            "Default deployment template: %s\n",
+                            model_name,
+                            model_version,
+                            registry_name,
+                            model.default_deployment_template.asset_id
+                        )
+                except Exception:  # pylint: disable=broad-except
+                    # If we can't fetch the model, continue without the check
+                    pass
+        except Exception:  # pylint: disable=broad-except
+            # If parsing fails, continue without the check
+            pass
+    
     if not is_registry_id_for_resource(deployment.model):
         deployment.model = (
             orchestrators.get_asset_arm_id(deployment.model, azureml_type=AzureMLResourceType.MODEL)
