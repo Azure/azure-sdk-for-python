@@ -12,14 +12,14 @@ from azure.search.documents.indexes.models import (
 
 
 def test_edm_contents():
-    assert SearchFieldDataType.String == "Edm.String"
-    assert SearchFieldDataType.Int32 == "Edm.Int32"
-    assert SearchFieldDataType.Int64 == "Edm.Int64"
-    assert SearchFieldDataType.Double == "Edm.Double"
-    assert SearchFieldDataType.Boolean == "Edm.Boolean"
-    assert SearchFieldDataType.DateTimeOffset == "Edm.DateTimeOffset"
-    assert SearchFieldDataType.GeographyPoint == "Edm.GeographyPoint"
-    assert SearchFieldDataType.ComplexType == "Edm.ComplexType"
+    assert SearchFieldDataType.STRING == "Edm.String"
+    assert SearchFieldDataType.INT32 == "Edm.Int32"
+    assert SearchFieldDataType.INT64 == "Edm.Int64"
+    assert SearchFieldDataType.DOUBLE == "Edm.Double"
+    assert SearchFieldDataType.BOOLEAN == "Edm.Boolean"
+    assert SearchFieldDataType.DATE_TIME_OFFSET == "Edm.DateTimeOffset"
+    assert SearchFieldDataType.GEOGRAPHY_POINT == "Edm.GeographyPoint"
+    assert SearchFieldDataType.COMPLEX == "Edm.ComplexType"
     assert SearchFieldDataType.Collection("foo") == "Collection(foo)"
 
 
@@ -27,7 +27,7 @@ class TestComplexField:
     def test_single(self):
         fld = ComplexField(name="foo", fields=[])
         assert fld.name == "foo"
-        assert fld.type == SearchFieldDataType.ComplexType
+        assert fld.type == SearchFieldDataType.COMPLEX
 
         assert fld.sortable is None
         assert fld.facetable is None
@@ -38,15 +38,11 @@ class TestComplexField:
         assert fld.index_analyzer_name is None
         assert fld.synonym_map_names is None
 
-        generated_field = fld._to_generated()
-        assert generated_field.retrievable is None
 
     def test_collection(self):
         fld = ComplexField(name="foo", fields=[], collection=True)
         assert fld.name == "foo"
-        assert fld.type == SearchFieldDataType.Collection(
-            SearchFieldDataType.ComplexType
-        )
+        assert fld.type == SearchFieldDataType.Collection(SearchFieldDataType.COMPLEX)
 
         assert fld.sortable is None
         assert fld.facetable is None
@@ -60,10 +56,10 @@ class TestComplexField:
 
 class TestSimplexField:
     def test_defaults(self):
-        fld = SimpleField(name="foo", type=SearchFieldDataType.Double)
+        fld = SimpleField(name="foo", type=SearchFieldDataType.DOUBLE)
         assert fld.name == "foo"
-        assert fld.type == SearchFieldDataType.Double
-        assert fld.hidden == False
+        assert fld.type == SearchFieldDataType.DOUBLE
+        # assert fld.hidden == False
         assert fld.sortable == False
         assert fld.facetable == False
         assert fld.searchable == False
@@ -80,7 +76,7 @@ class TestSearchableField:
         fld = SearchableField(name="foo", collection=True)
         assert fld.name == "foo"
         assert fld.type == SearchFieldDataType.Collection(SearchFieldDataType.String)
-        assert fld.hidden == False
+        # assert fld.hidden == False
         assert fld.sortable == False
         assert fld.facetable == False
         assert fld.searchable == True

@@ -270,7 +270,7 @@ class AIServicesVisionVectorizer(VectorSearchVectorizer, discriminator="aiServic
     """
 
     ai_services_vision_parameters: Optional["_models.AIServicesVisionParameters"] = rest_field(
-        name="AIServicesVisionParameters", visibility=["read", "create", "update", "delete", "query"]
+        name="aiServicesVisionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the parameters specific to AI Services Vision embedding vectorization."""
     kind: Literal[VectorSearchVectorizerKind.AI_SERVICES_VISION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1197,15 +1197,12 @@ class AzureOpenAiParameters(_Model):
     :ivar api_key: API key of the designated Azure OpenAI resource.
     :vartype api_key: str
     :ivar auth_identity: The user-assigned managed identity used for outbound connections.
-    :vartype auth_identity: str
+    :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
      "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
      "gpt-5", "gpt-5-mini", and "gpt-5-nano".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
-    :ivar authentication_method: The authentication method to use when connecting to the Azure
-     OpenAI resource.
-    :vartype authentication_method: str
     """
 
     resource_uri: str = rest_field(name="resourceUri", visibility=["read", "create", "update", "delete", "query"])
@@ -1214,7 +1211,7 @@ class AzureOpenAiParameters(_Model):
     """ID of the Azure OpenAI model deployment on the designated resource. Required."""
     api_key: Optional[str] = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
     """API key of the designated Azure OpenAI resource."""
-    auth_identity: Optional[str] = rest_field(
+    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
         name="authIdentity", visibility=["read", "create", "update", "delete", "query"]
     )
     """The user-assigned managed identity used for outbound connections."""
@@ -1225,10 +1222,6 @@ class AzureOpenAiParameters(_Model):
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
      \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
      \"gpt-5-mini\", and \"gpt-5-nano\"."""
-    authentication_method: Optional[str] = rest_field(
-        name="authenticationMethod", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The authentication method to use when connecting to the Azure OpenAI resource."""
 
     @overload
     def __init__(
@@ -1237,9 +1230,8 @@ class AzureOpenAiParameters(_Model):
         resource_uri: str,
         deployment_id: str,
         api_key: Optional[str] = None,
-        auth_identity: Optional[str] = None,
+        auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = None,
-        authentication_method: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -7373,27 +7365,26 @@ class RemoteSharePointKnowledgeSource(KnowledgeSource, discriminator="remoteShar
     :ivar kind: Required. A knowledge source that reads data from remote SharePoint.
     :vartype kind: str or ~azure.search.documents.indexes.models.REMOTE_SHARE_POINT
     :ivar remote_share_point_parameters: The parameters for the remote SharePoint knowledge source.
-     Required.
     :vartype remote_share_point_parameters:
      ~azure.search.documents.indexes.models.RemoteSharePointKnowledgeSourceParameters
     """
 
     kind: Literal[KnowledgeSourceKind.REMOTE_SHARE_POINT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. A knowledge source that reads data from remote SharePoint."""
-    remote_share_point_parameters: "_models.RemoteSharePointKnowledgeSourceParameters" = rest_field(
+    remote_share_point_parameters: Optional["_models.RemoteSharePointKnowledgeSourceParameters"] = rest_field(
         name="remoteSharePointParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The parameters for the remote SharePoint knowledge source. Required."""
+    """The parameters for the remote SharePoint knowledge source."""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
-        remote_share_point_parameters: "_models.RemoteSharePointKnowledgeSourceParameters",
         description: Optional[str] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
+        remote_share_point_parameters: Optional["_models.RemoteSharePointKnowledgeSourceParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -9710,7 +9701,7 @@ class SearchResourceEncryptionKey(_Model):
      Required.
     :vartype key_name: str
     :ivar key_version: The version of your Azure Key Vault key to be used to encrypt your data at
-     rest. Required.
+     rest.
     :vartype key_version: str
     :ivar vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
      the key to be used to encrypt your data at rest. An example URI might be
@@ -9729,8 +9720,10 @@ class SearchResourceEncryptionKey(_Model):
 
     key_name: str = rest_field(name="keyVaultKeyName", visibility=["read", "create", "update", "delete", "query"])
     """The name of your Azure Key Vault key to be used to encrypt your data at rest. Required."""
-    key_version: str = rest_field(name="keyVaultKeyVersion", visibility=["read", "create", "update", "delete", "query"])
-    """The version of your Azure Key Vault key to be used to encrypt your data at rest. Required."""
+    key_version: Optional[str] = rest_field(
+        name="keyVaultKeyVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The version of your Azure Key Vault key to be used to encrypt your data at rest."""
     vault_uri: str = rest_field(name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"])
     """The URI of your Azure Key Vault, also referred to as DNS name, that contains the key to be used
      to encrypt your data at rest. An example URI might be
@@ -9755,8 +9748,8 @@ class SearchResourceEncryptionKey(_Model):
         self,
         *,
         key_name: str,
-        key_version: str,
         vault_uri: str,
+        key_version: Optional[str] = None,
         access_credentials: Optional["_models.AzureActiveDirectoryApplicationCredentials"] = None,
         identity: Optional["_models.SearchIndexerDataIdentity"] = None,
     ) -> None: ...

@@ -1552,16 +1552,17 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
      relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
     :ivar base64_image: The base 64 encoded binary of an image to be vectorized to perform a vector
-     search query. Required.
+     search query.
     :vartype base64_image: str
     :ivar kind: The kind of vector query being performed. Required. Vector query where a base 64
      encoded binary of an image that needs to be vectorized is provided.
     :vartype kind: str or ~azure.search.documents.models.IMAGE_BINARY
     """
 
-    base64_image: str = rest_field(name="base64Image", visibility=["read", "create", "update", "delete", "query"])
-    """The base 64 encoded binary of an image to be vectorized to perform a vector search query.
-     Required."""
+    base64_image: Optional[str] = rest_field(
+        name="base64Image", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The base 64 encoded binary of an image to be vectorized to perform a vector search query."""
     kind: Literal[VectorQueryKind.IMAGE_BINARY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of vector query being performed. Required. Vector query where a base 64 encoded binary
      of an image that needs to be vectorized is provided."""
@@ -1570,7 +1571,6 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
     def __init__(
         self,
         *,
-        base64_image: str,
         k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
@@ -1579,6 +1579,7 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
+        base64_image: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1630,15 +1631,15 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
-    :ivar url: The URL of an image to be vectorized to perform a vector search query. Required.
+    :ivar url: The URL of an image to be vectorized to perform a vector search query.
     :vartype url: str
     :ivar kind: The kind of vector query being performed. Required. Vector query where an url that
      represents an image value that needs to be vectorized is provided.
     :vartype kind: str or ~azure.search.documents.models.IMAGE_URL
     """
 
-    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL of an image to be vectorized to perform a vector search query. Required."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL of an image to be vectorized to perform a vector search query."""
     kind: Literal[VectorQueryKind.IMAGE_URL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of vector query being performed. Required. Vector query where an url that represents
      an image value that needs to be vectorized is provided."""
@@ -1647,7 +1648,6 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
     def __init__(
         self,
         *,
-        url: str,
         k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
@@ -1656,6 +1656,7 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
+        url: Optional[str] = None,
     ) -> None: ...
 
     @overload

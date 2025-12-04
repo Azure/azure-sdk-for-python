@@ -976,7 +976,7 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Remote SharePoint document reference.
     :vartype type: str or ~azure.search.documents.knowledgebase.models.REMOTE_SHARE_POINT
-    :ivar web_url: The url the reference data originated from. Required.
+    :ivar web_url: The url the reference data originated from.
     :vartype web_url: str
     :ivar search_sensitivity_label_info: Information about the sensitivity label applied to the
      SharePoint document.
@@ -986,8 +986,8 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
 
     type: Literal[KnowledgeBaseReferenceType.REMOTE_SHARE_POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. Remote SharePoint document reference."""
-    web_url: str = rest_field(name="webUrl", visibility=["read", "create", "update", "delete", "query"])
-    """The url the reference data originated from. Required."""
+    web_url: Optional[str] = rest_field(name="webUrl", visibility=["read", "create", "update", "delete", "query"])
+    """The url the reference data originated from."""
     search_sensitivity_label_info: Optional["_models.SharePointSensitivityLabelInfo"] = rest_field(
         name="searchSensitivityLabelInfo", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -999,9 +999,9 @@ class KnowledgeBaseRemoteSharePointReference(KnowledgeBaseReference, discriminat
         *,
         id: str,  # pylint: disable=redefined-builtin
         activity_source: int,
-        web_url: str,
         source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
+        web_url: Optional[str] = None,
         search_sensitivity_label_info: Optional["_models.SharePointSensitivityLabelInfo"] = None,
     ) -> None: ...
 

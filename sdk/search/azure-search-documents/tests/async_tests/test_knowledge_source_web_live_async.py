@@ -131,9 +131,7 @@ class TestWebKnowledgeSourceLiveAsync(AzureRecordedTestCase):
                 ctx.created_revision,
                 match_condition=MatchConditions.IfNotModified,
             )
-            remaining = [
-                item async for item in ctx.index_client.list_knowledge_sources()
-            ]
+            remaining = [item async for item in ctx.index_client.list_knowledge_sources()]
             assert all(item.name != ctx.source_name for item in remaining)
         finally:
             await ctx.index_client.close()

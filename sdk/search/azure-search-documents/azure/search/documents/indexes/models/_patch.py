@@ -252,6 +252,7 @@ class SearchField(_SearchField):
             sortable=sortable,
             facetable=facetable,
             permission_filter=permission_filter,
+            sensitivity_label=sensitivity_label,
             analyzer_name=analyzer_name,
             search_analyzer_name=search_analyzer_name,
             index_analyzer_name=index_analyzer_name,

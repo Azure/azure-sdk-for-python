@@ -16,23 +16,19 @@ CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 class TestSearchBatchingClient:
     def test_search_indexing_buffered_sender_kwargs(self):
-        with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, window=100
-        ) as client:
+        with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, window=100) as client:
             assert client._batch_action_count == 512
             assert client._max_retries_per_action == 3
             assert client._auto_flush_interval == 60
             assert client._auto_flush
 
     def test_batch_queue(self):
-        with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, auto_flush=False
-        ) as client:
-            assert client._index_documents_batch
-            client.upload_documents(["upload1"])
-            client.delete_documents(["delete1", "delete2"])
-            client.merge_documents(["merge1", "merge2", "merge3"])
-            client.merge_or_upload_documents(["merge_or_upload1"])
+        with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
+            assert not(client._index_documents_batch is None)
+            client.upload_documents([{"upload1": "doc"}])
+            client.delete_documents([{"delete1": "doc"}, {"delete2": "doc"}])
+            client.merge_documents([{"merge1": "doc"}, {"merge2": "doc"}, {"merge3": "doc"}])
+            client.merge_or_upload_documents([{"merge_or_upload1": "doc"}])
             assert len(client.actions) == 7
             actions = client._index_documents_batch.dequeue_actions()
             assert len(client.actions) == 0
@@ -45,25 +41,19 @@ class TestSearchBatchingClient:
             assert len(client.actions) == 7
 
     @mock.patch(
-        "azure.search.documents._search_indexing_buffered_sender.SearchIndexingBufferedSender._process_if_needed"
+        "azure.search.documents._patch.SearchIndexingBufferedSender._process_if_needed"
     )
     def test_process_if_needed(self, mock_process_if_needed):
-        with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL
-        ) as client:
-            client.upload_documents(["upload1"])
-            client.delete_documents(["delete1", "delete2"])
+        with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL) as client:
+            client.upload_documents([{"upload1": "doc"}])
+            client.delete_documents([{"delete1": "doc"}, {"delete2": "doc"}])
         assert mock_process_if_needed.called
 
-    @mock.patch(
-        "azure.search.documents._search_indexing_buffered_sender.SearchIndexingBufferedSender._cleanup"
-    )
+    @mock.patch("azure.search.documents._patch.SearchIndexingBufferedSender._cleanup")
     def test_context_manager(self, mock_cleanup):
-        with SearchIndexingBufferedSender(
-            "endpoint", "index name", CREDENTIAL, auto_flush=False
-        ) as client:
-            client.upload_documents(["upload1"])
-            client.delete_documents(["delete1", "delete2"])
+        with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
+            client.upload_documents([{"upload1": "doc"}])
+            client.delete_documents([{"delete1": "doc"}, {"delete2": "doc"}])
         assert mock_cleanup.called
 
     def test_flush(self):
@@ -79,9 +69,7 @@ class TestSearchBatchingClient:
             "_index_documents_actions",
             side_effect=HttpResponseError("Error"),
         ):
-            with SearchIndexingBufferedSender(
-                "endpoint", "index name", CREDENTIAL, auto_flush=False
-            ) as client:
+            with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
                 client._index_key = "hotelId"
                 client.upload_documents([DOCUMENT])
                 client.flush()
@@ -92,14 +80,14 @@ class TestSearchBatchingClient:
         with SearchIndexingBufferedSender(
             "endpoint", "index name", CREDENTIAL, auto_flush=False, on_new=on_new
         ) as client:
-            client.upload_documents(["upload1"])
+            client.upload_documents([{"upload1": "doc"}])
             assert on_new.called
 
     def test_callback_error(self):
         def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get("id")
+                result.key = actions[0].get("id")
                 result.status_code = 400
                 result.succeeded = False
                 self.uploaded = self.uploaded + len(actions) - 1
@@ -111,7 +99,7 @@ class TestSearchBatchingClient:
         ) as client:
             client._index_documents_actions = mock_fail_index_documents
             client._index_key = "id"
-            client.upload_documents({"id": 0})
+            client.upload_documents([{"id": 0}])
             client.flush()
             assert on_error.called
 
@@ -121,7 +109,7 @@ class TestSearchBatchingClient:
 
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get("id")
+                result.key = actions[0].get("id")
                 result.status_code = 400
                 result.succeeded = False
                 self.uploaded = self.uploaded + len(actions) - 1
@@ -143,7 +131,7 @@ class TestSearchBatchingClient:
         def mock_successful_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get("id")
+                result.key = actions[0].get("id")
                 result.status_code = 200
                 result.succeeded = True
                 return [result]
@@ -160,7 +148,7 @@ class TestSearchBatchingClient:
         ) as client:
             client._index_documents_actions = mock_successful_index_documents
             client._index_key = "id"
-            client.upload_documents({"id": 0})
+            client.upload_documents([{"id": 0}])
             client.flush()
             assert on_progress.called
             assert on_remove.called
