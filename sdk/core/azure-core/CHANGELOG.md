@@ -1,6 +1,6 @@
 # Release History
 
-## 1.37.0(Unreleased)
+## 1.37.0 (Unreleased)
 
 ### Features Added
 
