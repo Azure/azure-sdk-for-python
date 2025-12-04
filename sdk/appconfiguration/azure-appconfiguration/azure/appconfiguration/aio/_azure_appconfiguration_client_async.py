@@ -6,7 +6,6 @@
 import functools
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, overload, cast
-from urllib.parse import urlencode
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential

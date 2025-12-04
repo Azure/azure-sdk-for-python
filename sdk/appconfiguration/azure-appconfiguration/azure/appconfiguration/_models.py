@@ -671,7 +671,7 @@ class ConfigurationSettingPaged(ItemPaged):
         self._tags_filter = kwargs.pop("tags_filter", None)
         super(ConfigurationSettingPaged, self).__init__(*args, **kwargs)
 
-    def by_page(self, continuation_token: Optional[str] = None, *, etags: Optional[List[str]] = None) -> PageIterator:
+    def by_page(self, continuation_token: Optional[str] = None, *, etags: Optional[List[str]] = None) -> Any:
         """Get an iterator of pages of objects, instead of an iterator of objects.
 
         :param str continuation_token:
@@ -706,7 +706,7 @@ class ConfigurationSettingEtagPageIterator:
         self,
         client: Any,
         etags: List[str],
-        base_iterator: PageIterator,
+        base_iterator: Any,
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
         tags_filter: Optional[List[str]] = None,
@@ -735,13 +735,16 @@ class ConfigurationSettingEtagPageIterator:
         """Get the next page, checking etag first.
 
         :returns: An iterator of objects in the next page.
+        :rtype: Iterator[ReturnType]
         :raises StopIteration: If there are no more pages or if the page hasn't changed.
         """
         if self._etag_index >= len(self._etags):
             raise StopIteration("No more etags to check")
 
         # Check if this page has changed using the etag
-        query_params: Dict[str, Union[str, List[str]]] = {"api-version": self._client._impl._config.api_version}
+        query_params: Dict[str, Union[str, List[str]]] = {
+            "api-version": self._client._impl._config.api_version
+        }  # pylint: disable=protected-access
 
         if self._key_filter:
             query_params["key"] = self._key_filter
@@ -755,11 +758,13 @@ class ConfigurationSettingEtagPageIterator:
         if self._base_iterator.continuation_token is None:
             # First page
             query_string = urlencode(query_params, doseq=True)
-            request_url = f"{self._client._impl._client._base_url}/kv?{query_string}"
+            request_url = (
+                f"{self._client._impl._client._base_url}/kv?{query_string}"  # pylint: disable=protected-access
+            )
         else:
             # Subsequent pages using continuation token
             request_url = (
-                f"{self._client._impl._client._base_url}{self._base_iterator.continuation_token}"
+                f"{self._client._impl._client._base_url}{self._base_iterator.continuation_token}"  # pylint: disable=protected-access
                 if not self._base_iterator.continuation_token.startswith("http")
                 else self._base_iterator.continuation_token
             )
@@ -803,9 +808,7 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
         self._tags_filter = kwargs.pop("tags_filter", None)
         super(ConfigurationSettingPagedAsync, self).__init__(*args, **kwargs)
 
-    def by_page(
-        self, continuation_token: Optional[str] = None, *, etags: Optional[List[str]] = None
-    ) -> AsyncPageIterator:
+    def by_page(self, continuation_token: Optional[str] = None, *, etags: Optional[List[str]] = None) -> Any:
         """Get an async iterator of pages of objects, instead of an iterator of objects.
 
         :param str continuation_token:
@@ -833,14 +836,14 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
         return super(ConfigurationSettingPagedAsync, self).by_page(continuation_token=continuation_token)
 
 
-class ConfigurationSettingEtagPageIteratorAsync:
+class ConfigurationSettingEtagPageIteratorAsync:  # pylint: disable=name-too-long
     """An async page iterator that checks etags before returning pages."""
 
     def __init__(
         self,
         client: Any,
         etags: List[str],
-        base_iterator: AsyncPageIterator,
+        base_iterator: Any,
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
         tags_filter: Optional[List[str]] = None,
@@ -869,6 +872,7 @@ class ConfigurationSettingEtagPageIteratorAsync:
         """Get the next page, checking etag first.
 
         :returns: An iterator of objects in the next page.
+        :rtype: AsyncIterator[ReturnType]
         :raises StopAsyncIteration: If there are no more pages or if the page hasn't changed.
         """
         if self._etag_index >= len(self._etags):
