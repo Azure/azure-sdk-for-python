@@ -14,11 +14,11 @@ from ci_tools.environment_exclusions import is_check_enabled
 
 FULL_BUILD_SET = [
     "whl",
-    # "sdist",
+    "sdist",
     # "depends",
     # "latestdependency",
     # "mindependency",
-    # "whl_no_aio",
+    "whl_no_aio",
 ]
 # this branch is checking only whl for now. rest will follow as they migrate
 PR_BUILD_SET = ["whl"] #, "sdist", "mindependency"
