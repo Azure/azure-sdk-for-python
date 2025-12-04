@@ -49,6 +49,7 @@ from ._utils import (
     AGENT_TYPE_WORKFLOW,
     AGENT_TYPE_HOSTED,
     AGENT_TYPE_UNKNOWN,
+    GEN_AI_AGENT_TYPE,
     ERROR_MESSAGE,
     OperationName,
     start_span,
@@ -565,7 +566,7 @@ class _AIAgentsInstrumentorPreview:
             if description:
                 span.add_attribute(GEN_AI_AGENT_DESCRIPTION, description)
             if agent_type:
-                span.add_attribute("gen_ai.agent.type", agent_type)
+                span.add_attribute(GEN_AI_AGENT_TYPE, agent_type)
 
             # Add hosted agent specific attributes
             if hosted_cpu:
