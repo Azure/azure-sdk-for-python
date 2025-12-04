@@ -74,6 +74,13 @@ GEN_AI_RESPONSE_FINISH_REASONS = "gen_ai.response.finish_reasons"
 GEN_AI_RESPONSE_OBJECT = "gen_ai.response.object"
 GEN_AI_TOKEN_TYPE = "gen_ai.token.type"
 GEN_AI_MESSAGE_ROLE = "gen_ai.message.role"
+GEN_AI_AGENT_TYPE = "gen_ai.agent.type"
+GEN_AI_CONVERSATION_ITEM_TYPE = "gen_ai.conversation.item.type"
+GEN_AI_AGENT_HOSTED_CPU = "gen_ai.agent.hosted.cpu"
+GEN_AI_AGENT_HOSTED_MEMORY = "gen_ai.agent.hosted.memory"
+GEN_AI_AGENT_HOSTED_IMAGE = "gen_ai.agent.hosted.image"
+GEN_AI_AGENT_HOSTED_PROTOCOL = "gen_ai.agent.hosted.protocol"
+GEN_AI_AGENT_HOSTED_PROTOCOL_VERSION = "gen_ai.agent.hosted.protocol_version"
 
 # Event names
 GEN_AI_USER_MESSAGE_EVENT = "gen_ai.input.messages"
@@ -88,15 +95,13 @@ GEN_AI_AGENT_WORKFLOW_EVENT = "gen_ai.agent.workflow"
 GEN_AI_CLIENT_OPERATION_DURATION = "gen_ai.client.operation.duration"
 GEN_AI_CLIENT_TOKEN_USAGE = "gen_ai.client.token.usage"
 
-# Additional attribute names for agents
-GEN_AI_AGENT_TYPE = "gen_ai.agent.type"
-GEN_AI_CONVERSATION_ITEM_TYPE = "gen_ai.conversation.item.type"
-
 # Constant attribute values
 AZURE_AI_AGENTS_SYSTEM = "az.ai.agents"
 AZURE_AI_AGENTS_PROVIDER = "azure.ai.agents"
 AGENT_TYPE_PROMPT = "prompt"
 AGENT_TYPE_WORKFLOW = "workflow"
+AGENT_TYPE_HOSTED = "hosted"
+AGENT_TYPE_UNKNOWN = "unknown"
 
 
 class OperationName(Enum):
