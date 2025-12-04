@@ -6,7 +6,6 @@
 # cSpell:disable
 import json
 import io
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
@@ -15,7 +14,7 @@ from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentV
 class TestAgentCrudAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async()
     async def test_agents_crud_async(self, **kwargs):
         """
         Test CRUD operations for Agents.
