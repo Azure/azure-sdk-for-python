@@ -28,7 +28,7 @@ class TestSearchBatchingClientAsync:
     @await_prepared_test
     async def test_batch_queue(self):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
-            assert not(client._index_documents_batch is None)
+            assert not (client._index_documents_batch is None)
             await client.upload_documents([{"upload1": "doc"}])
             await client.delete_documents([{"delete1": "doc"}, {"delete2": "doc"}])
             await client.merge_documents([{"merge1": "doc"}, {"merge2": "doc"}, {"merge3": "doc"}])
@@ -40,9 +40,7 @@ class TestSearchBatchingClientAsync:
             assert len(client.actions) == 7
 
     @await_prepared_test
-    @mock.patch(
-        "azure.search.documents.aio._patch.SearchIndexingBufferedSender._process_if_needed"
-    )
+    @mock.patch("azure.search.documents.aio._patch.SearchIndexingBufferedSender._process_if_needed")
     async def test_process_if_needed(self, mock_process_if_needed):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL) as client:
             await client.upload_documents([{"upload1": "doc"}])
@@ -50,9 +48,7 @@ class TestSearchBatchingClientAsync:
         assert mock_process_if_needed.called
 
     @await_prepared_test
-    @mock.patch(
-        "azure.search.documents.aio._patch.SearchIndexingBufferedSender._cleanup"
-    )
+    @mock.patch("azure.search.documents.aio._patch.SearchIndexingBufferedSender._cleanup")
     async def test_context_manager(self, mock_cleanup):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
             await client.upload_documents([{"upload1": "doc"}])

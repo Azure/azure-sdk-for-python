@@ -38,7 +38,6 @@ class TestComplexField:
         assert fld.index_analyzer_name is None
         assert fld.synonym_map_names is None
 
-
     def test_collection(self):
         fld = ComplexField(name="foo", fields=[], collection=True)
         assert fld.name == "foo"

@@ -18,9 +18,7 @@ CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 class TestSearchClientAsync:
     @await_prepared_test
-    @mock.patch(
-        "azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post"
-    )
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
     async def test_get_count_reset_continuation_token(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = await client.search(search_text="search text")
@@ -34,9 +32,7 @@ class TestSearchClientAsync:
         assert not result._first_page_iterator_instance.continuation_token
 
     @await_prepared_test
-    @mock.patch(
-        "azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post"
-    )
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
     async def test_search_enable_elevated_read(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = await client.search(
@@ -54,9 +50,7 @@ class TestSearchClientAsync:
         assert mock_search_post.call_args[1]["x_ms_query_source_authorization"] == "aad:fake-user"
 
     @await_prepared_test
-    @mock.patch(
-        "azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post"
-    )
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
     async def test_get_facets_with_aggregations(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = await client.search(search_text="*")

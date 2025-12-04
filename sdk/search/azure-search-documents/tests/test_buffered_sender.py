@@ -24,7 +24,7 @@ class TestSearchBatchingClient:
 
     def test_batch_queue(self):
         with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
-            assert not(client._index_documents_batch is None)
+            assert not (client._index_documents_batch is None)
             client.upload_documents([{"upload1": "doc"}])
             client.delete_documents([{"delete1": "doc"}, {"delete2": "doc"}])
             client.merge_documents([{"merge1": "doc"}, {"merge2": "doc"}, {"merge3": "doc"}])
@@ -40,9 +40,7 @@ class TestSearchBatchingClient:
                 client._index_documents_batch.enqueue_actions(action)
             assert len(client.actions) == 7
 
-    @mock.patch(
-        "azure.search.documents._patch.SearchIndexingBufferedSender._process_if_needed"
-    )
+    @mock.patch("azure.search.documents._patch.SearchIndexingBufferedSender._process_if_needed")
     def test_process_if_needed(self, mock_process_if_needed):
         with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL) as client:
             client.upload_documents([{"upload1": "doc"}])

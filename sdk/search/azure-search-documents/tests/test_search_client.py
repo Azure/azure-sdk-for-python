@@ -118,9 +118,7 @@ class TestSearchClient:
         result.get_count()
         assert not result._first_page_iterator_instance.continuation_token
 
-    @mock.patch(
-        "azure.search.documents._operations._operations._SearchClientOperationsMixin._autocomplete_post"
-    )
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._autocomplete_post")
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = client.autocomplete(search_text="search text", suggester_name="sg")
@@ -135,7 +133,7 @@ class TestSearchClient:
         assert mock_count.called
         assert mock_count.call_args[0] == ()
         assert len(mock_count.call_args[1]) == 0
-        
+
     @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
     def test_get_facets_with_aggregations(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -206,9 +204,7 @@ class TestSearchClient:
         assert mock_suggest_post.call_args[0] == ()
         # assert mock_suggest_post.call_args[1]["suggest_request"].search_text == "search text"
 
-    @mock.patch(
-        "azure.search.documents._operations._operations._SearchClientOperationsMixin._autocomplete_post"
-    )
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._autocomplete_post")
     def test_autocomplete_query_argument_v2020_06_30(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
         result = client.autocomplete(search_text="search text", suggester_name="sg")
@@ -222,7 +218,9 @@ class TestSearchClient:
             client.autocomplete("bad_query")
             assert str(e) == "Expected a AutocompleteQuery for 'query', but got {}".format(repr("bad_query"))
 
-    @pytest.mark.parametrize("arg", [[], [{"doc1": "doc"}], [{"doc1": "doc"}, {"doc2": "doc"}]], ids=lambda x: str(len(x)) + " docs")
+    @pytest.mark.parametrize(
+        "arg", [[], [{"doc1": "doc"}], [{"doc1": "doc"}, {"doc2": "doc"}]], ids=lambda x: str(len(x)) + " docs"
+    )
     @pytest.mark.parametrize("method_name", CRUD_METHOD_NAMES)
     def test_add_method(self, arg, method_name):
         with mock.patch.object(SearchClient, "index_documents", return_value=None) as mock_index_documents:
