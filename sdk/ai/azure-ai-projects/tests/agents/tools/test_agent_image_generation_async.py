@@ -9,48 +9,28 @@ import os
 import base64
 import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy, RecordedTransport
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 from azure.core.exceptions import ResourceNotFoundError
 
 
-class TestAgentImageGeneration(TestBase):
+class TestAgentImageGenerationAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_image_generation(self, **kwargs):
-        """
-        Test agent with Image Generation tool.
-
-        This test verifies that an agent can:
-        1. Use ImageGenTool to generate images from text prompts
-        2. Return base64-encoded image data
-        3. Decode and validate the image format
-
-        Routes used in this test:
-
-        Action REST API Route                                Client Method
-        ------+---------------------------------------------+-----------------------------------
-        # Setup:
-        POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
-
-        # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (with ImageGenTool)
-
-        # Teardown:
-        DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
-        """
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_agent_image_generation_async(self, **kwargs):
 
         image_model_deployment = self.test_agents_tools_params["image_generation_model_deployment_name"]
         model = self.test_agents_params["model_deployment_name"]
 
-        with (
-            self.create_client(operation_group="agents", **kwargs) as project_client,
+        async with (
+            self.create_async_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
             # Check if the image model deployment exists in the project
             try:
-                deployment = project_client.deployments.get(image_model_deployment)
+                deployment = await project_client.deployments.get(image_model_deployment)
                 print(f"Image model deployment found: {deployment.name}")
             except ResourceNotFoundError:
                 pytest.fail(f"Image generation model '{image_model_deployment}' not available in this project")
@@ -61,7 +41,7 @@ class TestAgentImageGeneration(TestBase):
             openai_client.max_retries = 0
 
             # Create agent with image generation tool
-            agent = project_client.agents.create_version(
+            agent = await project_client.agents.create_version(
                 agent_name="image-gen-agent",
                 definition=PromptAgentDefinition(
                     model=model,
@@ -78,7 +58,7 @@ class TestAgentImageGeneration(TestBase):
             # Request image generation
             print("\nAsking agent to generate an image of a simple geometric shape...")
 
-            response = openai_client.responses.create(
+            response = await openai_client.responses.create(
                 input="Generate an image of a blue circle on a white background.",
                 extra_headers={
                     "x-ms-oai-image-generation-deployment": image_model_deployment
@@ -122,10 +102,10 @@ class TestAgentImageGeneration(TestBase):
 
             # Save the image to a file
             os.makedirs(".assets", exist_ok=True)
-            with open(".assets/generated_image_sync.png", "wb") as f:
+            with open(".assets/generated_image_async.png", "wb") as f:
                 f.write(image_bytes)
-            print("✓ Image saved to .assets/generated_image_sync.png")
+            print("✓ Image saved to .assets/generated_image_async.png")
 
             # Teardown
-            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
             print("Agent deleted")
