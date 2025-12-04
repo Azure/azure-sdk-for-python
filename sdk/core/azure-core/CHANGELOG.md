@@ -1,14 +1,12 @@
 # Release History
 
-## 1.36.1 (Unreleased)
+## 1.37.0(Unreleased)
 
 ### Features Added
 
+- Added `get_backcompat_attr` to `azure.core.serialization`. `get_backcompat_attr` gets the value of an attribute using backcompat attribute access.  #44084
+
 ### Breaking Changes
-
-### Bugs Fixed
-
-- Fix `attribute_list` and `as_attribute_dict` to return original model attribute name in cases where we pad the name now but used to not pad #44084
 
 ### Other Changes
 

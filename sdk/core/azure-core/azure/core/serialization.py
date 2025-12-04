@@ -20,7 +20,7 @@ __all__ = [
     "as_attribute_dict",
     "attribute_list",
     "TypeHandlerRegistry",
-    "get_old_attribute",
+    "get_backcompat_attr_name",
 ]
 TZ_UTC = timezone.utc
 
@@ -393,7 +393,7 @@ def attribute_list(obj: Any) -> List[str]:
         if flattened_attribute == attr_name:
             retval.extend(attribute_list(rest_field._class_type))
         else:
-            retval.append(_get_backcompat_name(rest_field, attr_name))
+            retval.append(attr_name)
     return retval
 
 
@@ -431,9 +431,9 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
                 readonly_props.add(rest_field._rest_name)
             if flattened_attribute == attr_name:
                 for fk, fv in rest_field._class_type._attr_to_rest_field.items():
-                    rest_to_attr[fv._rest_name] = _get_backcompat_name(fv, fk)
+                    rest_to_attr[fv._rest_name] = fk
             else:
-                rest_to_attr[rest_field._rest_name] = _get_backcompat_name(rest_field, attr_name)
+                rest_to_attr[rest_field._rest_name] = attr_name
         for k, v in obj.items():
             if exclude_readonly and k in readonly_props:  # pyright: ignore
                 continue
@@ -458,33 +458,34 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
         raise TypeError("Object must be a generated model instance.") from exc
 
 
-def get_old_attribute(model: Any, field_name: str) -> Any:
-    """Get the value of an attribute using backcompat attribute access.
+def get_backcompat_attr_name(model: Any, attr_name: str) -> str:
+    """Get the backcompat attribute name for a given attribute.
 
-    This function takes a field name that may be a backcompat name (original TSP name)
-    and returns the value from the corresponding actual attribute on the model.
+    This function takes an attribute name and returns the backcompat name (original TSP name)
+    if one exists, otherwise returns the attribute name itself.
 
     :param any model: The model instance.
-    :param str field_name: The backcompat attribute name (from attribute_list).
-    :return: The value of the attribute.
-    :rtype: any
+    :param str attr_name: The attribute name to get the backcompat name for.
+    :return: The backcompat attribute name (original TSP name) or the attribute name itself.
+    :rtype: str
     """
     if not is_generated_model(model):
         raise TypeError("Object must be a generated model instance.")
-
-    # Check if field_name is an original TSP name in the model
+    
+    # Check if attr_name exists in the model's attributes
     flattened_attribute = _get_flattened_attribute(model)
-    for attr_name, rest_field in model._attr_to_rest_field.items():
-        # Check if field_name matches this attribute's original TSP name (regardless of flattening)
-        if _get_backcompat_name(rest_field, attr_name) == field_name:
-            return getattr(model, attr_name)
-
-        # If this is a flattened attribute, check if field_name is an original TSP name inside it
-        if flattened_attribute == attr_name:
+    for field_attr_name, rest_field in model._attr_to_rest_field.items():
+        # Check if this is the attribute we're looking for
+        if field_attr_name == attr_name:
+            # Return the original TSP name if it exists, otherwise the attribute name
+            return _get_backcompat_name(rest_field, attr_name)
+        
+        # If this is a flattened attribute, check inside it
+        if flattened_attribute == field_attr_name:
             for fk, fv in rest_field._class_type._attr_to_rest_field.items():
-                if _get_backcompat_name(fv, fk) == field_name:
-                    # This is a flattened property - access the actual attribute name
-                    return getattr(model, fk)
-
-    # Fallback to direct attribute access
-    return getattr(model, field_name)
+                if fk == attr_name:
+                    # Return the original TSP name for this flattened property
+                    return _get_backcompat_name(fv, fk)
+    
+    # If not found in the model, just return the attribute name as-is
+    return attr_name
