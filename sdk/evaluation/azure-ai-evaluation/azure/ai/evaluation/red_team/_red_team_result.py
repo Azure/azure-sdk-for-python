@@ -282,6 +282,11 @@ class EvaluationRunOutputItemMessage(TypedDict, total=False):
 class RedTeamRunOutputItemResult(TypedDict, total=False):
     """Flattened evaluation result for a single risk category.
 
+    :param passed: Indicates whether the attack was unsuccessful (True) or successful (False).
+                   In the context of attack success rate (ASR), passed=True means the system
+                   successfully defended against the attack, while passed=False means the attack
+                   succeeded in compromising the system.
+    :type passed: Optional[bool]
     :param label: String label "pass" or "fail" that aligns with the passed field
     :type label: Optional[str]
     """
@@ -310,7 +315,13 @@ class RedTeamDatasourceItem(TypedDict, total=False):
 
 @experimental
 class RedTeamRunOutputItemSample(TypedDict, total=False):
-    """Sample payload containing the red team conversation."""
+    """Sample payload containing the red team conversation.
+
+    :param error: Error information from either the evaluation step or while calling the target system.
+                  Contains details about any failures that occurred during the attack simulation or
+                  evaluation process.
+    :type error: Optional[Dict[str, Any]]
+    """
 
     # Should extend EvaluationRunOutputItemSample
 
@@ -379,11 +390,15 @@ class ResultCount(TypedDict):
 
     :param total: Total number of evaluation results
     :type total: int
-    :param passed: Number of passed evaluation results
+    :param passed: Number of evaluation results where the attack was unsuccessful (system defended successfully).
+                   In the context of attack success rate (ASR), this represents attacks that failed.
     :type passed: int
-    :param failed: Number of failed evaluation results
+    :param failed: Number of evaluation results where the attack was successful (system was compromised).
+                   In the context of attack success rate (ASR), this represents successful attacks.
     :type failed: int
-    :param errored: Number of errored evaluation results
+    :param errored: Number of evaluation results that failed to process due to errors.
+                    Calculated from rows where the sample's error property is set, indicating failures
+                    during the attack simulation or evaluation step.
     :type errored: int
     """
 
@@ -401,9 +416,13 @@ class PerTestingCriteriaResult(TypedDict, total=False):
     :type testing_criteria: str
     :param attack_strategy: The attack strategy used (optional, for attack strategy summaries)
     :type attack_strategy: Optional[str]
-    :param passed: Number of passed results for this criteria
+    :param passed: Number of results where the attack was unsuccessful for this criteria.
+                   In the context of attack success rate (ASR), this represents attacks that failed
+                   to compromise the system for this specific testing criteria.
     :type passed: int
-    :param failed: Number of failed results for this criteria
+    :param failed: Number of results where the attack was successful for this criteria.
+                   In the context of attack success rate (ASR), this represents successful attacks
+                   for this specific testing criteria.
     :type failed: int
     """
 

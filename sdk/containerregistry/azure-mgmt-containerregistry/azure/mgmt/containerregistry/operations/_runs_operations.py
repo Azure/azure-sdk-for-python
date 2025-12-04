@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -31,7 +31,8 @@ from .._configuration import ContainerRegistryManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -59,7 +60,9 @@ def build_list_request(
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "registryName": _SERIALIZER.url(
             "registry_name", registry_name, "str", max_length=50, min_length=5, pattern=r"^[a-zA-Z0-9]*$"
         ),
@@ -96,7 +99,9 @@ def build_get_request(
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "registryName": _SERIALIZER.url(
             "registry_name", registry_name, "str", max_length=50, min_length=5, pattern=r"^[a-zA-Z0-9]*$"
         ),
@@ -131,7 +136,9 @@ def build_update_request(
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "registryName": _SERIALIZER.url(
             "registry_name", registry_name, "str", max_length=50, min_length=5, pattern=r"^[a-zA-Z0-9]*$"
         ),
@@ -151,7 +158,7 @@ def build_update_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_log_sas_url_request(
+def build_cancel_request(
     resource_group_name: str, registry_name: str, run_id: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -163,11 +170,13 @@ def build_get_log_sas_url_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/runs/{runId}/listLogSasUrl",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/runs/{runId}/cancel",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "registryName": _SERIALIZER.url(
             "registry_name", registry_name, "str", max_length=50, min_length=5, pattern=r"^[a-zA-Z0-9]*$"
         ),
@@ -185,7 +194,7 @@ def build_get_log_sas_url_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_cancel_request(
+def build_get_log_sas_url_request(
     resource_group_name: str, registry_name: str, run_id: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -197,11 +206,13 @@ def build_cancel_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/runs/{runId}/cancel",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/runs/{runId}/listLogSasUrl",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "registryName": _SERIALIZER.url(
             "registry_name", registry_name, "str", max_length=50, min_length=5, pattern=r"^[a-zA-Z0-9]*$"
         ),
@@ -251,10 +262,10 @@ class RunsOperations:
     ) -> ItemPaged["_models.Run"]:
         """Gets all the runs for a registry.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param filter: The runs filter to apply on the operation. Arithmetic operators are not
          supported. The allowed string function is 'contains'. All logical operators except 'Not',
@@ -320,7 +331,10 @@ class RunsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -331,10 +345,10 @@ class RunsOperations:
     def get(self, resource_group_name: str, registry_name: str, run_id: str, **kwargs: Any) -> _models.Run:
         """Gets the detailed information for a given run.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -376,7 +390,10 @@ class RunsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Run", pipeline_response.http_response)
@@ -399,10 +416,10 @@ class RunsOperations:
     ) -> _models.Run:
         """Patch the run properties.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -429,10 +446,10 @@ class RunsOperations:
     ) -> _models.Run:
         """Patch the run properties.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -457,10 +474,10 @@ class RunsOperations:
     ) -> _models.Run:
         """Patch the run properties.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -518,71 +535,13 @@ class RunsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Run", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_log_sas_url(
-        self, resource_group_name: str, registry_name: str, run_id: str, **kwargs: Any
-    ) -> _models.RunGetLogResult:
-        """Gets a link to download the run logs.
-
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param run_id: The run ID. Required.
-        :type run_id: str
-        :return: RunGetLogResult or the result of cls(response)
-        :rtype: ~azure.mgmt.containerregistry.models.RunGetLogResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
-        cls: ClsType[_models.RunGetLogResult] = kwargs.pop("cls", None)
-
-        _request = build_get_log_sas_url_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            run_id=run_id,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("RunGetLogResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -595,10 +554,10 @@ class RunsOperations:
     ) -> None:
         """Cancel an existing run.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -640,8 +599,75 @@ class RunsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get_log_sas_url(
+        self, resource_group_name: str, registry_name: str, run_id: str, **kwargs: Any
+    ) -> _models.RunGetLogResult:
+        """Gets a link to download the run logs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param registry_name: The name of the Registry. Required.
+        :type registry_name: str
+        :param run_id: The run ID. Required.
+        :type run_id: str
+        :return: RunGetLogResult or the result of cls(response)
+        :rtype: ~azure.mgmt.containerregistry.models.RunGetLogResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+        cls: ClsType[_models.RunGetLogResult] = kwargs.pop("cls", None)
+
+        _request = build_get_log_sas_url_request(
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            run_id=run_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("RunGetLogResult", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

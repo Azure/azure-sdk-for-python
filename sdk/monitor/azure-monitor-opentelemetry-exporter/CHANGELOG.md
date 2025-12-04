@@ -1,12 +1,34 @@
 # Release History
 
-## 1.0.0b45 (Unreleased)
+## 1.0.0b46 (Unreleased)
 
 ### Features Added
-- Added local storage support for multiple users on the same Linux system
-  ([#43483](https://github.com/Azure/azure-sdk-for-python/pull/43483))
 
 ### Breaking Changes
+- Fix to accommodate breaking log changes from Otel
+  ([#43626](https://github.com/Azure/azure-sdk-for-python/pull/43626))
+- Pin OpenTelemetry versions to guard against upstream logging breaking changes
+  ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
+
+### Bugs Fixed
+- Fixes LogDeprecated warnings - `LogDeprecatedInitWarning: LogRecord init with trace_id, span_id, and/or trace_flags is deprecated since 1.35.0. Use context instead`
+  ([#44090](https://github.com/Azure/azure-sdk-for-python/pull/44090))
+- Fixes issue #43442: SyntaxWarning: 'return' in a 'finally' block in azure-monitor-opentelemetry-exporter with Python 3.14
+  ([#44053](https://github.com/Azure/azure-sdk-for-python/pull/44053))
+
+### Other Changes
+- Commented OneSettings configuration manager temporarily to avoid user impact during feature testing.
+  ([#44179](https://github.com/Azure/azure-sdk-for-python/pull/44179))
+
+## 1.0.0b45 (2025-11-14)
+
+### Features Added
+- Added new log record processor to support Trace Based Sampling
+  ([#43811](https://github.com/Azure/azure-sdk-for-python/pull/43811))
+- Added Operation Name Propagation for Dependencies and Logs
+  ([#43588](https://github.com/Azure/azure-sdk-for-python/pull/43588))
+- Added local storage support for multiple users on the same Linux system
+  ([#43483](https://github.com/Azure/azure-sdk-for-python/pull/43483))
 
 ### Bugs Fixed
 - Modified logic for message body on Microsoft.ApplicationInsights.MessageData to include default message for messages with empty body and export logs
@@ -15,6 +37,8 @@
 ### Other Changes
 - Unpinned fixedint dependency
   ([#43475](https://github.com/Azure/azure-sdk-for-python/pull/43475))
+- Remove fixedint dependency
+  ([#43659](https://github.com/Azure/azure-sdk-for-python/pull/43659))
 
 ## 1.0.0b44 (2025-10-14)
 

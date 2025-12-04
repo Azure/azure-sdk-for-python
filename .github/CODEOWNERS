@@ -33,7 +33,7 @@
 # ServiceLabel: %AI
 
 # PRLabel: %AI
-/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @jhakulin
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @trrwilson
 
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
@@ -79,6 +79,12 @@
 
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @lmazuel
+
+# ServiceOwners: @amber-yujueWang @rhurey @xitzhang
+# ServiceLabel: %Speech Transcription
+
+# PRLabel: %Speech Transcription
+/sdk/cognitiveservices/azure-ai-transcription/                       @amber-yujueWang @rhurey @xitzhang
 
 # ServiceLabel: %Communication
 # PRLabel: %Communication
@@ -185,11 +191,11 @@
 
 # ServiceLabel: %Monitor - Distro
 # PRLabel: %Monitor - Distro
-/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
+/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss @hectorhdzg @rads-1996 @MSNev @JacksonWeber
 
 # ServiceLabel: %Monitor - Exporter
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
+/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @jeremydvoss @hectorhdzg @rads-1996 @MSNev @JacksonWeber
 
 # ServiceLabel: %Consumption
 # PRLabel: %Consumption
@@ -243,19 +249,19 @@
 
 # PRLabel: %AI Model Inference
 # ServiceLabel: %AI Model Inference %Service Attention
-/sdk/ai/azure-ai-inference/                                          @dargilco @trangevi @jhakulin
+/sdk/ai/azure-ai-inference/                                          @dargilco @trangevi @trrwilson
 
 # PRLabel: %AI Agents
 # ServiceLabel: %AI Agents %Service Attention
-/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
+/sdk/ai/azure-ai-agents/                                             @dargilco @trrwilson @trangevi @glharper @nick863 @howieleung
 
 # PRLabel: %AI Projects
 # ServiceLabel: %AI Projects %Service Attention
-/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
+/sdk/ai/azure-ai-projects/                                           @dargilco @trrwilson @trangevi @glharper @nick863 @howieleung @kingernupur
 
 # PRLabel: %Voice Live
 # ServiceLabel: %Voice Live %Service Attention
-/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
 
 
 # PRLabel: %HDInsight
@@ -319,6 +325,10 @@
 # ServiceLabel: %Operator Nexus - Network Cloud
 # PRLabel: %Operator Nexus - Network Cloud
 /sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
+
+# ServiceLabel: %Planetary Computer
+# PRLabel: %Planetary Computer
+/sdk/planetarycomputer/                                              @mandarinamdar @chahibi
 
 # AzureSdkOwners: @annatisch
 # ServiceLabel: %Azure Projects
@@ -402,15 +412,14 @@
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
-# ServiceOwners: @MikeyMCZ @Han-msft
 # ServiceLabel: %Cognitive - Translator
+# ServiceOwners: @jrjrguo @SG-MS
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/azure-ai-translation-document/                      @Han-msft
-/sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
+/sdk/translation/                                                    @jrjrguo @SG-MS
 
 # PRLabel: %Cognitive - Language
-/sdk/cognitivelanguage/                                              @quentinRobinson @wangyuantao
+/sdk/cognitivelanguage/                                              @quentinRobinson @bidisha-c @mikaelsitruk @sarkar-rajarshi @ahmedaashour
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/                                                   @sharathmalladi
@@ -834,15 +843,16 @@
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
+/eng/tools/                                                          @scbedd @mccoyp
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 /.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kashifkhan @Azure/azure-sdk-eng
+/.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
 
 /.config/1espt/                                                      @benbp @weshaggard
 /.devcontainer/                                                      @scbedd @mccoyp @benbp @weshaggard
 /.vscode/                                                            @scbedd @mccoyp @benbp @weshaggard
 
-/tools/                                                              @scbedd @mccoyp
 /scripts/                                                            @scbedd @mccoyp
 /scripts/breaking_changes_checker/                                   @catalinaperalta
 /doc/                                                                @scbedd @mccoyp
@@ -859,4 +869,4 @@
 /eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @iscai-msft
 
 /pylintrc                                                            @l0lawrence @scbedd @mccoyp
-/sdk/**/ci.yml                                                       @msyyc @lmazuel
+/sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd

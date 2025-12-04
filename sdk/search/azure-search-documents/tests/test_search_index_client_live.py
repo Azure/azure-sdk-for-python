@@ -4,13 +4,19 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from datetime import timedelta
+
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import (
     AnalyzeTextOptions,
     CorsOptions,
+    FreshnessScoringFunction,
+    FreshnessScoringParameters,
+    SearchField,
     SearchIndex,
+    ScoringFunctionAggregation,
     ScoringProfile,
     SimpleField,
     SearchFieldDataType,
@@ -42,7 +48,7 @@ class TestSearchIndexClient(AzureRecordedTestCase):
     def _test_get_service_statistics(self, client):
         result = client.get_service_statistics()
         assert isinstance(result, dict)
-        assert set(result.keys()) == {"counters", "limits"}
+        assert set(result.keys()) == {"counters", "indexers_runtime", "limits"}
 
     def _test_list_indexes_empty(self, client):
         result = client.list_indexes()
@@ -146,10 +152,14 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            client.create_or_update_index(index, match_condition=MatchConditions.IfNotModified)
+            client.create_or_update_index(
+                index, match_condition=MatchConditions.IfNotModified
+            )
 
     def _test_analyze_text(self, client, index_name):
-        analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
+        analyze_request = AnalyzeTextOptions(
+            text="One's <two/>", analyzer_name="standard.lucene"
+        )
         result = client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
 
@@ -183,3 +193,116 @@ class TestSearchIndexClient(AzureRecordedTestCase):
     def _test_delete_indexes(self, client):
         for index in client.list_indexes():
             client.delete_index(index)
+
+    @SearchEnvVarPreparer()
+    @recorded_by_proxy
+    def test_purview_enabled_index(self, search_service_endpoint, search_service_name):
+        del search_service_name  # unused
+        endpoint = search_service_endpoint
+        client = SearchIndexClient(endpoint, get_credential(), retry_backoff_factor=60)
+
+        index_name = self.get_resource_name("purview-index")
+        fields = [
+            SearchField(
+                name="id",
+                type=SearchFieldDataType.String,
+                key=True,
+                filterable=True,
+                sortable=True,
+            ),
+            SearchField(
+                name="sensitivityLabel",
+                type=SearchFieldDataType.String,
+                filterable=True,
+                sensitivity_label=True,
+            ),
+        ]
+        index = SearchIndex(name=index_name, fields=fields, purview_enabled=True)
+
+        created = client.create_index(index)
+        try:
+            assert created.purview_enabled is True
+            for field in created.fields:
+                if field.name == "sensitivityLabel":
+                    assert field.sensitivity_label is True
+                    break
+            else:
+                raise AssertionError("Expected sensitivityLabel field to be present")
+
+            fetched = client.get_index(index_name)
+            assert fetched.purview_enabled is True
+            for field in fetched.fields:
+                if field.name == "sensitivityLabel":
+                    assert field.sensitivity_label is True
+                    break
+            else:
+                raise AssertionError("Expected sensitivityLabel field to be present")
+        finally:
+            try:
+                client.delete_index(index_name)
+            except HttpResponseError:
+                pass
+
+    @SearchEnvVarPreparer()
+    @recorded_by_proxy
+    def test_scoring_profile_product_aggregation(
+        self, search_service_endpoint, search_service_name
+    ):
+        del search_service_name  # unused
+        endpoint = search_service_endpoint
+        client = SearchIndexClient(endpoint, get_credential(), retry_backoff_factor=60)
+
+        index_name = self.get_resource_name("agg-product")
+        fields = [
+            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+            SimpleField(
+                name="lastUpdated",
+                type=SearchFieldDataType.DateTimeOffset,
+                filterable=True,
+            ),
+        ]
+        scoring_profile = ScoringProfile(
+            name="product-score",
+            function_aggregation=ScoringFunctionAggregation.PRODUCT,
+            functions=[
+                FreshnessScoringFunction(
+                    field_name="lastUpdated",
+                    boost=2.5,
+                    parameters=FreshnessScoringParameters(
+                        boosting_duration=timedelta(days=7)
+                    ),
+                )
+            ],
+        )
+        index = SearchIndex(
+            name=index_name, fields=fields, scoring_profiles=[scoring_profile]
+        )
+
+        created = client.create_index(index)
+        try:
+            assert (
+                created.scoring_profiles[0].function_aggregation
+                == ScoringFunctionAggregation.PRODUCT
+            )
+
+            fetched = client.get_index(index_name)
+            assert (
+                fetched.scoring_profiles[0].function_aggregation
+                == ScoringFunctionAggregation.PRODUCT
+            )
+
+            fetched.scoring_profiles[0].function_aggregation = (
+                ScoringFunctionAggregation.SUM
+            )
+            client.create_or_update_index(index=fetched)
+
+            updated = client.get_index(index_name)
+            assert (
+                updated.scoring_profiles[0].function_aggregation
+                == ScoringFunctionAggregation.SUM
+            )
+        finally:
+            try:
+                client.delete_index(index_name)
+            except HttpResponseError:
+                pass

@@ -273,7 +273,7 @@ class AgentPool(SubResource):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -596,7 +596,7 @@ class AgentPool(SubResource):
         :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType
          is Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
          1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-         "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+         "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
         :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -4076,7 +4076,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4390,7 +4390,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType
          is Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
          1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-         "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+         "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
         :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -4643,7 +4643,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4963,7 +4963,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType
          is Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
          1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-         "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+         "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
         :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -8793,7 +8793,7 @@ class Snapshot(TrackedResource):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar vm_size: The size of the VM.
     :vartype vm_size: str

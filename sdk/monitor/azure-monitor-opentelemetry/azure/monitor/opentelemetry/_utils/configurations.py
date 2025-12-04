@@ -46,6 +46,7 @@ from azure.monitor.opentelemetry._constants import (
     VIEWS_ARG,
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
+    ENABLE_TRACE_BASED_SAMPLING_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry._version import VERSION
@@ -79,6 +80,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_enable_live_metrics(configurations)
     _default_enable_performance_counters(configurations)
     _default_views(configurations)
+    _default_enable_trace_based_sampling(configurations)
 
     return configurations
 
@@ -185,15 +187,16 @@ def _default_sampling_ratio(configurations):
 
     # Handle all other cases (no sampler type specified or unsupported sampler type)
     else:
-        configurations[SAMPLING_RATIO_ARG] = default_value
+        if configurations.get(SAMPLING_RATIO_ARG) is None:
+            configurations[SAMPLING_RATIO_ARG] = default_value
         if sampler_type is not None:
             _logger.error(  # pylint: disable=C
                 "Invalid argument for the sampler to be used for tracing. "
                 "Supported values are %s and %s. Defaulting to %s: %s",
                 RATE_LIMITED_SAMPLER,
                 FIXED_PERCENTAGE_SAMPLER,
-                OTEL_TRACES_SAMPLER,
-                OTEL_TRACES_SAMPLER_ARG,
+                FIXED_PERCENTAGE_SAMPLER,
+                configurations[SAMPLING_RATIO_ARG],
             )
 
 def _default_instrumentation_options(configurations):
@@ -248,3 +251,6 @@ def _is_instrumentation_enabled(configurations, lib_name):
     if "enabled" not in library_options:
         return False
     return library_options["enabled"] is True
+
+def _default_enable_trace_based_sampling(configurations):
+    configurations.setdefault(ENABLE_TRACE_BASED_SAMPLING_ARG, False)
