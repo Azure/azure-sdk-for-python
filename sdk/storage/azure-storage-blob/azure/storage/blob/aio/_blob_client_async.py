@@ -3337,6 +3337,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
+            Specifies the source encryption key to use to decrypt
+            the source data provided in the request.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the service. An encryption
             scope can be created using the Management API and referenced here by name. If a default

@@ -753,6 +753,7 @@ class BlobClient(  # type: ignore[misc]
         source_etag: Optional[str] = None,
         source_match_condition: Optional[MatchConditions] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,
