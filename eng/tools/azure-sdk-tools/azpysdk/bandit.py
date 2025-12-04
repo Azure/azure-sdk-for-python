@@ -46,16 +46,10 @@ class bandit(Check):
             self.install_dev_reqs(executable, args, package_dir)
 
             try:
-                install_into_venv(executable, [f"bandit=={BANDIT_VERSION}"], package_dir)
-            except CalledProcessError as e:
-                logger.error(f"Failed to install bandit: {e}")
-                return e.returncode
-
-            try:
                 # pbr is required by the pinned version of bandit
-                install_into_venv(executable, ["pbr"], package_dir)
+                install_into_venv(executable, [f"bandit=={BANDIT_VERSION}", "pbr"], package_dir)
             except CalledProcessError as e:
-                logger.error(f"Failed to install dependencies: {e}")
+                logger.error(f"Failed to install bandit and dependencies: {e}")
                 return e.returncode
 
             self.pip_freeze(executable)
