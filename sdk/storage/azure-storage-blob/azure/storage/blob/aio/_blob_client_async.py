@@ -433,11 +433,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :keyword ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
-            Encrypts the data on the service-side with the given key.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
+            Specifies the source encryption key to use to decrypt
+            the source data provided in the request.
             Use of customer-provided keys must be done over HTTPS.
-            As the encryption key itself is provided in the request,
-            a secure connection must be established to transfer the key.
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the service. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -461,8 +460,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: Response from creating a new block blob for a given URL.
         :rtype: Dict[str, Any]
         """
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        if self.scheme.lower() != 'https':
+            if kwargs.get('cpk') or kwargs.get('source_cpk'):
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_blob_from_url_options(
             source_url=source_url,
             metadata=metadata,
@@ -2115,6 +2115,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
+            Specifies the source encryption key to use to decrypt
+            the source data provided in the request.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the service. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -2144,8 +2148,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: Blob property dict.
         :rtype: Dict[str, Any]
         """
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        if self.scheme.lower() != 'https':
+            if kwargs.get('cpk') or kwargs.get('source_cpk'):
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _stage_block_from_url_options(
             block_id=block_id,
             source_url=source_url,
@@ -3035,6 +3040,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
+            Specifies the source encryption key to use to decrypt
+            the source data provided in the request.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the service. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -3067,8 +3076,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        if self.scheme.lower() != 'https':
+            if kwargs.get('cpk') or kwargs.get('source_cpk'):
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_pages_from_url_options(
             source_url=source_url,
             offset=offset,
@@ -3372,8 +3382,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        if self.scheme.lower() != 'https':
+            if kwargs.get('cpk') or kwargs.get('source_cpk'):
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _append_block_from_url_options(
             copy_source_url=copy_source_url,
             source_offset=source_offset,
