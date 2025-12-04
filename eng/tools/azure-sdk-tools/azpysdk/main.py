@@ -8,6 +8,7 @@ A minimal command-line interface using argparse. This file provides a
 from __future__ import annotations
 
 import argparse
+import shutil
 import sys
 import os
 from typing import Sequence, Optional
@@ -116,6 +117,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if not hasattr(args, "func"):
         parser.print_help()
         return 1
+
+    # default to uv if available
+    uv_path = shutil.which("uv")
+    if uv_path:
+        os.environ["TOX_PIP_IMPL"] = "uv"
 
     try:
         result = args.func(args)
