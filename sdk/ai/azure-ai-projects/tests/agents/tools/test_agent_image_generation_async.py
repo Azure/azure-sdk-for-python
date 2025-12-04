@@ -100,7 +100,7 @@ class TestAgentImageGenerationAsync(TestBase):
 
             print("\n✓ Agent successfully generated and returned a valid image")
 
-            # Save the image to a file
+            # Save the image to a file in the .assets directory (which is .gitignored)
             os.makedirs(".assets", exist_ok=True)
             with open(".assets/generated_image_async.png", "wb") as f:
                 f.write(image_bytes)
