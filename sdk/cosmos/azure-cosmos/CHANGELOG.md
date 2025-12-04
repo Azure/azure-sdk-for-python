@@ -23,6 +23,7 @@
 
 #### Other Changes
 * Added cross-regional retries for 503 (Service Unavailable) errors. See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
+* Added tests for multi-language support for vector search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
 
 ### 4.14.2 (2025-11-14)
 
