@@ -501,10 +501,14 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         return processed_settings
 
     def _process_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
-        feature_flag_value = json.loads(feature_flag.value)
-        self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
-        self._tracing_context.update_feature_filter_telemetry(feature_flag)
-        return feature_flag_value
+        try:
+            feature_flag_value = json.loads(feature_flag.value)
+            self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
+            self._tracing_context.update_feature_filter_telemetry(feature_flag)
+            return feature_flag_value
+        except json.JSONDecodeError:
+            # Feature flag value is not a valid JSON
+            return {}
 
     def _update_watched_settings(
         self, configuration_settings: List[ConfigurationSetting]
