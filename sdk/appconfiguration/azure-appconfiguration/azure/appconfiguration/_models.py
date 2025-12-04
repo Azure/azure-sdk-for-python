@@ -781,7 +781,11 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
         :raises StopIteration: If there are no more pages or if the page hasn't changed.
         """
         if self._etag_index >= len(self._etags):
-            raise StopIteration("No more etags to check")
+            # No more etags, but there might be new pages
+            if self._base_iterator.continuation_token is None:
+                raise StopIteration("End of paging")
+            # Yield remaining pages without etag check (they are new)
+            return next(self._base_iterator)
 
         request = HttpRequest(
             method="GET",
@@ -800,11 +804,12 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
             if self._base_iterator.continuation_token is None:
                 raise StopIteration("End of paging")
             return self.__next__()
-
-        # Page has changed (200), return it using the base iterator
-        return next(self._base_iterator)
-
-
+        elif response.status_code == 200:
+            # Page has changed (200), return it using the base iterator
+            return next(self._base_iterator)
+        else:
+            # Unexpected status code, raise an error
+            response.raise_for_status()
 class ConfigurationSettingPagedAsync(AsyncItemPaged):
     """An async iterable of ConfigurationSettings that supports etag-based change detection."""
 
@@ -864,7 +869,11 @@ class ConfigurationSettingEtagPageIteratorAsync(
         :raises StopAsyncIteration: If there are no more pages or if the page hasn't changed.
         """
         if self._etag_index >= len(self._etags):
-            raise StopAsyncIteration("No more etags to check")
+            # No more etags, but there might be new pages
+            if self._base_iterator.continuation_token is None:
+                raise StopAsyncIteration("End of paging")
+            # Yield remaining pages without etag check (they are new)
+            return await self._base_iterator.__anext__()
 
         request = HttpRequest(
             method="GET",
@@ -883,6 +892,9 @@ class ConfigurationSettingEtagPageIteratorAsync(
             if self._base_iterator.continuation_token is None:
                 raise StopAsyncIteration("End of paging")
             return await self.__anext__()
-
-        # Page has changed (200), return it using the base iterator
-        return await self._base_iterator.__anext__()
+        elif response.status_code == 200:
+            # Page has changed (200), return it using the base iterator
+            return await self._base_iterator.__anext__()
+        else:
+            # Unexpected status code, raise an error
+            response.raise_for_status()
