@@ -4883,9 +4883,6 @@ class IndexerExecutionResult(_Model):
     :ivar mode: The mode the indexer is running in. Known values are: "indexingAllDocs",
      "indexingResetDocs", and "indexingResync".
     :vartype mode: str or ~azure.search.documents.indexes.models.IndexingMode
-    :ivar current_state: All of the state that defines and dictates the indexer's current
-     execution.
-    :vartype current_state: ~azure.search.documents.indexes.models.IndexerCurrentState
     :ivar error_message: The error message indicating the top-level error, if any.
     :vartype error_message: str
     :ivar start_time: The start time of this indexer execution.
@@ -4919,8 +4916,6 @@ class IndexerExecutionResult(_Model):
     mode: Optional[Union[str, "_models.IndexingMode"]] = rest_field(visibility=["read"])
     """The mode the indexer is running in. Known values are: \"indexingAllDocs\",
      \"indexingResetDocs\", and \"indexingResync\"."""
-    current_state: Optional["_models.IndexerCurrentState"] = rest_field(name="currentState", visibility=["read"])
-    """All of the state that defines and dictates the indexer's current execution."""
     error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
     """The error message indicating the top-level error, if any."""
     start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")

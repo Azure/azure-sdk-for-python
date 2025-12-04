@@ -1204,7 +1204,7 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Web document reference.
     :vartype type: str or ~azure.search.documents.knowledgebase.models.WEB
-    :ivar url: The url the reference data originated from. Required.
+    :ivar url: The url the reference data originated from.
     :vartype url: str
     :ivar title: The title of the web document.
     :vartype title: str
@@ -1212,8 +1212,8 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
 
     type: Literal[KnowledgeBaseReferenceType.WEB] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. Web document reference."""
-    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The url the reference data originated from. Required."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The url the reference data originated from."""
     title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The title of the web document."""
 
@@ -1223,9 +1223,9 @@ class KnowledgeBaseWebReference(KnowledgeBaseReference, discriminator="web"):
         *,
         id: str,  # pylint: disable=redefined-builtin
         activity_source: int,
-        url: str,
         source_data: Optional[dict[str, Any]] = None,
         reranker_score: Optional[float] = None,
+        url: Optional[str] = None,
         title: Optional[str] = None,
     ) -> None: ...
 
