@@ -29,6 +29,7 @@ RATE_LIMITED_SAMPLER = "microsoft.rate_limited"
 FIXED_PERCENTAGE_SAMPLER = "microsoft.fixed.percentage"
 SAMPLING_TRACES_PER_SECOND_ARG = "traces_per_second"
 ENABLE_TRACE_BASED_SAMPLING_ARG = "enable_trace_based_sampling_for_logs"
+BROWSER_SDK_LOADER_CONFIG_ARG = "browser_sdk_loader_config"
 
 # --------------------Autoinstrumentation Configuration------------------------------------------
 

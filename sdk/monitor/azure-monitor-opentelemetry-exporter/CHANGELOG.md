@@ -2,6 +2,8 @@
 
 ## 1.0.0b46 (2025-12-04)
 
+- Add Browser SDK loader SDK Stats feature bit
+
 ### Breaking Changes
 - Fix to accommodate breaking log changes from Otel
   ([#43626](https://github.com/Azure/azure-sdk-for-python/pull/43626))

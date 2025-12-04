@@ -28,6 +28,7 @@ from azure.monitor.opentelemetry._constants import (
     _AZURE_VM_RESOURCE_DETECTOR_NAME,
     _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _PREVIEW_INSTRUMENTED_LIBRARIES,
+    BROWSER_SDK_LOADER_CONFIG_ARG,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -81,6 +82,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_enable_performance_counters(configurations)
     _default_views(configurations)
     _default_enable_trace_based_sampling(configurations)
+    _default_browser_sdk_loader(configurations)
 
     return configurations
 
@@ -233,6 +235,17 @@ def _default_views(configurations):
     configurations.setdefault(VIEWS_ARG, [])
 
 
+def _default_browser_sdk_loader(configurations):
+    """Set default browser SDK loader configuration.
+
+    :param configurations: Configuration dictionary to update.
+    :type configurations: dict
+    """
+    # Use cast to Dict[str, Any] to avoid MyPy ConfigurationValue Union type issues
+    from typing import cast, Any
+    configurations.setdefault(BROWSER_SDK_LOADER_CONFIG_ARG, cast(Dict[str, Any], {}))
+
+
 def _get_otel_disabled_instrumentations():
     disabled_instrumentation = environ.get(OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, "")
     disabled_instrumentation = disabled_instrumentation.split(",")
@@ -245,7 +258,7 @@ def _is_instrumentation_enabled(configurations, lib_name):
     if INSTRUMENTATION_OPTIONS_ARG not in configurations:
         return False
     instrumentation_options = configurations[INSTRUMENTATION_OPTIONS_ARG]
-    if not lib_name in instrumentation_options:
+    if lib_name not in instrumentation_options:
         return False
     library_options = instrumentation_options[lib_name]
     if "enabled" not in library_options:
