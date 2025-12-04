@@ -699,8 +699,8 @@ class ConfigurationSettingPaged(ItemPaged):
         return super(ConfigurationSettingPaged, self).by_page(continuation_token=continuation_token)
 
 
-class ConfigurationSettingEtagPageIterator:
-    """A page iterator that checks etags before returning pages."""
+class _BaseConfigurationSettingEtagPageIterator:
+    """Base class for etag page iterators with shared helper methods."""
 
     def __init__(
         self,
@@ -728,6 +728,48 @@ class ConfigurationSettingEtagPageIterator:
         self._tags_filter = tags_filter
         self._base_iterator = base_iterator
 
+    def _build_query_params(self) -> Dict[str, Union[str, List[str]]]:
+        """Build query parameters for the request.
+
+        :return: Dictionary of query parameters
+        :rtype: dict[str, str or list[str]]
+        """
+        query_params: Dict[str, Union[str, List[str]]] = {
+            "api-version": self._client._impl._config.api_version  # pylint: disable=protected-access
+        }
+        if self._key_filter:
+            query_params["key"] = self._key_filter
+        if self._label_filter:
+            query_params["label"] = self._label_filter
+        if self._tags_filter:
+            query_params["tags"] = self._tags_filter
+        return query_params
+
+    def _build_request_url(self) -> str:
+        """Build the request URL based on continuation token.
+
+        :return: The constructed request URL
+        :rtype: str
+        """
+        if self._base_iterator.continuation_token is None:
+            query_string = urlencode(self._build_query_params(), doseq=True)
+            return f"{self._client._impl._client._base_url}/kv?{query_string}"  # pylint: disable=protected-access
+        base_url = self._client._impl._client._base_url  # pylint: disable=protected-access
+        token = self._base_iterator.continuation_token
+        return f"{base_url}{token}" if not token.startswith("http") else token
+
+    def _update_continuation_token(self, link: Optional[str]) -> None:
+        """Update the continuation token from the Link header.
+
+        :param link: The Link header value from the HTTP response
+        :type link: str or None
+        """
+        self._base_iterator.continuation_token = link[1 : link.index(">")] if link else None
+
+
+class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIterator):
+    """A page iterator that checks etags before returning pages."""
+
     def __iter__(self):
         return self
 
@@ -741,50 +783,20 @@ class ConfigurationSettingEtagPageIterator:
         if self._etag_index >= len(self._etags):
             raise StopIteration("No more etags to check")
 
-        # Check if this page has changed using the etag
-        query_params: Dict[str, Union[str, List[str]]] = {
-            "api-version": self._client._impl._config.api_version
-        }  # pylint: disable=protected-access
-
-        if self._key_filter:
-            query_params["key"] = self._key_filter
-
-        if self._label_filter:
-            query_params["label"] = self._label_filter
-
-        if self._tags_filter:
-            query_params["tags"] = self._tags_filter
-
-        if self._base_iterator.continuation_token is None:
-            # First page
-            query_string = urlencode(query_params, doseq=True)
-            request_url = (
-                f"{self._client._impl._client._base_url}/kv?{query_string}"  # pylint: disable=protected-access
-            )
-        else:
-            # Subsequent pages using continuation token
-            request_url = (
-                f"{self._client._impl._client._base_url}{self._base_iterator.continuation_token}"  # pylint: disable=protected-access
-                if not self._base_iterator.continuation_token.startswith("http")
-                else self._base_iterator.continuation_token
-            )
-
         request = HttpRequest(
             method="GET",
-            url=request_url,
+            url=self._build_request_url(),
             headers={
                 "If-None-Match": self._etags[self._etag_index],
                 "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
             },
         )
         response = self._client.send_request(request)
-
         self._etag_index += 1
 
         if response.status_code == 304:
             # Page hasn't changed, skip to next
-            link = response.headers.get("Link", None)
-            self._base_iterator.continuation_token = link[1 : link.index(">")] if link else None
+            self._update_continuation_token(response.headers.get("Link", None))
             if self._base_iterator.continuation_token is None:
                 raise StopIteration("End of paging")
             return self.__next__()
@@ -836,34 +848,10 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
         return super(ConfigurationSettingPagedAsync, self).by_page(continuation_token=continuation_token)
 
 
-class ConfigurationSettingEtagPageIteratorAsync:  # pylint: disable=name-too-long
+class ConfigurationSettingEtagPageIteratorAsync(
+    _BaseConfigurationSettingEtagPageIterator
+):  # pylint: disable=name-too-long
     """An async page iterator that checks etags before returning pages."""
-
-    def __init__(
-        self,
-        client: Any,
-        etags: List[str],
-        base_iterator: Any,
-        key_filter: Optional[str] = None,
-        label_filter: Optional[str] = None,
-        tags_filter: Optional[List[str]] = None,
-    ) -> None:
-        """Initialize the async etag-checking page iterator.
-
-        :param client: The client instance to use for checking etags
-        :param etags: List of etags to check against
-        :param base_iterator: The base async page iterator to wrap
-        :param key_filter: Key filter for configuration settings
-        :param label_filter: Label filter for configuration settings
-        :param tags_filter: Tags filter for configuration settings
-        """
-        self._client = client
-        self._etags = etags
-        self._etag_index = 0
-        self._key_filter = key_filter
-        self._label_filter = label_filter
-        self._tags_filter = tags_filter
-        self._base_iterator = base_iterator
 
     def __aiter__(self):
         return self
@@ -878,46 +866,20 @@ class ConfigurationSettingEtagPageIteratorAsync:  # pylint: disable=name-too-lon
         if self._etag_index >= len(self._etags):
             raise StopAsyncIteration("No more etags to check")
 
-        # Check if this page has changed using the etag
-        query_params: Dict[str, Union[str, List[str]]] = {"api-version": self._client._impl._config.api_version}
-
-        if self._key_filter:
-            query_params["key"] = self._key_filter
-
-        if self._label_filter:
-            query_params["label"] = self._label_filter
-
-        if self._tags_filter:
-            query_params["tags"] = self._tags_filter
-
-        if self._base_iterator.continuation_token is None:
-            # First page
-            query_string = urlencode(query_params, doseq=True)
-            request_url = f"{self._client._impl._client._base_url}/kv?{query_string}"
-        else:
-            # Subsequent pages using continuation token
-            request_url = (
-                f"{self._client._impl._client._base_url}{self._base_iterator.continuation_token}"
-                if not self._base_iterator.continuation_token.startswith("http")
-                else self._base_iterator.continuation_token
-            )
-
         request = HttpRequest(
             method="GET",
-            url=request_url,
+            url=self._build_request_url(),
             headers={
                 "If-None-Match": self._etags[self._etag_index],
                 "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
             },
         )
         response = await self._client.send_request(request)
-
         self._etag_index += 1
 
         if response.status_code == 304:
             # Page hasn't changed, skip to next
-            link = response.headers.get("Link", None)
-            self._base_iterator.continuation_token = link[1 : link.index(">")] if link else None
+            self._update_continuation_token(response.headers.get("Link", None))
             if self._base_iterator.continuation_token is None:
                 raise StopAsyncIteration("End of paging")
             return await self.__anext__()
