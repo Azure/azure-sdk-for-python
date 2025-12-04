@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.caches.begin_update(
+    response = client.caches.begin_update(
         resource_group_name="myRG",
         account_name="account1",
         pool_name="pool1",
         cache_name="cache1",
         body={"properties": {"size": 214748364800}},
     ).result()
+    print(response)
 
 
 # x-ms-original-file: 2025-09-01-preview/Caches_Update.json
