@@ -91,7 +91,7 @@ class whl(Check):
 
             pytest_args = self._build_pytest_args(package_dir, args)
             pytest_command = ["-m", "pytest", *pytest_args]
-            pytest_result = self.run_venv_command(executable, pytest_command, cwd=package_dir, immediately_dump=True)
+            pytest_result = self.run_venv_command(executable, pytest_command, cwd=staging_directory, immediately_dump=True)
 
             if pytest_result.returncode != 0:
                 if pytest_result.returncode == 5 and is_error_code_5_allowed(package_dir, package_name):
@@ -139,6 +139,7 @@ class whl(Check):
         junit_path = os.path.join(package_dir, f"test-junit-{args.command}.xml")
 
         default_args = [
+            f"{package_dir}",
             "-rsfE",
             f"--junitxml={junit_path}",
             "--verbose",
