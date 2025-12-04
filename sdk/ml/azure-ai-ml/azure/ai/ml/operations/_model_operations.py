@@ -357,6 +357,12 @@ class ModelOperations(_ScopeDependentOperations):
                 name=name, workspace_name=self._workspace_name, **self._scope_kwargs
             )
         )
+        
+    def _get(self, name: str, version: Optional[str] = None) -> Union[ModelVersion, ModelVersionData]:  # name:latest
+        if self._registry_name:
+            return self._get_with_registry(name, version) 
+        else: 
+            return self._get_with_workspace(name, version)
 
     @monitor_with_activity(ops_logger, "Model.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
@@ -396,7 +402,7 @@ class ModelOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
         # TODO: We should consider adding an exception trigger for internal_model=None
-        model_version_resource = self._get_with_registry(name, version) if self._registry_name else self._get_with_workspace(name, version)
+        model_version_resource = self._get(name, version)
 
         return Model._from_rest_object(model_version_resource)
 

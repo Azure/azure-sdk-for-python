@@ -140,8 +140,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     @classmethod
-    def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
-        rest_model_version: ModelVersionProperties = model_rest_object.properties
+    def _from_rest_object(cls, model_rest_object: Union[ModelVersion, ModelVersionData]) -> "Model":
+        rest_model_version: Union[ModelVersionProperties, ModelVersionDetails] = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
         model_stage = rest_model_version.stage if hasattr(rest_model_version, "stage") else None
         model_system_metadata = (
@@ -204,30 +204,48 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         model.version = None
         return model
 
-    def _to_rest_object(self) -> ModelVersionData:
-        model_version = ModelVersionDetails(
-            description=self.description,
-            tags=self.tags,
-            properties=self.properties,
-            flavors=(
-                {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
-            ),  # flatten OrderedDict to dict
-            model_type=self.type,
-            model_uri=self.path,
-            stage=self.stage,
-            is_anonymous=self._is_anonymous,
-        )
-        model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
-        
-        # Set default_deployment_template if it exists
+    def _to_rest_object(self) -> Union[ModelVersionData, ModelVersion]:
         if self.default_deployment_template:
+            model_version = ModelVersionDetails(
+                description=self.description,
+                tags=self.tags,
+                properties=self.properties,
+                flavors=(
+                    {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
+                ),  # flatten OrderedDict to dict
+                model_type=self.type,
+                model_uri=self.path,
+                stage=self.stage,
+                is_anonymous=self._is_anonymous,
+            )
+            model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
+            
             model_version.default_deployment_template = ModelVersionDefaultDeploymentTemplate(
                 asset_id=self.default_deployment_template.asset_id
             )
+            model_version_resource = ModelVersionData(properties=model_version) 
+            
+            return model_version_resource
+        else:
+            model_version = ModelVersionProperties(
+                description=self.description,
+                tags=self.tags,
+                properties=self.properties,
+                flavors=(
+                    {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
+                ),  # flatten OrderedDict to dict
+                model_type=self.type,
+                model_uri=self.path,
+                stage=self.stage,
+                is_anonymous=self._is_anonymous,
+            )
+            model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
+                
+        # Set default_deployment_template if it exists
 
-        model_version_resource = ModelVersionData(properties=model_version)
+            model_version_resource = ModelVersion(properties=model_version) if se
 
-        return model_version_resource
+            return model_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         # datastore_arm_id is null for registry scenario, so capture the full_storage_path
