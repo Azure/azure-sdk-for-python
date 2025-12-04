@@ -124,12 +124,12 @@ def package_needs_update(
         else package_row.get(LATEST_GA_DATE_COL)
     )
 
+    logger.debug(f"Checking {'new package' if is_new else 'outdated package'} for package {package_row.get(PACKAGE_COL)} with against date: {compareDate}")
+
     if not compareDate:
         logger.debug(
-            f"Package {package_row.get(PACKAGE_COL)} missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}."
+            f"Package {package_row.get(PACKAGE_COL)} is skipped due to missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}."
         )
-
-        logger.info(f"Checking {'new package' if is_new else 'outdated package'} for package {package_row.get(PACKAGE_COL)} with against date: {compareDate}")
 
         # TODO need to verify that this is the desired behavior / we're not skipping needed packages
 
@@ -158,11 +158,8 @@ def get_package_data_from_pypi(package_name: str) -> Tuple[Optional[str], Option
             
             # Get the latest version
             latest_version = data["info"]["version"]
-            print("hello")
             # Construct download URL from releases data
             if latest_version in data["releases"] and data["releases"][latest_version]:
-                print("world")
-                print(data["releases"][latest_version])
                 # Get the source distribution (sdist) if available, otherwise get the first file
                 files = data["releases"][latest_version]
                 source_dist = next((f for f in files if f["packagetype"] == "sdist"), None)
@@ -240,7 +237,6 @@ def update_package_versions(
             curr_download_uri = checkout_item.get('download_uri', '')
             latest_version, download_uri = get_package_data_from_pypi(pkg_name)
 
-            # TODO is this right
             if curr_download_uri != download_uri:
                 # version needs update 
                 logger.info(f"Package {pkg_name} download_uri mismatch with PyPi, updating {curr_download_uri} to {download_uri}")
