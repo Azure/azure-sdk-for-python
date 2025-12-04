@@ -471,7 +471,7 @@ def get_backcompat_attr_name(model: Any, attr_name: str) -> str:
     """
     if not is_generated_model(model):
         raise TypeError("Object must be a generated model instance.")
-    
+
     # Check if attr_name exists in the model's attributes
     flattened_attribute = _get_flattened_attribute(model)
     for field_attr_name, rest_field in model._attr_to_rest_field.items():
@@ -479,13 +479,13 @@ def get_backcompat_attr_name(model: Any, attr_name: str) -> str:
         if field_attr_name == attr_name:
             # Return the original TSP name if it exists, otherwise the attribute name
             return _get_backcompat_name(rest_field, attr_name)
-        
+
         # If this is a flattened attribute, check inside it
         if flattened_attribute == field_attr_name:
             for fk, fv in rest_field._class_type._attr_to_rest_field.items():
                 if fk == attr_name:
                     # Return the original TSP name for this flattened property
                     return _get_backcompat_name(fv, fk)
-    
+
     # If not found in the model, just return the attribute name as-is
     return attr_name
