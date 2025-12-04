@@ -1,5 +1,17 @@
 # Release History
 
+## 1.14.0 (Unreleased)
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Updated CodeVulnerability and UngroundedAttributes evaluators for RedTeam to use the binary true/false scoring pattern so their results align with service responses.
+
+### Features Added
+
+### Other Changes
+
 ## 1.13.7 (2025-11-14)
 
 ### Bugs Fixed
