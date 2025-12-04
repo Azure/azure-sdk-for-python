@@ -29,7 +29,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType, ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -326,7 +326,7 @@ class ModelOperations(_ScopeDependentOperations):
             ).result()
         )
 
-    def _get(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
+    def _get_with_registry(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
         if version:
             return (
                 self._model_versions_operation.get(
@@ -335,8 +335,16 @@ class ModelOperations(_ScopeDependentOperations):
                     registry_name=self._registry_name,
                     **self._scope_kwargs,
                 )
-                if self._registry_name
-                else self._model_versions_operation.get(
+            )
+
+        return (
+            self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
+        )
+
+    def _get_with_workspace(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
+        if version:
+            return (
+                self._model_versions_operation.get(
                     name=name,
                     version=version,
                     workspace_name=self._workspace_name,
@@ -345,9 +353,7 @@ class ModelOperations(_ScopeDependentOperations):
             )
 
         return (
-            self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
-            if self._registry_name
-            else self._model_container_operation.get(
+            self._model_container_operation.get(
                 name=name, workspace_name=self._workspace_name, **self._scope_kwargs
             )
         )
@@ -390,7 +396,7 @@ class ModelOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
         # TODO: We should consider adding an exception trigger for internal_model=None
-        model_version_resource = self._get(name, version)
+        model_version_resource = self._get_with_registry(name, version) if self._registry_name else self._get_with_workspace(name, version)
 
         return Model._from_rest_object(model_version_resource)
 
