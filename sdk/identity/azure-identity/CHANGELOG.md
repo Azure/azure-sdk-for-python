@@ -12,6 +12,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where an unhelpful TypeError was raised during Entra ID token requests that returned certain non-JSON responses. Now, a ClientAuthenticationError is raised with the full response for better troubleshooting. ([#44258](https://github.com/Azure/azure-sdk-for-python/pull/44258))
+
 ### Other Changes
 
 ## 1.26.0b1 (2025-11-07)
