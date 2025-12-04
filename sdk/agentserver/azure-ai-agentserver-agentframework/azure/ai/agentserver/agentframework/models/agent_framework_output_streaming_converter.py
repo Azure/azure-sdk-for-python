@@ -49,7 +49,7 @@ from .utils.async_iter import chunk_on_change, peek
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
 
-    async def convert_contents(self, contents: AsyncIterable[BaseContent]) -> AsyncIterable[ResponseStreamEvent]:  # pylint: disable=unused-argument
+    async def convert_contents(self, contents: AsyncIterable[BaseContent], author_name: str) -> AsyncIterable[ResponseStreamEvent]:  # pylint: disable=unused-argument
         raise NotImplementedError
 
 
@@ -59,7 +59,7 @@ class _TextContentStreamingState(_BaseStreamingState):
     def __init__(self, parent: AgentFrameworkOutputStreamingConverter):
         self._parent = parent
 
-    async def convert_contents(self, contents: AsyncIterable[TextContent]) -> AsyncIterable[ResponseStreamEvent]:
+    async def convert_contents(self, contents: AsyncIterable[TextContent], author_name: str) -> AsyncIterable[ResponseStreamEvent]:
         item_id = self._parent.context.id_generator.generate_message_id()
         output_index = self._parent.next_output_index()
 
@@ -70,7 +70,7 @@ class _TextContentStreamingState(_BaseStreamingState):
                 id=item_id,
                 status="in_progress",
                 content=[],
-                created_by=self._parent._created_by,
+                created_by=self._parent._build_created_by(author_name),
             ),
         )
 
@@ -116,7 +116,7 @@ class _TextContentStreamingState(_BaseStreamingState):
             id=item_id, 
             status="completed", 
             content=[content_part],
-            created_by=self._parent._created_by,
+            created_by=self._parent._build_created_by(author_name),
         )
         yield ResponseOutputItemDoneEvent(
             sequence_number=self._parent.next_sequence(),
@@ -134,7 +134,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         self._parent = parent
 
     async def convert_contents(
-            self, contents: AsyncIterable[FunctionCallContent]
+            self, contents: AsyncIterable[FunctionCallContent], author_name: str
         ) -> AsyncIterable[ResponseStreamEvent]:
         content_by_call_id = {}
         ids_by_call_id = {}
@@ -156,7 +156,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
                         call_id=content.call_id,
                         name=content.name,
                         arguments="",
-                        created_by=self._parent._created_by,
+                        created_by=self._parent._build_created_by(author_name),
                     ),
                 )
             else:
@@ -187,7 +187,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
                 call_id=call_id,
                 name=content.name,
                 arguments=args,
-                created_by=self._parent._created_by,
+                created_by=self._parent._build_created_by(author_name),
             )
             yield ResponseOutputItemDoneEvent(
                 sequence_number=self._parent.next_sequence(),
@@ -205,7 +205,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         self._parent = parent
 
     async def convert_contents(
-            self, contents: AsyncIterable[FunctionResultContent]
+            self, contents: AsyncIterable[FunctionResultContent], author_name: str
         ) -> AsyncIterable[ResponseStreamEvent]:
         async for content in contents:
             item_id = self._parent.context.id_generator.generate_function_output_id()
@@ -220,7 +220,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
                 status="completed",
                 call_id=content.call_id,
                 output=output,
-                created_by=self._parent._created_by,
+                created_by=self._parent._build_created_by(author_name),
             )
 
             yield ResponseOutputItemAddedEvent(
@@ -263,7 +263,6 @@ class AgentFrameworkOutputStreamingConverter:
         self._response_id = self._context.response_id
         self._response_created_at = None
         self._completed_output_items: List[ItemResource] = []
-        self._created_by: dict = {}
 
     def next_sequence(self) -> int:
         self._sequence += 1
@@ -302,7 +301,7 @@ class AgentFrameworkOutputStreamingConverter:
             if not has_value:
                 continue
 
-            first, _ = first_tuple  # Extract content from (content, author_name) tuple
+            first, author_name = first_tuple  # Extract content and author_name from tuple
 
             state = None
             if isinstance(first, TextContent):
@@ -330,7 +329,7 @@ class AgentFrameworkOutputStreamingConverter:
                 async for content, _ in contents_with_author:
                     yield content
             
-            async for content in state.convert_contents(extract_contents()):
+            async for content in state.convert_contents(extract_contents(), author_name):
                 yield content
 
         yield ResponseCompletedEvent(
@@ -341,8 +340,8 @@ class AgentFrameworkOutputStreamingConverter:
     def _build_created_by(self, author_name: str) -> dict:
         agent_dict = {
             "type": "agent_id",
-            "name": author_name if author_name else "",
-            "version": "",  # Default to empty string
+            "name": author_name or "",
+            "version": "",
         }
         
         return {
@@ -351,17 +350,12 @@ class AgentFrameworkOutputStreamingConverter:
         }
 
     async def _read_updates(self, updates: AsyncIterable[AgentRunResponseUpdate]) -> AsyncIterable[tuple[BaseContent, str]]:
-        current_author_name: str = ""
-        
         async for update in updates:
             if not update.contents:
                 continue
 
-            # Extract author_name from update (only once on first update)
-            if not self._created_by:
-                author_name = getattr(update, "author_name", "") or ""
-                current_author_name = author_name
-                self._created_by = self._build_created_by(author_name)
+            # Extract author_name from each update
+            author_name = getattr(update, "author_name", "") or ""
 
             accepted_types = (TextContent,
                               FunctionCallContent,
@@ -370,7 +364,7 @@ class AgentFrameworkOutputStreamingConverter:
                               ErrorContent)
             for content in update.contents:
                 if isinstance(content, accepted_types):
-                    yield (content, current_author_name)
+                    yield (content, author_name)
 
     def _ensure_response_started(self) -> None:
         if not self._response_created_at:

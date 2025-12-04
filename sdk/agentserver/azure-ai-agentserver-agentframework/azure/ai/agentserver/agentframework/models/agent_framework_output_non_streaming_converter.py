@@ -33,7 +33,6 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         self._context = context
         self._response_id = None
         self._response_created_at = None
-        self._created_by: dict = {}
 
     def _ensure_response_started(self) -> None:
         if not self._response_id:
@@ -49,7 +48,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         
         agent_dict = {
             "type": "agent_id",
-            "name": author_name if author_name else "",
+            "name": author_name or "",
             "version": "",  # Default to empty string
         }
         
@@ -57,15 +56,6 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             "agent": agent_dict,
             "response_id": self._response_id,
         }
-
-    def _new_assistant_message_item(self, message_text: str) -> ResponsesAssistantMessageItemResource:
-        item_content = self._build_item_content_output_text(message_text)
-        return ResponsesAssistantMessageItemResource(
-            id=self._context.id_generator.generate_message_id(), 
-            status="completed", 
-            content=[item_content],
-            created_by=self._created_by,
-        )
 
     def transform_output_for_response(self, response: AgentRunResponse) -> OpenAIResponse:
         """Build an OpenAIResponse capturing all supported content types.
@@ -85,16 +75,6 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         logger.debug("Transforming non-streaming response (messages=%d)", len(response.messages))
         self._ensure_response_started()
 
-        # Extract author_name from the first message that has one
-        author_name = ""
-        for message in response.messages:
-            msg_author_name = getattr(message, "author_name", None)
-            if msg_author_name:
-                author_name = msg_author_name
-                break
-        
-        self._created_by = self._build_created_by(author_name)
-
         completed_items: List[dict] = []
 
         for i, message in enumerate(response.messages):
@@ -102,9 +82,11 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             contents = getattr(message, "contents", None)
             if not contents:
                 continue
+            # Extract author_name from this message
+            msg_author_name = getattr(message, "author_name", None) or ""
             for j, content in enumerate(contents):
                 logger.debug("  content index=%d in message=%d type=%s", j, i, type(content).__name__)
-                self._append_content_item(content, completed_items)
+                self._append_content_item(content, completed_items, msg_author_name)
 
         response_data = self._construct_response_data(completed_items)
         openai_response = OpenAIResponse(response_data)
@@ -117,7 +99,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
 
     # ------------------------- helper append methods -------------------------
 
-    def _append_content_item(self, content: Any, sink: List[dict]) -> None:
+    def _append_content_item(self, content: Any, sink: List[dict], author_name: str) -> None:
         """Dispatch a content object to the appropriate append helper.
 
         Adding this indirection keeps the main transform method compact and makes it
@@ -127,20 +109,22 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         :type content: Any
         :param sink: The list to append the converted content dict to.
         :type sink: List[dict]
+        :param author_name: The author name for the created_by field.
+        :type author_name: str
 
         :return: None
         :rtype: None
         """
         if isinstance(content, TextContent):
-            self._append_text_content(content, sink)
+            self._append_text_content(content, sink, author_name)
         elif isinstance(content, FunctionCallContent):
-            self._append_function_call_content(content, sink)
+            self._append_function_call_content(content, sink, author_name)
         elif isinstance(content, FunctionResultContent):
-            self._append_function_result_content(content, sink)
+            self._append_function_result_content(content, sink, author_name)
         else:
             logger.debug("unsupported content type skipped: %s", type(content).__name__)
 
-    def _append_text_content(self, content: TextContent, sink: List[dict]) -> None:
+    def _append_text_content(self, content: TextContent, sink: List[dict], author_name: str) -> None:
         text_value = getattr(content, "text", None)
         if not text_value:
             return
@@ -159,12 +143,12 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                         "logprobs": [],
                     }
                 ],
-                "created_by": self._created_by,
+                "created_by": self._build_created_by(author_name),
             }
         )
         logger.debug("    added message item id=%s text_len=%d", item_id, len(text_value))
 
-    def _append_function_call_content(self, content: FunctionCallContent, sink: List[dict]) -> None:
+    def _append_function_call_content(self, content: FunctionCallContent, sink: List[dict], author_name: str) -> None:
         name = getattr(content, "name", "") or ""
         arguments = getattr(content, "arguments", "")
         if not isinstance(arguments, str):
@@ -182,7 +166,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                 "call_id": call_id,
                 "name": name,
                 "arguments": arguments or "",
-                "created_by": self._created_by,
+                "created_by": self._build_created_by(author_name),
             }
         )
         logger.debug(
@@ -193,7 +177,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             len(arguments or ""),
         )
 
-    def _append_function_result_content(self, content: FunctionResultContent, sink: List[dict]) -> None:
+    def _append_function_result_content(self, content: FunctionResultContent, sink: List[dict], author_name: str) -> None:
         # Coerce the function result into a simple display string.
         result = []
         raw = getattr(content, "result", None)
@@ -211,7 +195,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                 "status": "completed",
                 "call_id": call_id,
                 "output": json.dumps(result) if len(result) > 0 else "",
-                "created_by": self._created_by,
+                "created_by": self._build_created_by(author_name),
             }
         )
         logger.debug(
