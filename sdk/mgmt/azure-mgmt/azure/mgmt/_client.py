@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING, cast
+from typing import Any, Optional, TYPE_CHECKING, cast, Dict, Type
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
@@ -23,7 +23,233 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
+class ServiceProviderFactory:
+    """Base factory class for service providers with HTTP operations."""
+    
+    def __init__(self, client: "ManagementClient", service_provider: str, subscription_id: str = None):
+        self.client = client
+        self.service_provider = service_provider
+        # Use provided subscription_id or fall back to client's default
+        self.subscription_id = subscription_id or client._config.subscription_id
+        self.base_url = f"/subscriptions/{self.subscription_id}/providers/{service_provider}"
+    
+    def get(self, url: str, **kwargs: Any) -> HttpResponse:
+        """Send a GET request.
+        
+        :param url: The relative URL to send the request to. Can be absolute or relative to provider.
+        :type url: str
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
+        request = HttpRequest("GET", full_url)
+        return self.client._send_request(request, **kwargs)
+
+    def post(self, url: str, *, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
+        """Send a POST request.
+        
+        :param url: The relative URL to send the request to. Can be absolute or relative to provider.
+        :type url: str
+        :keyword json: JSON data to send in the request body.
+        :keyword data: Data to send in the request body.
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
+        request = HttpRequest("POST", full_url)
+        if json is not None:
+            request.set_json_body(json)
+        elif data is not None:
+            request.set_bytes_body(data)
+        return self.client._send_request(request, **kwargs)
+
+    def put(self, url: str, *, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
+        """Send a PUT request.
+        
+        :param url: The relative URL to send the request to. Can be absolute or relative to provider.
+        :type url: str
+        :keyword json: JSON data to send in the request body.
+        :keyword data: Data to send in the request body.
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
+        request = HttpRequest("PUT", full_url)
+        if json is not None:
+            request.set_json_body(json)
+        elif data is not None:
+            request.set_bytes_body(data)
+        return self.client._send_request(request, **kwargs)
+
+    def patch(self, url: str, *, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
+        """Send a PATCH request.
+        
+        :param url: The relative URL to send the request to. Can be absolute or relative to provider.
+        :type url: str
+        :keyword json: JSON data to send in the request body.
+        :keyword data: Data to send in the request body.
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
+        request = HttpRequest("PATCH", full_url)
+        if json is not None:
+            request.set_json_body(json)
+        elif data is not None:
+            request.set_bytes_body(data)
+        return self.client._send_request(request, **kwargs)
+
+    def delete(self, url: str, **kwargs: Any) -> HttpResponse:
+        """Send a DELETE request.
+        
+        :param url: The relative URL to send the request to. Can be absolute or relative to provider.
+        :type url: str
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
+        request = HttpRequest("DELETE", full_url)
+        return self.client._send_request(request, **kwargs)
+
+    def head(self, url: str, **kwargs: Any) -> HttpResponse:
+        """Send a HEAD request.
+        
+        :param url: The relative URL to send the request to. Can be absolute or relative to provider.
+        :type url: str
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
+        request = HttpRequest("HEAD", full_url)
+        return self.client._send_request(request, **kwargs)
+
+    def options(self, url: str, **kwargs: Any) -> HttpResponse:
+        """Send an OPTIONS request.
+        
+        :param url: The relative URL to send the request to. Can be absolute or relative to provider.
+        :type url: str
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        full_url = url if url.startswith('/') else f"{self.base_url}/{url}"
+        request = HttpRequest("OPTIONS", full_url)
+        return self.client._send_request(request, **kwargs)
+    
+    # Higher-level resource management methods
+    def get_resource(self, resource_type: str, resource_name: str = None, resource_group: str = None, **kwargs: Any) -> HttpResponse:
+        """Get a resource or list resources of a specific type.
+        
+        :param resource_type: The type of resource (e.g., 'virtualMachines')
+        :type resource_type: str
+        :param resource_name: Optional name of specific resource
+        :type resource_name: str
+        :param resource_group: Optional resource group name for scoped resources
+        :type resource_group: str
+        """
+        if resource_group:
+            url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/{self.service_provider}/{resource_type}"
+        else:
+            url = f"{self.base_url}/{resource_type}"
+        
+        if resource_name:
+            url += f"/{resource_name}"
+        return self.get(url, **kwargs)
+    
+    def create_resource(self, resource_type: str, resource_name: str, resource_data: Any, resource_group: str = None, **kwargs: Any) -> HttpResponse:
+        """Create a new resource.
+        
+        :param resource_type: The type of resource (e.g., 'virtualMachines')
+        :type resource_type: str
+        :param resource_name: Name of the resource to create
+        :type resource_name: str
+        :param resource_data: Resource configuration data
+        :param resource_group: Optional resource group name for scoped resources
+        :type resource_group: str
+        """
+        if resource_group:
+            url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/{self.service_provider}/{resource_type}/{resource_name}"
+        else:
+            url = f"{self.base_url}/{resource_type}/{resource_name}"
+        return self.put(url, json=resource_data, **kwargs)
+    
+    def update_resource(self, resource_type: str, resource_name: str, resource_data: Any, resource_group: str = None, **kwargs: Any) -> HttpResponse:
+        """Update an existing resource.
+        
+        :param resource_type: The type of resource (e.g., 'virtualMachines')
+        :type resource_type: str
+        :param resource_name: Name of the resource to update
+        :type resource_name: str
+        :param resource_data: Resource configuration data
+        :param resource_group: Optional resource group name for scoped resources
+        :type resource_group: str
+        """
+        if resource_group:
+            url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/{self.service_provider}/{resource_type}/{resource_name}"
+        else:
+            url = f"{self.base_url}/{resource_type}/{resource_name}"
+        return self.patch(url, json=resource_data, **kwargs)
+    
+    def delete_resource(self, resource_type: str, resource_name: str, resource_group: str = None, **kwargs: Any) -> HttpResponse:
+        """Delete a resource.
+        
+        :param resource_type: The type of resource (e.g., 'virtualMachines')
+        :type resource_type: str
+        :param resource_name: Name of the resource to delete
+        :type resource_name: str
+        :param resource_group: Optional resource group name for scoped resources
+        :type resource_group: str
+        """
+        if resource_group:
+            url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/{self.service_provider}/{resource_type}/{resource_name}"
+        else:
+            url = f"{self.base_url}/{resource_type}/{resource_name}"
+        return self.delete(url, **kwargs)
+
+class NetworkFactory(ServiceProviderFactory):
+    """Factory for Microsoft.Network service provider."""
+    
+    def __init__(self, client: "ManagementClient", subscription_id: str = None):
+        super().__init__(client, "Microsoft.Network", subscription_id)
+    
+    def virtual_networks(self, resource_group: str, vnet_name: str = None, **kwargs: Any) -> HttpResponse:
+        """Manage virtual networks."""
+        return self.get_resource("virtualNetworks", vnet_name, resource_group, **kwargs)
+    
+    def create_virtual_network(self, resource_group: str, vnet_name: str, vnet_config: Any, **kwargs: Any) -> HttpResponse:
+        """Create a virtual network."""
+        return self.create_resource("virtualNetworks", vnet_name, vnet_config, resource_group, **kwargs)
+    
+    def public_ip_addresses(self, resource_group: str, ip_name: str = None, **kwargs: Any) -> HttpResponse:
+        """Manage public IP addresses."""
+        return self.get_resource("publicIPAddresses", ip_name, resource_group, **kwargs)
+    
+    def create_public_ip(self, resource_group: str, ip_name: str, ip_config: Any, **kwargs: Any) -> HttpResponse:
+        """Create a public IP address."""
+        return self.create_resource("publicIPAddresses", ip_name, ip_config, resource_group, **kwargs)
+    
+    def network_security_groups(self, resource_group: str, nsg_name: str = None, **kwargs: Any) -> HttpResponse:
+        """Manage network security groups."""
+        return self.get_resource("networkSecurityGroups", nsg_name, resource_group, **kwargs)
+    
+    def create_network_security_group(self, resource_group: str, nsg_name: str, nsg_config: Any, **kwargs: Any) -> HttpResponse:
+        """Create a network security group."""
+        return self.create_resource("networkSecurityGroups", nsg_name, nsg_config, resource_group, **kwargs)
+
+
 class ManagementClient:  # pylint: disable=too-many-instance-attributes
+    """Azure Management Client with service provider factory support."""
+    
+    # Registry of available service provider factories
+    _service_factories: Dict[str, Type[ServiceProviderFactory]] = {
+        "Microsoft.Network": NetworkFactory,
+    }
 
     def __init__(
         self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
@@ -57,107 +283,41 @@ class ManagementClient:  # pylint: disable=too-many-instance-attributes
             ]
         self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
 
-    def get(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Send a GET request.
+    def __call__(self, service_provider: str, subscription_id: str = None) -> ServiceProviderFactory:
+        """Create a service provider factory.
         
-        :param url: The URL to send the request to. Required.
-        :type url: str
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call.
-        :rtype: ~azure.core.rest.HttpResponse
+        :param service_provider: The name of the service provider (e.g., 'Microsoft.Compute')
+        :type service_provider: str
+        :param subscription_id: Optional subscription ID. If not provided, uses client's default.
+        :type subscription_id: str
+        :return: A factory instance for the specified service provider
+        :rtype: ServiceProviderFactory
         """
-        request = HttpRequest("GET", url)
-        return self._send_request(request, **kwargs)
+        if service_provider in self._service_factories:
+            return self._service_factories[service_provider](self, subscription_id)
+        else:
+            # Return a generic factory for unsupported service providers
+            return ServiceProviderFactory(self, service_provider, subscription_id)
 
-    def post(self, url: str, *, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
-        """Send a POST request.
+    @classmethod
+    def register_service_factory(cls, service_provider: str, factory_class: Type[ServiceProviderFactory]) -> None:
+        """Register a new service provider factory.
         
-        :param url: The URL to send the request to. Required.
-        :type url: str
-        :keyword json: JSON data to send in the request body.
-        :keyword data: Data to send in the request body.
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call.
-        :rtype: ~azure.core.rest.HttpResponse
+        :param service_provider: The name of the service provider
+        :type service_provider: str
+        :param factory_class: The factory class for the service provider
+        :type factory_class: Type[ServiceProviderFactory]
         """
-        request = HttpRequest("POST", url)
-        if json is not None:
-            request.set_json_body(json)
-        elif data is not None:
-            request.set_bytes_body(data)
-        return self._send_request(request, **kwargs)
+        cls._service_factories[service_provider] = factory_class
 
-    def put(self, url: str, *, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
-        """Send a PUT request.
+    @classmethod
+    def get_supported_providers(cls) -> list[str]:
+        """Get a list of supported service providers.
         
-        :param url: The URL to send the request to. Required.
-        :type url: str
-        :keyword json: JSON data to send in the request body.
-        :keyword data: Data to send in the request body.
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call.
-        :rtype: ~azure.core.rest.HttpResponse
+        :return: List of supported service provider names
+        :rtype: list[str]
         """
-        request = HttpRequest("PUT", url)
-        if json is not None:
-            request.set_json_body(json)
-        elif data is not None:
-            request.set_bytes_body(data)
-        return self._send_request(request, **kwargs)
-
-    def patch(self, url: str, *, json: Any = None, data: Any = None, **kwargs: Any) -> HttpResponse:
-        """Send a PATCH request.
-        
-        :param url: The URL to send the request to. Required.
-        :type url: str
-        :keyword json: JSON data to send in the request body.
-        :keyword data: Data to send in the request body.
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call.
-        :rtype: ~azure.core.rest.HttpResponse
-        """
-        request = HttpRequest("PATCH", url)
-        if json is not None:
-            request.set_json_body(json)
-        elif data is not None:
-            request.set_bytes_body(data)
-        return self._send_request(request, **kwargs)
-
-    def delete(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Send a DELETE request.
-        
-        :param url: The URL to send the request to. Required.
-        :type url: str
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call.
-        :rtype: ~azure.core.rest.HttpResponse
-        """
-        request = HttpRequest("DELETE", url)
-        return self._send_request(request, **kwargs)
-
-    def head(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Send a HEAD request.
-        
-        :param url: The URL to send the request to. Required.
-        :type url: str
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call.
-        :rtype: ~azure.core.rest.HttpResponse
-        """
-        request = HttpRequest("HEAD", url)
-        return self._send_request(request, **kwargs)
-
-    def options(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Send an OPTIONS request.
-        
-        :param url: The URL to send the request to. Required.
-        :type url: str
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call.
-        :rtype: ~azure.core.rest.HttpResponse
-        """
-        request = HttpRequest("OPTIONS", url)
-        return self._send_request(request, **kwargs)
+        return list(cls._service_factories.keys())
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
