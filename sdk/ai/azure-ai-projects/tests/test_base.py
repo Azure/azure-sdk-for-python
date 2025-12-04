@@ -7,7 +7,7 @@ import random
 import re
 import functools
 import json
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, Final
 from azure.ai.projects.models import (
     Connection,
     ConnectionType,
@@ -62,7 +62,22 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
+    azure_ai_projects_tests_bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
+    azure_ai_projects_tests_ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    azure_ai_projects_tests_ai_search_index_name="sanitized-index-name",
+    azure_ai_projects_tests_mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
+    azure_ai_projects_tests_image_model_deployment_name="gpt-image-1-mini",
 )
+
+# Fine-tuning job type constants
+SFT_JOB_TYPE: Final[str] = "sft"
+DPO_JOB_TYPE: Final[str] = "dpo"
+RFT_JOB_TYPE: Final[str] = "rft"
+
+# Training type constants
+STANDARD_TRAINING_TYPE: Final[str] = "Standard"
+GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
+DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
 
 
 class TestBase(AzureRecordedTestCase):
@@ -122,10 +137,6 @@ class TestBase(AzureRecordedTestCase):
         "sft": {
             "openai": {
                 "model_name": "gpt-4.1",
-                "deployment": {
-                    "deployment_name": "gpt-4-1-fine-tuned-test",
-                    "pre_finetuned_model": "ft:gpt-4.1:azure-ai-test::ABCD1234",
-                },
             },
             "oss": {"model_name": "Ministral-3B"},
             "training_file_name": "sft_training_set.jsonl",

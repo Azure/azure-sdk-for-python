@@ -92,6 +92,13 @@ omit_function_dict = {
 
 
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    """
+    Unzips a zip or tar.gz file to a given location.
+
+    :param path_to_zip_file: The path to the zip or tar.gz file.
+    :param extract_location: The directory where the contents will be extracted.
+    :return: The path to the directory where the archive was extracted.
+    """
     if path_to_zip_file.endswith(".zip"):
         with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
             zip_ref.extractall(extract_location)

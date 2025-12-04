@@ -61,6 +61,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "avsDataStore": "str",
                                 "backupId": "str",
                                 "baremetalTenantId": "str",
+                                "breakthroughMode": "str",
                                 "capacityPoolResourceId": "str",
                                 "cloneProgress": 0,
                                 "coolAccess": bool,
@@ -69,6 +70,10 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "coolnessPeriod": 0,
                                 "dataProtection": {
                                     "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
+                                    "ransomwareProtection": {
+                                        "actualRansomwareProtectionState": "str",
+                                        "desiredRansomwareProtectionState": "str",
+                                    },
                                     "replication": {
                                         "destinationReplications": [
                                             {
@@ -79,6 +84,10 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                             }
                                         ],
                                         "endpointType": "str",
+                                        "externalReplicationSetupInfo": "str",
+                                        "externalReplicationSetupStatus": "str",
+                                        "mirrorState": "str",
+                                        "relationshipStatus": "str",
                                         "remotePath": {
                                             "externalHostName": "str",
                                             "serverName": "str",
@@ -129,7 +138,10 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "isRestoring": bool,
                                 "kerberosEnabled": bool,
                                 "keyVaultPrivateEndpointResourceId": "str",
+                                "language": "str",
+                                "largeVolumeType": "str",
                                 "ldapEnabled": bool,
+                                "ldapServerType": "str",
                                 "maximumNumberOfFiles": 0,
                                 "mountTargets": [
                                     {
