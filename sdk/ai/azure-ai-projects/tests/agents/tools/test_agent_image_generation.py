@@ -9,7 +9,7 @@ import os
 import base64
 import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -17,10 +17,7 @@ from azure.core.exceptions import ResourceNotFoundError
 class TestAgentImageGeneration(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_image_generation(self, **kwargs):
         """
         Test agent with Image Generation tool.
@@ -44,11 +41,7 @@ class TestAgentImageGeneration(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        # Get the image model deployment name from environment variable
-        image_model_deployment = os.environ.get(
-            "AZURE_AI_PROJECTS_TESTS_IMAGE_MODEL_DEPLOYMENT_NAME", "gpt-image-1-mini"
-        )
-
+        image_model_deployment = self.test_agents_tools_params["image_generation_model_deployment_name"]
         model = self.test_agents_params["model_deployment_name"]
 
         with (
@@ -60,9 +53,9 @@ class TestAgentImageGeneration(TestBase):
                 deployment = project_client.deployments.get(image_model_deployment)
                 print(f"Image model deployment found: {deployment.name}")
             except ResourceNotFoundError:
-                pytest.skip(f"Image generation model '{image_model_deployment}' not available in this project")
+                pytest.fail(f"Image generation model '{image_model_deployment}' not available in this project")
             except Exception as e:
-                pytest.skip(f"Unable to verify image model deployment: {e}")
+                pytest.fail(f"Unable to verify image model deployment: {e}")
 
             # Disable retries for faster failure when service returns 500
             openai_client.max_retries = 0
@@ -126,6 +119,11 @@ class TestAgentImageGeneration(TestBase):
             print(f"✓ Image size is reasonable ({len(image_bytes):,} bytes)")
 
             print("\n✓ Agent successfully generated and returned a valid image")
+
+            # Save the image to a file
+            with open("generated_image.png", "wb") as f:
+                f.write(image_bytes)
+            print("✓ Image saved to generated_image.png")
 
             # Teardown
             project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
