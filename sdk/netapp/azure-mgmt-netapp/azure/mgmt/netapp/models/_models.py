@@ -2020,8 +2020,9 @@ class CacheProperties(_Model):
      range 50GiB to 1PiB. Values expressed in bytes as multiples of 1GiB. Required.
     :vartype size: int
     :ivar export_policy: Set of export policy rules.
-    :vartype export_policy: list[~azure.mgmt.netapp.models.ExportPolicyRule]
-    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype export_policy: ~azure.mgmt.netapp.models.CachePropertiesExportPolicy
+    :ivar protocol_types: Set of supported protocol types, which include NFSv3, NFSv4 and SMB
+     protocol.
     :vartype protocol_types: list[str or ~azure.mgmt.netapp.models.ProtocolTypes]
     :ivar provisioning_state: Azure lifecycle management. Known values are: "Creating", "Updating",
      "Deleting", "Failed", "Succeeded", and "Canceled".
@@ -2096,14 +2097,14 @@ class CacheProperties(_Model):
     size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum storage quota allowed for a file system in bytes. Valid values are in the range 50GiB
      to 1PiB. Values expressed in bytes as multiples of 1GiB. Required."""
-    export_policy: Optional[list["_models.ExportPolicyRule"]] = rest_field(
+    export_policy: Optional["_models.CachePropertiesExportPolicy"] = rest_field(
         name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Set of export policy rules."""
     protocol_types: Optional[list[Union[str, "_models.ProtocolTypes"]]] = rest_field(
         name="protocolTypes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Set of protocol types, default NFSv3, CIFS for SMB protocol."""
+    """Set of supported protocol types, which include NFSv3, NFSv4 and SMB protocol."""
     provisioning_state: Optional[Union[str, "_models.CacheProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -2203,7 +2204,7 @@ class CacheProperties(_Model):
         peering_subnet_resource_id: str,
         encryption_key_source: Union[str, "_models.EncryptionKeySource"],
         origin_cluster_information: "_models.OriginClusterInformation",
-        export_policy: Optional[list["_models.ExportPolicyRule"]] = None,
+        export_policy: Optional["_models.CachePropertiesExportPolicy"] = None,
         protocol_types: Optional[list[Union[str, "_models.ProtocolTypes"]]] = None,
         kerberos: Optional[Union[str, "_models.KerberosState"]] = None,
         smb_settings: Optional["_models.SmbSettings"] = None,
@@ -2214,6 +2215,36 @@ class CacheProperties(_Model):
         cifs_change_notifications: Optional[Union[str, "_models.CifsChangeNotifyState"]] = None,
         global_file_locking: Optional[Union[str, "_models.GlobalFileLockingState"]] = None,
         write_back: Optional[Union[str, "_models.EnableWriteBackState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CachePropertiesExportPolicy(_Model):
+    """Set of export policy rules.
+
+    :ivar rules: Export policy rule.
+    :vartype rules: list[~azure.mgmt.netapp.models.ExportPolicyRule]
+    """
+
+    rules: Optional[list["_models.ExportPolicyRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Export policy rule."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rules: Optional[list["_models.ExportPolicyRule"]] = None,
     ) -> None: ...
 
     @overload
@@ -2269,8 +2300,9 @@ class CacheUpdateProperties(_Model):
      range 50GiB to 1PiB. Values expressed in bytes as multiples of 1GiB.
     :vartype size: int
     :ivar export_policy: Set of export policy rules.
-    :vartype export_policy: list[~azure.mgmt.netapp.models.ExportPolicyRule]
-    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype export_policy: ~azure.mgmt.netapp.models.CachePropertiesExportPolicy
+    :ivar protocol_types: Set of supported protocol types, which include NFSv3, NFSv4 and SMB
+     protocol.
     :vartype protocol_types: list[str or ~azure.mgmt.netapp.models.ProtocolTypes]
     :ivar smb_settings: SMB information for the cache.
     :vartype smb_settings: ~azure.mgmt.netapp.models.SmbSettings
@@ -2292,14 +2324,14 @@ class CacheUpdateProperties(_Model):
     size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum storage quota allowed for a file system in bytes. Valid values are in the range 50GiB
      to 1PiB. Values expressed in bytes as multiples of 1GiB."""
-    export_policy: Optional[list["_models.ExportPolicyRule"]] = rest_field(
+    export_policy: Optional["_models.CachePropertiesExportPolicy"] = rest_field(
         name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Set of export policy rules."""
     protocol_types: Optional[list[Union[str, "_models.ProtocolTypes"]]] = rest_field(
         name="protocolTypes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Set of protocol types, default NFSv3, CIFS for SMB protocol."""
+    """Set of supported protocol types, which include NFSv3, NFSv4 and SMB protocol."""
     smb_settings: Optional["_models.SmbSettings"] = rest_field(
         name="smbSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2330,7 +2362,7 @@ class CacheUpdateProperties(_Model):
         self,
         *,
         size: Optional[int] = None,
-        export_policy: Optional[list["_models.ExportPolicyRule"]] = None,
+        export_policy: Optional["_models.CachePropertiesExportPolicy"] = None,
         protocol_types: Optional[list[Union[str, "_models.ProtocolTypes"]]] = None,
         smb_settings: Optional["_models.SmbSettings"] = None,
         throughput_mibps: Optional[float] = None,

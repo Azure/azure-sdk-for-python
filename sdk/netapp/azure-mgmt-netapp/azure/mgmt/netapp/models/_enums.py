@@ -718,7 +718,7 @@ class PolicyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Export policy rule."""
+    """Set of supported protocol types, which include NFSv3, NFSv4 and SMB protocol."""
 
     NF_SV3 = "NFSv3"
     """NFSv3 protocol type"""
