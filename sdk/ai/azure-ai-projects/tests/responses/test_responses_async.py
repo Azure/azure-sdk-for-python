@@ -9,6 +9,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 
+
 class TestResponsesAsync(TestBase):
 
     # To run this test:

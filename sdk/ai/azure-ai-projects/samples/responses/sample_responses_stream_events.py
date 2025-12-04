@@ -6,14 +6,14 @@
 """
 DESCRIPTION:
     This sample demonstrates how to run a basic streaming responses operation
-    using OpenAI client `.responses.stream()` method.
+    using OpenAI client `.responses.create()` method with `stream=True`.
 
-    See also https://platform.openai.com/docs/api-reference/responses/create?lang=python
+    See also https://platform.openai.com/docs/guides/streaming-responses?api-mode=responses&lang=python
 
-    Note also the alternative streaming approach shown in sample_responses_stream_events.py.
+    Note also the alternative streaming approach shown in sample_responses_stream_manager.py.
 
 USAGE:
-    python sample_responses_stream_manager.py
+    python sample_responses_stream_events.py
 
     Before running the sample:
 
@@ -28,6 +28,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 
@@ -41,14 +42,15 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    with openai_client.responses.stream(
+    with openai_client.responses.create(
         model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
         input=[
             {"role": "user", "content": "Tell me about the capital city of France"},
         ],
-    ) as response_stream_manager:
+        stream=True,
+    ) as response_stream_events:
 
-        for event in response_stream_manager:
+        for event in response_stream_events:
             if event.type == "response.created":
                 print(f"Stream response created with ID: {event.response.id}\n")
             elif event.type == "response.output_text.delta":
