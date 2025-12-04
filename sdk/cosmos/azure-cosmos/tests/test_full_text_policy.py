@@ -313,6 +313,8 @@ class TestFullTextPolicy(unittest.TestCase):
             assert e.status_code == 400
             assert "Missing path in full-text index specification at index (0)" in e.http_error_message
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     def test_supported_languages_in_full_text_policy(self):
         # Create the container with English as the default language
         full_text_policy = {
@@ -344,6 +346,8 @@ class TestFullTextPolicy(unittest.TestCase):
         finally:
             self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     def test_default_language_fallback(self):
         # Use centralized dictionaries
         full_text_policy = {
@@ -389,6 +393,8 @@ class TestFullTextPolicy(unittest.TestCase):
         finally:
             self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     def test_mismatched_default_and_path_languages(self):
         # Create the initial container with English as the default language
         full_text_policy = {
@@ -429,6 +435,8 @@ class TestFullTextPolicy(unittest.TestCase):
             # Delete the container at the end of the test
             self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     def test_replace_full_text_policy_with_different_languages(self):
         # Create the initial container with English as the default language
         full_text_policy = {
@@ -470,6 +478,8 @@ class TestFullTextPolicy(unittest.TestCase):
             # Delete the container at the end of the test
             self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     def test_replace_full_text_policy_with_different_path_languages(self):
         # Create the initial container with English as the default language
         full_text_policy = {
@@ -511,6 +521,8 @@ class TestFullTextPolicy(unittest.TestCase):
             # Delete the container at the end of the test
             self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     def test_multi_path_multi_language_policy(self):
         # Create a container with a different language in each path
         full_text_paths_multi = []

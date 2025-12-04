@@ -327,6 +327,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 400
             assert "Missing path in full-text index specification at index (0)" in e.http_error_message
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     async def test_supported_languages_in_full_text_policy_async(self):
         full_text_policy = {
             "defaultLanguage": "en-US",
@@ -357,6 +359,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     async def test_default_language_fallback_async(self):
         full_text_policy = {
             "defaultLanguage": "en-US",
@@ -399,6 +403,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     async def test_mismatched_default_and_path_languages_async(self):
         # Create the container with English as the default language
         full_text_policy = {
@@ -437,6 +443,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     async def test_unsupported_language_in_full_text_policy_async(self):
         # Create the container with English as the default language
         full_text_policy = {
@@ -478,6 +486,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     async def test_replace_full_text_policy_with_different_languages_async(self):
 
         full_text_policy = {
@@ -516,6 +526,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     async def test_replace_full_text_policy_with_different_path_languages_async(self):
 
         full_text_policy = {
@@ -554,6 +566,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.test_db.delete_container(container.id)
 
+    # Skipped until testing pipeline is set up for full text multi-language support
+    @pytest.mark.skip
     async def test_multi_path_multi_language_policy_async(self):
         # Create a container with a different language in each path
         full_text_paths_multi = []
