@@ -6,7 +6,13 @@ from typing import Optional, List
 from subprocess import check_call
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, is_error_code_5_allowed, get_pip_command, discover_targeted_packages
+from ci_tools.functions import (
+    install_into_venv,
+    uninstall_from_venv,
+    is_error_code_5_allowed,
+    get_pip_command,
+    discover_targeted_packages,
+)
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
@@ -30,7 +36,6 @@ TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
 def get_installed_azure_packages(pkg_name_to_exclude: str) -> List[str]:
     # This method returns a list of installed azure sdk packages
     installed_pkgs = [p.split("==")[0] for p in get_installed_packages() if p.startswith("azure-")]
-
     # Get valid list of Azure SDK packages in repo
     pkgs = discover_targeted_packages("", REPO_ROOT)
     valid_azure_packages = [os.path.basename(p) for p in pkgs if "mgmt" not in p and "-nspkg" not in p]
@@ -39,12 +44,12 @@ def get_installed_azure_packages(pkg_name_to_exclude: str) -> List[str]:
     pkg_names = [
         p for p in installed_pkgs if p in valid_azure_packages and p != pkg_name_to_exclude and p not in EXCLUDED_PKGS
     ]
-
+    breakpoint()
     logger.info("Installed azure sdk packages: %s", pkg_names)
     return pkg_names
 
 
-def uninstall_packages(packages: List[str]):
+def uninstall_packages(executable: str, packages: List[str], working_directory: str):
     # This method uninstall list of given packages so dev build version can be reinstalled
     if len(packages) == 0:
         logger.warning("No packages to uninstall.")
@@ -59,8 +64,11 @@ def uninstall_packages(packages: List[str]):
     # Pass Uninstall confirmation
     if commands[0] != "uv":
         commands.append("--yes")
-
-    check_call(commands)
+    else:
+        commands.append("-y")
+    print(commands)
+    print("bros")
+    uninstall_from_venv(executable, packages, working_directory)
     logger.info("Uninstalled packages")
 
 
@@ -87,7 +95,7 @@ def install_packages(executable: str, packages: List[str], working_directory: st
 def install_dev_build_packages(executable: str, pkg_name_to_exclude: str, working_directory: str):
     # Uninstall GA version and reinstall dev build version of dependent packages
     azure_pkgs = get_installed_azure_packages(pkg_name_to_exclude)
-    uninstall_packages(azure_pkgs)
+    uninstall_packages(executable, azure_pkgs, working_directory)
     install_packages(executable, azure_pkgs, working_directory)
 
 
