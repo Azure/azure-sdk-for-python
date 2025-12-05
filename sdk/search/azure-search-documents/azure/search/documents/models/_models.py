@@ -26,28 +26,10 @@ class AutocompleteItem(_Model):
     :vartype query_plus_text: str
     """
 
-    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    text: str = rest_field(visibility=["read"])
     """The completed term. Required."""
-    query_plus_text: str = rest_field(name="queryPlusText", visibility=["read", "create", "update", "delete", "query"])
+    query_plus_text: str = rest_field(name="queryPlusText", visibility=["read"])
     """The query along with the completed term. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text: str,
-        query_plus_text: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class AutocompleteResult(_Model):
@@ -60,33 +42,11 @@ class AutocompleteResult(_Model):
     :vartype results: list[~azure.search.documents.models.AutocompleteItem]
     """
 
-    coverage: Optional[float] = rest_field(
-        name="@search.coverage", visibility=["read", "create", "update", "delete", "query"]
-    )
+    coverage: Optional[float] = rest_field(name="@search.coverage", visibility=["read"])
     """A value indicating the percentage of the index that was considered by the autocomplete request,
      or null if minimumCoverage was not specified in the request."""
-    results: list["_models.AutocompleteItem"] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"]
-    )
+    results: list["_models.AutocompleteItem"] = rest_field(name="value", visibility=["read"])
     """The list of returned Autocompleted items. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        results: list["_models.AutocompleteItem"],
-        coverage: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class DebugInfo(_Model):
@@ -400,27 +360,8 @@ class IndexDocumentsResult(_Model):
     :vartype results: list[~azure.search.documents.models.IndexingResult]
     """
 
-    results: list["_models.IndexingResult"] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"]
-    )
+    results: list["_models.IndexingResult"] = rest_field(name="value", visibility=["read"])
     """The list of status information for each document in the indexing request. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        results: list["_models.IndexingResult"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class IndexingResult(_Model):
@@ -477,36 +418,16 @@ class QueryAnswerResult(_Model):
     :vartype highlights: str
     """
 
-    score: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    score: Optional[float] = rest_field(visibility=["read"])
     """The score value represents how relevant the answer is to the query relative to other answers
      returned for the query."""
-    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    key: Optional[str] = rest_field(visibility=["read"])
     """The key of the document the answer was extracted from."""
-    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    text: Optional[str] = rest_field(visibility=["read"])
     """The text passage extracted from the document contents as the answer."""
-    highlights: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    highlights: Optional[str] = rest_field(visibility=["read"])
     """Same text passage as in the Text property with highlighted text phrases most relevant to the
      query."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        score: Optional[float] = None,
-        key: Optional[str] = None,
-        text: Optional[str] = None,
-        highlights: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class QueryCaptionResult(_Model):
@@ -522,28 +443,10 @@ class QueryCaptionResult(_Model):
     :vartype highlights: str
     """
 
-    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    text: Optional[str] = rest_field(visibility=["read"])
     """A representative text passage extracted from the document most relevant to the search query."""
-    highlights: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    highlights: Optional[str] = rest_field(visibility=["read"])
     """Same text passage as in the Text property with highlighted phrases most relevant to the query."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text: Optional[str] = None,
-        highlights: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class QueryResultDocumentInnerHit(_Model):
@@ -1133,29 +1036,21 @@ class SearchResult(_Model):
     :vartype document_debug_info: ~azure.search.documents.models.DocumentDebugInfo
     """
 
-    score: float = rest_field(name="@search.score", visibility=["read", "create", "update", "delete", "query"])
+    score: float = rest_field(name="@search.score", visibility=["read"])
     """The relevance score of the document compared to other documents returned by the query.
      Required."""
-    reranker_score: Optional[float] = rest_field(
-        name="@search.rerankerScore", visibility=["read", "create", "update", "delete", "query"]
-    )
+    reranker_score: Optional[float] = rest_field(name="@search.rerankerScore", visibility=["read"])
     """The relevance score computed by the semantic ranker for the top search results. Search results
      are sorted by the RerankerScore first and then by the Score. RerankerScore is only returned for
      queries of type 'semantic'."""
-    reranker_boosted_score: Optional[float] = rest_field(
-        name="@search.rerankerBoostedScore", visibility=["read", "create", "update", "delete", "query"]
-    )
+    reranker_boosted_score: Optional[float] = rest_field(name="@search.rerankerBoostedScore", visibility=["read"])
     """The relevance score computed by boosting the Reranker Score. Search results are sorted by the
      RerankerScore/RerankerBoostedScore based on useScoringProfileBoostedRanking in the Semantic
      Config. RerankerBoostedScore is only returned for queries of type 'semantic'."""
-    highlights: Optional[dict[str, list[str]]] = rest_field(
-        name="@search.highlights", visibility=["read", "create", "update", "delete", "query"]
-    )
+    highlights: Optional[dict[str, list[str]]] = rest_field(name="@search.highlights", visibility=["read"])
     """Text fragments from the document that indicate the matching search terms, organized by each
      applicable field; null if hit highlighting was not enabled for the query."""
-    captions: Optional[list["_models.QueryCaptionResult"]] = rest_field(
-        name="@search.captions", visibility=["read", "create", "update", "delete", "query"]
-    )
+    captions: Optional[list["_models.QueryCaptionResult"]] = rest_field(name="@search.captions", visibility=["read"])
     """Captions are the most representative passages from the document relatively to the search query.
      They are often used as document summary. Captions are only returned for queries of type
      'semantic'."""
@@ -1163,27 +1058,6 @@ class SearchResult(_Model):
         name="@search.documentDebugInfo", visibility=["read"]
     )
     """Contains debugging information that can be used to further explore your search results."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        score: float,
-        reranker_score: Optional[float] = None,
-        reranker_boosted_score: Optional[float] = None,
-        highlights: Optional[dict[str, list[str]]] = None,
-        captions: Optional[list["_models.QueryCaptionResult"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class VectorThreshold(_Model):
@@ -1332,33 +1206,11 @@ class SuggestDocumentsResult(_Model):
     :vartype coverage: float
     """
 
-    results: list["_models.SuggestResult"] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"]
-    )
+    results: list["_models.SuggestResult"] = rest_field(name="value", visibility=["read"])
     """The sequence of results returned by the query. Required."""
-    coverage: Optional[float] = rest_field(
-        name="@search.coverage", visibility=["read", "create", "update", "delete", "query"]
-    )
+    coverage: Optional[float] = rest_field(name="@search.coverage", visibility=["read"])
     """A value indicating the percentage of the index that was included in the query, or null if
      minimumCoverage was not set in the request."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        results: list["_models.SuggestResult"],
-        coverage: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SuggestResult(_Model):
@@ -1368,25 +1220,8 @@ class SuggestResult(_Model):
     :vartype text: str
     """
 
-    text: str = rest_field(name="@search.text", visibility=["read", "create", "update", "delete", "query"])
+    text: str = rest_field(name="@search.text", visibility=["read"])
     """The text of the suggestion result. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class TextResult(_Model):

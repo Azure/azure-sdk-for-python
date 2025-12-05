@@ -22,6 +22,7 @@ from ._enums import (
 
 if TYPE_CHECKING:
     from .. import models as _models
+    from ......search import models as _search_models6
     from ...knowledgebase import models as _knowledgebase_models3
 
 
@@ -858,12 +859,11 @@ class SearchIndexerSkill(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureMachineLearningSkill, ChatCompletionSkill, WebApiSkill, AzureOpenAIEmbeddingSkill,
-    CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill,
-    LanguageDetectionSkill, MergeSkill, PIIDetectionSkill, SentimentSkill, SplitSkill,
-    TextTranslationSkill, EntityLinkingSkill, EntityRecognitionSkillV3, SentimentSkillV3,
-    ConditionalSkill, ContentUnderstandingSkill, DocumentExtractionSkill,
-    DocumentIntelligenceLayoutSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill,
-    VisionVectorizeSkill
+    CustomEntityLookupSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill,
+    PIIDetectionSkill, SplitSkill, TextTranslationSkill, EntityLinkingSkill,
+    EntityRecognitionSkill, SentimentSkill, ConditionalSkill, ContentUnderstandingSkill,
+    DocumentExtractionSkill, DocumentIntelligenceLayoutSkill, ShaperSkill, ImageAnalysisSkill,
+    OcrSkill, VisionVectorizeSkill
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
     :vartype odata_type: str
@@ -3854,101 +3854,7 @@ class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Te
         self.odata_type = "#Microsoft.Skills.Text.V3.EntityLinkingSkill"  # type: ignore
 
 
-class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.EntityRecognitionSkill"):
-    """This skill is deprecated. Use the V3.EntityRecognitionSkill instead.
-
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
-     with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character '#'.
-    :vartype name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :vartype description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :vartype context: str
-    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
-     an upstream skill. Required.
-    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
-     be consumed as an input by another skill. Required.
-    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :ivar categories: A list of entity categories that should be extracted.
-    :vartype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-     Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de", "el",
-     "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
-    :vartype default_language_code: str or
-     ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
-    :ivar include_typeless_entities: Determines whether or not to include entities which are well
-     known but don't conform to a pre-defined type. If this configuration is not set (default), set
-     to null or set to false, entities which don't conform to one of the pre-defined types will not
-     be surfaced.
-    :vartype include_typeless_entities: bool
-    :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
-     confidence score is greater than the value specified. If not set (default), or if explicitly
-     set to null, all entities will be included.
-    :vartype minimum_precision: float
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
-     "#Microsoft.Skills.Text.EntityRecognitionSkill".
-    :vartype odata_type: str
-    """
-
-    categories: Optional[list[Union[str, "_models.EntityCategory"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A list of entity categories that should be extracted."""
-    default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value indicating which language code to use. Default is ``en``. Known values are: \"ar\",
-     \"cs\", \"zh-Hans\", \"zh-Hant\", \"da\", \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\",
-     \"hu\", \"it\", \"ja\", \"ko\", \"no\", \"pl\", \"pt-PT\", \"pt-BR\", \"ru\", \"es\", \"sv\",
-     and \"tr\"."""
-    include_typeless_entities: Optional[bool] = rest_field(
-        name="includeTypelessEntities", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Determines whether or not to include entities which are well known but don't conform to a
-     pre-defined type. If this configuration is not set (default), set to null or set to false,
-     entities which don't conform to one of the pre-defined types will not be surfaced."""
-    minimum_precision: Optional[float] = rest_field(
-        name="minimumPrecision", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value between 0 and 1 that be used to only include entities whose confidence score is greater
-     than the value specified. If not set (default), or if explicitly set to null, all entities will
-     be included."""
-    odata_type: Literal["#Microsoft.Skills.Text.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """A URI fragment specifying the type of skill. Required. Default value is
-     \"#Microsoft.Skills.Text.EntityRecognitionSkill\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        inputs: list["_models.InputFieldMappingEntry"],
-        outputs: list["_models.OutputFieldMappingEntry"],
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        context: Optional[str] = None,
-        categories: Optional[list[Union[str, "_models.EntityCategory"]]] = None,
-        default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = None,
-        include_typeless_entities: Optional[bool] = None,
-        minimum_precision: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.odata_type = "#Microsoft.Skills.Text.EntityRecognitionSkill"  # type: ignore
-
-
-class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityRecognitionSkill"):
+class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityRecognitionSkill"):
     """Using the Text Analytics API, extracts entities of different types from text.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -4725,74 +4631,51 @@ class IndexedSharePointKnowledgeSource(KnowledgeSource, discriminator="indexedSh
 class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=name-too-long
     """Parameters for SharePoint knowledge source.
 
-    :ivar identity: An explicit identity to use for this knowledge source.
-    :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    :ivar connection_string: The connection string for the SharePoint site. Required.
+    :ivar connection_string: SharePoint connection string with format:
+     SharePointOnlineEndpoint=[SharePoint site url];ApplicationId=[Azure AD App
+     ID];ApplicationSecret=[Azure AD App client secret];TenantId=[SharePoint site tenant id].
+     Required.
     :vartype connection_string: str
-    :ivar container_name: The name of the SharePoint container. Required.
-    :vartype container_name: str
-    :ivar query: SharePoint query.
+    :ivar container_name: Specifies which SharePoint libraries to access. Required. Known values
+     are: "defaultSiteLibrary", "allSiteLibraries", and "useQuery".
+    :vartype container_name: str or ~search.models.IndexedSharePointContainerName
+    :ivar query: Optional query to filter SharePoint content.
     :vartype query: str
-    :ivar embedding_model: The embedding model to use for vectorization.
-    :vartype embedding_model:
-     ~azure.search.documents.knowledgebase.models.KnowledgeSourceVectorizer
-    :ivar chat_completion_model: The chat completion model to use for understanding images.
-    :vartype chat_completion_model: ~azure.search.documents.indexes.models.KnowledgeBaseModel
-    :ivar ingestion_parameters: Ingestion parameters.
+    :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebase.models.KnowledgeSourceIngestionParameters
-    :ivar created_resources: Resources created for this knowledge source. These resources are
-     managed by the service and should not be modified or deleted.
+    :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
-    :ivar disable_image_verbalization: If true, images will not be verbalized using the
-     chatCompletionModel.
-    :vartype disable_image_verbalization: bool
     """
 
-    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An explicit identity to use for this knowledge source."""
     connection_string: str = rest_field(
         name="connectionString", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The connection string for the SharePoint site. Required."""
-    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the SharePoint container. Required."""
+    """SharePoint connection string with format: SharePointOnlineEndpoint=[SharePoint site
+     url];ApplicationId=[Azure AD App ID];ApplicationSecret=[Azure AD App client
+     secret];TenantId=[SharePoint site tenant id]. Required."""
+    container_name: Union[str, "_search_models6.IndexedSharePointContainerName"] = rest_field(
+        name="containerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies which SharePoint libraries to access. Required. Known values are:
+     \"defaultSiteLibrary\", \"allSiteLibraries\", and \"useQuery\"."""
     query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """SharePoint query."""
-    embedding_model: Optional["_knowledgebase_models3.KnowledgeSourceVectorizer"] = rest_field(
-        name="embeddingModel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The embedding model to use for vectorization."""
-    chat_completion_model: Optional["_models.KnowledgeBaseModel"] = rest_field(
-        name="chatCompletionModel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The chat completion model to use for understanding images."""
+    """Optional query to filter SharePoint content."""
     ingestion_parameters: Optional["_knowledgebase_models3.KnowledgeSourceIngestionParameters"] = rest_field(
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Ingestion parameters."""
+    """Consolidates all general ingestion settings."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
-    """Resources created for this knowledge source. These resources are managed by the service and
-     should not be modified or deleted."""
-    disable_image_verbalization: Optional[bool] = rest_field(
-        name="disableImageVerbalization", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If true, images will not be verbalized using the chatCompletionModel."""
+    """Resources created by the knowledge source."""
 
     @overload
     def __init__(
         self,
         *,
         connection_string: str,
-        container_name: str,
-        identity: Optional["_models.SearchIndexerDataIdentity"] = None,
+        container_name: Union[str, "_search_models6.IndexedSharePointContainerName"],
         query: Optional[str] = None,
-        embedding_model: Optional["_knowledgebase_models3.KnowledgeSourceVectorizer"] = None,
-        chat_completion_model: Optional["_models.KnowledgeBaseModel"] = None,
         ingestion_parameters: Optional["_knowledgebase_models3.KnowledgeSourceIngestionParameters"] = None,
-        disable_image_verbalization: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6016,27 +5899,8 @@ class ListDataSourcesResult(_Model):
      list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
     """
 
-    data_sources: list["_models.SearchIndexerDataSourceConnection"] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"]
-    )
+    data_sources: list["_models.SearchIndexerDataSourceConnection"] = rest_field(name="value", visibility=["read"])
     """The datasources in the Search service. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        data_sources: list["_models.SearchIndexerDataSourceConnection"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class ListIndexersResult(_Model):
@@ -6047,27 +5911,8 @@ class ListIndexersResult(_Model):
     :vartype indexers: list[~azure.search.documents.indexes.models.SearchIndexer]
     """
 
-    indexers: list["_models.SearchIndexer"] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"]
-    )
+    indexers: list["_models.SearchIndexer"] = rest_field(name="value", visibility=["read"])
     """The indexers in the Search service. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        indexers: list["_models.SearchIndexer"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class ListSkillsetsResult(_Model):
@@ -8792,47 +8637,23 @@ class SearchIndexerError(_Model):
     :vartype documentation_link: str
     """
 
-    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    key: Optional[str] = rest_field(visibility=["read"])
     """The key of the item for which indexing failed."""
-    error_message: str = rest_field(name="errorMessage", visibility=["read", "create", "update", "delete", "query"])
+    error_message: str = rest_field(name="errorMessage", visibility=["read"])
     """The message describing the error that occurred while processing the item. Required."""
-    status_code: int = rest_field(name="statusCode", visibility=["read", "create", "update", "delete", "query"])
+    status_code: int = rest_field(name="statusCode", visibility=["read"])
     """The status code indicating why the indexing operation failed. Possible values include: 400 for
      a malformed input document, 404 for document not found, 409 for a version conflict, 422 when
      the index is temporarily unavailable, or 503 for when the service is too busy. Required."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: Optional[str] = rest_field(visibility=["read"])
     """The name of the source at which the error originated. For example, this could refer to a
      particular skill in the attached skillset. This may not be always available."""
-    details: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    details: Optional[str] = rest_field(visibility=["read"])
     """Additional, verbose details about the error to assist in debugging the indexer. This may not be
      always available."""
-    documentation_link: Optional[str] = rest_field(
-        name="documentationLink", visibility=["read", "create", "update", "delete", "query"]
-    )
+    documentation_link: Optional[str] = rest_field(name="documentationLink", visibility=["read"])
     """A link to a troubleshooting guide for these classes of errors. This may not be always
      available."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error_message: str,
-        status_code: int,
-        key: Optional[str] = None,
-        name: Optional[str] = None,
-        details: Optional[str] = None,
-        documentation_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SearchIndexerIndexProjection(_Model):
@@ -9359,37 +9180,14 @@ class SearchIndexerLimits(_Model):
     :vartype max_document_content_characters_to_extract: int
     """
 
-    max_run_time: Optional[datetime.timedelta] = rest_field(
-        name="maxRunTime", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_run_time: Optional[datetime.timedelta] = rest_field(name="maxRunTime", visibility=["read"])
     """The maximum duration that the indexer is permitted to run for one execution."""
-    max_document_extraction_size: Optional[int] = rest_field(
-        name="maxDocumentExtractionSize", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_document_extraction_size: Optional[int] = rest_field(name="maxDocumentExtractionSize", visibility=["read"])
     """The maximum size of a document, in bytes, which will be considered valid for indexing."""
     max_document_content_characters_to_extract: Optional[int] = rest_field(
-        name="maxDocumentContentCharactersToExtract", visibility=["read", "create", "update", "delete", "query"]
+        name="maxDocumentContentCharactersToExtract", visibility=["read"]
     )
     """The maximum number of characters that will be extracted from a document picked up for indexing."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_run_time: Optional[datetime.timedelta] = None,
-        max_document_extraction_size: Optional[int] = None,
-        max_document_content_characters_to_extract: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SearchIndexerSkillset(_Model):
@@ -10207,70 +10005,7 @@ class SemanticSearch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentimentSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.SentimentSkill"):
-    """This skill is deprecated. Use the V3.SentimentSkill instead.
-
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
-     with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character '#'.
-    :vartype name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :vartype description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :vartype context: str
-    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
-     an upstream skill. Required.
-    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
-     be consumed as an input by another skill. Required.
-    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-     Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
-     "es", "sv", and "tr".
-    :vartype default_language_code: str or
-     ~azure.search.documents.indexes.models.SentimentSkillLanguage
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
-     "#Microsoft.Skills.Text.SentimentSkill".
-    :vartype odata_type: str
-    """
-
-    default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value indicating which language code to use. Default is ``en``. Known values are: \"da\",
-     \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\", \"it\", \"no\", \"pl\", \"pt-PT\", \"ru\",
-     \"es\", \"sv\", and \"tr\"."""
-    odata_type: Literal["#Microsoft.Skills.Text.SentimentSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """A URI fragment specifying the type of skill. Required. Default value is
-     \"#Microsoft.Skills.Text.SentimentSkill\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        inputs: list["_models.InputFieldMappingEntry"],
-        outputs: list["_models.OutputFieldMappingEntry"],
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        context: Optional[str] = None,
-        default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.odata_type = "#Microsoft.Skills.Text.SentimentSkill"  # type: ignore
-
-
-class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.SentimentSkill"):
+class SentimentSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.SentimentSkill"):
     """Using the Text Analytics API, evaluates unstructured text and for each record, provides
     sentiment labels (such as "negative", "neutral" and "positive") based on the highest confidence
     score found by the service at a sentence and document-level.
