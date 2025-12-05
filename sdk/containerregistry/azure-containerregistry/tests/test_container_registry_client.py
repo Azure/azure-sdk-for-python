@@ -797,8 +797,10 @@ class TestContainerRegistryClientUnitTests:
                     "Content-Type": content_type,
                     "Content-Length": len(b"hello world"),
                 },
+                content_type=content_type,
                 read=read,
                 json=json,
+                text=self.text,
             )
 
         with ContainerRegistryClient(
