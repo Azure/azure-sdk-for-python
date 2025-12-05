@@ -521,7 +521,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
             internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
             not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
-        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the blob has an active lease. If specified, upload_blob only succeeds if the
             blob's lease is active and matches this ID. Value can be a BlobLeaseClient object
@@ -711,7 +711,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
             internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
             not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
-        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the blob has an active lease. If specified, download_blob only
             succeeds if the blob's lease is active and matches this ID. Value can be a
@@ -2045,7 +2045,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
             internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
             not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
-        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2893,7 +2893,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
             internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
             not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
-        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
@@ -3209,7 +3209,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
             internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
             not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
-        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob
