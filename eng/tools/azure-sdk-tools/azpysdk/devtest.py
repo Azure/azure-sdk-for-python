@@ -10,7 +10,6 @@ from ci_tools.functions import (
     install_into_venv,
     uninstall_from_venv,
     is_error_code_5_allowed,
-    get_pip_command,
     discover_targeted_packages,
 )
 from ci_tools.scenario.generation import create_package_and_install
@@ -85,20 +84,23 @@ def uninstall_packages(executable: str, packages: List[str], working_directory: 
 
 
 def install_packages(executable: str, packages: List[str], working_directory: str):
-    # install list of given packages from devops feed
+    """
+    Installs a list of packages from the devops feed into the virtual environment.
+
+    :param executable: Path to the Python executable in the virtual environment.
+    :param packages: List of package names to install.
+    :param working_directory: Directory from which to run the install command.
+    :raises Exception: If installation fails.
+    :return: None
+    """
+
     if len(packages) == 0:
         logger.warning("No packages to install.")
         return
 
     logger.info("Installing dev build version for packages: %s", packages)
 
-    commands = packages
-    commands.extend(
-        [
-            "--index-url",
-            DEV_INDEX_URL,
-        ]
-    )
+    commands = [*packages, "--index-url", DEV_INDEX_URL]
 
     # install dev build of azure packages
     try:
