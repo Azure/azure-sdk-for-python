@@ -1172,33 +1172,16 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 etag = iterator.etag
                 page_etags.append(etag)
 
-            # monitor page updates without changes
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
+            # monitor page updates without changes - only changed pages will be yielded
+            items = client.list_configuration_settings(
+                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
-            first_page_response = await client.send_request(request)
-            assert first_page_response.status_code == 304
-
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = await client.send_request(request)
-                assert response.status_code == 304
-
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
+            iterator = items.by_page(etags=page_etags)
+            changed_pages = []
+            async for page in iterator:
+                changed_pages.append(page)
+            # No pages should be yielded since nothing changed
+            assert len(changed_pages) == 0
 
             # do some changes
             await client.add_configuration_setting(
@@ -1221,42 +1204,18 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
             assert page_etags[0] == new_page_etags[0]
             assert page_etags[1] != new_page_etags[1]
-            assert page_etags[2] != new_page_etags[2]
+            assert len(new_page_etags) == 3
 
-            # monitor page after updates
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
+            # monitor pages after updates - only changed pages will be yielded
+            items = client.list_configuration_settings(
+                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
-            first_page_response = await client.send_request(request)
-            # 304 means the page doesn't have changes.
-            assert first_page_response.status_code == 304
-
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = await client.send_request(request)
-
-                # 200 means the page has changes.
-                assert response.status_code == 200
-                items = response.json()["items"]
-                for item in items:
-                    # Read the keys
-                    pass
-
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
+            iterator = items.by_page(etags=page_etags)
+            changed_pages = []
+            async for page in iterator:
+                changed_pages.append(page)
+            # Should yield 2 pages (second page changed, third page is new)
+            assert len(changed_pages) == 2
 
             # clean up
             await self.tear_down()
