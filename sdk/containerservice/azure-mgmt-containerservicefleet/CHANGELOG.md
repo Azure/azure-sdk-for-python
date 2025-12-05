@@ -36,7 +36,7 @@
   - Added enum `TaintEffect`
   - Added model `Toleration`
   - Added enum `TolerationOperator`
-  - Added model `FleetManagedNamespacesOperations`
+  - Added operation group `FleetManagedNamespacesOperations`
 
 ## 4.0.0b1 (2025-08-04)
 
