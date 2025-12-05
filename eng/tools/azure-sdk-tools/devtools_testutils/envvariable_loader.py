@@ -68,7 +68,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                 user_auth = use_pwsh == "true" or use_cli == "true" or use_azd == "true"
                 if not user_auth:
                     # All variables are required for service principal authentication
-                    _logger.warn(
+                    _logger.warning(
                         "Environment variables for service principal credentials are not all set. "
                         "Please either set the variables or request user-based authentication by setting "
                         "an 'AZURE_TEST_USE_X_AUTH' environment variable to 'true'. See "
