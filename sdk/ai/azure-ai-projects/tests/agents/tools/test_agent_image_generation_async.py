@@ -21,8 +21,9 @@ class TestAgentImageGenerationAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_image_generation_async(self, **kwargs):
 
-        image_model_deployment = self.test_agents_tools_params["image_generation_model_deployment_name"]
         model = self.test_agents_params["model_deployment_name"]
+        image_model = self.test_agents_tools_params["image_generation_model_deployment_name"]
+        agent_name = "image-gen-agent"
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,
@@ -30,10 +31,10 @@ class TestAgentImageGenerationAsync(TestBase):
         ):
             # Check if the image model deployment exists in the project
             try:
-                deployment = await project_client.deployments.get(image_model_deployment)
+                deployment = await project_client.deployments.get(image_model)
                 print(f"Image model deployment found: {deployment.name}")
             except ResourceNotFoundError:
-                pytest.fail(f"Image generation model '{image_model_deployment}' not available in this project")
+                pytest.fail(f"Image generation model '{image_model}' not available in this project")
             except Exception as e:
                 pytest.fail(f"Unable to verify image model deployment: {e}")
 
@@ -42,32 +43,28 @@ class TestAgentImageGenerationAsync(TestBase):
 
             # Create agent with image generation tool
             agent = await project_client.agents.create_version(
-                agent_name="image-gen-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="Generate images based on user prompts",
-                    tools=[ImageGenTool(quality="low", size="1024x1024")],
+                    tools=[ImageGenTool(model=image_model, quality="low", size="1024x1024")],  # type: ignore
                 ),
                 description="Agent for testing image generation.",
             )
             print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "image-gen-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Request image generation
             print("\nAsking agent to generate an image of a simple geometric shape...")
 
             response = await openai_client.responses.create(
                 input="Generate an image of a blue circle on a white background.",
-                extra_headers={
-                    "x-ms-oai-image-generation-deployment": image_model_deployment
-                },  # Required for image generation
+                extra_headers={"x-ms-oai-image-generation-deployment": image_model},  # Required for image generation
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
             print(f"Response created (id: {response.id})")
-            assert response.id is not None
+            assert response.id
             assert response.output is not None
             assert len(response.output) > 0
 

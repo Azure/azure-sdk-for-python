@@ -389,11 +389,15 @@ class TestBase(AzureRecordedTestCase):
     ) -> None:
         assert agent is not None
         assert isinstance(agent, AgentVersionDetails)
-        assert agent.id is not None
+        assert agent.id
         if expected_name:
             assert agent.name == expected_name
+        else:
+            assert agent.name
         if expected_version:
             assert agent.version == expected_version
+        else:
+            assert agent.version
         print(f"Agent version validated (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     def _validate_agent(
@@ -401,11 +405,15 @@ class TestBase(AzureRecordedTestCase):
     ) -> None:
         assert agent is not None
         assert isinstance(agent, AgentDetails)
-        assert agent.id is not None
+        assert agent.id
         if expected_name:
             assert agent.name == expected_name
+        else:
+            assert agent.name
         if expected_latest_version:
             assert agent.versions.latest.version == expected_latest_version
+        else:
+            assert agent.versions.latest.version
         print(f"Agent validated (id: {agent.id}, name: {agent.name}, latest version: {agent.versions.latest.version})")
 
     def _validate_conversation_item(
