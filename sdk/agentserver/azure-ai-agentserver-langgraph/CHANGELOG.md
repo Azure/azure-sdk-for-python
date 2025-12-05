@@ -3,7 +3,7 @@
 
 ## 1.0.0b7 (2025-12-05)
 
-### Feature Added
+### Features Added
 
 - Update response with created_by
 

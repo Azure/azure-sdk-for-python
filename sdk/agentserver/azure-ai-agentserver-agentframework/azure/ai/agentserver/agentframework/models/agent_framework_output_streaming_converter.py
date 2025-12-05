@@ -298,7 +298,7 @@ class AgentFrameworkOutputStreamingConverter:
         )
         async for group in chunk_on_change(updates, is_changed):
             has_value, first_tuple, contents_with_author = await peek(self._read_updates(group))
-            if not has_value:
+            if not has_value or first_tuple is None:
                 continue
 
             first, author_name = first_tuple  # Extract content and author_name from tuple
