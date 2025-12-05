@@ -17,6 +17,7 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     ConfigurationSetting,
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
+    SnapshotComposition,
 )
 from ._client_manager_base import (
     _ConfigurationClientWrapperBase,
@@ -44,7 +45,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         user_agent: str,
         retry_total: int,
         retry_backoff_max: int,
-        **kwargs
+        **kwargs,
     ) -> Self:
         """
         Creates a new instance of the _ConfigurationClientWrapper class, using the provided credential to authenticate
@@ -66,7 +67,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -93,7 +94,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -136,9 +137,20 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
         configuration_settings = []
         for select in selects:
-            configurations = self._client.list_configuration_settings(
-                key_filter=select.key_filter, label_filter=select.label_filter, tags_filter=select.tag_filters, **kwargs
-            )
+            if select.snapshot_name is not None:
+                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
+                snapshot = self._client.get_snapshot(select.snapshot_name)
+                if snapshot.composition_type != SnapshotComposition.KEY:
+                    raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
+                configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+            else:
+                # Use traditional filtering when not loading from a snapshot
+                configurations = self._client.list_configuration_settings(
+                    key_filter=select.key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
             for config in configurations:
                 if not isinstance(config, FeatureFlagConfigurationSetting):
                     # Feature flags are ignored when loaded by Selects, as they are selected from
@@ -154,11 +166,13 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
+            # Handle None key_filter by converting to empty string
+            key_filter = select.key_filter if select.key_filter is not None else ""
             feature_flags = self._client.list_configuration_settings(
-                key_filter=FEATURE_FLAG_PREFIX + select.key_filter,
+                key_filter=FEATURE_FLAG_PREFIX + key_filter,
                 label_filter=select.label_filter,
                 tags_filter=select.tag_filters,
-                **kwargs
+                **kwargs,
             )
             for feature_flag in feature_flags:
                 if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
@@ -183,16 +197,21 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: Union[Dict[Tuple[str, str], str], None]
         """
         updated_watched_settings = dict(watched_settings)
+        trigger_refresh = False
         for (key, label), etag in watched_settings.items():
             changed, updated_watched_setting = self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
             if changed and updated_watched_setting is not None:
                 updated_watched_settings[(key, label)] = updated_watched_setting.etag
+                trigger_refresh = True
             elif changed:
                 # The key was deleted
                 updated_watched_settings[(key, label)] = None
-        return updated_watched_settings
+                trigger_refresh = True
+        if trigger_refresh:
+            return updated_watched_settings
+        return {}
 
     @distributed_trace
     def try_check_feature_flags(
@@ -261,7 +280,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         min_backoff_sec,
         max_backoff_sec,
         load_balancing_enabled,
-        **kwargs
+        **kwargs,
     ):
         super(ConfigurationClientManager, self).__init__(
             endpoint,
@@ -272,7 +291,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             min_backoff_sec,
             max_backoff_sec,
             load_balancing_enabled,
-            **kwargs
+            **kwargs,
         )
         self._original_connection_string = connection_string
         self._credential = credential
@@ -367,7 +386,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
                 elif self._credential:
@@ -378,7 +397,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL

@@ -22,7 +22,9 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
-    ClientAuthenticationError, ResourceModifiedError)
+    ClientAuthenticationError,
+    ResourceModifiedError
+)
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.mgmt.storage.aio import StorageManagementClient
 from azure.storage.blob.aio import (
@@ -30,7 +32,8 @@ from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     download_blob_from_url,
-    upload_blob_to_url)
+    upload_blob_to_url
+)
 from azure.storage.blob import (
     AccessPolicy,
     AccountSasPermissions,
@@ -43,13 +46,13 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     RehydratePriority,
     ResourceTypes,
-    RetentionPolicy,
     Services,
     StandardBlobTier,
     StorageErrorCode,
     generate_account_sas,
     generate_container_sas,
-    generate_blob_sas)
+    generate_blob_sas
+)
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -3591,5 +3594,94 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert content == data
 
         return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_delete_blob_access_tier_conditionals(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        await self._setup(storage_account_name, storage_account_key)
+
+        early = self.get_datetime_variable(variables, 'early', datetime.utcnow())
+
+        blob1_name = await self._create_block_blob()
+        blob1 = self.bsc.get_blob_client(self.container_name, blob1_name)
+        blob2_name = self._get_blob_reference() + "2"
+        blob2 = self.bsc.get_blob_client(self.container_name, blob2_name)
+        await blob2.upload_blob(
+            self.byte_data,
+            length=len(self.byte_data),
+            standard_blob_tier=StandardBlobTier.COOL,
+            overwrite=True
+        )
+        await blob1.set_standard_blob_tier('Cool')
+        await blob2.set_standard_blob_tier('Hot')
+
+        late = self.get_datetime_variable(variables, 'late', datetime.utcnow())
+
+        with pytest.raises(HttpResponseError):
+            await blob1.delete_blob(access_tier_if_modified_since=late)
+        resp = await blob1.delete_blob(access_tier_if_modified_since=early)
+        assert resp is None
+
+        with pytest.raises(HttpResponseError):
+            await blob2.delete_blob(access_tier_if_unmodified_since=early)
+        resp = await blob2.delete_blob(access_tier_if_unmodified_since=late)
+        assert resp is None
+
+        return variables
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_download_blob_decompress(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        decompressed_data = b"hello from gzip"
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        await blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+
+        downloaded = await blob.download_blob(decompress=True)
+        result = await downloaded.readall()
+        assert result == decompressed_data
+
+        downloaded = await blob.download_blob(decompress=False)
+        result = await downloaded.readall()
+        assert result == compressed_data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_download_blob_no_decompress_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = BlobClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            container_name=self.container_name,
+            blob_name=blob_name,
+            credential=storage_account_key,
+            max_chunk_get_size=4,
+            max_single_get_size=4,
+        )
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        await blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+
+        result = await (await blob.download_blob(decompress=False)).readall()
+        assert result == compressed_data
 
 # ------------------------------------------------------------------------------

@@ -620,8 +620,11 @@ class ShareProperties(DictMixin):
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
         self.provisioned_bandwidth = kwargs.get('x-ms-share-provisioned-bandwidth-mibps')
         self.lease = LeaseProperties(**kwargs)
-        self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
-            if kwargs.get('x-ms-enabled-protocols', None) else None
+        enabled_protocols = kwargs.get("x-ms-enabled-protocols", None)
+        if enabled_protocols is not None:
+            self.protocols = [protocol.strip() for protocol in enabled_protocols.split(',')]
+        else:
+            self.protocols = None
         self.root_squash = kwargs.get('x-ms-root-squash', None)
         self.enable_snapshot_virtual_directory_access = \
             kwargs.get('x-ms-enable-snapshot-virtual-directory-access')

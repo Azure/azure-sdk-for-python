@@ -206,6 +206,8 @@ def build_delete_request(
     if_tags: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     blob_delete_type: Literal["Permanent"] = "Permanent",
+    access_tier_if_modified_since: Optional[datetime.datetime] = None,
+    access_tier_if_unmodified_since: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -250,6 +252,14 @@ def build_delete_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if access_tier_if_modified_since is not None:
+        _headers["x-ms-access-tier-if-modified-since"] = _SERIALIZER.header(
+            "access_tier_if_modified_since", access_tier_if_modified_since, "rfc-1123"
+        )
+    if access_tier_if_unmodified_since is not None:
+        _headers["x-ms-access-tier-if-unmodified-since"] = _SERIALIZER.header(
+            "access_tier_if_unmodified_since", access_tier_if_unmodified_since, "rfc-1123"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2077,6 +2087,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
         request_id_parameter: Optional[str] = None,
         blob_delete_type: Literal["Permanent"] = "Permanent",
+        access_tier_if_modified_since: Optional[datetime.datetime] = None,
+        access_tier_if_unmodified_since: Optional[datetime.datetime] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
@@ -2122,6 +2134,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          permanently delete a blob if blob soft delete is enabled. Known values are "Permanent" and
          None. Default value is "Permanent".
         :type blob_delete_type: str
+        :param access_tier_if_modified_since: Specify this header value to operate only on a blob if
+         the access-tier has been modified since the specified date/time. Default value is None.
+        :type access_tier_if_modified_since: ~datetime.datetime
+        :param access_tier_if_unmodified_since: Specify this header value to operate only on a blob if
+         the access-tier has not been modified since the specified date/time. Default value is None.
+        :type access_tier_if_unmodified_since: ~datetime.datetime
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
@@ -2172,6 +2190,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             blob_delete_type=blob_delete_type,
+            access_tier_if_modified_since=access_tier_if_modified_since,
+            access_tier_if_unmodified_since=access_tier_if_unmodified_since,
             version=self._config.version,
             headers=_headers,
             params=_params,

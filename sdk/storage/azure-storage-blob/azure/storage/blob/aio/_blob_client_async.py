@@ -745,6 +745,8 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
+        :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
+            decompressed automatically before being returned. Default value is True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -975,6 +977,18 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
             .. versionadded:: 12.4.0
 
+        :keyword ~datetime.datetime access_tier_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the access-tier has been modified since the specified date/time.
+        :keyword ~datetime.datetime access_tier_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the access-tier has been modified since the specified date/time.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -997,7 +1011,8 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             snapshot=self.snapshot,
             version_id=get_version_id(self.version_id, kwargs),
             delete_snapshots=delete_snapshots,
-            **kwargs)
+            **kwargs
+        )
         try:
             await self._client.blob.delete(**options)
         except HttpResponseError as error:

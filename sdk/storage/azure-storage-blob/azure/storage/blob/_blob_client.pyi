@@ -211,6 +211,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: int = 1,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]: ...
@@ -232,6 +233,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: int = 1,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]: ...
@@ -253,6 +255,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: int = 1,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...
@@ -288,6 +291,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
+        access_tier_if_modified_since: Optional[datetime] = None,
+        access_tier_if_unmodified_since: Optional[datetime] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...

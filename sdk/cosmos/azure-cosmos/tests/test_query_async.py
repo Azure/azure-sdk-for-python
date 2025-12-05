@@ -756,6 +756,102 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                 raise ex_to_raise
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
 
+    async def test_query_items_with_parameters_none_async(self):
+        """Test that query_items handles parameters=None correctly (issue #43662)."""
+        created_collection = await self.created_db.create_container(
+            "test_params_none_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+        
+        # Create test documents
+        doc1_id = 'doc1_' + str(uuid.uuid4())
+        doc2_id = 'doc2_' + str(uuid.uuid4())
+        await created_collection.create_item(body={'pk': 'pk1', 'id': doc1_id, 'value1': 1})
+        await created_collection.create_item(body={'pk': 'pk2', 'id': doc2_id, 'value1': 2})
+
+        # Test 1: Explicitly passing parameters=None should not cause TypeError
+        query = 'SELECT * FROM c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None
+        )
+        results = [item async for item in query_iterable]
+        assert len(results) == 2
+
+        # Test 2: parameters=None with partition_key should work
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None,
+            partition_key='pk1'
+        )
+        results = [item async for item in query_iterable]
+        assert len(results) == 1
+        assert results[0]['id'] == doc1_id
+
+        # Test 3: Verify parameterized query still works with actual parameters
+        query_with_params = 'SELECT * FROM c WHERE c.value1 = @value'
+        query_iterable = created_collection.query_items(
+            query=query_with_params,
+            parameters=[{'name': '@value', 'value': 2}]
+        )
+        results = [item async for item in query_iterable]
+        assert len(results) == 1
+        assert results[0]['id'] == doc2_id
+
+        # Test 4: Query without parameters argument should work (default behavior)
+        query_iterable = created_collection.query_items(
+            query=query
+        )
+        results = [item async for item in query_iterable]
+        assert len(results) == 2
+
+        await self.created_db.delete_container(created_collection.id)
+
+    async def test_query_items_parameters_none_with_options_async(self):
+        """Test parameters=None works with various query options."""
+        created_collection = await self.created_db.create_container(
+            "test_params_none_opts_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+        
+        # Create multiple test documents
+        for i in range(5):
+            doc_id = f'doc_{i}_' + str(uuid.uuid4())
+            await created_collection.create_item(body={'pk': 'test', 'id': doc_id, 'index': i})
+
+        # Test with parameters=None and max_item_count
+        query = 'SELECT * FROM c ORDER BY c.index'
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None,
+            partition_key='test',
+            max_item_count=2
+        )
+        
+        # Verify pagination works
+        page_count = 0
+        total_items = 0
+        async for page in query_iterable.by_page():
+            page_count += 1
+            items = [item async for item in page]
+            total_items += len(items)
+            assert len(items) <= 2
+        
+        assert total_items == 5
+        assert page_count >= 2  # Should have multiple pages
+
+        # Test with parameters=None and populate_query_metrics
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None,
+            partition_key='test',
+            populate_query_metrics=True
+        )
+        results = [item async for item in query_iterable]
+        assert len(results) == 5
+        
+        # Verify query metrics were populated
+        metrics_header_name = 'x-ms-documentdb-query-metrics'
+        assert metrics_header_name in created_collection.client_connection.last_response_headers
+
+        await self.created_db.delete_container(created_collection.id)
+
 
 if __name__ == '__main__':
     unittest.main()

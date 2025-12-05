@@ -1,43 +1,19 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 """Customize generated code here.
-
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint: disable=import-error
-from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union
-
-from azure.core import AsyncPipelineClient
+from typing import Any, TYPE_CHECKING, Union, Optional
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline import PipelineResponse, policies
-from azure.core.polling import AsyncLROPoller
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.tracing.decorator_async import distributed_trace_async
-from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ConversationAuthoringProjectClientConfiguration
-from ._client import (
-    ConversationAuthoringClient as AuthoringClientGenerated,
-    ConversationAuthoringProjectClient as AuthoringProjectClientGenerated,
-)
-from .operations._patch import (
-    DeploymentOperations,
-    ExportedModelOperations,
-    ProjectOperations,
-    TrainedModelOperations,
-)
+from ._client import ConversationAuthoringClient as AuthoringClientGenerated
+from ._client import ConversationAuthoringProjectClient as AuthoringProjectClientGenerated
+from .operations import DeploymentOperations, ExportedModelOperations, ProjectOperations, TrainedModelOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-
-JSON = MutableMapping[str, Any]
-T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
 
 
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
@@ -51,7 +27,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__( # pylint: disable=super-init-not-called
+    def __init__(
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
@@ -72,52 +48,9 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
             Note that overriding this default value may result in unsupported behavior.
         :keyword str project_name: The name of the project to scope operations. Required.
         """
-        self._project_name = project_name
-        _endpoint = "{Endpoint}/language"
-
         if api_version is not None:
             kwargs["api_version"] = api_version
-
-        self._config = ConversationAuthoringProjectClientConfiguration(
-            endpoint=endpoint, credential=credential, project_name=project_name, **kwargs
-        )
-
-        _policies = kwargs.pop("policies", None)
-        if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
-        self._serialize.client_side_validation = False
-
-        # Assign patched operation groups with project_name
-        self.deployment = DeploymentOperations(
-            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
-        )
-        self.project = ProjectOperations(
-            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
-        )
-        self.exported_model = ExportedModelOperations(
-            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
-        )
-        self.trained_model = TrainedModelOperations(
-            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
-        )
+        super().__init__(endpoint=endpoint, credential=credential, project_name=project_name, **kwargs)
 
 
 class ConversationAuthoringClient(AuthoringClientGenerated):
@@ -153,25 +86,9 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
             project_name=project_name,
         )
 
-    @distributed_trace_async
-    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
-        """
-        Delete a project.
-
-        :param project_name: The name of the project to delete. Required.
-        :type project_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        return await super()._begin_delete_project(
-            project_name=project_name, **kwargs
-        )
-
 
 def patch_sdk():
     """Do not remove from this file.
-
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize

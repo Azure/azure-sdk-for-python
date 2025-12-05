@@ -13,12 +13,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations  # type: ignore
-from ._certificate_orders_diagnostics_operations import CertificateOrdersDiagnosticsOperations  # type: ignore
-from ._certificate_registration_provider_operations import CertificateRegistrationProviderOperations  # type: ignore
-from ._domain_registration_provider_operations import DomainRegistrationProviderOperations  # type: ignore
-from ._domains_operations import DomainsOperations  # type: ignore
-from ._top_level_domains_operations import TopLevelDomainsOperations  # type: ignore
 from ._app_service_environments_operations import AppServiceEnvironmentsOperations  # type: ignore
 from ._app_service_plans_operations import AppServicePlansOperations  # type: ignore
 from ._certificates_operations import CertificatesOperations  # type: ignore
@@ -43,18 +37,18 @@ from ._workflow_run_action_scope_repetitions_operations import WorkflowRunAction
 from ._workflow_triggers_operations import WorkflowTriggersOperations  # type: ignore
 from ._workflow_trigger_histories_operations import WorkflowTriggerHistoriesOperations  # type: ignore
 from ._workflow_versions_operations import WorkflowVersionsOperations  # type: ignore
+from ._app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations  # type: ignore
+from ._certificate_orders_diagnostics_operations import CertificateOrdersDiagnosticsOperations  # type: ignore
+from ._certificate_registration_provider_operations import CertificateRegistrationProviderOperations  # type: ignore
+from ._domain_registration_provider_operations import DomainRegistrationProviderOperations  # type: ignore
+from ._domains_operations import DomainsOperations  # type: ignore
+from ._top_level_domains_operations import TopLevelDomainsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AppServiceCertificateOrdersOperations",
-    "CertificateOrdersDiagnosticsOperations",
-    "CertificateRegistrationProviderOperations",
-    "DomainRegistrationProviderOperations",
-    "DomainsOperations",
-    "TopLevelDomainsOperations",
     "AppServiceEnvironmentsOperations",
     "AppServicePlansOperations",
     "CertificatesOperations",
@@ -78,6 +72,12 @@ __all__ = [
     "WorkflowTriggersOperations",
     "WorkflowTriggerHistoriesOperations",
     "WorkflowVersionsOperations",
+    "AppServiceCertificateOrdersOperations",
+    "CertificateOrdersDiagnosticsOperations",
+    "CertificateRegistrationProviderOperations",
+    "DomainRegistrationProviderOperations",
+    "DomainsOperations",
+    "TopLevelDomainsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

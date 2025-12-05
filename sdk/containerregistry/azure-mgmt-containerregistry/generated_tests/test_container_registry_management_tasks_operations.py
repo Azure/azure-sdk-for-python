@@ -128,19 +128,6 @@ class TestContainerRegistryManagementTasksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_tasks_delete(self, resource_group):
-        response = self.client.tasks.delete(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            task_name="str",
-            api_version="2025-03-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_tasks_update(self, resource_group):
         response = self.client.tasks.update(
             resource_group_name=resource_group.name,
@@ -201,6 +188,19 @@ class TestContainerRegistryManagementTasksOperations(AzureMgmtRecordedTestCase):
                     "timerTriggers": [{"name": "str", "schedule": "str", "status": "str"}],
                 },
             },
+            api_version="2025-03-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_tasks_delete(self, resource_group):
+        response = self.client.tasks.delete(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            task_name="str",
             api_version="2025-03-01-preview",
         )
 
