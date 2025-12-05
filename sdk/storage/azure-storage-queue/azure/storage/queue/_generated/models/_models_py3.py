@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -417,7 +417,7 @@ class ListQueuesSegmentResponse(_serialization.Model):
         max_results: int,
         next_marker: str,
         marker: Optional[str] = None,
-        queue_items: Optional[List["_models.QueueItem"]] = None,
+        queue_items: Optional[list["_models.QueueItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -647,7 +647,7 @@ class QueueItem(_serialization.Model):
     }
     _xml_map = {"name": "Queue"}
 
-    def __init__(self, *, name: str, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, name: str, metadata: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Queue. Required.
         :paramtype name: str
@@ -808,7 +808,7 @@ class StorageServiceProperties(_serialization.Model):
         logging: Optional["_models.Logging"] = None,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[List["_models.CorsRule"]] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
         **kwargs: Any
     ) -> None:
         """

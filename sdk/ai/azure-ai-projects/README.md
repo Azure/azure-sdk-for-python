@@ -348,7 +348,7 @@ tool = OpenApiAgentTool(
     openapi=OpenApiFunctionDefinition(
         name="get_weather",
         spec=openapi_weather,
-        description="Retrieve weather information for a location",
+        description="Retrieve weather information for a location.",
         auth=OpenApiAnonymousAuthDetails(),
     )
 )
