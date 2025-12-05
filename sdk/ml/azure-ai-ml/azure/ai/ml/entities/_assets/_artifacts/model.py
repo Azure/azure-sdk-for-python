@@ -243,7 +243,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 
         # Set default_deployment_template if it exists
 
-            model_version_resource = ModelVersion(properties=model_version) if se
+            model_version_resource = ModelVersion(properties=model_version)
 
             return model_version_resource
 
