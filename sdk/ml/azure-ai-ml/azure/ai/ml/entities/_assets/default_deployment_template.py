@@ -8,7 +8,7 @@ from typing import Optional
 class DefaultDeploymentTemplate:
     """Default deployment template reference for a model.
 
-    :param asset_id: The asset ID of the deployment template. 
+    :param asset_id: The asset ID of the deployment template.
         Format: azureml://registries/{registry_name}/deploymenttemplates/{template_name}/versions/{version}
     :type asset_id: str
     """

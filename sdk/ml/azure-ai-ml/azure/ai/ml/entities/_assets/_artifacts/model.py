@@ -110,6 +110,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         self.type = type or AssetTypes.CUSTOM_MODEL
         self.stage = stage
         # Handle default_deployment_template - can be passed as dict or DefaultDeploymentTemplate object
+        self.default_deployment_template: Optional[DefaultDeploymentTemplate]
         if isinstance(default_deployment_template, dict):
             self.default_deployment_template = DefaultDeploymentTemplate(**default_deployment_template)
         else:
@@ -149,10 +150,13 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         )
         if hasattr(rest_model_version, "flavors"):
             flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
-        
+
         # Handle default_deployment_template from REST object
         default_deployment_template = None
-        if hasattr(rest_model_version, "default_deployment_template") and rest_model_version.default_deployment_template:
+        if (
+            hasattr(rest_model_version, "default_deployment_template")
+            and rest_model_version.default_deployment_template
+        ):
             # REST object has default_deployment_template as a dict with 'asset_id' key
             if isinstance(rest_model_version.default_deployment_template, dict):
                 default_deployment_template = DefaultDeploymentTemplate(
@@ -163,7 +167,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 default_deployment_template = DefaultDeploymentTemplate(
                     asset_id=getattr(rest_model_version.default_deployment_template, "asset_id", None)
                 )
-        
+
         model = Model(
             id=model_rest_object.id,
             name=arm_id.asset_name,
@@ -219,33 +223,31 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 is_anonymous=self._is_anonymous,
             )
             model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
-            
+
             model_version.default_deployment_template = ModelVersionDefaultDeploymentTemplate(
                 asset_id=self.default_deployment_template.asset_id
             )
-            model_version_resource = ModelVersionData(properties=model_version) 
-            
-            return model_version_resource
-        else:
-            model_version = ModelVersionProperties(
-                description=self.description,
-                tags=self.tags,
-                properties=self.properties,
-                flavors=(
-                    {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
-                ),  # flatten OrderedDict to dict
-                model_type=self.type,
-                model_uri=self.path,
-                stage=self.stage,
-                is_anonymous=self._is_anonymous,
-            )
-            model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
-                
-        # Set default_deployment_template if it exists
-
-            model_version_resource = ModelVersion(properties=model_version)
+            model_version_resource = ModelVersionData(properties=model_version)
 
             return model_version_resource
+
+        model_version = ModelVersionProperties(
+            description=self.description,
+            tags=self.tags,
+            properties=self.properties,
+            flavors=(
+                {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
+            ),  # flatten OrderedDict to dict
+            model_type=self.type,
+            model_uri=self.path,
+            stage=self.stage,
+            is_anonymous=self._is_anonymous,
+        )
+        model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
+
+        model_version_resource = ModelVersion(properties=model_version)
+
+        return model_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         # datastore_arm_id is null for registry scenario, so capture the full_storage_path
