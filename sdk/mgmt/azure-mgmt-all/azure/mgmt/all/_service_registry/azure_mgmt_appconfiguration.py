@@ -1,8 +1,5 @@
 from typing import TYPE_CHECKING, Any, Optional, List, Dict, Union, cast
-try:
-    from typing import TypedDict, NotRequired  # Python 3.11+
-except ImportError:
-    from typing_extensions import TypedDict, NotRequired  # Python 3.8-3.10
+from typing_extensions import TypedDict, NotRequired
 
 from azure.core.polling import LROPoller
 from azure.core.rest import HttpResponse
@@ -387,7 +384,7 @@ class AppConfigurationFactory(ServiceProviderFactory):
         url = f"/subscriptions/{self.subscription_id}/providers/Microsoft.AppConfiguration/locations/{location}/deletedConfigurationStores/{config_store_name}"
         return self.get(url, **kwargs)
 
-    def purge_deleted_configuration_store(self, location: str, config_store_name: str, **kwargs: Any) -> LROPoller[None]:
+    def purge_deleted_configuration_store(self, location: str, config_store_name: str, **kwargs: Any) -> HttpResponse:
         """Purge a deleted configuration store."""
         url = f"/subscriptions/{self.subscription_id}/providers/Microsoft.AppConfiguration/locations/{location}/deletedConfigurationStores/{config_store_name}/purge"
         return self.post(url, **kwargs)

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING, cast, Dict, Type, Literal, Union
+from typing import Any, Optional, TYPE_CHECKING, cast, Dict, Type, Literal, Union, overload
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
@@ -18,8 +18,8 @@ from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import ManagementClientConfiguration
-from .service_registry.service_factory import ServiceProviderFactory
-from .service_registry.azure_mgmt_appconfiguration import AppConfigurationFactory
+from ._service_registry.service_factory import ServiceProviderFactory
+from ._service_registry.azure_mgmt_appconfiguration import AppConfigurationFactory
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -27,22 +27,23 @@ if TYPE_CHECKING:
 # Type alias for supported service providers
 SupportedProviders = Literal["Microsoft.AppConfiguration"]
 
+FactoryType = Union[ServiceProviderFactory, AppConfigurationFactory]
 
-class ManagementClient:  # pylint: disable=too-many-instance-attributes
+
+class ManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Management Client with service provider factory support."""
-    
+
     # Registry of available service provider factories
     service_factories: Dict[str, Type[ServiceProviderFactory]] = {
         "Microsoft.AppConfiguration": AppConfigurationFactory,
     }
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self, credential: "TokenCredential", subscription_id: str, **kwargs: Any # pylint:disable=client-accepts-api-version-keyword
     ) -> None:
         _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
-        if not base_url:
-            base_url = _endpoints["resource_manager"]
+        base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = ManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
@@ -68,17 +69,38 @@ class ManagementClient:  # pylint: disable=too-many-instance-attributes
             ]
         self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
 
-    def __call__(self, service_provider: str, subscription_id: Optional[str] = None, api_version: Optional[str] = None) -> ServiceProviderFactory:
+    @overload
+    def __call__(  # pylint: disable=client-method-name-no-double-underscore
+        self,
+        service_provider: Literal["Microsoft.AppConfiguration"],
+        subscription_id: Optional[str] = None,
+        api_version: Optional[str] = None
+    ) -> AppConfigurationFactory: ...
+
+    @overload
+    def __call__(  # pylint: disable=client-method-name-no-double-underscore
+        self,
+        service_provider: str,
+        subscription_id: Optional[str] = None,
+        api_version: Optional[str] = None
+    ) -> ServiceProviderFactory: ...
+
+    def __call__(  # pylint: disable=client-method-name-no-double-underscore
+        self,
+        service_provider: str,
+        subscription_id: Optional[str] = None,
+        api_version: Optional[str] = None
+    ) -> Union[AppConfigurationFactory, ServiceProviderFactory]:
         """Create a service client for the specified resource provider.
         
-        :param service_provider: The name of the service provider (e.g., 'Microsoft.AppConfiguration', 'Microsoft.Compute')
+        :param service_provider: The name of the service provider (e.g., 'Microsoft.AppConfiguration')
         :type service_provider: str or SupportedProviders
         :param subscription_id: Optional subscription ID. If not provided, uses client's default.
         :type subscription_id: str
         :param api_version: Optional API version for the service provider. If not provided, uses provider's default.
         :type api_version: str
         :return: A service client that can perform operations for the specified resource provider
-        :rtype: ServiceProviderFactory
+        :rtype: FactoryType
         
         Example usage:
             client = ManagementClient(credential, subscription_id)
@@ -101,12 +123,16 @@ class ManagementClient:  # pylint: disable=too-many-instance-attributes
         """
         # Check if we have a specialized factory for this provider
         try:
-            return self.service_factories[service_provider](self, subscription_id, api_version)
-        except KeyError:
-            raise ValueError(f"Service provider '{service_provider}' is not supported.")
+            return self.service_factories[service_provider](self, service_provider, subscription_id, api_version)
+        except KeyError as e:
+            raise ValueError(f"Service provider '{service_provider}' is not supported.") from e
 
     @classmethod
-    def register_service_factory(cls, service_provider: Union[str, SupportedProviders], factory_class: Type[ServiceProviderFactory]) -> None:
+    def register_service_factory(
+        cls,
+        service_provider: Union[str, SupportedProviders],
+        factory_class: Type[ServiceProviderFactory]
+        ) -> None:
         """Register a specialized service factory for a resource provider.
         
         This is typically used internally to register optimized service clients

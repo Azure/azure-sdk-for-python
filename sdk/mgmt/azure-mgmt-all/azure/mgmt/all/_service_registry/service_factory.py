@@ -2,7 +2,7 @@ from typing import Any, Optional, TYPE_CHECKING, Union, Dict, Callable, cast
 
 from azure.core.polling import LROPoller, PollingMethod, NoPolling
 from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline import PipelineResponse, PipelineContext
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 
@@ -251,7 +251,7 @@ class ServiceProviderFactory:
             polling_method = polling
         
         # Create a proper pipeline response
-        pipeline_response = PipelineResponse(request, raw_result, {})
+        pipeline_response = PipelineResponse(request, raw_result, PipelineContext(None))
         
         return LROPoller[Any](
             client=self.client._client,
@@ -329,7 +329,7 @@ class ServiceProviderFactory:
             polling_method = polling
         
         # Create a proper pipeline response
-        pipeline_response = PipelineResponse(request, raw_result, {})
+        pipeline_response = PipelineResponse(request, raw_result, PipelineContext(None))
         
         return LROPoller[Any](
             client=self.client._client,
@@ -399,7 +399,7 @@ class ServiceProviderFactory:
             polling_method = polling
         
         # Create a proper pipeline response
-        pipeline_response = PipelineResponse(request, raw_result, {})
+        pipeline_response = PipelineResponse(request, raw_result, PipelineContext(None))
         
         return LROPoller[None](
             client=self.client._client,
