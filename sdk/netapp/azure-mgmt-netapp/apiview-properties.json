@@ -38,6 +38,7 @@
         "azure.mgmt.netapp.models.Cache": "Microsoft.NetApp.Cache",
         "azure.mgmt.netapp.models.CacheMountTargetProperties": "Microsoft.NetApp.CacheMountTargetProperties",
         "azure.mgmt.netapp.models.CacheProperties": "Microsoft.NetApp.CacheProperties",
+        "azure.mgmt.netapp.models.CachePropertiesExportPolicy": "Microsoft.NetApp.CachePropertiesExportPolicy",
         "azure.mgmt.netapp.models.CacheUpdate": "Azure.ResourceManager.Foundations.ResourceUpdateModel",
         "azure.mgmt.netapp.models.CacheUpdateProperties": "Azure.ResourceManager.Foundations.ResourceUpdateModelProperties",
         "azure.mgmt.netapp.models.CapacityPool": "Microsoft.NetApp.CapacityPool",
