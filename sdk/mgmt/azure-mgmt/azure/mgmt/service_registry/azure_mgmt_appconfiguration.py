@@ -1,5 +1,8 @@
-from typing import TYPE_CHECKING, Any, Optional, List, Dict
-from typing_extensions import TypedDict, NotRequired
+from typing import TYPE_CHECKING, Any, Optional, List, Dict, Union, cast
+try:
+    from typing import TypedDict, NotRequired  # Python 3.11+
+except ImportError:
+    from typing_extensions import TypedDict, NotRequired  # Python 3.8-3.10
 
 from azure.core.rest import HttpResponse
 from .service_factory import ServiceProviderFactory
@@ -348,12 +351,12 @@ class AppConfigurationFactory(ServiceProviderFactory):
     def create_configuration_store(self, resource_group: str, config_store_name: str, 
                                  config_store_data: ConfigurationStore, **kwargs: Any) -> HttpResponse:
         """Create a configuration store."""
-        return self.create_resource("configurationStores", config_store_name, config_store_data, resource_group, **kwargs)
+        return self.create_resource("configurationStores", config_store_name, cast(Dict[str, Any], config_store_data), resource_group, **kwargs)
 
     def update_configuration_store(self, resource_group: str, config_store_name: str, 
                                  update_data: ConfigurationStoreUpdateParameters, **kwargs: Any) -> HttpResponse:
         """Update a configuration store."""
-        return self.update_resource("configurationStores", config_store_name, update_data, resource_group, **kwargs)
+        return self.update_resource("configurationStores", config_store_name, cast(Dict[str, Any], update_data), resource_group, **kwargs)
 
     def delete_configuration_store(self, resource_group: str, config_store_name: str, **kwargs: Any) -> HttpResponse:
         """Delete a configuration store."""
@@ -387,7 +390,7 @@ class AppConfigurationFactory(ServiceProviderFactory):
     def regenerate_key(self, resource_group: str, config_store_name: str, key_data: RegenerateKeyParameters, **kwargs: Any) -> HttpResponse:
         """Regenerate an API key for a configuration store."""
         url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.AppConfiguration/configurationStores/{config_store_name}/regenerateKey"
-        return self.post(url, model=key_data, **kwargs)
+        return self.post(url, model=cast(Dict[str, Any], key_data), **kwargs)
 
     # Key-Values Operations
     def key_values(self, resource_group: str, config_store_name: str, key_value_name: Optional[str] = None, **kwargs: Any) -> HttpResponse:
@@ -401,7 +404,7 @@ class AppConfigurationFactory(ServiceProviderFactory):
                                  key_value_name: str, key_value_data: KeyValue, **kwargs: Any) -> HttpResponse:
         """Create or update a key-value."""
         url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.AppConfiguration/configurationStores/{config_store_name}/keyValues/{key_value_name}"
-        return self.put(url, model=key_value_data, **kwargs)
+        return self.put(url, model=cast(Dict[str, Any], key_value_data), **kwargs)
 
     def delete_key_value(self, resource_group: str, config_store_name: str, key_value_name: str, **kwargs: Any) -> HttpResponse:
         """Delete a key-value."""
@@ -420,13 +423,13 @@ class AppConfigurationFactory(ServiceProviderFactory):
                        snapshot_name: str, snapshot_data: Snapshot, **kwargs: Any) -> HttpResponse:
         """Create a snapshot."""
         url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.AppConfiguration/configurationStores/{config_store_name}/snapshots/{snapshot_name}"
-        return self.put(url, model=snapshot_data, **kwargs)
+        return self.put(url, model=cast(Dict[str, Any], snapshot_data), **kwargs)
 
     def update_snapshot(self, resource_group: str, config_store_name: str, 
                        snapshot_name: str, snapshot_data: Snapshot, **kwargs: Any) -> HttpResponse:
         """Update a snapshot."""
         url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.AppConfiguration/configurationStores/{config_store_name}/snapshots/{snapshot_name}"
-        return self.patch(url, model=snapshot_data, **kwargs)
+        return self.patch(url, model=cast(Dict[str, Any], snapshot_data), **kwargs)
 
     def archive_snapshot(self, resource_group: str, config_store_name: str, snapshot_name: str, **kwargs: Any) -> HttpResponse:
         """Archive a snapshot."""
@@ -450,7 +453,7 @@ class AppConfigurationFactory(ServiceProviderFactory):
                       replica_name: str, replica_data: Replica, **kwargs: Any) -> HttpResponse:
         """Create a replica."""
         url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.AppConfiguration/configurationStores/{config_store_name}/replicas/{replica_name}"
-        return self.put(url, model=replica_data, **kwargs)
+        return self.put(url, model=cast(Dict[str, Any], replica_data), **kwargs)
 
     def delete_replica(self, resource_group: str, config_store_name: str, replica_name: str, **kwargs: Any) -> HttpResponse:
         """Delete a replica."""
@@ -471,7 +474,7 @@ class AppConfigurationFactory(ServiceProviderFactory):
                                                    **kwargs: Any) -> HttpResponse:
         """Create or update a private endpoint connection."""
         url = f"/subscriptions/{self.subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.AppConfiguration/configurationStores/{config_store_name}/privateEndpointConnections/{connection_name}"
-        return self.put(url, model=connection_data, **kwargs)
+        return self.put(url, model=cast(Dict[str, Any], connection_data), **kwargs)
 
     def delete_private_endpoint_connection(self, resource_group: str, config_store_name: str, 
                                          connection_name: str, **kwargs: Any) -> HttpResponse:
@@ -492,7 +495,7 @@ class AppConfigurationFactory(ServiceProviderFactory):
     def check_name_availability(self, check_data: CheckNameAvailabilityParameters, **kwargs: Any) -> HttpResponse:
         """Check if a configuration store name is available."""
         url = f"/subscriptions/{self.subscription_id}/providers/Microsoft.AppConfiguration/checkNameAvailability"
-        return self.post(url, model=check_data, **kwargs)
+        return self.post(url, model=cast(Dict[str, Any], check_data), **kwargs)
 
     # Operations
     def list_operations(self, **kwargs: Any) -> HttpResponse:
