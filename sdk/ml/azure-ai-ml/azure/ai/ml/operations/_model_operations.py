@@ -27,6 +27,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType, ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -324,31 +325,32 @@ class ModelOperations(_ScopeDependentOperations):
             ).result()
         )
 
-    def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
+    def _get_with_registry(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
         if version:
-            return (
-                self._model_versions_operation.get(
-                    name=name,
-                    version=version,
-                    registry_name=self._registry_name,
-                    **self._scope_kwargs,
-                )
-                if self._registry_name
-                else self._model_versions_operation.get(
-                    name=name,
-                    version=version,
-                    workspace_name=self._workspace_name,
-                    **self._scope_kwargs,
-                )
+            return self._model_versions_operation.get(
+                name=name,
+                version=version,
+                registry_name=self._registry_name,
+                **self._scope_kwargs,
             )
 
-        return (
-            self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
-            if self._registry_name
-            else self._model_container_operation.get(
-                name=name, workspace_name=self._workspace_name, **self._scope_kwargs
+        return self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
+
+    def _get_with_workspace(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
+        if version:
+            return self._model_versions_operation.get(
+                name=name,
+                version=version,
+                workspace_name=self._workspace_name,
+                **self._scope_kwargs,
             )
-        )
+
+        return self._model_container_operation.get(name=name, workspace_name=self._workspace_name, **self._scope_kwargs)
+
+    def _get(self, name: str, version: Optional[str] = None) -> Union[ModelVersion, ModelVersionData]:  # name:latest
+        if self._registry_name:
+            return self._get_with_registry(name, version)
+        return self._get_with_workspace(name, version)
 
     @monitor_with_activity(ops_logger, "Model.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
