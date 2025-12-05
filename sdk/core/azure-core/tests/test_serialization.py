@@ -7,7 +7,6 @@ from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
 import sys
-import traceback
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
 
@@ -15,7 +14,7 @@ from azure.core.serialization import (
     AzureJSONEncoder,
     NULL,
     as_attribute_dict,
-    get_old_attribute,
+    get_backcompat_attr_name,
     is_generated_model,
     attribute_list,
 )
@@ -1698,7 +1697,7 @@ class TestBackcompatPropertyMatrix:
         assert as_attribute_dict(model) == {"field_name": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {"field_name": "value"}
         assert getattr(model, "field_name") == "value"
-        assert get_old_attribute(model, "field_name") == "value"
+        assert get_backcompat_attr_name(model, "field_name") == "field_name"
 
     def test_1b_same_wire_normal_attr_no_original_readonly_regular(self):
         """Wire=attr, normal attr, no original, readonly, regular model"""
@@ -1713,7 +1712,7 @@ class TestBackcompatPropertyMatrix:
         assert as_attribute_dict(model) == {"field_name": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {}
         assert getattr(model, "field_name") == "value"
-        assert get_old_attribute(model, "field_name") == "value"
+        assert get_backcompat_attr_name(model, "field_name") == "field_name"
 
     def test_2a_different_wire_normal_attr_no_original_readwrite_regular(self):
         """Wire≠attr, normal attr, no original, readwrite, regular model"""
@@ -1729,7 +1728,7 @@ class TestBackcompatPropertyMatrix:
         # Verify wire representation uses different name
         assert dict(model) == {"wireField": "value"}
         assert getattr(model, "client_field") == "value"
-        assert get_old_attribute(model, "client_field") == "value"
+        assert get_backcompat_attr_name(model, "client_field") == "client_field"
 
     def test_2b_different_wire_normal_attr_no_original_readonly_regular(self):
         """Wire≠attr, normal attr, no original, readonly, regular model"""
@@ -1744,7 +1743,7 @@ class TestBackcompatPropertyMatrix:
         assert as_attribute_dict(model) == {"client_field": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {}
         assert getattr(model, "client_field") == "value"
-        assert get_old_attribute(model, "client_field") == "value"
+        assert get_backcompat_attr_name(model, "client_field") == "client_field"
 
     def test_3a_same_wire_padded_attr_with_original_readwrite_regular(self):
         """Wire=original, padded attr, original present, readwrite, regular model"""
@@ -1755,9 +1754,10 @@ class TestBackcompatPropertyMatrix:
         model = PaddedModel(keys_property="value")
 
         # Should use original_tsp_name when available
-        assert attribute_list(model) == ["keys"]
-        assert as_attribute_dict(model) == {"keys": "value"}
-        assert getattr(model, "keys_property") == get_old_attribute(model, "keys") == "value"
+        assert attribute_list(model) == ["keys_property"]
+        assert as_attribute_dict(model) == {"keys_property": "value"}
+        assert get_backcompat_attr_name(model, "keys_property") == "keys"
+        assert getattr(model, "keys_property") == "value"
         assert set(model.keys()) == {"keys_property"}
 
     def test_3b_same_wire_padded_attr_with_original_readonly_regular(self):
@@ -1768,11 +1768,11 @@ class TestBackcompatPropertyMatrix:
 
         model = ReadonlyPaddedModel(keys_property="value")
 
-        # Should use original_tsp_name, excluded when exclude_readonly=True
-        assert attribute_list(model) == ["keys"]
-        assert as_attribute_dict(model) == {"keys": "value"}
+        assert attribute_list(model) == ["keys_property"]
+        assert as_attribute_dict(model) == {"keys_property": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {}
-        assert getattr(model, "keys_property") == get_old_attribute(model, "keys") == "value"
+        assert get_backcompat_attr_name(model, "keys_property") == "keys"
+        assert getattr(model, "keys_property") == "value"
         assert set(model.keys()) == {"keys_property"}
 
     def test_4a_different_wire_padded_attr_with_original_readwrite_regular(self):
@@ -1783,12 +1783,11 @@ class TestBackcompatPropertyMatrix:
 
         model = DifferentWirePaddedModel(clear_property="value")
 
-        # Should use original_tsp_name
-        assert attribute_list(model) == ["clear"]
-        assert as_attribute_dict(model) == {"clear": "value"}
+        assert attribute_list(model) == ["clear_property"]
+        assert as_attribute_dict(model) == {"clear_property": "value"}
         # Verify wire uses different name
         assert dict(model) == {"clearWire": "value"}
-        assert getattr(model, "clear_property") == get_old_attribute(model, "clear") == "value"
+        assert getattr(model, "clear_property") == "value"
         assert set(model.keys()) == {"clearWire"}
 
     def test_4b_different_wire_padded_attr_with_original_readonly_regular(self):
@@ -1799,11 +1798,10 @@ class TestBackcompatPropertyMatrix:
 
         model = ReadonlyDifferentWirePaddedModel(pop_property="value")
 
-        # Should use original_tsp_name, excluded when exclude_readonly=True
-        assert attribute_list(model) == ["pop"]
-        assert as_attribute_dict(model) == {"pop": "value"}
+        assert attribute_list(model) == ["pop_property"]
+        assert as_attribute_dict(model) == {"pop_property": "value"}
         assert as_attribute_dict(model, exclude_readonly=True) == {}
-        assert getattr(model, "pop_property") == get_old_attribute(model, "pop") == "value"
+        assert getattr(model, "pop_property") == "value"
         assert set(model.keys()) == {"popWire"}
 
     # ========== DIMENSION 5: STRUCTURE VARIATIONS ==========
@@ -1824,21 +1822,24 @@ class TestBackcompatPropertyMatrix:
 
         # Test nested model independently
         nested_attrs = attribute_list(nested_model)
-        assert set(nested_attrs) == {"keys", "normal_field"}
+        assert set(nested_attrs) == {"keys_property", "normal_field"}
 
         nested_dict = as_attribute_dict(nested_model)
-        assert nested_dict == {"keys": "nested_keys", "normal_field": "nested_normal"}
+        assert nested_dict == {"keys_property": "nested_keys", "normal_field": "nested_normal"}
 
         # Test parent model with recursive backcompat
         parent_attrs = attribute_list(parent_model)
-        assert set(parent_attrs) == {"nested", "items"}
+        assert set(parent_attrs) == {"nested", "items_property"}
 
         parent_dict = as_attribute_dict(parent_model)
-        expected_parent = {"nested": {"keys": "nested_keys", "normal_field": "nested_normal"}, "items": "parent_items"}
+        expected_parent = {
+            "nested": {"keys_property": "nested_keys", "normal_field": "nested_normal"},
+            "items_property": "parent_items",
+        }
         assert parent_dict == expected_parent
 
-        assert getattr(nested_model, "keys_property") == get_old_attribute(nested_model, "keys") == "nested_keys"
-        assert getattr(parent_model, "items_property") == get_old_attribute(parent_model, "items") == "parent_items"
+        assert getattr(nested_model, "keys_property") == "nested_keys"
+        assert getattr(parent_model, "items_property") == "parent_items"
 
         assert set(nested_model.keys()) == {"keysWire", "normalWire"}
         assert set(nested_model.items()) == {("keysWire", "nested_keys"), ("normalWire", "nested_normal")}
@@ -1895,9 +1896,7 @@ class TestBackcompatPropertyMatrix:
         expected = {"id": "test_id", "name": "flattened_name", "description": "flattened_desc"}
         assert attr_dict == expected
 
-        assert get_old_attribute(model, "update") is model.update_property
-        assert get_old_attribute(model, "update").name == "flattened_name"
-        assert get_old_attribute(model, "update").description == "flattened_desc"
+        assert get_backcompat_attr_name(model, "update_property") == "update"
 
         assert set(model.keys()) == {"id", "update_property"}
 
@@ -1941,12 +1940,12 @@ class TestBackcompatPropertyMatrix:
 
         # Should use original names for flattened properties
         attrs = attribute_list(model)
-        assert set(attrs) == {"name", "values", "get"}
-        assert get_old_attribute(model, "values_property") == "test_values"
+        assert set(attrs) == {"name", "values_property", "get_property"}
+        assert get_backcompat_attr_name(model, "values_property") == "values"
         assert "test_name" in model.values()
 
         attr_dict = as_attribute_dict(model)
-        expected = {"name": "test_name", "values": "test_values", "get": "test_class"}
+        expected = {"name": "test_name", "values_property": "test_values", "get_property": "test_class"}
         assert attr_dict == expected
 
     def test_6c_flattened_with_readonly_exclusion(self):
@@ -1989,19 +1988,23 @@ class TestBackcompatPropertyMatrix:
 
         # All properties included by default
         full_dict = as_attribute_dict(model, exclude_readonly=False)
-        expected_full = {"get": "test_get", "setdefault": "setdefault", "popitem": "readwrite_value"}
+        expected_full = {
+            "get_property": "test_get",
+            "setdefault_property": "setdefault",
+            "popitem_property": "readwrite_value",
+        }
         assert full_dict == expected_full
 
         # Readonly properties excluded when requested
         filtered_dict = as_attribute_dict(model, exclude_readonly=True)
-        expected_filtered = {"setdefault": "setdefault", "popitem": "readwrite_value"}
+        expected_filtered = {"setdefault_property": "setdefault", "popitem_property": "readwrite_value"}
         assert filtered_dict == expected_filtered
 
         attribute_list_result = attribute_list(model)
-        expected_attrs = {"get", "setdefault", "popitem"}
+        expected_attrs = {"get_property", "setdefault_property", "popitem_property"}
         assert set(attribute_list_result) == expected_attrs
-        assert get_old_attribute(model, "setdefault") == "setdefault"
-        assert get_old_attribute(model, "popitem") == "readwrite_value"
+        assert get_backcompat_attr_name(model, "setdefault_property") == "setdefault"
+        assert get_backcompat_attr_name(model, "popitem_property") == "popitem"
         assert getattr(model, "get_property") == "test_get"
 
     # ========== EDGE CASES ==========
@@ -2035,22 +2038,27 @@ class TestBackcompatPropertyMatrix:
 
         # attribute_list should use backcompat names where available
         attrs = attribute_list(model)
-        expected_attrs = {"normal_field", "different_wire", "keys", "values", "items"}
+        expected_attrs = {"normal_field", "different_wire", "keys_property", "values_property", "items_property"}
         assert set(attrs) == expected_attrs
-        assert getattr(model, "keys_property") == get_old_attribute(model, "keys") == "keys_val"
-        assert getattr(model, "values_property") == get_old_attribute(model, "values") == "values_val"
-        assert getattr(model, "items_property") == get_old_attribute(model, "items") == "items_val"
-        assert getattr(model, "normal_field") == get_old_attribute(model, "normal_field") == "normal"
-        assert getattr(model, "different_wire") == get_old_attribute(model, "different_wire") == "different"
+        assert get_backcompat_attr_name(model, "keys_property") == "keys"
+        assert get_backcompat_attr_name(model, "values_property") == "values"
+        assert get_backcompat_attr_name(model, "items_property") == "items"
+        assert get_backcompat_attr_name(model, "normal_field") == "normal_field"
+        assert get_backcompat_attr_name(model, "different_wire") == "different_wire"
+        assert getattr(model, "keys_property") == "keys_val"
+        assert getattr(model, "values_property") == "values_val"
+        assert getattr(model, "items_property") == "items_val"
+        assert getattr(model, "normal_field") == "normal"
+        assert getattr(model, "different_wire") == "different"
 
         # Full as_attribute_dict
         full_dict = as_attribute_dict(model)
         expected_full = {
             "normal_field": "normal",
             "different_wire": "different",
-            "keys": "keys_val",
-            "values": "values_val",
-            "items": "items_val",
+            "keys_property": "keys_val",
+            "values_property": "values_val",
+            "items_property": "items_val",
         }
         assert full_dict == expected_full
 
@@ -2059,9 +2067,9 @@ class TestBackcompatPropertyMatrix:
         expected_filtered = {
             "normal_field": "normal",
             "different_wire": "different",
-            "keys": "keys_val",
-            "values": "values_val",
-            # "items" excluded because it's readonly
+            "keys_property": "keys_val",
+            "values_property": "values_val",
+            # "items_property" excluded because it's readonly
         }
         assert filtered_dict == expected_filtered
 
