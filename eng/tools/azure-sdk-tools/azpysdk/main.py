@@ -100,6 +100,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     return parser
 
+
 def classify_uv() -> Optional[tuple[Path, str]]:
     """Determine if uv is available and whether it's global or env-local.
 
@@ -108,8 +109,8 @@ def classify_uv() -> Optional[tuple[Path, str]]:
     """
     uv_exe = shutil.which("uv")
     if not uv_exe:
-        return None 
-    
+        return None
+
     uv_path = Path(uv_exe).resolve()
 
     # Candidate prefixes representing this environment
@@ -130,6 +131,7 @@ def classify_uv() -> Optional[tuple[Path, str]]:
         except ValueError:
             continue
     return uv_path, "global"
+
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """CLI entrypoint.
