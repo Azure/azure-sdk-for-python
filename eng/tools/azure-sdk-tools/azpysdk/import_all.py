@@ -76,7 +76,7 @@ class import_all(Check):
                 import_script_all = "from {0} import *".format(parsed.namespace)
                 commands = [executable, "-c", import_script_all]
 
-                outcomes.append(check_call(commands))
+                outcomes.append(check_call(commands, cwd=staging_directory))
                 logger.info("Verified module dependency, no issues found")
             else:
                 logger.info("Package {} is excluded from dependency check".format(parsed.name))
