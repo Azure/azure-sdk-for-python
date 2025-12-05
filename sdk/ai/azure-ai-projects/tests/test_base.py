@@ -491,4 +491,3 @@ class TestBase(AzureRecordedTestCase):
         except json.JSONDecodeError as e:
             print(f"Invalid JSON: {e}")
             return False
-
