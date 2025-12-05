@@ -1,6 +1,7 @@
 import argparse
 import sys
 import os
+import glob
 
 from typing import Optional, List
 from subprocess import check_call
@@ -33,9 +34,15 @@ DEV_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sd
 TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
 
 
-def get_installed_azure_packages(pkg_name_to_exclude: str) -> List[str]:
+def get_installed_azure_packages(executable: str, pkg_name_to_exclude: str) -> List[str]:
     # This method returns a list of installed azure sdk packages
-    installed_pkgs = [p.split("==")[0] for p in get_installed_packages() if p.startswith("azure-")]
+
+    venv_root = os.path.dirname(os.path.dirname(executable))
+    # Find site-packages directory within the venv
+    site_packages_pattern = os.path.join(venv_root, "lib", "python*", "site-packages")
+    site_packages_dirs = glob.glob(site_packages_pattern)
+    installed_pkgs = [p.split("==")[0] for p in get_installed_packages(site_packages_dirs) if p.startswith("azure-")]
+
     # Get valid list of Azure SDK packages in repo
     pkgs = discover_targeted_packages("", REPO_ROOT)
     valid_azure_packages = [os.path.basename(p) for p in pkgs if "mgmt" not in p and "-nspkg" not in p]
@@ -44,7 +51,7 @@ def get_installed_azure_packages(pkg_name_to_exclude: str) -> List[str]:
     pkg_names = [
         p for p in installed_pkgs if p in valid_azure_packages and p != pkg_name_to_exclude and p not in EXCLUDED_PKGS
     ]
-    breakpoint()
+
     logger.info("Installed azure sdk packages: %s", pkg_names)
     return pkg_names
 
@@ -66,8 +73,7 @@ def uninstall_packages(executable: str, packages: List[str], working_directory: 
         commands.append("--yes")
     else:
         commands.append("-y")
-    print(commands)
-    print("bros")
+
     uninstall_from_venv(executable, packages, working_directory)
     logger.info("Uninstalled packages")
 
@@ -94,7 +100,7 @@ def install_packages(executable: str, packages: List[str], working_directory: st
 
 def install_dev_build_packages(executable: str, pkg_name_to_exclude: str, working_directory: str):
     # Uninstall GA version and reinstall dev build version of dependent packages
-    azure_pkgs = get_installed_azure_packages(pkg_name_to_exclude)
+    azure_pkgs = get_installed_azure_packages(executable, pkg_name_to_exclude)
     uninstall_packages(executable, azure_pkgs, working_directory)
     install_packages(executable, azure_pkgs, working_directory)
 
@@ -156,6 +162,8 @@ class devtest(Check):
                 logger.warning(f"Test tools requirements file not found at {TEST_TOOLS_REQUIREMENTS}.")
 
             install_dev_build_packages(executable, package_name, package_dir)
+
+            self.pip_freeze(executable)
 
             pytest_args = self._build_pytest_args(package_dir, args)
 
