@@ -344,6 +344,13 @@ class AppConfigurationFactory(ServiceProviderFactory):
         super().__init__(client, "Microsoft.AppConfiguration", subscription_id)
 
     # Configuration Stores Operations
+
+    def list(self, skip_token: Optional[str] = None, **kwargs: Any) -> HttpResponse:
+        """List all configuration stores in the subscription."""
+        return self.get("configurationStores", skip_token=skip_token, **kwargs)
+
+
+
     def configuration_stores(self, resource_group: str, config_store_name: Optional[str] = None, **kwargs: Any) -> HttpResponse:
         """List configuration stores or get a specific configuration store."""
         return self.get_resource("configurationStores", config_store_name, resource_group, **kwargs)
