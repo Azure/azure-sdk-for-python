@@ -1,6 +1,13 @@
 # Release History
 
 
+## 1.0.0b7 (2025-12-05)
+
+### Changes
+
+- Update response with created_by
+
+
 ## 1.0.0b6 (2025-11-26)
 
 ### Feature Added
