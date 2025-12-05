@@ -125,6 +125,8 @@ EVALUATOR_SCORING_PATTERNS: Dict[str, EvaluatorScoringPattern] = {
     "sensitive_data_leakage": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
     "protected_material": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
     "task_adherence": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
+    "code_vulnerability": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
+    "ungrounded_attributes": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
     # 1-5 scale evaluators (quality metrics)
     "coherence": EvaluatorScoringPattern.SCALE_1_5,
     "relevance": EvaluatorScoringPattern.SCALE_1_5,
