@@ -66,7 +66,6 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
     azure_ai_projects_tests_ai_search_index_name="sanitized-index-name",
     azure_ai_projects_tests_mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
-    azure_ai_projects_tests_image_model_deployment_name="gpt-image-1-mini",
 )
 
 # Fine-tuning job type constants
@@ -103,6 +102,10 @@ class TestBase(AzureRecordedTestCase):
     test_agents_params = {
         "model_deployment_name": "gpt-4o",
         "agent_name": "agent-for-python-projects-sdk-testing",
+    }
+
+    test_agents_tools_params = {
+        "image_generation_model_deployment_name": "gpt-image-1-mini",
     }
 
     test_inference_params = {
@@ -386,11 +389,15 @@ class TestBase(AzureRecordedTestCase):
     ) -> None:
         assert agent is not None
         assert isinstance(agent, AgentVersionDetails)
-        assert agent.id is not None
+        assert agent.id
         if expected_name:
             assert agent.name == expected_name
+        else:
+            assert agent.name
         if expected_version:
             assert agent.version == expected_version
+        else:
+            assert agent.version
         print(f"Agent version validated (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     def _validate_agent(
@@ -398,11 +405,15 @@ class TestBase(AzureRecordedTestCase):
     ) -> None:
         assert agent is not None
         assert isinstance(agent, AgentDetails)
-        assert agent.id is not None
+        assert agent.id
         if expected_name:
             assert agent.name == expected_name
+        else:
+            assert agent.name
         if expected_latest_version:
             assert agent.versions.latest.version == expected_latest_version
+        else:
+            assert agent.versions.latest.version
         print(f"Agent validated (id: {agent.id}, name: {agent.name}, latest version: {agent.versions.latest.version})")
 
     def _validate_conversation_item(
