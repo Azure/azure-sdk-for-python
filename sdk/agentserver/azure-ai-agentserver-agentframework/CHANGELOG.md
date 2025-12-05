@@ -3,21 +3,21 @@
 
 ## 1.0.0b7 (2025-12-05)
 
-### Feature Added
+### Features Added
 
 - Update response with created_by
 
 
 ## 1.0.0b6 (2025-11-26)
 
-### Feature Added
+### Features Added
 
 - Support Agent-framework greater than 251112
 
 
 ## 1.0.0b5 (2025-11-16)
 
-### Feature Added
+### Features Added
 
 - Support Tools Oauth
 
@@ -28,7 +28,7 @@
 
 ## 1.0.0b4 (2025-11-13)
 
-### Feature Added
+### Features Added
 
 - Adapters support tools
 
