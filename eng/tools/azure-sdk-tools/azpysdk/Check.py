@@ -27,6 +27,17 @@ from ci_tools.logging import logger
 # being called from within a site-packages folder. Due to that, we can't trust the location of __file__
 REPO_ROOT = discover_repo_root()
 
+PACKAGING_REQUIREMENTS = [
+    "wheel==0.45.1",
+    "packaging==24.2",
+    "urllib3==2.2.3",
+    "tomli==2.2.1",
+    "build==1.2.2.post1",
+    "pkginfo==1.12.1.2",
+]
+
+TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
+DEPENDENCY_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/dependency_tools.txt")
 
 class Check(abc.ABC):
     """
