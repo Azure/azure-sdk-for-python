@@ -1,4 +1,5 @@
 import importlib
+import platform
 import re
 import sys
 from importlib import reload
@@ -64,7 +65,8 @@ def mock_function_multi_return_expected(__self, mock_arg):
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 @pytest.mark.skipif(
-    condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
+    platform.python_implementation() == "PyPy",
+    reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
 )
 class TestPersistentLocalsProfiler:
     @classmethod
@@ -134,6 +136,10 @@ class TestPersistentLocalsProfiler:
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+@pytest.mark.skipif(
+    condition=sys.version_info >= (3, 14),
+    reason="Bytecode builder only supports CPython 3.7-3.11. Runtime automatically uses profiler for 3.12+ (see is_bytecode_optimization_enabled in utils.py)",
+)
 class TestPersistentLocalsPrivatePreview(TestPersistentLocalsProfiler):
     _PACKAGE = "bytecode"
 
@@ -206,7 +212,8 @@ class TestPersistentLocalsPrivatePreview(TestPersistentLocalsProfiler):
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 @pytest.mark.skipif(
-    condition=sys.version_info >= (3, 11), reason="historical implementation doesn't support Python 3.11+"
+    condition=sys.version_info >= (3, 11),
+    reason="Historical implementation doesn't support Python 3.11+. This tests legacy bytecode manipulation from azureml-components. Runtime uses profiler from 3.12+, but this test forces bytecode usage to validate the historical implementation.",
 )
 class TestPersistentLocalsHistoricalImplementation(TestPersistentLocalsPrivatePreview):
     """This is to test the implementation of persistent locals function in azuerml-components."""

@@ -427,18 +427,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             NFS only. The owning group of the file.
         :keyword str file_mode:
             NFS only. The file mode of the file.
-        :keyword file_property_semantics:
-            SMB only. Specifies permissions to be configured. Default value is None.
-            If not specified or None is passed, New will be the default. Possible values are:
-
-                New - forcefully add the ARCHIVE attribute flag and alter the permissions specified in
-                x-ms-file-permission to inherit missing permissions from the parent.
-
-                Restore - apply changes without further modification.
-
-        :paramtype file_property_semantics: Literal["New", "Restore"]
-        :keyword data: Optional initial data to upload, up to 4MB.
-        :paramtype data: bytes
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -913,6 +901,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the size of the blob or None if the size is unknown.
         :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
+        :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
+            decompressed automatically before being returned. Default value is True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.

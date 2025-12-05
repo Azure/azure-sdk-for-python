@@ -9,7 +9,6 @@ bandit==1.6.2
 stevedore==5.4.1
 pyproject-api==1.8.0
 build==1.2.2.post1
-nh3<0.3; platform_python_implementation == "PyPy" and python_version == "3.9"
 
 # locking packages defined as deps from azure-sdk-tools
 Jinja2==3.1.6

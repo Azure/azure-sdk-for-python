@@ -757,6 +757,8 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
+        :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
+            decompressed automatically before being returned. Default value is True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

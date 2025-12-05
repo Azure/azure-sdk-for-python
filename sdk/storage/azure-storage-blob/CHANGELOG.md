@@ -9,7 +9,7 @@ This replaces `INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED` which h
 - Added support for the keywords `access_tier_if_modified_since` and `access_tier_if_unmodified_since` to
 conditionally perform `BlobClient.delete_blob` operation.
 
-## 12.28.0b1 (Unreleased)
+## 12.28.0b1 (2025-12-04)
 
 ### Features Added
 - Added support for service version 2026-02-06.
@@ -19,6 +19,8 @@ conditionally perform `BlobClient`'s `set_blob_tags` and `get_blob_tags` operati
 APIs, which specifies the full path to start listing paths from.
 - Added support for the keyword `user_delegation_oid` to `generate_blob_sas` and `generate_container_sas`, which
 specifies the Entra ID of the user that is authorized to use the generated SAS URL.
+- Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
+- Added the ability to skip auto decompression on `BlobClient.download_blob` via the `decompress` keyword.
 
 ## 12.27.1 (2025-10-29)
 

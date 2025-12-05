@@ -26,6 +26,24 @@ class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Timestamps per word in the output audio."""
 
 
+class AvatarConfigTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Avatar config types."""
+
+    VIDEO_AVATAR = "video-avatar"
+    """Video avatar"""
+    PHOTO_AVATAR = "photo-avatar"
+    """Photo avatar"""
+
+
+class AvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Avatar config output protocols."""
+
+    WEBRTC = "webrtc"
+    """WebRTC protocol, output the audio/video streams via WebRTC"""
+    WEBSOCKET = "websocket"
+    """WebSocket protocol, output the video frames over WebSocket"""
+
+
 class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Union of all supported Azure voice types."""
 
@@ -56,6 +74,7 @@ class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_CREATE = "response.create"
     RESPONSE_CANCEL = "response.cancel"
     SESSION_AVATAR_CONNECT = "session.avatar.connect"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
 
 
 class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -63,6 +82,7 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INPUT_TEXT = "input_text"
     INPUT_AUDIO = "input_audio"
+    INPUT_IMAGE = "input_image"
     TEXT = "text"
     AUDIO = "audio"
 
@@ -106,6 +126,19 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MESSAGE = "message"
     FUNCTION_CALL = "function_call"
     FUNCTION_CALL_OUTPUT = "function_call_output"
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    MCP_CALL = "mcp_call"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+
+
+class MCPApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The available set of MCP approval types."""
+
+    NEVER = "never"
+    """Approval is never required."""
+    ALWAYS = "always"
+    """Approval is always required."""
 
 
 class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -148,6 +181,10 @@ class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Shimmer voice."""
     VERSE = "verse"
     """Verse voice."""
+    MARIN = "marin"
+    """Marin voice."""
+    CEDAR = "cedar"
+    """Cedar voice."""
 
 
 class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -174,6 +211,24 @@ class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use the latest Phoenix model."""
     PHOENIX_V2_NEURAL = "PhoenixV2Neural"
     """Use the Phoenix V2 model."""
+
+
+class PhotoAvatarBaseModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Photo avatar base modes."""
+
+    VASA1 = "vasa-1"
+    """VASA-1 model"""
+
+
+class RequestImageContentPartDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an image's detail level. Can be 'auto', 'low', 'high', or an unknown future value."""
+
+    AUTO = "auto"
+    """Automatically select an appropriate detail level."""
+    LOW = "low"
+    """Use a lower detail level to reduce bandwidth or cost."""
+    HIGH = "high"
+    """Use a higher detail level—potentially more resource-intensive."""
 
 
 class ResponseItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -235,6 +290,16 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
+    MCP_LIST_TOOLS_IN_PROGRESS = "mcp_list_tools.in_progress"
+    MCP_LIST_TOOLS_COMPLETED = "mcp_list_tools.completed"
+    MCP_LIST_TOOLS_FAILED = "mcp_list_tools.failed"
+    RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call_arguments.delta"
+    RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call_arguments.done"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
+    RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
+    RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
 
 
 class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -254,6 +319,7 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     FUNCTION = "function"
+    MCP = "mcp"
 
 
 class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

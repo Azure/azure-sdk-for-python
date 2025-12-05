@@ -74,7 +74,7 @@ def create_client_with_custom_user_agent():
     client = cosmos_client.CosmosClient(
         HOST,
         {'masterKey': MASTER_KEY},
-        user_agent=custom_user_agent
+        user_agent_suffix=custom_user_agent
     )
     
     print(f'Client created with custom user agent: {custom_user_agent}')
@@ -106,7 +106,7 @@ def create_client_with_detailed_user_agent():
     client = cosmos_client.CosmosClient(
         HOST,
         {'masterKey': MASTER_KEY},
-        user_agent=detailed_user_agent
+        user_agent_suffix=detailed_user_agent
     )
     
     print(f'Client created with detailed user agent: {detailed_user_agent}')
@@ -128,7 +128,7 @@ def create_multiple_clients_with_different_user_agents():
     ingestion_client = cosmos_client.CosmosClient(
         HOST,
         {'masterKey': MASTER_KEY},
-        user_agent="DataIngestionService/1.0.0"
+        user_agent_suffix="DataIngestionService/1.0.0"
     )
     print('Created client for data ingestion: DataIngestionService/1.0.0')
     
@@ -136,7 +136,7 @@ def create_multiple_clients_with_different_user_agents():
     query_client = cosmos_client.CosmosClient(
         HOST,
         {'masterKey': MASTER_KEY},
-        user_agent="QueryService/1.0.0"
+        user_agent_suffix="QueryService/1.0.0"
     )
     print('Created client for queries: QueryService/1.0.0')
     
@@ -144,7 +144,7 @@ def create_multiple_clients_with_different_user_agents():
     analytics_client = cosmos_client.CosmosClient(
         HOST,
         {'masterKey': MASTER_KEY},
-        user_agent="AnalyticsService/1.0.0"
+        user_agent_suffix="AnalyticsService/1.0.0"
     )
     print('Created client for analytics: AnalyticsService/1.0.0')
     
@@ -215,7 +215,7 @@ def demonstrate_operations_with_multiple_user_agents():
         client = cosmos_client.CosmosClient(
                 HOST,
                 {'masterKey': MASTER_KEY},
-                user_agent=user_agent_suffix
+            user_agent_suffix=user_agent_suffix
         )
         db = client.create_database_if_not_exists(id=DATABASE_ID)
         print(f'{operation_name} completed with user agent: {user_agent_suffix}')

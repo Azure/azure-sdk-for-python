@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-07-01-preview/Accounts_TransitionEncryptionKey.json
+# x-ms-original-file: 2025-09-01-preview/Accounts_TransitionEncryptionKey.json
 if __name__ == "__main__":
     main()
