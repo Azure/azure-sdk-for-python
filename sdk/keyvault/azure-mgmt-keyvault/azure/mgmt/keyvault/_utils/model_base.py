@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17,7 +17,6 @@ import logging
 import base64
 import re
 import typing
-import traceback
 import enum
 import email.utils
 from datetime import datetime, date, time, timedelta, timezone
@@ -29,7 +28,8 @@ import isodate
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
-from azure.core.serialization import _Null, TypeHandlerRegistry
+from azure.core.serialization import _Null
+from azure.core.rest import HttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,9 +37,6 @@ __all__ = ["SdkJSONEncoder", "Model", "rest_field", "rest_discriminator"]
 
 TZ_UTC = timezone.utc
 _T = typing.TypeVar("_T")
-
-
-TYPE_HANDLER_REGISTRY = TypeHandlerRegistry()
 
 
 def _timedelta_as_isostr(td: timedelta) -> str:
@@ -165,10 +162,6 @@ class SdkJSONEncoder(JSONEncoder):
             except AttributeError:
                 # This will be raised when it hits value.total_seconds in the method above
                 pass
-
-            custom_serializer = TYPE_HANDLER_REGISTRY.get_serializer(o)
-            if custom_serializer:
-                return custom_serializer(o)
             return super(SdkJSONEncoder, self).default(o)
 
 
@@ -353,7 +346,7 @@ _UNSET = object()
 
 
 class _MyMutableMapping(MutableMapping[str, typing.Any]):
-    def __init__(self, data: typing.Dict[str, typing.Any]) -> None:
+    def __init__(self, data: dict[str, typing.Any]) -> None:
         self._data = data
 
     def __contains__(self, key: typing.Any) -> bool:
@@ -433,7 +426,7 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
             return self._data.pop(key)
         return self._data.pop(key, default)
 
-    def popitem(self) -> typing.Tuple[str, typing.Any]:
+    def popitem(self) -> tuple[str, typing.Any]:
         """
         Removes and returns some (key, value) pair
         :returns: The (key, value) pair.
@@ -489,7 +482,6 @@ def _is_model(obj: typing.Any) -> bool:
 
 
 def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-many-return-statements
-
     if isinstance(o, list):
         return [_serialize(x, format) for x in o]
     if isinstance(o, dict):
@@ -519,18 +511,10 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
     except AttributeError:
         # This will be raised when it hits value.total_seconds in the method above
         pass
-
-    # Check if there's a custom serializer for the type
-    custom_serializer = TYPE_HANDLER_REGISTRY.get_serializer(o)
-    if custom_serializer:
-        return custom_serializer(o)
-
     return o
 
 
-def _get_rest_field(
-    attr_to_rest_field: typing.Dict[str, "_RestField"], rest_name: str
-) -> typing.Optional["_RestField"]:
+def _get_rest_field(attr_to_rest_field: dict[str, "_RestField"], rest_name: str) -> typing.Optional["_RestField"]:
     try:
         return next(rf for rf in attr_to_rest_field.values() if rf._rest_name == rest_name)
     except StopIteration:
@@ -553,7 +537,7 @@ class Model(_MyMutableMapping):
     _is_model = True
     # label whether current class's _attr_to_rest_field has been calculated
     # could not see _attr_to_rest_field directly because subclass inherits it from parent class
-    _calculated: typing.Set[str] = set()
+    _calculated: set[str] = set()
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         class_name = self.__class__.__name__
@@ -638,7 +622,7 @@ class Model(_MyMutableMapping):
             # we know the last nine classes in mro are going to be 'Model', '_MyMutableMapping', 'MutableMapping',
             # 'Mapping', 'Collection', 'Sized', 'Iterable', 'Container' and 'object'
             mros = cls.__mro__[:-9][::-1]  # ignore parents, and reverse the mro order
-            attr_to_rest_field: typing.Dict[str, _RestField] = {  # map attribute name to rest_field property
+            attr_to_rest_field: dict[str, _RestField] = {  # map attribute name to rest_field property
                 k: v for mro_class in mros for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
             }
             annotations = {
@@ -653,8 +637,8 @@ class Model(_MyMutableMapping):
                     rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
                 if not rf._rest_name_input:
                     rf._rest_name_input = attr
-            cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
-            cls._backcompat_attr_to_rest_field: typing.Dict[str, _RestField] = {
+            cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
+            cls._backcompat_attr_to_rest_field: dict[str, _RestField] = {
                 Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
                 for attr, rf in cls._attr_to_rest_field.items()
             }
@@ -668,11 +652,11 @@ class Model(_MyMutableMapping):
                 base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore
 
     @classmethod
-    def _get_backcompat_attribute_name(cls, _attr_to_rest_field: typing.Dict[str, "_RestField"], attr_name: str) -> str:
-        rest_field = _attr_to_rest_field.get(attr_name)  # pylint: disable=protected-access
-        if rest_field is None:
+    def _get_backcompat_attribute_name(cls, attr_to_rest_field: dict[str, "_RestField"], attr_name: str) -> str:
+        rest_field_obj = attr_to_rest_field.get(attr_name)  # pylint: disable=protected-access
+        if rest_field_obj is None:
             return attr_name
-        original_tsp_name = getattr(rest_field, "_original_tsp_name", None)  # pylint: disable=protected-access
+        original_tsp_name = getattr(rest_field_obj, "_original_tsp_name", None)  # pylint: disable=protected-access
         if original_tsp_name:
             return original_tsp_name
         return attr_name
@@ -709,7 +693,7 @@ class Model(_MyMutableMapping):
         mapped_cls = cls.__mapping__.get(discriminator_value, cls)  # pyright: ignore # pylint: disable=no-member
         return mapped_cls._deserialize(data, exist_discriminators)
 
-    def as_dict(self, *, exclude_readonly: bool = False) -> typing.Dict[str, typing.Any]:
+    def as_dict(self, *, exclude_readonly: bool = False) -> dict[str, typing.Any]:
         """Return a dict that can be turned into json using json.dump.
 
         :keyword bool exclude_readonly: Whether to remove the readonly properties.
@@ -769,7 +753,7 @@ def _deserialize_with_union(deserializers, obj):
 def _deserialize_dict(
     value_deserializer: typing.Optional[typing.Callable],
     module: typing.Optional[str],
-    obj: typing.Dict[typing.Any, typing.Any],
+    obj: dict[typing.Any, typing.Any],
 ):
     if obj is None:
         return obj
@@ -779,7 +763,7 @@ def _deserialize_dict(
 
 
 def _deserialize_multiple_sequence(
-    entry_deserializers: typing.List[typing.Optional[typing.Callable]],
+    entry_deserializers: list[typing.Optional[typing.Callable]],
     module: typing.Optional[str],
     obj,
 ):
@@ -800,14 +784,14 @@ def _deserialize_sequence(
     return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
 
 
-def _sorted_annotations(types: typing.List[typing.Any]) -> typing.List[typing.Any]:
+def _sorted_annotations(types: list[typing.Any]) -> list[typing.Any]:
     return sorted(
         types,
         key=lambda x: hasattr(x, "__name__") and x.__name__.lower() in ("str", "float", "int", "bool"),
     )
 
 
-def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-branches
+def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-statements, too-many-branches
     annotation: typing.Any,
     module: typing.Optional[str],
     rf: typing.Optional["_RestField"] = None,
@@ -872,7 +856,10 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
         return functools.partial(_deserialize_with_union, deserializers)
 
     try:
-        if annotation._name == "Dict":  # pyright: ignore
+        annotation_name = (
+            annotation.__name__ if hasattr(annotation, "__name__") else annotation._name  # pyright: ignore
+        )
+        if annotation_name.lower() == "dict":
             value_deserializer = _get_deserialize_callable_from_annotation(
                 annotation.__args__[1], module, rf  # pyright: ignore
             )
@@ -885,7 +872,10 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
     except (AttributeError, IndexError):
         pass
     try:
-        if annotation._name in ["List", "Set", "Tuple", "Sequence"]:  # pyright: ignore
+        annotation_name = (
+            annotation.__name__ if hasattr(annotation, "__name__") else annotation._name  # pyright: ignore
+        )
+        if annotation_name.lower() in ["list", "set", "tuple", "sequence"]:
             if len(annotation.__args__) > 1:  # pyright: ignore
                 entry_deserializers = [
                     _get_deserialize_callable_from_annotation(dt, module, rf)
@@ -914,10 +904,6 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
 
     if get_deserializer(annotation, rf):
         return functools.partial(_deserialize_default, get_deserializer(annotation, rf))
-
-    deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(annotation)
-    if deserializer:
-        return deserializer
 
     return functools.partial(_deserialize_default, annotation)
 
@@ -973,13 +959,13 @@ def _deserialize(
 
 def _failsafe_deserialize(
     deserializer: typing.Any,
-    value: typing.Any,
+    response: HttpResponse,
     module: typing.Optional[str] = None,
     rf: typing.Optional["_RestField"] = None,
     format: typing.Optional[str] = None,
 ) -> typing.Any:
     try:
-        return _deserialize(deserializer, value, module, rf, format)
+        return _deserialize(deserializer, response.json(), module, rf, format)
     except DeserializationError:
         _LOGGER.warning(
             "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
@@ -989,10 +975,10 @@ def _failsafe_deserialize(
 
 def _failsafe_deserialize_xml(
     deserializer: typing.Any,
-    value: typing.Any,
+    response: HttpResponse,
 ) -> typing.Any:
     try:
-        return _deserialize_xml(deserializer, value)
+        return _deserialize_xml(deserializer, response.text())
     except DeserializationError:
         _LOGGER.warning(
             "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
@@ -1000,6 +986,7 @@ def _failsafe_deserialize_xml(
         return None
 
 
+# pylint: disable=too-many-instance-attributes
 class _RestField:
     def __init__(
         self,
@@ -1007,11 +994,11 @@ class _RestField:
         name: typing.Optional[str] = None,
         type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
         is_discriminator: bool = False,
-        visibility: typing.Optional[typing.List[str]] = None,
+        visibility: typing.Optional[list[str]] = None,
         default: typing.Any = _UNSET,
         format: typing.Optional[str] = None,
         is_multipart_file_input: bool = False,
-        xml: typing.Optional[typing.Dict[str, typing.Any]] = None,
+        xml: typing.Optional[dict[str, typing.Any]] = None,
         original_tsp_name: typing.Optional[str] = None,
     ):
         self._type = type
@@ -1028,7 +1015,11 @@ class _RestField:
 
     @property
     def _class_type(self) -> typing.Any:
-        return getattr(self._type, "args", [None])[0]
+        result = getattr(self._type, "args", [None])[0]
+        # type may be wrapped by nested functools.partial so we need to check for that
+        if isinstance(result, functools.partial):
+            return getattr(result, "args", [None])[0]
+        return result
 
     @property
     def _rest_name(self) -> str:
@@ -1071,11 +1062,11 @@ def rest_field(
     *,
     name: typing.Optional[str] = None,
     type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
-    visibility: typing.Optional[typing.List[str]] = None,
+    visibility: typing.Optional[list[str]] = None,
     default: typing.Any = _UNSET,
     format: typing.Optional[str] = None,
     is_multipart_file_input: bool = False,
-    xml: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    xml: typing.Optional[dict[str, typing.Any]] = None,
     original_tsp_name: typing.Optional[str] = None,
 ) -> typing.Any:
     return _RestField(
@@ -1094,8 +1085,8 @@ def rest_discriminator(
     *,
     name: typing.Optional[str] = None,
     type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
-    visibility: typing.Optional[typing.List[str]] = None,
-    xml: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    visibility: typing.Optional[list[str]] = None,
+    xml: typing.Optional[dict[str, typing.Any]] = None,
 ) -> typing.Any:
     return _RestField(name=name, type=type, is_discriminator=True, visibility=visibility, xml=xml)
 
@@ -1114,9 +1105,9 @@ def serialize_xml(model: Model, exclude_readonly: bool = False) -> str:
 def _get_element(
     o: typing.Any,
     exclude_readonly: bool = False,
-    parent_meta: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    parent_meta: typing.Optional[dict[str, typing.Any]] = None,
     wrapped_element: typing.Optional[ET.Element] = None,
-) -> typing.Union[ET.Element, typing.List[ET.Element]]:
+) -> typing.Union[ET.Element, list[ET.Element]]:
     if _is_model(o):
         model_meta = getattr(o, "_xml", {})
 
@@ -1205,7 +1196,7 @@ def _get_element(
 def _get_wrapped_element(
     v: typing.Any,
     exclude_readonly: bool,
-    meta: typing.Optional[typing.Dict[str, typing.Any]],
+    meta: typing.Optional[dict[str, typing.Any]],
 ) -> ET.Element:
     wrapped_element = _create_xml_element(
         meta.get("name") if meta else None, meta.get("prefix") if meta else None, meta.get("ns") if meta else None
@@ -1248,7 +1239,7 @@ def _deserialize_xml(
 def _convert_element(e: ET.Element):
     # dict case
     if len(e.attrib) > 0 or len({child.tag for child in e}) > 1:
-        dict_result: typing.Dict[str, typing.Any] = {}
+        dict_result: dict[str, typing.Any] = {}
         for child in e:
             if dict_result.get(child.tag) is not None:
                 if isinstance(dict_result[child.tag], list):
@@ -1261,7 +1252,7 @@ def _convert_element(e: ET.Element):
         return dict_result
     # array case
     if len(e) > 0:
-        array_result: typing.List[typing.Any] = []
+        array_result: list[typing.Any] = []
         for child in e:
             array_result.append(_convert_element(child))
         return array_result
