@@ -516,12 +516,12 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
             The possible options for content validation are as follows:
 
-            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            bool - Passing a boolean is deprecated. Will perform basic checksum validation via a pipeline
             policy that calculates an MD5 hash for each request body and sends it to the service to verify
             it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
             of https. If using this option, the memory-efficient upload algorithm will not be used.
 
-            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, it chooses 'crc64'.
 
             "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
             Performs validation using Azure Storage's specific implementation of CRC64 with a custom
@@ -2065,12 +2065,12 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
             The possible options for content validation are as follows:
 
-            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            bool - Passing a boolean is deprecated. Will perform basic checksum validation via a pipeline
             policy that calculates an MD5 hash for each request body and sends it to the service to verify
             it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
             of https. If using this option, the memory-efficient upload algorithm will not be used.
 
-            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, it chooses 'crc64'.
 
             "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
             Performs validation using Azure Storage's specific implementation of CRC64 with a custom
@@ -2915,12 +2915,12 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
             The possible options for content validation are as follows:
 
-            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            bool - Passing a boolean is deprecated. Will perform basic checksum validation via a pipeline
             policy that calculates an MD5 hash for each request body and sends it to the service to verify
             it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
             of https. If using this option, the memory-efficient upload algorithm will not be used.
 
-            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, it chooses 'crc64'.
 
             "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
             Performs validation using Azure Storage's specific implementation of CRC64 with a custom
@@ -3232,12 +3232,12 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
             The possible options for content validation are as follows:
 
-            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            bool - Passing a boolean is deprecated. Will perform basic checksum validation via a pipeline
             policy that calculates an MD5 hash for each request body and sends it to the service to verify
             it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
             of https. If using this option, the memory-efficient upload algorithm will not be used.
 
-            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, it chooses 'crc64'.
 
             "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
             Performs validation using Azure Storage's specific implementation of CRC64 with a custom
