@@ -1,12 +1,12 @@
 # Release History
 
-## 1.36.1 (Unreleased)
+## 1.37.0 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
+- Added `get_backcompat_attr` to `azure.core.serialization`. `get_backcompat_attr` gets the value of an attribute using backcompat attribute access.  #44084
 
-### Bugs Fixed
+### Breaking Changes
 
 ### Other Changes
 
