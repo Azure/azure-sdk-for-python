@@ -1,6 +1,6 @@
 # Release History
 
-## 14.1.0b1 (2025-11-28)
+## 14.1.0b1 (2025-12-02)
 
 ### Features Added
 
@@ -47,6 +47,7 @@
   - Added enum `CacheLifeCycleState`
   - Added model `CacheMountTargetProperties`
   - Added model `CacheProperties`
+  - Added model `CachePropertiesExportPolicy`
   - Added enum `CacheProvisioningState`
   - Added model `CacheUpdate`
   - Added model `CacheUpdateProperties`
