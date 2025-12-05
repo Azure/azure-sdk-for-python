@@ -61,7 +61,7 @@ async def main():
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="Generate images based on user prompts",
-                tools=[ImageGenTool(model="gpt-image-1-mini", quality="low", size="1024x1024")],
+                tools=[ImageGenTool(model="gpt-image-1-mini", quality="low", size="1024x1024")],  # type: ignore
             ),
             description="Agent for image generation.",
         )

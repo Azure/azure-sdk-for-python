@@ -57,7 +57,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = ImageGenTool(model="gpt-image-1-mini", quality="low", size="1024x1024")
+    tool = ImageGenTool(model="gpt-image-1-mini", quality="low", size="1024x1024")  # type: ignore
     # [END tool_declaration]
 
     agent = project_client.agents.create_version(
