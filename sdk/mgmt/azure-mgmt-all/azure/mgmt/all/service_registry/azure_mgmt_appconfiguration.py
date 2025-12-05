@@ -4,6 +4,7 @@ try:
 except ImportError:
     from typing_extensions import TypedDict, NotRequired  # Python 3.8-3.10
 
+from azure.core.polling import LROPoller
 from azure.core.rest import HttpResponse
 from .service_factory import ServiceProviderFactory
 
@@ -339,9 +340,12 @@ class TrackedResource(Resource):
 
 class AppConfigurationFactory(ServiceProviderFactory):
     """Factory for Microsoft.AppConfiguration service provider."""
+    
+    # App Configuration API version from azure-mgmt-appconfiguration
+    DEFAULT_API_VERSION = "2024-06-01"
 
-    def __init__(self, client: "ManagementClient", subscription_id: Optional[str] = None):
-        super().__init__(client, "Microsoft.AppConfiguration", subscription_id)
+    def __init__(self, client: "ManagementClient", subscription_id: Optional[str] = None, api_version: Optional[str] = None):
+        super().__init__(client, "Microsoft.AppConfiguration", subscription_id, api_version or self.DEFAULT_API_VERSION)
 
     # Configuration Stores Operations
 
@@ -356,18 +360,18 @@ class AppConfigurationFactory(ServiceProviderFactory):
         return self.get_resource("configurationStores", config_store_name, resource_group, **kwargs)
 
     def create_configuration_store(self, resource_group: str, config_store_name: str, 
-                                 config_store_data: ConfigurationStore, **kwargs: Any) -> HttpResponse:
+                                 config_store_data: ConfigurationStore, **kwargs: Any) -> LROPoller[ConfigurationStore]:
         """Create a configuration store."""
-        return self.create_resource("configurationStores", config_store_name, cast(Dict[str, Any], config_store_data), resource_group, **kwargs)
+        return self.begin_create_resource("configurationStores", config_store_name, cast(Dict[str, Any], config_store_data), resource_group, output_type="ConfigurationStore", **kwargs)
 
     def update_configuration_store(self, resource_group: str, config_store_name: str, 
-                                 update_data: ConfigurationStoreUpdateParameters, **kwargs: Any) -> HttpResponse:
+                                 update_data: ConfigurationStoreUpdateParameters, **kwargs: Any) -> LROPoller[ConfigurationStore]:
         """Update a configuration store."""
-        return self.update_resource("configurationStores", config_store_name, cast(Dict[str, Any], update_data), resource_group, **kwargs)
+        return self.begin_update_resource("configurationStores", config_store_name, cast(Dict[str, Any], update_data), resource_group, output_type="ConfigurationStore", **kwargs)
 
-    def delete_configuration_store(self, resource_group: str, config_store_name: str, **kwargs: Any) -> HttpResponse:
+    def delete_configuration_store(self, resource_group: str, config_store_name: str, **kwargs: Any) -> LROPoller[None]:
         """Delete a configuration store."""
-        return self.delete_resource("configurationStores", config_store_name, resource_group, **kwargs)
+        return self.begin_delete_resource("configurationStores", config_store_name, resource_group, **kwargs)
 
     def list_configuration_stores_by_subscription(self, **kwargs: Any) -> HttpResponse:
         """List all configuration stores in the subscription."""
@@ -383,7 +387,7 @@ class AppConfigurationFactory(ServiceProviderFactory):
         url = f"/subscriptions/{self.subscription_id}/providers/Microsoft.AppConfiguration/locations/{location}/deletedConfigurationStores/{config_store_name}"
         return self.get(url, **kwargs)
 
-    def purge_deleted_configuration_store(self, location: str, config_store_name: str, **kwargs: Any) -> HttpResponse:
+    def purge_deleted_configuration_store(self, location: str, config_store_name: str, **kwargs: Any) -> LROPoller[None]:
         """Purge a deleted configuration store."""
         url = f"/subscriptions/{self.subscription_id}/providers/Microsoft.AppConfiguration/locations/{location}/deletedConfigurationStores/{config_store_name}/purge"
         return self.post(url, **kwargs)

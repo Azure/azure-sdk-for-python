@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING, cast, Dict, Type
+from typing import Any, Optional, TYPE_CHECKING, cast, Dict, Type, Literal, Union
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
@@ -24,12 +24,15 @@ from .service_registry.azure_mgmt_appconfiguration import AppConfigurationFactor
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
+# Type alias for supported service providers
+SupportedProviders = Literal["Microsoft.AppConfiguration"]
+
 
 class ManagementClient:  # pylint: disable=too-many-instance-attributes
     """Azure Management Client with service provider factory support."""
     
     # Registry of available service provider factories
-    _service_factories: Dict[str, Type[ServiceProviderFactory]] = {
+    service_factories: Dict[str, Type[ServiceProviderFactory]] = {
         "Microsoft.AppConfiguration": AppConfigurationFactory,
     }
 
@@ -65,32 +68,58 @@ class ManagementClient:  # pylint: disable=too-many-instance-attributes
             ]
         self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
 
-    def __call__(self, service_provider: str, subscription_id: str = None) -> ServiceProviderFactory:
-        """Create a service provider factory.
+    def __call__(self, service_provider: str, subscription_id: Optional[str] = None, api_version: Optional[str] = None) -> ServiceProviderFactory:
+        """Create a service client for the specified resource provider.
         
-        :param service_provider: The name of the service provider (e.g., 'Microsoft.Compute')
-        :type service_provider: str
+        :param service_provider: The name of the service provider (e.g., 'Microsoft.AppConfiguration', 'Microsoft.Compute')
+        :type service_provider: str or SupportedProviders
         :param subscription_id: Optional subscription ID. If not provided, uses client's default.
         :type subscription_id: str
-        :return: A factory instance for the specified service provider
+        :param api_version: Optional API version for the service provider. If not provided, uses provider's default.
+        :type api_version: str
+        :return: A service client that can perform operations for the specified resource provider
         :rtype: ServiceProviderFactory
+        
+        Example usage:
+            client = ManagementClient(credential, subscription_id)
+            
+            # Get an App Configuration service client with default API version
+            app_config = client("Microsoft.AppConfiguration")
+            
+            # Get an App Configuration service client with specific API version
+            app_config = client("Microsoft.AppConfiguration", api_version="2023-03-01")
+            
+            # List all configuration stores
+            response = app_config.get("configurationStores")
+            
+            # Get a specific configuration store
+            response = app_config.get("configurationStores/mystore", resource_group="mygroup")
+            
+            # Create a new configuration store
+            store_data = {"location": "eastus", "sku": {"name": "standard"}}
+            response = app_config.put("configurationStores/mystore", model=store_data, resource_group="mygroup")
         """
-        if service_provider in self._service_factories:
-            return self._service_factories[service_provider](self, subscription_id)
-        else:
-            # Return a generic factory for unsupported service providers
-            return ServiceProviderFactory(self, service_provider, subscription_id)
+        # Check if we have a specialized factory for this provider
+        try:
+            return self.service_factories[service_provider](self, subscription_id, api_version)
+        except KeyError:
+            raise ValueError(f"Service provider '{service_provider}' is not supported.")
 
     @classmethod
-    def register_service_factory(cls, service_provider: str, factory_class: Type[ServiceProviderFactory]) -> None:
-        """Register a new service provider factory.
+    def register_service_factory(cls, service_provider: Union[str, SupportedProviders], factory_class: Type[ServiceProviderFactory]) -> None:
+        """Register a specialized service factory for a resource provider.
+        
+        This is typically used internally to register optimized service clients
+        for specific Azure resource providers.
+        
+        Note: When adding new providers, update the SupportedProviders type alias as well.
         
         :param service_provider: The name of the service provider
-        :type service_provider: str
-        :param factory_class: The factory class for the service provider
+        :type service_provider: Union[str, SupportedProviders]
+        :param factory_class: The specialized factory class for the service provider
         :type factory_class: Type[ServiceProviderFactory]
         """
-        cls._service_factories[service_provider] = factory_class
+        cls.service_factories[service_provider] = factory_class
 
     @classmethod
     def get_supported_providers(cls) -> list[str]:
@@ -99,7 +128,7 @@ class ManagementClient:  # pylint: disable=too-many-instance-attributes
         :return: List of supported service provider names
         :rtype: list[str]
         """
-        return list(cls._service_factories.keys())
+        return list(cls.service_factories.keys())
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

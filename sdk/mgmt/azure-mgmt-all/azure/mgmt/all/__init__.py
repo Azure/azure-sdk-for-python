@@ -21,4 +21,3 @@ __version__ = VERSION
 __all__ = [
     "ManagementClient",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
