@@ -30,8 +30,11 @@ USAGE:
        the "Models + endpoints" tab in your Microsoft Foundry project.
 
     NOTE:
-    - Image generation must have "gpt-image-1" deployment specified in the header when creating response at this moment
-    - The generated image will be saved as "microsoft.png" in the current directory
+    - Image generation requires a separate "gpt-image-1" deployment which is specified when constructing
+      the `ImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
+      calling `.responses.create`.
+    - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1".
+    - The generated image will be saved as "microsoft.png" in the current directory.
 """
 
 import asyncio
@@ -58,7 +61,7 @@ async def main():
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="Generate images based on user prompts",
-                tools=[ImageGenTool(quality="low", size="1024x1024")],
+                tools=[ImageGenTool(model="gpt-image-1", quality="low", size="1024x1024")],
             ),
             description="Agent for image generation.",
         )

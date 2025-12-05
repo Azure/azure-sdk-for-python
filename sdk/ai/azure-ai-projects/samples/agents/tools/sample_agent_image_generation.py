@@ -31,8 +31,9 @@ USAGE:
        used by the agent for understanding and responding to prompts. This is NOT the image generation model.
 
     NOTE:
-    - Image generation requires a separate "gpt-image-1" deployment which is specified in the
-      x-ms-oai-image-generation-deployment header when creating the response.
+    - Image generation requires a separate "gpt-image-1" deployment which is specified when constructing
+      the `ImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
+      calling `.responses.create`.
     - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1".
     - The generated image will be saved as "microsoft.png" in the current directory.
 """
@@ -56,7 +57,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = ImageGenTool(quality="low", size="1024x1024")
+    tool = ImageGenTool(model="gpt-image-1", quality="low", size="1024x1024")
     # [END tool_declaration]
 
     agent = project_client.agents.create_version(
