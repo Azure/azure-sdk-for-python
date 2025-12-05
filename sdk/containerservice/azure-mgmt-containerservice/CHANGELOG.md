@@ -1,5 +1,15 @@
 # Release History
 
+## 41.0.0b3 (2025-12-21)
+
+### Features Added
+
+  - Added model `MachineSecurityProfile`
+
+### Breaking Changes
+
+  - Model `AgentPoolUpgradeSettings` deleted or renamed its instance variable `min_surge`
+
 ## 40.2.0 (2025-11-24)
 
 ### Features Added
