@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 import logging
 import urllib.parse as url_parse
-from functools import wraps
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
@@ -99,7 +98,6 @@ def recorded_by_proxy_async(*transports):
 
 def _make_proxy_decorator_async(transports):
     def _decorator(test_func):
-        @wraps(test_func)
         async def record_wrap(*args, **kwargs):
             # ---- your existing trimming/early-exit logic ----
             trimmed_kwargs = {k: v for k, v in kwargs.items()}

@@ -7,7 +7,6 @@ from enum import Enum
 import logging
 import os
 from typing import TYPE_CHECKING, Optional
-from functools import wraps
 import urllib.parse as url_parse
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -298,7 +297,6 @@ def recorded_by_proxy(*transports):
 
 def _make_proxy_decorator(transports):
     def _decorator(test_func: "Callable"):
-        @wraps(test_func)
         def record_wrap(*args, **kwargs):
             # ---- your existing trimming/early-exit logic ----
             trimmed_kwargs = {k: v for k, v in kwargs.items()}
