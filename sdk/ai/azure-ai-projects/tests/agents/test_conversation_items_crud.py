@@ -5,7 +5,8 @@
 # ------------------------------------
 # cSpell:disable
 
-from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
+from test_base import TestBase, servicePreparer
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     #    ResponsesUserMessageItemParam,
     #    ResponsesSystemMessageItemParam,
@@ -19,7 +20,7 @@ from azure.ai.projects.models import (
 class TestConversationItemsCrud(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_conversation_items_crud(self, **kwargs):
         """
         Test CRUD operations for Conversation Items.
