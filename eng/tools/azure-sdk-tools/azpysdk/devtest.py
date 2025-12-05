@@ -4,7 +4,6 @@ import os
 import glob
 
 from typing import Optional, List
-from subprocess import check_call
 
 from .Check import Check
 from ci_tools.functions import (
@@ -35,8 +34,13 @@ TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
 
 
 def get_installed_azure_packages(executable: str, pkg_name_to_exclude: str) -> List[str]:
-    # This method returns a list of installed azure sdk packages
+    """
+    Returns a list of installed Azure SDK packages in the venv, excluding specified packages.
 
+    :param executable: Path to the Python executable in the venv.
+    :param pkg_name_to_exclude: Package name to exclude from the result.
+    :return: List of installed Azure SDK package names.
+    """
     venv_root = os.path.dirname(os.path.dirname(executable))
     # Find site-packages directory within the venv
     site_packages_pattern = os.path.join(venv_root, "lib", "python*", "site-packages")
@@ -47,7 +51,7 @@ def get_installed_azure_packages(executable: str, pkg_name_to_exclude: str) -> L
     pkgs = discover_targeted_packages("", REPO_ROOT)
     valid_azure_packages = [os.path.basename(p) for p in pkgs if "mgmt" not in p and "-nspkg" not in p]
 
-    # Filter current package and any exlcuded package
+    # Filter current package and any excluded package
     pkg_names = [
         p for p in installed_pkgs if p in valid_azure_packages and p != pkg_name_to_exclude and p not in EXCLUDED_PKGS
     ]
@@ -57,7 +61,15 @@ def get_installed_azure_packages(executable: str, pkg_name_to_exclude: str) -> L
 
 
 def uninstall_packages(executable: str, packages: List[str], working_directory: str):
-    # This method uninstall list of given packages so dev build version can be reinstalled
+    """
+    Uninstalls a list of packages from the virtual environment so dev build versions can be reinstalled.
+
+    :param executable: Path to the Python executable in the virtual environment.
+    :param packages: List of package names to uninstall.
+    :param working_directory: Directory from which to run the uninstall command.
+    :raises Exception: If uninstallation fails.
+    :return: None
+    """
     if len(packages) == 0:
         logger.warning("No packages to uninstall.")
         return
