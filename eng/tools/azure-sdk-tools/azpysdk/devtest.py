@@ -28,29 +28,23 @@ DEV_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sd
 
 TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
 
+
 def get_installed_azure_packages(pkg_name_to_exclude):
     # This method returns a list of installed azure sdk packages
-    installed_pkgs = [
-        p.split("==")[0] for p in get_installed_packages() if p.startswith("azure-")
-    ]
+    installed_pkgs = [p.split("==")[0] for p in get_installed_packages() if p.startswith("azure-")]
 
     # Get valid list of Azure SDK packages in repo
     pkgs = discover_targeted_packages("", REPO_ROOT)
-    valid_azure_packages = [
-        os.path.basename(p) for p in pkgs if "mgmt" not in p and "-nspkg" not in p
-    ]
+    valid_azure_packages = [os.path.basename(p) for p in pkgs if "mgmt" not in p and "-nspkg" not in p]
 
     # Filter current package and any exlcuded package
     pkg_names = [
-        p
-        for p in installed_pkgs
-        if p in valid_azure_packages
-        and p != pkg_name_to_exclude
-        and p not in EXCLUDED_PKGS
+        p for p in installed_pkgs if p in valid_azure_packages and p != pkg_name_to_exclude and p not in EXCLUDED_PKGS
     ]
 
     logger.info("Installed azure sdk packages: %s", pkg_names)
     return pkg_names
+
 
 def uninstall_packages(packages):
     # This method uninstall list of given packages so dev build version can be reinstalled
@@ -63,6 +57,7 @@ def uninstall_packages(packages):
     commands.append("--yes")
     check_call(commands)
     logger.info("Uninstalled packages")
+
 
 def install_packages(packages):
     # install list of given packages from devops feed
@@ -81,11 +76,13 @@ def install_packages(packages):
     # install dev build of azure packages
     check_call(commands)
 
+
 def install_dev_build_packages(pkg_name_to_exclude):
     # Uninstall GA version and reinstall dev build version of dependent packages
     azure_pkgs = get_installed_azure_packages(pkg_name_to_exclude)
     uninstall_packages(azure_pkgs)
     install_packages(azure_pkgs)
+
 
 class devtest(Check):
     def __init__(self) -> None:
@@ -96,7 +93,11 @@ class devtest(Check):
     ) -> None:
         """Register the devtest check. The devtest check tests a package against dependencies installed from a dev index."""
         parents = parent_parsers or []
-        p = subparsers.add_parser("devtest", parents=parents, help="Run the devtest check to test a package against dependencies installed from a dev index")
+        p = subparsers.add_parser(
+            "devtest",
+            parents=parents,
+            help="Run the devtest check to test a package against dependencies installed from a dev index",
+        )
         p.set_defaults(func=self.run)
         p.add_argument(
             "--pytest-args",
@@ -144,10 +145,7 @@ class devtest(Check):
             pytest_args = self._build_pytest_args(package_dir, args)
 
             pytest_result = self.run_venv_command(
-                executable,
-                ["-m", "pytest", *pytest_args],
-                cwd=package_dir,
-                immediately_dump=True
+                executable, ["-m", "pytest", *pytest_args], cwd=package_dir, immediately_dump=True
             )
 
             if pytest_result.returncode != 0:
@@ -163,27 +161,3 @@ class devtest(Check):
                 results.append(pytest_result.returncode)
 
         return max(results) if results else 0
-    
-    def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
-        log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
-        junit_path = os.path.join(package_dir, f"test-junit-{args.command}.xml")
-
-        default_args = [
-            "-rsfE",
-            f"--junitxml={junit_path}",
-            "--verbose",
-            "--cov-branch",
-            "--durations=10",
-            "--ignore=azure",
-            "--ignore=.tox",
-            "--ignore-glob=.venv*",
-            "--ignore=build",
-            "--ignore=.eggs",
-            "--ignore=samples",
-            f"--log-cli-level={log_level}",
-        ]
-
-        additional = args.pytest_args if args.pytest_args else []
-
-        return [*default_args, *additional, package_dir]
-    
