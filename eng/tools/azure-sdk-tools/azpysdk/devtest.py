@@ -108,7 +108,7 @@ class devtest(Check):
         """Run the devtest check command."""
         logger.info("Running devtest check...")
 
-        set_envvar_defaults()
+        set_envvar_defaults({"PROXY_URL": "http://localhost:5002"})
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
