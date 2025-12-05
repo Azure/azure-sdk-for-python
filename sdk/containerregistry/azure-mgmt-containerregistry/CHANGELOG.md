@@ -1,8 +1,10 @@
 # Release History
 
-## 14.1.0b4 (2025-12-22)
+## 14.1.0b4 (2025-12-05)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+  - Regular update
 
 ## 14.1.0b3 (2025-11-05)
 
