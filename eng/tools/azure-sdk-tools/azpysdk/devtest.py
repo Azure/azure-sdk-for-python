@@ -7,7 +7,7 @@ import subprocess
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, get_pip_command, discover_targeted_packages
+from ci_tools.functions import install_into_venv, is_error_code_5_allowed, get_pip_command, discover_targeted_packages
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
@@ -25,6 +25,8 @@ EXCLUDED_PKGS = [
 
 # index URL to devops feed
 DEV_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple"
+
+TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
 
 def get_installed_azure_packages(pkg_name_to_exclude):
     # This method returns a list of installed azure sdk packages
@@ -96,6 +98,11 @@ class devtest(Check):
         parents = parent_parsers or []
         p = subparsers.add_parser("devtest", parents=parents, help="Run the devtest check to test a package against dependencies installed from a dev index")
         p.set_defaults(func=self.run)
+        p.add_argument(
+            "--pytest-args",
+            nargs=argparse.REMAINDER,
+            help="Additional arguments forwarded to pytest.",
+        )
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the devtest check command."""
@@ -127,9 +134,56 @@ class devtest(Check):
                 python_executable=executable,
             )
 
+            if os.path.exists(TEST_TOOLS_REQUIREMENTS):
+                install_into_venv(executable, ["-r", TEST_TOOLS_REQUIREMENTS], package_dir)
+            else:
+                logger.warning(f"Test tools requirements file not found at {TEST_TOOLS_REQUIREMENTS}.")
+
             install_dev_build_packages(package_name)
 
-            # invoke pytest
+            pytest_args = self._build_pytest_args(package_dir, args)
 
+            pytest_result = self.run_venv_command(
+                executable,
+                ["-m", "pytest", *pytest_args],
+                cwd=package_dir,
+                immediately_dump=True
+            )
+
+            if pytest_result.returncode != 0:
+                if pytest_result.returncode == 5 and is_error_code_5_allowed(package_dir, package_name):
+                    logger.info(
+                        "pytest exited with code 5 for %s, which is allowed for management or opt-out packages.",
+                        package_name,
+                    )
+                    # Align with tox: skip coverage when tests are skipped entirely
+                    continue
+
+                logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
+                results.append(pytest_result.returncode)
 
         return max(results) if results else 0
+    
+    def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
+        log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
+        junit_path = os.path.join(package_dir, f"test-junit-{args.command}.xml")
+
+        default_args = [
+            "-rsfE",
+            f"--junitxml={junit_path}",
+            "--verbose",
+            "--cov-branch",
+            "--durations=10",
+            "--ignore=azure",
+            "--ignore=.tox",
+            "--ignore-glob=.venv*",
+            "--ignore=build",
+            "--ignore=.eggs",
+            "--ignore=samples",
+            f"--log-cli-level={log_level}",
+        ]
+
+        additional = args.pytest_args if args.pytest_args else []
+
+        return [*default_args, *additional, package_dir]
+    
