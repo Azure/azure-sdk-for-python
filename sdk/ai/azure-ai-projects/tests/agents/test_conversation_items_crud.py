@@ -16,7 +16,6 @@ from azure.ai.projects.models import (
 )
 
 
-# TODO: Emitter did not produce the output class  OpenAI.ConversationItemList. Validating service response as Dict for now.
 class TestConversationItemsCrud(TestBase):
 
     @servicePreparer()
