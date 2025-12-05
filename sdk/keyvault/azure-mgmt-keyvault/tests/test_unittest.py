@@ -22,29 +22,33 @@ def test_model_initialization():
 
 
 def test_model_attribute_list_for_compatibility():
-    expected_attributes = sorted([
-        "id",
-        "name",
-        "type",
-        "system_data",
-        "attributes",
-        "kty",
-        "key_ops",
-        "key_size",
-        "curve_name",
-        "key_uri",
-        "key_uri_with_version",
-        "rotation_policy",
-        "release_policy",
-        "location",
-        "tags",
-    ])
+    expected_attributes = sorted(
+        [
+            "id",
+            "name",
+            "type",
+            "system_data",
+            "attributes",
+            "kty",
+            "key_ops",
+            "key_size",
+            "curve_name",
+            "key_uri",
+            "key_uri_with_version",
+            "rotation_policy",
+            "release_policy",
+            "location",
+            "tags",
+        ]
+    )
     assert expected_attributes == sorted(attribute_list(Key(properties=KeyProperties(kty="RSA"))))
     assert expected_attributes == sorted(attribute_list(Key(kty="RSA")))
     assert expected_attributes == sorted(attribute_list(Key()))
 
+
 def test_private_link_resource_initialization():
-    plr = PrivateLinkResource(group_id="vault", required_members=["member1", "member2"], required_zone_names=["zone1", "zone2"])
+    plr = PrivateLinkResource(
+        group_id="vault", required_members=["member1", "member2"], required_zone_names=["zone1", "zone2"]
+    )
     assert plr.group_id == "vault"
     assert plr.properties.group_id == "vault"
-    

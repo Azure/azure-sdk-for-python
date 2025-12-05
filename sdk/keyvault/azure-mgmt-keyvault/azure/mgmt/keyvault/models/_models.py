@@ -2754,7 +2754,7 @@ class Permissions(_Model):
     """
 
     keys_property: Optional[list[Union[str, "_models.KeyPermissions"]]] = rest_field(
-        name="keys", visibility=["read", "create", "update", "delete", "query"]
+        name="keys", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="keys"
     )
     """Permissions to keys."""
     secrets: Optional[list[Union[str, "_models.SecretPermissions"]]] = rest_field(
