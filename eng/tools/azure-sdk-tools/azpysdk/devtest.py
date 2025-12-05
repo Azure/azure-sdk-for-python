@@ -3,15 +3,13 @@ import sys
 import os
 
 from typing import Optional, List
-import subprocess
-from subprocess import CalledProcessError, check_call
+from subprocess import check_call
 
 from .Check import Check
 from ci_tools.functions import install_into_venv, is_error_code_5_allowed, get_pip_command, discover_targeted_packages
 from ci_tools.scenario.generation import create_package_and_install
-from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
-from ci_tools.environment_exclusions import is_check_enabled
-from ci_tools.logging import logger, run_logged
+from ci_tools.variables import discover_repo_root, set_envvar_defaults
+from ci_tools.logging import logger
 
 REPO_ROOT = discover_repo_root()
 common_task_path = os.path.abspath(os.path.join(REPO_ROOT, "scripts", "devops_tasks"))
@@ -29,7 +27,7 @@ DEV_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sd
 TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
 
 
-def get_installed_azure_packages(pkg_name_to_exclude):
+def get_installed_azure_packages(pkg_name_to_exclude: str) -> List[str]:
     # This method returns a list of installed azure sdk packages
     installed_pkgs = [p.split("==")[0] for p in get_installed_packages() if p.startswith("azure-")]
 
@@ -46,26 +44,37 @@ def get_installed_azure_packages(pkg_name_to_exclude):
     return pkg_names
 
 
-def uninstall_packages(packages):
+def uninstall_packages(packages: List[str]):
     # This method uninstall list of given packages so dev build version can be reinstalled
+    if len(packages) == 0:
+        logger.warning("No packages to uninstall.")
+        return
+
     commands = get_pip_command()
     commands.append("uninstall")
 
     logger.info("Uninstalling packages: %s", packages)
+
     commands.extend(packages)
     # Pass Uninstall confirmation
-    commands.append("--yes")
+    if commands[0] != "uv":
+        commands.append("--yes")
+
     check_call(commands)
     logger.info("Uninstalled packages")
 
 
-def install_packages(packages):
+def install_packages(packages: List[str]):
     # install list of given packages from devops feed
+    if len(packages) == 0:
+        logger.warning("No packages to install.")
+        return
 
     commands = get_pip_command()
     commands.append("install")
 
     logger.info("Installing dev build version for packages: %s", packages)
+
     commands.extend(packages)
     commands.extend(
         [
@@ -77,7 +86,7 @@ def install_packages(packages):
     check_call(commands)
 
 
-def install_dev_build_packages(pkg_name_to_exclude):
+def install_dev_build_packages(pkg_name_to_exclude: str):
     # Uninstall GA version and reinstall dev build version of dependent packages
     azure_pkgs = get_installed_azure_packages(pkg_name_to_exclude)
     uninstall_packages(azure_pkgs)
