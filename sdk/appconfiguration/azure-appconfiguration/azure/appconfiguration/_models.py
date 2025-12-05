@@ -671,26 +671,26 @@ class ConfigurationSettingPaged(ItemPaged):
         self._tags_filter = kwargs.pop("tags_filter", None)
         super(ConfigurationSettingPaged, self).__init__(*args, **kwargs)
 
-    def by_page(self, continuation_token: Optional[str] = None, *, etags: Optional[List[str]] = None) -> Any:
+    def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
         """Get an iterator of pages of objects, instead of an iterator of objects.
 
         :param str continuation_token:
             An opaque continuation token. This value can be retrieved from the
             continuation_token field of a previous generator object. If specified,
             this generator will begin returning results from this point.
-        :keyword etags: A list of etags to check for changes. If provided, the iterator will
+        :keyword match_conditions: A list of etags to check for changes. If provided, the iterator will
             check each page against the corresponding etag and only return pages that have changed.
-        :paramtype etags: list[str] or None
+        :paramtype match_conditions: list[str] or None
         :returns: An iterator of pages (themselves iterator of objects)
         :rtype: iterator[iterator[ReturnType]]
         """
-        if etags is not None and self._client is not None:
+        if match_conditions is not None and self._client is not None:
             # Get the base page iterator first
             base_iterator = super(ConfigurationSettingPaged, self).by_page(continuation_token=continuation_token)
             # Wrap it with our etag-checking iterator
             return ConfigurationSettingEtagPageIterator(
                 self._client,
-                etags,
+                match_conditions,
                 base_iterator,
                 key_filter=self._key_filter,
                 label_filter=self._label_filter,
@@ -705,7 +705,7 @@ class _BaseConfigurationSettingEtagPageIterator:
     def __init__(
         self,
         client: Any,
-        etags: List[str],
+        match_conditions: List[str],
         base_iterator: Any,
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
@@ -714,15 +714,15 @@ class _BaseConfigurationSettingEtagPageIterator:
         """Initialize the etag-checking page iterator.
 
         :param client: The client instance to use for checking etags
-        :param etags: List of etags to check against
+        :param match_conditions: List of etags to check against
         :param base_iterator: The base page iterator to wrap
         :param key_filter: Key filter for configuration settings
         :param label_filter: Label filter for configuration settings
         :param tags_filter: Tags filter for configuration settings
         """
         self._client = client
-        self._etags = etags
-        self._etag_index = 0
+        self._match_conditions = match_conditions
+        self._match_condition_index = 0
         self._key_filter = key_filter
         self._label_filter = label_filter
         self._tags_filter = tags_filter
@@ -766,6 +766,23 @@ class _BaseConfigurationSettingEtagPageIterator:
         """
         self._base_iterator.continuation_token = link[1 : link.index(">")] if link else None
 
+    def _parse_response(self, response: HttpResponse) -> Any:
+        """Parse the HTTP response and return an iterator of configuration settings.
+
+        :param response: The HTTP response to parse
+        :type response: HttpResponse
+        :return: An iterator of configuration settings
+        :rtype: Iterator[ConfigurationSetting]
+        """
+        deserialized = json.loads(response.text())
+        list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
+        settings = [
+            ConfigurationSetting._from_generated(x) for x in list_of_elem  # pylint: disable=protected-access
+        ]
+        # Update continuation token for next page
+        self._update_continuation_token(response.headers.get("Link", None))
+        return iter(settings)
+
 
 class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIterator):
     """A page iterator that checks etags before returning pages."""
@@ -780,7 +797,7 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
         :rtype: Iterator[ReturnType]
         :raises StopIteration: If there are no more pages or if the page hasn't changed.
         """
-        if self._etag_index >= len(self._etags):
+        if self._match_condition_index >= len(self._match_conditions):
             # No more etags, but there might be new pages
             if self._base_iterator.continuation_token is None:
                 raise StopIteration("End of paging")
@@ -791,12 +808,12 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
             method="GET",
             url=self._build_request_url(),
             headers={
-                "If-None-Match": self._etags[self._etag_index],
+                "If-None-Match": self._match_conditions[self._match_condition_index],
                 "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
             },
         )
         response = self._client.send_request(request)
-        self._etag_index += 1
+        self._match_condition_index += 1
 
         if response.status_code == 304:
             # Page hasn't changed, skip to next
@@ -804,12 +821,13 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
             if self._base_iterator.continuation_token is None:
                 raise StopIteration("End of paging")
             return self.__next__()
-        elif response.status_code == 200:
-            # Page has changed (200), return it using the base iterator
-            return next(self._base_iterator)
-        else:
-            # Unexpected status code, raise an error
-            response.raise_for_status()
+        if response.status_code == 200:
+            # Page has changed (200), parse the response directly
+            return self._parse_response(response)
+        # Unexpected status code, raise an error
+        response.raise_for_status()
+        return iter([])  # This line is never reached but satisfies pylint
+
 class ConfigurationSettingPagedAsync(AsyncItemPaged):
     """An async iterable of ConfigurationSettings that supports etag-based change detection."""
 
@@ -825,26 +843,26 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
         self._tags_filter = kwargs.pop("tags_filter", None)
         super(ConfigurationSettingPagedAsync, self).__init__(*args, **kwargs)
 
-    def by_page(self, continuation_token: Optional[str] = None, *, etags: Optional[List[str]] = None) -> Any:
+    def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
         """Get an async iterator of pages of objects, instead of an iterator of objects.
 
         :param str continuation_token:
             An opaque continuation token. This value can be retrieved from the
             continuation_token field of a previous generator object. If specified,
             this generator will begin returning results from this point.
-        :keyword etags: A list of etags to check for changes. If provided, the iterator will
+        :keyword match_conditions: A list of etags to check for changes. If provided, the iterator will
             check each page against the corresponding etag and only return pages that have changed.
-        :paramtype etags: list[str] or None
+        :paramtype match_conditions: list[str] or None
         :returns: An async iterator of pages (themselves iterator of objects)
         :rtype: AsyncIterator[AsyncIterator[ReturnType]]
         """
-        if etags is not None and self._client is not None:
+        if match_conditions is not None and self._client is not None:
             # Get the base page iterator first
             base_iterator = super(ConfigurationSettingPagedAsync, self).by_page(continuation_token=continuation_token)
             # Wrap it with our etag-checking iterator
             return ConfigurationSettingEtagPageIteratorAsync(
                 self._client,
-                etags,
+                match_conditions,
                 base_iterator,
                 key_filter=self._key_filter,
                 label_filter=self._label_filter,
@@ -868,7 +886,7 @@ class ConfigurationSettingEtagPageIteratorAsync(
         :rtype: AsyncIterator[ReturnType]
         :raises StopAsyncIteration: If there are no more pages or if the page hasn't changed.
         """
-        if self._etag_index >= len(self._etags):
+        if self._match_condition_index >= len(self._match_conditions):
             # No more etags, but there might be new pages
             if self._base_iterator.continuation_token is None:
                 raise StopAsyncIteration("End of paging")
@@ -879,12 +897,12 @@ class ConfigurationSettingEtagPageIteratorAsync(
             method="GET",
             url=self._build_request_url(),
             headers={
-                "If-None-Match": self._etags[self._etag_index],
+                "If-None-Match": self._match_conditions[self._match_condition_index],
                 "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
             },
         )
         response = await self._client.send_request(request)
-        self._etag_index += 1
+        self._match_condition_index += 1
 
         if response.status_code == 304:
             # Page hasn't changed, skip to next
@@ -892,9 +910,9 @@ class ConfigurationSettingEtagPageIteratorAsync(
             if self._base_iterator.continuation_token is None:
                 raise StopAsyncIteration("End of paging")
             return await self.__anext__()
-        elif response.status_code == 200:
-            # Page has changed (200), return it using the base iterator
-            return await self._base_iterator.__anext__()
-        else:
-            # Unexpected status code, raise an error
-            response.raise_for_status()
+        if response.status_code == 200:
+            # Page has changed (200), parse the response directly
+            return self._parse_response(response)
+        # Unexpected status code, raise an error
+        response.raise_for_status()
+        return iter([])  # This line is never reached but satisfies pylint
