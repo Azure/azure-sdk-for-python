@@ -64,33 +64,31 @@ def uninstall_packages(packages: List[str]):
     logger.info("Uninstalled packages")
 
 
-def install_packages(packages: List[str]):
+def install_packages(executable: str, packages: List[str], working_directory: str):
     # install list of given packages from devops feed
     if len(packages) == 0:
         logger.warning("No packages to install.")
         return
 
-    commands = get_pip_command()
-    commands.append("install")
-
     logger.info("Installing dev build version for packages: %s", packages)
 
-    commands.extend(packages)
+    commands = packages
     commands.extend(
         [
             "--index-url",
             DEV_INDEX_URL,
         ]
     )
+
     # install dev build of azure packages
-    check_call(commands)
+    install_into_venv(executable, commands, working_directory)
 
 
-def install_dev_build_packages(pkg_name_to_exclude: str):
+def install_dev_build_packages(executable: str, pkg_name_to_exclude: str, working_directory: str):
     # Uninstall GA version and reinstall dev build version of dependent packages
     azure_pkgs = get_installed_azure_packages(pkg_name_to_exclude)
     uninstall_packages(azure_pkgs)
-    install_packages(azure_pkgs)
+    install_packages(executable, azure_pkgs, working_directory)
 
 
 class devtest(Check):
@@ -149,7 +147,7 @@ class devtest(Check):
             else:
                 logger.warning(f"Test tools requirements file not found at {TEST_TOOLS_REQUIREMENTS}.")
 
-            install_dev_build_packages(package_name)
+            install_dev_build_packages(executable, package_name, package_dir)
 
             pytest_args = self._build_pytest_args(package_dir, args)
 
