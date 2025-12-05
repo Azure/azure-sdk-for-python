@@ -1,8 +1,16 @@
 # Release History
 
-## 1.0.0b46 (Unreleased)
+## 1.0.0b47 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b46 (2025-12-04)
 
 ### Breaking Changes
 - Fix to accommodate breaking log changes from Otel
