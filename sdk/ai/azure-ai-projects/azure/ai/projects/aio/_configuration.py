@@ -22,26 +22,22 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Project endpoint. In the form
-     "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project
-     <https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project>`_"
-    if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
-     form
-    "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name
-     <https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name>`_"
-     if you want to explicitly
-    specify the Foundry Project name. Required.
+    :param endpoint: Foundry Project endpoint in the form
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}".
+     If you only have one Project in your Foundry Hub, or to target the default Project
+     in your Hub, use the form
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project". Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     "2025-11-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-05-15-preview")
+        api_version: str = kwargs.pop("api_version", "2025-11-15-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

@@ -3697,4 +3697,53 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_download_blob_decompress(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        decompressed_data = b"hello from gzip"
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+
+        result = blob.download_blob(decompress=True).readall()
+        assert result == decompressed_data
+
+        result = blob.download_blob(decompress=False).readall()
+        assert result == compressed_data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_download_blob_no_decompress_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = BlobClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            container_name=self.container_name,
+            blob_name = blob_name,
+            credential=storage_account_key,
+            max_chunk_get_size=4,
+            max_single_get_size=4,
+        )
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+
+        result = blob.download_blob(decompress=False).readall()
+        assert result == compressed_data
+
     # ------------------------------------------------------------------------------

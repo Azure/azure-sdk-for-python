@@ -15,12 +15,15 @@ from azure.storage.filedatalake import (
     CorsRule,
     Metrics,
     RetentionPolicy,
-    StaticWebsite)
+    StaticWebsite
+)
+from azure.storage.filedatalake._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 from azure.storage.filedatalake.aio import (
     DataLakeDirectoryClient,
     DataLakeFileClient,
     DataLakeServiceClient,
-    FileSystemClient)
+    FileSystemClient
+)
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -113,6 +116,14 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
     def _assert_retention_equal(self, ret1, ret2):
         assert ret1.enabled == ret2.enabled
         assert ret1.days == ret2.days
+
+    def _assert_devstore_conn_str(self, service):
+        assert service is not None
+        assert service.scheme == "http"
+        assert service.account_name == DEVSTORE_ACCOUNT_NAME
+        assert service.credential.account_name == DEVSTORE_ACCOUNT_NAME
+        assert service.credential.account_key == DEVSTORE_ACCOUNT_KEY
+        assert f"127.0.0.1:10000/{DEVSTORE_ACCOUNT_NAME}" in service.url
 
     # --Test cases per service ---------------------------------------
     @DataLakePreparer()
@@ -398,6 +409,22 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         assert client.url == 'https://foo.dfs.core.windows.net/fsname/dname'
         assert client.primary_hostname == 'foo.dfs.core.windows.net'
         assert not client.secondary_hostname
+
+    @DataLakePreparer()
+    def test_connectionstring_use_development_storage(self):
+        test_conn_str = "UseDevelopmentStorage=true;"
+
+        dsc = DataLakeServiceClient.from_connection_string(test_conn_str)
+        self._assert_devstore_conn_str(dsc)
+
+        fsc = FileSystemClient.from_connection_string(test_conn_str, "fsname")
+        self._assert_devstore_conn_str(fsc)
+
+        dfc = DataLakeFileClient.from_connection_string(test_conn_str, "fsname", "fpath")
+        self._assert_devstore_conn_str(dfc)
+
+        ddc = DataLakeDirectoryClient.from_connection_string(test_conn_str, "fsname", "dname")
+        self._assert_devstore_conn_str(ddc)
 
     @DataLakePreparer()
     @recorded_by_proxy_async

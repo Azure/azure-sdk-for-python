@@ -52,6 +52,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "avsDataStore": "str",
                         "backupId": "str",
                         "baremetalTenantId": "str",
+                        "breakthroughMode": "str",
                         "capacityPoolResourceId": "str",
                         "cloneProgress": 0,
                         "coolAccess": bool,
@@ -60,6 +61,10 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "coolnessPeriod": 0,
                         "dataProtection": {
                             "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
+                            "ransomwareProtection": {
+                                "actualRansomwareProtectionState": "str",
+                                "desiredRansomwareProtectionState": "str",
+                            },
                             "replication": {
                                 "destinationReplications": [
                                     {"region": "str", "replicationType": "str", "resourceId": "str", "zone": "str"}
@@ -116,6 +121,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "kerberosEnabled": bool,
                         "keyVaultPrivateEndpointResourceId": "str",
                         "language": "str",
+                        "largeVolumeType": "str",
                         "ldapEnabled": bool,
                         "ldapServerType": "str",
                         "maximumNumberOfFiles": 0,
@@ -187,6 +193,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "coolnessPeriod": 0,
                         "dataProtection": {
                             "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
+                            "ransomwareProtection": {"desiredRansomwareProtectionState": "str"},
                             "snapshot": {"snapshotPolicyId": "str"},
                         },
                         "defaultGroupQuotaInKiBs": 0,

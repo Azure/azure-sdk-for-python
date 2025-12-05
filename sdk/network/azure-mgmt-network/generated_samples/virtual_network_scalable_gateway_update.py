@@ -38,8 +38,10 @@ def main():
             "location": "centralus",
             "properties": {
                 "activeActive": False,
+                "adminState": "Enabled",
                 "allowRemoteVnetTraffic": False,
                 "allowVirtualWanTraffic": False,
+                "autoScaleConfiguration": {"bounds": {"max": 3, "min": 2}},
                 "bgpSettings": None,
                 "disableIPSecReplayProtection": False,
                 "enableBgp": False,
@@ -49,7 +51,7 @@ def main():
                     {
                         "name": "gwipconfig1",
                         "properties": {
-                            "privateIPAllocationMethod": "Static",
+                            "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
                                 "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/publicIPAddresses/gwpip"
                             },
@@ -59,31 +61,9 @@ def main():
                         },
                     }
                 ],
-                "natRules": [
-                    {
-                        "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworkGateways/ergw/natRules/natRule1",
-                        "name": "natRule1",
-                        "properties": {
-                            "externalMappings": [{"addressSpace": "50.0.0.0/24"}],
-                            "internalMappings": [{"addressSpace": "10.10.0.0/24"}],
-                            "ipConfigurationId": "",
-                            "mode": "EgressSnat",
-                            "type": "Static",
-                        },
-                    },
-                    {
-                        "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworkGateways/ergw/natRules/natRule2",
-                        "name": "natRule2",
-                        "properties": {
-                            "externalMappings": [{"addressSpace": "30.0.0.0/24"}],
-                            "internalMappings": [{"addressSpace": "20.10.0.0/24"}],
-                            "ipConfigurationId": "",
-                            "mode": "IngressSnat",
-                            "type": "Static",
-                        },
-                    },
-                ],
+                "natRules": [],
                 "sku": {"name": "ErGwScale", "tier": "ErGwScale"},
+                "virtualNetworkGatewayPolicyGroups": [],
                 "vpnClientConfiguration": None,
                 "vpnType": "PolicyBased",
             },
@@ -92,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-10-01/examples/VirtualNetworkScalableGatewayUpdate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/VirtualNetworkScalableGatewayUpdate.json
 if __name__ == "__main__":
     main()

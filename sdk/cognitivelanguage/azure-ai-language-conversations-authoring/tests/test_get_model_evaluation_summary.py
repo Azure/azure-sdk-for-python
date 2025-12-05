@@ -35,7 +35,7 @@ class TestConversationsGetModelEvaluationSummarySync(TestConversations):
         # Basic assertion the call returned something shaped like a summary
         assert eval_summary is not None
 
-         # ----- Entities evaluation (micro/macro) -----
+        # ----- Entities evaluation (micro/macro) -----
         entities_summary = eval_summary.entities_evaluation
         if entities_summary is not None:
             print(
