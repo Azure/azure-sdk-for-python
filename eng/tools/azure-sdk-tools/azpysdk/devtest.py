@@ -42,7 +42,10 @@ def get_installed_azure_packages(executable: str, pkg_name_to_exclude: str) -> L
     """
     venv_root = os.path.dirname(os.path.dirname(executable))
     # Find site-packages directory within the venv
-    site_packages_pattern = os.path.join(venv_root, "lib", "python*", "site-packages")
+    if os.name == "nt":
+        site_packages_pattern = os.path.join(venv_root, "Lib", "site-packages")
+    else:
+        site_packages_pattern = os.path.join(venv_root, "lib", "python*", "site-packages")
     site_packages_dirs = glob.glob(site_packages_pattern)
     installed_pkgs = [p.split("==")[0] for p in get_installed_packages(site_packages_dirs) if p.startswith("azure-")]
 
