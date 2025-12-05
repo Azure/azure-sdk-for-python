@@ -74,7 +74,11 @@ def uninstall_packages(executable: str, packages: List[str], working_directory: 
     else:
         commands.append("-y")
 
-    uninstall_from_venv(executable, packages, working_directory)
+    try:
+        uninstall_from_venv(executable, packages, working_directory)
+    except Exception as e:
+        logger.error(f"Failed to uninstall packages: {e}")
+        raise e
     logger.info("Uninstalled packages")
 
 
@@ -95,7 +99,12 @@ def install_packages(executable: str, packages: List[str], working_directory: st
     )
 
     # install dev build of azure packages
-    install_into_venv(executable, commands, working_directory)
+    try:
+        install_into_venv(executable, commands, working_directory)
+    except Exception as e:
+        logger.error(f"Failed to install packages: {e}")
+        raise e
+    logger.info("Installed dev build version for packages")
 
 
 def install_dev_build_packages(executable: str, pkg_name_to_exclude: str, working_directory: str):
@@ -157,11 +166,21 @@ class devtest(Check):
             )
 
             if os.path.exists(TEST_TOOLS_REQUIREMENTS):
-                install_into_venv(executable, ["-r", TEST_TOOLS_REQUIREMENTS], package_dir)
+                try:
+                    install_into_venv(executable, ["-r", TEST_TOOLS_REQUIREMENTS], package_dir)
+                except Exception as e:
+                    logger.error(f"Failed to install test tools requirements: {e}")
+                    results.append(1)
+                    continue
             else:
                 logger.warning(f"Test tools requirements file not found at {TEST_TOOLS_REQUIREMENTS}.")
 
-            install_dev_build_packages(executable, package_name, package_dir)
+            try:
+                install_dev_build_packages(executable, package_name, package_dir)
+            except Exception as e:
+                logger.error(f"Failed to install dev build packages: {e}")
+                results.append(1)
+                continue
 
             self.pip_freeze(executable)
 
