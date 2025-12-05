@@ -62,17 +62,7 @@ def uninstall_packages(executable: str, packages: List[str], working_directory: 
         logger.warning("No packages to uninstall.")
         return
 
-    commands = get_pip_command()
-    commands.append("uninstall")
-
     logger.info("Uninstalling packages: %s", packages)
-
-    commands.extend(packages)
-    # Pass Uninstall confirmation
-    if commands[0] != "uv":
-        commands.append("--yes")
-    else:
-        commands.append("-y")
 
     try:
         uninstall_from_venv(executable, packages, working_directory)
