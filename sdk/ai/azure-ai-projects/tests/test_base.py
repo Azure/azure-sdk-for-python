@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import random
 import re
 import functools
@@ -100,7 +101,7 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_agents_params = {
-        "model_deployment_name": "gpt-4o",
+        "model_deployment_name": os.environ.get("AZURE_AI_PROJECTS_TESTS_AGENTS_MODEL_DEPLOYMENT_NAME") or "gpt-4o",
         "agent_name": "agent-for-python-projects-sdk-testing",
     }
 
