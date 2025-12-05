@@ -182,8 +182,6 @@ class devtest(Check):
                 results.append(1)
                 continue
 
-            self.pip_freeze(executable)
-
             pytest_args = self._build_pytest_args(package_dir, args)
 
             pytest_result = self.run_venv_command(
