@@ -34,7 +34,6 @@ class CrossRegionHedgingStrategyConfig:
     The config dictionary can contain:
     - threshold_ms: Time in ms before routing to alternate region (default: 500)
     - threshold_steps_ms: Time interval between routing attempts (default: 100)
-    - type: Must be "CrossRegionHedging" if provided
     """
     def __init__(self, config: Optional[dict[str, Any]] = None) -> None:
         if config is None:
@@ -59,10 +58,5 @@ def _validate_hedging_config(config: Optional[dict[str, Any]]) -> Optional[Cross
     """
     if config is None:
         return None
-
-    if "type" not in config:
-        raise ValueError("Missing type field in availability strategy config")
-    if config["type"] != "CrossRegionHedging":
-        raise ValueError("Wrong availability strategy type is provided")
 
     return CrossRegionHedgingStrategyConfig(config)

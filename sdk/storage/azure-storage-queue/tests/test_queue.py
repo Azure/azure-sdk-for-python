@@ -1465,7 +1465,7 @@ class TestStorageQueue(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @QueuePreparer()
-    def test_user_delegation_oid(self, **kwargs):
+    def test_queue_user_delegation_oid(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
         message = "addedmessage"
@@ -1487,7 +1487,7 @@ class TestStorageQueue(StorageRecordedTestCase):
             queue.account_name,
             queue.queue_name,
             storage_account_key,
-            permission=QueueSasPermissions(add=True),
+            permission=QueueSasPermissions(add=True, read=True, process=True),
             expiry=expiry,
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid,
@@ -1497,8 +1497,9 @@ class TestStorageQueue(StorageRecordedTestCase):
         queue_msg = queue_client.send_message(message)
         assert queue_msg is not None
 
-        result = next(queue.receive_messages())
-        assert message == result.content
+        messages = list(queue_client.receive_messages())
+        assert len(messages) > 0
+        assert message == messages[0].content
 
 
 # ------------------------------------------------------------------------------

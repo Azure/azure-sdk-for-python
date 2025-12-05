@@ -40,6 +40,16 @@ from ._utils import (
     GEN_AI_RUN_STEP_END_TIMESTAMP,
     GEN_AI_RUN_STEP_STATUS,
     GEN_AI_AGENT_VERSION,
+    GEN_AI_AGENT_HOSTED_CPU,
+    GEN_AI_AGENT_HOSTED_MEMORY,
+    GEN_AI_AGENT_HOSTED_IMAGE,
+    GEN_AI_AGENT_HOSTED_PROTOCOL,
+    GEN_AI_AGENT_HOSTED_PROTOCOL_VERSION,
+    AGENT_TYPE_PROMPT,
+    AGENT_TYPE_WORKFLOW,
+    AGENT_TYPE_HOSTED,
+    AGENT_TYPE_UNKNOWN,
+    GEN_AI_AGENT_TYPE,
     ERROR_MESSAGE,
     OperationName,
     start_span,
@@ -454,21 +464,38 @@ class _AIAgentsInstrumentorPreview:
         additional_instructions: Optional[str],
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
+        response_schema: Optional[Any] = None,
     ) -> None:
-        # Early return if no instructions to trace
-        if not instructions:
+        # Early return if no instructions AND no response schema to trace
+        if not instructions and response_schema is None:
             return
 
         content_array: List[Dict[str, Any]] = []
         if _trace_agents_content:
-            # Combine instructions if both exist
-            if additional_instructions:
-                combined_text = f"{instructions} {additional_instructions}"
-            else:
-                combined_text = instructions
+            # Add instructions if provided
+            if instructions:
+                # Combine instructions if both exist
+                if additional_instructions:
+                    combined_text = f"{instructions} {additional_instructions}"
+                else:
+                    combined_text = instructions
 
-            # Use optimized format with consistent "content" field
-            content_array.append({"type": "text", "content": combined_text})
+                # Use optimized format with consistent "content" field
+                content_array.append({"type": "text", "content": combined_text})
+
+            # Add response schema if provided
+            if response_schema is not None:
+                # Convert schema to JSON string if it's a dict/object
+                if isinstance(response_schema, dict):
+                    schema_str = json.dumps(response_schema, ensure_ascii=False)
+                elif hasattr(response_schema, "__dict__"):
+                    # Handle model objects by converting to dict first
+                    schema_dict = {k: v for k, v in response_schema.__dict__.items() if not k.startswith("_")}
+                    schema_str = json.dumps(schema_dict, ensure_ascii=False)
+                else:
+                    schema_str = str(response_schema)
+
+                content_array.append({"type": "response_schema", "content": schema_str})
 
         attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
         # Store as JSON array directly without outer wrapper
@@ -513,6 +540,11 @@ class _AIAgentsInstrumentorPreview:
         structured_inputs: Optional[Any] = None,
         agent_type: Optional[str] = None,
         workflow_yaml: Optional[str] = None,
+        hosted_cpu: Optional[str] = None,
+        hosted_memory: Optional[str] = None,
+        hosted_image: Optional[str] = None,
+        hosted_protocol: Optional[str] = None,
+        hosted_protocol_version: Optional[str] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(
             OperationName.CREATE_AGENT,
@@ -534,10 +566,35 @@ class _AIAgentsInstrumentorPreview:
             if description:
                 span.add_attribute(GEN_AI_AGENT_DESCRIPTION, description)
             if agent_type:
-                span.add_attribute("gen_ai.agent.type", agent_type)
+                span.add_attribute(GEN_AI_AGENT_TYPE, agent_type)
+
+            # Add hosted agent specific attributes
+            if hosted_cpu:
+                span.add_attribute(GEN_AI_AGENT_HOSTED_CPU, hosted_cpu)
+            if hosted_memory:
+                span.add_attribute(GEN_AI_AGENT_HOSTED_MEMORY, hosted_memory)
+            if hosted_image:
+                span.add_attribute(GEN_AI_AGENT_HOSTED_IMAGE, hosted_image)
+            if hosted_protocol:
+                span.add_attribute(GEN_AI_AGENT_HOSTED_PROTOCOL, hosted_protocol)
+            if hosted_protocol_version:
+                span.add_attribute(GEN_AI_AGENT_HOSTED_PROTOCOL_VERSION, hosted_protocol_version)
+
+            # Extract response schema from text parameter if available
+            response_schema = None
+            if response_format and text:
+                # Extract schema from text.format.schema if available
+                if hasattr(text, "format"):
+                    format_info = getattr(text, "format", None)
+                    if format_info and hasattr(format_info, "schema"):
+                        response_schema = getattr(format_info, "schema", None)
+                elif isinstance(text, dict):
+                    format_info = text.get("format")
+                    if format_info and isinstance(format_info, dict):
+                        response_schema = format_info.get("schema")
 
             # Add instructions event (if instructions exist)
-            self._add_instructions_event(span, instructions, None)
+            self._add_instructions_event(span, instructions, None, response_schema=response_schema)
 
             # Add workflow event if workflow type agent (always add event, but only include YAML content if content recording enabled)
             if workflow_yaml is not None:
@@ -617,19 +674,41 @@ class _AIAgentsInstrumentorPreview:
         workflow_yaml = definition.get("workflow")  # Extract workflow YAML for workflow agents
         # toolset = definition.get("toolset")
 
+        # Extract hosted agent specific attributes
+        hosted_cpu = definition.get("cpu")
+        hosted_memory = definition.get("memory")
+        hosted_image = definition.get("image")
+        hosted_protocol = None
+        hosted_protocol_version = None
+        container_protocol_versions = definition.get("container_protocol_versions")
+        if container_protocol_versions and len(container_protocol_versions) > 0:
+            # Extract protocol and version from first entry
+            protocol_record = container_protocol_versions[0]
+            if hasattr(protocol_record, "protocol"):
+                hosted_protocol = getattr(protocol_record, "protocol", None)
+            elif isinstance(protocol_record, dict):
+                hosted_protocol = protocol_record.get("protocol")
+
+            if hasattr(protocol_record, "version"):
+                hosted_protocol_version = getattr(protocol_record, "version", None)
+            elif isinstance(protocol_record, dict):
+                hosted_protocol_version = protocol_record.get("version")
+
         # Determine agent type from definition
-        # Check for workflow first (most specific)
+        # Check for hosted agent first (most specific - has container/image configuration)
         agent_type = None
-        if workflow_yaml:
-            agent_type = "workflow"
+        if hosted_image or hosted_cpu or hosted_memory:
+            agent_type = AGENT_TYPE_HOSTED
+        elif workflow_yaml:
+            agent_type = AGENT_TYPE_WORKFLOW
         elif instructions or model:
             # Prompt agent - identified by having instructions and/or a model.
             # Note: An agent with only a model (no instructions) is treated as a prompt agent,
             # though this is uncommon. Typically prompt agents have both model and instructions.
-            agent_type = "prompt"
+            agent_type = AGENT_TYPE_PROMPT
         else:
             # Unknown type - set to "unknown" to indicate we couldn't determine it
-            agent_type = "unknown"
+            agent_type = AGENT_TYPE_UNKNOWN
 
         # Extract reasoning effort and summary from reasoning if available
         reasoning_effort = None
@@ -709,6 +788,11 @@ class _AIAgentsInstrumentorPreview:
             structured_inputs=structured_inputs,
             agent_type=agent_type,
             workflow_yaml=workflow_yaml,
+            hosted_cpu=hosted_cpu,
+            hosted_memory=hosted_memory,
+            hosted_image=hosted_image,
+            hosted_protocol=hosted_protocol,
+            hosted_protocol_version=hosted_protocol_version,
         )
 
     def trace_create_agent(self, function, *args, **kwargs):
