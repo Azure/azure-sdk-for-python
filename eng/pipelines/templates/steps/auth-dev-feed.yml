@@ -26,5 +26,8 @@ steps:
       onlyAddExtraIndex: false
 
   - pwsh: |
-      Write-Host "##vso[task.setvariable variable=UV_DEFAULT_INDEX]$($env:PIP_INDEX_URL)"
+      if ($env:PIP_INDEX_URL) {
+        Write-Host "PIP Index URL detected: $env:PIP_INDEX_URL"
+        Write-Host "##vso[task.setvariable variable=UV_DEFAULT_INDEX]$($env:PIP_INDEX_URL)"
+      }
     displayName: 'Mirror PIP Index URL to UV Index URL'
