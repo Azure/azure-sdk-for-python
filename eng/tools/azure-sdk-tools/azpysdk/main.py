@@ -9,9 +9,7 @@ from __future__ import annotations
 
 import argparse
 import shutil
-import sys
 import os
-from pathlib import Path
 from typing import Sequence, Optional
 
 from .import_all import import_all
@@ -101,38 +99,6 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def classify_uv() -> Optional[tuple[Path, str]]:
-    """Determine if uv is available and whether it's global or env-local.
-
-    Returns:
-        Optional tuple of (Path to uv executable, "global" or "env-local"), or None if uv is not found.
-    """
-    uv_exe = shutil.which("uv")
-    if not uv_exe:
-        return None
-
-    uv_path = Path(uv_exe).resolve()
-
-    # Candidate prefixes representing this environment
-    prefixes = []
-
-    for env_var in ("VIRTUAL_ENV", "CONDA_PREFIX", "PYENV_VIRTUAL_ENV"):
-        env_path = os.environ.get(env_var)
-        if env_path:
-            prefixes.append(Path(env_path).resolve())
-
-    # Fallback: sys.prefix for the current interpreter
-    prefixes.append(Path(sys.prefix).resolve())
-
-    for prefix in prefixes:
-        try:
-            if uv_path.is_relative_to(prefix):
-                return uv_path, "env-local"
-        except ValueError:
-            continue
-    return uv_path, "global"
-
-
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """CLI entrypoint.
 
@@ -152,8 +118,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 1
 
     # default to uv if available
-    uv_path, uv_type = classify_uv() or (None, None)
-    if uv_path and uv_type == "global":
+    uv_path = shutil.which("uv")
+    if uv_path:
         os.environ["TOX_PIP_IMPL"] = "uv"
 
     try:
