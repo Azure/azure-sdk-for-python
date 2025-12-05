@@ -727,6 +727,9 @@ class _BaseConfigurationSettingEtagPageIterator:
         self._label_filter = label_filter
         self._tags_filter = tags_filter
         self._base_iterator = base_iterator
+        self._continuation_token: Optional[str] = None
+        self.status_code: Optional[int] = None
+        self.etag: Optional[str] = None
 
     def _build_query_params(self) -> Dict[str, Union[str, List[str]]]:
         """Build query parameters for the request.
@@ -751,11 +754,11 @@ class _BaseConfigurationSettingEtagPageIterator:
         :return: The constructed request URL
         :rtype: str
         """
-        if self._base_iterator.continuation_token is None:
+        if self._continuation_token is None:
             query_string = urlencode(self._build_query_params(), doseq=True)
             return f"{self._client._impl._client._base_url}/kv?{query_string}"  # pylint: disable=protected-access
         base_url = self._client._impl._client._base_url  # pylint: disable=protected-access
-        token = self._base_iterator.continuation_token
+        token = self._continuation_token
         return f"{base_url}{token}" if not token.startswith("http") else token
 
     def _update_continuation_token(self, link: Optional[str]) -> None:
@@ -764,7 +767,7 @@ class _BaseConfigurationSettingEtagPageIterator:
         :param link: The Link header value from the HTTP response
         :type link: str or None
         """
-        self._base_iterator.continuation_token = link[1 : link.index(">")] if link else None
+        self._continuation_token = link[1 : link.index(">")] if link else None
 
     def _parse_response(self, response: HttpResponse) -> Any:
         """Parse the HTTP response and return an iterator of configuration settings.
@@ -774,6 +777,8 @@ class _BaseConfigurationSettingEtagPageIterator:
         :return: An iterator of configuration settings
         :rtype: Iterator[ConfigurationSetting]
         """
+        self.status_code = response.status_code
+        self.etag = response.headers.get("ETag", None)
         deserialized = json.loads(response.text())
         list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
         settings = [
@@ -797,12 +802,25 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
         :rtype: Iterator[ReturnType]
         :raises StopIteration: If there are no more pages or if the page hasn't changed.
         """
+        breakpoint()
         if self._match_condition_index >= len(self._match_conditions):
-            # No more etags, but there might be new pages
-            if self._base_iterator.continuation_token is None:
-                raise StopIteration("End of paging")
-            # Yield remaining pages without etag check (they are new)
-            return next(self._base_iterator)
+            # Check if there are more pages beyond the provided etags
+            if self._continuation_token:
+                # There are more pages, but we don't have etags for them
+                # Make a direct HTTP request without etag checking
+                request = HttpRequest(
+                    method="GET",
+                    url=self._build_request_url(),
+                    headers={
+                        "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
+                    },
+                )
+                response = self._client.send_request(request)
+                if response.status_code == 200:
+                    return self._parse_response(response)
+                response.raise_for_status()
+            # No more etags to check and no more pages, stop iteration
+            raise StopIteration("End of paging")
 
         request = HttpRequest(
             method="GET",
@@ -816,11 +834,13 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
         self._match_condition_index += 1
 
         if response.status_code == 304:
-            # Page hasn't changed, skip to next
-            self._update_continuation_token(response.headers.get("Link", None))
-            if self._base_iterator.continuation_token is None:
-                raise StopIteration("End of paging")
-            return self.__next__()
+            # Page hasn't changed - return empty iterator
+            self.status_code = 304
+            self.etag = response.headers.get("ETag", None)
+            link = response.headers.get("Link", None)
+            # Update continuation for next iteration
+            self._update_continuation_token(link)
+            return iter([])
         if response.status_code == 200:
             # Page has changed (200), parse the response directly
             return self._parse_response(response)
@@ -887,11 +907,24 @@ class ConfigurationSettingEtagPageIteratorAsync(
         :raises StopAsyncIteration: If there are no more pages or if the page hasn't changed.
         """
         if self._match_condition_index >= len(self._match_conditions):
-            # No more etags, but there might be new pages
-            if self._base_iterator.continuation_token is None:
-                raise StopAsyncIteration("End of paging")
-            # Yield remaining pages without etag check (they are new)
-            return await self._base_iterator.__anext__()
+            # Check if there are more pages beyond the provided etags
+            # (e.g., new keys were added since the etags were collected)
+            if self._continuation_token:
+                # There are more pages, but we don't have etags for them
+                # Make a direct HTTP request without etag checking
+                request = HttpRequest(
+                    method="GET",
+                    url=self._build_request_url(),
+                    headers={
+                        "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
+                    },
+                )
+                response = await self._client.send_request(request)
+                if response.status_code == 200:
+                    return self._parse_response(response)
+                response.raise_for_status()
+            # No more etags to check and no more pages, stop iteration
+            raise StopAsyncIteration("End of paging")
 
         request = HttpRequest(
             method="GET",
@@ -905,11 +938,13 @@ class ConfigurationSettingEtagPageIteratorAsync(
         self._match_condition_index += 1
 
         if response.status_code == 304:
-            # Page hasn't changed, skip to next
-            self._update_continuation_token(response.headers.get("Link", None))
-            if self._base_iterator.continuation_token is None:
-                raise StopAsyncIteration("End of paging")
-            return await self.__anext__()
+            # Page hasn't changed - return empty iterator
+            self.status_code = 304
+            self.etag = response.headers.get("ETag", None)
+            link = response.headers.get("Link", None)
+            # Update continuation for next iteration
+            self._update_continuation_token(link)
+            return iter([])
         if response.status_code == 200:
             # Page has changed (200), parse the response directly
             return self._parse_response(response)

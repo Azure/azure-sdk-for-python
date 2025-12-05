@@ -1144,44 +1144,91 @@ class TestAppConfigurationClient(AppConfigTestCase):
             page_etags = []
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
+            all_initial_items = []
             for page in iterator:
+                all_initial_items.extend(list(page))
                 etag = iterator.etag
                 page_etags.append(etag)
 
-            # monitor page updates without changes - only changed pages will be yielded
-            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page(etags=page_etags)
-            changed_pages = list(iterator)
-            # No pages should be yielded since nothing changed
-            assert len(changed_pages) == 0
+            # Verify we collected all 200 items initially
+            assert len(all_initial_items) == 200
+            
+            # Should have 2 pages for 200 settings
+            assert len(page_etags) == 2
 
-            # do some changes
+            # monitor page updates without changes - all pages will be yielded
+            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+            iterator = items.by_page(match_conditions=page_etags)
+            unchanged_count = 0
+            all_items = []
+            for page in iterator:
+                all_items.extend(list(page))
+                if iterator.status_code == 304:
+                    unchanged_count += 1
+            # All pages should be unchanged (status 304)
+            assert unchanged_count == 2
+            # Should have collected all 200 items
+            assert len(all_items) == 200
+
+            # do some changes - update one of the existing settings to change a page
             self.client.set_configuration_setting(
                 ConfigurationSetting(
-                    key="sample_key_201",
-                    label="sample_label_202",
+                    key="sample_key_150",  # This is in the second page
+                    label="sample_label_150",
+                    value="updated_value",  # Change the value to trigger an etag change
                 )
             )
-            # now we have three pages, 100 settings in first two pages and 1 setting in the last page
 
-            # get page etags after updates
-            new_page_etags = []
+            # monitor pages after updates - all pages will be yielded with status codes
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page()
+            iterator = items.by_page(match_conditions=page_etags)
+            
+            # Consume iterator and count unchanged pages
+            page_count = 0
+            unchanged_count = 0
+            all_items = []
             for page in iterator:
-                etag = iterator.etag
-                new_page_etags.append(etag)
+                all_items.extend(list(page))
+                page_count += 1
+                if iterator.status_code == 304:
+                    unchanged_count += 1
+            
+            # Should return exactly 2 pages with exactly 1 unchanged
+            assert page_count == 2
+            assert unchanged_count == 1
+            # Should still have all 200 items
+            assert len(all_items) == 200
 
-            assert page_etags[0] == new_page_etags[0]
-            assert page_etags[1] != new_page_etags[1]
-            assert len(new_page_etags) == 3
+            # Add a new configuration setting to trigger a new page (201st item creates 3rd page)
+            self.client.set_configuration_setting(
+                ConfigurationSetting(
+                    key="sample_key_200",
+                    label="sample_label_200",
+                    value="new_page_value",
+                )
+            )
 
-            # monitor pages after updates - only changed pages will be yielded
+            # monitor pages after adding new item - should get 3 pages now
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page(etags=page_etags)
-            changed_pages = list(iterator)
-            # Should yield 2 pages (second page changed, third page is new)
-            assert len(changed_pages) == 2
+            iterator = items.by_page(match_conditions=page_etags)
+            
+            # Consume iterator and count pages
+            page_count = 0
+            unchanged_count = 0
+            all_items = []
+            for page in iterator:
+                all_items.extend(list(page))
+                page_count += 1
+                if iterator.status_code == 304:
+                    unchanged_count += 1
+            
+            # Should return 3 pages: 2 original (1 changed, 1 unchanged) + 1 new page
+            assert page_count == 3
+            # Only 1 page should be unchanged (304) - first page
+            # Second page was modified earlier, third page is new (both should be 200)
+            assert unchanged_count == 1
+            # Should now have all 201 items
+            assert len(all_items) == 201
 
             # clean up
             self.tear_down()

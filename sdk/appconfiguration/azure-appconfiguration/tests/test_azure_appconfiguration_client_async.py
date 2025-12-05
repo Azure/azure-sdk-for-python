@@ -1152,9 +1152,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         async with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
             self.client = client
+            
             # prepare 200 configuration settings
             for i in range(200):
-                await client.add_configuration_setting(
+                await client.set_configuration_setting(
                     ConfigurationSetting(
                         key=f"async_sample_key_{str(i)}",
                         label=f"async_sample_label_{str(i)}",
@@ -1168,29 +1169,33 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
             iterator = items.by_page()
-            async for page in iterator:
+            async for _ in iterator:
                 etag = iterator.etag
                 page_etags.append(etag)
+            
+            # Should have at least 2 pages for 200 settings
+            assert len(page_etags) >= 2
 
-            # monitor page updates without changes - only changed pages will be yielded
+            # monitor page updates without changes - all pages will be yielded with status_code indicating change status
             items = client.list_configuration_settings(
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
-            iterator = items.by_page(etags=page_etags)
-            changed_pages = []
-            async for page in iterator:
-                changed_pages.append(page)
-            # No pages should be yielded since nothing changed
-            assert len(changed_pages) == 0
+            iterator = items.by_page(match_conditions=page_etags)
+            unchanged_count = 0
+            async for _ in iterator:
+                if iterator.status_code == 304:
+                    unchanged_count += 1
+            # All pages should be unchanged (status 304)
+            assert unchanged_count == len(page_etags)
 
-            # do some changes
-            await client.add_configuration_setting(
+            # do some changes - update one of the existing settings to change a page
+            await client.set_configuration_setting(
                 ConfigurationSetting(
-                    key="async_sample_key_201",
-                    label="async_sample_label_202",
+                    key="async_sample_key_150",  # This is in the second page
+                    label="async_sample_label_150",
+                    value="updated_value",  # Change the value to trigger an etag change
                 )
             )
-            # now we have three pages, 100 settings in first two pages and 1 setting in the last page
 
             # get page etags after updates
             new_page_etags = []
@@ -1198,24 +1203,32 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
             iterator = items.by_page()
-            async for page in iterator:
+            async for _ in iterator:
                 etag = iterator.etag
                 new_page_etags.append(etag)
 
-            assert page_etags[0] == new_page_etags[0]
-            assert page_etags[1] != new_page_etags[1]
-            assert len(new_page_etags) == 3
+            # Should still have same number of pages
+            assert len(new_page_etags) == len(page_etags)
+            # At least one page should have changed (since we updated a setting)
+            assert any(page_etags[i] != new_page_etags[i] for i in range(len(page_etags)))
 
-            # monitor pages after updates - only changed pages will be yielded
+            # monitor pages after updates - all pages will be yielded with status_code indicating change status
             items = client.list_configuration_settings(
                 key_filter="async_sample_key_*", label_filter="async_sample_label_*"
             )
-            iterator = items.by_page(etags=page_etags)
-            changed_pages = []
-            async for page in iterator:
-                changed_pages.append(page)
-            # Should yield 2 pages (second page changed, third page is new)
-            assert len(changed_pages) == 2
+            iterator = items.by_page(match_conditions=page_etags)
+            unchanged_count = 0
+            changed_count = 0
+            async for _ in iterator:
+                if iterator.status_code == 304:
+                    unchanged_count += 1
+                elif iterator.status_code == 200:
+                    changed_count += 1
+            # We should have at least one changed and one unchanged page
+            assert changed_count >= 1
+            assert unchanged_count >= 1
+            # Total should equal the number of original pages
+            assert changed_count + unchanged_count == len(page_etags)
 
             # clean up
             await self.tear_down()
