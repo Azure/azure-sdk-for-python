@@ -113,6 +113,36 @@ def test_request_url(authority):
     client.obtain_token_by_refresh_token("scope", "refresh token")
 
 
+def test_token_url():
+    tenant_id = "tenant-id"
+    client = AadClient(tenant_id, "client-id", authority="https://login.microsoftonline.com")
+    assert client._get_token_url() == "https://login.microsoftonline.com/tenant-id/oauth2/v2.0/token"
+
+    # Test with usage of AZURE_AUTHORITY_HOST
+    with patch.dict(
+        "os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://custom.microsoftonline.com"}, clear=True
+    ):
+        client = AadClient(tenant_id=tenant_id, client_id="client-id")
+        assert client._get_token_url() == "https://custom.microsoftonline.com/tenant-id/oauth2/v2.0/token"
+
+    # Test with usage of AZURE_REGIONAL_AUTHORITY_NAME
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus"}, clear=True):
+        client = AadClient(tenant_id=tenant_id, client_id="client-id")
+        assert client._get_token_url() == "https://centralus.login.microsoft.com/tenant-id/oauth2/v2.0/token"
+
+    # Test with usage of AZURE_REGIONAL_AUTHORITY_NAME and AZURE_AUTHORITY_HOST
+    with patch.dict(
+        "os.environ",
+        {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://login.microsoftonline.us",
+            EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus",
+        },
+        clear=True,
+    ):
+        client = AadClient(tenant_id=tenant_id, client_id="client-id")
+        assert client._get_token_url() == "https://centralus.login.microsoftonline.us/tenant-id/oauth2/v2.0/token"
+
+
 @pytest.mark.parametrize("secret", (None, "client secret"))
 def test_authorization_code(secret):
     tenant_id = "tenant-id"

@@ -14,6 +14,7 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._constants import EnvironmentVariables, KnownAuthorities
+from .._enums import RegionalAuthority
 
 within_credential_chain = ContextVar("within_credential_chain", default=False)
 within_dac = ContextVar("within_dac", default=False)
@@ -48,6 +49,37 @@ def normalize_authority(authority: str) -> str:
 def get_default_authority() -> str:
     authority = os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
     return normalize_authority(authority)
+
+
+def get_regional_authority(central_authority) -> Optional[str]:
+    """Return the regional authority configured in the AZURE_REGIONAL_AUTHORITY_NAME environment variable.
+
+    :param str central_authority: The central authority, e.g. "https://login.microsoftonline.com"
+    :return: The regional authority, or None if no regional authority is configured.
+    :rtype: Optional[str]
+    """
+    regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
+    if not regional_authority:
+        return None
+
+    if regional_authority.lower() == RegionalAuthority.AUTO_DISCOVER_REGION:
+        _LOGGER.warning(
+            "The value %s for %s is not supported for this credential. Using the non-regional authority.",
+            RegionalAuthority.AUTO_DISCOVER_REGION,
+            EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME,
+        )
+        return None
+
+    central_host = urlparse(central_authority).hostname
+    if not central_host:
+        return None
+
+    # This mirrors the regional authority logic in MSAL.
+    if central_host in ("login.microsoftonline.com", "login.microsoft.com", "login.windows.net", "sts.windows.net"):
+        regional_host = f"{regional_authority}.login.microsoft.com"
+    else:
+        regional_host = f"{regional_authority}.{central_host}"
+    return f"https://{regional_host}"
 
 
 def validate_scope(scope: str) -> None:
