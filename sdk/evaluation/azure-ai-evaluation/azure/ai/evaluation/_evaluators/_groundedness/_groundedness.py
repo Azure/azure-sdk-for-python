@@ -5,7 +5,11 @@ import os, logging
 from typing import Dict, List, Optional, Union, Any, Tuple
 
 from typing_extensions import overload, override
-from azure.ai.evaluation._legacy.prompty import AsyncPrompty
+
+if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
+    from promptflow.core._flow import AsyncPrompty
+else:
+    from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
@@ -116,6 +120,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         )
         self._model_config = model_config
         self.threshold = threshold
+        self._credential = credential
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
     @overload
@@ -218,7 +223,12 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             self._DEFAULT_OPEN_API_VERSION,
             UserAgentSingleton().value,
         )
-        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+        self._flow = AsyncPrompty.load(
+            source=self._prompty_file,
+            model=prompty_model_config,
+            is_reasoning_model=self._is_reasoning_model,
+            token_credential=self._credential,
+        )
 
     def _has_context(self, eval_input: dict) -> bool:
         """
