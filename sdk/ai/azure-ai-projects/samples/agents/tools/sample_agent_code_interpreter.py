@@ -100,10 +100,12 @@ with (
     # Download the generated file if available
     if file_id and filename:
         file_content = openai_client.containers.files.content.retrieve(file_id=file_id, container_id=container_id)
+        print(f"File ready for download: {filename}")
         with open(filename, "wb") as f:
             f.write(file_content.read())
-            print(f"File {filename} downloaded successfully.")
-        print(f"File ready for download: {filename}")
+
+        # Print result (should contain "file")
+        print(f"==> Result: file, {filename} downloaded successfully.")
     else:
         print("No file generated in response")
 

@@ -7,46 +7,34 @@
 
 import json
 from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy, RecordedTransport
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
-class TestAgentFunctionTool(TestBase):
+class TestAgentFunctionToolAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_function_tool(self, **kwargs):
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_agent_function_tool_async(self, **kwargs):
         """
-        Test agent with custom function tool.
+        Test agent with custom function tool (async version).
 
         This test verifies that an agent can:
         1. Use a custom function tool defined by the developer
         2. Request function calls when needed
         3. Receive function results and incorporate them into responses
-
-        Routes used in this test:
-
-        Action REST API Route                                Client Method
-        ------+---------------------------------------------+-----------------------------------
-        # Setup:
-        POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
-
-        # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (triggers function)
-        POST   /openai/responses                             openai_client.responses.create() (with function result)
-
-        # Teardown:
-        DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
         model = self.test_agents_params["model_deployment_name"]
-        agent_name = "function-tool-agent"
+        agent_name = "function-tool-agent-async"
 
-        with (
-            self.create_client(operation_group="agents", **kwargs) as project_client,
-            project_client.get_openai_client() as openai_client,
-        ):
+        # Setup
+        project_client = self.create_async_client(operation_group="agents", **kwargs)
+        openai_client = project_client.get_openai_client()
+
+        async with project_client:
             # Define a function tool for the model to use
             func_tool = FunctionTool(
                 name="get_weather",
@@ -66,7 +54,7 @@ class TestAgentFunctionTool(TestBase):
             )
 
             # Create agent with function tool
-            agent = project_client.agents.create_version(
+            agent = await project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
@@ -80,7 +68,7 @@ class TestAgentFunctionTool(TestBase):
             # Ask a question that should trigger the function call
             print("\nAsking agent: What's the weather in Seattle?")
 
-            response = openai_client.responses.create(
+            response = await openai_client.responses.create(
                 input="What's the weather in Seattle?",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
@@ -134,7 +122,7 @@ class TestAgentFunctionTool(TestBase):
             # Send the function results back to get the final response
             print("\nSending function results back to agent...")
 
-            response = openai_client.responses.create(
+            response = await openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -159,14 +147,14 @@ class TestAgentFunctionTool(TestBase):
             print("\n✓ Agent successfully used function tool and incorporated results into response")
 
             # Teardown
-            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print("Agent deleted")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_function_tool_multi_turn_with_multiple_calls(self, **kwargs):
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_agent_function_tool_multi_turn_with_multiple_calls_async(self, **kwargs):
         """
-        Test multi-turn conversation where agent calls functions multiple times.
+        Test multi-turn conversation where agent calls functions multiple times (async version).
 
         This tests:
         - Multiple function calls across different turns
@@ -176,10 +164,11 @@ class TestAgentFunctionTool(TestBase):
 
         model = self.test_agents_params["model_deployment_name"]
 
-        with (
-            self.create_client(operation_group="agents", **kwargs) as project_client,
-            project_client.get_openai_client() as openai_client,
-        ):
+        # Setup
+        project_client = self.create_async_client(operation_group="agents", **kwargs)
+        openai_client = project_client.get_openai_client()
+
+        async with project_client:
             # Define multiple function tools
             get_weather = FunctionTool(
                 name="get_weather",
@@ -216,8 +205,8 @@ class TestAgentFunctionTool(TestBase):
             )
 
             # Create agent with multiple functions
-            agent = project_client.agents.create_version(
-                agent_name="weather-assistant-multi-turn",
+            agent = await project_client.agents.create_version(
+                agent_name="weather-assistant-multi-turn-async",
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a weather assistant. Use available functions to answer weather questions.",
@@ -229,7 +218,7 @@ class TestAgentFunctionTool(TestBase):
 
             # Turn 1: Get current weather
             print("\n--- Turn 1: Current weather query ---")
-            response_1 = openai_client.responses.create(
+            response_1 = await openai_client.responses.create(
                 input="What's the weather in New York?",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
@@ -252,7 +241,7 @@ class TestAgentFunctionTool(TestBase):
                     )
 
             # Get response with function results
-            response_1 = openai_client.responses.create(
+            response_1 = await openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_1.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -264,7 +253,7 @@ class TestAgentFunctionTool(TestBase):
 
             # Turn 2: Follow-up with forecast (requires context)
             print("\n--- Turn 2: Follow-up forecast query ---")
-            response_2 = openai_client.responses.create(
+            response_2 = await openai_client.responses.create(
                 input="What about the forecast for the next few days?",
                 previous_response_id=response_1.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -299,7 +288,7 @@ class TestAgentFunctionTool(TestBase):
                     )
 
             # Get response with forecast
-            response_2 = openai_client.responses.create(
+            response_2 = await openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_2.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -311,7 +300,7 @@ class TestAgentFunctionTool(TestBase):
 
             # Turn 3: Compare with another city
             print("\n--- Turn 3: New city query ---")
-            response_3 = openai_client.responses.create(
+            response_3 = await openai_client.responses.create(
                 input="How does that compare to Seattle's weather?",
                 previous_response_id=response_2.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -353,7 +342,7 @@ class TestAgentFunctionTool(TestBase):
                         )
 
             # Get final comparison response
-            response_3 = openai_client.responses.create(
+            response_3 = await openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_3.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -370,14 +359,14 @@ class TestAgentFunctionTool(TestBase):
             print("  - Comparison between cities works")
 
             # Cleanup
-            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
             print("Agent deleted")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_function_tool_context_dependent_followup(self, **kwargs):
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_agent_function_tool_context_dependent_followup_async(self, **kwargs):
         """
-        Test deeply context-dependent follow-ups (e.g., unit conversion, clarification).
+        Test deeply context-dependent follow-ups (e.g., unit conversion, clarification) (async version).
 
         This tests that the agent truly uses previous response content, not just
         remembering parameters from the first query.
@@ -385,8 +374,9 @@ class TestAgentFunctionTool(TestBase):
 
         model = self.test_agents_params["model_deployment_name"]
 
-        with (
-            self.create_client(operation_group="agents", **kwargs) as project_client,
+        # Setup
+        async with (
+            self.create_async_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
             # Define function tool
@@ -408,8 +398,8 @@ class TestAgentFunctionTool(TestBase):
             )
 
             # Create agent
-            agent = project_client.agents.create_version(
-                agent_name="temperature-assistant-context",
+            agent = await project_client.agents.create_version(
+                agent_name="temperature-assistant-context-async",
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a temperature assistant. Answer temperature questions.",
@@ -421,7 +411,7 @@ class TestAgentFunctionTool(TestBase):
 
             # Turn 1: Get temperature in Fahrenheit
             print("\n--- Turn 1: Get temperature ---")
-            response_1 = openai_client.responses.create(
+            response_1 = await openai_client.responses.create(
                 input="What's the temperature in Boston?",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
@@ -439,7 +429,7 @@ class TestAgentFunctionTool(TestBase):
                         )
                     )
 
-            response_1 = openai_client.responses.create(
+            response_1 = await openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_1.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -451,7 +441,7 @@ class TestAgentFunctionTool(TestBase):
 
             # Turn 2: Context-dependent follow-up (convert the previous number)
             print("\n--- Turn 2: Context-dependent conversion ---")
-            response_2 = openai_client.responses.create(
+            response_2 = await openai_client.responses.create(
                 input="What is that in Celsius?",  # "that" refers to the 72°F from previous response
                 previous_response_id=response_1.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -472,7 +462,7 @@ class TestAgentFunctionTool(TestBase):
 
             # Turn 3: Another context-dependent follow-up (comparison)
             print("\n--- Turn 3: Compare to another value ---")
-            response_3 = openai_client.responses.create(
+            response_3 = await openai_client.responses.create(
                 input="Is that warmer or colder than 25°C?",  # "that" refers to the Celsius value just mentioned
                 previous_response_id=response_2.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -493,5 +483,5 @@ class TestAgentFunctionTool(TestBase):
             print("  - No unnecessary function calls made")
 
             # Cleanup
-            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
             print("Agent deleted")
