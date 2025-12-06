@@ -330,7 +330,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    #@pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -529,7 +528,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    #@pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -2817,7 +2815,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     # Workflow Agent Tracing Tests (Async)
     # ========================================
 
-    #@pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -2927,7 +2924,6 @@ trigger:
             # With content recording ON, action_id should be present
             assert "action_id" in part["content"]
 
-    #@pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -3040,7 +3036,6 @@ trigger:
             assert "action_id" not in part["content"]
             assert "previous_action_id" not in part["content"]
 
-    #@pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -3154,7 +3149,6 @@ trigger:
             # With content recording ON, action_id should be present
             assert "action_id" in part["content"]
 
-    #@pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
