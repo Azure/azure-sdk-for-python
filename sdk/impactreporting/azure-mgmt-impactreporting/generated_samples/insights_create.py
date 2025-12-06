@@ -38,7 +38,7 @@ def main():
             "properties": {
                 "category": "repair",
                 "content": {
-                    "description": 'At 2018-11-08T00:00:00Z UTC, your services dependent on these resources :code:`<link href=”…”>VM1</link>` may have experienced an issue. :code:`<br/>`\\ :code:`<div>`We have identified an outage that affected these resources(s). You can look at outage information on :code:`<link href="https:// portal.azure.com/#view/Microsoft_Azure_Health/AzureHealthBrowseBlade/~/serviceIssues/trackingId/NL2W-VCZ">NL2W-VCZ</link>` link.\\ :code:`<div>`',
+                    "description": 'At 2018-11-08T00:00:00Z UTC, your services dependent on these resources <link href=”…”>VM1</link> may have experienced an issue. <br/><div>We have identified an outage that affected these resources(s). You can look at outage information on <link href="https:// portal.azure.com/#view/Microsoft_Azure_Health/AzureHealthBrowseBlade/~/serviceIssues/trackingId/NL2W-VCZ">NL2W-VCZ</link> link.<div>',
                     "title": "Impact Has been correlated to an outage",
                 },
                 "eventTime": "2023-06-15T04:00:00.009223Z",
