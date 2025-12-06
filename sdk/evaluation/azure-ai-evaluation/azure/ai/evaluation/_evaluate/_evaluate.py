@@ -1793,15 +1793,45 @@ def _convert_results_to_aoai_evaluation_results(
     """
     Convert evaluation results to AOAI evaluation results format.
 
-    This method transforms evaluation results from the standard format into AOAI
-    evaluation format, adding structured results and summary statistics.
+    This method transforms evaluation results from the legacy format into AOAI
+    evaluation result format, adding structured results and summary statistics.
 
-    Each row of input results.rows looks like:
+    Algorithm Summary:
+    1. **Metadata Extraction**: Extract testing criteria metadata (type, metrics, inverse flags)
+       from evaluators, evaluation metadata, and evaluator configuration
+    2. **Row-by-Row Conversion**: Transform each legacy result row into AOAI format:
+       - Parse row data to separate criteria-specific outputs from input data
+       - Group metrics by criteria name (e.g., "outputs.violence.violence_score" → violence criteria)
+       - Extract and normalize metric values (score, label, reason, threshold, sample data)
+       - Handle inverse metrics (where True indicates failure, like security violations)
+       - Create structured result objects with standardized fields
+       - Add error summaries for failed evaluations from run summary
+    3. **Summary Calculation**: Generate aggregate statistics across all converted rows
+    4. **In-Place Update**: Add '_evaluation_results_list' and '_evaluation_summary' to results
+
+    Data Transformation:
+    Legacy format (flat key-value pairs):
     {"inputs.query":"What is the capital of France?","inputs.context":"France is in Europe",
      "inputs.generated_response":"Paris is the capital of France.","inputs.ground_truth":"Paris is the capital of France.",
      "outputs.F1_score.f1_score":1.0,"outputs.F1_score.f1_result":"pass","outputs.F1_score.f1_threshold":0.5}
 
-    Convert each row into new RunOutputItem object with results array.
+    AOAI format (structured objects with results array):
+    {
+      "object": "eval.run.output_item",
+      "id": "1",
+      "datasource_item": {"query": "What is the capital of France?", ...},
+      "results": [
+        {
+          "type": "quality",
+          "name": "F1_score",
+          "metric": "f1_score",
+          "score": 1.0,
+          "label": "pass",
+          "passed": true,
+          "threshold": 0.5
+        }
+      ]
+    }
 
     :param results: The evaluation results to convert (modified in-place)
     :type results: EvaluationResult
@@ -1825,7 +1855,8 @@ def _convert_results_to_aoai_evaluation_results(
     if evaluators is None:
         return
 
-    # Extract metadata and configuration
+    # Extract metadata and configuration to get testing criteria type, testing criteria name, metrics, is_inverse
+    # for each testing criteria
     testing_criteria_metadata = _extract_testing_criteria_metadata(
         evaluators, eval_meta_data, evaluator_config, logger, eval_id, eval_run_id
     )
@@ -2234,6 +2265,7 @@ def _convert_single_row_to_aoai_format(
     run_output_results = []
     top_sample = {}
 
+    # Process each criteria group to extract metric results of output items.
     for criteria_name, metrics in criteria_groups.items():
         criteria_results, sample = _process_criteria_metrics(
             criteria_name, metrics, testing_criteria_metadata, logger, eval_id, eval_run_id
@@ -2370,8 +2402,14 @@ def _process_criteria_metrics(
         )
     """
     expected_metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
-    criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "unknown")
+    criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "")
     is_inverse = testing_criteria_metadata.get(criteria_name, {}).get("is_inverse", False)
+
+    if _is_none_or_nan(criteria_type) or _is_none_or_nan(criteria_name):
+        logger.warning(
+            f"Skipping criteria '{criteria_name}' due to missing type/name or no valid metrics, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
+        )
+        return ([], {})
 
     # Extract metric values
     result_per_metric = _extract_metric_values(criteria_name, criteria_type, metrics, expected_metrics, logger)
@@ -2398,16 +2436,24 @@ def _extract_metric_values(
 ) -> Dict[str, Dict[str, Any]]:
     """Extract and organize metric values by metric name.
 
-    Args:
-        criteria_name: Name of the evaluation criteria (e.g. 'coherence')
-        metrics: Raw metrics dictionary from parsed row data
-        expected_metrics: List of expected metric names for this criteria
-        logger: Logger instance for warnings/errors
+    This method processes raw metrics from evaluation results and organizes them
+    by metric name, handling metric key transformations and value assignments.
 
-    Returns:
-        Dictionary mapping metric names to their extracted values
+    :param criteria_name: Name of the evaluation criteria (e.g. 'coherence')
+    :type criteria_name: str
+    :param criteria_type: Type of the criteria (e.g. 'azure_ai_evaluator')
+    :type criteria_type: str
+    :param metrics: Raw metrics dictionary from parsed row data
+    :type metrics: Dict[str, Any]
+    :param expected_metrics: List of expected metric names for this criteria
+    :type expected_metrics: List[str]
+    :param logger: Logger instance for warnings and debug messages
+    :type logger: logging.Logger
+    :return: Dictionary mapping metric names to their extracted values
+    :rtype: Dict[str, Dict[str, Any]]
 
     Example Input:
+        criteria_name = "coherence"
         metrics = {
             "score": 4.5,
             "coherence_reason": "Good flow",
@@ -2468,14 +2514,24 @@ def _update_metric_value(
 ) -> Tuple[str, str, str]:
     """Update metric dictionary with the appropriate field based on metric key.
 
-    Args:
-        metric_dict: Dictionary to update with metric values
-        metric_key: Key name of the metric (determines field assignment)
-        metric_value: Value to assign to the appropriate field
-        logger: Logger instance for warnings/errors
+    This method processes a single metric key-value pair and updates the metric dictionary
+    with the appropriate field assignment based on the key pattern. It handles various
+    metric types including scores, results, reasons, thresholds, and sample data.
 
-    Returns:
-        None (modifies metric_dict in place)
+    :param criteria_type: Type of the evaluation criteria (e.g. 'azure_ai_evaluator')
+    :type criteria_type: str
+    :param metric_dict: Dictionary to update with metric values
+    :type metric_dict: Dict[str, Any]
+    :param metric_key: Key name of the metric (determines field assignment)
+    :type metric_key: str
+    :param metric: Name of the metric being processed
+    :type metric: str
+    :param metric_value: Value to assign to the appropriate field
+    :type metric_value: Any
+    :param logger: Logger instance for warnings/errors
+    :type logger: logging.Logger
+    :return: Tuple of (result_name, result_name_child_level, result_name_nested_child_level, derived_passed)
+    :rtype: Tuple[str, str, str]
 
     Example Input:
         metric_dict = {}
@@ -2484,6 +2540,7 @@ def _update_metric_value(
 
     Example Output:
         metric_dict becomes {"score": 4.5}
+        Returns: ("score", None, None, None)
 
     Example Input:
         metric_dict = {}
@@ -2492,6 +2549,7 @@ def _update_metric_value(
 
     Example Output:
         metric_dict becomes {"label": "pass", "passed": True}
+        Returns: ("label", None, None, True)
     """
     result_name = None
     result_name_child_level = None
@@ -2591,11 +2649,14 @@ def _update_metric_value(
 def _ensure_sample_dict(metric_dict: Dict[str, Any]) -> None:
     """Ensure sample dictionary exists in metric_dict.
 
-    Args:
-        metric_dict: Metric dictionary to modify
+    This method checks if a 'sample' key exists in the metric dictionary and
+    creates an empty dictionary for it if it doesn't exist. This ensures that
+    sample-related data can be safely added to the metric dictionary.
 
-    Returns:
-        None (modifies metric_dict in place)
+    :param metric_dict: Metric dictionary to modify
+    :type metric_dict: Dict[str, Any]
+    :return: None (modifies metric_dict in place)
+    :rtype: None
 
     Example Input:
         metric_dict = {"score": 4.5}
@@ -2610,11 +2671,13 @@ def _ensure_sample_dict(metric_dict: Dict[str, Any]) -> None:
 def _ensure_usage_dict(metric_dict: Dict[str, Any]) -> None:
     """Ensure sample.usage dictionary exists in metric_dict.
 
-    Args:
-        metric_dict: Metric dictionary to modify
+    This method ensures that the metric dictionary has a nested sample.usage
+    structure for storing token usage statistics.
 
-    Returns:
-        None (modifies metric_dict in place)
+    :param metric_dict: Metric dictionary to modify
+    :type metric_dict: Dict[str, Any]
+    :return: None (modifies metric_dict in place)
+    :rtype: None
 
     Example Input:
         metric_dict = {"score": 4.5}
@@ -2639,18 +2702,27 @@ def _create_result_object(
 ) -> Dict[str, Any]:
     """Create a result object for AOAI format.
 
-    Args:
-        criteria_name: Name of the evaluation criteria (e.g. 'coherence')
-        metric: Name of the metric (e.g. 'score')
-        metric_values: Dictionary containing all metric values
-        criteria_type: Type of criteria (e.g. 'azure_ai_evaluator')
-        decrease_boolean_metrics: List of metrics that should be inverted
-        logger: Logger instance for warnings/errors
-        eval_id: Optional evaluation ID for debugging
-        eval_run_id: Optional evaluation run ID for debugging
+    This method constructs a standardized AOAI evaluation result object from
+    metric values, handling inverse metrics and proper field assignments.
 
-    Returns:
-        Dictionary representing AOAI evaluation result object
+    :param criteria_name: Name of the evaluation criteria (e.g. 'coherence')
+    :type criteria_name: str
+    :param metric: Name of the metric (e.g. 'score')
+    :type metric: str
+    :param metric_values: Dictionary containing all metric values
+    :type metric_values: Dict[str, Any]
+    :param criteria_type: Type of criteria (e.g. 'azure_ai_evaluator')
+    :type criteria_type: str
+    :param is_inverse: Whether this is an inverse metric that should be inverted
+    :type is_inverse: bool
+    :param logger: Logger instance for warnings and debug messages
+    :type logger: logging.Logger
+    :param eval_id: Optional evaluation ID for debugging context
+    :type eval_id: Optional[str]
+    :param eval_run_id: Optional evaluation run ID for debugging context
+    :type eval_run_id: Optional[str]
+    :return: Dictionary representing AOAI evaluation result object
+    :rtype: Dict[str, Any]
 
     Example Input:
         criteria_name = "coherence"
@@ -2715,15 +2787,21 @@ def _is_inverse_metric(
 ) -> bool:
     """Check if metric is a decrease boolean metric that needs value inversion.
 
-    Args:
-        metric: Name of the metric to check
-        decrease_boolean_metrics: List of explicitly configured decrease boolean metrics
-        logger: Logger instance for info messages
-        eval_id: Optional evaluation ID for debugging
-        eval_run_id: Optional evaluation run ID for debugging
+    This method determines if a metric should be treated as an inverse/decrease boolean
+    metric, where True values indicate negative results that should be inverted.
 
-    Returns:
-        True if metric should be treated as decrease boolean, False otherwise
+    :param metric: Name of the metric to check
+    :type metric: str
+    :param decrease_boolean_metrics: List of explicitly configured decrease boolean metrics
+    :type decrease_boolean_metrics: List[str]
+    :param logger: Logger instance for debug and info messages
+    :type logger: logging.Logger
+    :param eval_id: Optional evaluation ID for debugging context
+    :type eval_id: Optional[str]
+    :param eval_run_id: Optional evaluation run ID for debugging context
+    :type eval_run_id: Optional[str]
+    :return: True if metric should be treated as decrease boolean, False otherwise
+    :rtype: bool
 
     Example Input:
         metric = "indirect_attack"
@@ -2759,11 +2837,13 @@ def _is_inverse_metric(
 def _adjust_for_inverse_metric(label: Any) -> Tuple[float, str, bool]:
     """Adjust values for decrease boolean metrics by inverting the logic.
 
-    Args:
-        label: The original label value (typically boolean)
+    This method inverts the evaluation logic for metrics where True indicates
+    a negative result (like security violations or attacks detected).
 
-    Returns:
-        Tuple of (adjusted_score, adjusted_label, adjusted_passed)
+    :param label: The original label value (typically boolean)
+    :type label: Any
+    :return: Tuple of (adjusted_score, adjusted_label, adjusted_passed)
+    :rtype: Tuple[float, str, bool]
 
     Example Input:
         label = True (indicating violation/attack found)
@@ -2871,13 +2951,18 @@ def _add_error_summaries(
 def _should_add_error_summary(run_output_results: List[Dict[str, Any]], criteria_name: str, metric: str) -> bool:
     """Check if error summary should be added for given criteria and metric.
 
-    Args:
-        run_output_results: List of existing result objects to check and modify
-        criteria_name: Name of the criteria to check for
-        metric: Name of the metric to check for
+    This method determines whether an error summary should be added by checking
+    if valid results already exist for the given criteria and metric combination.
+    It removes empty results and indicates whether error reporting is needed.
 
-    Returns:
-        True if error summary should be added, False if valid result already exists
+    :param run_output_results: List of existing result objects to check and modify
+    :type run_output_results: List[Dict[str, Any]]
+    :param criteria_name: Name of the criteria to check for
+    :type criteria_name: str
+    :param metric: Name of the metric to check for
+    :type metric: str
+    :return: True if error summary should be added, False if valid result already exists
+    :rtype: bool
 
     Example Input:
         run_output_results = [
