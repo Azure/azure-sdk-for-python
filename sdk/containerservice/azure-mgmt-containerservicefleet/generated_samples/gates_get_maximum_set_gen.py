@@ -15,7 +15,7 @@ from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
     pip install azure-identity
     pip install azure-mgmt-containerservicefleet
 # USAGE
-    python update_runs_start.py
+    python gates_get_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.update_runs.begin_start(
-        resource_group_name="rg1",
-        fleet_name="fleet1",
-        update_run_name="run1",
-    ).result()
+    response = client.gates.get(
+        resource_group_name="rgfleets",
+        fleet_name="fleet-1",
+        gate_name="12345678-910a-bcde-f000-000000000000",
+    )
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/UpdateRuns_Start.json
+# x-ms-original-file: 2025-08-01-preview/Gates_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
