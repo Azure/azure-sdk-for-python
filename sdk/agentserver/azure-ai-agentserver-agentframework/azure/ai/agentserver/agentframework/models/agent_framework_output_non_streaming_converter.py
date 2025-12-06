@@ -7,8 +7,7 @@ import datetime
 import json
 from typing import Any, List
 
-from agent_framework import AgentRunResponse, FunctionResultContent
-from agent_framework._types import FunctionCallContent, TextContent
+from agent_framework import AgentRunResponse, FunctionCallContent, FunctionResultContent, ErrorContent, TextContent
 
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
@@ -121,6 +120,8 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             self._append_function_call_content(content, sink, author_name)
         elif isinstance(content, FunctionResultContent):
             self._append_function_result_content(content, sink, author_name)
+        elif isinstance(content, ErrorContent):
+            raise ValueError(f"ErrorContent received: code={content.error_code}, message={content.message}")
         else:
             logger.debug("unsupported content type skipped: %s", type(content).__name__)
 
