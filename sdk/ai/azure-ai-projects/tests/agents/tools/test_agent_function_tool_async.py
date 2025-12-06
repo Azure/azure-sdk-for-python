@@ -375,10 +375,10 @@ class TestAgentFunctionToolAsync(TestBase):
         model = self.test_agents_params["model_deployment_name"]
 
         # Setup
-        project_client = self.create_async_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
-
-        async with project_client:
+        async with (
+            self.create_async_client(operation_group="agents", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
             # Define function tool
             get_temperature = FunctionTool(
                 name="get_temperature",
