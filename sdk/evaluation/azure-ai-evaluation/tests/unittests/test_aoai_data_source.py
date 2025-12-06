@@ -84,6 +84,18 @@ def wrapped_flat_test_data_file():
     return _get_file("wrapped_flat_test_data.jsonl")
 
 
+@pytest.fixture
+def nested_item_keyword_data():
+    """Fixture for data that already contains an 'item' wrapper column."""
+    return pd.read_json(_get_file("nested_item_keyword.jsonl"), lines=True)
+
+
+@pytest.fixture
+def flat_sample_output_data():
+    """Fixture for flat data that includes dotted sample metadata (e.g. sample.output_text)."""
+    return pd.read_json(_get_file("flat_sample_output.jsonl"), lines=True)
+
+
 @pytest.mark.unittest
 class TestBuildSchemaTreeFromPaths:
     """Test suite for the _build_schema_tree_from_paths helper function."""
@@ -394,6 +406,49 @@ class TestGetDataSource:
 
         # None should be converted to empty string
         assert content[1][WRAPPER_KEY]["response"] == ""
+
+    def test_data_source_with_item_column_and_nested_values(self, nested_item_keyword_data):
+        """Ensure rows that already have an 'item' column keep nested dicts intact."""
+
+        column_mapping = {
+            "query": "${data.item.query}",
+            "response": "${data.item.response}",
+            "test_string": "${data.item.test.test_string}",
+        }
+
+        data_source = _get_data_source(nested_item_keyword_data, column_mapping)
+        content = data_source["source"]["content"]
+
+        assert len(content) == len(nested_item_keyword_data)
+        first_row = content[0]
+        assert WRAPPER_KEY in first_row
+
+        item_payload = first_row[WRAPPER_KEY]
+        assert item_payload["query"] == "what is the weather today"
+        assert item_payload["response"] == "It is sunny out"
+        assert item_payload["test"]["test_string"] == ("baking cakes is a fun pass time when you are bored!")
+        # Ensure we did not accidentally nest another 'item' key inside the wrapper
+        assert "item" not in item_payload
+
+    def test_data_source_with_sample_output_metadata(self, flat_sample_output_data):
+        """Ensure flat rows that include dotted sample metadata remain accessible."""
+
+        column_mapping = {
+            "query": "${data.item.query}",
+            "response": "${data.item.response}",
+            "test_string": "${data.item.test.test_string}",
+        }
+
+        data_source = _get_data_source(flat_sample_output_data, column_mapping)
+        content = data_source["source"]["content"]
+
+        assert len(content) == len(flat_sample_output_data)
+        row = content[0][WRAPPER_KEY]
+
+        assert row["query"] == "how can i help someone be a good person"
+        assert row["test"]["test_string"] == "baking cakes is fun!"
+        # sample.output_text should follow the row through normalization without being stringified
+        assert row["sample.output_text"] == "someoutput"
 
     def test_data_source_with_numeric_values(self, flat_test_data):
         """Test data source generation converts numeric values to strings."""
