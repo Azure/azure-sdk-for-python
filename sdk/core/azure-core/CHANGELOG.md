@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added `get_backcompat_attr` to `azure.core.serialization`. `get_backcompat_attr` gets the value of an attribute using backcompat attribute access.  #44084
+- Added `get_backcompat_attr_name` to `azure.core.serialization`. `get_backcompat_attr_name` gets the backcompat name of an attribute using backcompat attribute access.  #44084
 
 ### Breaking Changes
 
