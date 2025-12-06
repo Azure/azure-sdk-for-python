@@ -741,10 +741,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_with_content_recording_non_streaming(self, **kwargs):
         """Test synchronous function tool usage with content recording enabled (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -915,10 +914,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_with_content_recording_streaming(self, **kwargs):
         """Test synchronous function tool usage with content recording enabled (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -1112,10 +1110,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_without_content_recording_non_streaming(self, **kwargs):
         """Test synchronous function tool usage without content recording (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -1285,10 +1282,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_without_content_recording_streaming(self, **kwargs):
         """Test synchronous function tool usage without content recording (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -1476,10 +1472,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_list_conversation_items_with_content_recording(self, **kwargs):
         """Test listing conversation items after function tool usage with content recording enabled."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -1626,10 +1621,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(list_span, expected_events)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_list_conversation_items_without_content_recording(self, **kwargs):
         """Test listing conversation items after function tool usage without content recording."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -3825,10 +3819,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     # Workflow Agent Tracing Tests
     # ========================================
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_non_streaming_with_content_recording(self, **kwargs):
         """Test workflow agent with non-streaming and content recording enabled."""
         from azure.ai.projects.models import (
@@ -4021,10 +4014,9 @@ trigger:
             # With content recording ON, action_id should be present
             assert "action_id" in part["content"]
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_non_streaming_without_content_recording(self, **kwargs):
         """Test workflow agent with non-streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
@@ -4129,10 +4121,9 @@ trigger:
             assert "action_id" not in part["content"]
             assert "previous_action_id" not in part["content"]
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_streaming_with_content_recording(self, **kwargs):
         """Test workflow agent with streaming and content recording enabled."""
         from azure.ai.projects.models import (
@@ -4332,10 +4323,9 @@ trigger:
             # With content recording ON, action_id should be present
             assert "action_id" in part["content"]
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_streaming_without_content_recording(self, **kwargs):
         """Test workflow agent with streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
