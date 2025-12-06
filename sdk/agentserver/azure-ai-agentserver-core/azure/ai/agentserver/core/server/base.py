@@ -7,7 +7,6 @@ import inspect
 import json
 import os
 import time
-import traceback
 from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
@@ -141,80 +140,58 @@ class FoundryCBAgent:
                     resp = await self.agent_run(context)
 
                     if inspect.isgenerator(resp):
-                        # Prefetch first event to allow 500 status if generation fails immediately
-                        try:
-                            first_event = next(resp)
-                        except Exception as e:  # noqa: BLE001
-                            err_msg = _format_error(e)
-                            logger.error("Generator initialization failed: %s\n%s", e, traceback.format_exc())
-                            return JSONResponse({"error": err_msg}, status_code=500)
-
                         def gen():
                             ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
                             token = otel_context.attach(ctx)
-                            error_sent = False
+                            seq = 0
                             try:
-                                # yield prefetched first event
-                                yield _event_to_sse_chunk(first_event)
                                 for event in resp:
+                                    seq += 1
                                     yield _event_to_sse_chunk(event)
                             except Exception as e:  # noqa: BLE001
-                                err_msg = _format_error(e)
-                                logger.error("Error in non-async generator: %s\n%s", e, traceback.format_exc())
-                                payload = {"error": err_msg}
-                                yield f"event: error\ndata: {json.dumps(payload)}\n\n"
-                                error_sent = True
+                                logger.error("Error in non-async generator: %s", e, exc_info=True)
+                                err = project_models.ResponseErrorEvent(
+                                    sequence_number=seq + 1,
+                                    code=project_models.ResponseErrorCode.SERVER_ERROR,
+                                    message=_format_error(e),
+                                    param="")
+                                yield _event_to_sse_chunk(err)
                             finally:
                                 logger.info("End of processing CreateResponse request.")
                                 otel_context.detach(token)
-                                if not error_sent:
-                                    yield "data: [DONE]\n\n"
 
                         return StreamingResponse(gen(), media_type="text/event-stream")
                     if inspect.isasyncgen(resp):
-                        # Prefetch first async event to allow early 500
-                        try:
-                            first_event = await resp.__anext__()
-                        except StopAsyncIteration:
-                            # No items produced; treat as empty successful stream
-                            def empty_gen():
-                                yield "data: [DONE]\n\n"
-
-                            return StreamingResponse(empty_gen(), media_type="text/event-stream")
-                        except Exception as e:  # noqa: BLE001
-                            err_msg = _format_error(e)
-                            logger.error("Async generator initialization failed: %s\n%s", e, traceback.format_exc())
-                            return JSONResponse({"error": err_msg}, status_code=500)
-
                         async def gen_async():
                             ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
                             token = otel_context.attach(ctx)
-                            error_sent = False
+                            seq = 0
                             try:
-                                # yield prefetched first event
-                                yield _event_to_sse_chunk(first_event)
                                 async for event in resp:
+                                    seq += 1
                                     yield _event_to_sse_chunk(event)
                             except Exception as e:  # noqa: BLE001
-                                err_msg = _format_error(e)
-                                logger.error("Error in async generator: %s\n%s", e, traceback.format_exc())
-                                payload = {"error": err_msg}
-                                yield f"event: error\ndata: {json.dumps(payload)}\n\n"
-                                yield "data: [DONE]\n\n"
-                                error_sent = True
+                                logger.error("Error in async generator: %s", e, exc_info=True)
+                                err = project_models.ResponseErrorEvent(
+                                    sequence_number=seq + 1,
+                                    code=project_models.ResponseErrorCode.SERVER_ERROR,
+                                    message=_format_error(e),
+                                    param="")
+                                yield _event_to_sse_chunk(err)
                             finally:
                                 logger.info("End of processing CreateResponse request.")
                                 otel_context.detach(token)
-                                if not error_sent:
-                                    yield "data: [DONE]\n\n"
 
                         return StreamingResponse(gen_async(), media_type="text/event-stream")
                     logger.info("End of processing CreateResponse request.")
                     return JSONResponse(resp.as_dict())
                 except Exception as e:
                     # TODO: extract status code from exception
-                    logger.error(f"Error processing CreateResponse request: {traceback.format_exc()}")
-                    return JSONResponse({"error": str(e)}, status_code=500)
+                    logger.error(f"Error processing CreateResponse request: {e}", exc_info=True)
+                    err = project_models.ResponseError(
+                        code=project_models.ResponseErrorCode.SERVER_ERROR,
+                        message=_format_error(e))
+                    return JSONResponse(err.as_dict())
 
         async def liveness_endpoint(request):
             result = await self.agent_liveness(request)
