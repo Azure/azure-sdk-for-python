@@ -7,6 +7,10 @@
 
 - Update response with created_by
 
+### Bugs Fixed
+
+- Fixed error response handling in stream and non-stream modes
+
 
 ## 1.0.0b6 (2025-11-26)
 
