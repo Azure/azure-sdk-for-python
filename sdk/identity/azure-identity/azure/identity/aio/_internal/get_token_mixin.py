@@ -21,8 +21,7 @@ class GetTokenMixin(abc.ABC):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
-        self._global_lock: Optional[Any] = None
-        self._global_lock_init_lock = threading.Lock()
+        self._global_lock = None
         self._active_locks: WeakValueDictionary[tuple, Any] = WeakValueDictionary()
         self._lock_class_type: Optional[Type] = None
 
@@ -36,11 +35,8 @@ class GetTokenMixin(abc.ABC):
         return self._lock_class_type
 
     async def _get_request_lock(self, lock_key: tuple) -> Any:
-        # Initialize global lock if needed, using threading.Lock for thread-safe initialization
         if self._global_lock is None:
-            with self._global_lock_init_lock:
-                if self._global_lock is None:
-                    self._global_lock = self._lock_class()
+            self._global_lock = self._lock_class()
 
         lock = self._active_locks.get(lock_key)
         if lock is not None:
