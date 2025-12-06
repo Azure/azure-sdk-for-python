@@ -72,9 +72,7 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
             knowledge_sources=[KnowledgeSourceReference(name=source_name)],
         )
         created_base = await index_client.create_knowledge_base(create_base)
-        return _AsyncTestContext(
-            index_client, source_name, created_source, base_name, created_base
-        )
+        return _AsyncTestContext(index_client, source_name, created_source, base_name, created_base)
 
     async def _cleanup(self, ctx: "_AsyncTestContext") -> None:
         try:
@@ -156,10 +154,7 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
             listed = [item async for item in ctx.index_client.list_knowledge_bases()]
 
             assert fetched.name == ctx.base_name
-            assert (
-                fetched.knowledge_sources
-                and fetched.knowledge_sources[0].name == ctx.source_name
-            )
+            assert fetched.knowledge_sources and fetched.knowledge_sources[0].name == ctx.source_name
             assert any(item.name == ctx.base_name for item in listed)
         finally:
             await self._cleanup(ctx)
@@ -212,9 +207,7 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
             snapshots = await self._poll_status_snapshots(ctx)
             assert snapshots, "Expected at least one status snapshot"
 
-            service_stats = (
-                await ctx.index_client._client.get_service_statistics()
-            )  # pylint:disable=protected-access
+            service_stats = await ctx.index_client._client.get_service_statistics()  # pylint:disable=protected-access
             assert isinstance(service_stats, SearchServiceStatistics)
 
             runtime = service_stats.indexers_runtime
