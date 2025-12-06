@@ -57,6 +57,6 @@
                 }
             }
         },
-        "_evaluator_id": "azureml://registries/azureml/evaluators/builtin.self_harm/versions/2"
+        "_evaluator_id": "azureml://registries/azureml/evaluators/builtin.ViolenceContentCustomEvaluator/versions/2"
     }
 }
