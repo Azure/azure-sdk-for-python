@@ -1877,8 +1877,7 @@ def _convert_results_to_aoai_evaluation_results(
     )
 
     # Calculate and add summary
-    criteria_name_types_from_meta = _extract_criteria_name_types(eval_meta_data)
-    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger, criteria_name_types_from_meta)
+    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger, testing_criteria_metadata)
     results["_evaluation_summary"] = evaluation_summary
     logger.info(
         f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
@@ -1921,14 +1920,35 @@ def _extract_testing_criteria_metadata(
     }
     eval_meta_data = {
         "testing_criteria": [
-            {"name": "violence", "type": "azure_ai_evaluator", "metrics": ["violence"]}
+            {"name": "violence", "type": "azure_ai_evaluator", "evaluator_name": "builtin.violence"}
         ]
+    }
+    evaluator_config = {
+        "my_violence": {
+            "column_mapping": {
+                "query": "${data.item.query}",
+                "response": "${data.item.response}",
+                "context": "${data.item.context}",
+                "ground_truth": "${data.item.ground_truth}"
+            },
+            "_evaluator_definition": {
+                "type": "service",
+                "metrics": {
+                    "violence": {
+                        "type": "ordinal",
+                        "desirable_direction": "decrease",
+                        "min_value": 0.0,
+                        "max_value": 7.0
+                    }
+                }
+            },
+            "_evaluator_id": "azureml://registries/azureml/evaluators/builtin.violence/versions/2"
+        }
     }
 
     Output example:
     {
-        "violence": {"type": "azure_ai_evaluator", "metrics": ["violence"], "is_inverse": False},
-        "fluency": {"type": "azure_ai_evaluator", "metrics": ["fluency"], "is_inverse": False}
+        "violence": {"type": "azure_ai_evaluator", "evaluator_name": "builtin.violence", "metrics": ["violence"], "is_inverse": False}
     }
     """
     testing_criteria_metadata = {}
@@ -1936,13 +1956,18 @@ def _extract_testing_criteria_metadata(
     inverse_metrics = _get_inverse_metrics(evaluator_config)
 
     for criteria_name, evaluator in evaluators.items():
-        criteria_type, metrics = _determine_criteria_type_and_metrics(
+        criteria_type, evaluator_name, metrics = _determine_criteria_type_and_metrics(
             criteria_name, evaluator, criteria_name_types_from_meta, evaluator_config, logger, eval_id, eval_run_id
         )
         is_inverse = len(metrics) > 0 and all(
             _is_inverse_metric(metric, inverse_metrics, logger, eval_id, eval_run_id) for metric in metrics
         )
-        testing_criteria_metadata[criteria_name] = {"type": criteria_type, "metrics": metrics, "is_inverse": is_inverse}
+        testing_criteria_metadata[criteria_name] = {
+            "type": criteria_type,
+            "evaluator_name": evaluator_name,
+            "metrics": metrics,
+            "is_inverse": is_inverse,
+        }
 
     return testing_criteria_metadata
 
@@ -1962,15 +1987,15 @@ def _extract_criteria_name_types(eval_meta_data: Optional[Dict[str, Any]]) -> Di
     Input example:
     eval_meta_data = {
         "testing_criteria": [
-            {"name": "violence", "type": "azure_ai_evaluator", "metrics": ["violence"]},
-            {"name": "fluency", "type": "azure_ai_evaluator", "metrics": ["fluency"]}
+            {"name": "violence", "type": "azure_ai_evaluator", "evaluator_name": "violence"},
+            {"name": "fluency", "type": "azure_ai_evaluator", "evaluator_name": "fluency"}
         ]
     }
 
     Output example:
     {
-        "violence": {"name": "violence", "type": "azure_ai_evaluator", "metrics": ["violence"]},
-        "fluency": {"name": "fluency", "type": "azure_ai_evaluator", "metrics": ["fluency"]}
+        "violence": {"name": "violence", "type": "azure_ai_evaluator", "evaluator_name": "violence"},
+        "fluency": {"name": "fluency", "type": "azure_ai_evaluator", "evaluator_name": "fluency"}
     }
     """
     criteria_name_types = {}
@@ -1981,7 +2006,6 @@ def _extract_criteria_name_types(eval_meta_data: Optional[Dict[str, Any]]) -> Di
                 criteria_name = criteria.get("name")
                 if criteria_name is not None:
                     criteria_name_types[criteria_name] = criteria
-
     return criteria_name_types
 
 
@@ -1993,7 +2017,7 @@ def _determine_criteria_type_and_metrics(
     logger: logging.Logger,
     eval_id: Optional[str],
     eval_run_id: Optional[str],
-) -> Tuple[Optional[str], List[str]]:
+) -> Tuple[Optional[str], Optional[str], List[str]]:
     """
     Determine criteria type and metrics for a given evaluator.
 
@@ -2008,19 +2032,18 @@ def _determine_criteria_type_and_metrics(
     }
 
     Output example:
-    ("azure_ai_evaluator", ["violence"])
+    ("azure_ai_evaluator", "builtin.violence", ["violence"])
     """
     if criteria_name in criteria_name_types_from_meta:
         result = _extract_from_metadata(
             criteria_name, criteria_name_types_from_meta, evaluator_config, logger, eval_id, eval_run_id
         )
     elif isinstance(evaluator, AzureOpenAIGrader):
-        result = evaluator._type, [criteria_name]  # pylint: disable=protected-access
+        result = evaluator._type, "", [criteria_name]  # pylint: disable=protected-access
     elif isinstance(evaluator, EvaluatorBase):
         result = _extract_from_evaluator_base(evaluator, criteria_name)
     else:
-        result = "unknown", [criteria_name]
-
+        result = "unknown", "", [criteria_name]
     return result
 
 
@@ -2031,7 +2054,7 @@ def _extract_from_metadata(
     logger: logging.Logger,
     eval_id: Optional[str],
     eval_run_id: Optional[str],
-) -> Tuple[Optional[str], List[str]]:
+) -> Tuple[Optional[str], Optional[str], List[str]]:
     """
     Extract criteria type and metrics from metadata.
 
@@ -2050,7 +2073,7 @@ def _extract_from_metadata(
     }
 
     Output example:
-    ("azure_ai_evaluator", ["violence"])
+    ("azure_ai_evaluator", "builtin.violence", ["violence"])
     """
     criteria_info = criteria_name_types_from_meta[criteria_name]
     criteria_type = criteria_info.get("type", None)
@@ -2069,7 +2092,7 @@ def _extract_from_metadata(
     else:
         metrics.append(criteria_name)
 
-    return (criteria_type, metrics)
+    return (criteria_type, evaluator_name, metrics)
 
 
 def _has_evaluator_definition(evaluator_config: Optional[Dict[str, EvaluatorConfig]], criteria_name: str) -> bool:
@@ -2160,7 +2183,7 @@ def _extract_metrics_from_evaluator_name(
     return metrics_mapped if metrics_mapped else [criteria_name]
 
 
-def _extract_from_evaluator_base(evaluator: EvaluatorBase, criteria_name: str) -> Tuple[str, List[str]]:
+def _extract_from_evaluator_base(evaluator: EvaluatorBase, criteria_name: str) -> Tuple[str, str, List[str]]:
     """
     Extract criteria type and metrics from EvaluatorBase.
 
@@ -2172,7 +2195,7 @@ def _extract_from_evaluator_base(evaluator: EvaluatorBase, criteria_name: str) -
     criteria_name = "violence"
 
     Output example:
-    ("azure_ai_evaluator", ["violence"])
+    ("azure_ai_evaluator", "violence", ["violence"])
     """
     # Extract evaluator class name
     evaluator_class_name = evaluator.__class__.__name__
@@ -2185,8 +2208,9 @@ def _extract_from_evaluator_base(evaluator: EvaluatorBase, criteria_name: str) -
         metrics = metrics_mapped if metrics_mapped else [criteria_name]
     else:
         metrics = [criteria_name]
+        eval_name = ""
 
-    return ("azure_ai_evaluator", metrics)
+    return ("azure_ai_evaluator", eval_name, metrics)
 
 
 def _convert_single_row_to_aoai_format(
@@ -3243,7 +3267,12 @@ def _calculate_aoai_evaluation_summary(
                     ):
                         evaluator_name = criteria_name_types_from_meta[testing_criteria].get("evaluator_name", None)
                         criteria_type = criteria_name_types_from_meta[testing_criteria].get("type", None)
-                        if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
+                        if (
+                            isinstance(criteria_type, str)
+                            and criteria_type == "azure_ai_evaluator"
+                            and isinstance(evaluator_name, str)
+                            and evaluator_name.startswith("builtin.")
+                        ):
                             evaluator_name = evaluator_name.replace("builtin.", "")
                         is_primary_metric = _is_primary_metric(result_item.get("metric", ""), evaluator_name)
                     if not is_primary_metric:
