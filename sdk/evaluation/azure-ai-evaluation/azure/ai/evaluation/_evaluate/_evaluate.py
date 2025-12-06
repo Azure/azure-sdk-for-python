@@ -1792,6 +1792,35 @@ def _convert_results_to_aoai_evaluation_results(
 ) -> None:
     """
     Convert evaluation results to AOAI evaluation results format.
+
+    This method transforms evaluation results from the standard format into AOAI
+    evaluation format, adding structured results and summary statistics.
+
+    Each row of input results.rows looks like:
+    {"inputs.query":"What is the capital of France?","inputs.context":"France is in Europe",
+     "inputs.generated_response":"Paris is the capital of France.","inputs.ground_truth":"Paris is the capital of France.",
+     "outputs.F1_score.f1_score":1.0,"outputs.F1_score.f1_result":"pass","outputs.F1_score.f1_threshold":0.5}
+
+    Convert each row into new RunOutputItem object with results array.
+
+    :param results: The evaluation results to convert (modified in-place)
+    :type results: EvaluationResult
+    :param logger: Logger instance for debug and informational messages
+    :type logger: logging.Logger
+    :param eval_id: The evaluation ID for tracking and identification
+    :type eval_id: Optional[str]
+    :param eval_run_id: The evaluation run ID for tracking and identification
+    :type eval_run_id: Optional[str]
+    :param evaluators: The dictionary of evaluators used in the evaluation
+    :type evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]]
+    :param eval_run_summary: Summary information about evaluation run including error details
+    :type eval_run_summary: Optional[Dict[str, Any]]
+    :param eval_meta_data: The evaluation metadata, containing testing_criteria and other configuration
+    :type eval_meta_data: Optional[Dict[str, Any]]
+    :param evaluator_config: The configuration for evaluators including metrics and definitions
+    :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+    :return: None (modifies results dictionary in-place, adding '_evaluation_results_list' and '_evaluation_summary')
+    :rtype: None
     """
     if evaluators is None:
         return
@@ -1839,6 +1868,21 @@ def _extract_testing_criteria_metadata(
     This method processes evaluators to extract metadata including type and metrics
     for each testing criteria.
 
+    :param evaluators: Dictionary mapping criteria names to evaluator instances
+    :type evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]]
+    :param eval_meta_data: Metadata containing testing criteria definitions
+    :type eval_meta_data: Optional[Dict[str, Any]]
+    :param evaluator_config: Configuration for evaluators including metrics and definitions
+    :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+    :param logger: Logger instance for debug and warning messages
+    :type logger: logging.Logger
+    :param eval_id: Evaluation ID for debugging context
+    :type eval_id: Optional[str]
+    :param eval_run_id: Evaluation run ID for debugging context
+    :type eval_run_id: Optional[str]
+    :return: Dictionary mapping criteria names to their metadata (type, metrics, is_inverse)
+    :rtype: Dict[str, Any]
+
     Input example:
     evaluators = {
         "violence": ViolenceEvaluator(),
@@ -1852,8 +1896,8 @@ def _extract_testing_criteria_metadata(
 
     Output example:
     {
-        "violence": {"type": "azure_ai_evaluator", "metrics": ["violence"]},
-        "fluency": {"type": "azure_ai_evaluator", "metrics": ["fluency"]}
+        "violence": {"type": "azure_ai_evaluator", "metrics": ["violence"], "is_inverse": False},
+        "fluency": {"type": "azure_ai_evaluator", "metrics": ["fluency"], "is_inverse": False}
     }
     """
     testing_criteria_metadata = {}
@@ -1878,6 +1922,11 @@ def _extract_criteria_name_types(eval_meta_data: Optional[Dict[str, Any]]) -> Di
 
     This method processes the testing_criteria section from evaluation metadata
     to create a lookup dictionary for criteria information.
+
+    :param eval_meta_data: Evaluation metadata containing testing criteria definitions
+    :type eval_meta_data: Optional[Dict[str, Any]]
+    :return: Dictionary mapping criteria names to their full metadata objects
+    :rtype: Dict[str, Any]
 
     Input example:
     eval_meta_data = {
@@ -2125,6 +2174,25 @@ def _convert_single_row_to_aoai_format(
     This method transforms a single evaluation result row into the AOAI evaluation
     format, including parsing metrics, processing criteria, and formatting results.
 
+    :param row: Raw evaluation result row from DataFrame with inputs and outputs
+    :type row: Dict[str, Any]
+    :param row_idx: Zero-based index of the row for ID generation
+    :type row_idx: int
+    :param eval_id: Evaluation ID for tracking and identification
+    :type eval_id: Optional[str]
+    :param eval_run_id: Evaluation run ID for tracking and identification
+    :type eval_run_id: Optional[str]
+    :param created_time: Unix timestamp when the evaluation was created
+    :type created_time: int
+    :param testing_criteria_metadata: Metadata about testing criteria types and metrics
+    :type testing_criteria_metadata: Dict[str, Any]
+    :param eval_run_summary: Summary information about evaluation run including errors
+    :type eval_run_summary: Optional[Dict[str, Any]]
+    :param logger: Logger instance for debug and warning messages
+    :type logger: logging.Logger
+    :return: AOAI-formatted evaluation result object
+    :rtype: Dict[str, Any]
+
     Input example:
     row = {
         "inputs.query": "What is violence?",
@@ -2196,12 +2264,15 @@ def _parse_row_data(
 ) -> Tuple[Dict[str, Dict], Dict[str, Any]]:
     """Parse row data into criteria groups and input groups.
 
-    Args:
-        row: Raw evaluation result row data from DataFrame
-        testing_criteria_metadata: Metadata about available testing criteria
+    This method separates evaluation result row data into criteria-specific outputs
+    and input data, organizing them for further processing.
 
-    Returns:
-        Tuple of (criteria_groups, input_groups)
+    :param row: Raw evaluation result row data from DataFrame
+    :type row: Dict[str, Any]
+    :param testing_criteria_metadata: Metadata about available testing criteria
+    :type testing_criteria_metadata: Dict[str, Any]
+    :return: Tuple of (criteria_groups, input_groups) where criteria_groups maps criteria names to their metrics and input_groups contains input data
+    :rtype: Tuple[Dict[str, Dict], Dict[str, Any]]
 
     Example Input:
         row = {
@@ -2256,17 +2327,23 @@ def _process_criteria_metrics(
 ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """Process metrics for a single criteria and return results and sample.
 
-    Args:
-        criteria_name: Name of the evaluation criteria (e.g. 'coherence')
-        metrics: Dictionary of metric values for this criteria
-        testing_criteria_metadata: Metadata about available testing criteria
-        decrease_boolean_metrics: List of metrics that should be inverted
-        logger: Logger instance for warnings/errors
-        eval_id: Optional evaluation ID for debugging
-        eval_run_id: Optional evaluation run ID for debugging
+    This method processes metrics for a specific evaluation criteria, extracting and
+    organizing metric values into AOAI result objects with proper formatting.
 
-    Returns:
-        Tuple of (list of result objects, sample data for top-level)
+    :param criteria_name: Name of the evaluation criteria (e.g. 'coherence')
+    :type criteria_name: str
+    :param metrics: Dictionary of metric values for this criteria
+    :type metrics: Dict[str, Any]
+    :param testing_criteria_metadata: Metadata about available testing criteria including types and expected metrics
+    :type testing_criteria_metadata: Dict[str, Any]
+    :param logger: Logger instance for warnings and debug messages
+    :type logger: logging.Logger
+    :param eval_id: Optional evaluation ID for debugging context
+    :type eval_id: Optional[str]
+    :param eval_run_id: Optional evaluation run ID for debugging context
+    :type eval_run_id: Optional[str]
+    :return: Tuple of (list of result objects, sample data for top-level)
+    :rtype: Tuple[List[Dict[str, Any]], Dict[str, Any]]
 
     Example Input:
         criteria_name = "coherence"
@@ -2713,13 +2790,17 @@ def _add_error_summaries(
 ) -> None:
     """Add error summaries to results for failed evaluations.
 
-    Args:
-        run_output_results: List to append error result objects to
-        eval_run_summary: Summary containing error information per criteria
-        testing_criteria_metadata: Metadata about available testing criteria
+    This method processes evaluation run summary to add error result objects
+    for criteria that failed during evaluation, ensuring proper error reporting.
 
-    Returns:
-        None (modifies run_output_results in place)
+    :param run_output_results: List to append error result objects to
+    :type run_output_results: List[Dict[str, Any]]
+    :param eval_run_summary: Summary containing error information per criteria
+    :type eval_run_summary: Optional[Dict[str, Any]]
+    :param testing_criteria_metadata: Metadata about available testing criteria including metrics and types
+    :type testing_criteria_metadata: Dict[str, Any]
+    :return: None (modifies run_output_results in place)
+    :rtype: None
 
     Example Input:
         run_output_results = []
@@ -3028,10 +3109,24 @@ def _calculate_aoai_evaluation_summary(
     """
     Calculate summary statistics for AOAI evaluation results.
 
+    This method processes AOAI evaluation results to compute summary statistics including
+    result counts (passed/failed/errored), per-model usage statistics, and per-criteria statistics.
+
     :param aoai_results: List of AOAI result objects (run_output_items)
     :type aoai_results: list
-    :return: Summary statistics dictionary
+    :param logger: Logger instance for debug and informational messages
+    :type logger: logging.Logger
+    :param criteria_name_types_from_meta: Metadata about criteria including evaluator names for primary metric detection
+    :type criteria_name_types_from_meta: Optional[Dict[str, Any]]
+    :return: Summary statistics dictionary with result counts, model usage, and per-criteria results
     :rtype: Dict[str, Any]
+
+    Return structure:
+    {
+        "result_counts": {"total": int, "passed": int, "failed": int, "errored": int},
+        "per_model_usage": [{"model_name": str, "invocation_count": int, "total_tokens": int, ...}],
+        "per_testing_criteria_results": [{"testing_criteria": str, "passed": int, "failed": int}]
+    }
     """
     # Calculate result counts based on aoaiResults
     result_counts = {"total": 0, "errored": 0, "failed": 0, "passed": 0}
