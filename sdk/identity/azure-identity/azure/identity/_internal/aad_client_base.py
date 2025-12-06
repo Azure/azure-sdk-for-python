@@ -139,6 +139,11 @@ class AadClientBase(abc.ABC):
             ContentDecodePolicy.CONTEXT_NAME
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
+        if not content:
+            raise ClientAuthenticationError(
+                message="No response content from Microsoft Entra ID", response=response.http_response
+            )
+
         cache = self._get_cache(**kwargs)
         if response.http_request.body.get("grant_type") == "refresh_token":
             if content.get("error") == "invalid_grant":
