@@ -2147,17 +2147,7 @@ def _extract_metrics_from_definition(testing_criteria_config: Dict[str, Any]) ->
     if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
         metric_config_detail = evaluator_definition.get("metrics")
         if metric_config_detail and isinstance(metric_config_detail, dict) and len(metric_config_detail) > 0:
-            inverse_metrics = []
-            for metric_name, metric_info in metric_config_detail.items():
-                if (
-                    metric_info
-                    and isinstance(metric_info, dict)
-                    and "desirable_direction" in metric_info
-                    and metric_info["desirable_direction"] is True
-                    and "type" in metric_info
-                    and metric_info["type"] == "boolean"
-                ):
-                    inverse_metrics.append(metric_name)
+            inverse_metrics = _get_inverse_metrics(metric_config_detail)
             return list(metric_config_detail.keys()), inverse_metrics
     return [], []
 
@@ -2859,7 +2849,7 @@ def _is_inverse_metric(
         )
         return True
 
-    decrease_metric_lists = [
+    inverse_metric_lists = [
         _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"],
         _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"],
         _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"],
@@ -2867,12 +2857,11 @@ def _is_inverse_metric(
         _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["ungrounded_attributes"],
     ]
 
-    return any(metric in metric_list for metric_list in decrease_metric_lists)
+    return any(metric in metric_list for metric_list in inverse_metric_lists)
 
 
 def _adjust_for_inverse_metric(label: Any) -> Tuple[float, str, bool]:
-    """Adjust values for decrease boolean metrics by inverting the logic.
-
+    """Adjust values for inverse metrics by inverting the logic.
     This method inverts the evaluation logic for metrics where True indicates
     a negative result (like security violations or attacks detected).
 
@@ -3068,38 +3057,29 @@ def _is_none_or_nan(value: Any) -> bool:
 
 
 def _get_inverse_metrics(
-    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
+    metric_config_detail: Optional[Dict[str, Any]] = None,
 ) -> List[str]:
     """
-    Get the list of decrease boolean metrics.
+    Get the list of inverse metrics.
 
-    :param evaluator_config: Optional dictionary of evaluator configurations
-    :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
-    :return: List of decrease boolean metric names
+    :param metric_config_detail: Optional dictionary of metric configurations
+    :type metric_config_detail: Optional[Dict[str, Any]]
+    :return: List of inverse metric names
     :rtype: List[str]
     """
-    decrease_boolean_metrics = []
-    if evaluator_config and isinstance(evaluator_config, dict):
-        for criteria_name, config in evaluator_config.items():
-            if config and isinstance(config, dict) and "_evaluator_definition" in config:
-                if evaluator_definition := config.get("_evaluator_definition"):
-                    metric_config_detail = evaluator_definition.get("metrics")
-                    if (
-                        metric_config_detail
-                        and isinstance(metric_config_detail, dict)
-                        and len(metric_config_detail) > 0
-                    ):
-                        for metric_name, metric_info in metric_config_detail.items():
-                            if (
-                                metric_info
-                                and isinstance(metric_info, dict)
-                                and "desirable_direction" in metric_info
-                                and metric_info["desirable_direction"] is True
-                                and "type" in metric_info
-                                and metric_info["type"] == "boolean"
-                            ):
-                                decrease_boolean_metrics.append(metric_name)
-    return decrease_boolean_metrics
+    inverse_metrics = []
+    if metric_config_detail and isinstance(metric_config_detail, dict):
+        for metric_name, metric_info in metric_config_detail.items():
+            if (
+                metric_info
+                and isinstance(metric_info, dict)
+                and "desirable_direction" in metric_info
+                and metric_info["desirable_direction"] is True
+                and "type" in metric_info
+                and metric_info["type"] == "boolean"
+            ):
+                inverse_metrics.append(metric_name)
+    return inverse_metrics
 
 
 def _append_indirect_attachments_to_results(
