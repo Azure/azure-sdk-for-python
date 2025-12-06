@@ -20,15 +20,18 @@ classifiers = [
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
-    "azure-ai-agentserver-core",
-    "agent-framework-azure-ai==1.0.0b251007",
-    "agent-framework-core==1.0.0b251007",
+    "azure-ai-agentserver-core>=1.0.0b5",
+    "agent-framework-azure-ai>=1.0.0b251112",
+    "agent-framework-core>=1.0.0b251112",
     "opentelemetry-exporter-otlp-proto-grpc>=1.36.0",
 ]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.packages.find]
 exclude = [
