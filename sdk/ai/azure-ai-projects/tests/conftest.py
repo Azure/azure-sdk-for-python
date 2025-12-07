@@ -103,9 +103,6 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Normalize Content-Type for CSV files in multipart form-data (varies by OS/Python version)
     add_general_string_sanitizer(target="Content-Type: text/csv", value="Content-Type: application/vnd.ms-excel")
 
-    # Normalize Content-Type for markdown files in multipart form-data (varies by OS/Python version)
-    add_general_string_sanitizer(target="Content-Type: application/octet-stream", value="Content-Type: text/markdown")
-
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
 
