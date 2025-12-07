@@ -167,20 +167,23 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         return agent, tool_client_wrapper
 
     def init_tracing(self):
-        exporter = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
-        app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
-        project_endpoint = os.environ.get(AdapterConstants.AZURE_AI_PROJECT_ENDPOINT)
+        try:
+            exporter = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
+            app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
+            project_endpoint = os.environ.get(AdapterConstants.AZURE_AI_PROJECT_ENDPOINT)
 
-        if exporter or app_insights_conn_str:
-            from agent_framework.observability import setup_observability
+            if exporter or app_insights_conn_str:
+                from agent_framework.observability import setup_observability
 
-            setup_observability(
-                enable_sensitive_data=True,
-                otlp_endpoint=exporter,
-                applicationinsights_connection_string=app_insights_conn_str,
-            )
-        elif project_endpoint:
-            self.setup_tracing_with_azure_ai_client(project_endpoint)
+                setup_observability(
+                    enable_sensitive_data=True,
+                    otlp_endpoint=exporter,
+                    applicationinsights_connection_string=app_insights_conn_str,
+                )
+            elif project_endpoint:
+                self.setup_tracing_with_azure_ai_client(project_endpoint)
+        except Exception as e:
+            logger.warning(f"Failed to initialize tracing: {e}", exc_info=True)
         self.tracer = trace.get_tracer(__name__)
 
     def setup_tracing_with_azure_ai_client(self, project_endpoint: str):
