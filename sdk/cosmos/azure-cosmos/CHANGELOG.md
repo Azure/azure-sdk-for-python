@@ -1,15 +1,25 @@
 ## Release History
 
-### 4.14.3 (Unreleased)
+### 4.15.0b2 (Unreleased)
 
 #### Features Added
-* Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 
 #### Breaking Changes
 
 #### Bugs Fixed
+
+#### Other Changes
+
+### 4.15.0b1 (2025-11-26)
+
+#### Features Added
+* Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
+* Added support for AvailabilityStrategy to help improve request latency and availability in multi-region deployments. See [PR 42584](https://github.com/Azure/azure-sdk-for-python/pull/42584)
+
+#### Bugs Fixed
 * Fixed bug where client timeout/read_timeout values were not properly enforced[PR 42652](https://github.com/Azure/azure-sdk-for-python/pull/42652).
 * Fixed bug when passing in None for some option in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
+* Fixed bug where first metadata requests have duplicated custom `user_agent` in headers. See [PR 44189](https://github.com/Azure/azure-sdk-for-python/pull/44189)
 
 #### Other Changes
 * Added cross-regional retries for 503 (Service Unavailable) errors. See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).

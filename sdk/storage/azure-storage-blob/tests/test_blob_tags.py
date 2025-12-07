@@ -529,18 +529,18 @@ class TestStorageBlobTags(StorageRecordedTestCase):
     def test_blob_tags_conditional_headers(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop("variables", {})
 
         self._setup(storage_account_name, storage_account_key)
 
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         first_resp = blob.upload_blob(b"abc123", overwrite=True)
-        early = self.get_datetime_variable(
-            variables, 'expiry_time', datetime.utcnow()
-        )
+        early = blob.get_blob_properties().last_modified
         first_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         second_tags = {"tag4": "fourthtag", "tag5": "fifthtag", "tag6": "sixthtag"}
+
+        if self.is_live:
+            sleep(10)
 
         with pytest.raises(ResourceModifiedError):
             blob.set_blob_tags(first_tags, if_modified_since=early)
@@ -573,7 +573,5 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         blob.set_blob_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
         tags = blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
         assert tags == second_tags
-
-        return variables
 
 #------------------------------------------------------------------------------

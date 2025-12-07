@@ -2594,8 +2594,10 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_download_blob_in_chunks_where_maxsinglegetsize_not_multiple_of_chunksize(
-            self, storage_account_name, storage_account_key):
+    def test_download_blob_in_chunks_where_maxsinglegetsize_not_multiple_of_chunksize(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
                                 max_single_get_size=1024,
                                 max_chunk_get_size=666)
