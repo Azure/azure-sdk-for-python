@@ -7,7 +7,6 @@ import inspect
 import json
 import os
 import time
-import traceback
 from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
