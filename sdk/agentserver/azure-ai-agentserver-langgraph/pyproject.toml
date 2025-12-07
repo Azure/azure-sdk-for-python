@@ -19,7 +19,7 @@ classifiers = [
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=1.0.0b5",
+    "azure-ai-agentserver-core>=1.0.0b7",
     "langchain>0.3.20",
     "langchain-openai>0.3.10",
     "langchain-azure-ai[opentelemetry]>=0.1.8",
