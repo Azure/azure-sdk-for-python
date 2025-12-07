@@ -7,6 +7,7 @@ import inspect
 import json
 import os
 import time
+import traceback
 from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
@@ -145,7 +146,7 @@ class FoundryCBAgent:
                     logger.error(f"Error processing CreateResponse request: {e}", exc_info=True)
                     ex = e
 
-                if not request.stream:
+                if not context.stream:
                     logger.info("End of processing CreateResponse request.")
                     result = resp if not ex else project_models.ResponseError(
                         code=project_models.ResponseErrorCode.SERVER_ERROR,
