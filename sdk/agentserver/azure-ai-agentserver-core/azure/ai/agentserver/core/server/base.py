@@ -160,7 +160,7 @@ class FoundryCBAgent:
                         if ex:
                             return
                         it = iterate_in_threadpool(resp) if inspect.isgenerator(resp) else resp
-                        async for event in resp:
+                        async for event in it:
                             seq += 1
                             yield _event_to_sse_chunk(event)
                         logger.info("End of processing CreateResponse request.")
