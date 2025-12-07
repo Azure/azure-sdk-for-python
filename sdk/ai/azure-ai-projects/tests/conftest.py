@@ -3,6 +3,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+# Register MIME types before any other imports to ensure consistent Content-Type detection
+# across Windows, macOS, and Linux when uploading files in tests
+import mimetypes
+
+mimetypes.add_type("text/csv", ".csv")
+mimetypes.add_type("text/markdown", ".md")
+
 import os
 import pytest
 from dotenv import load_dotenv, find_dotenv
@@ -99,16 +107,6 @@ def add_sanitizers(test_proxy, sanitized_values):
         )
 
     sanitize_url_paths()
-
-    # Normalize Content-Type for CSV files in multipart form-data (varies by OS/Python version)
-    add_general_string_sanitizer(
-        target="Content-Type: application/vnd.ms-excel\r\n", value="Content-Type: text/csv\r\n"
-    )
-
-    # Normalize Content-Type for markdown files in multipart form-data (varies by OS/Python version)
-    add_general_string_sanitizer(
-        target="Content-Type: text/markdown\r\n", value="Content-Type: application/octet-stream\r\n"
-    )
 
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
