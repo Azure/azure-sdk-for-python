@@ -597,18 +597,18 @@ class TranslationText(_Model):
 
     :ivar language: A string representing the language code of the target language. Required.
     :vartype language: str
-    :ivar source_characters: An interger indicating the number of characters in the source text
+    :ivar source_characters: An integer indicating the number of characters in the source text
      string.
     :vartype source_characters: int
-    :ivar instruction_tokens: An interger indicating the number of tokens used in generating the
+    :ivar instruction_tokens: An integer indicating the number of tokens used in generating the
      translated text.
     :vartype instruction_tokens: int
-    :ivar source_tokens: An interger indicating the number of tokens used in the source sentence.
+    :ivar source_tokens: An integer indicating the number of tokens used in the source sentence.
     :vartype source_tokens: int
-    :ivar response_tokens: An interger indicating the number of tokens used in the translation
+    :ivar response_tokens: An integer indicating the number of tokens used in the translation
      response.
     :vartype response_tokens: int
-    :ivar target_tokens: An interger indicating the number of tokens used in the target sentence.
+    :ivar target_tokens: An integer indicating the number of tokens used in the target sentence.
     :vartype target_tokens: int
     :ivar text: A string giving the translated text. Required.
     :vartype text: str
@@ -619,23 +619,23 @@ class TranslationText(_Model):
     source_characters: Optional[int] = rest_field(
         name="sourceCharacters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """An interger indicating the number of characters in the source text string."""
+    """An integer indicating the number of characters in the source text string."""
     instruction_tokens: Optional[int] = rest_field(
         name="instructionTokens", visibility=["read", "create", "update", "delete", "query"]
     )
-    """An interger indicating the number of tokens used in generating the translated text."""
+    """An integer indicating the number of tokens used in generating the translated text."""
     source_tokens: Optional[int] = rest_field(
         name="sourceTokens", visibility=["read", "create", "update", "delete", "query"]
     )
-    """An interger indicating the number of tokens used in the source sentence."""
+    """An integer indicating the number of tokens used in the source sentence."""
     response_tokens: Optional[int] = rest_field(
         name="responseTokens", visibility=["read", "create", "update", "delete", "query"]
     )
-    """An interger indicating the number of tokens used in the translation response."""
+    """An integer indicating the number of tokens used in the translation response."""
     target_tokens: Optional[int] = rest_field(
         name="targetTokens", visibility=["read", "create", "update", "delete", "query"]
     )
-    """An interger indicating the number of tokens used in the target sentence."""
+    """An integer indicating the number of tokens used in the target sentence."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string giving the translated text. Required."""
 

@@ -28,7 +28,7 @@ class _TextTranslationClientOperationsMixin(
 
     def _get_generated_operations(self) -> _TextTranslationClientOperationsMixinGenerated:
         """Get an instance of the generated operations mixin.
-        
+
         This creates a wrapper object that shares the same _client, _config, _serialize, and _deserialize
         attributes with self, allowing the generated operations to work correctly.
         """
@@ -36,7 +36,7 @@ class _TextTranslationClientOperationsMixin(
             # Create a lightweight wrapper that shares attributes with self
             class GeneratedOpsWrapper(_TextTranslationClientOperationsMixinGenerated):
                 pass
-            
+
             wrapper = GeneratedOpsWrapper.__new__(GeneratedOpsWrapper)
             # Share the client infrastructure from self
             wrapper._client = self._client  # type: ignore
