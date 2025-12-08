@@ -433,6 +433,11 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :keyword ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
             Specifies the source encryption key to use to decrypt
             the source data provided in the request.
