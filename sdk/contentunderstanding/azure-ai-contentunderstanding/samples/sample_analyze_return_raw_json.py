@@ -114,18 +114,60 @@ def main() -> None:
 
     # [START extract_from_raw_json]
     # Extract key information from raw JSON
+    # This demonstrates accessing the same data that would be available via the object model
     if "result" in response_json:
         result_data = response_json["result"]
+
         if "analyzerId" in result_data:
-            print(f"Analyzer ID: {result_data['analyzerId']}")
+            print(f"\nAnalyzer ID: {result_data['analyzerId']}")
+
         if "contents" in result_data and isinstance(result_data["contents"], list):
             print(f"Contents count: {len(result_data['contents'])}")
+
             if len(result_data["contents"]) > 0:
                 first_content = result_data["contents"][0]
+
                 if "kind" in first_content:
                     print(f"Content kind: {first_content['kind']}")
                 if "mimeType" in first_content:
                     print(f"MIME type: {first_content['mimeType']}")
+
+                # Extract markdown content from raw JSON
+                # Object model equivalent: content.markdown
+                print("\nMarkdown Content (from raw JSON):")
+                print("=" * 50)
+                if "markdown" in first_content and first_content["markdown"]:
+                    print(first_content["markdown"])
+                else:
+                    print("No markdown content available.")
+                print("=" * 50)
+
+                # Extract document properties from raw JSON
+                # Object model equivalent: document_content.start_page_number, etc.
+                if first_content.get("kind") == "document":
+                    print("\nDocument Information (from raw JSON):")
+                    if "startPageNumber" in first_content:
+                        print(f"  Start page: {first_content['startPageNumber']}")
+                    if "endPageNumber" in first_content:
+                        print(f"  End page: {first_content['endPageNumber']}")
+
+                    start_page = first_content.get("startPageNumber")
+                    end_page = first_content.get("endPageNumber")
+                    if start_page and end_page:
+                        total_pages = end_page - start_page + 1
+                        print(f"  Total pages: {total_pages}")
+
+                    # Extract pages information
+                    # Object model equivalent: document_content.pages
+                    if "pages" in first_content and first_content["pages"]:
+                        pages = first_content["pages"]
+                        unit = first_content.get("unit", "units")
+                        print(f"\nPages ({len(pages)}):")
+                        for page in pages:
+                            page_num = page.get("pageNumber")
+                            width = page.get("width")
+                            height = page.get("height")
+                            print(f"  Page {page_num}: {width} x {height} {unit}")
     # [END extract_from_raw_json]
 
 
