@@ -852,7 +852,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.
@@ -3142,7 +3142,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def begin_import_method(
+    async def begin_import(
         self,
         body: _models.ExportedProject,
         *,
@@ -3168,7 +3168,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def begin_import_method(
+    async def begin_import(
         self,
         body: JSON,
         *,
@@ -3194,7 +3194,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def begin_import_method(
+    async def begin_import(
         self,
         body: IO[bytes],
         *,
@@ -3220,7 +3220,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    async def begin_import_method(
+    async def begin_import(
         self,
         body: Union[_models.ExportedProject, JSON, IO[bytes]],
         *,
