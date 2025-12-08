@@ -259,7 +259,7 @@ Generate images based on text prompts with customizable resolution, quality, and
 <!-- SNIPPET:sample_agent_image_generation.tool_declaration -->
 
 ```python
-tool = ImageGenTool(quality="low", size="1024x1024")
+tool = ImageGenTool(model="gpt-image-1-mini", quality="low", size="1024x1024")  # type: ignore
 ```
 
 <!-- END SNIPPET -->
@@ -269,11 +269,10 @@ After calling `responses.create()`, you can download file using the returned res
 
 ```python
 image_data = [output.result for output in response.output if output.type == "image_generation_call"]
-
 if image_data and image_data[0]:
     print("Downloading generated image...")
     filename = "microsoft.png"
-    file_path = os.path.abspath(filename)
+    file_path = os.path.join(tempfile.gettempdir(), filename)
 
     with open(file_path, "wb") as f:
         f.write(base64.b64decode(image_data[0]))
@@ -348,7 +347,7 @@ tool = OpenApiAgentTool(
     openapi=OpenApiFunctionDefinition(
         name="get_weather",
         spec=openapi_weather,
-        description="Retrieve weather information for a location",
+        description="Retrieve weather information for a location.",
         auth=OpenApiAnonymousAuthDetails(),
     )
 )
