@@ -4,7 +4,6 @@
 # ------------------------------------
 import abc
 import logging
-import threading
 import time
 from typing import Any, Optional, Dict, Type
 from weakref import WeakValueDictionary
@@ -21,7 +20,7 @@ class GetTokenMixin(abc.ABC):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
-        self._global_lock = None
+        self._global_lock: Any = None
         self._active_locks: WeakValueDictionary[tuple, Any] = WeakValueDictionary()
         self._lock_class_type: Optional[Type] = None
 
@@ -208,13 +207,11 @@ class GetTokenMixin(abc.ABC):
         # Remove the non-picklable entries
         del state["_global_lock"]
         del state["_lock_class_type"]
-        del state["_global_lock_init_lock"]
         del state["_active_locks"]
         return state
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
         self.__dict__.update(state)
-        self._global_lock_init_lock = threading.Lock()
         self._active_locks = WeakValueDictionary()
         self._global_lock = None
         self._lock_class_type = None
