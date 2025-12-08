@@ -13,13 +13,12 @@ for new strict dependency version pins. Requires architect approval to proceed.
 """
 
 import argparse
-import json
 import os
 import re
 import subprocess
 import sys
 from typing import List
-from github import Github, Auth
+from github import Github
 
 from ci_tools.parsing import ParsedSetup
 
