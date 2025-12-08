@@ -3,6 +3,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+# Register MIME types before any other imports to ensure consistent Content-Type detection
+# across Windows, macOS, and Linux when uploading files in tests
+import mimetypes
+
+mimetypes.add_type("text/csv", ".csv")
+mimetypes.add_type("text/markdown", ".md")
+
 import os
 import pytest
 from dotenv import load_dotenv, find_dotenv
@@ -11,6 +19,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
+    add_general_string_sanitizer,
 )
 
 if not load_dotenv(find_dotenv(), override=True):
@@ -105,6 +114,11 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Sanitize SAS URI from Datasets get credential response
     add_body_key_sanitizer(json_path="blobReference.credential.sasUri", value="sanitized-sas-uri")
     add_body_key_sanitizer(json_path="blobReferenceForConsumption.credential.sasUri", value="sanitized-sas-uri")
+
+    add_body_key_sanitizer(
+        json_path="$..project_connection_id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/connector-name",
+    )
 
     # Remove Stainless headers from OpenAI client requests, since they include platform and OS specific info, which we can't have in recorded requests.
     # Here is an example of all the `x-stainless` headers from a Responses call:

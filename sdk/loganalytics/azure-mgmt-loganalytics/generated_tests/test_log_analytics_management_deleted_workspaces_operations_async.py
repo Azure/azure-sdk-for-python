@@ -21,9 +21,9 @@ class TestLogAnalyticsManagementDeletedWorkspacesOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_deleted_workspaces_list(self, resource_group):
         response = self.client.deleted_workspaces.list(
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestLogAnalyticsManagementDeletedWorkspacesOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_deleted_workspaces_list_by_resource_group(self, resource_group):
         response = self.client.deleted_workspaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
