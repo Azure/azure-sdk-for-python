@@ -40,6 +40,7 @@ USAGE:
 import asyncio
 import base64
 import os
+import tempfile
 from dotenv import load_dotenv
 
 from azure.identity.aio import DefaultAzureCredential
@@ -76,22 +77,22 @@ async def main():
         )
         print(f"Response created: {response.id}")
 
+        print("\nCleaning up...")
+        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        print("Agent deleted")
+
         # Save the image to a file
         image_data = [output.result for output in response.output if output.type == "image_generation_call"]
-
         if image_data and image_data[0]:
             print("Downloading generated image...")
             filename = "microsoft.png"
-            file_path = os.path.abspath(filename)
+            file_path = os.path.join(tempfile.gettempdir(), filename)
 
             with open(file_path, "wb") as f:
                 f.write(base64.b64decode(image_data[0]))
 
-            print(f"Image downloaded and saved to: {file_path}")
-
-        print("\nCleaning up...")
-        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+            # Print result (should contain "file")
+            print(f"==> Result: Image downloaded and saved to file: {file_path}")
 
 
 if __name__ == "__main__":
