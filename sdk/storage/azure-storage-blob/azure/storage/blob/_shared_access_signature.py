@@ -594,6 +594,8 @@ def generate_blob_sas(
     ip: Optional[str] = None,
     *,
     user_delegation_oid: Optional[str] = None,
+    request_headers: Optional[Dict[str, str]] = None,
+    request_query_params: Optional[Dict[str, str]] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
