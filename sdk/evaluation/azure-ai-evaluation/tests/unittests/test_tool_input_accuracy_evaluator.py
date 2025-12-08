@@ -2,11 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Any, Callable, Dict
 from unittest.mock import MagicMock
 
 import pytest
 from azure.ai.evaluation._evaluators._tool_input_accuracy import _ToolInputAccuracyEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
+
+from .base_evaluator_tests import BaseEvaluatorInputTests
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
@@ -127,317 +130,25 @@ async def flow_side_effect(timeout, **kwargs):
 
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
-class TestToolInputAccuracyEvaluator:
+class TestToolInputAccuracyEvaluator(BaseEvaluatorInputTests):
+    """Unit tests for Tool Input Accuracy Evaluator."""
 
-    def test_evaluator_init(self, mock_model_config):
-        """Test that the evaluator initializes correctly."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        assert evaluator is not None
-        assert evaluator._RESULT_KEY == "tool_input_accuracy"
+    # ========================================================================
+    # CONFIGURATION
+    # ========================================================================
 
-    def test_evaluate_all_correct_parameters(self, mock_model_config):
-        """Test evaluation when all parameters are correct."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+    def get_evaluator_class(self):
+        return _ToolInputAccuracyEvaluator
 
-        query = "What is the weather in Paris? all_correct"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "get_weather",
-                        "arguments": {"location": "Paris", "units": "celsius"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = [
-            {
-                "name": "get_weather",
-                "type": "function",
-                "description": "Get weather information for a location",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to get weather for"},
-                        "units": {
-                            "type": "string",
-                            "description": "Temperature units",
-                            "enum": ["celsius", "fahrenheit"],
-                        },
-                    },
-                    "required": ["location"],
-                },
-            }
-        ]
+    def get_flow_side_effect(self) -> Callable:
+        return flow_side_effect
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert key in result
-        assert f"{key}_result" in result
-        assert f"{key}_reason" in result
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0
-
-    def test_evaluate_missing_required_parameters(self, mock_model_config):
-        """Test evaluation when required parameters are missing."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Get weather missing_required"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "get_weather",
-                        "arguments": {"units": "celsius"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = [
-            {
-                "name": "get_weather",
-                "type": "function",
-                "description": "Get weather information for a location",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to get weather for"},
-                        "units": {"type": "string", "description": "Temperature units"},
-                    },
-                    "required": ["location"],
-                },
-            }
-        ]
-
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
-        assert "missing required parameter" in result[f"{key}_reason"].lower()
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0  # 1/1 correct param
-
-    def test_evaluate_wrong_parameter_type(self, mock_model_config):
-        """Test evaluation when parameters have wrong types."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Set temperature wrong_type"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "set_temperature",
-                        "arguments": {"room": "bedroom", "temperature": "twenty"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = [
-            {
-                "name": "set_temperature",
-                "type": "function",
-                "description": "Set room temperature",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "room": {"type": "string", "description": "The room name"},
-                        "temperature": {"type": "number", "description": "Temperature in degrees"},
-                    },
-                    "required": ["room", "temperature"],
-                },
-            }
-        ]
-
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
-        assert "number" in result[f"{key}_reason"].lower() and "string" in result[f"{key}_reason"].lower()
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0  # 1/2 correct params
-
-    def test_evaluate_ungrounded_parameters(self, mock_model_config):
-        """Test evaluation when parameters are not grounded in conversation."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "What's the weather like? ungrounded"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "get_weather",
-                        "arguments": {"location": "Mars", "units": "celsius"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = [
-            {
-                "name": "get_weather",
-                "type": "function",
-                "description": "Get weather information for a location",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to get weather for"},
-                        "units": {"type": "string", "description": "Temperature units"},
-                    },
-                    "required": ["location"],
-                },
-            }
-        ]
-
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
-        assert "not grounded" in result[f"{key}_reason"].lower()
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0  # 1/2 correct params
-
-    def test_evaluate_unexpected_parameters(self, mock_model_config):
-        """Test evaluation when unexpected parameters are provided."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Get weather info unexpected_param"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "get_weather",
-                        "arguments": {"location": "Paris", "units": "celsius", "extra_param": "unexpected"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = [
-            {
-                "name": "get_weather",
-                "type": "function",
-                "description": "Get weather information for a location",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to get weather for"},
-                        "units": {"type": "string", "description": "Temperature units"},
-                    },
-                    "required": ["location"],
-                },
-            }
-        ]
-
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
-        assert "unexpected parameter" in result[f"{key}_reason"].lower()
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 66.67  # 2/3 correct params
-
-    def test_evaluate_mixed_errors(self, mock_model_config):
-        """Test evaluation with multiple types of errors."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Complex query with mixed_errors"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "complex_function",
-                        "arguments": {"param1": "correct", "param2": "wrong_type", "extra_param": "unexpected"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = [
-            {
-                "name": "complex_function",
-                "type": "function",
-                "description": "A complex function with multiple parameters",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "param1": {"type": "string", "description": "First parameter"},
-                        "param2": {"type": "number", "description": "Second parameter"},
-                        "required_param": {"type": "string", "description": "Required parameter"},
-                    },
-                    "required": ["param1", "required_param"],
-                },
-            }
-        ]
-
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
-        assert (
-            "multiple" in result[f"{key}_reason"].lower() or len(result[f"{key}_details"]["incorrect_parameters"]) >= 2
-        )
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 25.0  # 1/4 correct params
-
-    def test_evaluate_no_tool_calls(self, mock_model_config):
-        """Test evaluation when no tool calls are present."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Simple question without tool calls"
-        response = [{"role": "assistant", "content": "I can help you with that."}]
-        tool_definitions = [{"name": "get_weather", "type": "function", "description": "Get weather information"}]
-
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in result[f"{key}_reason"]
-
-    def test_evaluate_no_tool_definitions(self, mock_model_config):
-        """Test evaluation when no tool definitions are provided."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Get weather"
-        response = [
+    @property
+    def PARAMETER_CONFIG(self) -> Dict[str, Dict[str, Any]]:
+        """Configuration for Tool Input Accuracy Evaluator parameters."""
+        
+        # Shared test data
+        base_response = [
             {
                 "role": "assistant",
                 "content": [
@@ -450,205 +161,441 @@ class TestToolInputAccuracyEvaluator:
                 ],
             }
         ]
-        tool_definitions = []
-
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE in result[f"{key}_reason"]
-
-    def test_evaluate_missing_tool_definitions(self, mock_model_config):
-        """Test evaluation when tool definitions are missing for some tool calls."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Get weather"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "get_weather",
-                        "arguments": {"location": "Paris"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = [{"name": "different_function", "type": "function", "description": "A different function"}]
-
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
-
-    def test_evaluate_invalid_result_value(self, mock_model_config):
-        """Test that invalid result values raise an exception."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Test invalid_result"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "test_function",
-                        "arguments": {"param": "value"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = [
-            {
-                "name": "test_function",
-                "type": "function",
-                "description": "Test function",
-                "parameters": {
-                    "type": "object",
-                    "properties": {"param": {"type": "string", "description": "Test parameter"}},
-                },
-            }
-        ]
-
-        with pytest.raises(EvaluationException) as exc_info:
-            evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        assert "Invalid result value" in str(exc_info.value)
-
-    def test_evaluate_no_response(self, mock_model_config):
-        """Test evaluation when no response is provided."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Get weather"
-        tool_definitions = [{"name": "get_weather", "type": "function", "description": "Get weather information"}]
-
-        result = evaluator(query=query, response=None, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert "Response parameter is required" in result[f"{key}_reason"]
-
-    def test_parameter_extraction_accuracy_calculation(self, mock_model_config):
-        """Test the parameter extraction accuracy calculation."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-
-        # Test with some correct parameters
-        details = {
-            "total_parameters_passed": 5,
-            "correct_parameters_passed": 3,
-            "incorrect_parameters": ["param1", "param2"],
-        }
-        accuracy = evaluator._calculate_parameter_extraction_accuracy(details)
-        assert accuracy == 60.0
-
-        # Test with all correct parameters
-        details = {"total_parameters_passed": 4, "correct_parameters_passed": 4, "incorrect_parameters": []}
-        accuracy = evaluator._calculate_parameter_extraction_accuracy(details)
-        assert accuracy == 100.0
-
-        # Test with no parameters
-        details = {"total_parameters_passed": 0, "correct_parameters_passed": 0, "incorrect_parameters": []}
-        accuracy = evaluator._calculate_parameter_extraction_accuracy(details)
-        assert accuracy == 100.0
-
-        # Test with all incorrect parameters
-        details = {
-            "total_parameters_passed": 3,
-            "correct_parameters_passed": 0,
-            "incorrect_parameters": ["param1", "param2", "param3"],
-        }
-        accuracy = evaluator._calculate_parameter_extraction_accuracy(details)
-        assert accuracy == 0.0
-
-    def test_evaluate_with_conversation_history(self, mock_model_config):
-        """Test evaluation with conversation history format."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = [
-            {"role": "user", "content": "What's the weather in Paris?"},
-            {"role": "assistant", "content": "I'll check the weather for you."},
-        ]
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "get_weather",
-                        "arguments": {"location": "Paris"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = [
+        
+        base_tool_definitions = [
             {
                 "name": "get_weather",
                 "type": "function",
-                "description": "Get weather information for a location",
+                "description": "Get weather information",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to get weather for"}},
+                    "properties": {"location": {"type": "string"}},
                     "required": ["location"],
                 },
             }
         ]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert key in result
-        assert f"{key}_result" in result
-
-    def test_evaluate_with_single_tool_definition(self, mock_model_config):
-        """Test evaluation with a single tool definition (not in list format)."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
-        query = "Get weather all_correct"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "get_weather",
-                        "arguments": {"location": "Paris"},
-                    }
-                ],
-            }
-        ]
-        # Single tool definition (not in list)
-        tool_definitions = {
-            "name": "get_weather",
-            "type": "function",
-            "description": "Get weather information for a location",
-            "parameters": {
-                "type": "object",
-                "properties": {"location": {"type": "string", "description": "The location to get weather for"}},
-                "required": ["location"],
+        return {
+            "query": {
+                "test_data": {
+                    "valid": "What is the weather in Paris?",
+                    "empty": "",
+                    "string": "What is the weather in Paris?",
+                    "json_single": [{"role": "user", "content": "What is the weather in Paris?"}],
+                    "json_object": [
+                        {"role": "system", "content": "You are a helpful assistant."},
+                        {"role": "user", "content": "I want to know about the weather."},
+                        {"role": "assistant", "content": "Sure, which city?"},
+                        {"role": "user", "content": "Paris"},
+                    ],
+                    "unexpected": {"text": "What is the weather?", "metadata": {"timestamp": "2024-01-01"}},
+                    "success": {
+                        "query": "What is the weather in Paris? all_correct",
+                        "response": [
+                            {
+                                "role": "assistant",
+                                "content": [
+                                    {
+                                        "type": "tool_call",
+                                        "tool_call_id": "call_123",
+                                        "name": "get_weather",
+                                        "arguments": {"location": "Paris", "units": "celsius"},
+                                    }
+                                ],
+                            }
+                        ],
+                        "tool_definitions": [
+                            {
+                                "name": "get_weather",
+                                "type": "function",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {
+                                        "location": {"type": "string"},
+                                        "units": {"type": "string"},
+                                    },
+                                    "required": ["location"],
+                                },
+                            }
+                        ],
+                    },
+                    "not_present": {
+                        "query": "What's the weather like? ungrounded",
+                        "response": [
+                            {
+                                "role": "assistant",
+                                "content": [
+                                    {
+                                        "type": "tool_call",
+                                        "tool_call_id": "call_123",
+                                        "name": "get_weather",
+                                        "arguments": {"location": "Mars", "units": "celsius"},
+                                    }
+                                ],
+                            }
+                        ],
+                        "tool_definitions": [
+                            {
+                                "name": "get_weather",
+                                "type": "function",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {"location": {"type": "string"}, "units": {"type": "string"}},
+                                    "required": ["location"],
+                                },
+                            }
+                        ],
+                    },
+                    "not_as_expected": {
+                        "query": "Set temperature to twenty wrong_type",
+                        "response": [
+                            {
+                                "role": "assistant",
+                                "content": [
+                                    {
+                                        "type": "tool_call",
+                                        "tool_call_id": "call_123",
+                                        "name": "set_temperature",
+                                        "arguments": {"room": "bedroom", "temperature": "twenty"},
+                                    }
+                                ],
+                            }
+                        ],
+                        "tool_definitions": [
+                            {
+                                "name": "set_temperature",
+                                "type": "function",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {
+                                        "room": {"type": "string"},
+                                        "temperature": {"type": "number"},
+                                    },
+                                    "required": ["room", "temperature"],
+                                },
+                            }
+                        ],
+                    },
+                },
+                "expected_results": {
+                    "not_passed": "pass",
+                    "string": "pass",
+                    "json_object": "pass",
+                    "unexpected": "pass",
+                    "extracted_success": "pass",
+                    "not_present": "fail",
+                    "not_as_expected": "fail",
+                },
+            },
+            "response": {
+                "test_data": {
+                    "valid": base_response,
+                    "empty": [],
+                    "string": "The weather is sunny.",
+                    "json_single": [{"role": "assistant", "content": "I can help you with that."}],
+                    "json_object": base_response,
+                    "unexpected": [{"text": "Some response", "data": {"value": 123}}],
+                    "success": {
+                        "query": "all_correct",
+                        "response": base_response,
+                        "tool_definitions": base_tool_definitions,
+                    },
+                    "not_present": {
+                        "query": "What is the weather?",
+                        "response": [{"role": "assistant", "content": "I can help you with that."}],
+                        "tool_definitions": base_tool_definitions,
+                    },
+                    "not_as_expected": {
+                        "query": "mixed_errors",
+                        "response": [
+                            {
+                                "role": "assistant",
+                                "content": [
+                                    {
+                                        "type": "tool_call",
+                                        "tool_call_id": "call_123",
+                                        "name": "complex_function",
+                                        "arguments": {
+                                            "param1": "correct",
+                                            "param2": "wrong_type",
+                                            "extra_param": "unexpected",
+                                        },
+                                    }
+                                ],
+                            }
+                        ],
+                        "tool_definitions": [
+                            {
+                                "name": "complex_function",
+                                "type": "function",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {
+                                        "param1": {"type": "string"},
+                                        "param2": {"type": "number"},
+                                        "required_param": {"type": "string"},
+                                    },
+                                    "required": ["param1", "required_param"],
+                                },
+                            }
+                        ],
+                    },
+                },
+                "expected_results": {
+                    "not_passed": "not applicable",
+                    "string": "not applicable",
+                    "json_object": "pass",
+                    "unexpected": "not applicable",
+                    "extracted_success": "pass",
+                    "not_present": "not applicable",
+                    "not_as_expected": "fail",
+                },
+                "result_assertions": lambda result, key: assert_parameter_accuracy(result, key, 100.0),
+            },
+            "tool_definitions": {
+                "test_data": {
+                    "valid": base_tool_definitions,
+                    "empty": [],
+                    "string": "get_weather",
+                    "json_object": base_tool_definitions,
+                    "unexpected": [{"function_name": "get_weather", "params": ["location"]}],
+                    "success": {
+                        "query": "all_correct",
+                        "response": base_response,
+                        "tool_definitions": base_tool_definitions,
+                    },
+                    "not_present": {
+                        "query": "What is the weather?",
+                        "response": base_response,
+                        "tool_definitions": [
+                            {
+                                "name": "get_time",
+                                "type": "function",
+                                "parameters": {"type": "object", "properties": {"timezone": {"type": "string"}}},
+                            }
+                        ],
+                    },
+                    "not_as_expected": {
+                        "query": "wrong_type",
+                        "response": [
+                            {
+                                "role": "assistant",
+                                "content": [
+                                    {
+                                        "type": "tool_call",
+                                        "tool_call_id": "call_123",
+                                        "name": "get_weather",
+                                        "arguments": {"location": "Paris", "temperature": "twenty"},
+                                    }
+                                ],
+                            }
+                        ],
+                        "tool_definitions": [
+                            {
+                                "name": "get_weather",
+                                "type": "function",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {"location": {"type": "string"}, "temperature": {"type": "number"}},
+                                    "required": ["location"],
+                                },
+                            }
+                        ],
+                    },
+                },
+                "expected_results": {
+                    "not_passed": "not applicable",
+                    "string": "exception",
+                    "json_object": "pass",
+                    "unexpected": "not applicable",
+                    "extracted_success": "pass",
+                    "not_present": "not applicable",
+                    "not_as_expected": "fail",
+                },
+                "exception_type": AttributeError,
             },
         }
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+    # ========================================================================
+    # QUERY INPUT SCENARIO TESTS
+    # ========================================================================
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
+    def test_query_not_passed_empty_or_null(self, mock_model_config):
+        """Test query input: Not Passed, Empty, or Null."""
+        self.run_test_not_passed_empty_or_null(mock_model_config, "query", "pass")
+
+    def test_query_string_or_json_single_string(self, mock_model_config):
+        """Test query input: String or JSON with single item string."""
+        self.run_test_string_or_json_single_string(mock_model_config, "query", "pass")
+
+    def test_query_json_object(self, mock_model_config):
+        """Test query input: JSON Object (proper conversation format)."""
+        self.run_test_json_object(mock_model_config, "query", "pass")
+
+    def test_query_json_object_unexpected_format(self, mock_model_config):
+        """Test query input: JSON Object not in expected format."""
+        self.run_test_json_object_unexpected_format(mock_model_config, "query", "pass")
+
+    def test_query_extracted_parameter_successfully(self, mock_model_config):
+        """Test query input: Extracted parameter successfully."""
+        def custom_assertions(result, key):
+            assert result[key] == 1
+            assert result[f"{key}_result"] == "pass"
+            assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0
+        
+        self.run_test_extracted_parameter_successfully(mock_model_config, "query", custom_assertions)
+
+    def test_query_parameter_not_present(self, mock_model_config):
+        """Test query input: Parameter not present (ungrounded parameter)."""
+        evaluator = self.create_evaluator(mock_model_config)
+        key = self.get_result_key()
+        
+        test_data = self.PARAMETER_CONFIG["query"]["test_data"]["not_present"]
+        result = evaluator(**test_data)
+        
+        assert result[key] == 0
+        assert result[f"{key}_result"] == "fail"
+        assert "not grounded" in result[f"{key}_reason"].lower()
+        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0
+
+    def test_query_parameter_not_as_expected(self, mock_model_config):
+        """Test query input: Parameter not as expected."""
+        evaluator = self.create_evaluator(mock_model_config)
+        key = self.get_result_key()
+        
+        test_data = self.PARAMETER_CONFIG["query"]["test_data"]["not_as_expected"]
+        result = evaluator(**test_data)
+        
+        assert result[key] == 0
+        assert result[f"{key}_result"] == "fail"
+        assert "number" in result[f"{key}_reason"].lower() and "string" in result[f"{key}_reason"].lower()
+        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0
+
+    # ========================================================================
+    # RESPONSE INPUT SCENARIO TESTS
+    # ========================================================================
+
+    def test_response_not_passed_empty_or_null(self, mock_model_config):
+        """Test response input: Not Passed, Empty, or Null."""
+        self.run_test_not_passed_empty_or_null(
+            mock_model_config, 
+            "response", 
+            "not applicable",
+            "Response parameter is required"
+        )
+
+    def test_response_string_or_json_single_string(self, mock_model_config):
+        """Test response input: String or JSON with single item string."""
+        self.run_test_string_or_json_single_string(
+            mock_model_config, 
+            "response", 
+            "not applicable",
+            expected_message=_ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
+        )
+
+    def test_response_json_object(self, mock_model_config):
+        """Test response input: JSON Object (proper tool call format)."""
+        evaluator = self.create_evaluator(mock_model_config)
+        key = self.get_result_key()
+        
+        test_data = self.PARAMETER_CONFIG["response"]["test_data"]["success"]
+        result = evaluator(**test_data)
+        
         assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0
+
+    def test_response_json_object_unexpected_format(self, mock_model_config):
+        """Test response input: JSON Object not in expected format."""
+        self.run_test_json_object_unexpected_format(mock_model_config, "response", "not applicable")
+
+    def test_response_extracted_parameter_successfully(self, mock_model_config):
+        """Test response input: Extracted parameter successfully."""
+        def custom_assertions(result, key):
+            assert result[key] == 1
+            assert result[f"{key}_result"] == "pass"
+            assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0
+        
+        self.run_test_extracted_parameter_successfully(mock_model_config, "response", custom_assertions)
+
+    def test_response_parameter_not_present(self, mock_model_config):
+        """Test response input: Parameter not present."""
+        self.run_test_parameter_not_present(
+            mock_model_config, 
+            "response", 
+            "not applicable",
+            _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
+        )
+
+    def test_response_parameter_not_as_expected(self, mock_model_config):
+        """Test response input: Parameter not as expected."""
+        evaluator = self.create_evaluator(mock_model_config)
+        key = self.get_result_key()
+        
+        test_data = self.PARAMETER_CONFIG["response"]["test_data"]["not_as_expected"]
+        result = evaluator(**test_data)
+        
+        assert result[key] == 0
+        assert result[f"{key}_result"] == "fail"
+        assert len(result[f"{key}_details"]["incorrect_parameters"]) >= 2
+        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 25.0
+
+    # ========================================================================
+    # TOOL DEFINITIONS INPUT SCENARIO TESTS
+    # ========================================================================
+
+    def test_tool_definitions_not_passed_empty_or_null(self, mock_model_config):
+        """Test tool_definitions input: Not Passed, Empty, or Null."""
+        self.run_test_not_passed_empty_or_null(
+            mock_model_config, 
+            "tool_definitions", 
+            "not applicable",
+            _ToolInputAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE
+        )
+
+    def test_tool_definitions_string_or_json_single_string(self, mock_model_config):
+        """Test tool_definitions input: String or JSON with single item string."""
+        self.run_test_string_or_json_single_string(
+            mock_model_config, 
+            "tool_definitions", 
+            "exception",
+            exception_type=AttributeError
+        )
+
+    def test_tool_definitions_json_object(self, mock_model_config):
+        """Test tool_definitions input: JSON Object (proper definition format)."""
+        self.run_test_json_object(mock_model_config, "tool_definitions", "pass")
+
+    def test_tool_definitions_json_object_unexpected_format(self, mock_model_config):
+        """Test tool_definitions input: JSON Object not in expected format."""
+        self.run_test_json_object_unexpected_format(mock_model_config, "tool_definitions", "not applicable")
+
+    def test_tool_definitions_extracted_parameter_successfully(self, mock_model_config):
+        """Test tool_definitions input: Extracted parameter successfully."""
+        def custom_assertions(result, key):
+            assert result[key] == 1
+            assert result[f"{key}_result"] == "pass"
+            assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0
+        
+        self.run_test_extracted_parameter_successfully(mock_model_config, "tool_definitions", custom_assertions)
+
+    def test_tool_definitions_parameter_not_present(self, mock_model_config):
+        """Test tool_definitions input: Parameter not present."""
+        self.run_test_parameter_not_present(
+            mock_model_config, 
+            "tool_definitions", 
+            "not applicable",
+            _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
+        )
+
+    def test_tool_definitions_parameter_not_as_expected(self, mock_model_config):
+        """Test tool_definitions input: Parameter not as expected."""
+        self.run_test_parameter_not_as_expected(mock_model_config, "tool_definitions")
+
+
+# Helper function for assertions
+def assert_parameter_accuracy(result, key, expected_accuracy):
+    """Assert parameter extraction accuracy."""
+    assert f"{key}_details" in result
+    if "parameter_extraction_accuracy" in result[f"{key}_details"]:
+        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == expected_accuracy
