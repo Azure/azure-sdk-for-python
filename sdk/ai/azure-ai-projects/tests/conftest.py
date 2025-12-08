@@ -100,6 +100,15 @@ def add_sanitizers(test_proxy, sanitized_values):
 
     sanitize_url_paths()
 
+    # Sanitize fine-tuning job IDs in URLs and response bodies
+    add_general_regex_sanitizer(regex=r"ftjob-[a-f0-9]+", value="sanitized-ftjob-id")
+
+    # Sanitize file IDs in URLs and response bodies
+    add_general_regex_sanitizer(regex=r"file-[a-f0-9]+", value="sanitized-file-id")
+
+    # Sanitize checkpoint IDs in URLs and response bodies
+    add_general_regex_sanitizer(regex=r"ftchkpt-[a-f0-9]+", value="sanitized-checkpoint-id")
+
     # Normalize Content-Type for CSV files in multipart form-data (varies by OS/Python version)
     add_general_string_sanitizer(target="Content-Type: text/csv", value="Content-Type: application/vnd.ms-excel")
 
