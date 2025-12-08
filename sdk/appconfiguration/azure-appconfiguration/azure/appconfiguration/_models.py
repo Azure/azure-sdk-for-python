@@ -802,7 +802,6 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
         :rtype: Iterator[ReturnType]
         :raises StopIteration: If there are no more pages or if the page hasn't changed.
         """
-        breakpoint()
         if self._match_condition_index >= len(self._match_conditions):
             # Check if there are more pages beyond the provided etags
             if self._continuation_token:

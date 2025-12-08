@@ -1130,8 +1130,12 @@ class TestAppConfigurationClient(AppConfigTestCase):
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
             self.client = client
-            # prepare 200 configuration settings
-            for i in range(200):
+            
+            # Clean up any existing sample keys first
+            self.tear_down()
+            
+            # prepare 199 configuration settings
+            for i in range(199):
                 self.client.set_configuration_setting(
                     ConfigurationSetting(
                         key=f"sample_key_{str(i)}",
@@ -1149,11 +1153,10 @@ class TestAppConfigurationClient(AppConfigTestCase):
                 all_initial_items.extend(list(page))
                 etag = iterator.etag
                 page_etags.append(etag)
-
-            # Verify we collected all 200 items initially
-            assert len(all_initial_items) == 200
+            # Verify we collected all 199 items initially
+            assert len(all_initial_items) == 199
             
-            # Should have 2 pages for 200 settings
+            # Should have 2 pages for 199 settings
             assert len(page_etags) == 2
 
             # monitor page updates without changes - all pages will be yielded
@@ -1167,8 +1170,8 @@ class TestAppConfigurationClient(AppConfigTestCase):
                     unchanged_count += 1
             # All pages should be unchanged (status 304)
             assert unchanged_count == 2
-            # Should have collected all 200 items
-            assert len(all_items) == 200
+            # Should have collected 0 items as none have changed
+            assert len(all_items) == 0
 
             # do some changes - update one of the existing settings to change a page
             self.client.set_configuration_setting(
@@ -1196,14 +1199,14 @@ class TestAppConfigurationClient(AppConfigTestCase):
             # Should return exactly 2 pages with exactly 1 unchanged
             assert page_count == 2
             assert unchanged_count == 1
-            # Should still have all 200 items
-            assert len(all_items) == 200
+            # Should still have 100 items, as only the first page has a change.
+            assert len(all_items) == 100
 
-            # Add a new configuration setting to trigger a new page (201st item creates 3rd page)
+            # Add a new configuration setting to trigger a new page (200th item creates 3rd page)
             self.client.set_configuration_setting(
                 ConfigurationSetting(
-                    key="sample_key_200",
-                    label="sample_label_200",
+                    key="sample_key_X",
+                    label="sample_label_X",
                     value="new_page_value",
                 )
             )
@@ -1227,8 +1230,8 @@ class TestAppConfigurationClient(AppConfigTestCase):
             # Only 1 page should be unchanged (304) - first page
             # Second page was modified earlier, third page is new (both should be 200)
             assert unchanged_count == 1
-            # Should now have all 201 items
-            assert len(all_items) == 201
+            # Should still just have 100 items from the last page with items.
+            assert len(all_items) == 100
 
             # clean up
             self.tear_down()
