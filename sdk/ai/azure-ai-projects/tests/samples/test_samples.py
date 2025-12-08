@@ -1,8 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# Licensed-------------------------
 import csv, os, pytest, re, inspect, sys
 import importlib.util
 import unittest.mock as mock
@@ -12,23 +11,141 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, Recorde
 from test_base import servicePreparer, patched_open_crlf_to_lf
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
+from azure.identity import DefaultAzureCredential
+from functools import wraps
+from typing import Callable, Optional
 
 
 class SampleExecutor:
-    """Helper class for executing sample files with proper environment setup and credential mocking."""
+    """Decorator for executing sample files with proper environment setup and credential mocking."""
 
-    def __init__(
-        self, test_instance: "AzureRecordedTestCase", sample_path: str, env_var_mapping: dict[str, str], **kwargs
-    ):
+    def __init__(self, env_var_mapping_fn: Callable):
+        """
+        Initialize the SampleExecutor decorator.
+        
+        Args:
+            env_var_mapping_fn: Function that returns the environment variable mapping
+        """
+        self.env_var_mapping_fn = env_var_mapping_fn
+        self.agent = None
+        self.project_client = None
+        self.credential = None
+
+    def __enter__(self):
+        """Context manager entry - creates agent for all tests."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit - deletes agent after all tests."""
+        if self.agent and self.project_client:
+            try:
+                self.project_client.agents.delete_version(
+                    agent_name=self.agent.name,
+                    agent_version=self.agent.version
+                )
+                print(f"Agent {self.agent.name} deleted")
+            except Exception as e:
+                print(f"Error deleting agent: {e}")
+        
+        if self.project_client:
+            self.project_client.close()
+        
+        
+        return False
+
+    def setup_agent(self, test_instance: "AzureRecordedTestCase", endpoint: str, is_async: bool):
+        """
+        Setup agent using context managers.
+        
+        Args:
+            test_instance: The test instance to get credentials from
+            endpoint: The Azure AI project endpoint
+        """
+        # Get credential from test infrastructure
+        credential = test_instance.get_credential(AIProjectClient, is_async=is_async)
+        self.credential = credential
+        
+        # Create project client
+        self.project_client = AIProjectClient(endpoint=endpoint, credential=credential)
+        
+        # Create agent
+        self.agent = self.project_client.agents.create_version(
+            agent_name="TestToolsAgent",
+            definition=PromptAgentDefinition(
+                model="gpt-4o",
+                instructions="You are a helpful assistant for testing purposes.",
+            ),
+        )
+        print(f"Agent {self.agent.name} (version {self.agent.version}) created")
+
+    def __call__(self, fn):
+        """
+        Wrap the test function to provide executor instance.
+        
+        Args:
+            fn: The test function to wrap
+            
+        Returns:
+            Wrapped function with executor injection
+        """
+        if inspect.iscoroutinefunction(fn):
+            @wraps(fn)
+            async def _async_wrapper(test_instance, sample_path: str, **kwargs):
+                # Setup agent on first call
+                if self.agent is None:
+                    endpoint = kwargs.get("azure_ai_projects_tests_project_endpoint", "")
+                    self.setup_agent(test_instance, endpoint, True)
+                
+                env_var_mapping = self.env_var_mapping_fn(test_instance)
+                executor = _SampleExecutorInstance(
+                    test_instance, 
+                    env_var_mapping, 
+                    self.agent,
+                    **kwargs
+                )
+                await fn(test_instance, sample_path, executor=executor, **kwargs)
+            
+            return _async_wrapper
+        else:
+            @wraps(fn)
+            def _sync_wrapper(test_instance, sample_path: str, **kwargs):
+                # Setup agent on first call
+                if self.agent is None:
+                    endpoint = kwargs.get("azure_ai_projects_tests_project_endpoint", "")
+                    self.setup_agent(test_instance, endpoint, False)
+                
+                env_var_mapping = self.env_var_mapping_fn(test_instance)
+                executor = _SampleExecutorInstance(
+                    test_instance, 
+                    env_var_mapping,
+                    self.agent,
+                    **kwargs
+                )
+                fn(test_instance, sample_path, executor=executor, **kwargs)
+            
+            return _sync_wrapper
+
+
+class _SampleExecutorInstance:
+    """Internal class for executing sample files with proper environment setup and credential mocking."""
+
+    def __init__(self, test_instance: "AzureRecordedTestCase", env_var_mapping: dict[str, str], agent, **kwargs):
         self.test_instance = test_instance
-        self.sample_path = sample_path
+        self.env_var_mapping = env_var_mapping
+        self.agent = agent
+        self.kwargs = kwargs
         self.print_calls: list[str] = []
         self._original_print = print
 
+    def _prepare_execution(self, sample_path: str):
+        """Prepare for sample execution by setting up environment and module."""
+        self.sample_path = sample_path
+        
         # Prepare environment variables
         self.env_vars = {}
-        for sample_var, test_var in env_var_mapping.items():
-            value = kwargs.pop(test_var, None)
+        for sample_var, test_var in self.env_var_mapping.items():
+            value = self.kwargs.get(test_var, None)
             if value is not None:
                 self.env_vars[sample_var] = value
         self.env_vars["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = "gpt-4o"
@@ -52,9 +169,10 @@ class SampleExecutor:
         self.print_calls.append(" ".join(str(arg) for arg in args))
         self._original_print(*args, **kwargs)
 
-    def execute(self):
+    def execute(self, sample_path: str):
         """Execute a synchronous sample with proper mocking and environment setup."""
-
+        self._prepare_execution(sample_path)
+        
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
@@ -74,8 +192,10 @@ class SampleExecutor:
 
         self._validate_output()
 
-    async def execute_async(self):
+    async def execute_async(self, sample_path: str):
         """Execute an asynchronous sample with proper mocking and environment setup."""
+        self._prepare_execution(sample_path)
+        
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
@@ -203,6 +323,17 @@ def _get_tools_sample_paths_async():
             samples.append(pytest.param(sample_path, id=filename.replace(".py", "")))
 
     return samples
+
+
+def _get_tools_sample_environment_variables_map(self) -> dict[str, str]:
+    return {
+        "AZURE_AI_PROJECT_ENDPOINT": "azure_ai_projects_tests_project_endpoint",
+        "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
+        "AI_SEARCH_INDEX_NAME": "azure_ai_projects_tests_ai_search_index_name",
+        "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",
+        "SHAREPOINT_USER_INPUT": "azure_ai_projects_tests_sharepoint_user_input",
+        "SHAREPOINT_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_sharepoint_project_connection_id",
+    }
 
 
 class TestSamples(AzureRecordedTestCase):
@@ -506,27 +637,15 @@ class TestSamples(AzureRecordedTestCase):
     @servicePreparer()
     @pytest.mark.parametrize("sample_path", _get_tools_sample_paths())
     @SamplePathPasser()
+    @SampleExecutor(_get_tools_sample_environment_variables_map)
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_tools_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = self._get_sample_environment_variables_map()
-        executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
-        executor.execute()
+    def test_tools_samples(self, sample_path: str, executor: _SampleExecutorInstance, **kwargs) -> None:
+        executor.execute(sample_path)
 
     @servicePreparer()
     @pytest.mark.parametrize("sample_path", _get_tools_sample_paths_async())
     @SamplePathPasser()
+    @SampleExecutor(_get_tools_sample_environment_variables_map)
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_tools_samples_async(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = self._get_sample_environment_variables_map()
-        executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
-        await executor.execute_async()
-
-    def _get_sample_environment_variables_map(self) -> dict[str, str]:
-        return {
-            "AZURE_AI_PROJECT_ENDPOINT": "azure_ai_projects_tests_project_endpoint",
-            "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
-            "AI_SEARCH_INDEX_NAME": "azure_ai_projects_tests_ai_search_index_name",
-            "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",
-            "SHAREPOINT_USER_INPUT": "azure_ai_projects_tests_sharepoint_user_input",
-            "SHAREPOINT_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_sharepoint_project_connection_id",
-        }
+    async def test_tools_samples_async(self, sample_path: str, executor: _SampleExecutorInstance, **kwargs) -> None:
+        await executor.execute_async(sample_path)
