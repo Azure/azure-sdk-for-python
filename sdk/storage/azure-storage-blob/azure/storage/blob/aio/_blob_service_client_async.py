@@ -235,6 +235,8 @@ class BlobServiceClient(  # type: ignore [misc]
     async def get_user_delegation_key(
         self, key_start_time: "datetime",
         key_expiry_time: "datetime",
+        *,
+        delegated_user_tid: Optional[str] = None,
         **kwargs: Any
     ) -> "UserDelegationKey":
         """
@@ -245,6 +247,7 @@ class BlobServiceClient(  # type: ignore [misc]
             A DateTime value. Indicates when the key becomes valid.
         :param ~datetime.datetime key_expiry_time:
             A DateTime value. Indicates when the key stops being valid.
+        :keyword str delegated_user_tid: The delegated user tenant id in Azure AD.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -254,7 +257,11 @@ class BlobServiceClient(  # type: ignore [misc]
         :return: The user delegation key.
         :rtype: ~azure.storage.blob.UserDelegationKey
         """
-        key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
+        key_info = KeyInfo(
+            start=_to_utc_datetime(key_start_time),
+            expiry=_to_utc_datetime(key_expiry_time),
+            delegated_user_tid=delegated_user_tid
+        )
         timeout = kwargs.pop('timeout', None)
         try:
             user_delegation_key = await self._client.service.get_user_delegation_key(key_info=key_info,

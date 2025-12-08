@@ -277,6 +277,9 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_RAGRS = "Standard_RAGRS"
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
+    STANDARD_GZRS = "Standard_GZRS"
+    PREMIUM_ZRS = "Premium_ZRS"
+    STANDARD_RAGZRS = "Standard_RAGZRS"
 
 
 class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
