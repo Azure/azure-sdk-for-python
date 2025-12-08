@@ -1419,7 +1419,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         # Always try to include common ID fields (safe, needed for correlation)
                         for id_field in ["id", "call_id"]:
                             if hasattr(output_item, id_field):
-                                tool_output["id" if id_field == "id" else "id"] = getattr(output_item, id_field)
+                                tool_output["id"] = getattr(output_item, id_field)
                                 break  # Use first available ID field
 
                         # Only include detailed fields if content recording is enabled
@@ -2675,8 +2675,6 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     return self.stream_iter.get_final_response()
                 raise AttributeError("Underlying stream does not have 'get_final_response' method")
 
-        # Debug sync wrapper initialization
-        # Return wrapped stream
         return StreamWrapper(
             stream,
             span,
