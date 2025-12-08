@@ -24,9 +24,7 @@ from github import Github, Auth
 from ci_tools.parsing import ParsedSetup
 
 # Github
-GIT_TOKEN = os.environ["GH_TOKEN"]
-auth = Auth.Token(GIT_TOKEN)
-github = Github(auth=auth)
+github = Github()
 repo = github.get_repo("Azure/azure-sdk-for-python")
 
 ARCHITECTS = {'kashifkhan', 'annatisch', 'johanste'}
