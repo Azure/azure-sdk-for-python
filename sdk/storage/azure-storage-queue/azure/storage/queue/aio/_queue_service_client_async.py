@@ -214,7 +214,7 @@ class QueueServiceClient(  # type: ignore [misc]
         start: Optional["datetime"] = None,
         delegated_user_tid: Optional[str] = None,
         timeout: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> "UserDelegationKey":
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
@@ -237,9 +237,9 @@ class QueueServiceClient(  # type: ignore [misc]
         :rtype: ~azure.storage.queue.UserDelegationKey
         """
         key_info = KeyInfo(
-            start=_to_utc_datetime(start),
+            start=_to_utc_datetime(start),  # type: ignore [arg-type]
             expiry=_to_utc_datetime(expiry),
-            delegated_user_tid=delegated_user_tid
+            delegated_user_tid=delegated_user_tid,
         )
         try:
             user_delegation_key = await self._client.service.get_user_delegation_key(
