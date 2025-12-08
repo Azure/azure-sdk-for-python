@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -22,7 +22,7 @@ USAGE:
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) MCP_PROJECT_CONNECTION_ID - The connection resource ID in Custom keys
-       with key equals to "Authorization" and value to be "Bear <your GitHub PAT token>".
+       with key equals to "Authorization" and value to be "Bearer <your GitHub PAT token>".
        Token can be created in https://github.com/settings/personal-access-tokens/new
 """
 
@@ -36,26 +36,22 @@ from openai.types.responses.response_input_param import McpApprovalResponse, Res
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# Get the OpenAI client for responses and conversations
-openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
-
-mcp_tool = MCPTool(
-    server_label="api-specs",
-    server_url="https://api.githubcopilot.com/mcp",
-    require_approval="always",
-    project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
-)
-
-# Create tools list with proper typing for the agent definition
-tools: list[Tool] = [mcp_tool]
-
-with project_client:
+    # [START tool_declaration]
+    tool = MCPTool(
+        server_label="api-specs",
+        server_url="https://api.githubcopilot.com/mcp",
+        require_approval="always",
+        project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
+    )
+    # [END tool_declaration]
 
     # Create a prompt agent with MCP tool capabilities
     agent = project_client.agents.create_version(
@@ -63,7 +59,7 @@ with project_client:
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="Use MCP tools as needed",
-            tools=tools,
+            tools=[tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")

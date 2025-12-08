@@ -16,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" openai azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -33,10 +33,7 @@ from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 
 def image_to_base64(image_path: str) -> str:
@@ -51,9 +48,11 @@ def image_to_base64(image_path: str) -> str:
         raise OSError(f"Error reading file '{image_path}'") from exc
 
 
-with project_client:
-
-    openai_client = project_client.get_openai_client()
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
+):
 
     image_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/image_input.png"))
 

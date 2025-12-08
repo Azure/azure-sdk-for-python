@@ -22,7 +22,6 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataPlane
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -698,7 +697,7 @@ class ModelOperations(_ScopeDependentOperations):
             self._model_versions_operation = _client.model_versions
             yield
         finally:
-            self._operation_scope.registry_name = registry_
+            self._operation_scope.registry_name = registry_  # type: ignore[assignment]
             self._operation_scope._resource_group_name = rg_
             self._operation_scope._subscription_id = sub_
             self._service_client = client_
