@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.14.3 (2025-12-03)
+### 4.14.3 (2025-12-08)
 
 #### Bugs Fixed
 * Fixed bug where client timeout/read_timeout values were not properly enforced. See [PR 42652](https://github.com/Azure/azure-sdk-for-python/pull/42652).
