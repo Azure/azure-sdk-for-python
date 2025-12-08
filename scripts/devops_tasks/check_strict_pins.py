@@ -44,7 +44,7 @@ def get_changed_files(base_ref: str, head_ref: str) -> List[str]:
     
     return [
         line for line in diff_output.strip().split('\n')
-        if line.startswith('sdk/') and (line.endswith('/setup.py') or line.endswith('/pyproject.toml'))
+        if line.startswith('sdk/') and line.endswith(('/setup.py', '/pyproject.toml'))
     ]
 
 
@@ -53,37 +53,27 @@ def check_for_new_strict_pins(filepath: str, diff_output: str) -> List[str]:
     if not diff_output:
         return []
     
-    # Parse current file with ParsedSetup to get all requirements
-    package_dir = os.path.dirname(filepath)
     try:
-        parsed = ParsedSetup.from_path(package_dir)
+        parsed = ParsedSetup.from_path(os.path.dirname(filepath))
     except Exception as e:
-        print(f"Warning: Could not parse {package_dir}: {e}")
+        print(f"Warning: Could not parse {os.path.dirname(filepath)}: {e}")
         return []
     
-    # Find strict pins that appear in added lines of the diff
     added_lines = [line for line in diff_output.split('\n') if line.startswith('+')]
-    strict_pins = []
     
-    for requirement in parsed.requires:
-        if STRICT_PIN_PATTERN.match(requirement):
-            package_name = requirement.split('==')[0]
-            # Check if this package appears in added lines with ==
-            if any(package_name in line and '==' in line for line in added_lines):
-                strict_pins.append(requirement)
-    
-    return strict_pins
+    return [
+        requirement for requirement in parsed.requires
+        if STRICT_PIN_PATTERN.match(requirement)
+        and any(requirement.split('==')[0] in line and '==' in line for line in added_lines)
+    ]
 
 
 def check_architect_approval_via_cli(pr_number: str) -> bool:
     """Check if any architects have approved the PR using Azure CLI."""
     reviews = repo.get_pull(int(pr_number)).get_reviews()
-    approvers = {review.user.login for review in reviews if review.state == "APPROVED"}
-
-    return any(
-        any(architect.lower() in approver.lower() for architect in ARCHITECTS)
-        for approver in approvers
-    )
+    approvers = {review.user.login.lower() for review in reviews if review.state == "APPROVED"}
+    
+    return bool(ARCHITECTS & approvers)
 
 def main() -> int:
     parser = argparse.ArgumentParser(description='Check for strict version pins in dependencies')
@@ -100,11 +90,8 @@ def main() -> int:
     # Check each file for new strict pins
     all_strict_pins = []
     for filepath in changed_files:
-        diff_output = run_git_command([
-            "git", "diff", args.base, args.head, "--", filepath
-        ])
-        if pins := check_for_new_strict_pins(filepath, diff_output):
-            all_strict_pins += pins
+        diff_output = run_git_command(["git", "diff", args.base, args.head, "--", filepath])
+        all_strict_pins.extend(check_for_new_strict_pins(filepath, diff_output))
     
     if not all_strict_pins:
         return 0
