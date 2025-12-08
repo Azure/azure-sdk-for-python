@@ -40,6 +40,7 @@ USAGE:
 
 import base64
 import os
+import tempfile
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
@@ -80,20 +81,20 @@ with (
     )
     print(f"Response created: {response.id}")
 
-    # Save the image to a file
-    # [START download_image]
-    image_data = [output.result for output in response.output if output.type == "image_generation_call"]
-
-    if image_data and image_data[0]:
-        print("Downloading generated image...")
-        filename = "microsoft.png"
-        file_path = os.path.abspath(filename)
-
-        with open(file_path, "wb") as f:
-            f.write(base64.b64decode(image_data[0]))
-        # [END download_image]
-        print(f"Image downloaded and saved to: {file_path}")
-
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
+
+    # [START download_image]
+    image_data = [output.result for output in response.output if output.type == "image_generation_call"]
+    if image_data and image_data[0]:
+        print("Downloading generated image...")
+        filename = "microsoft.png"
+        file_path = os.path.join(tempfile.gettempdir(), filename)
+
+        with open(file_path, "wb") as f:
+            f.write(base64.b64decode(image_data[0]))
+
+        # [END download_image]
+        # Print result (should contain "file")
+        print(f"==> Result: Image downloaded and saved to file: {file_path}")

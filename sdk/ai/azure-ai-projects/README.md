@@ -269,11 +269,10 @@ After calling `responses.create()`, you can download file using the returned res
 
 ```python
 image_data = [output.result for output in response.output if output.type == "image_generation_call"]
-
 if image_data and image_data[0]:
     print("Downloading generated image...")
     filename = "microsoft.png"
-    file_path = os.path.abspath(filename)
+    file_path = os.path.join(tempfile.gettempdir(), filename)
 
     with open(file_path, "wb") as f:
         f.write(base64.b64decode(image_data[0]))
