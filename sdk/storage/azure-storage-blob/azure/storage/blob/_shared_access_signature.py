@@ -6,7 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (
-    Any, Callable, Optional, Union,
+    Any, Callable, Dict, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import parse_qs
@@ -452,6 +452,8 @@ def generate_container_sas(
     ip: Optional[str] = None,
     *,
     user_delegation_oid: Optional[str] = None,
+    request_headers: Optional[Dict[str, str]] = None,
+    request_query_params: Optional[Dict[str, str]] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -530,6 +532,12 @@ def generate_container_sas(
         Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
         issued to the user specified in this value.
+    :keyword Dict[str, str] request_headers:
+        If specified, both the correct request header(s) and corresponding values must be present,
+        or the request will fail.
+    :keyword Dict[str, str] request_query_params:
+        If specified, both the correct query parameter(s) and corresponding values must be present,
+        or the request will fail.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -676,6 +684,12 @@ def generate_blob_sas(
         Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
         issued to the user specified in this value.
+    :keyword Dict[str, str] request_headers:
+        If specified, both the correct request header(s) and corresponding values must be present,
+        or the request will fail.
+    :keyword Dict[str, str] request_query_params:
+        If specified, both the correct query parameter(s) and corresponding values must be present,
+        or the request will fail.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
