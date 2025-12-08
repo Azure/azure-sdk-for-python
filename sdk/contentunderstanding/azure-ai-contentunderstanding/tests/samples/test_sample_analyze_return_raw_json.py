@@ -18,7 +18,6 @@ USAGE:
 
 import os
 import json
-import pytest
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
 
@@ -32,11 +31,11 @@ class TestSampleAnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
         """Test analyzing a document and getting raw JSON response.
         
         This test validates:
-        1. Document analysis using protocol method
+        1. Document analysis using 'cls' callback to get raw HTTP response
         2. Raw JSON response format
         3. JSON structure validation
         
-        11_AnalyzeReturnRawJson.AnalyzeReturnRawJsonAsync()
+        11_AnalyzeReturnRawJson.AnalyzeReturnRawJson()
         """
         client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
@@ -55,80 +54,64 @@ class TestSampleAnalyzeReturnRawJson(ContentUnderstandingClientTestBase):
         assert len(file_bytes) > 0, "File should not be empty"
         print(f"[PASS] File loaded: {len(file_bytes)} bytes")
         
-        # Analyze the document and get raw response
-        # Note: The Python SDK returns structured objects by default
-        # We can access the raw response through the result
+        # Use 'cls' callback to get raw HTTP response
+        # The 'cls' parameter allows us to intercept the response before it gets deserialized as an object model
+        # We return a tuple: (deserialized_object, raw_http_response)
         poller = client.begin_analyze_binary(
             analyzer_id="prebuilt-documentSearch",
             binary_input=file_bytes,
-            content_type="application/pdf"
+            content_type="application/pdf",
+            cls=lambda pipeline_response, deserialized_obj, response_headers: (
+                deserialized_obj,
+                pipeline_response.http_response,
+            ),
         )
         
-        result = poller.result()
+        # Wait for completion and get both model and raw HTTP response
+        _, raw_http_response = poller.result()
         
         # Assertion: Verify analysis operation completed
         assert poller is not None, "Analysis operation should not be null"
         assert poller.done(), "Operation should be completed"
-        
-        # Verify raw response status
-        if hasattr(poller, '_polling_method'):
-            polling_method = getattr(poller, '_polling_method', None)
-            if polling_method and hasattr(polling_method, '_initial_response'):
-                raw_response = getattr(polling_method, '_initial_response', None)  # type: ignore
-                if raw_response:
-                    if hasattr(raw_response, 'http_response'):
-                        status = raw_response.http_response.status_code
-                    elif hasattr(raw_response, 'status_code'):
-                        status = raw_response.status_code
-                    else:
-                        status = None
-                        
-                    if status:
-                        assert status >= 200 and status < 300, \
-                            f"Response status should be successful (200-299), but was {status}"
-                        print(f"[PASS] Raw response status verified: {status}")
-        
         assert poller.status() == "Succeeded", f"Operation status should be Succeeded, but was {poller.status()}"
         print("[PASS] Analysis operation completed successfully")
         
-        # Assertion: Verify result
-        assert result is not None, "Analysis result should not be null"
-        print("[PASS] Response data is not null")
+        # Assertion: Verify raw HTTP response
+        assert raw_http_response is not None, "Raw HTTP response should not be null"
+        print("[PASS] Raw HTTP response is not null")
         
-        # Convert result to JSON string to verify raw format capability
-        # In Python SDK, we can serialize the result to JSON
-        try:
-            # Try to access the raw response data
-            if hasattr(result, '__dict__'):
-                result_dict = result.__dict__
-                json_str = json.dumps(result_dict, default=str)
-                assert json_str is not None, "Response string should not be null"
-                assert len(json_str) > 0, "Response string should not be empty"
-                print(f"[PASS] Response converted to JSON string: {len(json_str)} characters")
-                
-                # Verify it's valid JSON
-                parsed_json = json.loads(json_str)
-                assert parsed_json is not None, "Response should be valid JSON"
-                print("[PASS] Response is valid JSON format")
-            else:
-                print("[INFO] Result does not have __dict__ attribute, using alternative method")
-                
-                # Alternative: Check if result has contents (which confirms it's a valid response)
-                assert hasattr(result, "contents"), "Result should have contents attribute"
-                assert result.contents is not None, "Result contents should not be null"
-                print("[PASS] Response data structure verified")
-                
-        except json.JSONDecodeError as e:
-            pytest.fail(f"Response should be valid JSON format: {str(e)}")
-        except Exception as e:
-            print(f"[WARN] Could not serialize to JSON: {str(e)}")
-            # Still verify basic structure
-            assert result is not None, "Result should not be null"
-            print("[PASS] Response data verified (structured format)")
+        # Parse the raw JSON response
+        response_json = raw_http_response.json()
         
-        # Verify the response contains expected data
-        assert hasattr(result, "contents"), "Result should have contents"
-        if result.contents and len(result.contents) > 0:
-            print(f"[PASS] Response contains {len(result.contents)} content(s)")
+        # Assertion: Verify JSON is not empty
+        assert response_json is not None, "Response JSON should not be null"
+        print("[PASS] Response JSON parsed successfully")
+        
+        # Verify it's valid JSON by serializing
+        json_str = json.dumps(response_json, indent=2, ensure_ascii=False)
+        assert json_str is not None, "Response string should not be null"
+        assert len(json_str) > 0, "Response string should not be empty"
+        print(f"[PASS] Response converted to JSON string: {len(json_str)} characters")
+        
+        # Verify the response contains expected structure (matching C# sample validation)
+        assert "result" in response_json, "Response should contain 'result' key"
+        result_data = response_json["result"]
+        print("[PASS] Response contains 'result' key")
+        
+        # Verify analyzerId
+        if "analyzerId" in result_data:
+            print(f"[PASS] Analyzer ID: {result_data['analyzerId']}")
+        
+        # Verify contents
+        if "contents" in result_data and isinstance(result_data["contents"], list):
+            contents_count = len(result_data["contents"])
+            print(f"[PASS] Contents count: {contents_count}")
+            
+            if contents_count > 0:
+                first_content = result_data["contents"][0]
+                if "kind" in first_content:
+                    print(f"[PASS] Content kind: {first_content['kind']}")
+                if "mimeType" in first_content:
+                    print(f"[PASS] MIME type: {first_content['mimeType']}")
         
         print("\n[SUCCESS] All test_sample_analyze_return_raw_json assertions passed")
