@@ -31,14 +31,16 @@ USAGE:
        used by the agent for understanding and responding to prompts. This is NOT the image generation model.
 
     NOTE:
-    - Image generation requires a separate "gpt-image-1" deployment which is specified in the
-      x-ms-oai-image-generation-deployment header when creating the response.
-    - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1".
+    - Image generation requires a separate "gpt-image-1-mini" deployment which is specified when constructing
+      the `ImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
+      calling `.responses.create`.
+    - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1-mini".
     - The generated image will be saved as "microsoft.png" in the current directory.
 """
 
 import base64
 import os
+import tempfile
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
@@ -56,7 +58,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = ImageGenTool(quality="low", size="1024x1024")
+    tool = ImageGenTool(model="gpt-image-1-mini", quality="low", size="1024x1024")  # type: ignore
     # [END tool_declaration]
 
     agent = project_client.agents.create_version(
@@ -73,26 +75,26 @@ with (
     response = openai_client.responses.create(
         input="Generate an image of Microsoft logo.",
         extra_headers={
-            "x-ms-oai-image-generation-deployment": "gpt-image-1"
+            "x-ms-oai-image-generation-deployment": "gpt-image-1-mini"
         },  # this is required at the moment for image generation
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response created: {response.id}")
 
-    # Save the image to a file
-    # [START download_image]
-    image_data = [output.result for output in response.output if output.type == "image_generation_call"]
-
-    if image_data and image_data[0]:
-        print("Downloading generated image...")
-        filename = "microsoft.png"
-        file_path = os.path.abspath(filename)
-
-        with open(file_path, "wb") as f:
-            f.write(base64.b64decode(image_data[0]))
-        # [END download_image]
-        print(f"Image downloaded and saved to: {file_path}")
-
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
+
+    # [START download_image]
+    image_data = [output.result for output in response.output if output.type == "image_generation_call"]
+    if image_data and image_data[0]:
+        print("Downloading generated image...")
+        filename = "microsoft.png"
+        file_path = os.path.join(tempfile.gettempdir(), filename)
+
+        with open(file_path, "wb") as f:
+            f.write(base64.b64decode(image_data[0]))
+
+        # [END download_image]
+        # Print result (should contain "file")
+        print(f"==> Result: Image downloaded and saved to file: {file_path}")
