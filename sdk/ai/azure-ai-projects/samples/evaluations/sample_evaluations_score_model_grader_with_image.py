@@ -55,7 +55,7 @@ model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
 def image_to_data_uri(image_path: str) -> str:
     with Image.open(image_path) as img:
         buffered = BytesIO()
-        img.save(buffered, format=img.format or 'PNG')
+        img.save(buffered, format=img.format or "PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
         mime_type = f"image/{img.format.lower()}" if img.format else "image/png"
         return f"data:{mime_type};base64,{img_str}"
@@ -73,14 +73,8 @@ with (
             "item_schema": {
                 "type": "object",
                 "properties": {
-                    "image_url": {
-                        "type": "string",
-                        "description": "The URL of the image to be evaluated."
-                    },
-                    "caption": {
-                        "type": "string",
-                        "description": "The caption describing the image."
-                    },
+                    "image_url": {"type": "string", "description": "The URL of the image to be evaluated."},
+                    "caption": {"type": "string", "description": "The caption describing the image."},
                 },
                 "required": [
                     "image_url",
@@ -99,22 +93,18 @@ with (
             "input": [
                 {
                     "role": "system",
-                    "content": "You are an expert grader. Judge how well the model response {{sample.output_text}} describes the image as well as matches the caption {{item.caption}}. Output a score of 1 if it's an excellent match with both. If it's somewhat compatible, output a score around 0.5. Otherwise, give a score of 0."
+                    "content": "You are an expert grader. Judge how well the model response {{sample.output_text}} describes the image as well as matches the caption {{item.caption}}. Output a score of 1 if it's an excellent match with both. If it's somewhat compatible, output a score around 0.5. Otherwise, give a score of 0.",
                 },
                 {
                     "role": "user",
-                    "content":
-                        {
-                            "type": "input_image",
-                            "image_url": "{{item.image_url}}",
-                            "detail": "auto",
-                        }
-                }
+                    "content": {
+                        "type": "input_image",
+                        "image_url": "{{item.image_url}}",
+                        "detail": "auto",
+                    },
+                },
             ],
-            "range": [
-                0.0,
-                1.0
-            ],
+            "range": [0.0, 1.0],
             "pass_threshold": 0.5,
         },
     ]
@@ -163,7 +153,7 @@ with (
                     type="input_image",
                     image_url="{{item.image_url}}",
                     detail="auto",
-                )
+                ),
             ),
         ],
     )
@@ -180,7 +170,7 @@ with (
             input_messages=input_messages,
             sampling_params={
                 "temperature": 0.8,
-            }
+            },
         ),
     )
     print(f"Eval Run created (id: {eval_run_object.id}, name: {eval_run_object.name})")
