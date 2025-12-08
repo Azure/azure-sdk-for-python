@@ -526,6 +526,8 @@ class UserDelegationKey(object):
     """Object ID of this token."""
     signed_tid: Optional[str] = None
     """Tenant ID of the tenant that issued this token."""
+    signed_delegated_user_tid: Optional[str] = None
+    """User Tenant ID of this token."""
     signed_start: Optional[str] = None
     """The datetime this token becomes valid."""
     signed_expiry: Optional[str] = None
@@ -540,6 +542,7 @@ class UserDelegationKey(object):
     def __init__(self):
         self.signed_oid = None
         self.signed_tid = None
+        self.signed_delegated_user_tid = None
         self.signed_start = None
         self.signed_expiry = None
         self.signed_service = None

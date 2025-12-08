@@ -203,6 +203,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         *,
         expiry: "datetime",
         start: Optional["datetime"] = None,
+        delegated_user_tid: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> "UserDelegationKey":
@@ -217,6 +218,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         :keyword start:
             A DateTime value. Indicates when the key becomes valid.
         :paramtype start: Optional[~datetime.datetime]
+        :keyword str delegated_user_tid: The delegated user tenant id in Entra ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -226,7 +228,11 @@ class ShareServiceClient(StorageAccountHostsMixin):
         :return: The user delegation key.
         :rtype: ~azure.storage.fileshare.UserDelegationKey
         """
-        key_info = KeyInfo(start=_to_utc_datetime(start), expiry=_to_utc_datetime(expiry))
+        key_info = KeyInfo(
+            start=_to_utc_datetime(start),
+            expiry=_to_utc_datetime(expiry),
+            delegated_user_tid=delegated_user_tid
+        )
         try:
             user_delegation_key = self._client.service.get_user_delegation_key(  # type: ignore
                 key_info=key_info,
