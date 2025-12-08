@@ -216,7 +216,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 properties=self.properties,
                 flavors=(
                     {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
-                ),  # flatten OrderedDict to dict
+                ),
                 model_type=self.type,
                 model_uri=self.path,
                 stage=self.stage,
