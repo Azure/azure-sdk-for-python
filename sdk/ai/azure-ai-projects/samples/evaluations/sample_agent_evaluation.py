@@ -66,7 +66,7 @@ with (
             "type": "azure_ai_evaluator",
             "name": "violence_detection",
             "evaluator_name": "builtin.violence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+            "data_mapping": {"query": "{{item.query}}", "response": "{{item.sample.output_text}}"},
         }
     ]
     eval_object = openai_client.evals.create(
