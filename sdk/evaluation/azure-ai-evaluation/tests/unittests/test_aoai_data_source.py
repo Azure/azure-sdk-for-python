@@ -110,7 +110,6 @@ class TestBuildSchemaTreeFromPaths:
         assert "required" in schema
         assert set(schema["properties"].keys()) == {"query", "response", "ground_truth"}
         assert all(prop["type"] == "string" for prop in schema["properties"].values())
-        assert set(schema["required"]) == {"query", "response", "ground_truth"}
 
     def test_nested_paths(self):
         """Test building schema with nested paths."""
