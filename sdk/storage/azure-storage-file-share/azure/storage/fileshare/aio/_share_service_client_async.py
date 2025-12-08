@@ -221,7 +221,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         :keyword start:
             A DateTime value. Indicates when the key becomes valid.
         :paramtype start: Optional[~datetime.datetime]
-        :keyword str delegated_user_tid: The delegated user tenant id in Entra AD.
+        :keyword str delegated_user_tid: The delegated user tenant id in Entra ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
