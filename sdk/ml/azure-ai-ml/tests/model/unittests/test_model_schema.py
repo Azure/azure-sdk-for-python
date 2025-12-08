@@ -93,7 +93,7 @@ class TestModelSchema:
         # Create a dummy model file
         model_file = tmp_path / "model.pkl"
         model_file.write_text("dummy model")
-        
+
         yaml_content = f"""
 $schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
 name: model_with_default_template
@@ -106,9 +106,9 @@ default_deployment_template:
 """
         yaml_file = tmp_path / "model_with_template.yml"
         yaml_file.write_text(yaml_content)
-        
+
         model = load_model(yaml_file)
-        
+
         assert model.default_deployment_template is not None
         assert model.default_deployment_template.asset_id is not None
         assert "test-registry" in model.default_deployment_template.asset_id
@@ -118,11 +118,11 @@ default_deployment_template:
         """Test Model._to_rest_object() with default_deployment_template."""
         from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
         from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
-        
+
         template = DefaultDeploymentTemplate(
             asset_id="azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
         )
-        
+
         model = Model(
             name="test-model",
             version="1",
@@ -130,9 +130,9 @@ default_deployment_template:
             description="Test model with deployment template",
             default_deployment_template=template,
         )
-        
+
         rest_object = model._to_rest_object()
-        
+
         # Should return ModelVersionData when default_deployment_template is present
         assert isinstance(rest_object, ModelVersionData)
         assert rest_object.properties.default_deployment_template is not None
@@ -159,9 +159,9 @@ default_deployment_template:
             },
             "systemData": {},
         }
-        
+
         from_rest_model = Model._from_rest_object(ModelVersionData.deserialize(rest_model_with_template))
-        
+
         assert from_rest_model.default_deployment_template is not None
         assert from_rest_model.default_deployment_template.asset_id is not None
         assert "test-registry" in from_rest_model.default_deployment_template.asset_id
@@ -170,11 +170,11 @@ default_deployment_template:
     def test_model_with_default_deployment_template_to_dict(self) -> None:
         """Test Model._to_dict() with default_deployment_template."""
         from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
-        
+
         template = DefaultDeploymentTemplate(
             asset_id="azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
         )
-        
+
         model = Model(
             name="test-model",
             version="1",
@@ -182,9 +182,9 @@ default_deployment_template:
             description="Test model with deployment template",
             default_deployment_template=template,
         )
-        
+
         model_dict = model._to_dict()
-        
+
         assert "default_deployment_template" in model_dict
         assert model_dict["default_deployment_template"] is not None
         assert "asset_id" in model_dict["default_deployment_template"]

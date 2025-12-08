@@ -39,9 +39,7 @@ module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
 
 
-def check_and_log_default_deployment_template(
-    deployment: Deployment, credential: Optional[TokenCredential]
-) -> None:
+def check_default_deployment_template(deployment: Deployment, credential: Optional[TokenCredential]) -> None:
     """Check if a registry model has a default deployment template and log if found.
 
     :param Deployment deployment: Endpoint deployment object.
@@ -231,7 +229,7 @@ def upload_dependencies(
             else None
         )
 
-    check_and_log_default_deployment_template(deployment, credential)
+    check_default_deployment_template(deployment, credential)
 
     if not is_registry_id_for_resource(deployment.model):
         deployment.model = (

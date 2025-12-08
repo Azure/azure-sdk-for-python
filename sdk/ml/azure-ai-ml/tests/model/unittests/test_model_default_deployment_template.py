@@ -1,4 +1,5 @@
 """Unit tests for Model with default_deployment_template functionality."""
+
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -34,22 +35,20 @@ class TestModelDefaultDeploymentTemplate:
             path="./model.pkl",
             default_deployment_template=template,
         )
-        
+
         assert model.default_deployment_template is not None
         assert model.default_deployment_template.asset_id == template.asset_id
 
     def test_model_init_with_default_deployment_template_dict(self) -> None:
         """Test creating a Model with default_deployment_template as dict."""
-        template_dict = {
-            "asset_id": "azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
-        }
+        template_dict = {"asset_id": "azureml://registries/test-registry/deploymenttemplates/template1/versions/1"}
         model = Model(
             name="test-model",
             version="1",
             path="./model.pkl",
             default_deployment_template=template_dict,  # type: ignore[arg-type]
         )
-        
+
         assert model.default_deployment_template is not None
         assert isinstance(model.default_deployment_template, DefaultDeploymentTemplate)
         assert model.default_deployment_template.asset_id == template_dict["asset_id"]
@@ -61,7 +60,7 @@ class TestModelDefaultDeploymentTemplate:
             version="1",
             path="./model.pkl",
         )
-        
+
         assert model.default_deployment_template is None
 
     def test_model_to_rest_object_with_default_deployment_template(self) -> None:
@@ -76,9 +75,9 @@ class TestModelDefaultDeploymentTemplate:
             description="Test model",
             default_deployment_template=template,
         )
-        
+
         rest_object = model._to_rest_object()
-        
+
         # Should return ModelVersionData when default_deployment_template is present
         assert isinstance(rest_object, ModelVersionData)
         assert isinstance(rest_object.properties, ModelVersionDetails)
@@ -95,9 +94,9 @@ class TestModelDefaultDeploymentTemplate:
             description="Test model",
             stage="Production",
         )
-        
+
         rest_object = model._to_rest_object()
-        
+
         # Should return ModelVersion when default_deployment_template is not present
         assert isinstance(rest_object, ModelVersion)
         assert isinstance(rest_object.properties, ModelVersionProperties)
@@ -106,7 +105,7 @@ class TestModelDefaultDeploymentTemplate:
     def test_model_from_rest_object_with_default_deployment_template_dict(self) -> None:
         """Test Model._from_rest_object() with default_deployment_template as dict."""
         template_asset_id = "azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
-        
+
         # Create mock REST object
         rest_properties = Mock(spec=ModelVersionDetails)
         rest_properties.description = "Test model"
@@ -120,11 +119,11 @@ class TestModelDefaultDeploymentTemplate:
         rest_properties.intellectual_property = None
         rest_properties.system_metadata = None
         rest_properties.default_deployment_template = {"asset_id": template_asset_id}
-        
+
         rest_object = Mock(spec=ModelVersionData)
         rest_object.id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/test-model/versions/1"
         rest_object.properties = rest_properties
-        
+
         # Mock system_data
         mock_system_data = Mock()
         mock_system_data.created_by = "test_user"
@@ -132,9 +131,9 @@ class TestModelDefaultDeploymentTemplate:
         mock_system_data.last_modified_by = None
         mock_system_data.last_modified_at = None
         rest_object.system_data = mock_system_data
-        
+
         model = Model._from_rest_object(rest_object)
-        
+
         assert model.default_deployment_template is not None
         assert isinstance(model.default_deployment_template, DefaultDeploymentTemplate)
         assert model.default_deployment_template.asset_id == template_asset_id
@@ -142,7 +141,7 @@ class TestModelDefaultDeploymentTemplate:
     def test_model_from_rest_object_with_default_deployment_template_object(self) -> None:
         """Test Model._from_rest_object() with default_deployment_template as object."""
         template_asset_id = "azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
-        
+
         # Create mock REST object
         rest_properties = Mock(spec=ModelVersionDetails)
         rest_properties.description = "Test model"
@@ -155,16 +154,16 @@ class TestModelDefaultDeploymentTemplate:
         rest_properties.job_name = None
         rest_properties.intellectual_property = None
         rest_properties.system_metadata = None
-        
+
         # Create template object with asset_id attribute
         template_obj = Mock()
         template_obj.asset_id = template_asset_id
         rest_properties.default_deployment_template = template_obj
-        
+
         rest_object = Mock(spec=ModelVersionData)
         rest_object.id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/test-model/versions/1"
         rest_object.properties = rest_properties
-        
+
         # Mock system_data
         mock_system_data = Mock()
         mock_system_data.created_by = "test_user"
@@ -172,9 +171,9 @@ class TestModelDefaultDeploymentTemplate:
         mock_system_data.last_modified_by = None
         mock_system_data.last_modified_at = None
         rest_object.system_data = mock_system_data
-        
+
         model = Model._from_rest_object(rest_object)
-        
+
         assert model.default_deployment_template is not None
         assert isinstance(model.default_deployment_template, DefaultDeploymentTemplate)
         assert model.default_deployment_template.asset_id == template_asset_id
@@ -192,11 +191,11 @@ class TestModelDefaultDeploymentTemplate:
         rest_properties.stage = "Production"
         rest_properties.job_name = None
         rest_properties.intellectual_property = None
-        
+
         rest_object = Mock(spec=ModelVersion)
         rest_object.id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/test-model/versions/1"
         rest_object.properties = rest_properties
-        
+
         # Mock system_data
         mock_system_data = Mock()
         mock_system_data.created_by = "test_user"
@@ -204,9 +203,9 @@ class TestModelDefaultDeploymentTemplate:
         mock_system_data.last_modified_by = None
         mock_system_data.last_modified_at = None
         rest_object.system_data = mock_system_data
-        
+
         model = Model._from_rest_object(rest_object)
-        
+
         assert model.default_deployment_template is None
         assert model.stage == "Production"
 
@@ -222,13 +221,13 @@ class TestModelDefaultDeploymentTemplate:
             stage="Production",
             default_deployment_template=template,
         )
-        
+
         assert model.stage == "Production"
         assert model.default_deployment_template is not None
-        
+
         # Serialize to REST object
         rest_object = model._to_rest_object()
-        
+
         # Note: When default_deployment_template is present, it uses ModelVersionDetails
         # which doesn't support stage in the v2021_10_01_dataplanepreview API
         # This is expected behavior - stage is only supported in workspace operations
@@ -239,7 +238,7 @@ class TestModelDefaultDeploymentTemplate:
         # Create a dummy model file
         model_file = tmp_path / "model.pkl"
         model_file.write_text("dummy model")
-        
+
         yaml_content = f"""
 name: test-model
 version: "1"
@@ -250,9 +249,9 @@ default_deployment_template:
 """
         yaml_file = tmp_path / "model_with_template.yml"
         yaml_file.write_text(yaml_content)
-        
+
         model = load_model(source=yaml_file)
-        
+
         assert model.name == "test-model"
         assert model.version == "1"
         assert model.default_deployment_template is not None
