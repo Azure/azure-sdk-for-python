@@ -7,44 +7,21 @@
 
 import os
 from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy, RecordedTransport
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 
-class TestAgentFileSearchStream(TestBase):
+class TestAgentFileSearchStreamAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_file_search_stream(self, **kwargs):
-        """
-        Test agent with File Search tool using streaming responses.
-
-        This test verifies that an agent can:
-        1. Upload and index documents into a vector store
-        2. Use FileSearchTool with streaming enabled
-        3. Stream back responses based on document content
-
-        Routes used in this test:
-
-        Action REST API Route                                Client Method
-        ------+---------------------------------------------+-----------------------------------
-        # Setup:
-        POST   /vector_stores                                openai_client.vector_stores.create()
-        POST   /vector_stores/{id}/files                     openai_client.vector_stores.files.upload_and_poll()
-        POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
-
-        # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (stream=True, with FileSearchTool)
-
-        # Teardown:
-        DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
-        DELETE /vector_stores/{id}                           openai_client.vector_stores.delete()
-        """
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_agent_file_search_stream_async(self, **kwargs):
 
         model = self.test_agents_params["model_deployment_name"]
 
-        with (
-            self.create_client(operation_group="agents", **kwargs) as project_client,
+        async with (
+            self.create_async_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
             # Get the path to the test file
@@ -56,13 +33,13 @@ class TestAgentFileSearchStream(TestBase):
             print(f"Using test file: {asset_file_path}")
 
             # Create vector store for file search
-            vector_store = openai_client.vector_stores.create(name="ProductInfoStoreStream")
+            vector_store = await openai_client.vector_stores.create(name="ProductInfoStoreStream")
             print(f"Vector store created (id: {vector_store.id})")
             assert vector_store.id
 
             # Upload file to vector store
             with open(asset_file_path, "rb") as f:
-                file = openai_client.vector_stores.files.upload_and_poll(
+                file = await openai_client.vector_stores.files.upload_and_poll(
                     vector_store_id=vector_store.id,
                     file=f,
                 )
@@ -73,7 +50,7 @@ class TestAgentFileSearchStream(TestBase):
 
             # Create agent with file search tool
             agent_name = "file-search-stream-agent"
-            agent = project_client.agents.create_version(
+            agent = await project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
@@ -87,7 +64,7 @@ class TestAgentFileSearchStream(TestBase):
             # Ask a question with streaming enabled
             print("\nAsking agent about the product information (streaming)...")
 
-            stream_response = openai_client.responses.create(
+            stream_response = await openai_client.responses.create(
                 stream=True,
                 input="What products are mentioned in the document? Please provide a brief summary.",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -98,7 +75,7 @@ class TestAgentFileSearchStream(TestBase):
             response_id = None
             events_received = 0
 
-            for event in stream_response:
+            async for event in stream_response:
                 events_received += 1
 
                 if event.type == "response.output_item.done":
@@ -124,8 +101,8 @@ class TestAgentFileSearchStream(TestBase):
 
             # Teardown
             print("\nCleaning up...")
-            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
             print("Agent deleted")
 
-            openai_client.vector_stores.delete(vector_store.id)
+            await openai_client.vector_stores.delete(vector_store.id)
             print("Vector store deleted")
