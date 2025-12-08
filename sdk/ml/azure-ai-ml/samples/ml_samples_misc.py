@@ -114,6 +114,23 @@ class MiscConfigurationOptions(object):
         ml_client.models.create_or_update(model)
         # [END model_entity_create]
 
+        # [START model_entity_with_default_deployment_template]
+        from azure.ai.ml.entities import Model
+        from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
+
+        model_with_template = Model(
+            name="model-with-template",
+            version="1",
+            description="Model with default deployment template",
+            path="models/my_model.pkl",
+            type="custom_model",
+            default_deployment_template=DefaultDeploymentTemplate(
+                asset_id="azureml://registries/my-registry/deploymenttemplates/my-template/versions/1"
+            ),
+        )
+        ml_client.models.create_or_update(model_with_template)
+        # [END model_entity_with_default_deployment_template]
+
         # [START model_operations_archive]
         ml_client.models.archive(name="model1", version="5")
         # [END model_operations_archive]
