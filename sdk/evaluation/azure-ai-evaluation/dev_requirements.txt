@@ -1,8 +1,6 @@
 -e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
-opentelemetry-api==1.38.0
-opentelemetry-sdk==1.38.0
 pytest
 pytest-asyncio
 pytest-cov
