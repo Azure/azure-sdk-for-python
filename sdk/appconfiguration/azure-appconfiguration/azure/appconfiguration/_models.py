@@ -776,9 +776,7 @@ class _BaseConfigurationSettingEtagPageIterator:
         """
         deserialized = json.loads(response.text())
         list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
-        settings = [
-            ConfigurationSetting._from_generated(x) for x in list_of_elem  # pylint: disable=protected-access
-        ]
+        settings = [ConfigurationSetting._from_generated(x) for x in list_of_elem]  # pylint: disable=protected-access
         # Update continuation token for next page
         self._update_continuation_token(response.headers.get("Link", None))
         return iter(settings)
@@ -827,6 +825,7 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
         # Unexpected status code, raise an error
         response.raise_for_status()
         return iter([])  # This line is never reached but satisfies pylint
+
 
 class ConfigurationSettingPagedAsync(AsyncItemPaged):
     """An async iterable of ConfigurationSettings that supports etag-based change detection."""

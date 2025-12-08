@@ -1141,16 +1141,16 @@ class TestAppConfigurationClient(AppConfigTestCase):
             # there will have 2 pages while listing, there are 100 configuration settings per page.
 
             # get page etags
-            page_etags = []
+            match_conditions = []
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
             for page in iterator:
                 etag = iterator.etag
-                page_etags.append(etag)
+                match_conditions.append(etag)
 
             # monitor page updates without changes - only changed pages will be yielded
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page(etags=page_etags)
+            iterator = items.by_page(match_conditions=match_conditions)
             changed_pages = list(iterator)
             # No pages should be yielded since nothing changed
             assert len(changed_pages) == 0
@@ -1165,20 +1165,20 @@ class TestAppConfigurationClient(AppConfigTestCase):
             # now we have three pages, 100 settings in first two pages and 1 setting in the last page
 
             # get page etags after updates
-            new_page_etags = []
+            new_match_conditions = []
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
             iterator = items.by_page()
             for page in iterator:
                 etag = iterator.etag
-                new_page_etags.append(etag)
+                new_match_conditions.append(etag)
 
-            assert page_etags[0] == new_page_etags[0]
-            assert page_etags[1] != new_page_etags[1]
-            assert len(new_page_etags) == 3
+            assert match_conditions[0] == new_match_conditions[0]
+            assert match_conditions[1] != new_match_conditions[1]
+            assert len(new_match_conditions) == 3
 
             # monitor pages after updates - only changed pages will be yielded
             items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page(etags=page_etags)
+            iterator = items.by_page(match_conditions=match_conditions)
             changed_pages = list(iterator)
             # Should yield 2 pages (second page changed, third page is new)
             assert len(changed_pages) == 2
