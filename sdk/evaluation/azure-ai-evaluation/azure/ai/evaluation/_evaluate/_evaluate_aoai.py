@@ -815,7 +815,7 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             return val
         if isinstance(val, bool):
             return val
-        # Align numerics with legacy text-only JSONL payloads by stringifying them.
+        # Align numerics with legacy text-only JSONL payloads by turning them into strings.
         if isinstance(val, (int, float)):
             return str(val)
         if isinstance(val, (dict, list)):
