@@ -12,12 +12,10 @@ Tests various scenarios using an agent with File Search and Function Tool.
 All tests use the same tool combination but different inputs and workflows.
 """
 
-import os
 import json
-import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
@@ -26,10 +24,7 @@ class TestAgentFileSearchAndFunction(TestBase):
     """Tests for agents using File Search + Function Tool combination."""
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_data_analysis_workflow(self, **kwargs):
         """
         Test data analysis workflow: upload data, search, save results.
@@ -160,10 +155,7 @@ Overall Total Revenue: $129,000
         print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_empty_vector_store_handling(self, **kwargs):
         """
         Test how agent handles empty vector store (no files uploaded).
@@ -239,10 +231,7 @@ Overall Total Revenue: $129,000
         print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_python_code_file_search(self, **kwargs):
         """
         Test searching for Python code files.
@@ -337,10 +326,7 @@ print(f"Sum: {result}")
         print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_multi_turn_search_and_save_workflow(self, **kwargs):
         """
         Test multi-turn workflow: search documents, ask follow-ups, save findings.

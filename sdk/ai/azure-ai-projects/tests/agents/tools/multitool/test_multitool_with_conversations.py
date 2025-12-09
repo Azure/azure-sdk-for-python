@@ -11,10 +11,9 @@ within the context of conversations, testing conversation state management with 
 """
 
 import json
-import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     FunctionTool,
     FileSearchTool,
@@ -26,10 +25,7 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 class TestMultiToolWithConversations(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_file_search_and_function_with_conversation(self, **kwargs):
         """
         Test using multiple tools (FileSearch + Function) within one conversation.
