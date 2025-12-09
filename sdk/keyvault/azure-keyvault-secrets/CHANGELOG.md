@@ -10,6 +10,14 @@
 
 ### Other Changes
 
+- Refactored package structure to use generation-focused design with `_patch.py` patching layers
+  - Public API remains unchanged and fully backward compatible
+  - Internal structure now matches `azure-keyvault-securitydomain` pattern
+  - Models moved to `models/` subdirectory with patch-based imports
+  - Client implementation moved to root `_patch.py`
+  - Created `_internal/` directory for utilities
+  - Updated `__init__.py` files to use patch-based import pattern
+
 ## 4.10.0 (2025-06-16)
 
 ### Features Added
