@@ -7,6 +7,8 @@ import random
 import re
 import functools
 import json
+import os
+import tempfile
 from typing import Optional, Any, Dict, Final
 from azure.ai.projects.models import (
     Connection,
@@ -32,6 +34,9 @@ from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+
+# Store reference to built-in open before any mocking occurs
+_BUILTIN_OPEN = open
 
 
 # Load secrets from environment variables
@@ -61,6 +66,60 @@ RFT_JOB_TYPE: Final[str] = "rft"
 STANDARD_TRAINING_TYPE: Final[str] = "Standard"
 GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
 DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
+
+
+def patched_open_crlf_to_lf(*args, **kwargs):
+    """
+    Patched open function that converts CRLF to LF for text files.
+
+    This function should be used with mock.patch("builtins.open", side_effect=TestBase.patched_open_crlf_to_lf)
+    to ensure consistent line endings in test files during recording and playback.
+    """
+    # Extract file path - first positional arg or 'file' keyword arg
+    if args:
+        file_path = args[0]
+    elif "file" in kwargs:
+        file_path = kwargs["file"]
+    else:
+        # No file path provided, just pass through
+        return _BUILTIN_OPEN(*args, **kwargs)
+
+    # Extract mode - second positional arg or 'mode' keyword arg
+    if len(args) > 1:
+        mode = args[1]
+    else:
+        mode = kwargs.get("mode", "r")
+
+    # Check if this is binary read mode for text-like files
+    if "r" in mode and "b" in mode and file_path and isinstance(file_path, str):
+        # Check file extension to determine if it's a text file
+        text_extensions = {".txt", ".json", ".jsonl", ".csv", ".md", ".yaml", ".yml", ".xml"}
+        ext = os.path.splitext(file_path)[1].lower()
+        if ext in text_extensions:
+            # Read the original file
+            with _BUILTIN_OPEN(file_path, "rb") as f:
+                content = f.read()
+
+            # Convert CRLF to LF
+            converted_content = content.replace(b"\r\n", b"\n")
+
+            # Only create temp file if conversion was needed
+            if converted_content != content:
+                # Create a temporary file with the converted content
+                temp_fd, temp_path = tempfile.mkstemp(suffix=ext)
+                os.write(temp_fd, converted_content)
+                os.close(temp_fd)
+                # Replace file path with temp path
+                if args:
+                    # File path was passed as positional arg
+                    return _BUILTIN_OPEN(temp_path, *args[1:], **kwargs)
+                else:
+                    # File path was passed as keyword arg
+                    kwargs = kwargs.copy()
+                    kwargs["file"] = temp_path
+                    return _BUILTIN_OPEN(**kwargs)
+
+    return _BUILTIN_OPEN(*args, **kwargs)
 
 
 class TestBase(AzureRecordedTestCase):

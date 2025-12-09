@@ -5,33 +5,17 @@
 # ------------------------------------
 import csv, os, pytest, re, inspect, sys
 import importlib.util
-import io
 import unittest.mock as mock
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, RecordedTransport
-from test_base import servicePreparer
+from test_base import servicePreparer, patched_open_crlf_to_lf
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
 
 
 class SampleExecutor:
     """Helper class for executing sample files with proper environment setup and credential mocking."""
-
-    class ConvertedFileWrapper(io.BufferedReader):
-        """File wrapper that converts CRLF to LF content while preserving original filename."""
-
-        def __init__(self, file_path, converted_content):
-            # Create BytesIO with converted content
-            self._bytesio = io.BytesIO(converted_content)
-            # Initialize BufferedReader with the BytesIO
-            super().__init__(self._bytesio)
-            # Override name to be the original file path
-            self._name = file_path
-
-        @property
-        def name(self):
-            return self._name
 
     def __init__(
         self, test_instance: "AzureRecordedTestCase", sample_path: str, env_var_mapping: dict[str, str], **kwargs
@@ -62,35 +46,11 @@ class SampleExecutor:
 
         self.module = importlib.util.module_from_spec(spec)
         self.spec = spec
-        self._original_open = open
 
     def _capture_print(self, *args, **kwargs):
         """Capture print calls while still outputting to console."""
         self.print_calls.append(" ".join(str(arg) for arg in args))
         self._original_print(*args, **kwargs)
-
-    def _patched_open(self, *args, **kwargs):
-        """Patch open to convert CRLF to LF for text files."""
-        file_path = args[0] if args else kwargs.get("file")
-        mode = args[1] if len(args) > 1 else kwargs.get("mode", "r")
-
-        # Check if this is binary read mode for text-like files
-        if "r" in mode and "b" in mode and file_path and isinstance(file_path, str):
-            # Check file extension to determine if it's a text file
-            text_extensions = {".txt", ".json", ".jsonl", ".csv", ".md", ".yaml", ".yml", ".xml"}
-            ext = os.path.splitext(file_path)[1].lower()
-            if ext in text_extensions:
-                # Read the original file
-                with self._original_open(file_path, "rb") as f:
-                    content = f.read()
-
-                # Convert CRLF to LF
-                converted_content = content.replace(b"\r\n", b"\n")
-
-                # Return wrapped file-like object with converted content
-                return SampleExecutor.ConvertedFileWrapper(file_path, converted_content)
-
-        return self._original_open(*args, **kwargs)
 
     def execute(self):
         """Execute a synchronous sample with proper mocking and environment setup."""
@@ -98,7 +58,7 @@ class SampleExecutor:
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
-            mock.patch("builtins.open", side_effect=self._patched_open),
+            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
             mock.patch("azure.identity.DefaultAzureCredential") as mock_credential,
         ):
             for var_name, var_value in self.env_vars.items():
@@ -119,7 +79,7 @@ class SampleExecutor:
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
-            mock.patch("builtins.open", side_effect=self._patched_open),
+            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
             mock.patch("azure.identity.aio.DefaultAzureCredential") as mock_credential,
         ):
             for var_name, var_value in self.env_vars.items():
