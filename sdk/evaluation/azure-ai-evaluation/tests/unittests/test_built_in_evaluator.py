@@ -256,7 +256,6 @@ class TestBuiltInEvaluators:
     def test_qa_evaluator_is_reasoning_model_true(self, mock_model_config):
         """Test QAEvaluator properly passes is_reasoning_model=True to sub-evaluators"""
         qa_eval = QAEvaluator(model_config=mock_model_config, is_reasoning_model=True)
-        
         # Check that all model-based evaluators have is_reasoning_model set to True
         for evaluator in qa_eval._evaluators:
             if hasattr(evaluator, '_is_reasoning_model'):
