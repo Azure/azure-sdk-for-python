@@ -343,9 +343,16 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         return client, initial_response, deserialization_callback
 
 class CreateDeploymentDetails(_GeneratedCreateDeploymentDetails):
-    """Patched model that allows azure_resource_ids to be either:
-    - List[AssignedProjectResource] (preview style), or
-    - List[str] (GA style, stored for later use)
+    """Represents the options for creating or updating a project deployment.
+
+    :ivar trained_model_label: Represents the trained model label.
+    :vartype trained_model_label: str
+    :ivar azure_resource_ids: Language or AIService resource IDs associated with this deployment.
+        For service version 2025-11-15-preview, this is represented as a list of
+        :class:`AssignedProjectResource`. For service version 2025-11-01, it may be
+        constructed from a list of resource ID strings.
+    :vartype azure_resource_ids:
+        list[~azure.ai.language.conversations.authoring.models.AssignedProjectResource] or list[str]
     """
 
     # keep a separate field to remember the GA-style strings
