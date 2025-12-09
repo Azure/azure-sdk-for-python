@@ -636,7 +636,7 @@ class CreateDeploymentDetails(_Model):
     :ivar trained_model_label: Represents the trained model label. Required.
     :vartype trained_model_label: str
     :ivar azure_resource_ids: Represents the Language or AIService resource IDs that if
-     provided,\\n            the deployment will be rolled out to the resources provided here as
+     provided, the deployment will be rolled out to the resources provided here as
      well as the original resource in which the project is created.
     :vartype azure_resource_ids:
      list[~azure.ai.language.conversations.authoring.models.AssignedProjectResource]
@@ -649,7 +649,7 @@ class CreateDeploymentDetails(_Model):
     azure_resource_ids: Optional[list["_models.AssignedProjectResource"]] = rest_field(
         name="azureResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents the Language or AIService resource IDs that if provided,\n            the deployment
+    """Represents the Language or AIService resource IDs that if provided,          the deployment
      will be rolled out to the resources provided here as well as the original resource in which the
      project is created."""
 

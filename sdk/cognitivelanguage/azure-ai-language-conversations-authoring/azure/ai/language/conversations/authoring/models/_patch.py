@@ -348,14 +348,13 @@ class CreateDeploymentDetails(_GeneratedCreateDeploymentDetails):
     :ivar trained_model_label: Represents the trained model label.
     :vartype trained_model_label: str
     :ivar azure_resource_ids: Language or AIService resource IDs associated with this deployment.
-        For service version 2025-11-15-preview, this is represented as a list of
-        :class:`AssignedProjectResource`. For service version 2025-11-01, it may be
-        constructed from a list of resource ID strings.
+     For service version 2025-11-15-preview, this is represented as a list of
+     class:`AssignedProjectResource`. For service version 2025-11-01, it may be
+     constructed from a list of resource ID strings.
     :vartype azure_resource_ids:
-        list[~azure.ai.language.conversations.authoring.models.AssignedProjectResource] or list[str]
+     list[~azure.ai.language.conversations.authoring.models.AssignedProjectResource] or list[str]
     """
 
-    # keep a separate field to remember the GA-style strings
     _azure_resource_ids_strings: Optional[List[str]]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
