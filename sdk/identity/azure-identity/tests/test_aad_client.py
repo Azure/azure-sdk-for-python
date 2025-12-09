@@ -114,43 +114,56 @@ def test_request_url(authority):
     client.obtain_token_by_refresh_token("scope", "refresh token")
 
 
-def test_token_url():
-    tenant_id = "tenant-id"
-    client = AadClient(tenant_id, "client-id", authority="https://login.microsoftonline.com")
-    assert client._get_token_url() == "https://login.microsoftonline.com/tenant-id/oauth2/v2.0/token"
+def test_request_url_with_regional_authority():
 
-    # Test with usage of AZURE_AUTHORITY_HOST
-    with patch.dict(
-        "os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://custom.microsoftonline.com"}, clear=True
-    ):
-        client = AadClient(tenant_id=tenant_id, client_id="client-id")
-        assert client._get_token_url() == "https://custom.microsoftonline.com/tenant-id/oauth2/v2.0/token"
+    def send(request, **_):
+        assert urlparse(request.url).netloc == "centralus.login.microsoft.com"
+        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
 
-    # Test with usage of AZURE_REGIONAL_AUTHORITY_NAME
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus"}, clear=True):
-        client = AadClient(tenant_id=tenant_id, client_id="client-id")
-        assert client._get_token_url() == "https://centralus.login.microsoft.com/tenant-id/oauth2/v2.0/token"
+        client = AadClient("tenant-id", "client id", transport=Mock(send=send))
 
-    # Test with usage of AZURE_REGIONAL_AUTHORITY_NAME and AZURE_AUTHORITY_HOST
-    with patch.dict(
-        "os.environ",
-        {
-            EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://login.microsoftonline.us",
-            EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus",
-        },
-        clear=True,
-    ):
-        client = AadClient(tenant_id=tenant_id, client_id="client-id")
-        assert client._get_token_url() == "https://centralus.login.microsoftonline.us/tenant-id/oauth2/v2.0/token"
+        client.obtain_token_by_authorization_code("scope", "code", "uri")
+        client.obtain_token_by_refresh_token("scope", "refresh token")
+
+        # obtain_token_by_refresh_token is client_secret safe
+        client.obtain_token_by_refresh_token("scope", "refresh token", client_secret="secret")
+
+
+def test_regional_authority_initialized_once():
+    """The client should lazily initialize its regional authority only once."""
+
+    def send(request, **_):
+        assert urlparse(request.url).netloc == "centralus.login.microsoft.com"
+        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
+
+    with patch("azure.identity._internal.aad_client.AadClient._get_regional_authority_from_env") as mock_env:
+        mock_env.return_value = "centralus"
+        transport = Mock(send=Mock(wraps=send))
+        client = AadClient("tenant-id", "client id", transport=transport)
+
+        # The first token request should trigger initialization.
+        client.obtain_token_by_authorization_code("scope", "code", "uri")
+        # Subsequent requests shouldn't.
+        client.obtain_token_by_refresh_token("scope", "refresh token")
+        client.obtain_token_by_refresh_token("scope", "refresh token", client_secret="secret")
+
+        # Env should be checked only once.
+        assert mock_env.call_count == 1
 
 
 def test_initialize_regional_authority():
     client = AadClient("tenant-id", "client-id")
+    # The initial state should be False (uninitialized)
+    assert client._regional_authority is False
+
+    client._initialize_regional_authority()
     assert client._regional_authority is None
 
     # Test with usage of AZURE_REGIONAL_AUTHORITY_NAME
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus"}, clear=True):
         client = AadClient("tenant-id", "client-id")
+        client._initialize_regional_authority()
         assert client._regional_authority == "https://centralus.login.microsoft.com"
 
     # Test with non-Microsoft authority host
@@ -163,12 +176,14 @@ def test_initialize_regional_authority():
         clear=True,
     ):
         client = AadClient("tenant-id", "client-id")
+        client._initialize_regional_authority()
         assert client._regional_authority == "https://centralus.custom.authority.com"
 
     # Test with usage of region auto-discovery env var
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "tryautodetect"}, clear=True):
         with patch.dict("os.environ", {"REGION_NAME": "eastus"}):
             client = AadClient("tenant-id", "client-id")
+            client._initialize_regional_authority()
             assert client._regional_authority == "https://eastus.login.microsoft.com"
 
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "tryautodetect"}, clear=True):
@@ -181,10 +196,12 @@ def test_initialize_regional_authority():
         transport = mock.Mock(send=mock.Mock(return_value=response))
 
         client = AadClient("tenant-id", "client-id", transport=transport)
+        client._initialize_regional_authority()
         assert client._regional_authority == "https://westus2.login.microsoft.com"
 
     with patch.dict("os.environ", {"MSAL_FORCE_REGION": "westus3"}, clear=True):
         client = AadClient("tenant-id", "client-id")
+        client._initialize_regional_authority()
         assert client._regional_authority == "https://westus3.login.microsoft.com"
 
 

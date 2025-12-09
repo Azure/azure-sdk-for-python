@@ -212,7 +212,6 @@ async def test_regional_authority_initialized_once():
         assert urlparse(request.url).netloc == "centralus.login.microsoft.com"
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
 
-    # Mock _get_regional_authority_from_env to track how many times it's called.
     with patch("azure.identity.aio._internal.aad_client.AadClient._get_regional_authority_from_env") as mock_env:
         mock_env.return_value = "centralus"
         transport = AsyncMockTransport(send=Mock(wraps=send))
@@ -367,6 +366,9 @@ async def test_multitenant_cache():
 
 async def test_initialize_regional_authority():
     client = AadClient("tenant-id", "client-id")
+    # The initial state should be False (uninitialized)
+    assert client._regional_authority is False
+
     async with client:
         await client._initialize_regional_authority()
         assert client._regional_authority is None

@@ -24,7 +24,6 @@ class AadClient(AadClientBase):  # pylint:disable=client-accepts-api-version-key
     # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self._initialize_regional_authority()
 
     def __enter__(self) -> "AadClient":
         self._pipeline.__enter__()
@@ -39,6 +38,7 @@ class AadClient(AadClientBase):  # pylint:disable=client-accepts-api-version-key
     def obtain_token_by_authorization_code(
         self, scopes: Iterable[str], code: str, redirect_uri: str, client_secret: Optional[str] = None, **kwargs: Any
     ) -> AccessTokenInfo:
+        self._initialize_regional_authority()
         request = self._get_auth_code_request(
             scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret, **kwargs
         )
@@ -47,20 +47,24 @@ class AadClient(AadClientBase):  # pylint:disable=client-accepts-api-version-key
     def obtain_token_by_client_certificate(
         self, scopes: Iterable[str], certificate: AadClientCertificate, **kwargs: Any
     ) -> AccessTokenInfo:
+        self._initialize_regional_authority()
         request = self._get_client_certificate_request(scopes, certificate, **kwargs)
         return self._run_pipeline(request, **kwargs)
 
     def obtain_token_by_client_secret(self, scopes: Iterable[str], secret: str, **kwargs: Any) -> AccessTokenInfo:
+        self._initialize_regional_authority()
         request = self._get_client_secret_request(scopes, secret, **kwargs)
         return self._run_pipeline(request, **kwargs)
 
     def obtain_token_by_jwt_assertion(self, scopes: Iterable[str], assertion: str, **kwargs: Any) -> AccessTokenInfo:
+        self._initialize_regional_authority()
         request = self._get_jwt_assertion_request(scopes, assertion, **kwargs)
         return self._run_pipeline(request, **kwargs)
 
     def obtain_token_by_refresh_token(
         self, scopes: Iterable[str], refresh_token: str, **kwargs: Any
     ) -> AccessTokenInfo:
+        self._initialize_regional_authority()
         request = self._get_refresh_token_request(scopes, refresh_token, **kwargs)
         return self._run_pipeline(request, **kwargs)
 
@@ -87,7 +91,7 @@ class AadClient(AadClientBase):  # pylint:disable=client-accepts-api-version-key
         if regional_authority == RegionalAuthority.AUTO_DISCOVER_REGION:
             regional_authority = self._discover_region()
             if not regional_authority:
-                _LOGGER.warning("Failed to auto-discover region. Using the non-regional authority.")
+                _LOGGER.info("Failed to auto-discover region. Using the non-regional authority.")
                 self._regional_authority = None
                 return
 
@@ -102,7 +106,7 @@ class AadClient(AadClientBase):  # pylint:disable=client-accepts-api-version-key
             response = self._pipeline.run(request)
             return self._process_region_discovery_response(response)
         except Exception as ex:  # pylint: disable=broad-except
-            _LOGGER.info("Failed to discover Azure region from IMDS: %s", ex)
+            _LOGGER.debug("Failed to discover Azure region from IMDS: %s", ex)
             return None
 
     def _build_pipeline(self, **kwargs: Any) -> Pipeline:

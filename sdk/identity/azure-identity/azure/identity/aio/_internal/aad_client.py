@@ -111,7 +111,7 @@ class AadClient(AadClientBase):
             # Attempt to discover the region from IMDS
             regional_authority = await self._discover_region()
             if not regional_authority:
-                _LOGGER.debug("Failed to auto-discover region. Using the non-regional authority.")
+                _LOGGER.info("Failed to auto-discover region. Using the non-regional authority.")
                 self._regional_authority = None
                 return
 
@@ -126,7 +126,7 @@ class AadClient(AadClientBase):
             response = await self._pipeline.run(request)
             return self._process_region_discovery_response(response)
         except Exception as ex:  # pylint: disable=broad-except
-            _LOGGER.info("Failed to discover Azure region from IMDS: %s", ex)
+            _LOGGER.debug("Failed to discover Azure region from IMDS: %s", ex)
             return None
 
     async def _run_pipeline(self, request: HttpRequest, **kwargs) -> AccessTokenInfo:
