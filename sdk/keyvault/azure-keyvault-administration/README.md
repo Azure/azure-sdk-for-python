@@ -42,7 +42,7 @@ authentication as demonstrated below.
 * An existing [Key Vault Managed HSM][managed_hsm]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][managed_hsm_cli].
 
 ### Authenticate the client
-In order to interact with the Azure Key Vault service, you will need an instance of either a [KeyVaultAccessControlClient](#create-a-keyvaultaccesscontrolclient) or [KeyVaultBackupClient](#create-a-keyvaultbackupclient), as well as a **vault url** (which you may see as "DNS Name" in the Azure Portal) and a credential object. This document demonstrates using a [DefaultAzureCredential][default_cred_ref], which is appropriate for most scenarios, including local development and production environments. We recommend using a [managed identity][managed_identity] for authentication in production environments.
+In order to interact with the Azure Key Vault service, you will need an instance of either a [KeyVaultAccessControlClient](#create-a-keyvaultaccesscontrolclient), [KeyVaultBackupClient](#create-a-keyvaultbackupclient), [KeyVaultSettingsClient](#create-a-keyvaultsettingsclient), or [KeyVaultEkmClient](#create-a-keyvaultekmclient) as well as a **vault url** (which you may see as "DNS Name" in the Azure Portal) and a credential object. This document demonstrates using a [DefaultAzureCredential][default_cred_ref], which is appropriate for most scenarios, including local development and production environments. We recommend using a [managed identity][managed_identity] for authentication in production environments.
 
 See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
 
@@ -109,6 +109,24 @@ client = KeyVaultSettingsClient(vault_url=MANAGED_HSM_URL, credential=credential
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultSettingsClient` instead.
 
+#### Create a KeyVaultEkmClient
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a ekm client (replacing the value of `vault_url` with your Managed HSM's URL):
+
+<!-- SNIPPET:settings_operations.create_a_settings_client -->
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultEkmClient
+
+MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
+credential = DefaultAzureCredential()
+client = KeyVaultEkmClient(vault_url=MANAGED_HSM_URL, credential=credential)
+```
+
+<!-- END SNIPPET -->
+
+> **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultEkmClient` instead.
+
 ## Key concepts
 
 ### Role definition
@@ -140,6 +158,14 @@ A restore operation represents a long-running operation for both a full key and 
 ### KeyVaultSettingsClient
 
 A `KeyVaultSettingsClient` manages Managed HSM account settings.
+
+### KeyVaultEkmClient
+
+A `KeyVaultEkmClient` manages the Managed HSM Ekm connection.
+
+### Ekm Connection
+
+An Ekm connection represents the connection of a Managed HSM resource with an external HSM.
 
 ## Examples
 This section contains code snippets covering common tasks:
@@ -414,6 +440,7 @@ Several samples are available in the Azure SDK for Python GitHub repository. The
 - [Create/update/delete role definitions and role assignments][access_control_operations_sample] ([async version][access_control_operations_async_sample])
 - [Full backup and restore][backup_operations_sample] ([async version][backup_operations_async_sample])
 - [List and update Key Vault settings][settings_operations_sample] ([async version][settings_operations_async_sample])
+- [Retrieve and manage Ekm connections][ekm_operations_sample] ([async version][ekm_operations_async_sample])
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].
@@ -475,6 +502,8 @@ contact opencode@microsoft.com with any additional questions or comments.
 [sas_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/README.md#types-of-credentials
 [settings_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations.py
 [settings_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations_async.py
+[ekm_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_operations.py
+[ekm_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_operations_async.py
 [storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/README.md
 [storage_explorer]: https://learn.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer
 
