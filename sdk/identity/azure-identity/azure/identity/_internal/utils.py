@@ -58,7 +58,9 @@ def get_regional_authority(central_authority) -> Optional[str]:
     :return: The regional authority, or None if no regional authority is configured.
     :rtype: Optional[str]
     """
-    regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
+    regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME) or os.environ.get(
+        "MSAL_FORCE_REGION"
+    )  # For parity with credentials that rely on MSAL, we check this var too.
     if not regional_authority:
         return None
 

@@ -108,3 +108,8 @@ def test_get_regional_authority():
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "tryautodetect"}, clear=True):
         result = get_regional_authority("https://login.microsoftonline.com")
         assert result is None
+
+    # Test with MSAL_FORCE_REGION env variable
+    with patch.dict("os.environ", {"MSAL_FORCE_REGION": "westus3"}, clear=True):
+        result = get_regional_authority("https://login.microsoftonline.com")
+        assert result == "https://westus3.login.microsoft.com"
