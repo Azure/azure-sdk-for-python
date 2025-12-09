@@ -9,6 +9,7 @@ from azure.ai.evaluation import (
     RetrievalEvaluator,
     RelevanceEvaluator,
     GroundednessEvaluator,
+    QAEvaluator,
 )
 
 
@@ -243,3 +244,21 @@ class TestBuiltInEvaluators:
             "Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
             in exc_info.value.args[0]
         )
+
+    def test_qa_evaluator_is_reasoning_model_default(self, mock_model_config):
+        """Test QAEvaluator initializes with is_reasoning_model defaulting to False"""
+        qa_eval = QAEvaluator(model_config=mock_model_config)
+        
+        # Check that all model-based evaluators have is_reasoning_model set to False
+        for evaluator in qa_eval._evaluators:
+            if hasattr(evaluator, '_is_reasoning_model'):
+                assert evaluator._is_reasoning_model is False
+
+    def test_qa_evaluator_is_reasoning_model_true(self, mock_model_config):
+        """Test QAEvaluator properly passes is_reasoning_model=True to sub-evaluators"""
+        qa_eval = QAEvaluator(model_config=mock_model_config, is_reasoning_model=True)
+        
+        # Check that all model-based evaluators have is_reasoning_model set to True
+        for evaluator in qa_eval._evaluators:
+            if hasattr(evaluator, '_is_reasoning_model'):
+                assert evaluator._is_reasoning_model is True
