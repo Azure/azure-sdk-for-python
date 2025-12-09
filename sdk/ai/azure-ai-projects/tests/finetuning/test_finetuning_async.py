@@ -298,9 +298,7 @@ class TestFineTuningAsync(TestBase):
         self, completed_job_id, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
     ):
         if not completed_job_id:
-            pytest.skip(
-                f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test"
-            )
+            pytest.skip(f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test")
 
         subscription_id = kwargs.get("azure_ai_projects_tests_azure_subscription_id")
         resource_group = kwargs.get("azure_ai_projects_tests_azure_resource_group")
@@ -657,8 +655,8 @@ class TestFineTuningAsync(TestBase):
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
     @pytest.mark.skipif(
-    condition=(not is_live_and_not_recording()),
-    reason="Skipped because not able to pause any job",
+        condition=(not is_live_and_not_recording()),
+        reason="Skipped because not able to pause any job",
     )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -694,8 +692,8 @@ class TestFineTuningAsync(TestBase):
             print(f"[test_finetuning_pause_job] Successfully paused and verified job: {running_job_id}")
 
     @pytest.mark.skipif(
-    condition=(not is_live_and_not_recording()),
-    reason="Skipped because not able to pause any job",
+        condition=(not is_live_and_not_recording()),
+        reason="Skipped because not able to pause any job",
     )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)

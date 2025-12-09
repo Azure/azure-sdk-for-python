@@ -289,9 +289,7 @@ class TestFineTuning(TestBase):
         self, completed_job_id, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
     ):
         if not completed_job_id:
-            pytest.skip(
-                f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test"
-            )
+            pytest.skip(f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test")
 
         subscription_id = kwargs.get("azure_ai_projects_tests_azure_subscription_id")
         resource_group = kwargs.get("azure_ai_projects_tests_azure_resource_group")
