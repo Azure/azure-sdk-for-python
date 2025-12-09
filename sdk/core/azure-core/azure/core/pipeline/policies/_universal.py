@@ -40,6 +40,7 @@ import urllib.parse
 
 from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError
+from azure.core._version_validation import validate_version
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
@@ -209,8 +210,7 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         application_id: Optional[str] = kwargs.pop("user_agent", None)
         
         # Validate that azcore_version is not empty or None to prevent unauthorized SDK usage
-        if not azcore_version or not isinstance(azcore_version, str) or not azcore_version.strip():
-            raise ValueError("Invalid SDK version: version must be a non-empty string")
+        validate_version(azcore_version)
         
         sdk_moniker: str = kwargs.pop("sdk_moniker", "core/{}".format(azcore_version))
 
