@@ -7,7 +7,9 @@ import random
 import re
 import functools
 import json
-from typing import Optional, Any, Dict, Final
+import os
+import tempfile
+from typing import Optional, Any, Dict, Final, IO, Union, overload, Literal, TextIO, BinaryIO
 from azure.ai.projects.models import (
     Connection,
     ConnectionType,
@@ -32,6 +34,9 @@ from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+
+# Store reference to built-in open before any mocking occurs
+_BUILTIN_OPEN = open
 
 
 # Load secrets from environment variables
@@ -61,6 +66,70 @@ RFT_JOB_TYPE: Final[str] = "rft"
 STANDARD_TRAINING_TYPE: Final[str] = "Standard"
 GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
 DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
+
+
+def patched_open_crlf_to_lf(*args, **kwargs):
+    """
+    Patched open function that converts CRLF to LF for text files.
+
+    This function should be used with mock.patch("builtins.open", side_effect=TestBase.patched_open_crlf_to_lf)
+    to ensure consistent line endings in test files during recording and playback.
+
+    Note: CRLF to LF conversion is only performed when opening text-like files (.txt, .json, .jsonl, .csv,
+    .md, .yaml, .yml, .xml) in binary read mode ("rb"). For all other modes or file types, the call is
+    forwarded to the built-in open function as is.
+    """
+    # Extract file path - first positional arg or 'file' keyword arg
+    if args:
+        file_path = args[0]
+    elif "file" in kwargs:
+        file_path = kwargs["file"]
+    else:
+        # No file path provided, just pass through
+        return _BUILTIN_OPEN(*args, **kwargs)
+
+    # Extract mode - second positional arg or 'mode' keyword arg
+    if len(args) > 1:
+        mode = str(args[1])
+    else:
+        mode = str(kwargs.get("mode", "r"))
+
+    # Check if this is binary read mode for text-like files
+    if "r" in mode and "b" in mode and file_path and isinstance(file_path, str):
+        # Check file extension to determine if it's a text file
+        text_extensions = {".txt", ".json", ".jsonl", ".csv", ".md", ".yaml", ".yml", ".xml"}
+        ext = os.path.splitext(file_path)[1].lower()
+        if ext in text_extensions:
+            # Read the original file
+            with _BUILTIN_OPEN(file_path, "rb") as f:
+                content = f.read()
+
+            # Convert CRLF to LF
+            converted_content = content.replace(b"\r\n", b"\n")
+
+            # Only create temp file if conversion was needed
+            if converted_content != content:
+                # Create a sub temp folder and save file with same filename
+                temp_dir = tempfile.mkdtemp()
+                original_filename = os.path.basename(file_path)
+                temp_path = os.path.join(temp_dir, original_filename)
+
+                # Write the converted content to the temp file
+                print(f"Converting CRLF to LF for {file_path} and saving to {temp_path}")
+                with _BUILTIN_OPEN(temp_path, "wb") as temp_file:
+                    temp_file.write(converted_content)
+
+                # Replace file path with temp path
+                if args:
+                    # File path was passed as positional arg
+                    return _BUILTIN_OPEN(temp_path, *args[1:], **kwargs)
+                else:
+                    # File path was passed as keyword arg
+                    kwargs = kwargs.copy()
+                    kwargs["file"] = temp_path
+                    return _BUILTIN_OPEN(**kwargs)
+
+    return _BUILTIN_OPEN(*args, **kwargs)
 
 
 class TestBase(AzureRecordedTestCase):
@@ -148,6 +217,64 @@ class TestBase(AzureRecordedTestCase):
     REGEX_APPINSIGHTS_CONNECTION_STRING = re.compile(
         r"^InstrumentationKey=[0-9a-fA-F-]{36};IngestionEndpoint=https://.+.applicationinsights.azure.com/;LiveEndpoint=https://.+.monitor.azure.com/;ApplicationId=[0-9a-fA-F-]{36}$"
     )
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: Literal["r", "w", "a", "x", "r+", "w+", "a+", "x+"] = "r",
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> TextIO: ...
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: Literal["rb", "wb", "ab", "xb", "r+b", "w+b", "a+b", "x+b"],
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> BinaryIO: ...
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: str,
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> IO[Any]: ...
+
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: str = "r",
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> IO[Any]:
+        """
+        Open function that converts CRLF to LF for text files.
+
+        This function has the same signature as built-in open and converts line endings
+        to ensure consistent behavior during test recording and playback.
+        """
+        return patched_open_crlf_to_lf(file, mode, buffering, encoding, errors, newline, closefd, opener)
 
     # helper function: create projects client using environment variables
     def create_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AIProjectClient:

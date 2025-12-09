@@ -38,7 +38,7 @@ class TestAgentFileSearchStreamAsync(TestBase):
             assert vector_store.id
 
             # Upload file to vector store
-            with open(asset_file_path, "rb") as f:
+            with self.open_with_lf(asset_file_path, "rb") as f:
                 file = await openai_client.vector_stores.files.upload_and_poll(
                     vector_store_id=vector_store.id,
                     file=f,
