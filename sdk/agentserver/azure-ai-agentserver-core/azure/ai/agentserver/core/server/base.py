@@ -14,6 +14,7 @@ import uvicorn
 from opentelemetry import context as otel_context, trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.applications import Starlette
+from starlette.concurrency import iterate_in_threadpool
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
@@ -137,61 +138,46 @@ class FoundryCBAgent:
                     context_carrier = {}
                     TraceContextTextMapPropagator().inject(context_carrier)
 
+                    ex = None
                     resp = await self.agent_run(context)
-
-                    if inspect.isgenerator(resp):
-                        def gen():
-                            ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
-                            token = otel_context.attach(ctx)
-                            seq = 0
-                            try:
-                                for event in resp:
-                                    seq += 1
-                                    yield _event_to_sse_chunk(event)
-                            except Exception as e:  # noqa: BLE001
-                                logger.error("Error in non-async generator: %s", e, exc_info=True)
-                                err = project_models.ResponseErrorEvent(
-                                    sequence_number=seq + 1,
-                                    code=project_models.ResponseErrorCode.SERVER_ERROR,
-                                    message=_format_error(e),
-                                    param="")
-                                yield _event_to_sse_chunk(err)
-                            finally:
-                                logger.info("End of processing CreateResponse request.")
-                                otel_context.detach(token)
-
-                        return StreamingResponse(gen(), media_type="text/event-stream")
-                    if inspect.isasyncgen(resp):
-                        async def gen_async():
-                            ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
-                            token = otel_context.attach(ctx)
-                            seq = 0
-                            try:
-                                async for event in resp:
-                                    seq += 1
-                                    yield _event_to_sse_chunk(event)
-                            except Exception as e:  # noqa: BLE001
-                                logger.error("Error in async generator: %s", e, exc_info=True)
-                                err = project_models.ResponseErrorEvent(
-                                    sequence_number=seq + 1,
-                                    code=project_models.ResponseErrorCode.SERVER_ERROR,
-                                    message=_format_error(e),
-                                    param="")
-                                yield _event_to_sse_chunk(err)
-                            finally:
-                                logger.info("End of processing CreateResponse request.")
-                                otel_context.detach(token)
-
-                        return StreamingResponse(gen_async(), media_type="text/event-stream")
-                    logger.info("End of processing CreateResponse request.")
-                    return JSONResponse(resp.as_dict())
                 except Exception as e:
                     # TODO: extract status code from exception
                     logger.error(f"Error processing CreateResponse request: {e}", exc_info=True)
-                    err = project_models.ResponseError(
+                    ex = e
+
+                if not context.stream:
+                    logger.info("End of processing CreateResponse request.")
+                    result = resp if not ex else project_models.ResponseError(
                         code=project_models.ResponseErrorCode.SERVER_ERROR,
-                        message=_format_error(e))
-                    return JSONResponse(err.as_dict())
+                        message=_format_error(ex))
+                    return JSONResponse(result.as_dict())
+
+                async def gen_async(ex):
+                    ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
+                    token = otel_context.attach(ctx)
+                    seq = 0
+                    try:
+                        if ex:
+                            return
+                        it = iterate_in_threadpool(resp) if inspect.isgenerator(resp) else resp
+                        async for event in it:
+                            seq += 1
+                            yield _event_to_sse_chunk(event)
+                        logger.info("End of processing CreateResponse request.")
+                    except Exception as e:  # noqa: BLE001
+                        logger.error("Error in async generator: %s", e, exc_info=True)
+                        ex = e
+                    finally:
+                        if ex:
+                            err = project_models.ResponseErrorEvent(
+                                sequence_number=seq + 1,
+                                code=project_models.ResponseErrorCode.SERVER_ERROR,
+                                message=_format_error(ex),
+                                param="")
+                            yield _event_to_sse_chunk(err)
+                        otel_context.detach(token)
+
+                return StreamingResponse(gen_async(ex), media_type="text/event-stream")
 
         async def liveness_endpoint(request):
             result = await self.agent_liveness(request)

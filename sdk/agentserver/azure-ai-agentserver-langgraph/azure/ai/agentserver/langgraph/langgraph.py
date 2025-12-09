@@ -268,7 +268,7 @@ class LangGraphAdapter(FoundryCBAgent):
             output = self.state_converter.state_to_response(result, context)
             return output
         except Exception as e:
-            logger.error(f"Error during agent run: {e}")
+            logger.error(f"Error during agent run: {e}", exc_info=True)
             raise e
 
     async def agent_run_astream(
@@ -301,7 +301,7 @@ class LangGraphAdapter(FoundryCBAgent):
             async for result in self.state_converter.state_to_response_stream(stream, context):
                 yield result
         except Exception as e:
-            logger.error(f"Error during streaming agent run: {e}")
+            logger.error(f"Error during streaming agent run: {e}", exc_info=True)
             raise e
         finally:
             # Close tool_client if provided

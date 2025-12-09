@@ -11,7 +11,6 @@
 
 - Fixed error response handling in stream and non-stream modes
 
-
 ## 1.0.0b6 (2025-11-26)
 
 ### Features Added
