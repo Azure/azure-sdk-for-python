@@ -105,10 +105,15 @@ def patched_open_crlf_to_lf(*args, **kwargs):
 
             # Only create temp file if conversion was needed
             if converted_content != content:
-                # Create a temporary file with the converted content
-                temp_fd, temp_path = tempfile.mkstemp(suffix=ext)
-                os.write(temp_fd, converted_content)
-                os.close(temp_fd)
+                # Create a sub temp folder and save file with same filename
+                temp_dir = tempfile.mkdtemp()
+                original_filename = os.path.basename(file_path)
+                temp_path = os.path.join(temp_dir, original_filename)
+
+                # Write the converted content to the temp file
+                with _BUILTIN_OPEN(temp_path, "wb") as temp_file:
+                    temp_file.write(converted_content)
+
                 # Replace file path with temp path
                 if args:
                     # File path was passed as positional arg
