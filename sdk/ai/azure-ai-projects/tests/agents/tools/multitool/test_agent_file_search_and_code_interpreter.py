@@ -12,11 +12,9 @@ Tests various scenarios using an agent with File Search and Code Interpreter.
 All tests use the same tool combination but different inputs and workflows.
 """
 
-import os
-import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, CodeInterpreterTool, CodeInterpreterToolAuto
 
 
@@ -24,10 +22,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
     """Tests for agents using File Search + Code Interpreter combination."""
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_find_and_analyze_data(self, **kwargs):
         """
         Test finding data with File Search and analyzing with Code Interpreter.
@@ -83,10 +78,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
         openai_client.vector_stores.delete(vector_store.id)
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_analyze_code_file(self, **kwargs):
         """
         Test finding code file and analyzing it.
