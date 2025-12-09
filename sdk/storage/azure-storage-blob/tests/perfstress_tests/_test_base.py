@@ -33,6 +33,8 @@ class _ServiceTest(PerfStressTest):
             self._client_kwargs['max_single_get_size'] = self.args.max_get_size
         if self.args.buffer_threshold is not None:
             self._client_kwargs['min_large_block_upload_threshold'] = self.args.buffer_threshold
+        if self.args.data_block_size is not None:
+            self._client_kwargs['connection_data_block_size'] = self.args.data_block_size
         if self.args.client_encryption:
             self.key_encryption_key = KeyWrapper()
             self._client_kwargs['require_encryption'] = True
@@ -69,6 +71,7 @@ class _ServiceTest(PerfStressTest):
         parser.add_argument('--max-block-size', nargs='?', type=int, help='Maximum size of data in a block within a blob. Defaults to SDK default.', default=None)
         parser.add_argument('--max-get-size', nargs='?', type=int, help='Initial chunk size of a Blob download. Defaults to SDK default.', default=None)
         parser.add_argument('--buffer-threshold', nargs='?', type=int, help='Minimum block size to prevent full block buffering. Defaults to SDK default.', default=None)
+        parser.add_argument('--data-block-size', nargs='?', type=int, help='The chunk size used when reading from the network stream. Defaults to SDK default.', default=None)
         parser.add_argument('--client-encryption', nargs='?', type=str, help='The version of client-side encryption to use. Leave out for no encryption.', default=None)
         parser.add_argument('--max-concurrency', nargs='?', type=int, help='Maximum number of concurrent threads used for data transfer. Defaults to 1', default=1)
         parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of data to transfer.  Default is 10240.', default=10240)

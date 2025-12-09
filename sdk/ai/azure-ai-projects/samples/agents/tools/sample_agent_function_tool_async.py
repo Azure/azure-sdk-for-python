@@ -109,9 +109,8 @@ async def main():
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
 
-        # The model should be able to give a response!
-        print("Final output:")
-        print("\n" + response.output_text)
+        # Print result (should contain "Tuesday")
+        print(f"==> Result: {response.output_text}")
 
 
 if __name__ == "__main__":

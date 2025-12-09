@@ -1,12 +1,24 @@
 # Release History
 
-## 1.0.0b46 (Unreleased)
+## 1.0.0b47 (Unreleased)
 
 ### Features Added
 
 - Add Browser SDK loader SDK Stats feature bit
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b46 (2025-12-04)
+
+### Breaking Changes
+- Fix to accommodate breaking log changes from Otel
+  ([#43626](https://github.com/Azure/azure-sdk-for-python/pull/43626))
+- Pin OpenTelemetry versions to guard against upstream logging breaking changes
+  ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
 
 ### Bugs Fixed
 - Fixes LogDeprecated warnings - `LogDeprecatedInitWarning: LogRecord init with trace_id, span_id, and/or trace_flags is deprecated since 1.35.0. Use context instead`

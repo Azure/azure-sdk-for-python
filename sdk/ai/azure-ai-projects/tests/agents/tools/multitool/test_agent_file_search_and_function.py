@@ -384,8 +384,6 @@ Responsible AI development requires multistakeholder collaboration and transpare
         vector_store = openai_client.vector_stores.create(name="ResearchStore")
         print(f"Vector store created: {vector_store.id}")
 
-        
-
         file1 = BytesIO(doc1_content.encode("utf-8"))
         file1.name = "ml_healthcare.txt"
         file2 = BytesIO(doc2_content.encode("utf-8"))

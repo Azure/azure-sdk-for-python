@@ -13,7 +13,8 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 from opentelemetry import metrics
 from openai import OpenAI
-from test_base import servicePreparer, recorded_by_proxy_httpx
+from test_base import servicePreparer
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from test_ai_instrumentor_base import (
     TestAiAgentsInstrumentorBase,
     CONTENT_TRACING_ENV_VARIABLE,
@@ -64,7 +65,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_metrics_collection_non_streaming_responses(self, **kwargs):
         """Test that metrics are collected for non-streaming responses API calls."""
         self.cleanup()
@@ -111,7 +112,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_metrics_collection_streaming_responses(self, **kwargs):
         """Test that metrics are collected for streaming responses API calls."""
         self.cleanup()
@@ -164,7 +165,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_metrics_collection_conversation_create(self, **kwargs):
         """Test that metrics are collected for conversation creation calls."""
         self.cleanup()
@@ -201,7 +202,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_metrics_collection_multiple_operations(self, **kwargs):
         """Test that metrics are collected correctly for multiple operations."""
         self.cleanup()
@@ -253,7 +254,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_metrics_collection_without_content_recording(self, **kwargs):
         """Test that metrics are still collected when content recording is disabled."""
         self.cleanup()

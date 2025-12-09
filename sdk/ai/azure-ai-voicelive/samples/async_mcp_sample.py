@@ -16,11 +16,11 @@ DESCRIPTION:
 
 USAGE:
     python async_mcp_sample.py
-    
+
     Set the environment variables with your own values before running the sample:
     1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
     2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
-    
+
 REQUIREMENTS:
     - azure-ai-voicelive
     - python-dotenv
@@ -30,14 +30,12 @@ REQUIREMENTS:
 import os
 import sys
 import asyncio
-import json
-import datetime
 import logging
 import base64
 import signal
 import threading
 import queue
-from typing import Union, Optional, Dict, Any, Callable, TYPE_CHECKING, cast
+from typing import Union, Optional, Any, Callable, TYPE_CHECKING, cast
 from concurrent.futures import ThreadPoolExecutor
 
 # Audio processing imports
@@ -530,7 +528,7 @@ class AsyncMCPCallClient:
             await self._handle_mcp_call_completed(event, connection)
         elif event.type == ServerEventType.RESPONSE_MCP_CALL_FAILED:
             logger.error(f"MCP call failed for {event.item_id}.")
-    
+
         elif event.type == ServerEventType.CONVERSATION_ITEM_CREATED:
             logger.info(f"Conversation item created: id={event.item.id}, type={event.item.type}")
             if event.item.type == ItemType.MCP_LIST_TOOLS:
@@ -602,7 +600,7 @@ class AsyncMCPCallClient:
             return
         mcp_output = mcp_call_done.item.output
         logger.info(f"MCP Call output received: {mcp_output}")
-        
+
         # Create a new response to process the MCP output
         await connection.response.create()
 
@@ -620,7 +618,7 @@ class AsyncMCPCallClient:
         server_label = mcp_call_item.server_label
         function_name = mcp_call_item.name
         arguments = mcp_call_item.arguments
-        
+
         logger.info(f"MCP Call triggered: server_label={server_label}, function_name={function_name}")
         try:
             # Wait for the MCP call arguments to be complete

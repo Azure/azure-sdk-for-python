@@ -908,7 +908,10 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_put_block_list_with_blob_tier_specified(self, storage_account_name, storage_account_key):
+    async def test_put_block_list_with_blob_tier_specified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -929,7 +932,10 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_put_block_list_with_blob_tier_specified_cold(self, storage_account_name, storage_account_key):
+    async def test_put_block_list_with_blob_tier_specified_cold(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -1418,7 +1424,10 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_create_blob_from_bytes_with_blob_tier_specified(self, storage_account_name, storage_account_key):
+    async def test_create_blob_from_bytes_with_blob_tier_specified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -1484,7 +1493,10 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_upload_blob_from_path_non_parallel_with_standard_blob_tier(self, storage_account_name, storage_account_key):
+    async def test_upload_blob_from_path_non_parallel_with_standard_blob_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()

@@ -128,8 +128,8 @@ class TestAgentMCP(TestBase):
             print("\nSending approval response to continue agent execution...")
 
             response = openai_client.responses.create(
+                conversation=conversation.id,
                 input=input_list,
-                previous_response_id=response.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
@@ -275,8 +275,8 @@ class TestAgentMCP(TestBase):
             print("\nSending approval response to continue agent execution...")
 
             response = openai_client.responses.create(
+                conversation=conversation.id,
                 input=input_list,
-                previous_response_id=response.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 

@@ -5,15 +5,19 @@
 # ------------------------------------
 # cSpell:disable
 
-from test_base import TestBase, servicePreparer, recorded_by_proxy_async_httpx
+from test_base import TestBase, servicePreparer
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
 
 # from azure.ai.projects.models import ResponsesUserMessageItemParam, ItemContentInputText
 
 
 class TestConversationCrudAsync(TestBase):
 
+    # To run only this test:
+    # pytest tests/agents/test_conversation_crud_async.py::TestConversationCrudAsync::test_conversation_crud_async -s
     @servicePreparer()
-    @recorded_by_proxy_async_httpx
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_conversation_crud_async(self, **kwargs):
 
         async with self.create_async_client(operation_group="agents", **kwargs).get_openai_client() as client:
