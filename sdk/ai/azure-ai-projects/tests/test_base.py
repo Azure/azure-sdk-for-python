@@ -39,64 +39,6 @@ from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 _BUILTIN_OPEN = open
 
 
-@overload
-def open_with_lf(
-    file: Union[str, bytes, os.PathLike, int],
-    mode: Literal["r", "w", "a", "x", "r+", "w+", "a+", "x+"] = "r",
-    buffering: int = -1,
-    encoding: Optional[str] = None,
-    errors: Optional[str] = None,
-    newline: Optional[str] = None,
-    closefd: bool = True,
-    opener: Optional[Any] = None,
-) -> TextIO: ...
-
-
-@overload
-def open_with_lf(
-    file: Union[str, bytes, os.PathLike, int],
-    mode: Literal["rb", "wb", "ab", "xb", "r+b", "w+b", "a+b", "x+b"],
-    buffering: int = -1,
-    encoding: Optional[str] = None,
-    errors: Optional[str] = None,
-    newline: Optional[str] = None,
-    closefd: bool = True,
-    opener: Optional[Any] = None,
-) -> BinaryIO: ...
-
-
-@overload
-def open_with_lf(
-    file: Union[str, bytes, os.PathLike, int],
-    mode: str,
-    buffering: int = -1,
-    encoding: Optional[str] = None,
-    errors: Optional[str] = None,
-    newline: Optional[str] = None,
-    closefd: bool = True,
-    opener: Optional[Any] = None,
-) -> IO[Any]: ...
-
-
-def open_with_lf(
-    file: Union[str, bytes, os.PathLike, int],
-    mode: str = "r",
-    buffering: int = -1,
-    encoding: Optional[str] = None,
-    errors: Optional[str] = None,
-    newline: Optional[str] = None,
-    closefd: bool = True,
-    opener: Optional[Any] = None,
-) -> IO[Any]:
-    """
-    Open function that converts CRLF to LF for text files.
-
-    This function has the same signature as built-in open and converts line endings
-    to ensure consistent behavior during test recording and playback.
-    """
-    return patched_open_crlf_to_lf(file, mode, buffering, encoding, errors, newline, closefd, opener)
-
-
 # Load secrets from environment variables
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -270,6 +212,64 @@ class TestBase(AzureRecordedTestCase):
     REGEX_APPINSIGHTS_CONNECTION_STRING = re.compile(
         r"^InstrumentationKey=[0-9a-fA-F-]{36};IngestionEndpoint=https://.+.applicationinsights.azure.com/;LiveEndpoint=https://.+.monitor.azure.com/;ApplicationId=[0-9a-fA-F-]{36}$"
     )
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: Literal["r", "w", "a", "x", "r+", "w+", "a+", "x+"] = "r",
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> TextIO: ...
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: Literal["rb", "wb", "ab", "xb", "r+b", "w+b", "a+b", "x+b"],
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> BinaryIO: ...
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: str,
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> IO[Any]: ...
+
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: str = "r",
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> IO[Any]:
+        """
+        Open function that converts CRLF to LF for text files.
+
+        This function has the same signature as built-in open and converts line endings
+        to ensure consistent behavior during test recording and playback.
+        """
+        return patched_open_crlf_to_lf(file, mode, buffering, encoding, errors, newline, closefd, opener)
 
     # helper function: create projects client using environment variables
     def create_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AIProjectClient:
