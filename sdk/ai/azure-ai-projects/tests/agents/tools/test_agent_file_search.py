@@ -15,6 +15,8 @@ from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 class TestAgentFileSearch(TestBase):
 
+    # To only run this test:
+    # pytest tests/agents/tools/test_agent_file_search.py::TestAgentFileSearch::test_agent_file_search -s
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_file_search(self, **kwargs):
