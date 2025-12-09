@@ -248,7 +248,6 @@ class TestBuiltInEvaluators:
     def test_qa_evaluator_is_reasoning_model_default(self, mock_model_config):
         """Test QAEvaluator initializes with is_reasoning_model defaulting to False"""
         qa_eval = QAEvaluator(model_config=mock_model_config)
-        
         # Check that all model-based evaluators have is_reasoning_model set to False
         for evaluator in qa_eval._evaluators:
             if hasattr(evaluator, '_is_reasoning_model'):
