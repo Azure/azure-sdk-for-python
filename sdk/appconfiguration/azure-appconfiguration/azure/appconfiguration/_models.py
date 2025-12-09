@@ -623,17 +623,17 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
     """The etag of current page."""
 
     def __init__(self, command: Callable, **kwargs: Any):
+        super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=kwargs.get("continuation_token"),
+        )
         self._command = command
         self._key = kwargs.get("key")
         self._label = kwargs.get("label")
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._tags = kwargs.get("tags")
-        super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
-            self._get_next_cb,
-            self._extract_data_cb,
-            continuation_token=kwargs.get("continuation_token"),
-        )
         self._deserializer = lambda objs: [
             ConfigurationSetting._from_generated(x) for x in objs  # pylint:disable=protected-access
         ]
@@ -657,14 +657,24 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
 
 
 class ConfigurationSettingPaged(ItemPaged):
-    """An iterable of ConfigurationSettings that supports etag-based change detection."""
+    """
+    An iterable of ConfigurationSettings that supports etag-based change detection.
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the ItemPaged iterator with etag support.
+    This class extends ItemPaged to provide efficient monitoring of configuration changes
+    by using ETags. When used with the `match_conditions` parameter in `by_page()`, 
+    it only returns pages that have changed since the provided ETags were collected.
 
-        :param args: Arguments to pass to the PageIterator constructor
-        :param kwargs: Keyword arguments to pass to the PageIterator constructor
-        """
+    Example:
+        >>> # Get initial page ETags
+        >>> items = client.list_configuration_settings(key_filter="sample_*")
+        >>> match_conditions = [page.etag for page in items.by_page()]
+        >>>
+        >>> # Later, check for changes - only changed pages are returned
+        >>> items = client.list_configuration_settings(key_filter="sample_*")
+        >>> for page in items.by_page(match_conditions=match_conditions):
+        ...     # Process only changed pages
+        ...     pass
+    """
         self._client = kwargs.pop("client", None)
         self._key_filter = kwargs.pop("key_filter", None)
         self._label_filter = kwargs.pop("label_filter", None)
@@ -764,7 +774,14 @@ class _BaseConfigurationSettingEtagPageIterator:
         :param link: The Link header value from the HTTP response
         :type link: str or None
         """
-        self._base_iterator.continuation_token = link[1 : link.index(">")] if link else None
+        if link:
+            try:
+                self._base_iterator.continuation_token = link[1 : link.index(">")]
+            except ValueError:
+                # Malformed Link header, set to None to stop iteration
+                self._base_iterator.continuation_token = None
+        else:
+            self._base_iterator.continuation_token = None
 
     def _parse_response(self, response: HttpResponse) -> Any:
         """Parse the HTTP response and return an iterator of configuration settings.
@@ -828,14 +845,34 @@ class ConfigurationSettingEtagPageIterator(_BaseConfigurationSettingEtagPageIter
 
 
 class ConfigurationSettingPagedAsync(AsyncItemPaged):
-    """An async iterable of ConfigurationSettings that supports etag-based change detection."""
+    """
+    An async iterable of ConfigurationSettings that supports etag-based change detection.
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the async ItemPaged iterator with etag support.
+    This class provides asynchronous iteration over configuration settings, with optional support for
+    etag-based change detection. By supplying a list of etags via the `match_conditions` parameter to
+    the `by_page` method, you can efficiently detect and retrieve only those pages that have changed
+    since your last retrieval.
 
-        :param args: Arguments to pass to the AsyncPageIterator constructor
-        :param kwargs: Keyword arguments to pass to the AsyncPageIterator constructor
-        """
+    Example usage:
+
+        async for setting in ConfigurationSettingPagedAsync(...):
+            # Process each setting asynchronously
+            print(setting)
+
+        # To iterate by page and use etag-based change detection:
+        etags = ["etag1", "etag2", "etag3"]
+        async for page in paged.by_page(match_conditions=etags):
+            async for setting in page:
+                print(setting)
+
+    When `match_conditions` is provided, each page is checked against the corresponding etag.
+    If the page has not changed (HTTP 304), it is skipped. If the page has changed (HTTP 200),
+    the new page is returned. This allows efficient polling for changes without retrieving
+    unchanged data.
+
+    :param args: Arguments to pass to the AsyncPageIterator constructor.
+    :param kwargs: Keyword arguments to pass to the AsyncPageIterator constructor.
+    """
         self._client = kwargs.pop("client", None)
         self._key_filter = kwargs.pop("key_filter", None)
         self._label_filter = kwargs.pop("label_filter", None)
