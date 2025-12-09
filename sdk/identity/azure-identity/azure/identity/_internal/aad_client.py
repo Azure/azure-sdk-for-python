@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
+import logging
+import os
 from typing import Iterable, Union, Optional, Any
 
 from azure.core.credentials import AccessTokenInfo
@@ -11,9 +13,19 @@ from azure.core.pipeline.transport import HttpRequest
 from .aad_client_base import AadClientBase
 from .aadclient_certificate import AadClientCertificate
 from .pipeline import build_pipeline
+from .._enums import RegionalAuthority
 
 
-class AadClient(AadClientBase):
+_LOGGER = logging.getLogger(__name__)
+
+
+class AadClient(AadClientBase):  # pylint:disable=client-accepts-api-version-keyword
+
+    # pylint:disable=missing-client-constructor-parameter-credential
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._initialize_regional_authority()
+
     def __enter__(self) -> "AadClient":
         self._pipeline.__enter__()
         return self
@@ -61,6 +73,37 @@ class AadClient(AadClientBase):
     ) -> AccessTokenInfo:
         # no need for an implementation, non-async OnBehalfOfCredential acquires tokens through MSAL
         raise NotImplementedError()
+
+    def _initialize_regional_authority(self) -> None:
+        # This is based on MSAL's regional authority logic.
+        if self._regional_authority is not False:
+            return
+
+        regional_authority = self._get_regional_authority_from_env()
+        if not regional_authority:
+            self._regional_authority = None
+            return
+
+        if regional_authority == RegionalAuthority.AUTO_DISCOVER_REGION:
+            regional_authority = self._discover_region()
+            if not regional_authority:
+                _LOGGER.warning("Failed to auto-discover region. Using the non-regional authority.")
+                self._regional_authority = None
+                return
+
+        self._regional_authority = self._build_regional_authority_url(regional_authority)
+
+    def _discover_region(self) -> Optional[str]:
+        region = os.environ.get("REGION_NAME", "").replace(" ", "").lower()
+        if region:
+            return region
+        try:
+            request = self._get_region_discovery_request()
+            response = self._pipeline.run(request)
+            return self._process_region_discovery_response(response)
+        except Exception as ex:  # pylint: disable=broad-except
+            _LOGGER.info("Failed to discover Azure region from IMDS: %s", ex)
+            return None
 
     def _build_pipeline(self, **kwargs: Any) -> Pipeline:
         return build_pipeline(**kwargs)

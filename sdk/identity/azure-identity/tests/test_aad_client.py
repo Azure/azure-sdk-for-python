@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+from unittest import mock
 from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
@@ -111,6 +112,80 @@ def test_request_url(authority):
         client = AadClient(tenant_id=tenant_id, client_id="client id", transport=Mock(send=send))
     client.obtain_token_by_authorization_code("scope", "code", "uri")
     client.obtain_token_by_refresh_token("scope", "refresh token")
+
+
+def test_token_url():
+    tenant_id = "tenant-id"
+    client = AadClient(tenant_id, "client-id", authority="https://login.microsoftonline.com")
+    assert client._get_token_url() == "https://login.microsoftonline.com/tenant-id/oauth2/v2.0/token"
+
+    # Test with usage of AZURE_AUTHORITY_HOST
+    with patch.dict(
+        "os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://custom.microsoftonline.com"}, clear=True
+    ):
+        client = AadClient(tenant_id=tenant_id, client_id="client-id")
+        assert client._get_token_url() == "https://custom.microsoftonline.com/tenant-id/oauth2/v2.0/token"
+
+    # Test with usage of AZURE_REGIONAL_AUTHORITY_NAME
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus"}, clear=True):
+        client = AadClient(tenant_id=tenant_id, client_id="client-id")
+        assert client._get_token_url() == "https://centralus.login.microsoft.com/tenant-id/oauth2/v2.0/token"
+
+    # Test with usage of AZURE_REGIONAL_AUTHORITY_NAME and AZURE_AUTHORITY_HOST
+    with patch.dict(
+        "os.environ",
+        {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://login.microsoftonline.us",
+            EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus",
+        },
+        clear=True,
+    ):
+        client = AadClient(tenant_id=tenant_id, client_id="client-id")
+        assert client._get_token_url() == "https://centralus.login.microsoftonline.us/tenant-id/oauth2/v2.0/token"
+
+
+def test_initialize_regional_authority():
+    client = AadClient("tenant-id", "client-id")
+    assert client._regional_authority is None
+
+    # Test with usage of AZURE_REGIONAL_AUTHORITY_NAME
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus"}, clear=True):
+        client = AadClient("tenant-id", "client-id")
+        assert client._regional_authority == "https://centralus.login.microsoft.com"
+
+    # Test with non-Microsoft authority host
+    with patch.dict(
+        "os.environ",
+        {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://custom.authority.com",
+            EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "centralus",
+        },
+        clear=True,
+    ):
+        client = AadClient("tenant-id", "client-id")
+        assert client._regional_authority == "https://centralus.custom.authority.com"
+
+    # Test with usage of region auto-discovery env var
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "tryautodetect"}, clear=True):
+        with patch.dict("os.environ", {"REGION_NAME": "eastus"}):
+            client = AadClient("tenant-id", "client-id")
+            assert client._regional_authority == "https://eastus.login.microsoft.com"
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "tryautodetect"}, clear=True):
+        response = Mock(
+            status_code=200,
+            headers={"Content-Type": "text/plain"},
+            content_type="text/plain",
+            text=lambda encoding=None: "westus2",
+        )
+        transport = mock.Mock(send=mock.Mock(return_value=response))
+
+        client = AadClient("tenant-id", "client-id", transport=transport)
+        assert client._regional_authority == "https://westus2.login.microsoft.com"
+
+    with patch.dict("os.environ", {"MSAL_FORCE_REGION": "westus3"}, clear=True):
+        client = AadClient("tenant-id", "client-id")
+        assert client._regional_authority == "https://westus3.login.microsoft.com"
 
 
 @pytest.mark.parametrize("secret", (None, "client secret"))
