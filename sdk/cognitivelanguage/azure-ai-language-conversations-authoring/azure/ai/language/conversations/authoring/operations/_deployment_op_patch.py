@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Optional, List, Union
+from typing import Any, Optional, Union
 
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace

@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from collections.abc import MutableMapping, Awaitable  # pylint:disable=import-error
-from typing import Any, Callable, Optional, Tuple, TypeVar, cast, Mapping, Optional, List
+from typing import Any, Callable, Tuple, TypeVar, cast, Mapping, Optional, List
 
 import base64
 import functools
