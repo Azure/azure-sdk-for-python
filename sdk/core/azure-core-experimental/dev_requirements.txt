@@ -1,6 +1,7 @@
 -e ../../../eng/tools/azure-sdk-tools
 ../azure-core
 -e ../azure-core/tests/testserver_tests/coretestserver
+js
 pyodide==0.19.0a1; python_version >= '3.8'
 # 0.23.3 cannot be pulled into our azdo feed due to a restriction present on azdo feeds that is not present on pypi
 # at the same time 0.24.0 has a regression that breaks azure-core-experimental, so we cannot upgrade to that
