@@ -163,14 +163,14 @@ def _get_tools_sample_paths():
         "sample_agent_bing_custom_search.py",
         "sample_agent_bing_grounding.py",
         "sample_agent_browser_automation.py",
-        "sample_agent_code_interpreter.py",
         "sample_agent_fabric.py",
-        "sample_agent_file_search.py",
-        "sample_agent_file_search_in_stream.py",
         "sample_agent_mcp_with_project_connection.py",
         "sample_agent_memory_search.py",
         "sample_agent_openapi_with_project_connection.py",
         "sample_agent_to_agent.py",
+        "sample_agent_code_interpreter.py",
+        "sample_agent_file_search.py",
+        "sample_agent_file_search_in_stream.py",
     ]
     samples = []
 
@@ -191,11 +191,10 @@ def _get_tools_sample_paths_async():
 
     # Skip async samples that are not yet ready for testing
     tools_samples_to_skip = [
-        "sample_agent_code_interpreter_async.py",
-        "sample_agent_file_search_async.py",
-        "sample_agent_file_search_in_stream_async.py",
         "sample_agent_mcp_with_project_connection_async.py",
         "sample_agent_memory_search_async.py",
+        "sample_agent_code_interpreter_async.py",
+        "sample_agent_file_search_in_stream_async.py",
     ]
     samples = []
 

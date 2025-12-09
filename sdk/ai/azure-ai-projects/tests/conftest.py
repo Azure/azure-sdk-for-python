@@ -3,6 +3,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+# Register MIME types before any other imports to ensure consistent Content-Type detection
+# across Windows, macOS, and Linux when uploading files in tests
+import mimetypes
+
+mimetypes.add_type("text/csv", ".csv")
+mimetypes.add_type("text/markdown", ".md")
+
 import os
 import pytest
 from dotenv import load_dotenv, find_dotenv
