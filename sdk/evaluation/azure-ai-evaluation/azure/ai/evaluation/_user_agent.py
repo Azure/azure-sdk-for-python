@@ -6,6 +6,10 @@ from typing import Iterator
 
 from azure.ai.evaluation._version import VERSION
 
+# Validate that VERSION is not empty or None to prevent unauthorized SDK usage
+if not VERSION or not isinstance(VERSION, str) or not VERSION.strip():
+    raise ValueError("Invalid SDK version: version must be a non-empty string")
+
 
 class UserAgentSingleton:
     __BASE_USER_AGENT: str = "{}/{}".format("azure-ai-evaluation", VERSION)

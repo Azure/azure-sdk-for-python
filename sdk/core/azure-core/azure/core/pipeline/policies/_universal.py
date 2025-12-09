@@ -207,6 +207,11 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         self.overwrite: bool = kwargs.pop("user_agent_overwrite", False)
         self.use_env: bool = kwargs.pop("user_agent_use_env", True)
         application_id: Optional[str] = kwargs.pop("user_agent", None)
+        
+        # Validate that azcore_version is not empty or None to prevent unauthorized SDK usage
+        if not azcore_version or not isinstance(azcore_version, str) or not azcore_version.strip():
+            raise ValueError("Invalid SDK version: version must be a non-empty string")
+        
         sdk_moniker: str = kwargs.pop("sdk_moniker", "core/{}".format(azcore_version))
 
         if base_user_agent:
