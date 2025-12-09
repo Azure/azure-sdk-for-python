@@ -9,7 +9,7 @@ import functools
 import json
 import os
 import tempfile
-from typing import Optional, Any, Dict, Final
+from typing import Optional, Any, Dict, Final, IO, Union, overload, Literal, TextIO, BinaryIO
 from azure.ai.projects.models import (
     Connection,
     ConnectionType,
@@ -37,6 +37,64 @@ from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 
 # Store reference to built-in open before any mocking occurs
 _BUILTIN_OPEN = open
+
+
+@overload
+def open_with_lf(
+    file: Union[str, bytes, os.PathLike, int],
+    mode: Literal["r", "w", "a", "x", "r+", "w+", "a+", "x+"] = "r",
+    buffering: int = -1,
+    encoding: Optional[str] = None,
+    errors: Optional[str] = None,
+    newline: Optional[str] = None,
+    closefd: bool = True,
+    opener: Optional[Any] = None,
+) -> TextIO: ...
+
+
+@overload
+def open_with_lf(
+    file: Union[str, bytes, os.PathLike, int],
+    mode: Literal["rb", "wb", "ab", "xb", "r+b", "w+b", "a+b", "x+b"],
+    buffering: int = -1,
+    encoding: Optional[str] = None,
+    errors: Optional[str] = None,
+    newline: Optional[str] = None,
+    closefd: bool = True,
+    opener: Optional[Any] = None,
+) -> BinaryIO: ...
+
+
+@overload
+def open_with_lf(
+    file: Union[str, bytes, os.PathLike, int],
+    mode: str,
+    buffering: int = -1,
+    encoding: Optional[str] = None,
+    errors: Optional[str] = None,
+    newline: Optional[str] = None,
+    closefd: bool = True,
+    opener: Optional[Any] = None,
+) -> IO[Any]: ...
+
+
+def open_with_lf(
+    file: Union[str, bytes, os.PathLike, int],
+    mode: str = "r",
+    buffering: int = -1,
+    encoding: Optional[str] = None,
+    errors: Optional[str] = None,
+    newline: Optional[str] = None,
+    closefd: bool = True,
+    opener: Optional[Any] = None,
+) -> IO[Any]:
+    """
+    Open function that converts CRLF to LF for text files.
+
+    This function has the same signature as built-in open and converts line endings
+    to ensure consistent behavior during test recording and playback.
+    """
+    return patched_open_crlf_to_lf(file, mode, buffering, encoding, errors, newline, closefd, opener)
 
 
 # Load secrets from environment variables

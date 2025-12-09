@@ -8,7 +8,7 @@
 import os
 import pytest
 from io import BytesIO
-from test_base import TestBase, servicePreparer
+from test_base import TestBase, servicePreparer, open_with_lf
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
@@ -65,7 +65,7 @@ class TestAgentFileSearch(TestBase):
             assert vector_store.id
 
             # Upload file to vector store
-            with open(asset_file_path, "rb") as f:
+            with open_with_lf(asset_file_path, "rb") as f:
                 file = openai_client.vector_stores.files.upload_and_poll(
                     vector_store_id=vector_store.id,
                     file=f,
