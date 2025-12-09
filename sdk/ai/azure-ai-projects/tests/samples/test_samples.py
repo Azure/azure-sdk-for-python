@@ -9,7 +9,7 @@ import unittest.mock as mock
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, RecordedTransport
-from test_base import servicePreparer, patched_open_crlf_to_lf
+from test_base import TestBase, servicePreparer
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
 
@@ -17,9 +17,7 @@ from azure.ai.projects import AIProjectClient
 class SampleExecutor:
     """Helper class for executing sample files with proper environment setup and credential mocking."""
 
-    def __init__(
-        self, test_instance: "AzureRecordedTestCase", sample_path: str, env_var_mapping: dict[str, str], **kwargs
-    ):
+    def __init__(self, test_instance: "TestBase", sample_path: str, env_var_mapping: dict[str, str], **kwargs):
         self.test_instance = test_instance
         self.sample_path = sample_path
         self.print_calls: list[str] = []
@@ -58,7 +56,7 @@ class SampleExecutor:
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
-            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
+            mock.patch("builtins.open", side_effect=self.test_instance.patched_open_crlf_to_lf),
             mock.patch("azure.identity.DefaultAzureCredential") as mock_credential,
         ):
             for var_name, var_value in self.env_vars.items():
@@ -79,7 +77,7 @@ class SampleExecutor:
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
-            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
+            mock.patch("builtins.open", side_effect=self.test_instance.patched_open_crlf_to_lf),
             mock.patch("azure.identity.aio.DefaultAzureCredential") as mock_credential,
         ):
             for var_name, var_value in self.env_vars.items():
@@ -205,7 +203,7 @@ def _get_tools_sample_paths_async():
     return samples
 
 
-class TestSamples(AzureRecordedTestCase):
+class TestSamples(TestBase):
     _samples_folder_path: str
     _results: dict[str, tuple[bool, str]]
 
