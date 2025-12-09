@@ -73,8 +73,9 @@ async def async_blob_storage_example():
     await blob_service_client.close()
     await credential.close()
 
+
 async def main():
-    # Run async examples
+    # Run async example
     await async_blob_storage_example()
 
 if __name__ == "__main__":
