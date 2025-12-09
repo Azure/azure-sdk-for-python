@@ -41,7 +41,7 @@ from .constants import (
     DEFAULT_OAUTH_SCOPE,
     READ_TIMEOUT,
     SERVICE_HOST_BASE,
-    STORAGE_OAUTH_SCOPE
+    STORAGE_OAUTH_SCOPE,
 )
 from .models import LocationMode, StorageConfiguration
 from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
