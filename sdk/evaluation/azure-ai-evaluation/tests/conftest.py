@@ -326,22 +326,22 @@ def connection_file() -> Dict[str, Any]:
 
 def _get_connection_from_env() -> Dict[str, Any]:
     """Get connection configuration from environment variables.
-    
+
     This is used when connections.json doesn't exist, typically in CI/CD pipelines
     where test-resources.json ARM template provisions resources and sets environment variables.
-    
+
     Returns:
         Dict[str, Any]: A dictionary matching the connections.json format, where each key
             maps to a dict with a "value" key containing the actual configuration.
             Example: {"azure_ai_project_scope": {"value": {"subscription_id": "...", ...}}}
     """
     connections = {}
-    
+
     # Build azure_ai_project_scope from environment variables if available
     subscription_id = os.getenv("AZURE_AI_PROJECT_SUBSCRIPTION_ID")
     resource_group_name = os.getenv("AZURE_AI_PROJECT_RESOURCE_GROUP_NAME")
     project_name = os.getenv("AZURE_AI_PROJECT_NAME")
-    
+
     if subscription_id and resource_group_name and project_name:
         connections[KEY_AZURE_PROJECT_SCOPE] = {
             "value": {
@@ -350,13 +350,13 @@ def _get_connection_from_env() -> Dict[str, Any]:
                 "project_name": project_name,
             }
         }
-    
+
     # Build azure_openai_model_config from environment variables if available
     azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
     api_version = os.getenv("AZURE_OPENAI_API_VERSION")
     deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
     api_key = os.getenv("AZURE_OPENAI_KEY")
-    
+
     if azure_endpoint and deployment_name:
         connections[KEY_AZURE_MODEL_CONFIG] = {
             "value": {
@@ -367,7 +367,7 @@ def _get_connection_from_env() -> Dict[str, Any]:
         }
         if api_key:
             connections[KEY_AZURE_MODEL_CONFIG]["value"]["api_key"] = api_key
-    
+
     return connections
 
 
