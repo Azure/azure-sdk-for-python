@@ -5,10 +5,11 @@ from contextlib import contextmanager
 from typing import Iterator
 
 from azure.ai.evaluation._version import VERSION
-from azure.core._version_validation import validate_version
 
 # Validate that VERSION is not empty or None to prevent unauthorized SDK usage
-validate_version(VERSION)
+# This is specifically important for red teaming scenarios
+if not VERSION or not isinstance(VERSION, str) or not VERSION.strip():
+    raise ValueError("Invalid SDK version: version must be a non-empty string")
 
 
 class UserAgentSingleton:
