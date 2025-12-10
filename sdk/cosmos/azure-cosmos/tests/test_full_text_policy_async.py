@@ -36,21 +36,21 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
     }
     language_abstracts = {
         "en-US": "This is a test in English.",
-        "fr-FR": "Ceci est une démonstration en français.",
-        "de-DE": "Dies ist ein Beispiel auf Deutsch.",
-        "it-IT": "Questo è un esempio in italiano.",
-        "pt-BR": "Este é um exemplo em português do Brasil.",
-        "pt-PT": "Este é um exemplo em português de Portugal.",
-        "es-ES": "Esta es una demostración en español.",
+        "fr-FR": "Ceci est une démonstration en français.",  # cspell:ignore Ceci démonstration français
+        "de-DE": "Dies ist ein Beispiel auf Deutsch.",  # cspell:ignore Dies Beispiel Deutsch
+        "it-IT": "Questo è un esempio in italiano.",  # cspell:ignore Questo esempio italiano
+        "pt-BR": "Este é um exemplo em português do Brasil.",  # cspell:ignore Este exemplo português Brasil
+        "pt-PT": "Este é um exemplo em português de Portugal.",  # cspell:ignore Este exemplo português Portugal
+        "es-ES": "Esta es una demostración en español.",  # cspell:ignore Esta demostración español
     }
     search_terms = {
         "en-US": "English",
-        "fr-FR": "démonstration",
-        "de-DE": "Beispiel",
-        "it-IT": "esempio",
-        "pt-BR": "exemplo",
-        "pt-PT": "exemplo",
-        "es-ES": "demostración",
+        "fr-FR": "démonstration",  # cspell:ignore démonstration
+        "de-DE": "Beispiel",  # cspell:ignore Beispiel
+        "it-IT": "esempio",  # cspell:ignore esempio
+        "pt-BR": "exemplo",  # cspell:ignore exemplo
+        "pt-PT": "exemplo",  # cspell:ignore exemplo
+        "es-ES": "demostración",  # cspell:ignore demostración
     }
 
     @classmethod
