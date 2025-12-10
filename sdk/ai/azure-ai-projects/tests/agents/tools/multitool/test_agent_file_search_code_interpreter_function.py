@@ -91,7 +91,7 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         )
         print(f"Response received (id: {response.id})")
 
-        assert response.id is not None
+        self.validate_response(response)
         print("✓ Three-tool combination works!")
 
         # Cleanup

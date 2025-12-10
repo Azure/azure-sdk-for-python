@@ -91,9 +91,7 @@ class TestAgentMCP(TestBase):
             )
 
             print(f"Initial response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Process any MCP approval requests
             approval_requests_found = 0
@@ -132,7 +130,7 @@ class TestAgentMCP(TestBase):
             )
 
             print(f"Final response completed (id: {response.id})")
-            assert response.id is not None
+            self.validate_response(response)
 
             # Get the final response text
             response_text = response.output_text
@@ -238,9 +236,7 @@ class TestAgentMCP(TestBase):
             )
 
             print(f"Initial response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Process any MCP approval requests
             approval_requests_found = 0
@@ -279,7 +275,7 @@ class TestAgentMCP(TestBase):
             )
 
             print(f"Final response completed (id: {response.id})")
-            assert response.id is not None
+            self.validate_response(response)
 
             # Get the final response text
             response_text = response.output_text

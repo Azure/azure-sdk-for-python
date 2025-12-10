@@ -70,7 +70,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         )
         print(f"Response received (id: {response.id})")
 
-        assert response.id is not None
+        self.validate_response(response)
         print("✓ Code Interpreter + Function Tool works!")
 
         # Cleanup
@@ -127,7 +127,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         )
 
         print(f"Response received (id: {response.id})")
-        assert response.id is not None
+        self.validate_response(response)
         print("✓ Data generation and reporting works!")
 
         # Cleanup

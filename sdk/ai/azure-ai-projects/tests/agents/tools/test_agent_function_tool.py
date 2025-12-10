@@ -86,8 +86,7 @@ class TestAgentFunctionTool(TestBase):
             )
 
             print(f"Initial response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
+            self.validate_response(response)
 
             # Check for function calls in the response
             function_calls_found = 0
@@ -141,7 +140,7 @@ class TestAgentFunctionTool(TestBase):
             )
 
             print(f"Final response completed (id: {response.id})")
-            assert response.id is not None
+            self.validate_response(response)
 
             # Get the final response text
             response_text = response.output_text

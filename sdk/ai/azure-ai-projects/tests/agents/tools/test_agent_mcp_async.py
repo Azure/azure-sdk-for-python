@@ -5,7 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
@@ -64,9 +63,7 @@ class TestAgentMCPAsync(TestBase):
             )
 
             print(f"Initial response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Process any MCP approval requests
             approval_requests_found = 0
@@ -105,7 +102,7 @@ class TestAgentMCPAsync(TestBase):
             )
 
             print(f"Final response completed (id: {response.id})")
-            assert response.id is not None
+            self.validate_response(response)
 
             # Get the final response text
             response_text = response.output_text

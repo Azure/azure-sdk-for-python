@@ -69,7 +69,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
         )
         print(f"Response received (id: {response.id})")
 
-        assert response.id is not None
+        self.validate_response(response)
         assert len(response.output_text) > 20
         print("✓ File Search + Code Interpreter works!")
 

@@ -216,8 +216,7 @@ Overall Total Revenue: $129,000
         print(f"Response: '{response_text[:200] if response_text else '(empty)'}...'")
 
         # Verify agent didn't crash
-        assert response.id is not None, "Agent should return a valid response"
-        assert len(response.output) >= 0, "Agent should return output items"
+        self.validate_response(response)
 
         # If there's text, it should be meaningful
         if response_text:
