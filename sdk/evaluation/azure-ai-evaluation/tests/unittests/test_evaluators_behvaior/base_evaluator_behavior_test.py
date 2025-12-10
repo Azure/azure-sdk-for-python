@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """
 Base class for behavioral tests of evaluators using AIProjectClient.
-Tests various input scenarios: query, response, tool_definitions, and tool_calls.
+Tests various input scenarios: query, and response.
 """
 
 import time
@@ -17,18 +17,40 @@ from openai.types.eval_create_params import DataSourceConfigCustom
 
 class BaseEvaluatorBehaviorTest:
     """
-    Base class for evaluator behavioral tests.
+    Base class for evaluator behavioral tests with query and response inputs.
     Subclasses should implement:
-    - evaluator_name: str - name of the evaluator (e.g., "tool_selection")
+    - evaluator_name: str - name of the evaluator (e.g., "relevance")
     - MINIMAL_RESPONSE: list - minimal valid response format for the evaluator
     """
 
-    # Subclasses must implement these
+    # Subclasses must implement
     evaluator_name = None
-    MINIMAL_RESPONSE = None
 
-    # Common test data
-    STRING_QUERY = "Can you send me an email with weather information for Seattle?"
+    # Subclasses may override
+    # Test Configs
+    requires_valid_format = True
+    requires_query = True
+
+    MINIMAL_RESPONSE = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C.",
+                    }
+                ],
+            },
+        ]
+    
+    # Tool-related test data (can be overridden by subclasses)
+    VALID_TOOL_CALLS = None
+    INVALID_TOOL_CALLS = None
+    VALID_TOOL_DEFINITIONS = None
+    INVALID_TOOL_DEFINITIONS = None
+
+    # Common test data for query and response
+    STRING_QUERY = "Can you send me an email to your_email@example.com with weather information for Seattle?"
     
     STRING_RESPONSE = "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C."
     
@@ -37,7 +59,7 @@ class BaseEvaluatorBehaviorTest:
             "role": "user",
             "content": {
                 "type": "text",
-                "text": "Can you send me an email with weather information for Seattle?",
+                "text": "Can you send me an email to your_email@example.com with weather information for Seattle?",
             }
         },
     ]
@@ -94,52 +116,10 @@ class BaseEvaluatorBehaviorTest:
                 ],
             },
         ]
-    
-    VALID_TOOL_DEFINITIONS = [
-        {
-            "name": "fetch_weather",
-            "description": "Fetches the weather information for the specified location.",
-            "parameters": {
-                "type": "object",
-                "properties": {"location": {"type": "string"}},
-            },
-        },
-        {
-            "name": "send_email",
-            "description": "Sends an email.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "recipient": {"type": "string"},
-                    "subject": {"type": "string"},
-                    "body": {"type": "string"},
-                },
-            },
-        },
-    ]
-
-    VALID_TOOL_CALLS = [
-        {
-            "type": "tool_call",
-            "tool_call_id": "call_1",
-            "name": "fetch_weather",
-            "arguments": {"location": "Seattle"},
-        },
-        {
-            "type": "tool_call",
-            "tool_call_id": "call_2",
-            "name": "send_email",
-            "arguments": {
-                "recipient": "your_email@example.com",
-                "subject": "Weather Information for Seattle",
-                "body": "The current weather in Seattle is rainy with a temperature of 14\u00b0C.",
-            },
-        },
-    ]
 
     INVALID_QUERY = [
         {
-            "user": "Can you send me an email with weather information for Seattle?",
+            "user": "Can you send me an email to your_email@example.com with weather information for Seattle?",
         },
     ]
 
@@ -174,46 +154,6 @@ class BaseEvaluatorBehaviorTest:
                 "assistant": "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C.",
             },
         ]
-    
-    INVALID_TOOL_DEFINITIONS = [
-        {
-            "fetch_weather": {
-                "description": "Fetches the weather information for the specified location.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {"location": {"type": "string"}},
-                },
-            }
-        },
-        {
-            "send_email": {
-                "description": "Sends an email.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "recipient": {"type": "string"},
-                        "subject": {"type": "string"},
-                        "body": {"type": "string"},
-                    },
-                },
-            },
-        },
-    ]
-
-    INVALID_TOOL_CALLS = [
-        {
-            "name": "fetch_weather",
-            "arguments": {"location": "Seattle"},
-        },
-        {
-            "name": "send_email",
-            "arguments": {
-                "recipient": "your_email@example.com",
-                "subject": "Weather Information for Seattle",
-                "body": "The current weather in Seattle is rainy with a temperature of 14\u00b0C.",
-            },
-        },
-    ]
     
     def _run_evaluation(self, evaluator_name, openai_client, model_deployment_name, query, response, tool_calls, tool_definitions):
         """Helper to run evaluation and return results."""
@@ -305,14 +245,24 @@ class BaseEvaluatorBehaviorTest:
         assert result_data["status"] == "completed"
         assert result_data["label"] == "pass"
         assert result_data["is_passed"] is True
-        assert result_data["score"] == 1.0
+        assert type(result_data["score"]) is float
+        assert result_data["score"] >= 1.0
     
     def assert_fail(self, result_data):
         """Helper to assert a failing result."""
         assert result_data["status"] == "completed"
         assert result_data["label"] == "fail"
         assert result_data["is_passed"] is False
+        assert type(result_data["score"]) is float
         assert result_data["score"] == 0.0
+
+    def assert_pass_or_fail(self, result_data):
+        """Helper to assert a pass or fail result."""
+        assert result_data["status"] == "completed"
+        assert result_data["label"] in ["pass", "fail"]
+        assert result_data["is_passed"] in [True, False]
+        assert type(result_data["score"]) is float
+        assert result_data["score"] >= 0.0
     
     def assert_error(self, result_data, error_code="FAILED_EXECUTION"):
         """Helper to assert an error result."""
@@ -325,8 +275,8 @@ class BaseEvaluatorBehaviorTest:
     def assert_not_applicable(self, result_data):
         """Helper to assert a not applicable result."""
         assert result_data["status"] == "completed"
-        assert result_data["label"] == "pass" #  this should be not applicable?
-        assert result_data["is_passed"] == True  # this should be false?
+        assert result_data["label"] == "pass"  # TODO: this should be not applicable?
+        assert result_data["is_passed"] == True  # TODO: this should be false?
         assert result_data["score"] == "not applicable"
 
     # ==================== All Valid ====================
@@ -359,8 +309,11 @@ class BaseEvaluatorBehaviorTest:
         )
         result_data = self._extract_and_print_result(run, outputs, "Query Not Present")
 
-        # This should be not applicable instead of raising exception
-        self.assert_error(result_data)
+        if self.requires_query:
+            # TODO: This should be not applicable instead of raising exception
+            self.assert_error(result_data)
+        else:
+            self.assert_pass(result_data)
 
     def test_query_as_string(self, openai_client, model_deployment_name):
         """Query as string - should pass."""
@@ -393,7 +346,7 @@ class BaseEvaluatorBehaviorTest:
     # ==================== RESPONSE TESTS ====================
 
     def test_response_not_present(self, openai_client, model_deployment_name):
-        """Response not present but tool_calls provided - should pass."""
+        """Response not present - should return not applicable."""
         run, outputs = self._run_evaluation(
             self.evaluator_name,
             openai_client, model_deployment_name,
@@ -404,24 +357,10 @@ class BaseEvaluatorBehaviorTest:
         )
         result_data = self._extract_and_print_result(run, outputs, "Response Not Present")
 
-        self.assert_pass(result_data)
-
-    def test_response_and_tool_calls_not_present(self, openai_client, model_deployment_name):
-        """Response and tool_calls not present - should return not applicable."""
-        run, outputs = self._run_evaluation(
-            self.evaluator_name,
-            openai_client, model_deployment_name,
-            query=self.VALID_QUERY,
-            response=None,
-            tool_calls=None,
-            tool_definitions=self.VALID_TOOL_DEFINITIONS,
-        )
-        result_data = self._extract_and_print_result(run, outputs, "Response And Tool Calls Not Present")
-
         self.assert_not_applicable(result_data)
 
-    def test_response_as_string_with_tool_calls(self, openai_client, model_deployment_name):
-        """Response as string - should pass with explicit tool_calls."""
+    def test_response_as_string(self, openai_client, model_deployment_name):
+        """Response as string - should pass."""
         run, outputs = self._run_evaluation(
             self.evaluator_name,
             openai_client, model_deployment_name,
@@ -430,123 +369,37 @@ class BaseEvaluatorBehaviorTest:
             tool_calls=self.VALID_TOOL_CALLS,
             tool_definitions=self.VALID_TOOL_DEFINITIONS,
         )
-        result_data = self._extract_and_print_result(run, outputs, "Response String With Tool Calls")
+        result_data = self._extract_and_print_result(run, outputs, "Response String")
 
         self.assert_pass(result_data)
 
-    def test_response_as_string_without_tool_calls(self, openai_client, model_deployment_name):
-        """Response as string - should return not applicable."""
-        run, outputs = self._run_evaluation(
-            self.evaluator_name,
-            openai_client, model_deployment_name,
-            query=self.VALID_QUERY,
-            response=self.STRING_RESPONSE,
-            tool_calls=None,
-            tool_definitions=self.VALID_TOOL_DEFINITIONS,
-        )
-        result_data = self._extract_and_print_result(run, outputs, "Response String Without Tool Calls")
-
-        self.assert_not_applicable(result_data)
-
-    def test_response_invalid_format_with_tool_calls(self, openai_client, model_deployment_name):
-        """Response in invalid format - should pass with explicit tool_calls."""
-        run, outputs = self._run_evaluation(
-            self.evaluator_name,
-            openai_client, model_deployment_name,
-            query=self.VALID_QUERY,
-            response=self.INVALID_RESPONSE,
-            tool_calls=self.VALID_TOOL_CALLS,
-            tool_definitions=self.VALID_TOOL_DEFINITIONS,
-        )
-        result_data = self._extract_and_print_result(run, outputs, "Response Invalid With Tool Calls")
-
-        self.assert_pass(result_data)
-
-    def test_response_invalid_format_without_tool_calls(self, openai_client, model_deployment_name):
+    def test_response_invalid_format(self, openai_client, model_deployment_name):
         """Response in invalid format - should return not_applicable."""
         run, outputs = self._run_evaluation(
             self.evaluator_name,
             openai_client, model_deployment_name,
             query=self.VALID_QUERY,
             response=self.INVALID_RESPONSE,
-            tool_calls=None,
+            tool_calls=self.VALID_TOOL_CALLS,
             tool_definitions=self.VALID_TOOL_DEFINITIONS,
         )
-        result_data = self._extract_and_print_result(run, outputs, "Response Invalid Without Tool Calls")
+        result_data = self._extract_and_print_result(run, outputs, "Response Invalid")
 
-        self.assert_not_applicable(result_data)
+        if self.requires_valid_format:
+            self.assert_not_applicable(result_data)
+        else:
+            self.assert_pass(result_data)
     
-    def test_response_minimal_format_without_tool_calls(self, openai_client, model_deployment_name):
+    def test_response_minimal_format(self, openai_client, model_deployment_name):
         """Response in minimal format - should pass."""
         run, outputs = self._run_evaluation(
             self.evaluator_name,
             openai_client, model_deployment_name,
             query=self.VALID_QUERY,
             response=self.MINIMAL_RESPONSE,
-            tool_calls=None,
+            tool_calls=self.VALID_TOOL_CALLS,
             tool_definitions=self.VALID_TOOL_DEFINITIONS,
         )
-        result_data = self._extract_and_print_result(run, outputs, "Response Minimal Without Tool Calls")
+        result_data = self._extract_and_print_result(run, outputs, "Response Minimal")
 
         self.assert_pass(result_data)
-
-    # ==================== TOOL CALLS TESTS ====================
-
-    def test_tool_calls_not_present(self, openai_client, model_deployment_name):
-        """Tool calls not present with valid response - should pass."""
-        run, outputs = self._run_evaluation(
-            self.evaluator_name,
-            openai_client, model_deployment_name,
-            query=self.VALID_QUERY,
-            response=self.VALID_RESPONSE,
-            tool_calls=None,
-            tool_definitions=self.VALID_TOOL_DEFINITIONS,
-        )
-        result_data = self._extract_and_print_result(run, outputs, "Tool Calls Not Present")
-
-        self.assert_pass(result_data)
-
-    def test_tool_calls_invalid_format(self, openai_client, model_deployment_name):
-        """Tool calls in invalid format - should return not_applicable."""
-        run, outputs = self._run_evaluation(
-            self.evaluator_name,
-            openai_client, model_deployment_name,
-            query=self.VALID_QUERY,
-            response=None,
-            tool_calls=self.INVALID_TOOL_CALLS,
-            tool_definitions=self.VALID_TOOL_DEFINITIONS,
-        )
-        result_data = self._extract_and_print_result(run, outputs, "Tool Calls Invalid")
-
-        self.assert_not_applicable(result_data)
-
-
-    # ==================== TOOL DEFINITIONS TESTS ====================
-
-    def test_tool_definitions_not_present(self, openai_client, model_deployment_name):
-        """Tool definitions not present - should return not_applicable."""
-        run, outputs = self._run_evaluation(
-            self.evaluator_name,
-            openai_client, model_deployment_name,
-            query=self.VALID_QUERY,
-            response=self.VALID_RESPONSE,
-            tool_calls=self.VALID_TOOL_CALLS,
-            tool_definitions=None,
-        )
-        result_data = self._extract_and_print_result(run, outputs, "Tool Definitions Not Present")
-
-        self.assert_not_applicable(result_data)
-
-    def test_tool_definitions_invalid_format(self, openai_client, model_deployment_name):
-        """Tool definitions in invalid format - should return not_applicable."""
-        run, outputs = self._run_evaluation(
-            self.evaluator_name,
-            openai_client, model_deployment_name,
-            query=self.VALID_QUERY,
-            response=self.VALID_RESPONSE,
-            tool_calls=self.VALID_TOOL_CALLS,
-            tool_definitions=self.INVALID_TOOL_DEFINITIONS,
-        )
-        result_data = self._extract_and_print_result(run, outputs, "Tool Definitions Invalid")
-
-        self.assert_not_applicable(result_data)

@@ -2,8 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """
-Behavioral tests for Tool Selection Evaluator using AIProjectClient.
-Tests various input scenarios: query, response, tool_definitions, and tool_calls.
+Behavioral tests for Tool Input Accuracy Evaluator.
 """
 
 import pytest
@@ -11,13 +10,13 @@ from base_tool_calls_evaluator_behavior_test import BaseToolCallEvaluatorBehavio
 
 
 @pytest.mark.unittest
-class TestToolSelectionEvaluatorBehavior(BaseToolCallEvaluatorBehaviorTest):
+class TestToolInputAccuracyEvaluatorBehavior(BaseToolCallEvaluatorBehaviorTest):
     """
-    Behavioral tests for Tool Selection Evaluator.
+    Behavioral tests for Tool Input Accuracy Evaluator.
     Tests different input formats and scenarios.
     """
 
-    evaluator_name = "tool_selection"
+    evaluator_name = "tool_input_accuracy"
 
     MINIMAL_RESPONSE = [
             {
@@ -26,6 +25,7 @@ class TestToolSelectionEvaluatorBehavior(BaseToolCallEvaluatorBehaviorTest):
                     {
                         "type": "tool_call",
                         "name": "fetch_weather",
+                        "arguments": {"location": "Seattle"},
                     }
                 ],
             },
@@ -35,7 +35,13 @@ class TestToolSelectionEvaluatorBehavior(BaseToolCallEvaluatorBehaviorTest):
                     {
                         "type": "tool_call",
                         "name": "send_email",
+                        "arguments": {
+                            "recipient": "your_email@example.com",
+                            "subject": "Weather Information for Seattle",
+                            "body": "The current weather in Seattle is rainy with a temperature of 14\u00b0C.",
+                        },
                     }
                 ],
             },
         ]
+   
