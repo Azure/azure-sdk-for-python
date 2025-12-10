@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -812,8 +813,10 @@ class TestContainerRegistryClientAsyncUnitTests:
                     "Content-Type": content_type,
                     "Content-Length": len(b"hello world"),
                 },
+                content_type=content_type,
                 read=read,
                 json=json,
+                text=self.text,
             )
 
         async with ContainerRegistryClient(
