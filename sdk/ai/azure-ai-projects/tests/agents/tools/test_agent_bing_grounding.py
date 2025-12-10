@@ -52,7 +52,7 @@ class TestAgentBingGrounding(TestBase):
         bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
 
         if not bing_connection_id:
-            pytest.skip("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.fail("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
@@ -60,9 +60,11 @@ class TestAgentBingGrounding(TestBase):
             self.create_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
+            agent_name="bing-grounding-agent"
+
             # Create agent with Bing grounding tool
             agent = project_client.agents.create_version(
-                agent_name="bing-grounding-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant.",
@@ -78,10 +80,7 @@ class TestAgentBingGrounding(TestBase):
                 ),
                 description="You are a helpful agent.",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "bing-grounding-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Test agent with a query that requires current web information
             output_text = ""
@@ -151,7 +150,7 @@ class TestAgentBingGrounding(TestBase):
         bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
 
         if not bing_connection_id:
-            pytest.skip("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.fail("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 

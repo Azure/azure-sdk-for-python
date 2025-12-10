@@ -158,17 +158,19 @@ class TestAgentAISearchAsync(TestBase):
             ai_search_index_name = kwargs.get("azure_ai_projects_tests_ai_search_index_name")
 
             if not ai_search_connection_id:
-                pytest.skip("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_PROJECT_CONNECTION_ID environment variable not set")
+                pytest.fail("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_PROJECT_CONNECTION_ID environment variable not set")
 
             if not ai_search_index_name:
-                pytest.skip("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_INDEX_NAME environment variable not set")
+                pytest.fail("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_INDEX_NAME environment variable not set")
 
             assert isinstance(ai_search_connection_id, str), "ai_search_connection_id must be a string"
             assert isinstance(ai_search_index_name, str), "ai_search_index_name must be a string"
 
+            agent_name="ai-search-qa-agent-async-parallel"
+
             # Create agent with Azure AI Search tool
             agent = await project_client.agents.create_version(
-                agent_name="ai-search-qa-agent-async-parallel",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="""You are a helpful assistant that answers true/false questions based on the provided search results.
@@ -191,10 +193,7 @@ class TestAgentAISearchAsync(TestBase):
                 ),
                 description="Agent for testing AI Search question answering (async parallel).",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "ai-search-qa-agent-async-parallel"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Test all questions IN PARALLEL using asyncio.gather()
             total_questions = len(self.TEST_QUESTIONS)
