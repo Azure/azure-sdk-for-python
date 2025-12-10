@@ -9,7 +9,7 @@ import unittest.mock as mock
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, RecordedTransport
-from test_base import servicePreparer
+from test_base import servicePreparer, patched_open_crlf_to_lf
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
 
@@ -54,9 +54,11 @@ class SampleExecutor:
 
     def execute(self):
         """Execute a synchronous sample with proper mocking and environment setup."""
+
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
+            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
             mock.patch("azure.identity.DefaultAzureCredential") as mock_credential,
         ):
             for var_name, var_value in self.env_vars.items():
@@ -77,6 +79,7 @@ class SampleExecutor:
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
+            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
             mock.patch("azure.identity.aio.DefaultAzureCredential") as mock_credential,
         ):
             for var_name, var_value in self.env_vars.items():
@@ -168,9 +171,6 @@ def _get_tools_sample_paths():
         "sample_agent_memory_search.py",
         "sample_agent_openapi_with_project_connection.py",
         "sample_agent_to_agent.py",
-        "sample_agent_code_interpreter.py",
-        "sample_agent_file_search.py",
-        "sample_agent_file_search_in_stream.py",
     ]
     samples = []
 
@@ -193,8 +193,6 @@ def _get_tools_sample_paths_async():
     tools_samples_to_skip = [
         "sample_agent_mcp_with_project_connection_async.py",
         "sample_agent_memory_search_async.py",
-        "sample_agent_code_interpreter_async.py",
-        "sample_agent_file_search_in_stream_async.py",
     ]
     samples = []
 
