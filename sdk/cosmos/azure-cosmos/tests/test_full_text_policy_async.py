@@ -614,7 +614,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 )
                 results = [result async for result in container.query_items(query)]
                 assert len(results) > 0
-                assert any(results[0][f"abstract_{suffix}"] == self.language_abstracts[lang_code] for result in results)
+                assert results[0][f"abstract_{suffix}"] == self.language_abstracts[lang_code]
         finally:
             await self.test_db.delete_container(container.id)
 
