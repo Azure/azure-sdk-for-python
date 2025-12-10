@@ -38,6 +38,8 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
     SAMPLING_TRACES_PER_SECOND_ARG,
     SPAN_PROCESSORS_ARG,
+    LOG_PROCESSORS_ARG,
+    METRIC_READERS_ARG,
     VIEWS_ARG,
     ENABLE_TRACE_BASED_SAMPLING_ARG,
 )
@@ -102,6 +104,10 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      Attributes take priority over default attributes and those from Resource Detectors.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
+    :keyword list[~opentelemetry.sdk._logs.LogRecordProcessor] log_processors: List of `LogRecordProcessor` objects
+     to process every log prior to exporting. Will be run sequentially.
+    :keyword list[~opentelemetry.sdk.metrics.MetricReader] metric_readers: List of `MetricReader` objects
+     to process every metric prior to exporting. Will be run sequentially.
     :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
      Defaults to `False`.
     :keyword bool enable_performance_counters: Boolean value to determine whether to enable performance counters.
@@ -224,6 +230,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
             {"enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs},
         )
         logger_provider.add_log_record_processor(log_record_processor)
+        for log_processor in configurations[LOG_PROCESSORS_ARG]:
+            logger_provider.add_log_record_processor(log_processor)  # type: ignore
         set_logger_provider(logger_provider)
         logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
         logging_formatter: Optional[Formatter] = configurations.get(LOGGING_FORMATTER_ARG)  # type: ignore
@@ -273,8 +281,12 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
+    if configurations.get(METRIC_READERS_ARG):
+        readers = [reader] + configurations[METRIC_READERS_ARG]  # type: ignore
+    else:
+        readers = [reader]
     meter_provider = MeterProvider(
-        metric_readers=[reader],
+        metric_readers=readers,
         resource=resource,
         views=views,
     )

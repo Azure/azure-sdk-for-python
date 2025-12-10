@@ -43,6 +43,8 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
     SAMPLING_TRACES_PER_SECOND_ARG,
     SPAN_PROCESSORS_ARG,
+    LOG_PROCESSORS_ARG,
+    METRIC_READERS_ARG,
     VIEWS_ARG,
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
@@ -78,6 +80,8 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_sampling_ratio(configurations)
     _default_instrumentation_options(configurations)
     _default_span_processors(configurations)
+    _default_log_processors(configurations)
+    _default_metric_readers(configurations)
     _default_enable_live_metrics(configurations)
     _default_enable_performance_counters(configurations)
     _default_views(configurations)
@@ -224,6 +228,12 @@ def _default_instrumentation_options(configurations):
 def _default_span_processors(configurations):
     configurations.setdefault(SPAN_PROCESSORS_ARG, [])
 
+def _default_log_processors(configurations):
+    configurations.setdefault(LOG_PROCESSORS_ARG, [])
+
+
+def _default_metric_readers(configurations):
+    configurations.setdefault(METRIC_READERS_ARG, [])
 
 def _default_enable_live_metrics(configurations):
     configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)
