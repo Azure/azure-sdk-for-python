@@ -178,7 +178,7 @@ class InstallAndTest(Check):
             "--durations=10",
             "--ignore=azure",
             "--ignore=.tox",
-            "--ignore-glob=.venv*",
+            "--ignore-glob=**/.venv*",
             "--ignore=build",
             "--ignore=.eggs",
             "--ignore=samples",
