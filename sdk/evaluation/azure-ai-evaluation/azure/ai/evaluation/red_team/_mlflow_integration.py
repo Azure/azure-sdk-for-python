@@ -353,16 +353,21 @@ class MLflowIntegration:
 
             if self._one_dp_project:
                 try:
-                    create_evaluation_result_response = (
-                        self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
+                    # Create evaluation result with retry logic to handle transient failures
+                    @self.retry_manager.create_retry_decorator(context="create_evaluation_result")
+                    def create_result_with_retry():
+                        return self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
                             name=str(uuid.uuid4()),
                             path=tmpdir,
                             metrics=metrics,
                             result_type=ResultType.REDTEAM,
                         )
-                    )
 
-                    # Use retry decorator to handle transient failures and prevent run from getting stuck
+                    create_evaluation_result_response = create_result_with_retry()
+                    self.logger.debug(f"Created evaluation result: {create_evaluation_result_response.id}")
+
+                    # Update run with retry logic to handle race conditions and transient failures
+                    # The update may fail if called too quickly after create_evaluation_result
                     @self.retry_manager.create_retry_decorator(context="update_red_team_run")
                     def update_run_with_retry():
                         return self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
