@@ -15,8 +15,6 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
-from functools import wraps
-from typing import Callable, Optional, Literal
 from pydantic import BaseModel
 
 
@@ -276,17 +274,6 @@ def _get_tools_sample_paths_async():
             samples.append(pytest.param(sample_path, id=test_id))
 
     return samples
-
-
-def _get_tools_sample_environment_variables_map(self) -> dict[str, str]:
-    return {
-        "AZURE_AI_PROJECT_ENDPOINT": "azure_ai_projects_tests_project_endpoint",
-        "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
-        "AI_SEARCH_INDEX_NAME": "azure_ai_projects_tests_ai_search_index_name",
-        "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",
-        "SHAREPOINT_USER_INPUT": "azure_ai_projects_tests_sharepoint_user_input",
-        "SHAREPOINT_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_sharepoint_project_connection_id",
-    }
 
 
 class TestSamples(AzureRecordedTestCase):
