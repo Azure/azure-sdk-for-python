@@ -384,6 +384,8 @@ Widget C:
             openai_client.conversations.delete(conversation_id=conversation.id)
             print("Cleanup completed")
 
+    # To run this test only:
+    # pytest tests/agents/tools/test_agent_tools_with_conversations.py::TestAgentToolsWithConversations::test_code_interpreter_with_file_in_conversation -s
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_code_interpreter_with_file_in_conversation(self, **kwargs):
