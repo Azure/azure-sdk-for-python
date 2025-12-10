@@ -2,7 +2,7 @@
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed-------------------------
-import csv, os, pytest, re, inspect, sys
+import csv, os, pytest, re, inspect, sys, json
 import importlib.util
 import unittest.mock as mock
 from azure.core.exceptions import HttpResponseError
@@ -11,11 +11,10 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, Recorde
 from test_base import servicePreparer, patched_open_crlf_to_lf
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from functools import wraps
-from typing import Callable, Optional
-
+from typing import Callable, Optional, Literal
+from pydantic import BaseModel
 
 class SampleExecutor:
     """Decorator for executing sample files with proper environment setup and credential mocking."""
@@ -54,31 +53,6 @@ class SampleExecutor:
         
         return False
 
-    def setup_agent(self, test_instance: "AzureRecordedTestCase", endpoint: str, is_async: bool):
-        """
-        Setup agent using context managers.
-        
-        Args:
-            test_instance: The test instance to get credentials from
-            endpoint: The Azure AI project endpoint
-        """
-        # Get credential from test infrastructure
-        credential = test_instance.get_credential(AIProjectClient, is_async=is_async)
-        self.credential = credential
-        
-        # Create project client
-        self.project_client = AIProjectClient(endpoint=endpoint, credential=credential)
-        
-        # Create agent
-        self.agent = self.project_client.agents.create_version(
-            agent_name="TestToolsAgent",
-            definition=PromptAgentDefinition(
-                model="gpt-4o",
-                instructions="You are a helpful assistant for testing purposes.",
-            ),
-        )
-        print(f"Agent {self.agent.name} (version {self.agent.version}) created")
-
     def __call__(self, fn):
         """
         Wrap the test function to provide executor instance.
@@ -92,11 +66,6 @@ class SampleExecutor:
         if inspect.iscoroutinefunction(fn):
             @wraps(fn)
             async def _async_wrapper(test_instance, sample_path: str, **kwargs):
-                # Setup agent on first call
-                if self.agent is None:
-                    endpoint = kwargs.get("azure_ai_projects_tests_project_endpoint", "")
-                    self.setup_agent(test_instance, endpoint, True)
-                
                 env_var_mapping = self.env_var_mapping_fn(test_instance)
                 executor = _SampleExecutorInstance(
                     test_instance, 
@@ -110,11 +79,6 @@ class SampleExecutor:
         else:
             @wraps(fn)
             def _sync_wrapper(test_instance, sample_path: str, **kwargs):
-                # Setup agent on first call
-                if self.agent is None:
-                    endpoint = kwargs.get("azure_ai_projects_tests_project_endpoint", "")
-                    self.setup_agent(test_instance, endpoint, False)
-                
                 env_var_mapping = self.env_var_mapping_fn(test_instance)
                 executor = _SampleExecutorInstance(
                     test_instance, 
@@ -169,6 +133,23 @@ class _SampleExecutorInstance:
         self.print_calls.append(" ".join(str(arg) for arg in args))
         self._original_print(*args, **kwargs)
 
+    def _get_mock_credential(self, is_async: bool):
+        """Get a mock credential that supports context manager protocol."""
+        credential_instance = self.test_instance.get_credential(AIProjectClient, is_async=is_async)
+        if is_async:
+            patch_target = "azure.identity.aio.DefaultAzureCredential"
+        else:
+            patch_target = "azure.identity.DefaultAzureCredential"
+        
+        # Create a mock that returns a context manager wrapping the credential
+        mock_credential_class = mock.MagicMock()
+        mock_credential_class.return_value.__enter__ = mock.MagicMock(return_value=credential_instance)
+        mock_credential_class.return_value.__exit__ = mock.MagicMock(return_value=None)
+        mock_credential_class.return_value.__aenter__ = mock.AsyncMock(return_value=credential_instance)
+        mock_credential_class.return_value.__aexit__ = mock.AsyncMock(return_value=None)
+        
+        return mock.patch(patch_target, new=mock_credential_class)
+
     def execute(self, sample_path: str):
         """Execute a synchronous sample with proper mocking and environment setup."""
         self._prepare_execution(sample_path)
@@ -177,20 +158,15 @@ class _SampleExecutorInstance:
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
             mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
-            mock.patch("azure.identity.DefaultAzureCredential") as mock_credential,
+            self._get_mock_credential(is_async=False),
         ):
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
-            credential_instance = self.test_instance.get_credential(AIProjectClient, is_async=False)
-            credential_mock = mock.MagicMock()
-            credential_mock.__enter__.return_value = credential_instance
-            credential_mock.__exit__.return_value = False
-            mock_credential.return_value = credential_mock
             if self.spec.loader is None:
                 raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
             self.spec.loader.exec_module(self.module)
 
-        self._validate_output()
+            self._validate_output()
 
     async def execute_async(self, sample_path: str):
         """Execute an asynchronous sample with proper mocking and environment setup."""
@@ -200,65 +176,66 @@ class _SampleExecutorInstance:
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
             mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
-            mock.patch("azure.identity.aio.DefaultAzureCredential") as mock_credential,
+            self._get_mock_credential(is_async=True),
+            self._get_mock_credential(is_async=False),
         ):
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
 
-            # Create a mock credential that supports async context manager protocol
-            credential_instance = self.test_instance.get_credential(AIProjectClient, is_async=True)
-            credential_mock = mock.AsyncMock()
-            credential_mock.__aenter__.return_value = credential_instance
-            credential_mock.__aexit__.return_value = False
-            mock_credential.return_value = credential_mock
             if self.spec.loader is None:
                 raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
             self.spec.loader.exec_module(self.module)
             await self.module.main()
 
-        self._validate_output()
+            self._validate_output()
 
     def _validate_output(self):
-        """
-        Validates:
-        * Sample output contains the marker '==> Result: <content>'
-        * If the sample includes a comment '# Print result (should contain "<keyword>")',
-          the result must include that keyword (case-insensitive)
-        * If no keyword is specified, the result must be at least 200 characters long
-        """
-        # Find content after ==> Result: marker in print_calls array
-        result_line = None
-        for call in self.print_calls:
-            if call.startswith("==> Result:"):
-                result_line = call
-                break
+        class TestReport(BaseModel):
+            model_config = {"extra": "forbid"}
+            result: Literal["correct", "incorrect"]
+            reason: str
+                            
+        with (
+            DefaultAzureCredential() as credential,
+            AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            response = openai_client.responses.create(
+                model="gpt-4o",
+                instructions="""We just run Python code and captured content from print.
+One entry of string array per print.
+Validating the printed content to determine if correct or not:
+Respond "incorrect" if any entries show:
+- Error messages or exception text
+- Empty or null results where data is expected
+- Malformed or corrupted data
+- HTTP error codes (4xx, 5xx)
+- Timeout or connection errors
+- Warning messages indicating failures
+- Failure to retrieve or process data
+- Statements saying documents/information didn't provide relevant data
+- Statements saying unable to find/retrieve information
+- Asking the user to specify, clarify, or provide more details
+- Suggesting to use other tools or sources
+- Asking follow-up questions to complete the task
+- Indicating lack of knowledge or missing information
+- Responses that defer answering or redirect the question
+Respond with "correct" only if the result provides a complete, substantive answer with actual data/information.
+Always respond with `reason` indicating the reason for the response.""",
+                text={
+                    "format": {
+                        "type": "json_schema",
+                        "name": "TestReport",
+                        "schema": TestReport.model_json_schema(),
+                    }
+                },
+                input=str(self.print_calls),
+            )
 
-        if not result_line:
-            assert False, "Expected to find '==> Result:' in print calls."
+            test_report = json.loads(response.output_text)
 
-        # Extract content after ==> Result:
-        arrow_match = re.search(r"==> Result:(.*)", result_line, re.IGNORECASE | re.DOTALL)
-        if not arrow_match:
-            assert False, f"Expected to find '==> Result:' in line: {result_line}"
-
-        content_after_arrow = arrow_match.group(1).strip()
-
-        # Read the sample file to check for expected output comment
-        with open(self.sample_path) as f:
-            sample_code = f.read()
-
-        # Verify pattern: # Print result (should contain '...') if exist
-        match = re.search(r"# Print result \(should contain ['\"](.+?)['\"]\)", sample_code)
-        if match:
-            # Decode Unicode escape sequences like \u00b0F to actual characters
-            expected_contain = match.group(1).encode().decode("unicode_escape")
-            assert (
-                expected_contain.lower() in content_after_arrow.lower()
-            ), f"Expected to find '{expected_contain}' after '==> Result:', but got: {content_after_arrow}"
-        else:
-            result_len = len(content_after_arrow)
-            assert result_len > 200, f"Expected 200 characters after '==> Result:', but got {result_len} characters"
-
+            assert test_report["result"] == "correct", f"Error is identified: {test_report['reason']}"
+            print(f"Reason: {test_report['reason']}")
 
 class SamplePathPasser:
     def __call__(self, fn):
