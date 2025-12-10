@@ -10,7 +10,6 @@ from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -67,7 +66,6 @@ class AzureAppConfigurationClient:
         if not credential:
             raise ValueError("Missing credential")
 
-        credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
         if isinstance(credential, AzureKeyCredential):
@@ -77,13 +75,7 @@ class AzureAppConfigurationClient:
                     "authentication_policy": AppConfigRequestsCredentialsPolicy(credential, base_url, id_credential),
                 }
             )
-        elif hasattr(credential, "get_token"):  # AsyncFakeCredential is not an instance of AsyncTokenCredential
-            kwargs.update(
-                {
-                    "authentication_policy": AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
-                }
-            )
-        else:
+        elif not hasattr(credential, "get_token"):  # AsyncFakeCredential is not an instance of AsyncTokenCredential
             raise TypeError(
                 f"Unsupported credential: {type(credential)}. Use an instance of token credential from azure.identity"
             )

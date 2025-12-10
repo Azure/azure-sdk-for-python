@@ -9,7 +9,6 @@ from typing import Any, Dict, List, Optional, Union, overload, cast
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential, AzureKeyCredential
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotModifiedError
@@ -63,7 +62,6 @@ class AzureAppConfigurationClient:
         if not credential:
             raise ValueError("Missing credential")
 
-        credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = SyncTokenPolicy()
 
         if isinstance(credential, AzureKeyCredential):
@@ -73,13 +71,7 @@ class AzureAppConfigurationClient:
                     "authentication_policy": AppConfigRequestsCredentialsPolicy(credential, base_url, id_credential),
                 }
             )
-        elif isinstance(credential, TokenCredential):
-            kwargs.update(
-                {
-                    "authentication_policy": BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
-                }
-            )
-        else:
+        elif not isinstance(credential, TokenCredential):
             raise TypeError(
                 f"Unsupported credential: {type(credential)}. Use an instance of token credential from azure.identity"
             )
