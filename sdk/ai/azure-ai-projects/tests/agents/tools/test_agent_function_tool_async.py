@@ -73,8 +73,7 @@ class TestAgentFunctionToolAsync(TestBase):
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Initial response completed (id: {response.id})")
-            self.validate_response(response)
+            self.validate_response(response, print_message="Initial response completed")
 
             # Check for function calls in the response
             function_calls_found = 0
@@ -127,8 +126,7 @@ class TestAgentFunctionToolAsync(TestBase):
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Final response completed (id: {response.id})")
-            self.validate_response(response)
+            self.validate_response(response, print_message="Final response completed")
 
             # Get the final response text
             response_text = response.output_text

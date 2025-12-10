@@ -68,8 +68,6 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
             input="Calculate 5 + 3 and save the result.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        print(f"Response received (id: {response.id})")
-
         self.validate_response(response)
         print("✓ Code Interpreter + Function Tool works!")
 
@@ -126,7 +124,6 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
 
-        print(f"Response received (id: {response.id})")
         self.validate_response(response)
         print("✓ Data generation and reporting works!")
 

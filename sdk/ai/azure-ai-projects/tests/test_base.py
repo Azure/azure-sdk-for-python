@@ -358,11 +358,14 @@ class TestBase(AzureRecordedTestCase):
                 assert TestBase.is_valid_dict(connection.credentials.credential_keys)
 
     @classmethod
-    def validate_response(cls, response: Response):
-        assert response.id 
+    def validate_response(cls, response: Response, *, print_message: Optional[str] = None):
+        assert response.id
         assert response.output is not None
         assert len(response.output) > 0
-        print(f"Response completed (id: {response.id})")
+        if print_message:
+            print(f"{print_message} (id: {response.id})")
+        else:
+            print(f"Response completed (id: {response.id})")
 
     @classmethod
     def validate_red_team_response(

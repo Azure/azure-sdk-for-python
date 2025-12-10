@@ -89,8 +89,6 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
             input="Find the data file, analyze it, and save the results.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        print(f"Response received (id: {response.id})")
-
         self.validate_response(response)
         print("✓ Three-tool combination works!")
 
