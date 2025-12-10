@@ -22,7 +22,7 @@ INCORRECT_AUDIENCE_ERROR_MESSAGE = (
 AAD_AUDIENCE_ERROR_CODE = "AADSTS500011"
 
 
-class AudiencePolicy(SansIOHTTPPolicy):
+class AudienceErrorHandlingPolicy(SansIOHTTPPolicy):
     """
     A policy to handle audience-related authentication errors for Azure App Configuration.
     Raises a ClientAuthenticationError with a helpful message if the audience is missing or incorrect.
@@ -30,7 +30,7 @@ class AudiencePolicy(SansIOHTTPPolicy):
 
     def __init__(self, has_audience: bool = False):
         """
-        Initialize the AudiencePolicy.
+        Initialize the AudienceErrorHandlingPolicy.
 
         :param has_audience: Indicates if the expected audience is set for the authentication token.
         :type has_audience: bool

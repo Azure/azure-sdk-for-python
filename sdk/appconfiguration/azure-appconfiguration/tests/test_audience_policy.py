@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
-from azure.appconfiguration._audience_policy import AudiencePolicy
+from azure.appconfiguration._audience_policy import AudienceErrorHandlingPolicy
 import pytest
 
 NO_AUDIENCE_ERROR_MESSAGE = (
@@ -22,7 +22,7 @@ AAD_AUDIENCE_ERROR_CODE = "AADSTS500011"
 
 
 def test_on_exception_no_audience():
-    policy = AudiencePolicy(False)
+    policy = AudienceErrorHandlingPolicy(False)
     try:
         raise ClientAuthenticationError(message=f"{AAD_AUDIENCE_ERROR_CODE} some error", response=None)
     except ClientAuthenticationError:
@@ -32,7 +32,7 @@ def test_on_exception_no_audience():
 
 
 def test_on_exception_incorrect_audience():
-    policy = AudiencePolicy(True)
+    policy = AudienceErrorHandlingPolicy(True)
     try:
         raise ClientAuthenticationError(message=f"{AAD_AUDIENCE_ERROR_CODE} some error", response=None)
     except ClientAuthenticationError:
@@ -42,7 +42,7 @@ def test_on_exception_incorrect_audience():
 
 
 def test_on_exception_non_audience_error():
-    policy = AudiencePolicy(False)
+    policy = AudienceErrorHandlingPolicy(False)
     try:
         raise ClientAuthenticationError(message="Some other error", response=None)
     except ClientAuthenticationError as ex:

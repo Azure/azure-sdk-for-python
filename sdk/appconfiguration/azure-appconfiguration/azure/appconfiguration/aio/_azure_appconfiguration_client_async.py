@@ -41,7 +41,7 @@ from .._utils import (
     get_label_filter,
     parse_connection_string,
 )
-from .._audience_policy import AudiencePolicy
+from .._audience_policy import AudienceErrorHandlingPolicy
 
 
 class AzureAppConfigurationClient:
@@ -72,7 +72,7 @@ class AzureAppConfigurationClient:
         credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
-        audience_policy = AudiencePolicy(bool(kwargs.get("credential_scopes", None)))
+        audience_policy = AudienceErrorHandlingPolicy(bool(kwargs.get("credential_scopes", None)))
 
         per_call_policies = [self._sync_token_policy, audience_policy]
 
