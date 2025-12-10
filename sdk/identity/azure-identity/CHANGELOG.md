@@ -12,6 +12,8 @@
 
 ### Bugs Fixed
 
+- Fixed the `AZURE_REGIONAL_AUTHORITY_NAME` environment variable not being respected in certain credentials. ([#44347](https://github.com/Azure/azure-sdk-for-python/pull/44347))
+
 ### Other Changes
 
 ## 1.26.0b1 (2025-11-07)
