@@ -18,6 +18,8 @@ by creating custom transport sessions with a truststore-based SSLContext.
 
 Requirements:
     pip install truststore azure-identity azure-storage-blob aiohttp requests
+USAGE:
+    python example_truststore_ssl_context.py
 """
 
 import ssl

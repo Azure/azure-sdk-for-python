@@ -16,6 +16,8 @@ HTTP clients.
 
 Requirements:
     pip install truststore azure-identity azure-storage-blob aiohttp
+USAGE:
+    python example_truststore_injection.py
 """
 
 import ssl

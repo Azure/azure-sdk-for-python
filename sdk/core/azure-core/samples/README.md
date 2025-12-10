@@ -26,6 +26,6 @@ These are some code snippets that show the way in which end users can customize 
 
 [example_shared_transport_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/example_shared_transport_async.py) - samples of how to use a shared async transport
 
-[example_truststore.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/example_truststore.py) - samples of how to use the `truststore` library to leverage OS certificate stores via global injection
+[example_truststore_injection.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/example_truststore_injection.py) - samples of how to use the `truststore` library to leverage OS certificate stores via global injection
 
 [example_truststore_ssl_context.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/example_truststore_ssl_context.py) - samples of how to use `truststore.SSLContext` directly with custom transport sessions
