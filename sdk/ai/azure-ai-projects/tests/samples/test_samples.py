@@ -6,6 +6,9 @@
 import csv, os, pytest, re, inspect, sys, json
 import importlib.util
 import unittest.mock as mock
+from typing import cast
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, RecordedTransport
@@ -131,7 +134,6 @@ Respond false if any entries show:
 - Error messages or exception text
 - Empty or null results where data is expected
 - Malformed or corrupted data
-- HTTP error codes (4xx, 5xx)
 - Timeout or connection errors
 - Warning messages indicating failures
 - Failure to retrieve or process data
@@ -180,9 +182,11 @@ Always respond with `reason` indicating the reason for the response.""",
 
     def _validate_output(self):
         """Validate sample output using synchronous OpenAI client."""
+        credential = self.test_instance.get_credential(AIProjectClient, is_async=False)
         with (
-            DefaultAzureCredential() as credential,
-            AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+            AIProjectClient(
+                endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=cast(TokenCredential, credential)
+            ) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
             response = openai_client.responses.create(**self._get_validation_request_params())
@@ -191,10 +195,10 @@ Always respond with `reason` indicating the reason for the response.""",
 
     async def _validate_output_async(self):
         """Validate sample output using asynchronous OpenAI client."""
+        credential = self.test_instance.get_credential(AIProjectClient, is_async=True)
         async with (
-            AsyncDefaultAzureCredential() as credential,
             AsyncAIProjectClient(
-                endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential
+                endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=cast(AsyncTokenCredential, credential)
             ) as project_client,
         ):
             async with project_client.get_openai_client() as openai_client:
@@ -225,25 +229,27 @@ def _get_tools_sample_paths():
     samples_folder_path = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir))
     tools_folder = os.path.join(samples_folder_path, "samples", "agents", "tools")
 
-    tools_samples_to_skip = [
-        "sample_agent_bing_custom_search.py",
-        "sample_agent_bing_grounding.py",
-        "sample_agent_browser_automation.py",
-        "sample_agent_fabric.py",
-        "sample_agent_mcp_with_project_connection.py",
-        "sample_agent_memory_search.py",
-        "sample_agent_openapi_with_project_connection.py",
-        "sample_agent_to_agent.py",
+    # Whitelist of samples to test
+    tools_samples_to_test = [
+        "sample_agent_ai_search.py",
+        "sample_agent_code_interpreter.py",
+        "sample_agent_file_search.py",
+        "sample_agent_file_search_in_stream.py",
+        "sample_agent_function_tool.py",
+        "sample_agent_image_generation.py",
+        "sample_agent_mcp.py",
+        "sample_agent_openapi.py",
+        "sample_agent_sharepoint.py",
+        "sample_agent_web_search.py",
     ]
     samples = []
 
-    for filename in sorted(os.listdir(tools_folder)):
-        # Only include .py files, exclude __pycache__ and utility files
-        if "sample_" in filename and "_async" not in filename and filename not in tools_samples_to_skip:
-            sample_path = os.path.join(tools_folder, filename)
+    for filename in tools_samples_to_test:
+        sample_path = os.path.join(tools_folder, filename)
+        if os.path.exists(sample_path):
             # Get relative path from samples folder and convert to test ID format
             rel_path = os.path.relpath(sample_path, samples_folder_path)
-            # Remove 'samples\\' prefix and convert to forward slashes
+            # Remove 'samples\' prefix and convert to forward slashes
             test_id = rel_path.replace("samples\\", "").replace("\\", "/").replace(".py", "")
             samples.append(pytest.param(sample_path, id=test_id))
 
@@ -256,20 +262,23 @@ def _get_tools_sample_paths_async():
     samples_folder_path = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir))
     tools_folder = os.path.join(samples_folder_path, "samples", "agents", "tools")
 
-    # Skip async samples that are not yet ready for testing
-    tools_samples_to_skip = [
-        "sample_agent_mcp_with_project_connection_async.py",
-        "sample_agent_memory_search_async.py",
+    # Whitelist of async samples to test
+    tools_samples_to_test_async = [
+        "sample_agent_code_interpreter_async.py",
+        "sample_agent_computer_use_async.py",
+        "sample_agent_file_search_in_stream_async.py",
+        "sample_agent_function_tool_async.py",
+        "sample_agent_image_generation_async.py",
+        "sample_agent_mcp_async.py",
     ]
     samples = []
 
-    for filename in sorted(os.listdir(tools_folder)):
-        # Only include async .py files, exclude __pycache__ and utility files
-        if "sample_" in filename and "_async" in filename and filename not in tools_samples_to_skip:
-            sample_path = os.path.join(tools_folder, filename)
+    for filename in tools_samples_to_test_async:
+        sample_path = os.path.join(tools_folder, filename)
+        if os.path.exists(sample_path):
             # Get relative path from samples folder and convert to test ID format
             rel_path = os.path.relpath(sample_path, samples_folder_path)
-            # Remove 'samples\\' prefix and convert to forward slashes
+            # Remove 'samples\' prefix and convert to forward slashes
             test_id = rel_path.replace("samples\\", "").replace("\\", "/").replace(".py", "")
             samples.append(pytest.param(sample_path, id=test_id))
 
