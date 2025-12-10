@@ -287,8 +287,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     elif tool_name:
                         # This is a regular function tool from converter
                         tool_definition_exists = any(
-                            tool.get("name") == tool_name and tool.get("type", "function") == "function"
-                            for tool in tool_definitions_expanded
+                            tool.get("name") == tool_name for tool in tool_definitions_expanded
                         )
                         if not tool_definition_exists:
                             raise EvaluationException(
