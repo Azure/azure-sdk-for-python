@@ -102,13 +102,13 @@ with (
                     for annotation in text_content.annotations:
                         if annotation.type == "url_citation":
                             print(
-                                f"URL Citation: {annotation.url}, "
+                                f"URL Citation: , "
                                 f"Start index: {annotation.start_index}, "
                                 f"End index: {annotation.end_index}"
                             )
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
-            print(f"==> Result: {event.response.output_text}")
+            print(f"Agent response: {event.response.output_text}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

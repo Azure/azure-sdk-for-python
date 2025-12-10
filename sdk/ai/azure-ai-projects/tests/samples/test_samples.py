@@ -11,10 +11,13 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, Recorde
 from test_base import servicePreparer, patched_open_crlf_to_lf
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from functools import wraps
 from typing import Callable, Optional, Literal
 from pydantic import BaseModel
+
 
 class SampleExecutor:
     """Decorator for executing sample files with proper environment setup and credential mocking."""
@@ -22,82 +25,55 @@ class SampleExecutor:
     def __init__(self, env_var_mapping_fn: Callable):
         """
         Initialize the SampleExecutor decorator.
-        
+
         Args:
             env_var_mapping_fn: Function that returns the environment variable mapping
         """
         self.env_var_mapping_fn = env_var_mapping_fn
-        self.agent = None
-        self.project_client = None
-        self.credential = None
-
-    def __enter__(self):
-        """Context manager entry - creates agent for all tests."""
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Context manager exit - deletes agent after all tests."""
-        if self.agent and self.project_client:
-            try:
-                self.project_client.agents.delete_version(
-                    agent_name=self.agent.name,
-                    agent_version=self.agent.version
-                )
-                print(f"Agent {self.agent.name} deleted")
-            except Exception as e:
-                print(f"Error deleting agent: {e}")
-        
-        if self.project_client:
-            self.project_client.close()
-        
-        
-        return False
 
     def __call__(self, fn):
         """
         Wrap the test function to provide executor instance.
-        
+
         Args:
             fn: The test function to wrap
-            
+
         Returns:
             Wrapped function with executor injection
         """
         if inspect.iscoroutinefunction(fn):
+
             @wraps(fn)
             async def _async_wrapper(test_instance, sample_path: str, **kwargs):
                 env_var_mapping = self.env_var_mapping_fn(test_instance)
-                executor = _SampleExecutorInstance(
-                    test_instance, 
-                    env_var_mapping, 
-                    self.agent,
-                    **kwargs
-                )
+                executor = _SampleExecutorInstance(test_instance, env_var_mapping, **kwargs)
                 await fn(test_instance, sample_path, executor=executor, **kwargs)
-            
+
             return _async_wrapper
         else:
+
             @wraps(fn)
             def _sync_wrapper(test_instance, sample_path: str, **kwargs):
                 env_var_mapping = self.env_var_mapping_fn(test_instance)
-                executor = _SampleExecutorInstance(
-                    test_instance, 
-                    env_var_mapping,
-                    self.agent,
-                    **kwargs
-                )
+                executor = _SampleExecutorInstance(test_instance, env_var_mapping, **kwargs)
                 fn(test_instance, sample_path, executor=executor, **kwargs)
-            
+
             return _sync_wrapper
 
 
 class _SampleExecutorInstance:
     """Internal class for executing sample files with proper environment setup and credential mocking."""
 
-    def __init__(self, test_instance: "AzureRecordedTestCase", env_var_mapping: dict[str, str], agent, **kwargs):
+    class TestReport(BaseModel):
+        """Schema for validation test report."""
+
+        model_config = {"extra": "forbid"}
+        correct: bool
+        reason: str
+
+    def __init__(self, test_instance: "AzureRecordedTestCase", env_var_mapping: dict[str, str], **kwargs):
         self.test_instance = test_instance
         self.env_var_mapping = env_var_mapping
-        self.agent = agent
         self.kwargs = kwargs
         self.print_calls: list[str] = []
         self._original_print = print
@@ -105,7 +81,7 @@ class _SampleExecutorInstance:
     def _prepare_execution(self, sample_path: str):
         """Prepare for sample execution by setting up environment and module."""
         self.sample_path = sample_path
-        
+
         # Prepare environment variables
         self.env_vars = {}
         for sample_var, test_var in self.env_var_mapping.items():
@@ -140,72 +116,66 @@ class _SampleExecutorInstance:
             patch_target = "azure.identity.aio.DefaultAzureCredential"
         else:
             patch_target = "azure.identity.DefaultAzureCredential"
-        
+
         # Create a mock that returns a context manager wrapping the credential
         mock_credential_class = mock.MagicMock()
         mock_credential_class.return_value.__enter__ = mock.MagicMock(return_value=credential_instance)
         mock_credential_class.return_value.__exit__ = mock.MagicMock(return_value=None)
         mock_credential_class.return_value.__aenter__ = mock.AsyncMock(return_value=credential_instance)
         mock_credential_class.return_value.__aexit__ = mock.AsyncMock(return_value=None)
-        
+
         return mock.patch(patch_target, new=mock_credential_class)
 
     def execute(self, sample_path: str):
         """Execute a synchronous sample with proper mocking and environment setup."""
         self._prepare_execution(sample_path)
-        
+
         with (
             MonkeyPatch.context() as mp,
-            mock.patch("builtins.print", side_effect=self._capture_print),
-            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
             self._get_mock_credential(is_async=False),
         ):
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
-            if self.spec.loader is None:
-                raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
-            self.spec.loader.exec_module(self.module)
+
+            with (
+                mock.patch("builtins.print", side_effect=self._capture_print),
+                mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
+            ):
+                if self.spec.loader is None:
+                    raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
+                self.spec.loader.exec_module(self.module)
 
             self._validate_output()
 
     async def execute_async(self, sample_path: str):
         """Execute an asynchronous sample with proper mocking and environment setup."""
         self._prepare_execution(sample_path)
-        
+
         with (
             MonkeyPatch.context() as mp,
-            mock.patch("builtins.print", side_effect=self._capture_print),
-            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
             self._get_mock_credential(is_async=True),
-            self._get_mock_credential(is_async=False),
         ):
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
 
-            if self.spec.loader is None:
-                raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
-            self.spec.loader.exec_module(self.module)
-            await self.module.main()
+            with (
+                mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
+                mock.patch("builtins.print", side_effect=self._capture_print),
+            ):
+                if self.spec.loader is None:
+                    raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
+                self.spec.loader.exec_module(self.module)
+                await self.module.main()
 
-            self._validate_output()
+            await self._validate_output_async()
 
-    def _validate_output(self):
-        class TestReport(BaseModel):
-            model_config = {"extra": "forbid"}
-            result: Literal["correct", "incorrect"]
-            reason: str
-                            
-        with (
-            DefaultAzureCredential() as credential,
-            AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
-            project_client.get_openai_client() as openai_client,
-        ):
-            response = openai_client.responses.create(
-                model="gpt-4o",
-                instructions="""We just run Python code and captured content from print.
-One entry of string array per print.
+    def _get_validation_request_params(self) -> dict:
+        """Get common parameters for validation request."""
+        return {
+            "model": "gpt-4o",
+            "instructions": """We just run Python code and captured a Python array of print statements.
 Validating the printed content to determine if correct or not:
-Respond "incorrect" if any entries show:
+Respond false if any entries show:
 - Error messages or exception text
 - Empty or null results where data is expected
 - Malformed or corrupted data
@@ -220,22 +190,66 @@ Respond "incorrect" if any entries show:
 - Asking follow-up questions to complete the task
 - Indicating lack of knowledge or missing information
 - Responses that defer answering or redirect the question
-Respond with "correct" only if the result provides a complete, substantive answer with actual data/information.
+Respond with true only if the result provides a complete, substantive answer with actual data/information.
 Always respond with `reason` indicating the reason for the response.""",
-                text={
-                    "format": {
-                        "type": "json_schema",
-                        "name": "TestReport",
-                        "schema": TestReport.model_json_schema(),
-                    }
-                },
-                input=str(self.print_calls),
-            )
+            "text": {
+                "format": {
+                    "type": "json_schema",
+                    "name": "TestReport",
+                    "schema": self.TestReport.model_json_schema(),
+                }
+            },
+            # The input field is sanitized in recordings (see conftest.py) by matching the unique prefix
+            # "print contents array = ". This allows sample print statements to change without breaking playback.
+            # The instructions field is preserved as-is in recordings. If you modify the instructions,
+            # you must re-record the tests.
+            "input": f"print contents array = {self.print_calls}",
+        }
 
+    def _assert_validation_result(self, test_report: dict) -> None:
+        """Assert validation result and print reason."""
+        if not test_report["correct"]:
+            # Write print statements to log file in temp folder for debugging
+            import tempfile
+            from datetime import datetime
+
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            log_file = os.path.join(tempfile.gettempdir(), f"sample_validation_error_{timestamp}.log")
+            with open(log_file, "w") as f:
+                f.write(f"Sample: {self.sample_path}\n")
+                f.write(f"Validation Error: {test_report['reason']}\n\n")
+                f.write("Print Statements:\n")
+                f.write("=" * 80 + "\n")
+                for i, print_call in enumerate(self.print_calls, 1):
+                    f.write(f"{i}. {print_call}\n")
+            print(f"\nValidation failed! Print statements logged to: {log_file}")
+        assert test_report["correct"], f"Error is identified: {test_report['reason']}"
+        print(f"Reason: {test_report['reason']}")
+
+    def _validate_output(self):
+        """Validate sample output using synchronous OpenAI client."""
+        with (
+            DefaultAzureCredential() as credential,
+            AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            response = openai_client.responses.create(**self._get_validation_request_params())
             test_report = json.loads(response.output_text)
+            self._assert_validation_result(test_report)
 
-            assert test_report["result"] == "correct", f"Error is identified: {test_report['reason']}"
-            print(f"Reason: {test_report['reason']}")
+    async def _validate_output_async(self):
+        """Validate sample output using asynchronous OpenAI client."""
+        async with (
+            AsyncDefaultAzureCredential() as credential,
+            AsyncAIProjectClient(
+                endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential
+            ) as project_client,
+        ):
+            async with project_client.get_openai_client() as openai_client:
+                response = await openai_client.responses.create(**self._get_validation_request_params())
+                test_report = json.loads(response.output_text)
+                self._assert_validation_result(test_report)
+
 
 class SamplePathPasser:
     def __call__(self, fn):

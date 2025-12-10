@@ -96,5 +96,4 @@ with (
             f.write(base64.b64decode(image_data[0]))
 
         # [END download_image]
-        # Print result (should contain "file")
-        print(f"==> Result: Image downloaded and saved to file: {file_path}")
+        print(f"Image saved to: {file_path}")
