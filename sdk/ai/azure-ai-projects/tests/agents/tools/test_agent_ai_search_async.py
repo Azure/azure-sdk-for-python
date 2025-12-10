@@ -17,6 +17,8 @@ from azure.ai.projects.models import (
     AzureAISearchQueryType,
 )
 
+# The tests in this file rely on an existing Azure AI Search project connection that has been populated with the following document:
+# https://arxiv.org/pdf/2508.03680
 
 class TestAgentAISearchAsync(TestBase):
 
