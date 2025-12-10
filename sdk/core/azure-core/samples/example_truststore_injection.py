@@ -20,7 +20,6 @@ USAGE:
     python example_truststore_injection.py
 """
 
-import ssl
 import asyncio
 import truststore
 
