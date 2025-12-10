@@ -84,6 +84,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
+
     def __next__(self):
         """Returns the next result
 
@@ -100,7 +101,17 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 # TODO: we can also use more_itertools.peekable to be more python friendly
                 targetRangeExContext.peek()
                 self._orderByPQ.push(targetRangeExContext)
-
+            except exceptions.CosmosHttpResponseError as e:
+                # Handle partition split during peek(). The _configure_partition_ranges method
+                # handles Gone errors during initial setup when calling peek() on document producers.
+                # However, partition splits can also occur while iterating through results. When
+                # peek() is called to check if there are more results in a partition range and that
+                # range has been split, it raises a Gone (410) error. We repair the document
+                # producers with refreshed partition ranges and retry the fetch.
+                if exceptions._partition_range_is_gone(e):
+                    self._repair_document_producer()
+                    return next(self)  # Retry fetching the next document
+                raise
             except StopIteration:
                 pass
 

@@ -18,7 +18,8 @@ class TestRoutingMapProvider(unittest.TestCase):
         def __init__(self, partition_key_ranges):
             self.partition_key_ranges = partition_key_ranges
 
-        def _ReadPartitionKeyRanges(self, collection_link: str, feed_options: Optional[Mapping[str, Any]] = None):
+        def _ReadPartitionKeyRanges(self, collection_link: str, feed_options: Optional[Mapping[str, Any]] = None,
+                                    **kwargs):
             return self.partition_key_ranges
 
     def setUp(self):

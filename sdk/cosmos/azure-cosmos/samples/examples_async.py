@@ -319,15 +319,18 @@ async def examples_async():
         # gets all items within the feed range.
         # [START query_items_feed_range]
         async for feed_range in container.read_feed_ranges():
-            async for queried_item in container.query_items(
-                    query='SELECT * from c',
-                    feed_range=feed_range):
+            items_in_range = container.query_items(
+                query='SELECT * from c',
+                feed_range=feed_range
+            )
+            async for queried_item in items_in_range:
                 print(json.dumps(queried_item, indent=True))
-        # [END query_items_param]
+        # [END query_items_feed_range]
 
         # Get the feed ranges list from container.
         # [START read_feed_ranges]
-        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        feed_ranges_iterable = await container.read_feed_ranges()
+        feed_ranges = [feed_range async for feed_range in feed_ranges_iterable]
         # [END read_feed_ranges]
 
         # Get a feed range from a partition key.

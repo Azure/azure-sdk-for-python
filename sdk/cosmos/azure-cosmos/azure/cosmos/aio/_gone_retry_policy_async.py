@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2021 Microsoft Corporation
+# Copyright (c) 2025 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,24 +19,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for connection reset retry policy implementation in the Azure
-Cosmos database service.
+"""Internal class for Internal class for partition key range splits and merges retry policy.
 """
+
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
 
-# pylint: disable=protected-access
+class PartitionKeyRangeGoneRetryPolicyAsync(_PartitionKeyRangeGoneRetryPolicyBase):
 
-
-class PartitionKeyRangeGoneRetryPolicy(_PartitionKeyRangeGoneRetryPolicyBase):
-
-    def ShouldRetry(self, exception):
+    async def ShouldRetry(self, exception):
         self.exception = exception
         collection_link = self._extract_collection_info()
 
         if self.refresh_partition_key_range_cache:
             previous_routing_map = self._get_previous_routing_map(collection_link)
             if previous_routing_map is not None:
-                self.client.refresh_routing_map_provider(collection_link, previous_routing_map)
+                await self.client.refresh_routing_map_provider(collection_link, previous_routing_map)
             self.refresh_partition_key_range_cache = False
 
         return False
