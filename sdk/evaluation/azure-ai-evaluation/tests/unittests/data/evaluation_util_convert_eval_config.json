@@ -50,7 +50,7 @@
             "type": "service",
             "metrics": {
                 "ViolenceContentCustomEvaluator": {
-                    "type": "ordinal",
+                    "type": "boolean",
                     "desirable_direction": "decrease",
                     "min_value": 0.0,
                     "max_value": 7.0

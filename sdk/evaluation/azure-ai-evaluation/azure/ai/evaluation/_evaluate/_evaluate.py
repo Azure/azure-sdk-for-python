@@ -3074,7 +3074,7 @@ def _get_inverse_metrics(
                 metric_info
                 and isinstance(metric_info, dict)
                 and "desirable_direction" in metric_info
-                and metric_info["desirable_direction"] is True
+                and metric_info["desirable_direction"] == "decrease"
                 and "type" in metric_info
                 and metric_info["type"] == "boolean"
             ):
