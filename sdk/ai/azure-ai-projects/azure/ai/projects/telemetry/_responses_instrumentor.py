@@ -3793,11 +3793,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Remote function call (like Bing Custom Search call)
             role = "assistant"  # Override role for remote function calls
 
-            # Extract the tool name
-            tool_name = getattr(item, "name", None) if hasattr(item, "name") else None
-
+            # Check if there's a more specific type in name field (e.g., "bing_custom_search_preview_call")
+            specific_type = None
+            if hasattr(item, "name") and item.name:
+                # Use the API type directly without transformation
+                specific_type = item.name
+            
             tool_call = {
-                "type": tool_name if tool_name else "remote_function",
+                "type": specific_type if specific_type else item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3874,11 +3877,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Remote function call output (like Bing Custom Search output)
             role = "tool"  # Tool outputs use role "tool"
 
-            # Extract the tool name
-            tool_name = getattr(item, "name", None) if hasattr(item, "name") else None
-
+            # Check if there's a more specific type in name field (e.g., "bing_custom_search_preview_call_output")
+            specific_type = None
+            if hasattr(item, "name") and item.name:
+                # Use the API type directly without transformation
+                specific_type = item.name
+            
             tool_output = {
-                "type": tool_name if tool_name else "remote_function",
+                "type": specific_type if specific_type else item_type,
             }
 
             # Always include ID (needed for correlation)
