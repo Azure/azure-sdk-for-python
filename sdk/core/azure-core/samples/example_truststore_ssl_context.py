@@ -40,13 +40,14 @@ from azure.core.pipeline.transport import RequestsTransport, AioHttpTransport
 # Helper: Custom HTTPAdapter for requests
 # =============================================================================
 
+
 class TruststoreHTTPAdapter(HTTPAdapter):
     """Custom HTTPAdapter that uses truststore.SSLContext for SSL verification."""
-    
+
     def __init__(self, ssl_context, **kwargs):
         self._ssl_context = ssl_context
         super().__init__(**kwargs)
-    
+
     def init_poolmanager(self, *args, **kwargs):
         kwargs["ssl_context"] = self._ssl_context
         return super().init_poolmanager(*args, **kwargs)
@@ -56,26 +57,27 @@ class TruststoreHTTPAdapter(HTTPAdapter):
 # Synchronous Example
 # =============================================================================
 
+
 def sync_blob_storage_with_ssl_context():
     """Synchronous Azure Blob Storage using truststore.SSLContext directly.
-    
+
     This approach gives you more control over the SSL context configuration
     without globally injecting truststore into ssl module.
     """
-    
+
     account_url = "https://<your-storage-account>.blob.core.windows.net"
-    
+
     # Create SSLContext using truststore (uses system certificate stores)
     ssl_context = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    
+
     # Create a session with truststore adapter
     session = requests.Session()
     adapter = TruststoreHTTPAdapter(ssl_context)
     session.mount("https://", adapter)
-    
+
     # Create transport with the custom session
     transport = RequestsTransport(session=session, session_owner=False)
-    
+
     with transport:
         credential = DefaultAzureCredential()
         blob_service_client = BlobServiceClient(
@@ -83,14 +85,14 @@ def sync_blob_storage_with_ssl_context():
             credential=credential,
             transport=transport,
         )
-        
+
         print("=== Sync Blob Storage with SSLContext ===")
         for container in blob_service_client.list_containers():
             print(f"Container: {container['name']}")
-        
+
         blob_service_client.close()
         credential.close()
-    
+
     session.close()  # Close the session manually since session_owner=False
 
 
@@ -98,25 +100,26 @@ def sync_blob_storage_with_ssl_context():
 # Asynchronous Example
 # =============================================================================
 
+
 async def async_blob_storage_with_ssl_context():
     """Asynchronous Azure Blob Storage using truststore.SSLContext directly.
-    
+
     This approach gives you more control over the SSL context configuration
     without globally injecting truststore into ssl module.
     """
-    
+
     account_url = "https://<your-storage-account>.blob.core.windows.net"
-    
+
     # Create SSLContext using truststore (uses system certificate stores)
     ssl_context = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    
+
     # Create a TCPConnector with our truststore SSLContext
     connector = aiohttp.TCPConnector(ssl=ssl_context)
     session = aiohttp.ClientSession(connector=connector)
-    
+
     # Create transport with the custom session
     transport = AioHttpTransport(session=session, session_owner=False)
-    
+
     async with transport:
         credential = AsyncDefaultAzureCredential()
         blob_service_client = AsyncBlobServiceClient(
@@ -124,14 +127,14 @@ async def async_blob_storage_with_ssl_context():
             credential=credential,
             transport=transport,
         )
-        
+
         print("=== Async Blob Storage with SSLContext ===")
         async for container in blob_service_client.list_containers():
             print(f"Container: {container['name']}")
-        
+
         await blob_service_client.close()
         await credential.close()
-    
+
     await session.close()  # Close the session manually since session_owner=False
 
 
