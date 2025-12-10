@@ -6,23 +6,45 @@ Base class for behavioral tests of tool calls evaluators.
 Tests various input scenarios: query, response, tool_definitions, and tool_calls.
 """
 
-from base_tools_evaluator_behavior_test import BaseToolEvaluatorBehaviorTest
+from base_tools_evaluator_behavior_test import BaseToolsEvaluatorBehaviorTest
 
 
-class BaseToolCallEvaluatorBehaviorTest(BaseToolEvaluatorBehaviorTest):
+class BaseToolCallEvaluatorBehaviorTest(BaseToolsEvaluatorBehaviorTest):
     """
     Base class for tool call evaluator behavioral tests with tool_calls.
-    Extends BaseToolEvaluatorBehaviorTest with tool call support.
+    Extends BaseToolsEvaluatorBehaviorTest with tool call support.
     Subclasses should implement:
     - evaluator_name: str - name of the evaluator (e.g., "tool_selection")
     - MINIMAL_RESPONSE: list - minimal valid response format for the evaluator
     - needs_arguments: bool - whether tool calls need arguments to be valid
     """
     
+    # Test Configs
+    requires_valid_format = True
+    requires_tool_definitions = True
     # TODO: Remove if not needed
     needs_arguments = False
     
-    MINIMAL_RESPONSE = None
+    MINIMAL_RESPONSE = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "name": "fetch_weather",
+                    }
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "name": "send_email",
+                    }
+                ],
+            },
+        ]
 
     # Tool call test data
     VALID_TOOL_CALLS = [
@@ -117,7 +139,7 @@ class BaseToolCallEvaluatorBehaviorTest(BaseToolEvaluatorBehaviorTest):
         )
         result_data = self._extract_and_print_result(run, outputs, "Response And Tool Calls Not Present")
 
-        self.assert_not_applicable(result_data)
+        self.assert_error(result_data)
 
     def test_response_as_string_without_tool_calls(self, openai_client, model_deployment_name):
         """Response as string - should return not applicable."""
@@ -146,7 +168,7 @@ class BaseToolCallEvaluatorBehaviorTest(BaseToolEvaluatorBehaviorTest):
         result_data = self._extract_and_print_result(run, outputs, "Response Invalid Without Tool Calls")
 
         if self.requires_valid_format:
-            self.assert_not_applicable(result_data)
+            self.assert_error(result_data)
         else:
             self.assert_pass(result_data)
     
@@ -207,7 +229,7 @@ class BaseToolCallEvaluatorBehaviorTest(BaseToolEvaluatorBehaviorTest):
         result_data = self._extract_and_print_result(run, outputs, "Tool Calls Invalid Without Valid Response")
 
         if self.requires_valid_format:
-            self.assert_not_applicable(result_data)
+            self.assert_error(result_data)
         else:
             self.assert_pass(result_data)
             
@@ -238,7 +260,7 @@ class BaseToolCallEvaluatorBehaviorTest(BaseToolEvaluatorBehaviorTest):
         )
         result_data = self._extract_and_print_result(run, outputs, "Response Missing name Parameter Without Tool Calls")
 
-        self.assert_not_applicable(result_data)
+        self.assert_error(result_data)
 
     def test_response_missing_arguments_parameters_without_tool_calls(self, openai_client, model_deployment_name):
         """Response is missing arguments parameter - should return not_applicable."""
@@ -252,9 +274,9 @@ class BaseToolCallEvaluatorBehaviorTest(BaseToolEvaluatorBehaviorTest):
             tool_calls=None,
             tool_definitions=self.VALID_TOOL_DEFINITIONS,
         )
-        result_data = self._extract_and_print_result(run, outputs, "Response Missing name Parameter Without Tool Calls")
+        result_data = self._extract_and_print_result(run, outputs, "Response Missing arguments Parameter Without Tool Calls")
 
         if self.needs_arguments:
-            self.assert_not_applicable(result_data)
+            self.assert_error(result_data)
         else:
             self.assert_pass(result_data)

@@ -17,18 +17,3 @@ class TestRelevanceEvaluatorBehavior(BaseEvaluatorBehaviorTest):
     """
 
     evaluator_name = "relevance"
-    
-    # Test Configs
-    requires_valid_format = False
-
-    MINIMAL_RESPONSE = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C.",
-                    }
-                ],
-            },
-        ]

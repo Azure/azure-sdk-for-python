@@ -9,16 +9,17 @@ Tests various input scenarios: query, response, and tool_definitions.
 from base_evaluator_behavior_test import BaseEvaluatorBehaviorTest
 
 
-class BaseToolEvaluatorBehaviorTest(BaseEvaluatorBehaviorTest):
+class BaseToolsEvaluatorBehaviorTest(BaseEvaluatorBehaviorTest):
     """
-    Base class for tool evaluator behavioral tests with tool_definitions.
+    Base class for tools evaluator behavioral tests with tool_definitions.
     Extends BaseEvaluatorBehaviorTest with tool definition support.
     Subclasses should implement:
     - evaluator_name: str - name of the evaluator (e.g., "tool_output_utilization")
     - MINIMAL_RESPONSE: list - minimal valid response format for the evaluator
     """
 
-    MINIMAL_RESPONSE = None
+    # Test Configs
+    requires_tool_definitions = False
 
     # Tool definition test data
     VALID_TOOL_DEFINITIONS = [
@@ -102,7 +103,10 @@ class BaseToolEvaluatorBehaviorTest(BaseEvaluatorBehaviorTest):
         )
         result_data = self._extract_and_print_result(run, outputs, "Tool Definitions Not Present")
 
-        self.assert_not_applicable(result_data)
+        if self.requires_tool_definitions:
+            self.assert_error(result_data)
+        else:
+            self.assert_pass(result_data)
 
     def test_tool_definitions_invalid_format(self, openai_client, model_deployment_name):
         """Tool definitions in invalid format - should return not_applicable."""
@@ -117,6 +121,6 @@ class BaseToolEvaluatorBehaviorTest(BaseEvaluatorBehaviorTest):
         result_data = self._extract_and_print_result(run, outputs, "Tool Definitions Invalid")
 
         if self.requires_valid_format:
-            self.assert_not_applicable(result_data)
+            self.assert_error(result_data)
         else:
             self.assert_pass(result_data)

@@ -18,6 +18,7 @@ class TestToolInputAccuracyEvaluatorBehavior(BaseToolCallEvaluatorBehaviorTest):
 
     evaluator_name = "tool_input_accuracy"
 
+    # TODO: Remove this if arguments not required
     MINIMAL_RESPONSE = [
             {
                 "role": "assistant",

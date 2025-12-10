@@ -6,11 +6,11 @@ Behavioral tests for Tool Call Success Evaluator.
 """
 
 import pytest
-from base_tools_evaluator_behavior_test import BaseToolEvaluatorBehaviorTest
+from base_tools_evaluator_behavior_test import BaseToolsEvaluatorBehaviorTest
 
 
 @pytest.mark.unittest
-class TestToolCallSuccessEvaluatorBehavior(BaseToolEvaluatorBehaviorTest):
+class TestToolCallSuccessEvaluatorBehavior(BaseToolsEvaluatorBehaviorTest):
     """
     Behavioral tests for Tool Call Success Evaluator.
     Tests different input formats and scenarios.
@@ -19,7 +19,6 @@ class TestToolCallSuccessEvaluatorBehavior(BaseToolEvaluatorBehaviorTest):
     evaluator_name = "tool_call_success"
 
     # Test Configs
-    requires_valid_format = False
     requires_query = False
 
     MINIMAL_RESPONSE = [

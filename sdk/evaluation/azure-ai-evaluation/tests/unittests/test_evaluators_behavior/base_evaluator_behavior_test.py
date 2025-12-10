@@ -28,10 +28,54 @@ class BaseEvaluatorBehaviorTest:
 
     # Subclasses may override
     # Test Configs
-    requires_valid_format = True
+    requires_valid_format = False
     requires_query = True
 
     MINIMAL_RESPONSE = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C.",
+                    }
+                ],
+            },
+        ]
+
+    weather_tool_call_and_assistant_response = [
+            {
+                "tool_call_id": "call_1",
+                "role": "tool",
+                "content": [{"type": "tool_result", "tool_result": {"weather": "Rainy, 14\u00b0C"}}],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C.",
+                    }
+                ],
+            },
+        ]
+
+    email_tool_call_and_assistant_response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "send_email",
+                        "arguments": {
+                            "recipient": "your_email@example.com",
+                            "subject": "Weather Information for Seattle",
+                            "body": "The current weather in Seattle is rainy with a temperature of 14\u00b0C.",
+                        },
+                    }
+                ],
+            },
             {
                 "role": "assistant",
                 "content": [
@@ -357,7 +401,7 @@ class BaseEvaluatorBehaviorTest:
         )
         result_data = self._extract_and_print_result(run, outputs, "Response Not Present")
 
-        self.assert_not_applicable(result_data)
+        self.assert_error(result_data)
 
     def test_response_as_string(self, openai_client, model_deployment_name):
         """Response as string - should pass."""
@@ -386,7 +430,7 @@ class BaseEvaluatorBehaviorTest:
         result_data = self._extract_and_print_result(run, outputs, "Response Invalid")
 
         if self.requires_valid_format:
-            self.assert_not_applicable(result_data)
+            self.assert_error(result_data)
         else:
             self.assert_pass(result_data)
     

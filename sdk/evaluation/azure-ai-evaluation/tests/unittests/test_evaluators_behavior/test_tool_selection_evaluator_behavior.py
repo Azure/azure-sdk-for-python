@@ -18,24 +18,3 @@ class TestToolSelectionEvaluatorBehavior(BaseToolCallEvaluatorBehaviorTest):
     """
 
     evaluator_name = "tool_selection"
-
-    MINIMAL_RESPONSE = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "name": "fetch_weather",
-                    }
-                ],
-            },
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "name": "send_email",
-                    }
-                ],
-            },
-        ]
