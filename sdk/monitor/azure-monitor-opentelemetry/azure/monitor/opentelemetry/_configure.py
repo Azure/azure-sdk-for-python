@@ -106,8 +106,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      to process every span prior to exporting. Will be run sequentially.
     :keyword list[~opentelemetry.sdk._logs.LogRecordProcessor] log_processors: List of `LogRecordProcessor` objects
      to process every log prior to exporting. Will be run sequentially.
-    :keyword list[~opentelemetry.sdk.metrics.MetricReader] metric_readers: List of `MetricReader` objects
-     to process every metric prior to exporting. Will be run sequentially.
+    :keyword list[~opentelemetry.sdk.metrics.MetricReader] metric_readers: List of MetricReader objects to read and export metrics.
+     Each reader can have its own exporter and collection interval.
     :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
      Defaults to `False`.
     :keyword bool enable_performance_counters: Boolean value to determine whether to enable performance counters.
