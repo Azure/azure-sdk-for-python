@@ -415,7 +415,7 @@ Widget C:
             )
 
             # Upload file using open() with rb mode, just like the sample
-            with open(asset_file_path, "rb") as f:
+            with self.open_with_lf(asset_file_path, "rb") as f:
                 uploaded_file = openai_client.files.create(file=f, purpose="assistants")
             print(f"File uploaded: {uploaded_file.id}")
 
