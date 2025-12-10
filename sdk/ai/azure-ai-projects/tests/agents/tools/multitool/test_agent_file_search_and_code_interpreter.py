@@ -67,9 +67,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
             input="Find the data file and calculate the average.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        print(f"Response received (id: {response.id})")
-
-        assert response.id is not None
+        self.validate_response(response)
         assert len(response.output_text) > 20
         print("✓ File Search + Code Interpreter works!")
 

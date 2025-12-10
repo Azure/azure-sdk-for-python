@@ -74,10 +74,7 @@ class TestAgentWebSearch(TestBase):
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Get the response text
             response_text = response.output_text
