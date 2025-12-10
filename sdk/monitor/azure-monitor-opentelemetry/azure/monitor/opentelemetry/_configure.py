@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from functools import cached_property
-from logging import getLogger, Formatter
+from logging import config, getLogger, Formatter
 from typing import Dict, List, Optional, cast
 
 from opentelemetry.instrumentation.instrumentor import (  # type: ignore
@@ -12,7 +12,7 @@ from opentelemetry.instrumentation.instrumentor import (  # type: ignore
 )
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, MetricReader
 from opentelemetry.sdk.metrics.view import View
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -218,6 +218,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
+        for log_processor in configurations[LOG_PROCESSORS_ARG]:  # type: ignore
+            logger_provider.add_log_record_processor(log_processor)  # type: ignore
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
             qlp = _QuickpulseLogRecordProcessor()
             logger_provider.add_log_record_processor(qlp)
@@ -230,8 +232,6 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
             {"enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs},
         )
         logger_provider.add_log_record_processor(log_record_processor)
-        for log_processor in configurations[LOG_PROCESSORS_ARG]:
-            logger_provider.add_log_record_processor(log_processor)  # type: ignore
         set_logger_provider(logger_provider)
         logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
         logging_formatter: Optional[Formatter] = configurations.get(LOGGING_FORMATTER_ARG)  # type: ignore
@@ -278,13 +278,10 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     views: List[View] = configurations[VIEWS_ARG]  # type: ignore
+    readers: list[MetricReader] = configurations[METRIC_READERS_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     metric_exporter = AzureMonitorMetricExporter(**configurations)
-    reader = PeriodicExportingMetricReader(metric_exporter)
-    if configurations.get(METRIC_READERS_ARG):
-        readers = [reader] + configurations[METRIC_READERS_ARG]  # type: ignore
-    else:
-        readers = [reader]
+    readers.append(PeriodicExportingMetricReader(metric_exporter))
     meter_provider = MeterProvider(
         metric_readers=readers,
         resource=resource,
