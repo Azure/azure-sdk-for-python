@@ -56,7 +56,7 @@ class TestAgentWebSearchAsync(TestBase):
             print(f"\nAgent's response: {response_text[:300]}...")
 
             # Verify we got a meaningful response
-            assert len(response_text) > 30, "Expected a substantial response from the agent"
+            assert len(response_text) > 30, f"Expected a substantial response from the agent. Got '{response_text}'"
 
             # The response should mention weather-related terms or Seattle
             response_lower = response_text.lower()

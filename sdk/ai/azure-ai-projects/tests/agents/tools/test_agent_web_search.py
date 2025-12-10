@@ -43,7 +43,7 @@ class TestAgentWebSearch(TestBase):
             self.create_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
-            agent_name="web-search-agent"
+            agent_name = "web-search-agent"
 
             # Create agent with web search tool
             agent = project_client.agents.create_version(
@@ -76,7 +76,7 @@ class TestAgentWebSearch(TestBase):
             print(f"\nAgent's response: {response_text[:300]}...")
 
             # Verify we got a meaningful response
-            assert len(response_text) > 30, "Expected a substantial response from the agent"
+            assert len(response_text) > 30, f"Expected a substantial response from the agent. Got '{response_text}'"
 
             # The response should mention weather-related terms or Seattle
             response_lower = response_text.lower()
