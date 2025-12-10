@@ -547,6 +547,7 @@ class TestConfigure(unittest.TestCase):
             "enable_performance_counters": True,
             "logger_name": "test",
             "resource": TEST_RESOURCE,
+            "log_processors": [],
             "logging_formatter": formatter_init_mock,
             "enable_trace_based_sampling_for_logs": False,
         }
@@ -749,6 +750,7 @@ class TestConfigure(unittest.TestCase):
             "connection_string": "test_cs",
             "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
+            "metric_readers": [],
             "views": [],
         }
         _setup_metrics(configurations)
