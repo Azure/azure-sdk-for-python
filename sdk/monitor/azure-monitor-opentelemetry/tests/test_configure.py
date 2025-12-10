@@ -591,7 +591,7 @@ class TestConfigure(unittest.TestCase):
 
         # Create a mock handler that looks like LoggingHandler
         logging_handler_init_mock = Mock()
-        
+
         # Set up the logger to already have a LoggingHandler
         logger_mock = Mock()
         logger_mock.handlers = [logging_handler_init_mock]
@@ -600,7 +600,7 @@ class TestConfigure(unittest.TestCase):
 
         elp_init_mock = Mock()
         elp_mock.return_value = elp_init_mock
-        
+
         configurations = {
             "connection_string": "test_cs",
             "enable_performance_counters": True,
@@ -609,18 +609,23 @@ class TestConfigure(unittest.TestCase):
             "logging_formatter": None,
             "enable_trace_based_sampling_for_logs": True,
         }
-        
+
         # Patch all the necessary modules and imports
-        with patch.dict('sys.modules', {
-            'opentelemetry._logs': Mock(set_logger_provider=set_logger_provider_mock),
-            'opentelemetry.sdk._logs': Mock(LoggerProvider=lp_mock),
-            'azure.monitor.opentelemetry.exporter.export.logs._processor': Mock(_AzureBatchLogRecordProcessor=blrp_mock),
-            'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
-            'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
-            'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
-        }):
+        with patch.dict(
+            "sys.modules",
+            {
+                "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
+                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock),
+                "azure.monitor.opentelemetry.exporter.export.logs._processor": Mock(
+                    _AzureBatchLogRecordProcessor=blrp_mock
+                ),
+                "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
+                "opentelemetry._events": Mock(_set_event_logger_provider=set_elp_mock),
+                "opentelemetry.sdk._events": Mock(EventLoggerProvider=elp_mock),
+            },
+        ):
             _setup_logging(configurations)
-        
+
         # Verify the correct behavior
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
