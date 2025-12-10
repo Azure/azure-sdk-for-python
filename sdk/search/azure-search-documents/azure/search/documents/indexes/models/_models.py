@@ -11426,18 +11426,16 @@ class VisionVectorizeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :ivar model_version: The version of the model to use when calling the AI Services Vision
-     service. It will default to the latest available when not specified.
+     service. It will default to the latest available when not specified. Required.
     :vartype model_version: str
     :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Vision.VectorizeSkill".
     :vartype odata_type: str
     """
 
-    model_version: Optional[str] = rest_field(
-        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """The version of the model to use when calling the AI Services Vision service. It will default to
-     the latest available when not specified."""
+     the latest available when not specified. Required."""
     odata_type: Literal["#Microsoft.Skills.Vision.VectorizeSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Vision.VectorizeSkill\"."""
@@ -11448,10 +11446,10 @@ class VisionVectorizeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
         *,
         inputs: list["_models.InputFieldMappingEntry"],
         outputs: list["_models.OutputFieldMappingEntry"],
+        model_version: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        model_version: Optional[str] = None,
     ) -> None: ...
 
     @overload
