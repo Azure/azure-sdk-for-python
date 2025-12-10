@@ -42,6 +42,8 @@ class QueryStringConstants(object):
     SIGNED_KEY_SERVICE = "sks"
     SIGNED_KEY_VERSION = "skv"
     SIGNED_ENCRYPTION_SCOPE = "ses"
+    SIGNED_REQUEST_HEADERS = "srh"
+    SIGNED_REQUEST_QUERY_PARAMS = "srq"
     SIGNED_KEY_DELEGATED_USER_TID = "skdutid"
     SIGNED_DELEGATED_USER_OID = "sduoid"
 
@@ -81,6 +83,8 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
             QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
+            QueryStringConstants.SIGNED_REQUEST_HEADERS,
+            QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS,
             QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
             QueryStringConstants.SIGNED_DELEGATED_USER_OID,
             # for ADLS
@@ -217,6 +221,20 @@ class _SharedAccessHelper(object):
         self._add_query(QueryStringConstants.SIGNED_CONTENT_ENCODING, content_encoding)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_LANGUAGE, content_language)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_TYPE, content_type)
+
+    def add_request_headers(self, request_headers):
+        if not request_headers:
+            self._add_query(QueryStringConstants.SIGNED_REQUEST_HEADERS, "\n")
+            return
+        serialized = [str(k) + ":" + str(v) for k, v in request_headers.items()]
+        self._add_query(QueryStringConstants.SIGNED_REQUEST_HEADERS, "\n".join(serialized) + "\n")
+
+    def add_request_query_params(self, request_query_params):
+        if not request_query_params:
+            self._add_query(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS, "\n")
+            return
+        serialized = [str(k) + ":" + str(v) for k, v in request_query_params.items()]
+        self._add_query(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS, "\n" + "\n".join(serialized))
 
     def add_account_signature(self, account_name, account_key):
         def get_value_to_append(query):

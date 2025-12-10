@@ -68,6 +68,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
         user_delegation_oid: Optional[str] = None,
+        request_headers: Optional[Dict[str, str]] = None,
+        request_query_params: Optional[Dict[str, str]] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
@@ -141,6 +143,12 @@ class BlobSharedAccessSignature(SharedAccessSignature):
             Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
             The resulting SAS URL must be used in conjunction with an Entra ID token that has been
             issued to the user specified in this value.
+        :param Dict[str, str] request_headers:
+            If specified, both the correct request header(s) and corresponding values must be present,
+            or the request will fail.
+        :param Dict[str, str] request_query_params:
+            If specified, both the correct query parameter(s) and corresponding values must be present,
+            or the request will fail.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
@@ -166,6 +174,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
                                           content_type)
         sas.add_encryption_scope(**kwargs)
         sas.add_info_for_hns_account(**kwargs)
+        sas.add_request_headers(request_headers)
+        sas.add_request_query_params(request_query_params)
         sas.add_resource_signature(self.account_name, self.account_key, resource_path,
                                    user_delegation_key=self.user_delegation_key)
 
@@ -188,6 +198,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
         user_delegation_oid: Optional[str] = None,
+        request_headers: Optional[Dict[str, str]] = None,
+        request_query_params: Optional[Dict[str, str]] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
@@ -251,6 +263,12 @@ class BlobSharedAccessSignature(SharedAccessSignature):
             Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
             The resulting SAS URL must be used in conjunction with an Entra ID token that has been
             issued to the user specified in this value.
+        :param Dict[str, str] request_headers:
+            If specified, both the correct request header(s) and corresponding values must be present,
+            or the request will fail.
+        :param Dict[str, str] request_query_params:
+            If specified, both the correct query parameter(s) and corresponding values must be present,
+            or the request will fail.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
@@ -268,6 +286,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
                                           content_type)
         sas.add_encryption_scope(**kwargs)
         sas.add_info_for_hns_account(**kwargs)
+        sas.add_request_headers(request_headers)
+        sas.add_request_query_params(request_query_params)
         sas.add_resource_signature(self.account_name, self.account_key, container_name,
                                    user_delegation_key=self.user_delegation_key)
 
@@ -336,6 +356,8 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
              self.get_value_to_append(QueryStringConstants.SIGNED_RESOURCE) +
              self.get_value_to_append(BlobQueryStringConstants.SIGNED_TIMESTAMP) +
              self.get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE) +
+             self.get_value_to_append(QueryStringConstants.SIGNED_REQUEST_HEADERS) +
+             self.get_value_to_append(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING) +
@@ -575,6 +597,8 @@ def generate_container_sas(
         policy_id=policy_id,
         ip=ip,
         user_delegation_oid=user_delegation_oid,
+        request_headers=request_headers,
+        request_query_params=request_query_params,
         sts_hook=sts_hook,
         **kwargs
     )
@@ -725,8 +749,10 @@ def generate_blob_sas(
         start=start,
         policy_id=policy_id,
         ip=ip,
-        sts_hook=sts_hook,
         user_delegation_oid=user_delegation_oid,
+        request_headers=request_headers,
+        request_query_params=request_query_params,
+        sts_hook=sts_hook,
         **kwargs
     )
 
