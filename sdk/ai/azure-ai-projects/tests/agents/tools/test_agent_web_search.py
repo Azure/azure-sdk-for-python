@@ -5,19 +5,15 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
 
 
 class TestAgentWebSearch(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_web_search(self, **kwargs):
         """
         Test agent with Web Search tool for real-time information.
@@ -47,9 +43,11 @@ class TestAgentWebSearch(TestBase):
             self.create_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
+            agent_name="web-search-agent"
+
             # Create agent with web search tool
             agent = project_client.agents.create_version(
-                agent_name="web-search-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can search the web for current information.",
@@ -61,10 +59,7 @@ class TestAgentWebSearch(TestBase):
                 ),
                 description="Agent for testing web search capabilities.",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "web-search-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Ask a question that requires web search for current information
             print("\nAsking agent about current weather...")
