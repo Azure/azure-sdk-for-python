@@ -90,31 +90,13 @@ class ErrorAdditionalInfo(_Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: dict[str, str]
+    :vartype info: dict[str, any]
     """
 
-    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Optional[str] = rest_field(visibility=["read"])
     """The additional info type."""
-    info: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    info: Optional[dict[str, Any]] = rest_field(visibility=["read"])
     """The additional info."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        info: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class ErrorDetail(_Model):
@@ -132,41 +114,18 @@ class ErrorDetail(_Model):
     :vartype additional_info: list[~azure.search.documents.models.ErrorAdditionalInfo]
     """
 
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    code: Optional[str] = rest_field(visibility=["read"])
     """The error code."""
-    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    message: Optional[str] = rest_field(visibility=["read"])
     """The error message."""
-    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[list["_models.ErrorDetail"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
     additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
-        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
+        name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[list["_models.ErrorDetail"]] = None,
-        additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class ErrorResponse(_Model):

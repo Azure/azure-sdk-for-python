@@ -335,8 +335,25 @@ class AnalyzeResult(_Model):
     :vartype tokens: list[~azure.search.documents.indexes.models.AnalyzedTokenInfo]
     """
 
-    tokens: list["_models.AnalyzedTokenInfo"] = rest_field(visibility=["read"])
+    tokens: list["_models.AnalyzedTokenInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of tokens returned by the analyzer specified in the request. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tokens: list["_models.AnalyzedTokenInfo"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AnalyzeTextOptions(_Model):
@@ -1113,9 +1130,6 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
      "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
      "gpt-5", "gpt-5-mini", and "gpt-5-nano".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
-    :ivar authentication_method: The authentication method to use when connecting to the Azure
-     OpenAI resource.
-    :vartype authentication_method: str
     :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
      supported in text-embedding-3 and later models.
     :vartype dimensions: int
@@ -1145,10 +1159,6 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
      \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
      \"gpt-5-mini\", and \"gpt-5-nano\"."""
-    authentication_method: Optional[str] = rest_field(
-        name="authenticationMethod", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The authentication method to use when connecting to the Azure OpenAI resource."""
     dimensions: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of dimensions the resulting output embeddings should have. Only supported in
      text-embedding-3 and later models."""
@@ -1170,7 +1180,6 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
         api_key: Optional[str] = None,
         auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = None,
-        authentication_method: Optional[str] = None,
         dimensions: Optional[int] = None,
     ) -> None: ...
 
@@ -1350,9 +1359,6 @@ class AzureOpenAIVectorizerParameters(_Model):
      "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
      "gpt-5", "gpt-5-mini", and "gpt-5-nano".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
-    :ivar authentication_method: The authentication method to use when connecting to the Azure
-     OpenAI resource.
-    :vartype authentication_method: str
     """
 
     resource_url: Optional[str] = rest_field(
@@ -1376,10 +1382,6 @@ class AzureOpenAIVectorizerParameters(_Model):
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
      \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
      \"gpt-5-mini\", and \"gpt-5-nano\"."""
-    authentication_method: Optional[str] = rest_field(
-        name="authenticationMethod", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The authentication method to use when connecting to the Azure OpenAI resource."""
 
     @overload
     def __init__(
@@ -1390,7 +1392,6 @@ class AzureOpenAIVectorizerParameters(_Model):
         api_key: Optional[str] = None,
         auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = None,
-        authentication_method: Optional[str] = None,
     ) -> None: ...
 
     @overload
