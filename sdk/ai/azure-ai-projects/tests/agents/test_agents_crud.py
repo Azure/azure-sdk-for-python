@@ -13,6 +13,8 @@ from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentV
 
 class TestAgentCrud(TestBase):
 
+    # To run this test:
+    # pytest tests\agents\test_agents_crud.py::TestAgentCrud::test_agents_crud -s
     @servicePreparer()
     @recorded_by_proxy()
     def test_agents_crud(self, **kwargs):

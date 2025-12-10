@@ -6,9 +6,8 @@
 # cSpell:disable
 
 import json
-import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
@@ -16,10 +15,7 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 class TestAgentFunctionTool(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_function_tool(self, **kwargs):
         """
         Test agent with custom function tool.
@@ -45,6 +41,7 @@ class TestAgentFunctionTool(TestBase):
         """
 
         model = self.test_agents_params["model_deployment_name"]
+        agent_name = "function-tool-agent"
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -70,7 +67,7 @@ class TestAgentFunctionTool(TestBase):
 
             # Create agent with function tool
             agent = project_client.agents.create_version(
-                agent_name="function-tool-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can check the weather. Use the get_weather function when users ask about weather.",
@@ -78,12 +75,7 @@ class TestAgentFunctionTool(TestBase):
                 ),
                 description="Agent for testing function tool capabilities.",
             )
-            print(
-                f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}, model: {agent.definition['model']})"
-            )
-            assert agent.id is not None
-            assert agent.name == "function-tool-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Ask a question that should trigger the function call
             print("\nAsking agent: What's the weather in Seattle?")
@@ -171,10 +163,7 @@ class TestAgentFunctionTool(TestBase):
         print("Agent deleted")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_function_tool_multi_turn_with_multiple_calls(self, **kwargs):
         """
         Test multi-turn conversation where agent calls functions multiple times.
@@ -385,10 +374,7 @@ class TestAgentFunctionTool(TestBase):
             print("Agent deleted")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_function_tool_context_dependent_followup(self, **kwargs):
         """
         Test deeply context-dependent follow-ups (e.g., unit conversion, clarification).
