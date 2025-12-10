@@ -394,6 +394,14 @@ async def test_initialize_regional_authority():
             await client._initialize_regional_authority()
             assert client._regional_authority == "https://centralus.custom.authority.com"
 
+    # Test with AZURE_REGIONAL_AUTHORITY_NAME set to "True" (auto-discovery)
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "True"}, clear=True):
+        with patch.dict("os.environ", {"REGION_NAME": "southcentralus"}):
+            client = AadClient("tenant-id", "client-id")
+            await client._initialize_regional_authority()
+            assert client._regional_authority == "https://southcentralus.login.microsoft.com"
+            await client.close()
+
     # Test with usage of region auto-discovery env var
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: "tryautodetect"}, clear=True):
         with patch.dict("os.environ", {"REGION_NAME": "eastus"}):

@@ -107,7 +107,7 @@ class AadClient(AadClientBase):
             self._regional_authority = None
             return
 
-        if regional_authority == RegionalAuthority.AUTO_DISCOVER_REGION:
+        if regional_authority in [RegionalAuthority.AUTO_DISCOVER_REGION, "true"]:
             # Attempt to discover the region from IMDS
             regional_authority = await self._discover_region()
             if not regional_authority:

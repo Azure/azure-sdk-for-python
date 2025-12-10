@@ -88,7 +88,7 @@ class AadClient(AadClientBase):  # pylint:disable=client-accepts-api-version-key
             self._regional_authority = None
             return
 
-        if regional_authority == RegionalAuthority.AUTO_DISCOVER_REGION:
+        if regional_authority in [RegionalAuthority.AUTO_DISCOVER_REGION, "true"]:
             regional_authority = self._discover_region()
             if not regional_authority:
                 _LOGGER.info("Failed to auto-discover region. Using the non-regional authority.")
