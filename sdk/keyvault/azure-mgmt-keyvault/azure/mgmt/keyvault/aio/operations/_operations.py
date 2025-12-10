@@ -1444,7 +1444,7 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = api_version
+                _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
@@ -3652,17 +3652,13 @@ class SecretsOperations:
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.Secret, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
