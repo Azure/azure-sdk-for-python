@@ -621,6 +621,7 @@ class TestConfigure(unittest.TestCase):
             "enable_performance_counters": True,
             "logger_name": "test",
             "resource": TEST_RESOURCE,
+            "log_processors": [],
             "logging_formatter": None,
             "enable_trace_based_sampling_for_logs": True,
         }
@@ -687,6 +688,7 @@ class TestConfigure(unittest.TestCase):
             "enable_performance_counters": False,
             "logger_name": "test",
             "resource": TEST_RESOURCE,
+            "log_processors": [],
             "logging_formatter": formatter_init_mock,
             "enable_trace_based_sampling_for_logs": False,
         }
@@ -795,6 +797,7 @@ class TestConfigure(unittest.TestCase):
             "connection_string": "test_cs",
             "enable_performance_counters": False,
             "resource": TEST_RESOURCE,
+            "metric_readers": [],
             "views": [view_mock],
         }
         _setup_metrics(configurations)
@@ -838,6 +841,7 @@ class TestConfigure(unittest.TestCase):
             "connection_string": "test_cs",
             "enable_performance_counters": False,
             "resource": TEST_RESOURCE,
+            "metric_readers": [],
             "views": [],
         }
         _setup_metrics(configurations)
