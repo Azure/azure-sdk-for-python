@@ -20,7 +20,7 @@ class TestLogAnalyticsManagementStorageInsightConfigsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_storage_insight_configs_create_or_update(self, resource_group):
         response = self.client.storage_insight_configs.create_or_update(
             resource_group_name=resource_group.name,
             workspace_name="str",
@@ -36,7 +36,7 @@ class TestLogAnalyticsManagementStorageInsightConfigsOperations(AzureMgmtRecorde
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -44,12 +44,12 @@ class TestLogAnalyticsManagementStorageInsightConfigsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_storage_insight_configs_get(self, resource_group):
         response = self.client.storage_insight_configs.get(
             resource_group_name=resource_group.name,
             workspace_name="str",
             storage_insight_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -57,12 +57,12 @@ class TestLogAnalyticsManagementStorageInsightConfigsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_storage_insight_configs_delete(self, resource_group):
         response = self.client.storage_insight_configs.delete(
             resource_group_name=resource_group.name,
             workspace_name="str",
             storage_insight_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -70,11 +70,11 @@ class TestLogAnalyticsManagementStorageInsightConfigsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_workspace(self, resource_group):
+    def test_storage_insight_configs_list_by_workspace(self, resource_group):
         response = self.client.storage_insight_configs.list_by_workspace(
             resource_group_name=resource_group.name,
             workspace_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

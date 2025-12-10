@@ -12,23 +12,16 @@ Tests various scenarios using an agent with Code Interpreter and Function Tool.
 All tests use the same tool combination but different inputs and workflows.
 """
 
-import os
-import json
-import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto, FunctionTool
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestAgentCodeInterpreterAndFunction(TestBase):
     """Tests for agents using Code Interpreter + Function Tool combination."""
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_calculate_and_save(self, **kwargs):
         """
         Test calculation with Code Interpreter and saving with Function Tool.
@@ -75,19 +68,14 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
             input="Calculate 5 + 3 and save the result.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        print(f"Response received (id: {response.id})")
-
-        assert response.id is not None
+        self.validate_response(response)
         print("✓ Code Interpreter + Function Tool works!")
 
         # Cleanup
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_generate_data_and_report(self, **kwargs):
         """
         Test generating data with Code Interpreter and reporting with Function.
@@ -136,8 +124,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
 
-        print(f"Response received (id: {response.id})")
-        assert response.id is not None
+        self.validate_response(response)
         print("✓ Data generation and reporting works!")
 
         # Cleanup

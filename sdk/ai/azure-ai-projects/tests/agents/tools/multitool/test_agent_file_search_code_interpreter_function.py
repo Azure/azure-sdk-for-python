@@ -12,12 +12,9 @@ Tests various scenarios using an agent with all three tools together.
 All tests use the same 3-tool combination but different inputs and workflows.
 """
 
-import os
-import json
-import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     FileSearchTool,
@@ -25,17 +22,13 @@ from azure.ai.projects.models import (
     CodeInterpreterToolAuto,
     FunctionTool,
 )
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestAgentFileSearchCodeInterpreterFunction(TestBase):
     """Tests for agents using File Search + Code Interpreter + Function Tool."""
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_complete_analysis_workflow(self, **kwargs):
         """
         Test complete workflow: find data, analyze it, save results.
@@ -96,9 +89,7 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
             input="Find the data file, analyze it, and save the results.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        print(f"Response received (id: {response.id})")
-
-        assert response.id is not None
+        self.validate_response(response)
         print("✓ Three-tool combination works!")
 
         # Cleanup
@@ -106,10 +97,7 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         openai_client.vector_stores.delete(vector_store.id)
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_four_tools_combination(self, **kwargs):
         """
         Test with 4 tools: File Search + Code Interpreter + 2 Functions.
