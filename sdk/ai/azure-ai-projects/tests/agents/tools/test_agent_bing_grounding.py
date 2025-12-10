@@ -60,7 +60,7 @@ class TestAgentBingGrounding(TestBase):
             self.create_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
-            agent_name="bing-grounding-agent"
+            agent_name = "bing-grounding-agent"
 
             # Create agent with Bing grounding tool
             agent = project_client.agents.create_version(

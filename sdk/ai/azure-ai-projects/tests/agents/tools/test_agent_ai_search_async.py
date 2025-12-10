@@ -166,7 +166,7 @@ class TestAgentAISearchAsync(TestBase):
             assert isinstance(ai_search_connection_id, str), "ai_search_connection_id must be a string"
             assert isinstance(ai_search_index_name, str), "ai_search_index_name must be a string"
 
-            agent_name="ai-search-qa-agent-async-parallel"
+            agent_name = "ai-search-qa-agent-async-parallel"
 
             # Create agent with Azure AI Search tool
             agent = await project_client.agents.create_version(
