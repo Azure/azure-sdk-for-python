@@ -64,6 +64,12 @@ class AzureAppConfigurationClient:
 
         self._sync_token_policy = SyncTokenPolicy()
 
+        credential_scopes = kwargs.pop("credential_scopes", ["https://azconfig.io/.default"])
+        # Ensure all scopes end with /.default
+        kwargs["credential_scopes"] = [
+            scope if scope.endswith("/.default") else f"{scope}/.default" for scope in credential_scopes
+        ]
+
         if isinstance(credential, AzureKeyCredential):
             id_credential = kwargs.pop("id_credential")
             kwargs.update(

@@ -45,11 +45,7 @@ class AzureAppConfigurationClientConfiguration:  # pylint: disable=too-many-inst
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        credential_scopes = kwargs.pop("credential_scopes", ["https://azconfig.io/.default"])
-        # Ensure all scopes end with /.default
-        self.credential_scopes = [
-            scope if scope.endswith("/.default") else f"{scope}/.default" for scope in credential_scopes
-        ]
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://azconfig.io/.default"])
         kwargs.setdefault("sdk_moniker", "appconfiguration/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)

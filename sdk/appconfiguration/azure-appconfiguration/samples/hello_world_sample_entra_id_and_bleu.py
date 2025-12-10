@@ -44,11 +44,13 @@ def main():
     from azure.appconfiguration import AzureAppConfigurationClient
     from azure.identity import DefaultAzureCredential
 
-    ENDPOINT =  os.environ["APPCONFIGURATION_ENDPOINT"]
+    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT"]
 
     # Create app config client with Entra ID authentication
     credential = DefaultAzureCredential(authority="https://login.sovcloud-identity.fr")
-    client = AzureAppConfigurationClient(base_url=ENDPOINT, credential=credential, credential_scopes=["https://appconfig.sovcloud-api.fr/.default"])
+    client = AzureAppConfigurationClient(
+        base_url=ENDPOINT, credential=credential, credential_scopes=["https://appconfig.sovcloud-api.fr/.default"]
+    )
     # [END create_app_config_client_entra_id]
 
     print("Add new configuration setting")
