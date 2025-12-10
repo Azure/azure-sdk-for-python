@@ -38,7 +38,7 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
     SAMPLING_TRACES_PER_SECOND_ARG,
     SPAN_PROCESSORS_ARG,
-    LOG_PROCESSORS_ARG,
+    LOG_RECORD_PROCESSORS_ARG,
     METRIC_READERS_ARG,
     VIEWS_ARG,
     ENABLE_TRACE_BASED_SAMPLING_ARG,
@@ -104,8 +104,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      Attributes take priority over default attributes and those from Resource Detectors.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
-    :keyword list[~opentelemetry.sdk._logs.LogRecordProcessor] log_processors: List of `LogRecordProcessor` objects
-     to process every log prior to exporting. Will be run sequentially.
+    :keyword list[~opentelemetry.sdk._logs.LogRecordProcessor] log_record_processors: List of `LogRecordProcessor` 
+     objects to process every log record prior to exporting. Will be run sequentially.
     :keyword list[~opentelemetry.sdk.metrics.MetricReader] metric_readers: List of MetricReader objects to read and
      export metrics. Each reader can have its own exporter and collection interval.
     :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
@@ -218,8 +218,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
-        for log_processor in configurations[LOG_PROCESSORS_ARG]:  # type: ignore
-            logger_provider.add_log_record_processor(log_processor)  # type: ignore
+        for log_record_processor in configurations[LOG_RECORD_PROCESSORS_ARG]:  # type: ignore
+            logger_provider.add_log_record_processor(log_record_processor)  # type: ignore
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
             qlp = _QuickpulseLogRecordProcessor()
             logger_provider.add_log_record_processor(qlp)

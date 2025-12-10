@@ -76,7 +76,7 @@ class TestConfigurations(TestCase):
             views=["test_view"],
             logger_name="test_logger",
             span_processors=["test_processor"],
-            log_processors=["test_log_processor"],
+            log_record_processors=["test_log_record_processor"],
             metric_readers=["test_metric_reader"],
             enable_trace_based_sampling_for_logs=True,
         )
@@ -112,7 +112,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["views"], ["test_view"])
         self.assertEqual(configurations["logger_name"], "test_logger")
         self.assertEqual(configurations["span_processors"], ["test_processor"])
-        self.assertEqual(configurations["log_processors"], ["test_log_processor"])
+        self.assertEqual(configurations["log_record_processors"], ["test_log_record_processor"])
         self.assertEqual(configurations["metric_readers"], ["test_metric_reader"])
         self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], True)
 
@@ -148,7 +148,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["enable_performance_counters"], True)
         self.assertEqual(configurations["logger_name"], "")
         self.assertEqual(configurations["span_processors"], [])
-        self.assertEqual(configurations["log_processors"], [])
+        self.assertEqual(configurations["log_record_processors"], [])
         self.assertEqual(configurations["metric_readers"], [])
         self.assertEqual(configurations["views"], [])
         self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], False)
