@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Union, overload, cast
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential, AzureKeyCredential
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotModifiedError
@@ -64,7 +65,7 @@ class AzureAppConfigurationClient:
 
         self._sync_token_policy = SyncTokenPolicy()
 
-        credential_scopes = kwargs.pop("credential_scopes", ["https://azconfig.io/.default"])
+        credential_scopes = kwargs.pop("credential_scopes", [f"{base_url.strip('/')}/.default"])
         # Ensure all scopes end with /.default
         kwargs["credential_scopes"] = [
             scope if scope.endswith("/.default") else f"{scope}/.default" for scope in credential_scopes
@@ -77,7 +78,13 @@ class AzureAppConfigurationClient:
                     "authentication_policy": AppConfigRequestsCredentialsPolicy(credential, base_url, id_credential),
                 }
             )
-        elif not isinstance(credential, TokenCredential):
+        elif isinstance(credential, TokenCredential):
+            kwargs.update(
+                {
+                    "authentication_policy": BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+                }
+            )
+        else:
             raise TypeError(
                 f"Unsupported credential: {type(credential)}. Use an instance of token credential from azure.identity"
             )

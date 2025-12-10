@@ -24,7 +24,6 @@ USAGE: python hello_world_sample_entra_id_and_bleu.py
     
     For Azure Bleu (French Sovereign Cloud):
     - Use authority: https://login.sovcloud-identity.fr or tenant-specific URL
-    - Set disable_instance_discovery=True (required for sovereign clouds)
     - Use credential_scopes: ["https://appconfig.sovcloud-api.fr/.default"]
     
     DefaultAzureCredential will attempt multiple authentication methods:
