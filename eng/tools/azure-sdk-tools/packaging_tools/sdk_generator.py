@@ -146,7 +146,8 @@ def main(generate_input, generate_output):
                 "======================================= What Can I do (begin) ========================================================================",
                 f"Fail to generate sdk for {readme_or_tsp}. If you are from service team, please first check if the failure happens only to Python automation, or for all SDK automations. ",
                 "If it happens for all SDK automations, please double check your Swagger / Typespec, and check whether there is error in ModelValidation and LintDiff. ",
-                "If it happens to Python alone, you can open an issue to https://github.com/microsoft/typespec/issues. Please include the link of this Pull Request in the issue.",
+                "If it happens to Python alone, you can seek support in teams channel https://aka.ms/azsdk/support/python-teams-channel or open an issue in ",
+                "https://github.com/microsoft/typespec/issues. Please include the link of this Pull Request in the issue.",
                 "======================================= What Can I do (end) =========================================================================",
             ]:
                 _LOGGER.error(hint_message)

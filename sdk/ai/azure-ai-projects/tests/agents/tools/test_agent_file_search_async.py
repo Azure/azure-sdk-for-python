@@ -6,49 +6,23 @@
 # cSpell:disable
 
 import os
-import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy, RecordedTransport
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 
-class TestAgentFileSearch(TestBase):
+class TestAgentFileSearchAsync(TestBase):
 
-    # To only run this test:
-    # pytest tests/agents/tools/test_agent_file_search.py::TestAgentFileSearch::test_agent_file_search -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_file_search(self, **kwargs):
-        """
-        Test agent with File Search tool for document Q&A.
-
-        This test verifies that an agent can:
-        1. Upload and index documents into a vector store
-        2. Use FileSearchTool to search through uploaded documents
-        3. Answer questions based on document content
-
-        Routes used in this test:
-
-        Action REST API Route                                Client Method
-        ------+---------------------------------------------+-----------------------------------
-        # Setup:
-        POST   /vector_stores                                openai_client.vector_stores.create()
-        POST   /vector_stores/{id}/files                     openai_client.vector_stores.files.upload_and_poll()
-        POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
-
-        # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (with FileSearchTool)
-
-        # Teardown:
-        DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
-        DELETE /vector_stores/{id}                           openai_client.vector_stores.delete()
-        """
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_agent_file_search_async(self, **kwargs):
 
         model = self.test_agents_params["model_deployment_name"]
 
-        with (
-            self.create_client(operation_group="agents", **kwargs) as project_client,
+        async with (
+            self.create_async_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
             # Get the path to the test file
@@ -60,13 +34,13 @@ class TestAgentFileSearch(TestBase):
             print(f"Using test file: {asset_file_path}")
 
             # Create vector store for file search
-            vector_store = openai_client.vector_stores.create(name="ProductInfoStore")
+            vector_store = await openai_client.vector_stores.create(name="ProductInfoStore")
             print(f"Vector store created (id: {vector_store.id})")
             assert vector_store.id
 
             # Upload file to vector store
             with self.open_with_lf(asset_file_path, "rb") as f:
-                file = openai_client.vector_stores.files.upload_and_poll(
+                file = await openai_client.vector_stores.files.upload_and_poll(
                     vector_store_id=vector_store.id,
                     file=f,
                 )
@@ -77,7 +51,7 @@ class TestAgentFileSearch(TestBase):
 
             # Create agent with file search tool
             agent_name = "file-search-agent"
-            agent = project_client.agents.create_version(
+            agent = await project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
@@ -91,7 +65,7 @@ class TestAgentFileSearch(TestBase):
             # Ask a question about the uploaded document
             print("\nAsking agent about the product information...")
 
-            response = openai_client.responses.create(
+            response = await openai_client.responses.create(
                 input="What products are mentioned in the document?",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
@@ -115,89 +89,17 @@ class TestAgentFileSearch(TestBase):
 
             # Teardown
             print("\nCleaning up...")
-            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
             print("Agent deleted")
 
-            openai_client.vector_stores.delete(vector_store.id)
+            await openai_client.vector_stores.delete(vector_store.id)
             print("Vector store deleted")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
-    def test_agent_file_search_unsupported_file_type(self, **kwargs):
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_agent_file_search_multi_turn_conversation_async(self, **kwargs):
         """
-        Negative test: Verify that unsupported file types are rejected with clear error messages.
-
-        This test validates that:
-        1. CSV files (unsupported format) are rejected
-        2. The error message clearly indicates the file type is not supported
-        3. The error message lists supported file types
-
-        This ensures good developer experience by providing actionable error messages.
-        """
-
-        with (
-            self.create_client(operation_group="agents", **kwargs) as project_client,
-            project_client.get_openai_client() as openai_client,
-        ):
-            # Create vector store
-            vector_store = openai_client.vector_stores.create(name="UnsupportedFileTestStore")
-            print(f"Vector store created (id: {vector_store.id})")
-
-            # Create CSV file (unsupported format)
-            csv_content = """product,quarter,revenue
-Widget A,Q1,15000
-Widget B,Q1,22000
-Widget A,Q2,18000
-Widget B,Q2,25000"""
-
-            csv_file = BytesIO(csv_content.encode("utf-8"))
-            csv_file.name = "sales_data.csv"
-
-            # Attempt to upload unsupported file type
-            print("\nAttempting to upload CSV file (unsupported format)...")
-            try:
-                file = openai_client.vector_stores.files.upload_and_poll(
-                    vector_store_id=vector_store.id,
-                    file=csv_file,
-                )
-                # If we get here, the test should fail
-                openai_client.vector_stores.delete(vector_store.id)
-                pytest.fail("Expected BadRequestError for CSV file upload, but upload succeeded")
-
-            except Exception as e:
-                error_message = str(e)
-                print(f"\n✓ Upload correctly rejected with error: {error_message[:200]}...")
-
-                # Verify error message quality
-                assert (
-                    "400" in error_message or "BadRequestError" in type(e).__name__
-                ), "Should be a 400 Bad Request error"
-
-                assert ".csv" in error_message.lower(), "Error message should mention the CSV file extension"
-
-                assert (
-                    "not supported" in error_message.lower() or "unsupported" in error_message.lower()
-                ), "Error message should clearly state the file type is not supported"
-
-                # Check that supported file types are mentioned (helpful for developers)
-                error_lower = error_message.lower()
-                has_supported_list = any(ext in error_lower for ext in [".txt", ".pdf", ".md", ".py"])
-                assert has_supported_list, "Error message should list examples of supported file types"
-
-                print("✓ Error message is clear and actionable")
-                print("  - Mentions unsupported file type (.csv)")
-                print("  - States it's not supported")
-                print("  - Lists supported file types")
-
-            # Cleanup
-            openai_client.vector_stores.delete(vector_store.id)
-            print("\nVector store deleted")
-
-    @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_file_search_multi_turn_conversation(self, **kwargs):
-        """
-        Test multi-turn conversation with File Search.
+        Test multi-turn conversation with File Search (async version).
 
         This test verifies that an agent can maintain context across multiple turns
         while using File Search to answer follow-up questions.
@@ -205,8 +107,8 @@ Widget B,Q2,25000"""
 
         model = self.test_agents_params["model_deployment_name"]
 
-        with (
-            self.create_client(operation_group="agents", **kwargs) as project_client,
+        async with (
+            self.create_async_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
             # Create a document with information about products
@@ -232,20 +134,20 @@ Widget C:
 """
 
             # Create vector store and upload document
-            vector_store = openai_client.vector_stores.create(name="ProductCatalog")
+            vector_store = await openai_client.vector_stores.create(name="ProductCatalog")
             print(f"Vector store created: {vector_store.id}")
 
             product_file = BytesIO(product_info.encode("utf-8"))
             product_file.name = "products.txt"
 
-            file = openai_client.vector_stores.files.upload_and_poll(
+            file = await openai_client.vector_stores.files.upload_and_poll(
                 vector_store_id=vector_store.id,
                 file=product_file,
             )
             print(f"Product catalog uploaded: {file.id}")
 
             # Create agent with File Search
-            agent = project_client.agents.create_version(
+            agent = await project_client.agents.create_version(
                 agent_name="product-catalog-agent",
                 definition=PromptAgentDefinition(
                     model=model,
@@ -258,7 +160,7 @@ Widget C:
 
             # Turn 1: Ask about price
             print("\n--- Turn 1: Initial query ---")
-            response_1 = openai_client.responses.create(
+            response_1 = await openai_client.responses.create(
                 input="What is the price of Widget B?",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
@@ -269,7 +171,7 @@ Widget C:
 
             # Turn 2: Follow-up question (requires context from turn 1)
             print("\n--- Turn 2: Follow-up query (testing context retention) ---")
-            response_2 = openai_client.responses.create(
+            response_2 = await openai_client.responses.create(
                 input="What about its stock level?",
                 previous_response_id=response_1.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -283,7 +185,7 @@ Widget C:
 
             # Turn 3: Another follow-up (compare with different product)
             print("\n--- Turn 3: Comparison query ---")
-            response_3 = openai_client.responses.create(
+            response_3 = await openai_client.responses.create(
                 input="How does that compare to Widget A's stock?",
                 previous_response_id=response_2.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -297,7 +199,7 @@ Widget C:
 
             # Turn 4: New topic (testing topic switching)
             print("\n--- Turn 4: Topic switch ---")
-            response_4 = openai_client.responses.create(
+            response_4 = await openai_client.responses.create(
                 input="Which widget has the highest rating?",
                 previous_response_id=response_3.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -315,6 +217,6 @@ Widget C:
             print("  - Topic switching works")
 
             # Cleanup
-            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-            openai_client.vector_stores.delete(vector_store.id)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            await openai_client.vector_stores.delete(vector_store.id)
             print("Cleanup completed")

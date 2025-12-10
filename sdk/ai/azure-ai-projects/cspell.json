@@ -23,7 +23,8 @@
         "Ministral",
         "cogsvc",
         "evals",
-        "FineTuning"
+        "FineTuning",
+        "closefd"
     ],
     "ignorePaths": [
         "*.csv",

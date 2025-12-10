@@ -9,7 +9,7 @@ import unittest.mock as mock
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, RecordedTransport
-from test_base import servicePreparer
+from test_base import servicePreparer, patched_open_crlf_to_lf
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
 
@@ -54,9 +54,11 @@ class SampleExecutor:
 
     def execute(self):
         """Execute a synchronous sample with proper mocking and environment setup."""
+
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
+            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
             mock.patch("azure.identity.DefaultAzureCredential") as mock_credential,
         ):
             for var_name, var_value in self.env_vars.items():
@@ -77,6 +79,7 @@ class SampleExecutor:
         with (
             MonkeyPatch.context() as mp,
             mock.patch("builtins.print", side_effect=self._capture_print),
+            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
             mock.patch("azure.identity.aio.DefaultAzureCredential") as mock_credential,
         ):
             for var_name, var_value in self.env_vars.items():
