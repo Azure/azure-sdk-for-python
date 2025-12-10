@@ -102,7 +102,7 @@ with (
                     for annotation in text_content.annotations:
                         if annotation.type == "url_citation":
                             print(
-                                f"URL Citation: , "
+                                f"URL Citation: {annotation.url}, "
                                 f"Start index: {annotation.start_index}, "
                                 f"End index: {annotation.end_index}"
                             )

@@ -328,7 +328,8 @@ print(f"Sum: {result}")
                 # Verify findings discuss the code (proves File Search was used)
                 findings_lower = arguments["findings"].lower()
                 assert any(
-                    keyword in findings_lower for keyword in ["sum", "calculate", "function", "numbers", "list", "return"]
+                    keyword in findings_lower
+                    for keyword in ["sum", "calculate", "function", "numbers", "list", "return"]
                 ), f"Expected findings to discuss the code content. Got: {arguments['findings'][:100]}"
 
                 input_list.append(

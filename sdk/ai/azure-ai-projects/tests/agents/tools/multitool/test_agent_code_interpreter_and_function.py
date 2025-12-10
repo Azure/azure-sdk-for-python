@@ -18,6 +18,7 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
+
 class TestAgentCodeInterpreterAndFunction(TestBase):
     """Tests for agents using Code Interpreter + Function Tool combination."""
 
