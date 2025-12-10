@@ -3798,7 +3798,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             if hasattr(item, "name") and item.name:
                 # Use the API type directly without transformation
                 specific_type = item.name
-            
+
             tool_call = {
                 "type": specific_type if specific_type else item_type,
             }
@@ -3882,7 +3882,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             if hasattr(item, "name") and item.name:
                 # Use the API type directly without transformation
                 specific_type = item.name
-            
+
             tool_output = {
                 "type": specific_type if specific_type else item_type,
             }
