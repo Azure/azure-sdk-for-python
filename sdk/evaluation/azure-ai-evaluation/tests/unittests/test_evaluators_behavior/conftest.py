@@ -12,19 +12,23 @@ from azure.ai.projects import AIProjectClient
 
 
 @pytest.fixture(scope="module")
-def project_endpoint():
+def project_endpoint() -> str | None:
     """Get Azure AI Project endpoint from environment."""
-    return os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "https://np-wus2-resource.services.ai.azure.com/api/projects/np-wus2")
+    project_endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT")
+    print(f"Using project endpoint: {project_endpoint}")
+    return project_endpoint
 
 
 @pytest.fixture(scope="module")
-def model_deployment_name():
+def model_deployment_name() -> str:
     """Get model deployment name from environment."""
-    return os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
+    model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
+    print(f"Using model deployment name: {model_deployment_name}")
+    return model_deployment_name
 
 
 @pytest.fixture(scope="module")
-def project_client(project_endpoint):
+def project_client(project_endpoint: str | None):
     """Create an AI Project client for testing."""
     credential = DefaultAzureCredential()
     with AIProjectClient(endpoint=project_endpoint, credential=credential) as client:
@@ -32,7 +36,7 @@ def project_client(project_endpoint):
 
 
 @pytest.fixture(scope="module")
-def openai_client(project_client):
+def openai_client(project_client: AIProjectClient):
     """Get OpenAI client from project client."""
     with project_client.get_openai_client() as client:
         yield client
