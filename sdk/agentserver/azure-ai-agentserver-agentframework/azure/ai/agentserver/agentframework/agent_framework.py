@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import os
-from typing import Any, AsyncGenerator, Union
+from typing import Any, AsyncGenerator, Union, cast, List, Dict
 
 from agent_framework import AgentProtocol
 from agent_framework.azure import AzureAIAgentClient  # pylint: disable=no-name-in-module
@@ -71,7 +71,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         """
         override = request_body.get("stream_timeout_s", None)
         if override is not None:
-            return float(override)
+            return float(cast(Union[str, int, float], override))
         env_val = os.getenv(Constants.AGENTS_ADAPTER_STREAM_TIMEOUT_S)
         return float(env_val) if env_val is not None else float(Constants.DEFAULT_STREAM_TIMEOUT_S)
 
@@ -105,7 +105,13 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         request_input = context.request.get("input")
 
         input_converter = AgentFrameworkInputConverter()
-        message = input_converter.transform_input(request_input)
+        # Cast to expected type - if it's a dict, wrap in a list
+        converted_input: Union[str, List[Dict[Any, Any]], None]
+        if isinstance(request_input, dict) and not isinstance(request_input, list):
+            converted_input = [request_input]
+        else:
+            converted_input = cast(Union[str, List[Dict[Any, Any]], None], request_input)
+        message = input_converter.transform_input(converted_input)
         logger.debug(f"Transformed input message type: {type(message)}")
 
         # Use split converters
