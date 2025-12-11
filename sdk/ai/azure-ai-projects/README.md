@@ -570,8 +570,11 @@ Enable multi-agent collaboration where agents can communicate and delegate tasks
 
 ```python
 tool = A2ATool(
-    project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
+    project_connection_id=project_client.connections.get(os.environ["A2A_PROJECT_CONNECTION_NAME"]).id,
 )
+# If the connection is missing target, we need to set the A2A endpoint URL.
+if os.environ.get("A2A_ENDPOINT"):
+    tool.base_url = os.environ["A2A_ENDPOINT"]
 ```
 
 <!-- END SNIPPET -->
