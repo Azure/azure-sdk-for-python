@@ -90,10 +90,12 @@ def get_default_scope(endpoint: str, audience: Optional[str] = None) -> str:
     :return: The default scope for the given endpoint.
     :rtype: str
     """
+    # Normalize endpoint by stripping trailing slashes for suffix checks
+    normalized_endpoint = endpoint.rstrip('/')
     if audience is None or not audience:
-        if endpoint.endswith(_US_GOVERNMENT_SUFFIX_LEGACY) or endpoint.endswith(_US_GOVERNMENT_SUFFIX):
+        if normalized_endpoint.endswith(_US_GOVERNMENT_SUFFIX_LEGACY) or normalized_endpoint.endswith(_US_GOVERNMENT_SUFFIX):
             return _AZURE_US_GOVERNMENT_AUDIENCE + _DEFAULT_SCOPE_SUFFIX
-        if endpoint.endswith(_CHINA_SUFFIX_LEGACY) or endpoint.endswith(_CHINA_SUFFIX):
+        if normalized_endpoint.endswith(_CHINA_SUFFIX_LEGACY) or normalized_endpoint.endswith(_CHINA_SUFFIX):
             return _AZURE_CHINA_AUDIENCE + _DEFAULT_SCOPE_SUFFIX
         return _AZURE_PUBLIC_CLOUD_AUDIENCE + _DEFAULT_SCOPE_SUFFIX
 
