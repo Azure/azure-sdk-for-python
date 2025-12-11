@@ -69,11 +69,7 @@ class TestAgentCodeInterpreter(TestBase):
                 input="Calculate this using Python: First, find the sum of cubes from 1 to 50 (1³ + 2³ + ... + 50³). Then add 12 factorial divided by 8 factorial (12!/8!). What is the final result?",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
-
-            print(f"Response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Get the response text
             last_message = response.output[-1]
@@ -174,11 +170,7 @@ class TestAgentCodeInterpreter(TestBase):
                 input="Create a bar chart showing operating profit by sector from the uploaded CSV file. Save it as a PNG file.",
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
-
-            print(f"Response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Extract file information from response annotations
             file_id = ""
