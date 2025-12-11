@@ -36,8 +36,6 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     OpenApiAgentTool,
     OpenApiFunctionDefinition,
-    OpenApiAnonymousAuthDetails,
-    OpenApiManagedAuthDetails,
     OpenApiProjectConnectionAuthDetails,
     OpenApiProjectConnectionSecurityScheme,
 )
