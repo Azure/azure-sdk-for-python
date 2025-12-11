@@ -22,7 +22,6 @@
   - Model `VaultCheckNameAvailabilityParameters` added property `type`
   - Added model `CloudError`
   - Added model `OperationProperties`
-  - Added model `ProxyResource`
   - Added model `TrackedResource`
 
 ### Breaking Changes
@@ -36,7 +35,7 @@
   - Model `Permissions` renamed its instance variable `keys` to `keys_property`
   - Model `Resource` deleted or renamed its instance variable `location`
   - Model `Resource` deleted or renamed its instance variable `tags`
-  - Deleted model `ProxyResourceWithoutSystemData` which actually were not used by SDK users
+  - Renamed model `ProxyResourceWithoutSystemData` to `ProxyResource`
 
 ## 12.1.1 (2025-10-09)
 
