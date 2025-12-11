@@ -1,5 +1,14 @@
 # Release History
 
+## 12.23.0 (Unreleased)
+
+### Features Added
+- Stable release of features from 12.23.0b1
+
+### Other Changes
+- Changed the default `connection_data_block_size` for all clients from 4 KiB to 256 KiB. This should result in
+significantly better throughput on large file downloads for most environments.
+
 ## 12.23.0b1 (2025-12-04)
 
 ### Features Added
