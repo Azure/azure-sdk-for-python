@@ -18,21 +18,12 @@ from test_base import (
     DEVELOPER_TIER_TRAINING_TYPE,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import is_live_and_not_recording, RecordedTransport, set_custom_default_matcher
+from devtools_testutils import is_live_and_not_recording, RecordedTransport
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient as CognitiveServicesManagementClientAsync
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
 
 class TestFineTuningAsync(TestBase):
-
-    @pytest.fixture(scope="class", autouse=True)
-    def setup_matcher(self):
-        """Configure custom matcher for fine-tuning tests to handle multipart form data line ending differences."""
-        set_custom_default_matcher(
-            compare_bodies=False,
-            excluded_headers="Content-Type,Content-Length,x-ms-client-request-id,x-ms-request-id,User-Agent",
-        )
-        yield
 
     async def _create_sft_finetuning_job_async(
         self, openai_client, train_file_id, validation_file_id, training_type, model_type
@@ -116,7 +107,7 @@ class TestFineTuningAsync(TestBase):
         training_file_path = test_data_dir / self.test_finetuning_params[job_type]["training_file_name"]
         validation_file_path = test_data_dir / self.test_finetuning_params[job_type]["validation_file_name"]
 
-        with open(training_file_path, "rb") as f:
+        with self.open_with_lf(str(training_file_path), "rb") as f:
             train_file = await openai_client.files.create(file=f, purpose="fine-tune")
         train_processed_file = await openai_client.files.wait_for_processing(train_file.id)
         assert train_processed_file is not None
@@ -124,7 +115,7 @@ class TestFineTuningAsync(TestBase):
         TestBase.assert_equal_or_not_none(train_processed_file.status, "processed")
         print(f"[_upload_test_files_async] Uploaded training file: {train_processed_file.id}")
 
-        with open(validation_file_path, "rb") as f:
+        with self.open_with_lf(str(validation_file_path), "rb") as f:
             validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
         validation_processed_file = await openai_client.files.wait_for_processing(validation_file.id)
         assert validation_processed_file is not None
