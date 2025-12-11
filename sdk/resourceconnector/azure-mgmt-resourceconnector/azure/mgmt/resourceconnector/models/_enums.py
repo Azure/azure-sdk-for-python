@@ -17,6 +17,12 @@ class AccessProfileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLUSTER_CUSTOMER_USER = "clusterCustomerUser"
 
 
+class ArtifactType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Appliance ArtifactType definition."""
+
+    LOGS_ARTIFACT_TYPE = "LogsArtifactType"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -49,6 +55,16 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"
+
+
+class SSHKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Appliance SSHKeyType definition."""
+
+    SSH_CUSTOMER_USER = "SSHCustomerUser"
+    MANAGEMENT_CA_KEY = "ManagementCAKey"
+    LOGS_KEY = "LogsKey"
+    SCOPED_ACCESS_KEY = "ScopedAccessKey"
+    USER_MANAGEMENT_KEY = "UserManagementKey"
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):

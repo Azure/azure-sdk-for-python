@@ -38,6 +38,8 @@
         "azure.mgmt.resourceconnector.models.Status": "Microsoft.ResourceConnector.Status",
         "azure.mgmt.resourceconnector.models.ResourceIdentityType": "Microsoft.ResourceConnector.ResourceIdentityType",
         "azure.mgmt.resourceconnector.models.AccessProfileType": "Microsoft.ResourceConnector.AccessProfileType",
+        "azure.mgmt.resourceconnector.models.ArtifactType": "Microsoft.ResourceConnector.ArtifactType",
+        "azure.mgmt.resourceconnector.models.SSHKeyType": "Microsoft.ResourceConnector.SSHKeyType",
         "azure.mgmt.resourceconnector.operations.AppliancesOperations.get": "Microsoft.ResourceConnector.Appliances.get",
         "azure.mgmt.resourceconnector.aio.operations.AppliancesOperations.get": "Microsoft.ResourceConnector.Appliances.get",
         "azure.mgmt.resourceconnector.operations.AppliancesOperations.begin_create_or_update": "Microsoft.ResourceConnector.Appliances.createOrUpdate",
