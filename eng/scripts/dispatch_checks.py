@@ -78,7 +78,7 @@ async def run_check(
         header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
         trailer = "=" * len(header)
         if in_ci():
-            print(f"##[group]{package} :: {check}")
+            print(f"##[group]{package} :: {check} :: {exit_code}")
 
         if stdout:
             print(header)
