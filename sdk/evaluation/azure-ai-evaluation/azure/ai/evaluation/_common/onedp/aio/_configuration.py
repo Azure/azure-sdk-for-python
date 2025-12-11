@@ -55,6 +55,8 @@ class ProjectsClientConfiguration:  # pylint: disable=too-many-instance-attribut
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
+        # Use the evaluation SDK version for the user agent instead of the onedp version.
+        # This ensures that the user agent reflects the public SDK version, which is important for telemetry and support.
         kwargs.setdefault("sdk_moniker", "azure-ai-evaluation/{}".format(EVALUATION_VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
