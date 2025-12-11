@@ -26,7 +26,6 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import CodeTransparencyClientConfiguration
-from .._utils.model_base import _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
