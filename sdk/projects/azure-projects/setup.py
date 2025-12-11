@@ -77,7 +77,7 @@ setup(
         "azure-identity>=1.20",
         "azure-appconfiguration-provider>=2.0.0",  # TODO: This needs to be removed before GA.
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     entry_points={
         "console_scripts": ["azproj=azure.projects._command:command"],
     },
