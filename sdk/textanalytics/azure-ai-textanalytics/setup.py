@@ -67,7 +67,7 @@ setup(
     package_data={
         'azure.ai.textanalytics': ['py.typed'],
     },
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "azure-core>=1.27.0",
         'azure-common>=1.1',

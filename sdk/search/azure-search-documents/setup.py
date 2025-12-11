@@ -45,7 +45,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -62,7 +61,7 @@ setup(
             "azure.search",
         ]
     ),
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "azure-core>=1.28.0",
         "azure-common>=1.1",
