@@ -36,6 +36,7 @@ from ._utils import (
     get_key_filter,
     get_label_filter,
     parse_connection_string,
+    get_default_scope,
 )
 from ._sync_token import SyncTokenPolicy
 
@@ -65,7 +66,7 @@ class AzureAppConfigurationClient:
 
         self._sync_token_policy = SyncTokenPolicy()
 
-        credential_scopes = kwargs.pop("credential_scopes", [f"{base_url.strip('/')}/.default"])
+        credential_scopes = kwargs.pop("credential_scopes", [get_default_scope(base_url)])
         # Ensure all scopes end with /.default
         kwargs["credential_scopes"] = [
             scope if scope.endswith("/.default") else f"{scope}/.default" for scope in credential_scopes
