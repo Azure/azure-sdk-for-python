@@ -230,5 +230,5 @@ class EvaluationServiceOneDPClient:
                 internal_message=f"Storage connectivity test failed: {e}",
                 target=ErrorTarget.RAI_CLIENT,
                 category=ErrorCategory.UPLOAD_ERROR,
-                blame=ErrorBlame.USER_ERROR,
+                blame=ErrorBlame.SYSTEM_ERROR,
             )
