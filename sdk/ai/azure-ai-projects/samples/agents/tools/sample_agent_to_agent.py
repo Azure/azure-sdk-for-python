@@ -22,7 +22,7 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) A2A_PROJECT_CONNECTION_NAME - The A2A project connection name,
+    3) A2A_PROJECT_CONNECTION_ID - The A2A project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
     4) A2A_ENDPOINT - If the connection is missing target i.e. if it is of "Custom keys" type, we need to set the A2A
        endpoint on the tool.
@@ -49,7 +49,7 @@ with (
 
     # [START tool_declaration]
     tool = A2ATool(
-        project_connection_id=project_client.connections.get(os.environ["A2A_PROJECT_CONNECTION_NAME"]).id,
+        project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
     )
     # If the connection is missing target, we need to set the A2A endpoint URL.
     if os.environ.get("A2A_ENDPOINT"):
