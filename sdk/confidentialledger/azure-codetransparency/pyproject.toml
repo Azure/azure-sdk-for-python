@@ -61,3 +61,4 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 pyright = false
+type_check_samples = false
