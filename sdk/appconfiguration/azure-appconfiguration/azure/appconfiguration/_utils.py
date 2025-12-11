@@ -84,15 +84,17 @@ def get_default_scope(endpoint: str, audience: Optional[str] = None) -> str:
     Gets the default scope for the given endpoint.
 
     :param endpoint: The endpoint to get the default scope for.
+    :type endpoint: str
     :param audience: The audience to use for the scope. If not provided, determines audience based on endpoint.
+    :type audience: str or None
     :return: The default scope for the given endpoint.
+    :rtype: str
     """
     if audience is None or not audience:
         if endpoint.endswith(_US_GOVERNMENT_SUFFIX_LEGACY) or endpoint.endswith(_US_GOVERNMENT_SUFFIX):
             return _AZURE_US_GOVERNMENT_AUDIENCE + _DEFAULT_SCOPE_SUFFIX
-        elif endpoint.endswith(_CHINA_SUFFIX_LEGACY) or endpoint.endswith(_CHINA_SUFFIX):
+        if endpoint.endswith(_CHINA_SUFFIX_LEGACY) or endpoint.endswith(_CHINA_SUFFIX):
             return _AZURE_CHINA_AUDIENCE + _DEFAULT_SCOPE_SUFFIX
-        else:
-            return _AZURE_PUBLIC_CLOUD_AUDIENCE + _DEFAULT_SCOPE_SUFFIX
+        return _AZURE_PUBLIC_CLOUD_AUDIENCE + _DEFAULT_SCOPE_SUFFIX
 
     return audience + _DEFAULT_SCOPE_SUFFIX
