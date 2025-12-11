@@ -634,6 +634,7 @@ class TestBuiltInEvaluators:
             ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
         ),
     )
+    @pytest.mark.skip(reason="ECI evaluator service is currently unavailable in prod using sync evals. To be re-enabled later.")
     def test_eci_evaluator(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
