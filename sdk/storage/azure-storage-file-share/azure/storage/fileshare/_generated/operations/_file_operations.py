@@ -73,7 +73,7 @@ def build_create_request(
 
     file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -168,7 +168,7 @@ def build_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -217,7 +217,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -259,7 +259,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -317,7 +317,7 @@ def build_set_http_headers_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -398,7 +398,7 @@ def build_set_metadata_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -445,7 +445,7 @@ def build_acquire_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -494,7 +494,7 @@ def build_release_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -541,7 +541,7 @@ def build_change_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -589,7 +589,7 @@ def build_break_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -643,7 +643,7 @@ def build_upload_range_request(
 
     comp: Literal["range"] = kwargs.pop("comp", _params.pop("comp", "range"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -715,7 +715,7 @@ def build_upload_range_from_url_request(
     file_range_write_from_url: Literal["update"] = kwargs.pop(
         "file_range_write_from_url", _headers.pop("x-ms-write", "update")
     )
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -791,7 +791,7 @@ def build_get_range_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["rangelist"] = kwargs.pop("comp", _params.pop("comp", "rangelist"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -858,7 +858,7 @@ def build_start_copy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -946,7 +946,7 @@ def build_abort_copy_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -992,7 +992,7 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1040,7 +1040,7 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1099,7 +1099,7 @@ def build_rename_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1180,7 +1180,7 @@ def build_create_symbolic_link_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["symboliclink"] = kwargs.pop("restype", _params.pop("restype", "symboliclink"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1233,7 +1233,7 @@ def build_get_symbolic_link_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["symboliclink"] = kwargs.pop("restype", _params.pop("restype", "symboliclink"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1277,7 +1277,7 @@ def build_create_hard_link_request(
 
     restype: Literal["hardlink"] = kwargs.pop("restype", _params.pop("restype", "hardlink"))
     file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL

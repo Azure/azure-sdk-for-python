@@ -3,6 +3,8 @@
 ## 12.25.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2026-04-06.
+- Added support for improved error handling for file share provisioning.
 
 ## 12.24.0b1 (2025-12-04)
 

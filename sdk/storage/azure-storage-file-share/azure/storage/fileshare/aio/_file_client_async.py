@@ -13,7 +13,7 @@ from datetime import datetime
 from io import BytesIO
 from typing import (
     Any, AnyStr, AsyncGenerator, AsyncIterable, Callable, cast,
-    Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Dict, IO, Iterable, List, Literal, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -50,11 +50,6 @@ from .._shared.uploads_async import AsyncIterStreamer, FileChunkUploader, IterSt
 from ._download_async import StorageStreamDownloader
 from ._lease_async import ShareLeaseClient
 from ._models import FileProperties, Handle, HandlesPaged
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -493,7 +488,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def upload_file(
-        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -506,9 +501,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
         :param data:
             Content of the file.
-        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
+        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]]
         :param int length:
-            Length of the file in bytes. Specify its maximum size, up to 1 TiB.
+            Length of the file in bytes.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, the default value would be "None" and the attributes will be set to "Archive".
@@ -544,13 +539,27 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each range of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
-            already validate. Note that this MD5 hash is not stored with the
-            file.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the file.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, it chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword int max_concurrency:
             Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
@@ -859,15 +868,27 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
-            already validate. Note that this MD5 hash is not stored with the
-            file. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used, because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the file.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, it chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1281,13 +1302,27 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :param int length:
             Number of bytes to use for uploading a section of the file.
             The range can be up to 4 MB in size.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the page content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https as https (the default)
-            will already validate. Note that this MD5 hash is not stored with the
-            file.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the file.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, it chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword file_last_write_mode:
             If the file last write time should be preserved or overwritten. Possible values
             are "preserve" or "now". If not specified, file last write time will be changed to

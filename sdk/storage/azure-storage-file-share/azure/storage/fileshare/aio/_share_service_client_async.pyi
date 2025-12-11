@@ -70,6 +70,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         *,
         expiry: datetime,
         start: Optional[datetime] = None,
+        delegated_user_tid: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> UserDelegationKey: ...
