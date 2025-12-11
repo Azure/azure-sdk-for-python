@@ -452,6 +452,9 @@ class SubStatusCodes:
     # Client Side substatus codes
     THROUGHPUT_OFFER_NOT_FOUND = 10004
 
+    # Emergency Revocation substatus code
+    EMERGENCY_REVOCATION = 5013
+
 
 class ResourceType:
     """Types of resources in Azure Cosmos

@@ -30,7 +30,8 @@ from azure.core.exceptions import AzureError, ClientAuthenticationError, Service
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import _container_recreate_retry_policy, _health_check_retry_policy, _service_unavailable_retry_policy
+from . import _container_recreate_retry_policy, _health_check_retry_policy, _service_unavailable_retry_policy, \
+    _emergency_revocation_retry_policy
 from . import _default_retry_policy
 from . import _endpoint_discovery_retry_policy
 from . import _gone_retry_policy
@@ -111,6 +112,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     )
     service_unavailable_retry_policy = _service_unavailable_retry_policy._ServiceUnavailableRetryPolicy(
         client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args)
+    emergency_revocation_retry_policy = _emergency_revocation_retry_policy.EmergencyRevocationRetryPolicy(*args)
     # Get logger
     logger = kwargs.get("logger", logging.getLogger("azure.cosmos._retry_utility"))
 
@@ -191,6 +193,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
                 retry_policy = health_check_retry_policy
+            elif e.status_code == StatusCodes.UNAUTHORIZED and e.sub_status == SubStatusCodes.EMERGENCY_REVOCATION:
+                retry_policy = emergency_revocation_retry_policy
             # Re-assign retry policy based on error code
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
                     [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:

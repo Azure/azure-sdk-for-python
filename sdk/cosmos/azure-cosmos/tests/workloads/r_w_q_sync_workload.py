@@ -10,6 +10,7 @@ from azure.cosmos import CosmosClient, documents
 def run_workload(client_id, client_logger):
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
+    client_logger.log("token: %s", COSMOS_CREDENTIAL.get_token())
     with CosmosClient(COSMOS_URI, COSMOS_CREDENTIAL, connection_policy=connectionPolicy,
                       preferred_locations=PREFERRED_LOCATIONS, excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
                       enable_diagnostics_logging=True, logger=client_logger,

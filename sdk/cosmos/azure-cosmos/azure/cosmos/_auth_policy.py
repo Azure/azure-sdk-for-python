@@ -3,19 +3,25 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import logging
 from typing import TypeVar, Any, MutableMapping, cast, Optional
 
-from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.policies._authentication import HTTPResponseType
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
+from azure.cosmos.exceptions import CosmosHttpResponseError
+
+from azure.cosmos import http_constants
 
 from .http_constants import HttpHeaders
 from ._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+logger = logging.getLogger("azure.cosmos.CosmosBearerTokenCredentialPolicy")
 
 # NOTE: This class accesses protected members (_scopes, _token) of the parent class
 # to implement fallback and scope-switching logic not exposed by the public API.
@@ -66,6 +72,28 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
                     tried_fallback = True
                     continue
                 raise
+    def on_response(
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+    ) -> None:
+        """Called after the policy receives a response.
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        :param ~azure.core.pipeline.PipelineResponse response: the response
+        """
+        if (response.http_response.status_code == http_constants.StatusCodes.UNAUTHORIZED and
+            response.http_response.headers.get(http_constants.HttpHeaders.SubStatus)
+                == str(http_constants.SubStatusCodes.EMERGENCY_REVOCATION)):
+            logger.info("Token on response %", self._token)
+            # force token refresh on next request
+            self._token = None
+            data = response.http_response.body()
+            if data:
+                data = data.decode("utf-8")
+            # raise specific exception for emergency account revocation
+            raise CosmosHttpResponseError(message=data, response=response.http_response)
+
+        return super().on_response(request, response)
 
     def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
