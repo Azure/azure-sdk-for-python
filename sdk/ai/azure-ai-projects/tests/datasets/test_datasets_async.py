@@ -24,7 +24,7 @@ data_file2 = os.path.join(data_folder, "data_file2.txt")
 class TestDatasetsAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_file_async -s
+    # pytest tests\datasets\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_file_async -s
     @servicePreparer()
     @pytest.mark.skipif(
         not is_live_and_not_recording(),
@@ -132,7 +132,7 @@ class TestDatasetsAsync(TestBase):
             assert exception_thrown
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_folder_async -s
+    # pytest tests\datasets\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_folder_async -s
     @servicePreparer()
     @pytest.mark.skipif(
         not is_live_and_not_recording(),

@@ -177,10 +177,10 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_datasets_params = {
-        "dataset_name_1": f"test-dataset-name-{random.randint(0, 99999):05d}",
-        "dataset_name_2": f"test-dataset-name-{random.randint(0, 99999):05d}",
-        "dataset_name_3": f"test-dataset-name-{random.randint(0, 99999):05d}",
-        "dataset_name_4": f"test-dataset-name-{random.randint(0, 99999):05d}",
+        "dataset_name_1": f"test-dataset-name-1",
+        "dataset_name_2": f"test-dataset-name-2",
+        "dataset_name_3": f"test-dataset-name-3",
+        "dataset_name_4": f"test-dataset-name-4",
         "dataset_version": 1,
         "connection_name": "balapvbyostoragecanary",
     }

@@ -134,7 +134,6 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                         version=output_version,
                         dataset_version=FileDatasetVersion(
                             # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
-                            # Per above doc the ".url" contains SAS token... should this be stripped away?
                             data_uri=data_uri,
                         ),
                     )
