@@ -706,7 +706,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.ResourceNotFoundError: If the knowledge base doesn't exist.
         :raises ~azure.core.exceptions.ResourceModifiedError: If the knowledge base has been modified on the server.
-        :raises ~azure.core.exceptions.ResourceNotModifiedError: If the knowledge base hasn't been 
+        :raises ~azure.core.exceptions.ResourceNotModifiedError: If the knowledge base hasn't been
             modified on the server.
         :raises ~azure.core.exceptions.ResourceExistsError: If the knowledge base already exists.
         """
