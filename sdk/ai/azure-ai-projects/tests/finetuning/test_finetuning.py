@@ -17,12 +17,26 @@ from test_base import (
     GLOBAL_STANDARD_TRAINING_TYPE,
     DEVELOPER_TIER_TRAINING_TYPE,
 )
-from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live_and_not_recording
+from devtools_testutils import (
+    recorded_by_proxy,
+    RecordedTransport,
+    is_live_and_not_recording,
+    set_custom_default_matcher,
+)
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
 
 class TestFineTuning(TestBase):
+
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_matcher(self):
+        """Configure custom matcher for fine-tuning tests to handle multipart form data line ending differences."""
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="Content-Type,Content-Length,x-ms-client-request-id,x-ms-request-id,User-Agent",
+        )
+        yield
 
     def _create_sft_finetuning_job(self, openai_client, train_file_id, validation_file_id, training_type, model_type):
         return openai_client.fine_tuning.jobs.create(

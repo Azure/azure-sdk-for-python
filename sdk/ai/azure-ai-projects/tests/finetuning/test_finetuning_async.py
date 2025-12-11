@@ -18,12 +18,21 @@ from test_base import (
     DEVELOPER_TIER_TRAINING_TYPE,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import is_live_and_not_recording, RecordedTransport
+from devtools_testutils import is_live_and_not_recording, RecordedTransport, set_custom_default_matcher
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient as CognitiveServicesManagementClientAsync
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
 
 class TestFineTuningAsync(TestBase):
+
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_matcher(self):
+        """Configure custom matcher for fine-tuning tests to handle multipart form data line ending differences."""
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="Content-Type,Content-Length,x-ms-client-request-id,x-ms-request-id,User-Agent",
+        )
+        yield
 
     async def _create_sft_finetuning_job_async(
         self, openai_client, train_file_id, validation_file_id, training_type, model_type
