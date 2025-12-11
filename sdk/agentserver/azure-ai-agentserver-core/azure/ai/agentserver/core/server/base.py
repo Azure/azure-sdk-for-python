@@ -536,16 +536,37 @@ async def _iter_with_keep_alive(
     
     If no event is received within KEEP_ALIVE_INTERVAL seconds,
     yields None as a signal to send a keep-alive comment.
+    The original iterator is protected with asyncio.shield to ensure
+    it continues running even when timeout occurs.
     """
     it_anext = it.__anext__
+    pending_task: Optional[asyncio.Task] = None
+    
     while True:
         try:
-            # Wait for next event with timeout
-            event = await asyncio.wait_for(it_anext(), timeout=KEEP_ALIVE_INTERVAL)
-            yield event
-        except asyncio.TimeoutError:
-            # Timeout occurred, yield None as signal to send keep-alive comment
-            yield None
+            # If there's a pending task from previous timeout, wait for it first
+            if pending_task is not None:
+                event = await pending_task
+                pending_task = None
+                yield event
+                continue
+            
+            # Create a task for the next event
+            next_event_task = asyncio.create_task(it_anext())
+            
+            try:
+                # Shield the task and wait with timeout
+                event = await asyncio.wait_for(
+                    asyncio.shield(next_event_task), 
+                    timeout=KEEP_ALIVE_INTERVAL
+                )
+                yield event
+            except asyncio.TimeoutError:
+                # Timeout occurred, but task continues due to shield
+                # Save task to check in next iteration
+                pending_task = next_event_task
+                yield None
+                
         except StopAsyncIteration:
             # Iterator exhausted
             break
