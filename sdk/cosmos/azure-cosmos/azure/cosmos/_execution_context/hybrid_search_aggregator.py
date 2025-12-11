@@ -86,19 +86,16 @@ def _rewrite_query_infos(hybrid_search_query_info, global_statistics, parameters
         assert query_info['hasNonStreamingOrderBy']
         rewritten_order_by_expressions = []
         for order_by_expression in query_info['orderByExpressions']:
-            rewritten_order_by_expressions.append(_format_component_query(order_by_expression, global_statistics))
-            # rewritten_order_by_expressions.append(
-            #     _format_component_query_workaround(order_by_expression, global_statistics,
-            #                                        len(hybrid_search_query_info[
-            #                                                'componentQueryInfos'])))
+            rewritten_order_by_expressions.append(
+                _format_component_query_workaround(order_by_expression, global_statistics,
+                                                   len(hybrid_search_query_info[
+                                                           'componentQueryInfos'])))
 
         query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], parameters)
-        rewritten_query = _format_component_query(query_info['rewrittenQuery'],
-                                                             global_statistics)
-        # rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
-        #                                                      global_statistics,
-        #                                                      len(hybrid_search_query_info[
-        #                                                              'componentQueryInfos']))
+        rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
+                                                             global_statistics,
+                                                             len(hybrid_search_query_info[
+                                                                     'componentQueryInfos']))
         new_query_info = query_info.copy()
         new_query_info['orderByExpressions'] = rewritten_order_by_expressions
         new_query_info['rewrittenQuery'] = rewritten_query
@@ -364,20 +361,14 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             rewritten_order_by_expressions = []
             for order_by_expression in query_info['orderByExpressions']:
                 rewritten_order_by_expressions.append(
-                    _format_component_query(order_by_expression, self._aggregated_global_statistics))
-                # rewritten_order_by_expressions.append(
-                #     _format_component_query_workaround(order_by_expression, self._aggregated_global_statistics,
-                #                                        len(self._hybrid_search_query_info[
-                #                                                'componentQueryInfos'])))
+                    _format_component_query_workaround(order_by_expression, self._aggregated_global_statistics,
+                                                       len(self._hybrid_search_query_info[
+                                                               'componentQueryInfos'])))
             query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], self._parameters)
-            rewritten_order_by_expressions.append(
-                _format_component_query(query_info['rewrittenQuery'], self._aggregated_global_statistics))
-            rewritten_query = _format_component_query(query_info['rewrittenQuery'],
-                                                             self._aggregated_global_statistics)
-            # rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
-            #                                                      self._aggregated_global_statistics,
-            #                                                      len(self._hybrid_search_query_info[
-            #                                                              'componentQueryInfos']))
+            rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
+                                                                 self._aggregated_global_statistics,
+                                                                 len(self._hybrid_search_query_info[
+                                                                         'componentQueryInfos']))
             new_query_info = query_info.copy()
             new_query_info['orderByExpressions'] = rewritten_order_by_expressions
             new_query_info['rewrittenQuery'] = rewritten_query
