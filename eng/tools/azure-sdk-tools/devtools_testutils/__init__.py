@@ -20,7 +20,7 @@ from .envvariable_loader import EnvironmentVariableLoader
 from .exceptions import AzureTestError, ReservedResourceNameError
 from .proxy_fixtures import environment_variables, recorded_test, variable_recorder
 from .proxy_startup import start_test_proxy, stop_test_proxy, test_proxy
-from .proxy_testcase import recorded_by_proxy
+from .proxy_testcase import recorded_by_proxy, RecordedTransport
 from .sanitizers import (
     add_api_version_transform,
     add_batch_sanitizers,
@@ -52,7 +52,13 @@ from .sanitizers import (
     set_session_recording_options,
 )
 from .cert import create_combined_bundle
-from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording, trim_kwargs_from_test_function
+from .helpers import (
+    ResponseCallback,
+    RetryCounter,
+    is_live_and_not_recording,
+    is_live as is_live_internal,
+    trim_kwargs_from_test_function,
+)
 from .fake_credentials import FakeTokenCredential
 
 PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
@@ -99,6 +105,7 @@ __all__ = [
     "EnvironmentVariableLoader",
     "environment_variables",
     "recorded_by_proxy",
+    "RecordedTransport",
     "recorded_test",
     "test_proxy",
     "trim_kwargs_from_test_function",
@@ -117,4 +124,5 @@ __all__ = [
     "FakeTokenCredential",
     "create_combined_bundle",
     "is_live_and_not_recording",
+    "is_live_internal",
 ]

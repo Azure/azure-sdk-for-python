@@ -20,9 +20,9 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_workspaces_list(self, resource_group):
         response = self.client.workspaces.list(
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_workspaces_list_by_resource_group(self, resource_group):
         response = self.client.workspaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,22 +41,25 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_workspaces_begin_create_or_update(self, resource_group):
         response = self.client.workspaces.begin_create_or_update(
             resource_group_name=resource_group.name,
             workspace_name="str",
             parameters={
                 "location": "str",
-                "createdDate": "str",
+                "createdDate": "2020-02-20 00:00:00",
                 "customerId": "str",
                 "defaultDataCollectionRuleResourceId": "str",
                 "etag": "str",
+                "failover": {"lastModifiedDate": "2020-02-20 00:00:00", "state": "str"},
                 "features": {
+                    "associations": ["str"],
                     "clusterResourceId": "str",
                     "disableLocalAuth": bool,
                     "enableDataExport": bool,
                     "enableLogAccessUsingOnlyResourcePermissions": bool,
                     "immediatePurgeDataOn30Days": bool,
+                    "unifiedSentinelBillingOnly": bool,
                 },
                 "forceCmkForQuery": bool,
                 "id": "str",
@@ -66,14 +69,21 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "modifiedDate": "str",
+                "modifiedDate": "2020-02-20 00:00:00",
                 "name": "str",
                 "privateLinkScopedResources": [{"resourceId": "str", "scopeId": "str"}],
                 "provisioningState": "str",
                 "publicNetworkAccessForIngestion": "Enabled",
                 "publicNetworkAccessForQuery": "Enabled",
+                "replication": {
+                    "createdDate": "2020-02-20 00:00:00",
+                    "enabled": bool,
+                    "lastModifiedDate": "2020-02-20 00:00:00",
+                    "location": "str",
+                    "provisioningState": "str",
+                },
                 "retentionInDays": 0,
-                "sku": {"name": "str", "capacityReservationLevel": 0, "lastSkuUpdate": "str"},
+                "sku": {"name": "str", "capacityReservationLevel": 0, "lastSkuUpdate": "2020-02-20 00:00:00"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -86,7 +96,7 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "workspaceCapping": {"dailyQuotaGb": 0.0, "dataIngestionStatus": "str", "quotaNextResetTime": "str"},
             },
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -94,11 +104,11 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_workspaces_begin_delete(self, resource_group):
         response = self.client.workspaces.begin_delete(
             resource_group_name=resource_group.name,
             workspace_name="str",
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -106,11 +116,11 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_workspaces_get(self, resource_group):
         response = self.client.workspaces.get(
             resource_group_name=resource_group.name,
             workspace_name="str",
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -118,21 +128,24 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_workspaces_update(self, resource_group):
         response = self.client.workspaces.update(
             resource_group_name=resource_group.name,
             workspace_name="str",
             parameters={
-                "createdDate": "str",
+                "createdDate": "2020-02-20 00:00:00",
                 "customerId": "str",
                 "defaultDataCollectionRuleResourceId": "str",
                 "etag": "str",
+                "failover": {"lastModifiedDate": "2020-02-20 00:00:00", "state": "str"},
                 "features": {
+                    "associations": ["str"],
                     "clusterResourceId": "str",
                     "disableLocalAuth": bool,
                     "enableDataExport": bool,
                     "enableLogAccessUsingOnlyResourcePermissions": bool,
                     "immediatePurgeDataOn30Days": bool,
+                    "unifiedSentinelBillingOnly": bool,
                 },
                 "forceCmkForQuery": bool,
                 "id": "str",
@@ -142,20 +155,90 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "modifiedDate": "str",
+                "modifiedDate": "2020-02-20 00:00:00",
                 "name": "str",
                 "privateLinkScopedResources": [{"resourceId": "str", "scopeId": "str"}],
                 "provisioningState": "str",
                 "publicNetworkAccessForIngestion": "Enabled",
                 "publicNetworkAccessForQuery": "Enabled",
+                "replication": {
+                    "createdDate": "2020-02-20 00:00:00",
+                    "enabled": bool,
+                    "lastModifiedDate": "2020-02-20 00:00:00",
+                    "location": "str",
+                    "provisioningState": "str",
+                },
                 "retentionInDays": 0,
-                "sku": {"name": "str", "capacityReservationLevel": 0, "lastSkuUpdate": "str"},
+                "sku": {"name": "str", "capacityReservationLevel": 0, "lastSkuUpdate": "2020-02-20 00:00:00"},
                 "tags": {"str": "str"},
                 "type": "str",
                 "workspaceCapping": {"dailyQuotaGb": 0.0, "dataIngestionStatus": "str", "quotaNextResetTime": "str"},
             },
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_workspaces_begin_failover(self, resource_group):
+        response = self.client.workspaces.begin_failover(
+            resource_group_name=resource_group.name,
+            location="str",
+            workspace_name="str",
+            api_version="2025-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_workspaces_begin_failback(self, resource_group):
+        response = self.client.workspaces.begin_failback(
+            resource_group_name=resource_group.name,
+            workspace_name="str",
+            api_version="2025-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_workspaces_list_nsp(self, resource_group):
+        response = self.client.workspaces.list_nsp(
+            resource_group_name=resource_group.name,
+            workspace_name="str",
+            api_version="2025-07-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_workspaces_get_nsp(self, resource_group):
+        response = self.client.workspaces.get_nsp(
+            resource_group_name=resource_group.name,
+            workspace_name="str",
+            network_security_perimeter_configuration_name="str",
+            api_version="2025-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_workspaces_begin_reconcile_nsp(self, resource_group):
+        response = self.client.workspaces.begin_reconcile_nsp(
+            resource_group_name=resource_group.name,
+            workspace_name="str",
+            network_security_perimeter_configuration_name="str",
+            api_version="2025-07-01",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

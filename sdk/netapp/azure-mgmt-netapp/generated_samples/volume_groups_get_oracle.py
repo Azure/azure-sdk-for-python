@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/VolumeGroups_Get_Oracle.json
+# x-ms-original-file: 2025-09-01-preview/VolumeGroups_Get_Oracle.json
 if __name__ == "__main__":
     main()

@@ -157,10 +157,10 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
         ACCOUNT1 = self.get_resource_name(setup.TEST_ACC_1 + "-")
         create_snapshot_policy(self.client, setup.TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
         snapshot_policy_patchproperties = SnapshotPolicyProperties(
-            #hourly_schedule={},
+            # hourly_schedule={},
             daily_schedule=DailySchedule(snapshots_to_keep=1, minute=50, hour=1),
-            #weekly_schedule={},
-            #monthly_schedule={},
+            # weekly_schedule={},
+            # monthly_schedule={},
             enabled=False,
         )
         snapshot_policy_body = SnapshotPolicyPatch(properties=snapshot_policy_patchproperties)
