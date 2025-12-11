@@ -2147,7 +2147,7 @@ def _extract_metrics_from_definition(testing_criteria_config: Dict[str, Any]) ->
     if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
         metric_config_detail = evaluator_definition.get("metrics")
         if metric_config_detail and isinstance(metric_config_detail, dict) and len(metric_config_detail) > 0:
-            inverse_metrics = _get_inverse_metrics(metric_config_detail)
+            inverse_metrics = _get_metrics_need_extra_reverse(metric_config_detail)
             return list(metric_config_detail.keys()), inverse_metrics
     return [], []
 
@@ -3056,7 +3056,7 @@ def _is_none_or_nan(value: Any) -> bool:
     return False
 
 
-def _get_inverse_metrics(
+def _get_metrics_need_extra_reverse(
     metric_config_detail: Optional[Dict[str, Any]] = None,
 ) -> List[str]:
     """
