@@ -1,5 +1,62 @@
 # Release History
 
+## 13.0.0 (2025-12-11)
+
+### Features Added
+
+  - Client `KeyVaultManagementClient` added method `send_request`
+  - Model `DeletedManagedHsm` added property `system_data`
+  - Model `DeletedVault` added property `system_data`
+  - Model `Key` added property `properties`
+  - Model `Key` added property `system_data`
+  - Model `MHSMPrivateEndpointConnectionItem` added property `properties`
+  - Model `ManagedHsmKey` added property `properties`
+  - Model `ManagedHsmKey` added property `system_data`
+  - Model `Operation` added property `operation_properties`
+  - Model `Permissions` added property `keys_property`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateEndpointConnectionItem` added property `properties`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `Secret` added property `system_data`
+  - Model `VaultCheckNameAvailabilityParameters` added property `type`
+  - Added model `CloudError`
+  - Added model `OperationProperties`
+  - Added model `ProxyResource`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Model `Key` deleted or renamed its instance variable `attributes`
+  - Model `Key` deleted or renamed its instance variable `kty`
+  - Model `Key` deleted or renamed its instance variable `key_ops`
+  - Model `Key` deleted or renamed its instance variable `key_size`
+  - Model `Key` deleted or renamed its instance variable `curve_name`
+  - Model `Key` deleted or renamed its instance variable `key_uri`
+  - Model `Key` deleted or renamed its instance variable `key_uri_with_version`
+  - Model `Key` deleted or renamed its instance variable `rotation_policy`
+  - Model `Key` deleted or renamed its instance variable `release_policy`
+  - Model `MHSMPrivateEndpointConnectionItem` deleted or renamed its instance variable `private_endpoint`
+  - Model `MHSMPrivateEndpointConnectionItem` deleted or renamed its instance variable `private_link_service_connection_state`
+  - Model `MHSMPrivateEndpointConnectionItem` deleted or renamed its instance variable `provisioning_state`
+  - Model `ManagedHsmKey` deleted or renamed its instance variable `attributes`
+  - Model `ManagedHsmKey` deleted or renamed its instance variable `kty`
+  - Model `ManagedHsmKey` deleted or renamed its instance variable `key_ops`
+  - Model `ManagedHsmKey` deleted or renamed its instance variable `key_size`
+  - Model `ManagedHsmKey` deleted or renamed its instance variable `curve_name`
+  - Model `ManagedHsmKey` deleted or renamed its instance variable `key_uri`
+  - Model `ManagedHsmKey` deleted or renamed its instance variable `key_uri_with_version`
+  - Model `ManagedHsmKey` deleted or renamed its instance variable `rotation_policy`
+  - Model `ManagedHsmKey` deleted or renamed its instance variable `release_policy`
+  - Model `Operation` deleted or renamed its instance variable `service_specification`
+  - Model `Permissions` deleted or renamed its instance variable `keys`
+  - Model `PrivateEndpointConnectionItem` deleted or renamed its instance variable `private_endpoint`
+  - Model `PrivateEndpointConnectionItem` deleted or renamed its instance variable `private_link_service_connection_state`
+  - Model `PrivateEndpointConnectionItem` deleted or renamed its instance variable `provisioning_state`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `ProxyResourceWithoutSystemData`
+
 ## 12.1.1 (2025-10-09)
 
 ### Bugs Fixed

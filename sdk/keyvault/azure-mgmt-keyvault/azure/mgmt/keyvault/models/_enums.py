@@ -59,19 +59,6 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESTORE = "restore"
 
 
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of entity that created the resource."""
-
-    USER = "User"
-    """The entity was created by a user."""
-    APPLICATION = "Application"
-    """The entity was created by an application."""
-    MANAGED_IDENTITY = "ManagedIdentity"
-    """The entity was created by a managed identity."""
-    KEY = "Key"
-    """The entity was created by a key."""
-
-
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The vault's create mode to indicate whether the vault need to be recovered or not."""
 
@@ -100,6 +87,19 @@ class GeoReplicationRegionProvisioningState(str, Enum, metaclass=CaseInsensitive
     FAILED = "Failed"
     DELETING = "Deleting"
     CLEANUP = "Cleanup"
+
+
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of entity that created the resource."""
+
+    USER = "User"
+    """The entity was created by a user."""
+    APPLICATION = "Application"
+    """The entity was created by an application."""
+    MANAGED_IDENTITY = "ManagedIdentity"
+    """The entity was created by a managed identity."""
+    KEY = "Key"
+    """The entity was created by a key."""
 
 
 class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

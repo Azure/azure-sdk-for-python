@@ -98,34 +98,6 @@ class Action(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArmResource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.keyvault.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
 class Attributes(_Model):
     """The object attributes managed by the KeyVault service.
 
@@ -315,7 +287,35 @@ class CloudErrorBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProxyResource(ArmResource):
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.keyvault.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
     """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -982,7 +982,7 @@ class LogSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedHsm(ArmResource):
+class ManagedHsm(Resource):
     """Resource information with extended details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2096,7 +2096,7 @@ class MHSMPrivateEndpoint(_Model):
     """Full identifier of the private endpoint resource."""
 
 
-class MHSMPrivateEndpointConnection(ArmResource):
+class MHSMPrivateEndpointConnection(Resource):
     """Private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3528,21 +3528,21 @@ class SystemData(_Model):
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or ~azure.mgmt.keyvault.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.keyvault.models.IdentityType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: str or ~azure.mgmt.keyvault.models.CreatedByType
+    :vartype last_modified_by_type: str or ~azure.mgmt.keyvault.models.IdentityType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+    created_by_type: Optional[Union[str, "_models.IdentityType"]] = rest_field(
         name="createdByType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
@@ -3555,7 +3555,7 @@ class SystemData(_Model):
         name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+    last_modified_by_type: Optional[Union[str, "_models.IdentityType"]] = rest_field(
         name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of identity that last modified the resource. Known values are: \"User\",
@@ -3570,10 +3570,10 @@ class SystemData(_Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.IdentityType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.IdentityType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
     ) -> None: ...
 
@@ -3588,7 +3588,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(ArmResource):
+class TrackedResource(Resource):
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
