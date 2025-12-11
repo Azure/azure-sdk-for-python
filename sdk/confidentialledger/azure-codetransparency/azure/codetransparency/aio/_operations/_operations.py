@@ -34,7 +34,6 @@ from ..._operations._operations import (
     build_code_transparency_get_public_keys_request,
     build_code_transparency_get_transparency_config_cbor_request,
 )
-from ..._utils.model_base import _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import CodeTransparencyClientConfiguration
 
