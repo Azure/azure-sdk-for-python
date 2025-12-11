@@ -606,11 +606,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     if not item_type:
                         continue  # Skip if no type
 
-                    # Convert function_call_output to "function"
-                    if item_type == "function_call_output":
-                        tool_output["type"] = "function"
-                    else:
-                        tool_output["type"] = item_type
+                    # Use the API type directly
+                    tool_output["type"] = item_type
 
                     # Add call_id as "id" - handle both dict and object
                     if isinstance(output_item, dict):
@@ -1035,7 +1032,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle function_call type
                 if item_type == "function_call":
                     tool_call = {
-                        "type": "function",
+                        "type": item_type,
                     }
 
                     # Always include id (needed to correlate with function output)
@@ -1057,7 +1054,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle file_search_call type
                 elif item_type == "file_search_call":
                     tool_call = {
-                        "type": "file_search",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1083,7 +1080,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle code_interpreter_call type
                 elif item_type == "code_interpreter_call":
                     tool_call = {
-                        "type": "code_interpreter",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1112,7 +1109,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle web_search_call type
                 elif item_type == "web_search_call":
                     tool_call = {
-                        "type": "web_search",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1143,7 +1140,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle azure_ai_search_call type
                 elif item_type == "azure_ai_search_call":
                     tool_call = {
-                        "type": "azure_ai_search",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1175,7 +1172,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle image_generation_call type
                 elif item_type == "image_generation_call":
                     tool_call = {
-                        "type": "image_generation",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1204,7 +1201,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle mcp_call type (Model Context Protocol)
                 elif item_type == "mcp_call":
                     tool_call = {
-                        "type": "mcp",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "id"):
@@ -1254,7 +1251,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Handle computer_call type (for computer use)
                 elif item_type == "computer_call":
                     tool_call = {
-                        "type": "computer",
+                        "type": item_type,
                     }
 
                     if hasattr(output_item, "call_id"):
@@ -3493,7 +3490,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "tool"  # Override role for tool outputs
 
             tool_output: Dict[str, Any] = {
-                "type": "function",
+                "type": item_type,
             }
 
             # Add call_id as "id" - always include for correlation
@@ -3529,7 +3526,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for function calls
 
             tool_call = {
-                "type": "function",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3568,7 +3565,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for file search calls
 
             tool_call = {
-                "type": "file_search",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3611,7 +3608,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for code interpreter calls
 
             tool_call = {
-                "type": "code_interpreter",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3667,7 +3664,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for web search calls
 
             tool_call = {
-                "type": "web_search",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3708,7 +3705,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for Azure AI Search calls
 
             tool_call = {
-                "type": "azure_ai_search",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3754,7 +3751,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             role = "assistant"  # Override role for image generation calls
 
             tool_call = {
-                "type": "image_generation",
+                "type": item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3796,11 +3793,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Remote function call (like Bing Custom Search call)
             role = "assistant"  # Override role for remote function calls
 
-            # Extract the tool name
-            tool_name = getattr(item, "name", None) if hasattr(item, "name") else None
+            # Check if there's a more specific type in name field (e.g., "bing_custom_search_preview_call")
+            specific_type = None
+            if hasattr(item, "name") and item.name:
+                # Use the API type directly without transformation
+                specific_type = item.name
 
             tool_call = {
-                "type": tool_name if tool_name else "remote_function",
+                "type": specific_type if specific_type else item_type,
             }
 
             # Always include ID (needed for correlation)
@@ -3877,11 +3877,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Remote function call output (like Bing Custom Search output)
             role = "tool"  # Tool outputs use role "tool"
 
-            # Extract the tool name
-            tool_name = getattr(item, "name", None) if hasattr(item, "name") else None
+            # Check if there's a more specific type in name field (e.g., "bing_custom_search_preview_call_output")
+            specific_type = None
+            if hasattr(item, "name") and item.name:
+                # Use the API type directly without transformation
+                specific_type = item.name
 
             tool_output = {
-                "type": tool_name if tool_name else "remote_function",
+                "type": specific_type if specific_type else item_type,
             }
 
             # Always include ID (needed for correlation)

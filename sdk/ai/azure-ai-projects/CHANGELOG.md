@@ -20,6 +20,7 @@
 * Tracing: added the "parts" array to "gen_ai.input.messages" and "gen_ai.output.messages".
 * Tracing: removed "role" as a separate attribute and added "role" to "gen_ai.input.messages" and "gen_ai.output.messages" content.
 * Tracing: added "finish_reason" as part of "gen_ai.output.messages" content.
+* Tracing: changed the tool calls to use the api definitions as the types in traces. For example "function_call" instead of "function" and "function_call_output" instead of "function"
 
 ### Bugs Fixed
 * Tracing: fixed a bug with computer use tool call output including screenshot binary data even when binary data tracing is off.
