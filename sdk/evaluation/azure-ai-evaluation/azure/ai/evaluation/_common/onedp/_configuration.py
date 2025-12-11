@@ -56,7 +56,7 @@ class ProjectsClientConfiguration:  # pylint: disable=too-many-instance-attribut
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
         # Use the evaluation SDK version for the user agent to properly identify the SDK
-        kwargs.setdefault("sdk_moniker", "ai-evaluation/{}".format(EVALUATION_VERSION))
+        kwargs.setdefault("sdk_moniker", "azure-ai-evaluation/{}".format(EVALUATION_VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
