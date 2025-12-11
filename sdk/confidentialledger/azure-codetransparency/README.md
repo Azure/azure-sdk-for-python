@@ -1,5 +1,8 @@
-# Code Transparency Service client library for Python
-<!-- write necessary description of service -->
+# Azure Signing Transparency client library for Python
+
+`azure-codetransparency` is based on a managed service that complies with a [draft SCITT RFC][SCITT_ARCHITECTURE_RFC]. The service stores [COSE signature envelopes][COSE_RFC] in the Merkle tree and issues signed inclusion proofs as [receipts][SCITT_RECEIPT_RFC].
+
+- [OSS server application source code][Service_source_code]
 
 ## Getting started
 
@@ -12,9 +15,25 @@ python -m pip install azure-codetransparency
 #### Prequisites
 
 - Python 3.9 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- An existing Code Transparency Service instance.
+- A running, accessible Signing Transparency service
+- Ability to create `COSE_Sign1` envelopes (see [example script][CTS_claim_generator_script])
+- The registration policy must be configured in the running service to accept your payloads (see [configuration options][CTS_configuration_doc])
 
+## Key concepts
+
+<!-- TODO -->
+
+## Examples
+
+<!-- TODO -->
+
+## Troubleshooting
+
+Response values returned from client methods are `Response` objects, which contain information about the HTTP response such as the HTTP `Status` property and a `Headers` collection with more details.
+
+## Next steps
+
+For more extensive documentation, see the API [reference documentation](https://azure.github.io/azure-sdk-for-python/). You can also read more about Microsoft Research's open-source [Confidential Consortium Framework][ccf].
 
 ## Contributing
 
@@ -34,6 +53,13 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
+[COSE_RFC]: https://www.rfc-editor.org/rfc/rfc8152.txt
+[SCITT_ARCHITECTURE_RFC]: https://www.ietf.org/archive/id/draft-ietf-scitt-architecture-11.txt
+[SCITT_RECEIPT_RFC]: https://www.ietf.org/archive/id/draft-ietf-cose-merkle-tree-proofs-08.txt
+[Service_source_code]: https://github.com/microsoft/scitt-ccf-ledger
+[CTS_claim_generator_script]: https://github.com/microsoft/scitt-ccf-ledger/tree/main/demo/cts_poc
+[CTS_configuration_doc]: https://github.com/microsoft/scitt-ccf-ledger/blob/main/docs/configuration.md
+[ccf]: https://github.com/Microsoft/CCF
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
