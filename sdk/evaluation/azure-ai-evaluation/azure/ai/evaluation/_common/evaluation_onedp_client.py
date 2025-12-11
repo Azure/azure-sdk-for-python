@@ -186,7 +186,7 @@ class EvaluationServiceOneDPClient:
 
         try:
             # Create a test name and version
-            test_name = f"connectivity-test"
+            test_name = "connectivity-test"
             test_version = "1"
 
             # Start a pending upload to get storage credentials
