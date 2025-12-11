@@ -23,7 +23,6 @@ USAGE: python hello_world_sample_entra_id_and_bleu.py
     4) AZURE_CLIENT_SECRET: Your application client secret
     
     For Azure Bleu (French Sovereign Cloud):
-    - Use authority: https://login.sovcloud-identity.fr or tenant-specific URL
     - Use credential_scopes: ["https://appconfig.sovcloud-api.fr/.default"]
     
     DefaultAzureCredential will attempt multiple authentication methods:
@@ -46,7 +45,7 @@ def main():
     ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT"]
 
     # Create app config client with Entra ID authentication
-    credential = DefaultAzureCredential(authority="https://login.sovcloud-identity.fr")
+    credential = DefaultAzureCredential()
     client = AzureAppConfigurationClient(
         base_url=ENDPOINT, credential=credential, credential_scopes=["https://appconfig.sovcloud-api.fr/.default"]
     )
