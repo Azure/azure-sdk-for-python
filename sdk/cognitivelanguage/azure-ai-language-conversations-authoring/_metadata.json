@@ -1,3 +1,7 @@
 {
-  "apiVersion": "2025-11-15-preview"
+  "apiVersion": "2025-11-15-preview",
+  "commit": "2fc7fcc9a50bcea5b3dd9307b80f09c440e385bb",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/cognitiveservices/data-plane/LanguageAnalyzeConversationsAuthoring",
+  "emitterVersion": "0.54.0"
 }
