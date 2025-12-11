@@ -23,7 +23,9 @@
         "Ministral",
         "cogsvc",
         "evals",
-        "FineTuning"
+        "FineTuning",
+        "ftjob",
+        "ftchkpt"
     ],
     "ignorePaths": [
         "*.csv",
