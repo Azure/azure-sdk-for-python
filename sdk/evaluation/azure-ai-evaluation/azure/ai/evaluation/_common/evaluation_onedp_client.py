@@ -218,11 +218,11 @@ class EvaluationServiceOneDPClient:
             # Re-raise with helpful context
             error_msg = (
                 f"Failed to connect to Azure Blob Storage. Error: {str(e)}. "
-                f"Please verify that:\n"
-                f"  1. The storage account exists and is accessible\n"
-                f"  2. Your credentials have the necessary permissions (Storage Blob Data Contributor role)\n"
-                f"  3. Network access to the storage account is not blocked by firewall rules\n"
-                f"  4. The Azure AI project is properly configured"
+                "Please verify that:\n"
+                "  1. The storage account exists and is accessible\n"
+                "  2. Your credentials have the necessary permissions (Storage Blob Data Contributor role)\n"
+                "  3. Network access to the storage account is not blocked by firewall rules\n"
+                "  4. The Azure AI project is properly configured"
             )
             
             raise EvaluationException(

@@ -925,10 +925,10 @@ def upload(path: str, container_client: ContainerClient, logger=None):
         error_msg = (
             f"Failed to upload evaluation results to Azure Blob Storage.{storage_info} "
             f"Error: {str(e)}. "
-            f"Please verify that:\n"
-            f"  1. The storage account exists and is accessible\n"
-            f"  2. Your credentials have the necessary permissions (Storage Blob Data Contributor role)\n"
-            f"  3. Network access to the storage account is not blocked by firewall rules"
+            "Please verify that:\n"
+            "  1. The storage account exists and is accessible\n"
+            "  2. Your credentials have the necessary permissions (Storage Blob Data Contributor role)\n"
+            "  3. Network access to the storage account is not blocked by firewall rules"
         )
         
         raise EvaluationException(

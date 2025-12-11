@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 from azure.ai.evaluation._common.evaluation_onedp_client import EvaluationServiceOneDPClient
+from azure.ai.evaluation._common.utils import upload
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation.red_team._mlflow_integration import MLflowIntegration
 
@@ -118,8 +119,6 @@ class TestUploadErrorMessages(unittest.TestCase):
     @patch('azure.ai.evaluation._common.utils.ContainerClient')
     def test_upload_error_message_includes_guidance(self, mock_container_client_class):
         """Test that upload errors include helpful troubleshooting guidance."""
-        from azure.ai.evaluation._common.utils import upload
-        
         # Arrange
         mock_container_client = Mock()
         mock_container_client.account_name = "testaccount"
