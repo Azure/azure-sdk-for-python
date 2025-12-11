@@ -8,17 +8,17 @@
 import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
 
 
 class TestAgentMCP(TestBase):
 
+    # To run only this test:
+    # pytest tests/agents/tools/test_agent_mcp.py::TestAgentMCP::test_agent_mcp_basic -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_mcp_basic(self, **kwargs):
         """
         Test agent with MCP (Model Context Protocol) tool for external API access.
@@ -62,10 +62,11 @@ class TestAgentMCP(TestBase):
             )
 
             tools: list[Tool] = [mcp_tool]
+            agent_name = "mcp-basic-agent"
 
             # Create agent with MCP tool
             agent = project_client.agents.create_version(
-                agent_name="mcp-basic-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
@@ -73,10 +74,7 @@ class TestAgentMCP(TestBase):
                 ),
                 description="Agent for testing basic MCP functionality.",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "mcp-basic-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Create conversation
             conversation = openai_client.conversations.create()
@@ -92,10 +90,7 @@ class TestAgentMCP(TestBase):
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Initial response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response, print_message="Initial response completed")
 
             # Process any MCP approval requests
             approval_requests_found = 0
@@ -128,13 +123,12 @@ class TestAgentMCP(TestBase):
             print("\nSending approval response to continue agent execution...")
 
             response = openai_client.responses.create(
+                conversation=conversation.id,
                 input=input_list,
-                previous_response_id=response.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Final response completed (id: {response.id})")
-            assert response.id is not None
+            self.validate_response(response, print_message="Final response completed")
 
             # Get the final response text
             response_text = response.output_text
@@ -195,7 +189,7 @@ class TestAgentMCP(TestBase):
             mcp_project_connection_id = kwargs.get("azure_ai_projects_tests_mcp_project_connection_id")
 
             if not mcp_project_connection_id:
-                pytest.skip("AZURE_AI_PROJECTS_TESTS_MCP_PROJECT_CONNECTION_ID environment variable not set")
+                pytest.fail("AZURE_AI_PROJECTS_TESTS_MCP_PROJECT_CONNECTION_ID environment variable not set")
 
             assert isinstance(mcp_project_connection_id, str), "mcp_project_connection_id must be a string"
             print(f"Using MCP project connection: {mcp_project_connection_id}")
@@ -239,10 +233,7 @@ class TestAgentMCP(TestBase):
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Initial response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response, print_message="Initial response completed")
 
             # Process any MCP approval requests
             approval_requests_found = 0
@@ -275,13 +266,12 @@ class TestAgentMCP(TestBase):
             print("\nSending approval response to continue agent execution...")
 
             response = openai_client.responses.create(
+                conversation=conversation.id,
                 input=input_list,
-                previous_response_id=response.id,
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Final response completed (id: {response.id})")
-            assert response.id is not None
+            self.validate_response(response, print_message="Final response completed")
 
             # Get the final response text
             response_text = response.output_text

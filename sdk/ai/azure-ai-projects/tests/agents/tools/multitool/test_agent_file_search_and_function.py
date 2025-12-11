@@ -12,12 +12,10 @@ Tests various scenarios using an agent with File Search and Function Tool.
 All tests use the same tool combination but different inputs and workflows.
 """
 
-import os
 import json
-import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
@@ -26,10 +24,7 @@ class TestAgentFileSearchAndFunction(TestBase):
     """Tests for agents using File Search + Function Tool combination."""
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_data_analysis_workflow(self, **kwargs):
         """
         Test data analysis workflow: upload data, search, save results.
@@ -152,7 +147,7 @@ Overall Total Revenue: $129,000
             )
             print(f"Final response: {response.output_text[:200]}...")
 
-        print("\n✓ Workflow completed successfully")
+        print("\n[PASS] Workflow completed successfully")
 
         # Teardown
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
@@ -160,10 +155,7 @@ Overall Total Revenue: $129,000
         print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_empty_vector_store_handling(self, **kwargs):
         """
         Test how agent handles empty vector store (no files uploaded).
@@ -224,14 +216,13 @@ Overall Total Revenue: $129,000
         print(f"Response: '{response_text[:200] if response_text else '(empty)'}...'")
 
         # Verify agent didn't crash
-        assert response.id is not None, "Agent should return a valid response"
-        assert len(response.output) >= 0, "Agent should return output items"
+        self.validate_response(response)
 
         # If there's text, it should be meaningful
         if response_text:
             assert len(response_text) > 10, "Non-empty response should be meaningful"
 
-        print("\n✓ Agent handled missing data gracefully")
+        print("\n[PASS] Agent handled missing data gracefully")
 
         # Teardown
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
@@ -239,13 +230,14 @@ Overall Total Revenue: $129,000
         print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_python_code_file_search(self, **kwargs):
         """
-        Test searching for Python code files.
+        Test searching for Python code files and saving findings.
+
+        This test verifies that both File Search and Function Tool are used:
+        1. File Search: Agent searches vector store for Python code
+        2. Function Tool: Agent saves the code review findings
         """
 
         model = self.test_agents_params["model_deployment_name"]
@@ -280,7 +272,7 @@ print(f"Sum: {result}")
         # Define function tool
         save_function = FunctionTool(
             name="save_code_review",
-            description="Save code review findings",
+            description="Save code review findings. Must be called to persist the review.",
             parameters={
                 "type": "object",
                 "properties": {
@@ -295,12 +287,12 @@ print(f"Sum: {result}")
             strict=True,
         )
 
-        # Create agent
+        # Create agent with explicit instructions to use both tools
         agent = project_client.agents.create_version(
             agent_name="file-search-function-code-agent",
             definition=PromptAgentDefinition(
                 model=model,
-                instructions="You can search for code files and describe what they do. Save your findings.",
+                instructions="You are a code reviewer. Search for code files, analyze them, and ALWAYS save your findings using the save_code_review function.",
                 tools=[
                     FileSearchTool(vector_store_ids=[vector_store.id]),
                     save_function,
@@ -310,26 +302,56 @@ print(f"Sum: {result}")
         )
         print(f"Agent created (id: {agent.id})")
 
-        # Request code analysis
-        print("\nAsking agent to find and analyze the Python code...")
+        # Request code analysis with explicit save instruction
+        print("\nAsking agent to find, analyze, and save the code review...")
 
         response = openai_client.responses.create(
-            input="Find the Python code file and tell me what the calculate_sum function does.",
+            input="Find the Python code file, explain what the calculate_sum function does, and save your code review findings.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
 
+        # Verify function call is made (both tools should be used)
+        function_call_found = False
+        input_list: ResponseInputParam = []
+
+        for item in response.output:
+            if item.type == "function_call":
+                function_call_found = True
+                print(f"Function call detected (name: {item.name})")
+                assert item.name == "save_code_review", f"Expected save_code_review, got {item.name}"
+
+                arguments = json.loads(item.arguments)
+                print(f"Function arguments: {arguments}")
+                assert "findings" in arguments
+                assert len(arguments["findings"]) > 20, "Expected meaningful findings"
+
+                # Verify findings discuss the code (proves File Search was used)
+                findings_lower = arguments["findings"].lower()
+                assert any(
+                    keyword in findings_lower
+                    for keyword in ["sum", "calculate", "function", "numbers", "list", "return"]
+                ), f"Expected findings to discuss the code content. Got: {arguments['findings'][:100]}"
+
+                input_list.append(
+                    FunctionCallOutput(
+                        type="function_call_output",
+                        call_id=item.call_id,
+                        output=json.dumps({"status": "saved", "review_id": "review_001"}),
+                    )
+                )
+
+        assert function_call_found, "Expected save_code_review function to be called"
+
+        # Send function results back to get final response
+        response = openai_client.responses.create(
+            input=input_list,
+            previous_response_id=response.id,
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        )
         response_text = response.output_text
-        print(f"Response: {response_text[:300]}...")
+        print(f"Final response: {response_text[:200] if response_text else '(confirmation)'}...")
 
-        # Verify agent found and analyzed the code
-        assert len(response_text) > 50, "Expected detailed analysis"
-
-        response_lower = response_text.lower()
-        assert any(
-            keyword in response_lower for keyword in ["sum", "calculate", "function", "numbers", "code", "python"]
-        ), "Expected response to discuss the code"
-
-        print("\n✓ Agent successfully found code file using File Search")
+        print("\n[PASS] Agent successfully used both File Search and Function Tool")
 
         # Teardown
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
@@ -337,10 +359,7 @@ print(f"Sum: {result}")
         print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_multi_turn_search_and_save_workflow(self, **kwargs):
         """
         Test multi-turn workflow: search documents, ask follow-ups, save findings.
@@ -383,8 +402,6 @@ Responsible AI development requires multistakeholder collaboration and transpare
         # Create vector store and upload documents
         vector_store = openai_client.vector_stores.create(name="ResearchStore")
         print(f"Vector store created: {vector_store.id}")
-
-        
 
         file1 = BytesIO(doc1_content.encode("utf-8"))
         file1.name = "ml_healthcare.txt"
@@ -509,7 +526,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
         response_4_lower = response_4_text.lower()
         assert any(keyword in response_4_lower for keyword in ["bias", "privacy", "ethics", "accountability"])
 
-        print("\n✓ Multi-turn File Search + Function workflow successful!")
+        print("\n[PASS] Multi-turn File Search + Function workflow successful!")
         print("  - Multiple searches across different documents")
         print("  - Function called after context-building searches")
         print("  - Topic switching works correctly")

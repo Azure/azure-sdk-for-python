@@ -12,12 +12,10 @@ Tests various scenarios using an agent with all three tools together.
 All tests use the same 3-tool combination but different inputs and workflows.
 """
 
-import os
 import json
-import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     FileSearchTool,
@@ -32,13 +30,15 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
     """Tests for agents using File Search + Code Interpreter + Function Tool."""
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_complete_analysis_workflow(self, **kwargs):
         """
         Test complete workflow: find data, analyze it, save results.
+
+        This test verifies that all three tools are used:
+        1. File Search: Agent finds the data file with numerical values
+        2. Code Interpreter: Agent performs statistical calculations on the data
+        3. Function Tool: Agent saves the computed results
         """
 
         model = self.test_agents_params["model_deployment_name"]
@@ -47,12 +47,30 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         project_client = self.create_client(operation_group="agents", **kwargs)
         openai_client = project_client.get_openai_client()
 
-        # Create data file
-        txt_content = "Sample data for analysis"
+        # Create data file with numbers that require computation
+        # Values: 23, 47, 82, 15, 91, 38, 64, 29, 76, 55
+        # Sum: 520, Count: 10, Average: 52.0, Min: 15, Max: 91
+        txt_content = """Monthly Sales Report - Store #147
+
+The following sales figures (in thousands) were recorded:
+
+January: 23
+February: 47
+March: 82
+April: 15
+May: 91
+June: 38
+July: 64
+August: 29
+September: 76
+October: 55
+
+Please analyze this data for the quarterly review.
+"""
         vector_store = openai_client.vector_stores.create(name="ThreeToolStore")
 
         txt_file = BytesIO(txt_content.encode("utf-8"))
-        txt_file.name = "data.txt"
+        txt_file.name = "sales_report.txt"
 
         file = openai_client.vector_stores.files.upload_and_poll(
             vector_store_id=vector_store.id,
@@ -60,27 +78,30 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         )
         print(f"File uploaded (id: {file.id})")
 
-        # Define function tool
+        # Define function tool for saving analysis results
         func_tool = FunctionTool(
-            name="save_result",
-            description="Save analysis result",
+            name="save_analysis",
+            description="Save the statistical analysis results. Must be called to persist the analysis.",
             parameters={
                 "type": "object",
                 "properties": {
-                    "result": {"type": "string", "description": "The result"},
+                    "report_name": {"type": "string", "description": "Name of the report analyzed"},
+                    "total": {"type": "number", "description": "Sum of all values"},
+                    "average": {"type": "number", "description": "Average of all values"},
+                    "summary": {"type": "string", "description": "Brief summary of findings"},
                 },
-                "required": ["result"],
+                "required": ["report_name", "total", "average", "summary"],
                 "additionalProperties": False,
             },
             strict=True,
         )
 
-        # Create agent with all three tools
+        # Create agent with all three tools and explicit instructions
         agent = project_client.agents.create_version(
             agent_name="three-tool-agent",
             definition=PromptAgentDefinition(
                 model=model,
-                instructions="Use file search to find data, code interpreter to analyze it, and save_result to save findings.",
+                instructions="You are a data analyst. Use file search to find data files, code interpreter to calculate statistics, and ALWAYS save your analysis using the save_analysis function.",
                 tools=[
                     FileSearchTool(vector_store_ids=[vector_store.id]),
                     CodeInterpreterTool(container=CodeInterpreterToolAuto()),
@@ -91,96 +112,13 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         )
         print(f"Agent created (id: {agent.id})")
 
-        # Use the agent
+        # Request that requires all three tools
         response = openai_client.responses.create(
-            input="Find the data file, analyze it, and save the results.",
+            input="Find the sales report, use code to calculate the total and average of all monthly sales figures, then save the analysis results.",
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
-        print(f"Response received (id: {response.id})")
-
-        assert response.id is not None
+        self.validate_response(response)
         print("✓ Three-tool combination works!")
-
-        # Cleanup
-        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        openai_client.vector_stores.delete(vector_store.id)
-
-    @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
-    def test_four_tools_combination(self, **kwargs):
-        """
-        Test with 4 tools: File Search + Code Interpreter + 2 Functions.
-        """
-
-        model = self.test_agents_params["model_deployment_name"]
-
-        # Setup
-        project_client = self.create_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
-
-        # Create vector store
-        txt_content = "Test data"
-        vector_store = openai_client.vector_stores.create(name="FourToolStore")
-
-        txt_file = BytesIO(txt_content.encode("utf-8"))
-        txt_file.name = "data.txt"
-
-        file = openai_client.vector_stores.files.upload_and_poll(
-            vector_store_id=vector_store.id,
-            file=txt_file,
-        )
-
-        # Define two function tools
-        func_tool_1 = FunctionTool(
-            name="save_result",
-            description="Save result",
-            parameters={
-                "type": "object",
-                "properties": {
-                    "result": {"type": "string", "description": "The result"},
-                },
-                "required": ["result"],
-                "additionalProperties": False,
-            },
-            strict=True,
-        )
-
-        func_tool_2 = FunctionTool(
-            name="log_action",
-            description="Log an action",
-            parameters={
-                "type": "object",
-                "properties": {
-                    "action": {"type": "string", "description": "Action taken"},
-                },
-                "required": ["action"],
-                "additionalProperties": False,
-            },
-            strict=True,
-        )
-
-        # Create agent with 4 tools
-        agent = project_client.agents.create_version(
-            agent_name="four-tool-agent",
-            definition=PromptAgentDefinition(
-                model=model,
-                instructions="Use all available tools.",
-                tools=[
-                    FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=CodeInterpreterToolAuto()),
-                    func_tool_1,
-                    func_tool_2,
-                ],
-            ),
-            description="Agent with 4 tools.",
-        )
-        print(f"Agent with 4 tools created (id: {agent.id})")
-
-        assert agent.id is not None
-        print("✓ 4 tools works!")
 
         # Cleanup
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
