@@ -1,5 +1,7 @@
 # Azure Signing Transparency client library for Python
 
+[comment]: # ( cspell:ignore cose merkle scitt )
+
 `azure-codetransparency` is based on a managed service that complies with a [draft SCITT RFC][SCITT_ARCHITECTURE_RFC]. The service stores [COSE signature envelopes][COSE_RFC] in the Merkle tree and issues signed inclusion proofs as [receipts][SCITT_RECEIPT_RFC].
 
 - [OSS server application source code][Service_source_code]
