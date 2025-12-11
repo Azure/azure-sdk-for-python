@@ -30,11 +30,11 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
 
 ## Set up your development environment
 
-The Azure SDK Python team creates libraries that are compatible with Python 3.8 and up. We walk through setting up a
-Python virtual environment for Python 3.8, but having a virtual environment for each minor version can make it
+The Azure SDK Python team creates libraries that are compatible with Python 3.9 and up. We walk through setting up a
+Python virtual environment for Python 3.9, but having a virtual environment for each minor version can make it
 easier to debug PRs locally.
 
-- Python 3.8+: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the Windows store ([3.8](https://www.microsoft.com/p/python-38/9mssztt1n39l), [3.9](https://www.microsoft.com/p/python-39/9p7qfqmjrfp7), [3.10](https://www.microsoft.com/p/python-310/9pjpw5ldxlz5), [3.11](https://apps.microsoft.com/detail/9nrwmjp3717k?hl=en-us&gl=US), [3.12](https://apps.microsoft.com/detail/9ncvdn91xzqp?hl=en-us&gl=US)) (Windows only).
+- Python 3.9+: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the Windows store [3.9](https://www.microsoft.com/p/python-39/9p7qfqmjrfp7), [3.10](https://www.microsoft.com/p/python-310/9pjpw5ldxlz5), [3.11](https://apps.microsoft.com/detail/9nrwmjp3717k?hl=en-us&gl=US), [3.12](https://apps.microsoft.com/detail/9ncvdn91xzqp?hl=en-us&gl=US)) (Windows only).
 
 
 ```cmd

@@ -25,7 +25,7 @@ or execute the various commands available in the toolbox.
     You can initialize a virtual environment this way:
 
     ```
-    python -m venv env # Might be "python3" or "py -3.8" depending on your Python installation
+    python -m venv env # Might be "python3" or "py -3.9" depending on your Python installation
     source env/bin/activate      # Linux shell (Bash, ZSH, etc.) only
     ./env/scripts/activate       # PowerShell only
     ./env/scripts/activate.bat   # Windows CMD only

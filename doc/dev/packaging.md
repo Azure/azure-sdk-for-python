@@ -21,7 +21,7 @@ While this article provides an example using setup.py, this can also be achieved
 
 We want to build sdist and wheels in order to follow the following constraints:
 - Solution should work with *recent* versions of pip and setuptools (not the very latest only, but not archaeology either)
-- Wheels must work with Python 3.8+
+- Wheels must work with Python 3.9+
 - mixed dev installation and PyPI installation should be explicitly addressed
 
 # What do I do in my files to achieve that
@@ -113,7 +113,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
