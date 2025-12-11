@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import io
 import logging
 import os
 import tempfile
+import uuid
 from typing import Union, Any, Dict
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.evaluation._common.onedp import ProjectsClient as RestEvaluationServiceClient
@@ -185,8 +187,9 @@ class EvaluationServiceOneDPClient:
         LOGGER.debug("Testing storage account connectivity...")
 
         try:
-            # Create a test name and version
-            test_name = "connectivity-test"
+            # Create a unique test identifier to avoid conflicts
+            test_id = str(uuid.uuid4())[:8]
+            test_name = f"connectivity-test-{test_id}"
             test_version = "1"
 
             # Start a pending upload to get storage credentials
@@ -197,17 +200,13 @@ class EvaluationServiceOneDPClient:
                 **kwargs,
             )
 
-            # Create a temporary test file
-            with tempfile.TemporaryDirectory() as tmpdir:
-                test_file_path = os.path.join(tmpdir, "test.txt")
-                with open(test_file_path, "w") as f:
-                    f.write("connectivity test")
-
-                # Attempt to upload the test file
-                with ContainerClient.from_container_url(
-                    start_pending_upload_response.blob_reference_for_consumption.credential.sas_uri
-                ) as container_client:
-                    upload(path=test_file_path, container_client=container_client, logger=LOGGER)
+            # Attempt to upload a minimal test blob directly (no temp files needed)
+            with ContainerClient.from_container_url(
+                start_pending_upload_response.blob_reference_for_consumption.credential.sas_uri
+            ) as container_client:
+                # Use BytesIO for efficient in-memory test data
+                test_data = io.BytesIO(b"connectivity test")
+                container_client.upload_blob(data=test_data, name="test.txt", overwrite=True)
 
             LOGGER.debug("Storage account connectivity test successful")
             return True
