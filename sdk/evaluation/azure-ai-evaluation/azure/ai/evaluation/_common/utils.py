@@ -914,9 +914,26 @@ def upload(path: str, container_client: ContainerClient, logger=None):
                 logger.debug(f"File '{local}' uploaded successfully")
 
     except Exception as e:
+        # Extract storage account information if available
+        storage_info = ""
+        try:
+            account_name = container_client.account_name if hasattr(container_client, 'account_name') else "unknown"
+            storage_info = f" Storage account: {account_name}."
+        except Exception:
+            pass
+        
+        error_msg = (
+            f"Failed to upload evaluation results to Azure Blob Storage.{storage_info} "
+            f"Error: {str(e)}. "
+            f"Please verify that:\n"
+            f"  1. The storage account exists and is accessible\n"
+            f"  2. Your credentials have the necessary permissions (Storage Blob Data Contributor role)\n"
+            f"  3. Network access to the storage account is not blocked by firewall rules"
+        )
+        
         raise EvaluationException(
-            message=f"Error uploading file: {e}",
-            internal_message=f"Error uploading file: {e}",
+            message=error_msg,
+            internal_message=f"Error uploading file to blob storage: {e}",
             target=ErrorTarget.RAI_CLIENT,
             category=ErrorCategory.UPLOAD_ERROR,
             blame=ErrorBlame.SYSTEM_ERROR,
