@@ -24,7 +24,7 @@ USAGE:
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) A2A_PROJECT_CONNECTION_ID - The A2A project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) A2A_ENDPOINT - If the connection is missing target i.e. if it is of "Custom keys" type, we need to set the A2A
+    4) (Optional) A2A_ENDPOINT - If the connection is missing target i.e. if it is of "Custom keys" type, we need to set the A2A
        endpoint on the tool.
 """
 
