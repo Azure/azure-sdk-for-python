@@ -91,8 +91,7 @@ async def main():
             with open(file_path, "wb") as f:
                 f.write(base64.b64decode(image_data[0]))
 
-            # Print result (should contain "file")
-            print(f"==> Result: Image downloaded and saved to file: {file_path}")
+            print(f"Image saved to: {file_path}")
 
 
 if __name__ == "__main__":

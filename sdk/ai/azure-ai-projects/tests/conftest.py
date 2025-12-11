@@ -19,7 +19,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
-    add_general_string_sanitizer,
+    add_body_regex_sanitizer,
 )
 
 if not load_dotenv(find_dotenv(), override=True):
@@ -118,6 +118,14 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_body_key_sanitizer(
         json_path="$..project_connection_id",
         value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/connector-name",
+    )
+
+    # Sanitize print output from sample validation to prevent replay failures when print statements change
+    # Only targets the validation Responses API call by matching the unique input prefix
+    add_body_key_sanitizer(
+        json_path="$.input",
+        value="sanitized-print-output",
+        regex=r"print contents array = .*",
     )
 
     # Remove Stainless headers from OpenAI client requests, since they include platform and OS specific info, which we can't have in recorded requests.
