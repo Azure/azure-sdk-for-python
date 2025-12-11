@@ -109,7 +109,7 @@ class AssignedProjectResource(_Model):
      ~azure.ai.language.conversations.authoring.models.DataGenerationConnectionInfo
     """
 
-    resource_id: str = rest_field(name="azureResourceId", visibility=["read"])
+    resource_id: str = rest_field(name="azureResourceId", visibility=["read", "create"])
     """The Azure resource ID of the language or AI resource. Required."""
     region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Azure resource region. Required."""
@@ -122,6 +122,7 @@ class AssignedProjectResource(_Model):
     def __init__(
         self,
         *,
+        resource_id: str,
         region: str,
         assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = None,
     ) -> None: ...
@@ -634,30 +635,30 @@ class CreateDeploymentDetails(_Model):
 
     :ivar trained_model_label: Represents the trained model label. Required.
     :vartype trained_model_label: str
-    :ivar assigned_resources: Represents the resources to be assigned to the deployment. If
-     provided, the deployment will be rolled out to the resources provided here as well as the
-     original resource in which the project is created.
-    :vartype assigned_resources:
-     list[~azure.ai.language.conversations.authoring.models.DeploymentResource]
+    :ivar azure_resource_ids: Represents the Language or AIService resource IDs that if
+     provided, the deployment will be rolled out to the resources provided here as
+     well as the original resource in which the project is created.
+    :vartype azure_resource_ids:
+     list[~azure.ai.language.conversations.authoring.models.AssignedProjectResource]
     """
 
     trained_model_label: str = rest_field(
         name="trainedModelLabel", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the trained model label. Required."""
-    assigned_resources: Optional[list["_models.DeploymentResource"]] = rest_field(
-        name="assignedResources", visibility=["read", "create", "update", "delete", "query"]
+    azure_resource_ids: Optional[list["_models.AssignedProjectResource"]] = rest_field(
+        name="azureResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents the resources to be assigned to the deployment. If provided, the deployment will be
-     rolled out to the resources provided here as well as the original resource in which the project
-     is created."""
+    """Represents the Language or AIService resource IDs that if provided,          the deployment
+     will be rolled out to the resources provided here as well as the original resource in which the
+     project is created."""
 
     @overload
     def __init__(
         self,
         *,
         trained_model_label: str,
-        assigned_resources: Optional[list["_models.DeploymentResource"]] = None,
+        azure_resource_ids: Optional[list["_models.AssignedProjectResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -882,47 +883,6 @@ class DeploymentDeleteFromResourcesState(_Model):
         expires_on: Optional[datetime.datetime] = None,
         warnings: Optional[list[ODataV4Format]] = None,
         errors: Optional[list[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentResource(_Model):
-    """Represents an Azure resource assigned to a deployment.
-
-    :ivar resource_id: Represents the Azure resource Id. Required.
-    :vartype resource_id: str
-    :ivar region: Represents the resource region. Required.
-    :vartype region: str
-    :ivar assigned_aoai_resource: Represents the AOAI resource assigned for data generation.
-    :vartype assigned_aoai_resource:
-     ~azure.ai.language.conversations.authoring.models.DataGenerationConnectionInfo
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the Azure resource Id. Required."""
-    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the resource region. Required."""
-    assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = rest_field(
-        name="assignedAoaiResource", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the AOAI resource assigned for data generation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        region: str,
-        assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = None,
     ) -> None: ...
 
     @overload

@@ -1,5 +1,13 @@
 # Release History
 
+## 1.0.0b3 (2025-12-09)
+
+### Features Added
+- Added support for service version 2025-11-01.
+
+### Other Changes
+- Updated deployment samples (sync and async) to demonstrate usage with both 2025-11-01 (GA) and 2025-11-15-preview service versions.
+
 ## 1.0.0b2 (2025-11-14)
 
 ### Features Added
