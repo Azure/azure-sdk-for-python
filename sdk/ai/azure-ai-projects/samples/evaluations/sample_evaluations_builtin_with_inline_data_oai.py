@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Using an OpenAI client, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list evaluation and and eval runs
+    `openai.evals.*` methods to create, get and list evaluation and eval runs
     using inline dataset content.
 
 USAGE:
@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install python-dotenv
+    pip install openai azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
