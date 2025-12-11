@@ -6,7 +6,7 @@
 import csv, os, pytest, re, inspect, sys, json
 import importlib.util
 import unittest.mock as mock
-from typing import cast
+from typing import Union, cast, overload
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -83,7 +83,7 @@ class SampleExecutor:
 
         return mock.patch(patch_target, new=mock_credential_class)
 
-    def execute(self):
+    def execute(self, enable_llm_validation: bool = True):
         """Execute a synchronous sample with proper mocking and environment setup."""
 
         with (
@@ -101,9 +101,10 @@ class SampleExecutor:
                     raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
                 self.spec.loader.exec_module(self.module)
 
-            self._validate_output()
+            if enable_llm_validation:
+                self._validate_output()
 
-    async def execute_async(self):
+    async def execute_async(self, enable_llm_validation: bool = True):
         """Execute an asynchronous sample with proper mocking and environment setup."""
 
         with (
@@ -122,7 +123,8 @@ class SampleExecutor:
                 self.spec.loader.exec_module(self.module)
                 await self.module.main()
 
-            await self._validate_output_async()
+            if enable_llm_validation:
+                await self._validate_output_async()
 
     def _get_validation_request_params(self) -> dict:
         """Get common parameters for validation request."""
@@ -223,58 +225,73 @@ class SamplePathPasser:
             return _wrapper_sync
 
 
-def _get_tools_sample_paths():
+@overload
+def _get_sample_paths(sub_folder: str, *, samples_to_test: list[str]) -> list:
+    """Get sample paths for testing (whitelist mode).
+
+    Args:
+        sub_folder: Relative path to the samples subfolder (e.g., "agents/tools")
+        samples_to_test: Whitelist of sample filenames to include
+
+    Returns:
+        List of pytest.param objects with sample paths and test IDs
+    """
+    ...
+
+
+@overload
+def _get_sample_paths(sub_folder: str, *, samples_to_skip: list[str], is_async: bool) -> list:
+    """Get sample paths for testing (blacklist mode).
+
+    Args:
+        sub_folder: Relative path to the samples subfolder (e.g., "agents/tools")
+        samples_to_skip: Blacklist of sample filenames to exclude (auto-discovers all samples)
+        is_async: Whether to filter for async samples (_async.py suffix)
+
+    Returns:
+        List of pytest.param objects with sample paths and test IDs
+    """
+    ...
+
+
+def _get_sample_paths(
+    sub_folder: str,
+    *,
+    samples_to_skip: Union[list[str], None] = None,
+    is_async: Union[bool, None] = None,
+    samples_to_test: Union[list[str], None] = None,
+) -> list:
     # Get the path to the samples folder
     current_dir = os.path.dirname(os.path.abspath(__file__))
     samples_folder_path = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir))
-    tools_folder = os.path.join(samples_folder_path, "samples", "agents", "tools")
+    target_folder = os.path.join(samples_folder_path, "samples", *sub_folder.split("/"))
 
-    # Whitelist of samples to test
-    tools_samples_to_test = [
-        "sample_agent_ai_search.py",
-        "sample_agent_code_interpreter.py",
-        "sample_agent_file_search.py",
-        "sample_agent_file_search_in_stream.py",
-        "sample_agent_function_tool.py",
-        "sample_agent_image_generation.py",
-        "sample_agent_mcp.py",
-        "sample_agent_openapi.py",
-        "sample_agent_sharepoint.py",
-        "sample_agent_web_search.py",
-    ]
+    if not os.path.exists(target_folder):
+        raise ValueError(f"Target folder does not exist: {target_folder}")
+
+    # Discover all sample files in the folder
+    all_files = [f for f in os.listdir(target_folder) if f.startswith("sample_") and f.endswith(".py")]
+
+    # Filter by async suffix only when using samples_to_skip
+    if samples_to_skip is not None and is_async is not None:
+        if is_async:
+            all_files = [f for f in all_files if f.endswith("_async.py")]
+        else:
+            all_files = [f for f in all_files if not f.endswith("_async.py")]
+
+    # Apply whitelist or blacklist
+    if samples_to_test is not None:
+        files_to_test = [f for f in all_files if f in samples_to_test]
+    else:  # samples_to_skip is not None
+        assert samples_to_skip is not None
+        files_to_test = [f for f in all_files if f not in samples_to_skip]
+
+    # Create pytest.param objects
     samples = []
-
-    for filename in tools_samples_to_test:
-        sample_path = os.path.join(tools_folder, filename)
-        if os.path.exists(sample_path):
-            test_id = filename.replace(".py", "")
-            samples.append(pytest.param(sample_path, id=test_id))
-
-    return samples
-
-
-def _get_tools_sample_paths_async():
-    # Get the path to the samples folder
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    samples_folder_path = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir))
-    tools_folder = os.path.join(samples_folder_path, "samples", "agents", "tools")
-
-    # Whitelist of async samples to test
-    tools_samples_to_test_async = [
-        "sample_agent_code_interpreter_async.py",
-        "sample_agent_computer_use_async.py",
-        "sample_agent_file_search_in_stream_async.py",
-        "sample_agent_function_tool_async.py",
-        "sample_agent_image_generation_async.py",
-        "sample_agent_mcp_async.py",
-    ]
-    samples = []
-
-    for filename in tools_samples_to_test_async:
-        sample_path = os.path.join(tools_folder, filename)
-        if os.path.exists(sample_path):
-            test_id = filename.replace(".py", "")
-            samples.append(pytest.param(sample_path, id=test_id))
+    for filename in sorted(files_to_test):
+        sample_path = os.path.join(target_folder, filename)
+        test_id = filename.replace(".py", "")
+        samples.append(pytest.param(sample_path, id=test_id))
 
     return samples
 
@@ -282,7 +299,23 @@ def _get_tools_sample_paths_async():
 class TestSamples(AzureRecordedTestCase):
 
     @servicePreparer()
-    @pytest.mark.parametrize("sample_path", _get_tools_sample_paths())
+    @pytest.mark.parametrize(
+        "sample_path",
+        _get_sample_paths(
+            "agents/tools",
+            samples_to_skip=[
+                "sample_agent_bing_custom_search.py",
+                "sample_agent_bing_grounding.py",
+                "sample_agent_browser_automation.py",
+                "sample_agent_fabric.py",
+                "sample_agent_mcp_with_project_connection.py",
+                "sample_agent_memory_search.py",
+                "sample_agent_openapi_with_project_connection.py",
+                "sample_agent_to_agent.py",
+            ],
+            is_async=False,
+        ),
+    )
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
@@ -291,7 +324,17 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
 
     @servicePreparer()
-    @pytest.mark.parametrize("sample_path", _get_tools_sample_paths_async())
+    @pytest.mark.parametrize(
+        "sample_path",
+        _get_sample_paths(
+            "agents/tools",
+            samples_to_skip=[
+                "sample_agent_mcp_with_project_connection_async.py",
+                "sample_agent_memory_search_async.py",
+            ],
+            is_async=True,
+        ),
+    )
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
