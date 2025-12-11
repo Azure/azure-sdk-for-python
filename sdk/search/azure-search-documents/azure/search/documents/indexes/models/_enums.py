@@ -267,6 +267,76 @@ class EdgeNGramTokenFilterSide(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies that the n-gram should be generated from the back of the input."""
 
 
+class EntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A string indicating what entity categories to return."""
+
+    LOCATION = "location"
+    """Entities describing a physical location."""
+    ORGANIZATION = "organization"
+    """Entities describing an organization."""
+    PERSON = "person"
+    """Entities describing a person."""
+    QUANTITY = "quantity"
+    """Entities describing a quantity."""
+    DATETIME = "datetime"
+    """Entities describing a date and time."""
+    URL = "url"
+    """Entities describing a URL."""
+    EMAIL = "email"
+    """Entities describing an email address."""
+
+
+class EntityRecognitionSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Deprecated. The language codes supported for input text by EntityRecognitionSkill."""
+
+    AR = "ar"
+    """Arabic"""
+    CS = "cs"
+    """Czech"""
+    ZH_HANS = "zh-Hans"
+    """Chinese-Simplified"""
+    ZH_HANT = "zh-Hant"
+    """Chinese-Traditional"""
+    DA = "da"
+    """Danish"""
+    NL = "nl"
+    """Dutch"""
+    EN = "en"
+    """English"""
+    FI = "fi"
+    """Finnish"""
+    FR = "fr"
+    """French"""
+    DE = "de"
+    """German"""
+    EL = "el"
+    """Greek"""
+    HU = "hu"
+    """Hungarian"""
+    IT = "it"
+    """Italian"""
+    JA = "ja"
+    """Japanese"""
+    KO = "ko"
+    """Korean"""
+    NO = "no"
+    """Norwegian (Bokmaal)"""
+    PL = "pl"
+    """Polish"""
+    PT_PT = "pt-PT"
+    """Portuguese (Portugal)"""
+    PT_BR = "pt-BR"
+    """Portuguese (Brazil)"""
+    RU = "ru"
+    """Russian"""
+    ES = "es"
+    """Spanish"""
+    SV = "sv"
+    """Swedish"""
+    TR = "tr"
+    """Turkish"""
+
+
 class ImageAnalysisSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The language codes supported for input by ImageAnalysisSkill."""
 
@@ -383,6 +453,17 @@ class ImageDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Details recognized as celebrities."""
     LANDMARKS = "landmarks"
     """Details recognized as landmarks."""
+
+
+class IndexedSharePointContainerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies which SharePoint libraries to access."""
+
+    DEFAULT_SITE_LIBRARY = "defaultSiteLibrary"
+    """Index content from the site's default document library."""
+    ALL_SITE_LIBRARIES = "allSiteLibraries"
+    """Index content from every document library in the site."""
+    USE_QUERY = "useQuery"
+    """Use a query to filter SharePoint content."""
 
 
 class IndexerExecutionEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1614,6 +1695,41 @@ class SearchIndexPermissionFilterOption(str, Enum, metaclass=CaseInsensitiveEnum
     """enabled."""
     DISABLED = "disabled"
     """disabled."""
+
+
+class SentimentSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Deprecated. The language codes supported for input text by SentimentSkill."""
+
+    DA = "da"
+    """Danish"""
+    NL = "nl"
+    """Dutch"""
+    EN = "en"
+    """English"""
+    FI = "fi"
+    """Finnish"""
+    FR = "fr"
+    """French"""
+    DE = "de"
+    """German"""
+    EL = "el"
+    """Greek"""
+    IT = "it"
+    """Italian"""
+    NO = "no"
+    """Norwegian (Bokmaal)"""
+    PL = "pl"
+    """Polish"""
+    PT_PT = "pt-PT"
+    """Portuguese (Portugal)"""
+    RU = "ru"
+    """Russian"""
+    ES = "es"
+    """Spanish"""
+    SV = "sv"
+    """Swedish"""
+    TR = "tr"
+    """Turkish"""
 
 
 class SnowballTokenFilterLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):

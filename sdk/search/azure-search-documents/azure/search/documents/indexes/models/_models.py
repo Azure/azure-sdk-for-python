@@ -22,7 +22,6 @@ from ._enums import (
 
 if TYPE_CHECKING:
     from .. import models as _models
-    from ......search import models as _search_models6
     from ...knowledgebase import models as _knowledgebase_models3
 
 
@@ -478,11 +477,12 @@ class TokenFilter(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AsciiFoldingTokenFilter, CjkBigramTokenFilter, CommonGramTokenFilter,
-    DictionaryDecompounderTokenFilter, EdgeNGramTokenFilter, ElisionTokenFilter, KeepTokenFilter,
-    KeywordMarkerTokenFilter, LengthTokenFilter, LimitTokenFilter, NGramTokenFilter,
-    PatternCaptureTokenFilter, PatternReplaceTokenFilter, PhoneticTokenFilter, ShingleTokenFilter,
-    SnowballTokenFilter, StemmerOverrideTokenFilter, StemmerTokenFilter, StopwordsTokenFilter,
-    SynonymTokenFilter, TruncateTokenFilter, UniqueTokenFilter, WordDelimiterTokenFilter
+    DictionaryDecompounderTokenFilter, EdgeNGramTokenFilter, EdgeNGramTokenFilterV2,
+    ElisionTokenFilter, KeepTokenFilter, KeywordMarkerTokenFilter, LengthTokenFilter,
+    LimitTokenFilter, NGramTokenFilter, NGramTokenFilterV2, PatternCaptureTokenFilter,
+    PatternReplaceTokenFilter, PhoneticTokenFilter, ShingleTokenFilter, SnowballTokenFilter,
+    StemmerOverrideTokenFilter, StemmerTokenFilter, StopwordsTokenFilter, SynonymTokenFilter,
+    TruncateTokenFilter, UniqueTokenFilter, WordDelimiterTokenFilter
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
     :vartype odata_type: str
@@ -876,11 +876,12 @@ class SearchIndexerSkill(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureMachineLearningSkill, ChatCompletionSkill, WebApiSkill, AzureOpenAIEmbeddingSkill,
-    CustomEntityLookupSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill,
-    PIIDetectionSkill, SplitSkill, TextTranslationSkill, EntityLinkingSkill,
-    EntityRecognitionSkill, SentimentSkill, ConditionalSkill, ContentUnderstandingSkill,
-    DocumentExtractionSkill, DocumentIntelligenceLayoutSkill, ShaperSkill, ImageAnalysisSkill,
-    OcrSkill, VisionVectorizeSkill
+    CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill,
+    LanguageDetectionSkill, MergeSkill, PIIDetectionSkill, SentimentSkill, SplitSkill,
+    TextTranslationSkill, EntityLinkingSkill, EntityRecognitionSkillV3, SentimentSkillV3,
+    ConditionalSkill, ContentUnderstandingSkill, DocumentExtractionSkill,
+    DocumentIntelligenceLayoutSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill,
+    VisionVectorizeSkill
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
     :vartype odata_type: str
@@ -2100,9 +2101,10 @@ class LexicalTokenizer(_Model):
     """Base type for tokenizers.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, MicrosoftLanguageStemmingTokenizer,
-    MicrosoftLanguageTokenizer, NGramTokenizer, PathHierarchyTokenizer, PatternTokenizer,
-    LuceneStandardTokenizer, UaxUrlEmailTokenizer
+    ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, KeywordTokenizerV2,
+    MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenizer,
+    PathHierarchyTokenizer, PatternTokenizer, LuceneStandardTokenizer, LuceneStandardTokenizerV2,
+    UaxUrlEmailTokenizer
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
     :vartype odata_type: str
@@ -3622,7 +3624,63 @@ class DocumentKeysOrIds(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"):
+class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilter"):
+    """Generates n-grams of the given size(s) starting from the front or the back of an input token.
+    This token filter is implemented using Apache Lucene.
+
+    :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
+     or underscores, can only start and end with alphanumeric characters, and is limited to 128
+     characters. Required.
+    :vartype name: str
+    :ivar min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
+     maxGram.
+    :vartype min_gram: int
+    :ivar max_gram: The maximum n-gram length. Default is 2.
+    :vartype max_gram: int
+    :ivar side: Specifies which side of the input the n-gram should be generated from. Default is
+     "front". Known values are: "front" and "back".
+    :vartype side: str or ~azure.search.documents.indexes.models.EdgeNGramTokenFilterSide
+    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+     is "#Microsoft.Azure.Search.EdgeNGramTokenFilter".
+    :vartype odata_type: str
+    """
+
+    min_gram: Optional[int] = rest_field(name="minGram", visibility=["read", "create", "update", "delete", "query"])
+    """The minimum n-gram length. Default is 1. Must be less than the value of maxGram."""
+    max_gram: Optional[int] = rest_field(name="maxGram", visibility=["read", "create", "update", "delete", "query"])
+    """The maximum n-gram length. Default is 2."""
+    side: Optional[Union[str, "_models.EdgeNGramTokenFilterSide"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies which side of the input the n-gram should be generated from. Default is \"front\".
+     Known values are: \"front\" and \"back\"."""
+    odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A URI fragment specifying the type of token filter. Required. Default value is
+     \"#Microsoft.Azure.Search.EdgeNGramTokenFilter\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        min_gram: Optional[int] = None,
+        max_gram: Optional[int] = None,
+        side: Optional[Union[str, "_models.EdgeNGramTokenFilterSide"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.odata_type = "#Microsoft.Azure.Search.EdgeNGramTokenFilter"  # type: ignore
+
+
+class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"):
     """Generates n-grams of the given size(s) starting from the front or the back of an input token.
     This token filter is implemented using Apache Lucene.
 
@@ -3855,7 +3913,101 @@ class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Te
         self.odata_type = "#Microsoft.Skills.Text.V3.EntityLinkingSkill"  # type: ignore
 
 
-class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityRecognitionSkill"):
+class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.EntityRecognitionSkill"):
+    """This skill is deprecated. Use the V3.EntityRecognitionSkill instead.
+
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :vartype context: str
+    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
+     an upstream skill. Required.
+    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
+     be consumed as an input by another skill. Required.
+    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :ivar categories: A list of entity categories that should be extracted.
+    :vartype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
+    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+     Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de", "el",
+     "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
+    :vartype default_language_code: str or
+     ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
+    :ivar include_typeless_entities: Determines whether or not to include entities which are well
+     known but don't conform to a pre-defined type. If this configuration is not set (default), set
+     to null or set to false, entities which don't conform to one of the pre-defined types will not
+     be surfaced.
+    :vartype include_typeless_entities: bool
+    :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
+     confidence score is greater than the value specified. If not set (default), or if explicitly
+     set to null, all entities will be included.
+    :vartype minimum_precision: float
+    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+     "#Microsoft.Skills.Text.EntityRecognitionSkill".
+    :vartype odata_type: str
+    """
+
+    categories: Optional[list[Union[str, "_models.EntityCategory"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of entity categories that should be extracted."""
+    default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = rest_field(
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A value indicating which language code to use. Default is ``en``. Known values are: \"ar\",
+     \"cs\", \"zh-Hans\", \"zh-Hant\", \"da\", \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\",
+     \"hu\", \"it\", \"ja\", \"ko\", \"no\", \"pl\", \"pt-PT\", \"pt-BR\", \"ru\", \"es\", \"sv\",
+     and \"tr\"."""
+    include_typeless_entities: Optional[bool] = rest_field(
+        name="includeTypelessEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Determines whether or not to include entities which are well known but don't conform to a
+     pre-defined type. If this configuration is not set (default), set to null or set to false,
+     entities which don't conform to one of the pre-defined types will not be surfaced."""
+    minimum_precision: Optional[float] = rest_field(
+        name="minimumPrecision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A value between 0 and 1 that be used to only include entities whose confidence score is greater
+     than the value specified. If not set (default), or if explicitly set to null, all entities will
+     be included."""
+    odata_type: Literal["#Microsoft.Skills.Text.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A URI fragment specifying the type of skill. Required. Default value is
+     \"#Microsoft.Skills.Text.EntityRecognitionSkill\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inputs: list["_models.InputFieldMappingEntry"],
+        outputs: list["_models.OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        categories: Optional[list[Union[str, "_models.EntityCategory"]]] = None,
+        default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = None,
+        include_typeless_entities: Optional[bool] = None,
+        minimum_precision: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.odata_type = "#Microsoft.Skills.Text.EntityRecognitionSkill"  # type: ignore
+
+
+class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityRecognitionSkill"):
     """Using the Text Analytics API, extracts entities of different types from text.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -4639,7 +4791,8 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
     :vartype connection_string: str
     :ivar container_name: Specifies which SharePoint libraries to access. Required. Known values
      are: "defaultSiteLibrary", "allSiteLibraries", and "useQuery".
-    :vartype container_name: str or ~search.models.IndexedSharePointContainerName
+    :vartype container_name: str or
+     ~azure.search.documents.indexes.models.IndexedSharePointContainerName
     :ivar query: Optional query to filter SharePoint content.
     :vartype query: str
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
@@ -4655,7 +4808,7 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
     """SharePoint connection string with format: SharePointOnlineEndpoint=[SharePoint site
      url];ApplicationId=[Azure AD App ID];ApplicationSecret=[Azure AD App client
      secret];TenantId=[SharePoint site tenant id]. Required."""
-    container_name: Union[str, "_search_models6.IndexedSharePointContainerName"] = rest_field(
+    container_name: Union[str, "_models.IndexedSharePointContainerName"] = rest_field(
         name="containerName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies which SharePoint libraries to access. Required. Known values are:
@@ -4674,7 +4827,7 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
         self,
         *,
         connection_string: str,
-        container_name: Union[str, "_search_models6.IndexedSharePointContainerName"],
+        container_name: Union[str, "_models.IndexedSharePointContainerName"],
         query: Optional[str] = None,
         ingestion_parameters: Optional["_knowledgebase_models3.KnowledgeSourceIngestionParameters"] = None,
     ) -> None: ...
@@ -5485,7 +5638,49 @@ class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
         self.odata_type = "#Microsoft.Azure.Search.KeywordMarkerTokenFilter"  # type: ignore
 
 
-class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizerV2"):
+class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizer"):
+    """Emits the entire input as a single token. This tokenizer is implemented using Apache Lucene.
+
+    :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
+     underscores, can only start and end with alphanumeric characters, and is limited to 128
+     characters. Required.
+    :vartype name: str
+    :ivar buffer_size: The read buffer size in bytes. Default is 256.
+    :vartype buffer_size: int
+    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+     "#Microsoft.Azure.Search.KeywordTokenizer".
+    :vartype odata_type: str
+    """
+
+    buffer_size: Optional[int] = rest_field(
+        name="bufferSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The read buffer size in bytes. Default is 256."""
+    odata_type: Literal["#Microsoft.Azure.Search.KeywordTokenizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A URI fragment specifying the type of tokenizer. Required. Default value is
+     \"#Microsoft.Azure.Search.KeywordTokenizer\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        buffer_size: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.odata_type = "#Microsoft.Azure.Search.KeywordTokenizer"  # type: ignore
+
+
+class KeywordTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizerV2"):
     """Emits the entire input as a single token. This tokenizer is implemented using Apache Lucene.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
@@ -5990,7 +6185,51 @@ class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Se
         self.odata_type = "#Microsoft.Azure.Search.StandardAnalyzer"  # type: ignore
 
 
-class LuceneStandardTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizerV2"):
+class LuceneStandardTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizer"):
+    """Breaks text following the Unicode Text Segmentation rules. This tokenizer is implemented using
+    Apache Lucene.
+
+    :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
+     underscores, can only start and end with alphanumeric characters, and is limited to 128
+     characters. Required.
+    :vartype name: str
+    :ivar max_token_length: The maximum token length. Default is 255. Tokens longer than the
+     maximum length are split.
+    :vartype max_token_length: int
+    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+     "#Microsoft.Azure.Search.StandardTokenizer".
+    :vartype odata_type: str
+    """
+
+    max_token_length: Optional[int] = rest_field(
+        name="maxTokenLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum token length. Default is 255. Tokens longer than the maximum length are split."""
+    odata_type: Literal["#Microsoft.Azure.Search.StandardTokenizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A URI fragment specifying the type of tokenizer. Required. Default value is
+     \"#Microsoft.Azure.Search.StandardTokenizer\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        max_token_length: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.odata_type = "#Microsoft.Azure.Search.StandardTokenizer"  # type: ignore
+
+
+class LuceneStandardTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizerV2"):
     """Breaks text following the Unicode Text Segmentation rules. This tokenizer is implemented using
     Apache Lucene.
 
@@ -6434,7 +6673,53 @@ class NativeBlobSoftDeleteDeletionDetectionPolicy(
         self.odata_type = "#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy"  # type: ignore
 
 
-class NGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilterV2"):
+class NGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilter"):
+    """Generates n-grams of the given size(s). This token filter is implemented using Apache Lucene.
+
+    :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
+     or underscores, can only start and end with alphanumeric characters, and is limited to 128
+     characters. Required.
+    :vartype name: str
+    :ivar min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
+     maxGram.
+    :vartype min_gram: int
+    :ivar max_gram: The maximum n-gram length. Default is 2.
+    :vartype max_gram: int
+    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+     is "#Microsoft.Azure.Search.NGramTokenFilter".
+    :vartype odata_type: str
+    """
+
+    min_gram: Optional[int] = rest_field(name="minGram", visibility=["read", "create", "update", "delete", "query"])
+    """The minimum n-gram length. Default is 1. Must be less than the value of maxGram."""
+    max_gram: Optional[int] = rest_field(name="maxGram", visibility=["read", "create", "update", "delete", "query"])
+    """The maximum n-gram length. Default is 2."""
+    odata_type: Literal["#Microsoft.Azure.Search.NGramTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A URI fragment specifying the type of token filter. Required. Default value is
+     \"#Microsoft.Azure.Search.NGramTokenFilter\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        min_gram: Optional[int] = None,
+        max_gram: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.odata_type = "#Microsoft.Azure.Search.NGramTokenFilter"  # type: ignore
+
+
+class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilterV2"):
     """Generates n-grams of the given size(s). This token filter is implemented using Apache Lucene.
 
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
@@ -10006,7 +10291,70 @@ class SemanticSearch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentimentSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.SentimentSkill"):
+class SentimentSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.SentimentSkill"):
+    """This skill is deprecated. Use the V3.SentimentSkill instead.
+
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :vartype context: str
+    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
+     an upstream skill. Required.
+    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
+     be consumed as an input by another skill. Required.
+    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+     Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
+     "es", "sv", and "tr".
+    :vartype default_language_code: str or
+     ~azure.search.documents.indexes.models.SentimentSkillLanguage
+    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+     "#Microsoft.Skills.Text.SentimentSkill".
+    :vartype odata_type: str
+    """
+
+    default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = rest_field(
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A value indicating which language code to use. Default is ``en``. Known values are: \"da\",
+     \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\", \"it\", \"no\", \"pl\", \"pt-PT\", \"ru\",
+     \"es\", \"sv\", and \"tr\"."""
+    odata_type: Literal["#Microsoft.Skills.Text.SentimentSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A URI fragment specifying the type of skill. Required. Default value is
+     \"#Microsoft.Skills.Text.SentimentSkill\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inputs: list["_models.InputFieldMappingEntry"],
+        outputs: list["_models.OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.odata_type = "#Microsoft.Skills.Text.SentimentSkill"  # type: ignore
+
+
+class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.SentimentSkill"):
     """Using the Text Analytics API, evaluates unstructured text and for each record, provides
     sentiment labels (such as "negative", "neutral" and "positive") based on the highest confidence
     score found by the service at a sentence and document-level.
