@@ -247,10 +247,7 @@ def _get_tools_sample_paths():
     for filename in tools_samples_to_test:
         sample_path = os.path.join(tools_folder, filename)
         if os.path.exists(sample_path):
-            # Get relative path from samples folder and convert to test ID format
-            rel_path = os.path.relpath(sample_path, samples_folder_path)
-            # Remove 'samples\' prefix and convert to forward slashes
-            test_id = rel_path.replace("samples\\", "").replace("\\", "/").replace(".py", "")
+            test_id = filename.replace(".py", "")
             samples.append(pytest.param(sample_path, id=test_id))
 
     return samples
@@ -276,10 +273,7 @@ def _get_tools_sample_paths_async():
     for filename in tools_samples_to_test_async:
         sample_path = os.path.join(tools_folder, filename)
         if os.path.exists(sample_path):
-            # Get relative path from samples folder and convert to test ID format
-            rel_path = os.path.relpath(sample_path, samples_folder_path)
-            # Remove 'samples\' prefix and convert to forward slashes
-            test_id = rel_path.replace("samples\\", "").replace("\\", "/").replace(".py", "")
+            test_id = filename.replace(".py", "")
             samples.append(pytest.param(sample_path, id=test_id))
 
     return samples
@@ -291,7 +285,7 @@ class TestSamples(AzureRecordedTestCase):
     @pytest.mark.parametrize("sample_path", _get_tools_sample_paths())
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_samples(self, sample_path: str, **kwargs) -> None:
+    def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = self._get_sample_environment_variables_map()
         executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         executor.execute()
@@ -300,7 +294,7 @@ class TestSamples(AzureRecordedTestCase):
     @pytest.mark.parametrize("sample_path", _get_tools_sample_paths_async())
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_samples_async(self, sample_path: str, **kwargs) -> None:
+    async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = self._get_sample_environment_variables_map()
         executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         await executor.execute_async()
