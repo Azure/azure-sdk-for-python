@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Unit tests for storage account validation functionality."""
 
+import os
 import tempfile
 import unittest
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
@@ -141,7 +142,6 @@ class TestUploadErrorMessages(unittest.TestCase):
             self.assertIn("verify", error_message.lower())
         finally:
             # Clean up the temporary file
-            import os
             try:
                 os.unlink(test_file_path)
             except Exception:

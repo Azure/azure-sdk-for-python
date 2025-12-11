@@ -3,6 +3,8 @@
 # ---------------------------------------------------------
 
 import logging
+import os
+import tempfile
 from typing import Union, Any, Dict
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.evaluation._common.onedp import ProjectsClient as RestEvaluationServiceClient
@@ -17,6 +19,7 @@ from azure.ai.evaluation._common.onedp.models import (
     RedTeamUpload,
 )
 from azure.storage.blob import ContainerClient
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from .utils import upload
 
 LOGGER = logging.getLogger(__name__)
@@ -179,10 +182,6 @@ class EvaluationServiceOneDPClient:
         :rtype: bool
         :raises EvaluationException: If the storage account is inaccessible or lacks permissions
         """
-        import tempfile
-        import os
-        from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-
         LOGGER.debug("Testing storage account connectivity...")
 
         try:
