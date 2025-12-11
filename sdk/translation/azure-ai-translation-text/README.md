@@ -149,7 +149,9 @@ try:
                 f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
             )
         for translated_text in translation.translations:
-            print(f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'.")
+            print(
+                f"Text was translated to: '{translated_text.language}' and the result is: '{translated_text.text}'."
+            )
 
 except HttpResponseError as exception:
     if exception.error is not None:

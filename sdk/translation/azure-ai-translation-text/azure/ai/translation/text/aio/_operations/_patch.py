@@ -16,14 +16,14 @@ from azure.core import MatchConditions
 JSON = MutableMapping[str, Any]
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
-from aiohttp import ClientSession
+from azure.core import AsyncPipelineClient
 from ... import models as _models
-from ..._configuration import TextTranslationClientConfiguration
+from .._configuration import TextTranslationClientConfiguration
 from ..._utils.utils import ClientMixinABC
 from ._operations import _TextTranslationClientOperationsMixin as _TextTranslationClientOperationsMixinGenerated
 
 
-class _TextTranslationClientOperationsMixin(ClientMixinABC[ClientSession, TextTranslationClientConfiguration]):
+class _TextTranslationClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, TextTranslationClientConfiguration]):
     """Mixin class that delegates to the generated operations class while providing custom method signatures."""
 
     def _get_generated_operations(self) -> _TextTranslationClientOperationsMixinGenerated:
