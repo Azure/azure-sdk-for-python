@@ -8,9 +8,12 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where `credential_scopes` passed via kwargs were being ignored. Now ensures all scopes are properly used and normalized to end with `/.default` suffix.
+
 ### Other Changes
 
 - Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(timezone.utc)`.
+- Improved authentication scope handling to automatically detect and use correct audience URLs for Azure Public Cloud, Azure US Government, and Azure China cloud environments.
 
 ## 1.7.2 (2025-10-20)
 
