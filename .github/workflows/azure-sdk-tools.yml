@@ -70,7 +70,7 @@ jobs:
 
       - name: Install azure-sdk-tools on in global uv, discover azpysdk checks
         run: |
-          uv pip install --system eng/tools/azure-sdk-tools[build,ghtools,conda]
+          uv pip install --system eng/tools/azure-sdk-tools[build,ghtools,conda,systemperf]
 
           # Discover available azpysdk commands from the {command1,command2,...} line in help output
           CHECKS=$(azpysdk -h 2>&1 | \
