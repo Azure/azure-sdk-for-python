@@ -92,7 +92,8 @@ jobs:
 
       - name: Run all discovered checks against azure-template using uv as package manager
         run: |
-          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
+          sdk_build azure-template -d $(pwd)/wheels
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
         shell: bash
         env:
           TOX_PIP_IMPL: "uv"
@@ -104,7 +105,7 @@ jobs:
 
       - name: Run all discovered checks against azure-template using pip as package manager
         run: |
-          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
         shell: bash
 
   dev-setup-and-import:
