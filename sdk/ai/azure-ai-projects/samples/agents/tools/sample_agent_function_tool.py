@@ -108,8 +108,7 @@ with (
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
 
-    # Print result (should contain "Tuesday")
-    print(f"==> Result: {response.output_text}")
+    print(f"Agent response: {response.output_text}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

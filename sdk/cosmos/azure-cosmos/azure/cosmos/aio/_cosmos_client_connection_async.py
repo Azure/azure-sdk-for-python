@@ -3409,15 +3409,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.HybridSearch + "," +
                                     documents._QueryFeature.CountIf + "," +
                                     documents._QueryFeature.WeightedRankFusion)
-        if os.environ.get(Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG,
-                          Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT) == "True":
-            supported_query_features = (documents._QueryFeature.Aggregate + "," +
-                                        documents._QueryFeature.CompositeAggregate + "," +
-                                        documents._QueryFeature.Distinct + "," +
-                                        documents._QueryFeature.MultipleOrderBy + "," +
-                                        documents._QueryFeature.OffsetAndLimit + "," +
-                                        documents._QueryFeature.OrderBy + "," +
-                                        documents._QueryFeature.Top)
 
         options = {
             "contentType": runtime_constants.MediaTypes.Json,

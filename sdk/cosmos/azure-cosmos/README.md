@@ -816,11 +816,6 @@ Or if you'd like to add the optional parameters to the vector distance, you coul
 The `embeddings_string` above would be your string made from your vector embeddings.
 You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well to help yourself out.
 
-*Note: For a limited time, if your query operates against a region or emulator that has not yet been updated the client might run into some issues
-not being able to recognize the new NonStreamingOrderBy capability that makes vector search possible.
-If this happens, you can set the `AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY` environment variable to `"True"` to opt out of this
-functionality and continue operating as usual.*
-
 ### Public Preview - Full Text Policy and Full Text Indexes
 We have added new capabilities to utilize full text policies and full text indexing for users to leverage full text search
 utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level

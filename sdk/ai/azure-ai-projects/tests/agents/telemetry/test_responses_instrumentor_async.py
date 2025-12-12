@@ -482,7 +482,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
                 },
             },
         ]
@@ -513,7 +513,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
                 },
             },
             {
@@ -674,7 +674,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
                 },
             },
         ]
@@ -705,7 +705,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
                 },
             },
             {
@@ -2643,7 +2643,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
                 },
             },
         ]
@@ -2658,7 +2658,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}]',
                 },
             },
             {
@@ -2781,7 +2781,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
                 },
             },
         ]
@@ -2796,7 +2796,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
                 },
             },
             {
