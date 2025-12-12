@@ -6,9 +6,9 @@
 
 # Azure Configuration audience URLs
 _DEFAULT_SCOPE_SUFFIX = "/.default"
-_AZURE_PUBLIC_CLOUD_AUDIENCE = "https://appconfig.azure.com" + _DEFAULT_SCOPE_SUFFIX
-_AZURE_US_GOVERNMENT_AUDIENCE = "https://appconfig.azure.us" + _DEFAULT_SCOPE_SUFFIX
-_AZURE_CHINA_AUDIENCE = "https://appconfig.azure.cn" + _DEFAULT_SCOPE_SUFFIX
+_AZURE_PUBLIC_CLOUD_SCOPE = "https://appconfig.azure.com" + _DEFAULT_SCOPE_SUFFIX
+_AZURE_US_GOVERNMENT_SCOPE = "https://appconfig.azure.us" + _DEFAULT_SCOPE_SUFFIX
+_AZURE_CHINA_SCOPE = "https://appconfig.azure.cn" + _DEFAULT_SCOPE_SUFFIX
 
 
 # Endpoint suffixes for cloud detection
@@ -32,7 +32,7 @@ def get_default_scope(endpoint: str) -> str:
     if normalized_endpoint.endswith(_US_GOVERNMENT_SUFFIX_LEGACY) or normalized_endpoint.endswith(
         _US_GOVERNMENT_SUFFIX
     ):
-        return _AZURE_US_GOVERNMENT_AUDIENCE
+        return _AZURE_US_GOVERNMENT_SCOPE
     if normalized_endpoint.endswith(_CHINA_SUFFIX_LEGACY) or normalized_endpoint.endswith(_CHINA_SUFFIX):
-        return _AZURE_CHINA_AUDIENCE
-    return _AZURE_PUBLIC_CLOUD_AUDIENCE
+        return _AZURE_CHINA_SCOPE
+    return _AZURE_PUBLIC_CLOUD_SCOPE
