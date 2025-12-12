@@ -410,6 +410,7 @@ __all__: list[str] = [
     "ApiVersion",
     "DEFAULT_VERSION",
     "RequestEntityTooLargeError",
+    "IndexDocumentsBatch",
 ]  # Add all objects you want publicly available to users at this package level
 
 
