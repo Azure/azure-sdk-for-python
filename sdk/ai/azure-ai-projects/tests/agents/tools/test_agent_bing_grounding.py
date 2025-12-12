@@ -45,7 +45,7 @@ class TestAgentBingGrounding(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         # Note: This test requires AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable
         # to be set with a valid Bing connection ID from the project
@@ -145,7 +145,7 @@ class TestAgentBingGrounding(TestBase):
         Bing grounding and provide accurate responses with citations.
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
 
