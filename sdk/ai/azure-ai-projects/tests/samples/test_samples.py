@@ -306,7 +306,6 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_browser_automation.py",
                 "sample_agent_fabric.py",
                 "sample_agent_mcp_with_project_connection.py",
-                "sample_agent_memory_search.py",
                 "sample_agent_openapi_with_project_connection.py",
                 "sample_agent_to_agent.py",
             ],
@@ -347,4 +346,6 @@ class TestSamples(AzureRecordedTestCase):
             "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",
             "SHAREPOINT_USER_INPUT": "azure_ai_projects_tests_sharepoint_user_input",
             "SHAREPOINT_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_sharepoint_project_connection_id",
+            "MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_memory_store_chat_model_deployment_name",
+            "MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_memory_store_embedding_model_deployment_name",
         }

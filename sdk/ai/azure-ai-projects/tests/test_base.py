@@ -64,6 +64,8 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_azure_resource_group="sanitized-resource-group",
     azure_ai_projects_tests_ai_search_user_input="What is Azure AI Projects?",
     azure_ai_projects_tests_sharepoint_user_input="What is SharePoint?",
+    azure_ai_projects_tests_memory_store_chat_model_deployment_name="gpt-4.1-mini",
+    azure_ai_projects_tests_memory_store_embedding_model_deployment_name="text-embedding-ada-002",
 )
 
 # Fine-tuning job type constants

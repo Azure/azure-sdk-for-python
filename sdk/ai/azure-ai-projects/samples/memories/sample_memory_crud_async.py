@@ -22,9 +22,9 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model, as found under the "Name" column in
+    2) MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model, as found under the
+    3) MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model, as found under the
        "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -58,8 +58,8 @@ async def main() -> None:
 
         # Create Memory Store
         definition = MemoryStoreDefaultDefinition(
-            chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
-            embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
+            chat_model=os.environ["MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"],
+            embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
         )
         memory_store = await project_client.memory_stores.create(
             name=memory_store_name, description="Example memory store for conversations", definition=definition
