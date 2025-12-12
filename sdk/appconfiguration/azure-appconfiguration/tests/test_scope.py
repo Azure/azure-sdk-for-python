@@ -18,7 +18,7 @@ class TestGetDefaultScope:
 
     def test_get_default_scope_public_cloud_legacy(self):
         """Test default scope for Azure public cloud with legacy endpoint."""
-        endpoint = "https://example1.azconfig.azure.com"
+        endpoint = "https://example1.azconfig.azure.com"  # cspell:disable-line
         actual_scope = get_default_scope(endpoint)
         assert actual_scope == _EXPECTED_PUBLIC_CLOUD_SCOPE
 
@@ -30,7 +30,7 @@ class TestGetDefaultScope:
 
     def test_get_default_scope_china_legacy(self):
         """Test default scope for Azure China cloud with legacy endpoint."""
-        endpoint = "https://example1.azconfig.azure.cn"
+        endpoint = "https://example1.azconfig.azure.cn"  # cspell:disable-line
         actual_scope = get_default_scope(endpoint)
         assert actual_scope == _EXPECTED_CHINA_SCOPE
 
@@ -42,7 +42,7 @@ class TestGetDefaultScope:
 
     def test_get_default_scope_us_government_legacy(self):
         """Test default scope for Azure US Government cloud with legacy endpoint."""
-        endpoint = "https://example1.azconfig.azure.us"
+        endpoint = "https://example1.azconfig.azure.us"  # cspell:disable-line
         actual_scope = get_default_scope(endpoint)
         assert actual_scope == _EXPECTED_US_GOVERNMENT_SCOPE
 
@@ -78,6 +78,6 @@ class TestGetDefaultScope:
 
     def test_get_default_scope_legacy_with_trailing_slash(self):
         """Test default scope for legacy endpoint with trailing slash."""
-        endpoint = "https://example1.azconfig.azure.us/"
+        endpoint = "https://example1.azconfig.azure.us/"  # cspell:disable-line
         actual_scope = get_default_scope(endpoint)
         assert actual_scope == _EXPECTED_US_GOVERNMENT_SCOPE

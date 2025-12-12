@@ -12,9 +12,9 @@ _AZURE_CHINA_SCOPE = "https://appconfig.azure.cn" + _DEFAULT_SCOPE_SUFFIX
 
 
 # Endpoint suffixes for cloud detection
-_US_GOVERNMENT_SUFFIX_LEGACY = "azconfig.azure.us"
+_US_GOVERNMENT_SUFFIX_LEGACY = "azconfig.azure.us"  # cspell:disable-line
 _US_GOVERNMENT_SUFFIX = "appconfig.azure.us"
-_CHINA_SUFFIX_LEGACY = "azconfig.azure.cn"
+_CHINA_SUFFIX_LEGACY = "azconfig.azure.cn"  # cspell:disable-line
 _CHINA_SUFFIX = "appconfig.azure.cn"
 
 
