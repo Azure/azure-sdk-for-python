@@ -156,13 +156,8 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_agents_params = {
-        # "model_deployment_name": "gpt-4o",
         "agent_name": "agent-for-python-projects-sdk-testing",
     }
-
-    # test_agents_tools_params = {
-    #     "image_generation_model_deployment_name": "gpt-image-1-mini",
-    # }
 
     test_inference_params = {
         "connection_name_api_key_auth": "connection1",
