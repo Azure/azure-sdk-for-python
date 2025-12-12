@@ -4,8 +4,6 @@
 
 import io
 import logging
-import os
-import tempfile
 import uuid
 from typing import Union, Any, Dict
 from azure.core.credentials import AzureKeyCredential, TokenCredential
