@@ -29,7 +29,7 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model (e.g., gpt-4o, gpt-4o-mini, gpt-5o, gpt-5o-mini)
        used by the agent for understanding and responding to prompts. This is NOT the image generation model.
-    3) AZURE_AI_IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g., gpt-image-1-mini)
+    3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g., gpt-image-1-mini)
        used by the ImageGenTool.
 
     NOTE:
@@ -63,7 +63,7 @@ with (
     # [START tool_declaration]
     tool = ImageGenTool(
         model=image_generation_model, quality="low", size="1024x1024"  # Model such as "gpt-image-1-mini" # type: ignore
-    )  # type: ignore
+    )
     # [END tool_declaration]
 
     agent = project_client.agents.create_version(
