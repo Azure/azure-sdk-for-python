@@ -8,6 +8,7 @@ from subprocess import CalledProcessError, check_call
 
 from .Check import Check
 from ci_tools.functions import install_into_venv
+from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
 
@@ -186,7 +187,7 @@ def run_check_call_with_timeout(
             return err
 
 
-def execute_sample(sample, samples_errors, timed):
+def execute_sample(sample, samples_errors, timed, executable):
     timeout = None
     pass_if_timeout = True
 
@@ -197,7 +198,7 @@ def execute_sample(sample, samples_errors, timed):
         return
 
     logger.info("Testing {}".format(sample))
-    command_array = [sys.executable, sample]
+    command_array = [executable, sample]
 
     if not timed:
         errors = run_check_call(command_array, REPO_ROOT, always_exit=False)
@@ -265,10 +266,10 @@ def run_samples(executable: str, targeted_package: str) -> None:
         exit(0)
 
     for sample in sample_paths:
-        execute_sample(sample, samples_errors, timed=False)
+        execute_sample(sample, samples_errors, timed=False, executable=executable)
 
     for sample in timed_sample_paths:
-        execute_sample(sample, samples_errors, timed=True)
+        execute_sample(sample, samples_errors, timed=True, executable=executable)
 
     if samples_errors:
         logger.error("Sample(s) that ran with errors: {}".format(samples_errors))
@@ -310,6 +311,19 @@ class samples(Check):
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
+
+            # build and install the package
+            create_package_and_install(
+                distribution_directory=staging_directory,
+                target_setup=package_dir,
+                skip_install=False,
+                cache_dir=None,
+                work_dir=staging_directory,
+                force_create=False,
+                package_type="sdist",
+                pre_download_disabled=False,
+                python_executable=executable,
+            )
 
             self.pip_freeze(executable)
 
