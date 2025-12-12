@@ -661,20 +661,26 @@ class ConfigurationSettingPaged(ItemPaged):
     An iterable of ConfigurationSettings that supports etag-based change detection.
 
     This class extends ItemPaged to provide efficient monitoring of configuration changes
-    by using ETags. When used with the `match_conditions` parameter in `by_page()`, 
+    by using ETags. When used with the `match_conditions` parameter in `by_page()`,
     it only returns pages that have changed since the provided ETags were collected.
 
     Example:
-        >>> # Get initial page ETags
-        >>> items = client.list_configuration_settings(key_filter="sample_*")
-        >>> match_conditions = [page.etag for page in items.by_page()]
-        >>>
-        >>> # Later, check for changes - only changed pages are returned
-        >>> items = client.list_configuration_settings(key_filter="sample_*")
-        >>> for page in items.by_page(match_conditions=match_conditions):
-        ...     # Process only changed pages
-        ...     pass
+        # Get initial page ETags
+        items = client.list_configuration_settings(key_filter="sample_*")
+        match_conditions = [page.etag for page in items.by_page()]
+
+        # Later, check for changes - only changed pages are returned
+        items = client.list_configuration_settings(key_filter="sample_*")
+        for page in items.by_page(match_conditions=match_conditions):
+             # Process only changed pages
+             pass
     """
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the ItemPaged iterator with etag support.
+        :param args: Arguments to pass to the PageIterator constructor
+        :param kwargs: Keyword arguments to pass to the PageIterator constructor
+        """
         self._client = kwargs.pop("client", None)
         self._key_filter = kwargs.pop("key_filter", None)
         self._label_filter = kwargs.pop("label_filter", None)
@@ -869,10 +875,14 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
     If the page has not changed (HTTP 304), it is skipped. If the page has changed (HTTP 200),
     the new page is returned. This allows efficient polling for changes without retrieving
     unchanged data.
-
-    :param args: Arguments to pass to the AsyncPageIterator constructor.
-    :param kwargs: Keyword arguments to pass to the AsyncPageIterator constructor.
     """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize the ItemPaged iterator with etag support.
+        :param args: Arguments to pass to the PageIterator constructor
+        :param kwargs: Keyword arguments to pass to the PageIterator constructor
+        """
         self._client = kwargs.pop("client", None)
         self._key_filter = kwargs.pop("key_filter", None)
         self._label_filter = kwargs.pop("label_filter", None)
