@@ -34,6 +34,7 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         self._account_scope = account_scope
         self._override_scope = override_scope
         self._current_scope = override_scope or account_scope
+        self.counter = 0
         super().__init__(credential, self._current_scope)
 
     @staticmethod
@@ -55,6 +56,11 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         tried_fallback = False
         while True:
             try:
+                self.counter += 1
+                if self.counter > 100000:
+                    self.counter = 0
+                    logger.info("Token on request %s", self._token)
+
                 super().on_request(request)
                 # The None-check for self._token is done in the parent on_request
                 self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
@@ -84,7 +90,7 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         if (response.http_response.status_code == http_constants.StatusCodes.UNAUTHORIZED and
             response.http_response.headers.get(http_constants.HttpHeaders.SubStatus)
                 == str(http_constants.SubStatusCodes.EMERGENCY_REVOCATION)):
-            logger.info("Token on response %", self._token)
+            logger.info("Token on response %s", self._token)
             # force token refresh on next request
             self._token = None
             data = response.http_response.body()
