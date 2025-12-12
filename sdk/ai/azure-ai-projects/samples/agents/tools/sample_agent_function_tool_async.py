@@ -109,8 +109,7 @@ async def main():
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
 
-        # Print result (should contain "Tuesday")
-        print(f"==> Result: {response.output_text}")
+        print(f"Agent response: {response.output_text}")
 
 
 if __name__ == "__main__":

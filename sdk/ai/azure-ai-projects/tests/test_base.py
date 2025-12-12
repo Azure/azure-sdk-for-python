@@ -11,25 +11,26 @@ import os
 import tempfile
 from typing import Optional, Any, Dict, Final, IO, Union, overload, Literal, TextIO, BinaryIO
 from azure.ai.projects.models import (
+    ApiKeyCredentials,
+    AzureAISearchIndex,
     Connection,
     ConnectionType,
-    CustomCredential,
     CredentialType,
-    ApiKeyCredentials,
+    CustomCredential,
+    DatasetCredential,
+    DatasetType,
+    DatasetVersion,
     Deployment,
     DeploymentType,
-    ModelDeployment,
     Index,
     IndexType,
-    AzureAISearchIndex,
-    DatasetVersion,
-    DatasetType,
-    DatasetCredential,
+    ItemContentType,
     ItemResource,
     ItemType,
+    ModelDeployment,
     ResponsesMessageRole,
-    ItemContentType,
 )
+from openai.types.responses import Response
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
@@ -357,8 +358,18 @@ class TestBase(AzureRecordedTestCase):
                 assert TestBase.is_valid_dict(connection.credentials.credential_keys)
 
     @classmethod
+    def validate_response(cls, response: Response, *, print_message: Optional[str] = None):
+        assert response.id
+        assert response.output is not None
+        assert len(response.output) > 0
+        if print_message:
+            print(f"{print_message} (id: {response.id})")
+        else:
+            print(f"Response completed (id: {response.id})")
+
+    @classmethod
     def validate_red_team_response(
-        cls, response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
+        cls, response: Response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
     ):
         """Assert basic red team scan response properties."""
         assert response is not None
