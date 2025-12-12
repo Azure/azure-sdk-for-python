@@ -28,6 +28,8 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) AZURE_AI_IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g., gpt-image-1-mini)
+       used by the ImageGenTool.
 
     NOTE:
     - Image generation requires a separate "gpt-image-1-mini" deployment which is specified when constructing
@@ -57,12 +59,15 @@ async def main():
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
+
+        image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
+
         agent = await project_client.agents.create_version(
             agent_name="MyAgent",
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="Generate images based on user prompts",
-                tools=[ImageGenTool(model="gpt-image-1-mini", quality="low", size="1024x1024")],  # type: ignore
+                tools=[ImageGenTool(model=image_generation_model, quality="low", size="1024x1024")],  # type: ignore
             ),
             description="Agent for image generation.",
         )
@@ -71,7 +76,7 @@ async def main():
         response = await openai_client.responses.create(
             input="Generate an image of Microsoft logo.",
             extra_headers={
-                "x-ms-oai-image-generation-deployment": "gpt-image-1-mini"
+                "x-ms-oai-image-generation-deployment": image_generation_model
             },  # this is required at the moment for image generation
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )

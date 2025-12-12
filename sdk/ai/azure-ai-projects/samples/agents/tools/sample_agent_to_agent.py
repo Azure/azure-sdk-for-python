@@ -86,8 +86,8 @@ with (
             item = event.item
             if item.type == "a2a_preview_call":
                 print(f"Request ID: {getattr(item, 'id')}")
-                if hasattr(item, 'model_extra'):
-                    extra = getattr(item, 'model_extra')
+                if hasattr(item, "model_extra"):
+                    extra = getattr(item, "model_extra")
                     if isinstance(extra, dict):
                         print(f"Arguments: {extra['arguments']}")
             elif item.type == "a2a_preview_call_output":
