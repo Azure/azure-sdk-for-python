@@ -2,15 +2,9 @@
 
 ## 1.1.0b2 (2025-12-12)
 
-tool can't generate changelog for this release, please update manually.
+### Bugs Fixed
 
-## 1.1.0b2 (2025-12-12)
-
-tool can't generate changelog for this release, please update manually.
-
-## 1.1.0b2 (2025-12-11)
-
-tool can't generate changelog for this release, please update manually.
+  - Set default value of `lro_options` same as old version to keep compatibility for some LRO APIs
 
 ## 1.1.0b1 (2025-11-19)
 
