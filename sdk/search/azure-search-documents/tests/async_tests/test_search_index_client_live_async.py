@@ -254,10 +254,10 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
         index_name = self.get_resource_name("agg-product")
         fields = [
-            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
             SimpleField(
                 name="lastUpdated",
-                type=SearchFieldDataType.DateTimeOffset,
+                type=SearchFieldDataType.DATE_TIME_OFFSET,
                 filterable=True,
             ),
         ]

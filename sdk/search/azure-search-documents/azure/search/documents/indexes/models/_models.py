@@ -2103,7 +2103,7 @@ class LexicalTokenizer(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, KeywordTokenizerV2,
     MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenizer,
-    PathHierarchyTokenizer, PatternTokenizer, LuceneStandardTokenizer, LuceneStandardTokenizerV2,
+    PathHierarchyTokenizerV2, PatternTokenizer, LuceneStandardTokenizer, LuceneStandardTokenizerV2,
     UaxUrlEmailTokenizer
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
@@ -6963,7 +6963,7 @@ class OutputFieldMappingEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PathHierarchyTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.PathHierarchyTokenizerV2"):
+class PathHierarchyTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.PathHierarchyTokenizerV2"):
     """Tokenizer for path-like hierarchies. This tokenizer is implemented using Apache Lucene.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or

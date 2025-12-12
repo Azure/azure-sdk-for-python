@@ -45,7 +45,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         try:
             name: str = synonym_map.name  # type: ignore
             return self._delete_synonym_map(
-                synonym_map_name=name,
+                name=name,
                 match_condition=match_condition,
                 etag=synonym_map.e_tag,  # type: ignore
                 **kwargs,
@@ -53,7 +53,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         except AttributeError:
             name = synonym_map  # type: ignore
             return self._delete_synonym_map(
-                synonym_map_name=name,
+                name=name,
                 **kwargs,
             )
 
@@ -66,7 +66,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         **kwargs: Any,
     ) -> _models.SynonymMap:
         return self._create_or_update_synonym_map(
-            synonym_map_name=synonym_map.name,
+            name=synonym_map.name,
             synonym_map=synonym_map,
             prefer="return=representation",
             etag=synonym_map.e_tag,
@@ -95,7 +95,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         try:
             name: str = index.name  # type: ignore
             return self._delete_index(
-                index_name=name,
+                name=name,
                 match_condition=match_condition,
                 etag=index.e_tag,  # type: ignore
                 **kwargs,
@@ -103,7 +103,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         except AttributeError:
             name = index  # type: ignore
             return self._delete_index(
-                index_name=name,
+                name=name,
                 **kwargs,
             )
 
@@ -133,7 +133,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._create_or_update_index(
-            index_name=index.name,
+            name=index.name,
             index=index,
             prefer="return=representation",
             allow_index_downtime=allow_index_downtime,
@@ -161,7 +161,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._create_or_update_alias(
-            alias_name=alias.name,
+            name=alias.name,
             alias=alias,
             prefer="return=representation",
             etag=alias.e_tag,
@@ -190,7 +190,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         try:
             name: str = alias.name  # type: ignore
             return self._delete_alias(
-                alias_name=name,
+                name=name,
                 match_condition=match_condition,
                 etag=alias.e_tag,  # type: ignore
                 **kwargs,
@@ -198,7 +198,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         except AttributeError:
             name = alias  # type: ignore
             return self._delete_alias(
-                alias_name=name,
+                name=name,
                 **kwargs,
             )
 
@@ -223,7 +223,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         try:
             name: str = knowledge_base.name  # type: ignore
             return self._delete_knowledge_base(
-                knowledge_base_name=name,
+                name=name,
                 match_condition=match_condition,
                 etag=knowledge_base.e_tag,  # type: ignore
                 **kwargs,
@@ -231,7 +231,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         except AttributeError:
             name = knowledge_base  # type: ignore
             return self._delete_knowledge_base(
-                knowledge_base_name=name,
+                name=name,
                 **kwargs,
             )
 
@@ -254,7 +254,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._create_or_update_knowledge_base(
-            knowledge_base_name=knowledge_base.name,
+            name=knowledge_base.name,
             knowledge_base=knowledge_base,
             prefer="return=representation",
             etag=knowledge_base.e_tag,
@@ -281,7 +281,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._create_or_update_knowledge_source(
-            knowledge_source_name=knowledge_source.name,
+            name=knowledge_source.name,
             knowledge_source=knowledge_source,
             prefer="return=representation",
             match_condition=match_condition,
@@ -310,7 +310,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         try:
             name: str = knowledge_source.name  # type: ignore
             return self._delete_knowledge_source(
-                source_name=name,
+                name=name,
                 match_condition=match_condition,
                 etag=knowledge_source.e_tag,  # type: ignore
                 **kwargs,
@@ -318,7 +318,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         except AttributeError:
             name = knowledge_source  # type: ignore
             return self._delete_knowledge_source(
-                source_name=name,
+                name=name,
                 **kwargs,
             )
 
@@ -395,7 +395,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         try:
             name: str = data_source.name  # type: ignore
             return self._delete_data_source_connection(
-                data_source_name=name,
+                name=name,
                 match_condition=match_condition,
                 etag=data_source.e_tag,  # type: ignore
                 **kwargs,
@@ -403,7 +403,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         except AttributeError:
             name = data_source  # type: ignore
             return self._delete_data_source_connection(
-                data_source_name=name,
+                name=name,
                 **kwargs,
             )
 
@@ -430,7 +430,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._create_or_update_data_source_connection(
-            data_source_name=data_source.name,
+            name=data_source.name,
             data_source=data_source,
             prefer="return=representation",
             etag=data_source.e_tag,
@@ -460,7 +460,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         try:
             name: str = indexer.name  # type: ignore
             return self._delete_indexer(
-                indexer_name=name,
+                name=name,
                 match_condition=match_condition,
                 etag=indexer.e_tag,  # type: ignore
                 **kwargs,
@@ -468,7 +468,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         except AttributeError:
             name = indexer  # type: ignore
             return self._delete_indexer(
-                indexer_name=name,
+                name=name,
                 **kwargs,
             )
 
@@ -499,7 +499,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._create_or_update_indexer(
-            indexer_name=indexer.name,
+            name=indexer.name,
             indexer=indexer,
             prefer="return=representation",
             etag=indexer.e_tag,
@@ -530,7 +530,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         try:
             name: str = skillset.name  # type: ignore
             return self._delete_skillset(
-                skillset_name=name,
+                name=name,
                 match_condition=match_condition,
                 etag=skillset.e_tag,  # type: ignore
                 **kwargs,
@@ -538,7 +538,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         except AttributeError:
             name = skillset  # type: ignore
             return self._delete_skillset(
-                skillset_name=name,
+                name=name,
                 **kwargs,
             )
 
@@ -569,7 +569,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._create_or_update_skillset(
-            skillset_name=skillset.name,
+            name=skillset.name,
             skillset=skillset,
             prefer="return=representation",
             etag=skillset.e_tag,

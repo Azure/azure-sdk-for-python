@@ -1807,7 +1807,7 @@ class _SearchClientOperationsMixin(
         search_text: str,
         suggester_name: str,
         content_type: str = "application/json",
-        autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
+        mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1833,7 +1833,7 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
-        autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
+        mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1852,11 +1852,11 @@ class _SearchClientOperationsMixin(
         :keyword suggester_name: The name of the suggester as specified in the suggesters collection
          that's part of the index definition. Required.
         :paramtype suggester_name: str
-        :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
-         'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
-         auto-completed terms. Known values are: "oneTerm", "twoTerms", and "oneTermWithContext".
-         Default value is None.
-        :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
+        :keyword mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use 'twoTerms' to
+         get shingles and 'oneTermWithContext' to use the current context while producing auto-completed
+         terms. Known values are: "oneTerm", "twoTerms", and "oneTermWithContext". Default value is
+         None.
+        :paramtype mode: str or ~azure.search.documents.models.AutocompleteMode
         :keyword filter: An OData expression that filters the documents used to produce completed terms
          for the Autocomplete result. Default value is None.
         :paramtype filter: str
@@ -1908,7 +1908,7 @@ class _SearchClientOperationsMixin(
             if suggester_name is _Unset:
                 raise TypeError("missing required argument: suggester_name")
             body = {
-                "autocompleteMode": autocomplete_mode,
+                "autocompleteMode": mode,
                 "filter": filter,
                 "fuzzy": use_fuzzy_matching,
                 "highlightPostTag": highlight_post_tag,

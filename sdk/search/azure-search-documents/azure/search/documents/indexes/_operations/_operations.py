@@ -46,11 +46,7 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_search_index_create_or_update_synonym_map_request(  # pylint: disable=name-too-long
-    synonym_map_name: str,
-    *,
-    etag: Optional[str] = None,
-    match_condition: Optional[MatchConditions] = None,
-    **kwargs: Any,
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -63,7 +59,7 @@ def build_search_index_create_or_update_synonym_map_request(  # pylint: disable=
     # Construct URL
     _url = "/synonymmaps('{synonymMapName}')"
     path_format_arguments = {
-        "synonymMapName": _SERIALIZER.url("synonym_map_name", synonym_map_name, "str"),
+        "synonymMapName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -87,11 +83,7 @@ def build_search_index_create_or_update_synonym_map_request(  # pylint: disable=
 
 
 def build_search_index_delete_synonym_map_request(  # pylint: disable=name-too-long
-    synonym_map_name: str,
-    *,
-    etag: Optional[str] = None,
-    match_condition: Optional[MatchConditions] = None,
-    **kwargs: Any,
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -100,7 +92,7 @@ def build_search_index_delete_synonym_map_request(  # pylint: disable=name-too-l
     # Construct URL
     _url = "/synonymmaps('{synonymMapName}')"
     path_format_arguments = {
-        "synonymMapName": _SERIALIZER.url("synonym_map_name", synonym_map_name, "str"),
+        "synonymMapName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -120,7 +112,7 @@ def build_search_index_delete_synonym_map_request(  # pylint: disable=name-too-l
 
 
 def build_search_index_get_synonym_map_request(  # pylint: disable=name-too-long
-    synonym_map_name: str, **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -131,7 +123,7 @@ def build_search_index_get_synonym_map_request(  # pylint: disable=name-too-long
     # Construct URL
     _url = "/synonymmaps('{synonymMapName}')"
     path_format_arguments = {
-        "synonymMapName": _SERIALIZER.url("synonym_map_name", synonym_map_name, "str"),
+        "synonymMapName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -191,7 +183,7 @@ def build_search_index_create_synonym_map_request(**kwargs: Any) -> HttpRequest:
 
 
 def build_search_index_create_or_update_index_request(  # pylint: disable=name-too-long
-    index_name: str,
+    name: str,
     *,
     allow_index_downtime: Optional[bool] = None,
     etag: Optional[str] = None,
@@ -209,7 +201,7 @@ def build_search_index_create_or_update_index_request(  # pylint: disable=name-t
     # Construct URL
     _url = "/indexes('{indexName}')"
     path_format_arguments = {
-        "indexName": _SERIALIZER.url("index_name", index_name, "str"),
+        "indexName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -235,7 +227,7 @@ def build_search_index_create_or_update_index_request(  # pylint: disable=name-t
 
 
 def build_search_index_delete_index_request(
-    index_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -244,7 +236,7 @@ def build_search_index_delete_index_request(
     # Construct URL
     _url = "/indexes('{indexName}')"
     path_format_arguments = {
-        "indexName": _SERIALIZER.url("index_name", index_name, "str"),
+        "indexName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -263,7 +255,7 @@ def build_search_index_delete_index_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_get_index_request(index_name: str, **kwargs: Any) -> HttpRequest:
+def build_search_index_get_index_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -273,7 +265,7 @@ def build_search_index_get_index_request(index_name: str, **kwargs: Any) -> Http
     # Construct URL
     _url = "/indexes('{indexName}')"
     path_format_arguments = {
-        "indexName": _SERIALIZER.url("index_name", index_name, "str"),
+        "indexName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -331,7 +323,7 @@ def build_search_index_create_index_request(**kwargs: Any) -> HttpRequest:
 
 
 def build_search_index_get_index_statistics_request(  # pylint: disable=name-too-long
-    index_name: str, **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -342,7 +334,7 @@ def build_search_index_get_index_statistics_request(  # pylint: disable=name-too
     # Construct URL
     _url = "/indexes('{indexName}')/search.stats"
     path_format_arguments = {
-        "indexName": _SERIALIZER.url("index_name", index_name, "str"),
+        "indexName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -356,7 +348,7 @@ def build_search_index_get_index_statistics_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_analyze_text_request(index_name: str, **kwargs: Any) -> HttpRequest:
+def build_search_index_analyze_text_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -367,7 +359,7 @@ def build_search_index_analyze_text_request(index_name: str, **kwargs: Any) -> H
     # Construct URL
     _url = "/indexes('{indexName}')/search.analyze"
     path_format_arguments = {
-        "indexName": _SERIALIZER.url("index_name", index_name, "str"),
+        "indexName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -384,7 +376,7 @@ def build_search_index_analyze_text_request(index_name: str, **kwargs: Any) -> H
 
 
 def build_search_index_create_or_update_alias_request(  # pylint: disable=name-too-long
-    alias_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -397,7 +389,7 @@ def build_search_index_create_or_update_alias_request(  # pylint: disable=name-t
     # Construct URL
     _url = "/aliases('{aliasName}')"
     path_format_arguments = {
-        "aliasName": _SERIALIZER.url("alias_name", alias_name, "str"),
+        "aliasName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -421,7 +413,7 @@ def build_search_index_create_or_update_alias_request(  # pylint: disable=name-t
 
 
 def build_search_index_delete_alias_request(
-    alias_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -430,7 +422,7 @@ def build_search_index_delete_alias_request(
     # Construct URL
     _url = "/aliases('{aliasName}')"
     path_format_arguments = {
-        "aliasName": _SERIALIZER.url("alias_name", alias_name, "str"),
+        "aliasName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -449,7 +441,7 @@ def build_search_index_delete_alias_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_get_alias_request(alias_name: str, **kwargs: Any) -> HttpRequest:
+def build_search_index_get_alias_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -459,7 +451,7 @@ def build_search_index_get_alias_request(alias_name: str, **kwargs: Any) -> Http
     # Construct URL
     _url = "/aliases('{aliasName}')"
     path_format_arguments = {
-        "aliasName": _SERIALIZER.url("alias_name", alias_name, "str"),
+        "aliasName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -515,11 +507,7 @@ def build_search_index_create_alias_request(**kwargs: Any) -> HttpRequest:
 
 
 def build_search_index_create_or_update_knowledge_base_request(  # pylint: disable=name-too-long
-    knowledge_base_name: str,
-    *,
-    etag: Optional[str] = None,
-    match_condition: Optional[MatchConditions] = None,
-    **kwargs: Any,
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -532,7 +520,7 @@ def build_search_index_create_or_update_knowledge_base_request(  # pylint: disab
     # Construct URL
     _url = "/knowledgebases('{knowledgeBaseName}')"
     path_format_arguments = {
-        "knowledgeBaseName": _SERIALIZER.url("knowledge_base_name", knowledge_base_name, "str"),
+        "knowledgeBaseName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -556,11 +544,7 @@ def build_search_index_create_or_update_knowledge_base_request(  # pylint: disab
 
 
 def build_search_index_delete_knowledge_base_request(  # pylint: disable=name-too-long
-    knowledge_base_name: str,
-    *,
-    etag: Optional[str] = None,
-    match_condition: Optional[MatchConditions] = None,
-    **kwargs: Any,
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -569,7 +553,7 @@ def build_search_index_delete_knowledge_base_request(  # pylint: disable=name-to
     # Construct URL
     _url = "/knowledgebases('{knowledgeBaseName}')"
     path_format_arguments = {
-        "knowledgeBaseName": _SERIALIZER.url("knowledge_base_name", knowledge_base_name, "str"),
+        "knowledgeBaseName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -589,7 +573,7 @@ def build_search_index_delete_knowledge_base_request(  # pylint: disable=name-to
 
 
 def build_search_index_get_knowledge_base_request(  # pylint: disable=name-too-long
-    knowledge_base_name: str, **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -600,7 +584,7 @@ def build_search_index_get_knowledge_base_request(  # pylint: disable=name-too-l
     # Construct URL
     _url = "/knowledgebases('{knowledgeBaseName}')"
     path_format_arguments = {
-        "knowledgeBaseName": _SERIALIZER.url("knowledge_base_name", knowledge_base_name, "str"),
+        "knowledgeBaseName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -656,7 +640,7 @@ def build_search_index_create_knowledge_base_request(**kwargs: Any) -> HttpReque
 
 
 def build_search_index_create_or_update_knowledge_source_request(  # pylint: disable=name-too-long
-    source_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -669,7 +653,7 @@ def build_search_index_create_or_update_knowledge_source_request(  # pylint: dis
     # Construct URL
     _url = "/knowledgesources('{sourceName}')"
     path_format_arguments = {
-        "sourceName": _SERIALIZER.url("source_name", source_name, "str"),
+        "sourceName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -693,7 +677,7 @@ def build_search_index_create_or_update_knowledge_source_request(  # pylint: dis
 
 
 def build_search_index_delete_knowledge_source_request(  # pylint: disable=name-too-long
-    source_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -702,7 +686,7 @@ def build_search_index_delete_knowledge_source_request(  # pylint: disable=name-
     # Construct URL
     _url = "/knowledgesources('{sourceName}')"
     path_format_arguments = {
-        "sourceName": _SERIALIZER.url("source_name", source_name, "str"),
+        "sourceName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -722,7 +706,7 @@ def build_search_index_delete_knowledge_source_request(  # pylint: disable=name-
 
 
 def build_search_index_get_knowledge_source_request(  # pylint: disable=name-too-long
-    source_name: str, **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -733,7 +717,7 @@ def build_search_index_get_knowledge_source_request(  # pylint: disable=name-too
     # Construct URL
     _url = "/knowledgesources('{sourceName}')"
     path_format_arguments = {
-        "sourceName": _SERIALIZER.url("source_name", source_name, "str"),
+        "sourceName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -827,7 +811,7 @@ def build_search_index_list_index_stats_summary_request(**kwargs: Any) -> HttpRe
 
 
 def build_search_indexer_create_or_update_data_source_connection_request(  # pylint: disable=name-too-long
-    data_source_name: str,
+    name: str,
     *,
     skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
     etag: Optional[str] = None,
@@ -845,7 +829,7 @@ def build_search_indexer_create_or_update_data_source_connection_request(  # pyl
     # Construct URL
     _url = "/datasources('{dataSourceName}')"
     path_format_arguments = {
-        "dataSourceName": _SERIALIZER.url("data_source_name", data_source_name, "str"),
+        "dataSourceName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -873,11 +857,7 @@ def build_search_indexer_create_or_update_data_source_connection_request(  # pyl
 
 
 def build_search_indexer_delete_data_source_connection_request(  # pylint: disable=name-too-long
-    data_source_name: str,
-    *,
-    etag: Optional[str] = None,
-    match_condition: Optional[MatchConditions] = None,
-    **kwargs: Any,
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -886,7 +866,7 @@ def build_search_indexer_delete_data_source_connection_request(  # pylint: disab
     # Construct URL
     _url = "/datasources('{dataSourceName}')"
     path_format_arguments = {
-        "dataSourceName": _SERIALIZER.url("data_source_name", data_source_name, "str"),
+        "dataSourceName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -906,7 +886,7 @@ def build_search_indexer_delete_data_source_connection_request(  # pylint: disab
 
 
 def build_search_indexer_get_data_source_connection_request(  # pylint: disable=name-too-long
-    data_source_name: str, **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -917,7 +897,7 @@ def build_search_indexer_get_data_source_connection_request(  # pylint: disable=
     # Construct URL
     _url = "/datasources('{dataSourceName}')"
     path_format_arguments = {
-        "dataSourceName": _SERIALIZER.url("data_source_name", data_source_name, "str"),
+        "dataSourceName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -979,7 +959,7 @@ def build_search_indexer_create_data_source_connection_request(  # pylint: disab
 
 
 def build_search_indexer_reset_indexer_request(  # pylint: disable=name-too-long
-    indexer_name: str, **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -988,7 +968,7 @@ def build_search_indexer_reset_indexer_request(  # pylint: disable=name-too-long
     # Construct URL
     _url = "/indexers('{indexerName}')/search.reset"
     path_format_arguments = {
-        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+        "indexerName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1001,7 +981,7 @@ def build_search_indexer_reset_indexer_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_indexer_resync_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
+def build_search_indexer_resync_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1010,7 +990,7 @@ def build_search_indexer_resync_request(indexer_name: str, **kwargs: Any) -> Htt
     # Construct URL
     _url = "/indexers('{indexerName}')/search.resync"
     path_format_arguments = {
-        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+        "indexerName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1026,7 +1006,7 @@ def build_search_indexer_resync_request(indexer_name: str, **kwargs: Any) -> Htt
 
 
 def build_search_indexer_reset_documents_request(  # pylint: disable=name-too-long
-    indexer_name: str, *, overwrite: Optional[bool] = None, **kwargs: Any
+    name: str, *, overwrite: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1036,7 +1016,7 @@ def build_search_indexer_reset_documents_request(  # pylint: disable=name-too-lo
     # Construct URL
     _url = "/indexers('{indexerName}')/search.resetdocs"
     path_format_arguments = {
-        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+        "indexerName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1053,7 +1033,7 @@ def build_search_indexer_reset_documents_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_indexer_run_indexer_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
+def build_search_indexer_run_indexer_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1061,7 +1041,7 @@ def build_search_indexer_run_indexer_request(indexer_name: str, **kwargs: Any) -
     # Construct URL
     _url = "/indexers('{indexerName}')/search.run"
     path_format_arguments = {
-        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+        "indexerName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1075,7 +1055,7 @@ def build_search_indexer_run_indexer_request(indexer_name: str, **kwargs: Any) -
 
 
 def build_search_indexer_create_or_update_indexer_request(  # pylint: disable=name-too-long
-    indexer_name: str,
+    name: str,
     *,
     skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
     disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -1094,7 +1074,7 @@ def build_search_indexer_create_or_update_indexer_request(  # pylint: disable=na
     # Construct URL
     _url = "/indexers('{indexerName}')"
     path_format_arguments = {
-        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+        "indexerName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1126,7 +1106,7 @@ def build_search_indexer_create_or_update_indexer_request(  # pylint: disable=na
 
 
 def build_search_indexer_delete_indexer_request(  # pylint: disable=name-too-long
-    indexer_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1135,7 +1115,7 @@ def build_search_indexer_delete_indexer_request(  # pylint: disable=name-too-lon
     # Construct URL
     _url = "/indexers('{indexerName}')"
     path_format_arguments = {
-        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+        "indexerName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1154,7 +1134,7 @@ def build_search_indexer_delete_indexer_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_indexer_get_indexer_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
+def build_search_indexer_get_indexer_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1164,7 +1144,7 @@ def build_search_indexer_get_indexer_request(indexer_name: str, **kwargs: Any) -
     # Construct URL
     _url = "/indexers('{indexerName}')"
     path_format_arguments = {
-        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+        "indexerName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1224,7 +1204,7 @@ def build_search_indexer_create_indexer_request(**kwargs: Any) -> HttpRequest:  
 
 
 def build_search_indexer_get_indexer_status_request(  # pylint: disable=name-too-long
-    indexer_name: str, **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1235,7 +1215,7 @@ def build_search_indexer_get_indexer_status_request(  # pylint: disable=name-too
     # Construct URL
     _url = "/indexers('{indexerName}')/search.status"
     path_format_arguments = {
-        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+        "indexerName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1250,7 +1230,7 @@ def build_search_indexer_get_indexer_status_request(  # pylint: disable=name-too
 
 
 def build_search_indexer_create_or_update_skillset_request(  # pylint: disable=name-too-long
-    skillset_name: str,
+    name: str,
     *,
     skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
     disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -1269,7 +1249,7 @@ def build_search_indexer_create_or_update_skillset_request(  # pylint: disable=n
     # Construct URL
     _url = "/skillsets('{skillsetName}')"
     path_format_arguments = {
-        "skillsetName": _SERIALIZER.url("skillset_name", skillset_name, "str"),
+        "skillsetName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1301,7 +1281,7 @@ def build_search_indexer_create_or_update_skillset_request(  # pylint: disable=n
 
 
 def build_search_indexer_delete_skillset_request(  # pylint: disable=name-too-long
-    skillset_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+    name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1310,7 +1290,7 @@ def build_search_indexer_delete_skillset_request(  # pylint: disable=name-too-lo
     # Construct URL
     _url = "/skillsets('{skillsetName}')"
     path_format_arguments = {
-        "skillsetName": _SERIALIZER.url("skillset_name", skillset_name, "str"),
+        "skillsetName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1329,9 +1309,7 @@ def build_search_indexer_delete_skillset_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_indexer_get_skillset_request(  # pylint: disable=name-too-long
-    skillset_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_search_indexer_get_skillset_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1341,7 +1319,7 @@ def build_search_indexer_get_skillset_request(  # pylint: disable=name-too-long
     # Construct URL
     _url = "/skillsets('{skillsetName}')"
     path_format_arguments = {
-        "skillsetName": _SERIALIZER.url("skillset_name", skillset_name, "str"),
+        "skillsetName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1400,9 +1378,7 @@ def build_search_indexer_create_skillset_request(**kwargs: Any) -> HttpRequest: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_indexer_reset_skills_request(  # pylint: disable=name-too-long
-    skillset_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_search_indexer_reset_skills_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1411,7 +1387,7 @@ def build_search_indexer_reset_skills_request(  # pylint: disable=name-too-long
     # Construct URL
     _url = "/skillsets('{skillsetName}')/search.resetskills"
     path_format_arguments = {
-        "skillsetName": _SERIALIZER.url("skillset_name", skillset_name, "str"),
+        "skillsetName": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1433,7 +1409,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_synonym_map(
         self,
-        synonym_map_name: str,
+        name: str,
         synonym_map: _models1.SynonymMap,
         *,
         content_type: str = "application/json",
@@ -1444,7 +1420,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_synonym_map(
         self,
-        synonym_map_name: str,
+        name: str,
         synonym_map: JSON,
         *,
         content_type: str = "application/json",
@@ -1455,7 +1431,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_synonym_map(
         self,
-        synonym_map_name: str,
+        name: str,
         synonym_map: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -1467,7 +1443,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     def _create_or_update_synonym_map(
         self,
-        synonym_map_name: str,
+        name: str,
         synonym_map: Union[_models1.SynonymMap, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
@@ -1476,8 +1452,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     ) -> _models1.SynonymMap:
         """Creates a new synonym map or updates a synonym map if it already exists.
 
-        :param synonym_map_name: The name of the synonym map. Required.
-        :type synonym_map_name: str
+        :param name: The name of the synonym map. Required.
+        :type name: str
         :param synonym_map: The definition of the synonym map to create or update. Is one of the
          following types: SynonymMap, JSON, IO[bytes] Required.
         :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or JSON or IO[bytes]
@@ -1519,7 +1495,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             _content = json.dumps(synonym_map, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_index_create_or_update_synonym_map_request(
-            synonym_map_name=synonym_map_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             prefer=prefer,
@@ -1566,17 +1542,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     def _delete_synonym_map(  # pylint: disable=inconsistent-return-statements
-        self,
-        synonym_map_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any,
+        self, name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> None:
         """Deletes a synonym map.
 
-        :param synonym_map_name: The name of the synonym map. Required.
-        :type synonym_map_name: str
+        :param name: The name of the synonym map. Required.
+        :type name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1606,7 +1577,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_index_delete_synonym_map_request(
-            synonym_map_name=synonym_map_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -1637,11 +1608,11 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_synonym_map(self, synonym_map_name: str, **kwargs: Any) -> _models1.SynonymMap:
+    def get_synonym_map(self, name: str, **kwargs: Any) -> _models1.SynonymMap:
         """Retrieves a synonym map definition.
 
-        :param synonym_map_name: The name of the synonym map. Required.
-        :type synonym_map_name: str
+        :param name: The name of the synonym map. Required.
+        :type name: str
         :return: SynonymMap. The SynonymMap is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1660,7 +1631,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[_models1.SynonymMap] = kwargs.pop("cls", None)
 
         _request = build_search_index_get_synonym_map_request(
-            synonym_map_name=synonym_map_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1897,7 +1868,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_index(
         self,
-        index_name: str,
+        name: str,
         index: _models1.SearchIndex,
         *,
         allow_index_downtime: Optional[bool] = None,
@@ -1909,7 +1880,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_index(
         self,
-        index_name: str,
+        name: str,
         index: JSON,
         *,
         allow_index_downtime: Optional[bool] = None,
@@ -1921,7 +1892,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_index(
         self,
-        index_name: str,
+        name: str,
         index: IO[bytes],
         *,
         allow_index_downtime: Optional[bool] = None,
@@ -1934,7 +1905,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     def _create_or_update_index(
         self,
-        index_name: str,
+        name: str,
         index: Union[_models1.SearchIndex, JSON, IO[bytes]],
         *,
         allow_index_downtime: Optional[bool] = None,
@@ -1944,8 +1915,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     ) -> _models1.SearchIndex:
         """Creates a new search index or updates an index if it already exists.
 
-        :param index_name: The name of the index. Required.
-        :type index_name: str
+        :param name: The name of the index. Required.
+        :type name: str
         :param index: The definition of the index to create or update. Is one of the following types:
          SearchIndex, JSON, IO[bytes] Required.
         :type index: ~azure.search.documents.indexes.models.SearchIndex or JSON or IO[bytes]
@@ -1993,7 +1964,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             _content = json.dumps(index, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_index_create_or_update_index_request(
-            index_name=index_name,
+            name=name,
             allow_index_downtime=allow_index_downtime,
             etag=etag,
             match_condition=match_condition,
@@ -2041,19 +2012,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     def _delete_index(  # pylint: disable=inconsistent-return-statements
-        self,
-        index_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any,
+        self, name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> None:
         """Deletes a search index and all the documents it contains. This operation is permanent, with no
         recovery option. Make sure you have a master copy of your index definition, data ingestion
         code, and a backup of the primary data source in case you need to re-build the index.
 
-        :param index_name: The name of the index. Required.
-        :type index_name: str
+        :param name: The name of the index. Required.
+        :type name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2083,7 +2049,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_index_delete_index_request(
-            index_name=index_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -2114,11 +2080,11 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_index(self, index_name: str, **kwargs: Any) -> _models1.SearchIndex:
+    def get_index(self, name: str, **kwargs: Any) -> _models1.SearchIndex:
         """Retrieves an index definition.
 
-        :param index_name: The name of the index. Required.
-        :type index_name: str
+        :param name: The name of the index. Required.
+        :type name: str
         :return: SearchIndex. The SearchIndex is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2137,7 +2103,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[_models1.SearchIndex] = kwargs.pop("cls", None)
 
         _request = build_search_index_get_index_request(
-            index_name=index_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2391,11 +2357,11 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_index_statistics(self, index_name: str, **kwargs: Any) -> _models1.GetIndexStatisticsResult:
+    def get_index_statistics(self, name: str, **kwargs: Any) -> _models1.GetIndexStatisticsResult:
         """Returns statistics for the given index, including a document count and storage usage.
 
-        :param index_name: The name of the index. Required.
-        :type index_name: str
+        :param name: The name of the index. Required.
+        :type name: str
         :return: GetIndexStatisticsResult. The GetIndexStatisticsResult is compatible with
          MutableMapping
         :rtype: ~azure.search.documents.indexes.models.GetIndexStatisticsResult
@@ -2415,7 +2381,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[_models1.GetIndexStatisticsResult] = kwargs.pop("cls", None)
 
         _request = build_search_index_get_index_statistics_request(
-            index_name=index_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2457,17 +2423,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     def analyze_text(
-        self,
-        index_name: str,
-        request: _models1.AnalyzeTextOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, name: str, request: _models1.AnalyzeTextOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
 
-        :param index_name: The name of the index. Required.
-        :type index_name: str
+        :param name: The name of the index. Required.
+        :type name: str
         :param request: The text and analyzer or analysis components to test. Required.
         :type request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2480,12 +2441,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     def analyze_text(
-        self, index_name: str, request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
 
-        :param index_name: The name of the index. Required.
-        :type index_name: str
+        :param name: The name of the index. Required.
+        :type name: str
         :param request: The text and analyzer or analysis components to test. Required.
         :type request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2498,12 +2459,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     def analyze_text(
-        self, index_name: str, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
 
-        :param index_name: The name of the index. Required.
-        :type index_name: str
+        :param name: The name of the index. Required.
+        :type name: str
         :param request: The text and analyzer or analysis components to test. Required.
         :type request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -2516,12 +2477,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     def analyze_text(
-        self, index_name: str, request: Union[_models1.AnalyzeTextOptions, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, request: Union[_models1.AnalyzeTextOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
 
-        :param index_name: The name of the index. Required.
-        :type index_name: str
+        :param name: The name of the index. Required.
+        :type name: str
         :param request: The text and analyzer or analysis components to test. Is one of the following
          types: AnalyzeTextOptions, JSON, IO[bytes] Required.
         :type request: ~azure.search.documents.indexes.models.AnalyzeTextOptions or JSON or IO[bytes]
@@ -2551,7 +2512,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             _content = json.dumps(request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_index_analyze_text_request(
-            index_name=index_name,
+            name=name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2596,7 +2557,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_alias(
         self,
-        alias_name: str,
+        name: str,
         alias: _models1.SearchAlias,
         *,
         content_type: str = "application/json",
@@ -2607,7 +2568,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_alias(
         self,
-        alias_name: str,
+        name: str,
         alias: JSON,
         *,
         content_type: str = "application/json",
@@ -2618,7 +2579,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_alias(
         self,
-        alias_name: str,
+        name: str,
         alias: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -2630,7 +2591,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     def _create_or_update_alias(
         self,
-        alias_name: str,
+        name: str,
         alias: Union[_models1.SearchAlias, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
@@ -2639,8 +2600,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     ) -> _models1.SearchAlias:
         """Creates a new search alias or updates an alias if it already exists.
 
-        :param alias_name: The name of the alias. Required.
-        :type alias_name: str
+        :param name: The name of the alias. Required.
+        :type name: str
         :param alias: The definition of the alias to create or update. Is one of the following types:
          SearchAlias, JSON, IO[bytes] Required.
         :type alias: ~azure.search.documents.indexes.models.SearchAlias or JSON or IO[bytes]
@@ -2682,7 +2643,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             _content = json.dumps(alias, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_index_create_or_update_alias_request(
-            alias_name=alias_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             prefer=prefer,
@@ -2729,18 +2690,13 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     def _delete_alias(  # pylint: disable=inconsistent-return-statements
-        self,
-        alias_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any,
+        self, name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> None:
         """Deletes a search alias and its associated mapping to an index. This operation is permanent,
         with no recovery option. The mapped index is untouched by this operation.
 
-        :param alias_name: The name of the alias. Required.
-        :type alias_name: str
+        :param name: The name of the alias. Required.
+        :type name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2770,7 +2726,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_index_delete_alias_request(
-            alias_name=alias_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -2801,11 +2757,11 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_alias(self, alias_name: str, **kwargs: Any) -> _models1.SearchAlias:
+    def get_alias(self, name: str, **kwargs: Any) -> _models1.SearchAlias:
         """Retrieves an alias definition.
 
-        :param alias_name: The name of the alias. Required.
-        :type alias_name: str
+        :param name: The name of the alias. Required.
+        :type name: str
         :return: SearchAlias. The SearchAlias is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2824,7 +2780,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[_models1.SearchAlias] = kwargs.pop("cls", None)
 
         _request = build_search_index_get_alias_request(
-            alias_name=alias_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3075,7 +3031,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_knowledge_base(
         self,
-        knowledge_base_name: str,
+        name: str,
         knowledge_base: _models1.KnowledgeBase,
         *,
         content_type: str = "application/json",
@@ -3086,7 +3042,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_knowledge_base(
         self,
-        knowledge_base_name: str,
+        name: str,
         knowledge_base: JSON,
         *,
         content_type: str = "application/json",
@@ -3097,7 +3053,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_knowledge_base(
         self,
-        knowledge_base_name: str,
+        name: str,
         knowledge_base: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -3109,7 +3065,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     def _create_or_update_knowledge_base(
         self,
-        knowledge_base_name: str,
+        name: str,
         knowledge_base: Union[_models1.KnowledgeBase, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
@@ -3118,8 +3074,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     ) -> _models1.KnowledgeBase:
         """Creates a new knowledge base or updates a knowledge base if it already exists.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
+        :param name: The name of the knowledge base. Required.
+        :type name: str
         :param knowledge_base: The definition of the knowledge base to create or update. Is one of the
          following types: KnowledgeBase, JSON, IO[bytes] Required.
         :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or JSON or IO[bytes]
@@ -3161,7 +3117,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             _content = json.dumps(knowledge_base, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_index_create_or_update_knowledge_base_request(
-            knowledge_base_name=knowledge_base_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             prefer=prefer,
@@ -3208,17 +3164,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     def _delete_knowledge_base(  # pylint: disable=inconsistent-return-statements
-        self,
-        knowledge_base_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any,
+        self, name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> None:
         """Deletes a knowledge base.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
+        :param name: The name of the knowledge base. Required.
+        :type name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -3248,7 +3199,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_index_delete_knowledge_base_request(
-            knowledge_base_name=knowledge_base_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -3279,11 +3230,11 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_knowledge_base(self, knowledge_base_name: str, **kwargs: Any) -> _models1.KnowledgeBase:
+    def get_knowledge_base(self, name: str, **kwargs: Any) -> _models1.KnowledgeBase:
         """Retrieves a knowledge base definition.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
+        :param name: The name of the knowledge base. Required.
+        :type name: str
         :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3302,7 +3253,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[_models1.KnowledgeBase] = kwargs.pop("cls", None)
 
         _request = build_search_index_get_knowledge_base_request(
-            knowledge_base_name=knowledge_base_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3555,7 +3506,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_knowledge_source(
         self,
-        source_name: str,
+        name: str,
         knowledge_source: _models1.KnowledgeSource,
         *,
         content_type: str = "application/json",
@@ -3566,7 +3517,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_knowledge_source(
         self,
-        source_name: str,
+        name: str,
         knowledge_source: JSON,
         *,
         content_type: str = "application/json",
@@ -3577,7 +3528,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @overload
     def _create_or_update_knowledge_source(
         self,
-        source_name: str,
+        name: str,
         knowledge_source: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -3589,7 +3540,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     def _create_or_update_knowledge_source(
         self,
-        source_name: str,
+        name: str,
         knowledge_source: Union[_models1.KnowledgeSource, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
@@ -3598,8 +3549,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     ) -> _models1.KnowledgeSource:
         """Creates a new knowledge source or updates an knowledge source if it already exists.
 
-        :param source_name: The name of the knowledge source. Required.
-        :type source_name: str
+        :param name: The name of the knowledge source. Required.
+        :type name: str
         :param knowledge_source: The definition of the knowledge source to create or update. Is one of
          the following types: KnowledgeSource, JSON, IO[bytes] Required.
         :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or JSON or
@@ -3642,7 +3593,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             _content = json.dumps(knowledge_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_index_create_or_update_knowledge_source_request(
-            source_name=source_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             prefer=prefer,
@@ -3689,17 +3640,12 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     def _delete_knowledge_source(  # pylint: disable=inconsistent-return-statements
-        self,
-        source_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any,
+        self, name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> None:
         """Deletes an existing knowledge source.
 
-        :param source_name: The name of the knowledge source. Required.
-        :type source_name: str
+        :param name: The name of the knowledge source. Required.
+        :type name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -3729,7 +3675,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_index_delete_knowledge_source_request(
-            source_name=source_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -3760,11 +3706,11 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_knowledge_source(self, source_name: str, **kwargs: Any) -> _models1.KnowledgeSource:
+    def get_knowledge_source(self, name: str, **kwargs: Any) -> _models1.KnowledgeSource:
         """Retrieves a knowledge source definition.
 
-        :param source_name: The name of the knowledge source. Required.
-        :type source_name: str
+        :param name: The name of the knowledge source. Required.
+        :type name: str
         :return: KnowledgeSource. The KnowledgeSource is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3783,7 +3729,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[_models1.KnowledgeSource] = kwargs.pop("cls", None)
 
         _request = build_search_index_get_knowledge_source_request(
-            source_name=source_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4190,7 +4136,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def _create_or_update_data_source_connection(
         self,
-        data_source_name: str,
+        name: str,
         data_source: _models1.SearchIndexerDataSourceConnection,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -4202,7 +4148,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def _create_or_update_data_source_connection(
         self,
-        data_source_name: str,
+        name: str,
         data_source: JSON,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -4214,7 +4160,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def _create_or_update_data_source_connection(
         self,
-        data_source_name: str,
+        name: str,
         data_source: IO[bytes],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -4227,7 +4173,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     def _create_or_update_data_source_connection(
         self,
-        data_source_name: str,
+        name: str,
         data_source: Union[_models1.SearchIndexerDataSourceConnection, JSON, IO[bytes]],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -4237,8 +4183,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models1.SearchIndexerDataSourceConnection:
         """Creates a new datasource or updates a datasource if it already exists.
 
-        :param data_source_name: The name of the datasource. Required.
-        :type data_source_name: str
+        :param name: The name of the datasource. Required.
+        :type name: str
         :param data_source: The definition of the datasource to create or update. Is one of the
          following types: SearchIndexerDataSourceConnection, JSON, IO[bytes] Required.
         :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or
@@ -4285,7 +4231,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             _content = json.dumps(data_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_indexer_create_or_update_data_source_connection_request(
-            data_source_name=data_source_name,
+            name=name,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             etag=etag,
             match_condition=match_condition,
@@ -4333,17 +4279,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def _delete_data_source_connection(  # pylint: disable=inconsistent-return-statements
-        self,
-        data_source_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any,
+        self, name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> None:
         """Deletes a datasource.
 
-        :param data_source_name: The name of the datasource. Required.
-        :type data_source_name: str
+        :param name: The name of the datasource. Required.
+        :type name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -4373,7 +4314,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_indexer_delete_data_source_connection_request(
-            data_source_name=data_source_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -4404,13 +4345,11 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_data_source_connection(
-        self, data_source_name: str, **kwargs: Any
-    ) -> _models1.SearchIndexerDataSourceConnection:
+    def get_data_source_connection(self, name: str, **kwargs: Any) -> _models1.SearchIndexerDataSourceConnection:
         """Retrieves a datasource definition.
 
-        :param data_source_name: The name of the datasource. Required.
-        :type data_source_name: str
+        :param name: The name of the datasource. Required.
+        :type name: str
         :return: SearchIndexerDataSourceConnection. The SearchIndexerDataSourceConnection is compatible
          with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
@@ -4430,7 +4369,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         cls: ClsType[_models1.SearchIndexerDataSourceConnection] = kwargs.pop("cls", None)
 
         _request = build_search_indexer_get_data_source_connection_request(
-            data_source_name=data_source_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4674,11 +4613,11 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace
-    def reset_indexer(self, indexer_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def reset_indexer(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Resets the change tracking state associated with an indexer.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4697,7 +4636,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_indexer_reset_indexer_request(
-            indexer_name=indexer_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4728,7 +4667,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def resync(
         self,
-        indexer_name: str,
+        name: str,
         indexer_resync: _models1.IndexerResyncBody,
         *,
         content_type: str = "application/json",
@@ -4736,8 +4675,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :param indexer_resync: The definition of the indexer resync options. Required.
         :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4749,13 +4688,11 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         """
 
     @overload
-    def resync(
-        self, indexer_name: str, indexer_resync: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    def resync(self, name: str, indexer_resync: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :param indexer_resync: The definition of the indexer resync options. Required.
         :type indexer_resync: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4768,12 +4705,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @overload
     def resync(
-        self, indexer_name: str, indexer_resync: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, indexer_resync: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :param indexer_resync: The definition of the indexer resync options. Required.
         :type indexer_resync: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -4786,12 +4723,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def resync(  # pylint: disable=inconsistent-return-statements
-        self, indexer_name: str, indexer_resync: Union[_models1.IndexerResyncBody, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, indexer_resync: Union[_models1.IndexerResyncBody, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :param indexer_resync: The definition of the indexer resync options. Is one of the following
          types: IndexerResyncBody, JSON, IO[bytes] Required.
         :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or JSON or
@@ -4822,7 +4759,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             _content = json.dumps(indexer_resync, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_indexer_resync_request(
-            indexer_name=indexer_name,
+            name=name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4855,7 +4792,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def reset_documents(
         self,
-        indexer_name: str,
+        name: str,
         keys_or_ids: Optional[_models1.DocumentKeysOrIds] = None,
         *,
         overwrite: Optional[bool] = None,
@@ -4864,8 +4801,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> None:
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
          the document key field must be specified in the indexer configuration. If ids are provided, the
          document key field is ignored. Default value is None.
@@ -4884,7 +4821,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def reset_documents(
         self,
-        indexer_name: str,
+        name: str,
         keys_or_ids: Optional[JSON] = None,
         *,
         overwrite: Optional[bool] = None,
@@ -4893,8 +4830,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> None:
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
          the document key field must be specified in the indexer configuration. If ids are provided, the
          document key field is ignored. Default value is None.
@@ -4913,7 +4850,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def reset_documents(
         self,
-        indexer_name: str,
+        name: str,
         keys_or_ids: Optional[IO[bytes]] = None,
         *,
         overwrite: Optional[bool] = None,
@@ -4922,8 +4859,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> None:
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
          the document key field must be specified in the indexer configuration. If ids are provided, the
          document key field is ignored. Default value is None.
@@ -4942,7 +4879,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     def reset_documents(  # pylint: disable=inconsistent-return-statements
         self,
-        indexer_name: str,
+        name: str,
         keys_or_ids: Optional[Union[_models1.DocumentKeysOrIds, JSON, IO[bytes]]] = None,
         *,
         overwrite: Optional[bool] = None,
@@ -4950,8 +4887,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> None:
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
          the document key field must be specified in the indexer configuration. If ids are provided, the
          document key field is ignored. Is one of the following types: DocumentKeysOrIds, JSON,
@@ -4991,7 +4928,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 _content = None
 
         _request = build_search_indexer_reset_documents_request(
-            indexer_name=indexer_name,
+            name=name,
             overwrite=overwrite,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5023,11 +4960,11 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def run_indexer(self, indexer_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def run_indexer(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Runs an indexer on-demand.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5046,7 +4983,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_indexer_run_indexer_request(
-            indexer_name=indexer_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5077,7 +5014,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def _create_or_update_indexer(
         self,
-        indexer_name: str,
+        name: str,
         indexer: _models1.SearchIndexer,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -5090,7 +5027,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def _create_or_update_indexer(
         self,
-        indexer_name: str,
+        name: str,
         indexer: JSON,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -5103,7 +5040,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def _create_or_update_indexer(
         self,
-        indexer_name: str,
+        name: str,
         indexer: IO[bytes],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -5117,7 +5054,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     def _create_or_update_indexer(
         self,
-        indexer_name: str,
+        name: str,
         indexer: Union[_models1.SearchIndexer, JSON, IO[bytes]],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -5128,8 +5065,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models1.SearchIndexer:
         """Creates a new indexer or updates an indexer if it already exists.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :param indexer: The definition of the indexer to create or update. Is one of the following
          types: SearchIndexer, JSON, IO[bytes] Required.
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or JSON or IO[bytes]
@@ -5177,7 +5114,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             _content = json.dumps(indexer, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_indexer_create_or_update_indexer_request(
-            indexer_name=indexer_name,
+            name=name,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             etag=etag,
@@ -5226,17 +5163,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def _delete_indexer(  # pylint: disable=inconsistent-return-statements
-        self,
-        indexer_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any,
+        self, name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> None:
         """Deletes an indexer.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5266,7 +5198,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_indexer_delete_indexer_request(
-            indexer_name=indexer_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -5297,11 +5229,11 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_indexer(self, indexer_name: str, **kwargs: Any) -> _models1.SearchIndexer:
+    def get_indexer(self, name: str, **kwargs: Any) -> _models1.SearchIndexer:
         """Retrieves an indexer definition.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :return: SearchIndexer. The SearchIndexer is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5320,7 +5252,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         cls: ClsType[_models1.SearchIndexer] = kwargs.pop("cls", None)
 
         _request = build_search_indexer_get_indexer_request(
-            indexer_name=indexer_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5553,11 +5485,11 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_indexer_status(self, indexer_name: str, **kwargs: Any) -> _models1.SearchIndexerStatus:
+    def get_indexer_status(self, name: str, **kwargs: Any) -> _models1.SearchIndexerStatus:
         """Returns the current status and execution history of an indexer.
 
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
+        :param name: The name of the indexer. Required.
+        :type name: str
         :return: SearchIndexerStatus. The SearchIndexerStatus is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5576,7 +5508,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         cls: ClsType[_models1.SearchIndexerStatus] = kwargs.pop("cls", None)
 
         _request = build_search_indexer_get_indexer_status_request(
-            indexer_name=indexer_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5619,7 +5551,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def _create_or_update_skillset(
         self,
-        skillset_name: str,
+        name: str,
         skillset: _models1.SearchIndexerSkillset,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -5632,7 +5564,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def _create_or_update_skillset(
         self,
-        skillset_name: str,
+        name: str,
         skillset: JSON,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -5645,7 +5577,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def _create_or_update_skillset(
         self,
-        skillset_name: str,
+        name: str,
         skillset: IO[bytes],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -5659,7 +5591,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     def _create_or_update_skillset(
         self,
-        skillset_name: str,
+        name: str,
         skillset: Union[_models1.SearchIndexerSkillset, JSON, IO[bytes]],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -5670,8 +5602,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models1.SearchIndexerSkillset:
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
+        :param name: The name of the skillset. Required.
+        :type name: str
         :param skillset: The skillset containing one or more skills to create or update in a search
          service. Is one of the following types: SearchIndexerSkillset, JSON, IO[bytes] Required.
         :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or JSON or
@@ -5720,7 +5652,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             _content = json.dumps(skillset, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_indexer_create_or_update_skillset_request(
-            skillset_name=skillset_name,
+            name=name,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             etag=etag,
@@ -5769,17 +5701,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def _delete_skillset(  # pylint: disable=inconsistent-return-statements
-        self,
-        skillset_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any,
+        self, name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> None:
         """Deletes a skillset in a search service.
 
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
+        :param name: The name of the skillset. Required.
+        :type name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5809,7 +5736,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_indexer_delete_skillset_request(
-            skillset_name=skillset_name,
+            name=name,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -5840,11 +5767,11 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_skillset(self, skillset_name: str, **kwargs: Any) -> _models1.SearchIndexerSkillset:
+    def get_skillset(self, name: str, **kwargs: Any) -> _models1.SearchIndexerSkillset:
         """Retrieves a skillset in a search service.
 
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
+        :param name: The name of the skillset. Required.
+        :type name: str
         :return: SearchIndexerSkillset. The SearchIndexerSkillset is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5863,7 +5790,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         cls: ClsType[_models1.SearchIndexerSkillset] = kwargs.pop("cls", None)
 
         _request = build_search_indexer_get_skillset_request(
-            skillset_name=skillset_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6101,17 +6028,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @overload
     def reset_skills(
-        self,
-        skillset_name: str,
-        skill_names: _models1.SkillNames,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, name: str, skill_names: _models1.SkillNames, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reset an existing skillset in a search service.
 
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
+        :param name: The name of the skillset. Required.
+        :type name: str
         :param skill_names: The names of the skills to reset. If not specified, all skills in the
          skillset will be reset. Required.
         :type skill_names: ~azure.search.documents.indexes.models.SkillNames
@@ -6125,12 +6047,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @overload
     def reset_skills(
-        self, skillset_name: str, skill_names: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, skill_names: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reset an existing skillset in a search service.
 
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
+        :param name: The name of the skillset. Required.
+        :type name: str
         :param skill_names: The names of the skills to reset. If not specified, all skills in the
          skillset will be reset. Required.
         :type skill_names: JSON
@@ -6144,12 +6066,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @overload
     def reset_skills(
-        self, skillset_name: str, skill_names: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, skill_names: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reset an existing skillset in a search service.
 
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
+        :param name: The name of the skillset. Required.
+        :type name: str
         :param skill_names: The names of the skills to reset. If not specified, all skills in the
          skillset will be reset. Required.
         :type skill_names: IO[bytes]
@@ -6163,12 +6085,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def reset_skills(  # pylint: disable=inconsistent-return-statements
-        self, skillset_name: str, skill_names: Union[_models1.SkillNames, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, skill_names: Union[_models1.SkillNames, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Reset an existing skillset in a search service.
 
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
+        :param name: The name of the skillset. Required.
+        :type name: str
         :param skill_names: The names of the skills to reset. If not specified, all skills in the
          skillset will be reset. Is one of the following types: SkillNames, JSON, IO[bytes] Required.
         :type skill_names: ~azure.search.documents.indexes.models.SkillNames or JSON or IO[bytes]
@@ -6198,7 +6120,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             _content = json.dumps(skill_names, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_indexer_reset_skills_request(
-            skillset_name=skillset_name,
+            name=name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
