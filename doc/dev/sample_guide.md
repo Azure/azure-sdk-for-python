@@ -54,13 +54,17 @@ The given `START`/`END` keywords can be used in a [sphinx literalinclude][sphinx
 [Literalinclude example][literalinclude]
 
 The rendered code snippets are sensitive to the indentation in the sample file. Sphinx will adjust the dedent accordingly to ensure the sample is captured accurately and not accidentally trimmed.
-You can preview how published reference documentation will look by running [tox][tox]: `tox run -e sphinx -c ../../../eng/tox/tox.ini --root <path to python package>`.
+You can preview how published reference documentation will look by running either
+- [tox][tox]: `tox run -e sphinx -c ../../../eng/tox/tox.ini --root <path to python package>`. 
+- [azpysdk](../../doc/tool_usage_guide.md): run `azpysdk sphinx .` in the package directory.
 
 ## Test run samples in CI live tests
 Per the [Python guidelines][snippet_guidelines], sample code and snippets should be test run in CI to ensure they remain functional. Samples should be run in the package's live test pipeline which is scheduled to run daily.
 To ensure samples do get tested as part of regular CI runs, add these [lines][live_tests] to the package's tests.yml. 
 
-You can test this CI step locally first, by utilizing [tox][tox] and running `tox run -e samples -c ../../../eng/tox/tox.ini --root <path to python package>`.
+You can test this CI step locally first with tox or azpysdk:
+- To use [tox][tox], run `tox run -e samples -c ../../../eng/tox/tox.ini --root <path to python package>`. 
+- To use [azpysdk](../../doc/tool_usage_guide.md), run `azpysdk samples .` in the package directory.
 
 The `Test Samples` step in CI will rely on the resources provisioned and environment variables used for running the package's tests.
 
