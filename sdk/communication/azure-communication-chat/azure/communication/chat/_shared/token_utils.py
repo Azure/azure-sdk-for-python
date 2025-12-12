@@ -8,7 +8,7 @@
 import json
 from datetime import datetime, timezone
 from typing import Tuple, Any, List, Optional
-import isodate
+import isodate  # type: ignore[import-untyped]
 from azure.core.exceptions import HttpResponseError
 
 TEAMS_EXTENSION_SCOPE_PREFIX = "https://auth.msft.communication.azure.com/"
