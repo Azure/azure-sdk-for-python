@@ -46,7 +46,7 @@ class _CallbackChatTarget(PromptChatTarget):
 
         messages.append(request.to_chat_message())
 
-        logger.info(f"Sending the following prompt to the prompt target: {request}")
+        logger.debug(f"Sending the following prompt to the prompt target: {request}")
 
         # Extract context from request labels if available
         # The context is stored in memory labels when the prompt is sent by orchestrator
@@ -100,7 +100,7 @@ class _CallbackChatTarget(PromptChatTarget):
             response_entry.request_pieces[0].labels["token_usage"] = token_usage
             logger.debug(f"Captured token usage from callback: {token_usage}")
 
-        logger.info("Received the following response from the prompt target" + f"{response_text}")
+        logger.debug("Received the following response from the prompt target" + f"{response_text}")
         return response_entry
 
     def _validate_request(self, *, prompt_request: PromptRequestResponse) -> None:
