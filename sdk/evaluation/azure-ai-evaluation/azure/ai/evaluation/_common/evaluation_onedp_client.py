@@ -207,6 +207,7 @@ class EvaluationServiceOneDPClient:
                 # Use BytesIO for efficient in-memory test data
                 test_data = io.BytesIO(b"connectivity test")
                 container_client.upload_blob(data=test_data, name="test.txt", overwrite=True)
+                container_client.delete_blob(name="test.txt")
 
             LOGGER.debug("Storage account connectivity test successful")
             return True
