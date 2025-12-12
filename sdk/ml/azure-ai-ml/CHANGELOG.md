@@ -6,7 +6,6 @@
 
 - Added support for `default_deployment_template` property in Model entity, allowing models to specify a default deployment template for online deployments.
 - Online deployments now display informational messages when deploying models with configured default deployment templates.
-- Update the deployment template parameter `allowed_instance_type` -> `allowed_instance_types`
 
 ### Bugs Fixed
 
@@ -15,6 +14,7 @@
 - Ensuring that azureml-dataprep-rslex is only installed for PyPy below 3.10 and CPython below 3.13.
 - Adding support for Python 3.14.
 - Dropping support for Python 3.7 and 3.8.
+- Update the deployment template parameter `allowed_instance_type` -> `allowed_instance_types`
 
 ## 1.30.0 (2025-10-29)
 
