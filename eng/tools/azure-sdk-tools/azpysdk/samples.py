@@ -312,19 +312,6 @@ class samples(Check):
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
 
-            # build and install the package
-            create_package_and_install(
-                distribution_directory=staging_directory,
-                target_setup=package_dir,
-                skip_install=False,
-                cache_dir=None,
-                work_dir=staging_directory,
-                force_create=False,
-                package_type="sdist",
-                pre_download_disabled=False,
-                python_executable=executable,
-            )
-
             self.pip_freeze(executable)
 
             service_dir = os.path.join("sdk", package_dir)
