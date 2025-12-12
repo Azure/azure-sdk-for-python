@@ -45,7 +45,6 @@ class SampleExecutor:
             value = kwargs.pop(test_var, None)
             if value is not None:
                 self.env_vars[sample_var] = value
-        self.env_vars["AZURE_AI_MODEL_DEPLOYMENT_NAME"] = "gpt-4o"
 
         # Add the sample's directory to sys.path so it can import local modules
         self.sample_dir = os.path.dirname(sample_path)
@@ -345,6 +344,8 @@ class TestSamples(AzureRecordedTestCase):
     def _get_sample_environment_variables_map(self) -> dict[str, str]:
         return {
             "AZURE_AI_PROJECT_ENDPOINT": "azure_ai_projects_tests_project_endpoint",
+            "AZURE_AI_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_model_deployment_name",
+            "IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_image_generation_model_deployment_name",
             "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
             "AI_SEARCH_INDEX_NAME": "azure_ai_projects_tests_ai_search_index_name",
             "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",

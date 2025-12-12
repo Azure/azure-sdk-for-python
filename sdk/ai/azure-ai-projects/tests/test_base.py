@@ -47,6 +47,8 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_agents_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_projects_tests_model_deployment_name="gpt-4o",
+    azure_ai_projects_tests_image_generation_model_deployment_name="gpt-image-1-mini",
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
     azure_ai_projects_tests_bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
@@ -154,13 +156,13 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_agents_params = {
-        "model_deployment_name": "gpt-4o",
+        # "model_deployment_name": "gpt-4o",
         "agent_name": "agent-for-python-projects-sdk-testing",
     }
 
-    test_agents_tools_params = {
-        "image_generation_model_deployment_name": "gpt-image-1-mini",
-    }
+    # test_agents_tools_params = {
+    #     "image_generation_model_deployment_name": "gpt-image-1-mini",
+    # }
 
     test_inference_params = {
         "connection_name_api_key_auth": "connection1",
