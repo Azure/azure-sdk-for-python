@@ -384,6 +384,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         query_rewrites_count: Optional[int] = None,
         debug: Optional[Union[str, _models.QueryDebugMode]] = None,
         hybrid_search: Optional[_models.HybridSearch] = None,
+        query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
         **kwargs: Any,
     ) -> AsyncSearchItemPaged[Dict]:
         # pylint:disable=too-many-locals
@@ -515,8 +517,12 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
         :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
         :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
         :keyword enable_elevated_read: A value that enables elevated read that bypass document level
-            permission checks for the query operation. Default value is None.
+         permission checks for the query operation. Default value is None.
         :paramtype enable_elevated_read: bool
         :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
@@ -588,6 +594,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             query_rewrites_count=query_rewrites_count,
             debug=debug,
             hybrid_search=hybrid_search,
+            query_source_authorization=query_source_authorization,
+            enable_elevated_read=enable_elevated_read,
         )
 
         # Create kwargs for the search_post call
