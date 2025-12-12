@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
 # mypy: ignore-errors
+import asyncio
 import inspect
 import json
 import os
@@ -38,6 +39,7 @@ from ..client.tools._utils._model_base import ToolDefinition, UserInfo
 
 logger = get_logger()
 DEBUG_ERRORS = os.environ.get(Constants.AGENT_DEBUG_ERRORS, "false").lower() == "true"
+KEEP_ALIVE_INTERVAL = 15.0  # seconds
 
 class AgentRunContextMiddleware(BaseHTTPMiddleware):
     def __init__(self, app: ASGIApp, agent: Optional['FoundryCBAgent'] = None):
@@ -160,9 +162,14 @@ class FoundryCBAgent:
                         if ex:
                             return
                         it = iterate_in_threadpool(resp) if inspect.isgenerator(resp) else resp
-                        async for event in it:
-                            seq += 1
-                            yield _event_to_sse_chunk(event)
+                        # Wrap iterator with keep-alive mechanism
+                        async for event in _iter_with_keep_alive(it):
+                            if event is None:
+                                # Keep-alive signal
+                                yield _keep_alive_comment()
+                            else:
+                                seq += 1
+                                yield _event_to_sse_chunk(event)
                         logger.info("End of processing CreateResponse request.")
                     except Exception as e:  # noqa: BLE001
                         logger.error("Error in async generator: %s", e, exc_info=True)
@@ -515,6 +522,54 @@ def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
     if event.type:
         return f"event: {event.type}\ndata: {event_data}\n\n"
     return f"data: {event_data}\n\n"
+
+
+def _keep_alive_comment() -> str:
+    """Generate a keep-alive SSE comment to maintain connection."""
+    return ": keep-alive\n\n"
+
+
+async def _iter_with_keep_alive(
+    it: AsyncGenerator[ResponseStreamEvent, None]
+) -> AsyncGenerator[Optional[ResponseStreamEvent], None]:
+    """Wrap an async iterator with keep-alive mechanism.
+    
+    If no event is received within KEEP_ALIVE_INTERVAL seconds,
+    yields None as a signal to send a keep-alive comment.
+    The original iterator is protected with asyncio.shield to ensure
+    it continues running even when timeout occurs.
+    """
+    it_anext = it.__anext__
+    pending_task: Optional[asyncio.Task] = None
+    
+    while True:
+        try:
+            # If there's a pending task from previous timeout, wait for it first
+            if pending_task is not None:
+                event = await pending_task
+                pending_task = None
+                yield event
+                continue
+            
+            # Create a task for the next event
+            next_event_task = asyncio.create_task(it_anext())
+            
+            try:
+                # Shield the task and wait with timeout
+                event = await asyncio.wait_for(
+                    asyncio.shield(next_event_task), 
+                    timeout=KEEP_ALIVE_INTERVAL
+                )
+                yield event
+            except asyncio.TimeoutError:
+                # Timeout occurred, but task continues due to shield
+                # Save task to check in next iteration
+                pending_task = next_event_task
+                yield None
+                
+        except StopAsyncIteration:
+            # Iterator exhausted
+            break
 
 
 def _format_error(exc: Exception) -> str:
