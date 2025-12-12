@@ -36,7 +36,7 @@ USAGE:
       the `ImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
       calling `.responses.create`.
     - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1-mini".
-    - The generated image will be saved as "microsoft.png" in the current directory.
+    - The generated image will be saved as "microsoft.png" in the OS temporary directory.
 """
 
 import asyncio
