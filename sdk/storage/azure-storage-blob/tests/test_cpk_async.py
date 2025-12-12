@@ -679,7 +679,6 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
-            snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
@@ -725,7 +724,6 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
-            snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
@@ -770,7 +768,6 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
-            snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
@@ -816,7 +813,6 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
-            snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
