@@ -32,13 +32,13 @@ def main():
     )
 
     response = client.private_link_resources.list_by_server(
-        resource_group_name="Default",
-        server_name="test-svr",
+        resource_group_name="exampleresourcegroup",
+        server_name="exampleserver",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/PrivateLinkResourcesList.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2025-08-01/examples/PrivateLinkResourcesList.json
 if __name__ == "__main__":
     main()

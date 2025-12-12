@@ -9,7 +9,7 @@ import psutil
 
 from opentelemetry import metrics
 from opentelemetry.metrics import CallbackOptions, Observation
-from opentelemetry.sdk._logs import LogData
+from opentelemetry.sdk._logs import ReadableLogRecord
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_MESSAGE,
@@ -632,13 +632,13 @@ class _PerformanceCountersManager(metaclass=Singleton):
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while recording span.")  # pylint: disable=C4769
 
-    def _record_log_record(self, log_data: LogData) -> None:
+    def _record_log_record(self, readable_log_record: ReadableLogRecord) -> None:
         try:
             # pylint: disable=global-statement
             global _EXCEPTIONS_COUNT
-            if log_data.log_record:
+            if readable_log_record.log_record:
                 exc_type = None
-                log_record = log_data.log_record
+                log_record = readable_log_record.log_record
                 if log_record.attributes:
                     exc_type = log_record.attributes.get(EXCEPTION_TYPE)
                     exc_message = log_record.attributes.get(EXCEPTION_MESSAGE)

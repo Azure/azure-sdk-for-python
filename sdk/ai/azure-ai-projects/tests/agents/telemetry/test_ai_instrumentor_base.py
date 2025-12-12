@@ -130,7 +130,7 @@ class TestAiAgentsInstrumentorBase(TestBase):
         content = f'{{"content": "{message}", "role": "user"}}' if recording_enabled else '{"role": "user"}'
         expected_events = [
             {
-                "name": "gen_ai.user.message",
+                "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",
@@ -183,11 +183,11 @@ class TestAiAgentsInstrumentorBase(TestBase):
             tool_attr = tool_message_attribute_content if recording_enabled else ""
             expected_events = [
                 {
-                    "name": "gen_ai.tool.message",
+                    "name": "gen_ai.input.messages",
                     "attributes": {"gen_ai.event.content": f'{{"content": "{tool_attr}", "id": "*"}}'},
                 },
                 {
-                    "name": "gen_ai.assistant.message",
+                    "name": "gen_ai.output.messages",
                     "attributes": {
                         "gen_ai.system": "az.ai.agents",
                         "gen_ai.thread.id": "*",
@@ -202,7 +202,7 @@ class TestAiAgentsInstrumentorBase(TestBase):
                     },
                 },
                 {
-                    "name": "gen_ai.assistant.message",
+                    "name": "gen_ai.output.messages",
                     "attributes": {
                         "gen_ai.system": "az.ai.agents",
                         "gen_ai.thread.id": "*",
@@ -240,7 +240,7 @@ class TestAiAgentsInstrumentorBase(TestBase):
             content = '{"role": "assistant"}'
         expected_events = [
             {
-                "name": "gen_ai.assistant.message",
+                "name": "gen_ai.output.messages",
                 "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
@@ -266,7 +266,7 @@ class TestAiAgentsInstrumentorBase(TestBase):
         )
         expected_events = [
             {
-                "name": "gen_ai.user.message",
+                "name": "gen_ai.input.messages",
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",

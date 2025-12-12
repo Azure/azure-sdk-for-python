@@ -1339,6 +1339,8 @@ class SharePropertiesInternal(_serialization.Model):
     :vartype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
     :ivar next_allowed_provisioned_bandwidth_downgrade_time:
     :vartype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+    :ivar enable_smb_directory_lease:
+    :vartype enable_smb_directory_lease: bool
     """
 
     _validation = {
@@ -1380,6 +1382,7 @@ class SharePropertiesInternal(_serialization.Model):
             "key": "NextAllowedProvisionedBandwidthDowngradeTime",
             "type": "rfc-1123",
         },
+        "enable_smb_directory_lease": {"key": "EnableSmbDirectoryLease", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1411,6 +1414,7 @@ class SharePropertiesInternal(_serialization.Model):
         max_burst_credits_for_iops: Optional[int] = None,
         next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = None,
         next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1469,6 +1473,8 @@ class SharePropertiesInternal(_serialization.Model):
         :paramtype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
         :keyword next_allowed_provisioned_bandwidth_downgrade_time:
         :paramtype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+        :keyword enable_smb_directory_lease:
+        :paramtype enable_smb_directory_lease: bool
         """
         super().__init__(**kwargs)
         self.last_modified = last_modified
@@ -1497,6 +1503,7 @@ class SharePropertiesInternal(_serialization.Model):
         self.max_burst_credits_for_iops = max_burst_credits_for_iops
         self.next_allowed_provisioned_iops_downgrade_time = next_allowed_provisioned_iops_downgrade_time
         self.next_allowed_provisioned_bandwidth_downgrade_time = next_allowed_provisioned_bandwidth_downgrade_time
+        self.enable_smb_directory_lease = enable_smb_directory_lease
 
 
 class ShareProtocolSettings(_serialization.Model):

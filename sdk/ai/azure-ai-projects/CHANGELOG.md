@@ -4,11 +4,35 @@
 
 ### Features Added
 
+* The package now takes dependency on openai and azure-identity packages. No need to install them separately.
+* Tracing: support for tracing the schema when agent is created with structured output definition.
+
 ### Breaking changes
 
+* Rename class `AgentObject` to `AgentDetails`
+* Rename class `AgentVersionObject` to `AgentVersionDetails`
+* Rename class `MemoryStoreObject` to `MemoryStoreDetails`
+* Tracing: removed outer "content" from event content format wrapper and unified type-specific keys (e.g., "text", "image_url") to generic "content" key.
+* Tracing: replaced "gen_ai.request.assistant_name" attribute with gen_ai.agent.name.
+* Tracing: removed "gen_ai.system" - the "gen_ai.provider.name" provides same information.
+* Tracing: changed "gen_ai.user.message" and "gen_ai.tool.message" to "gen_ai.input.messages". Changed "gen_ai.assistant.message" to "gen_ai.output.messages".
+* Tracing: changed "gen_ai.system.instruction" to "gen_ai.system.instructions".
+* Tracing: added the "parts" array to "gen_ai.input.messages" and "gen_ai.output.messages".
+* Tracing: removed "role" as a separate attribute and added "role" to "gen_ai.input.messages" and "gen_ai.output.messages" content.
+* Tracing: added "finish_reason" as part of "gen_ai.output.messages" content.
+* Tracing: changed the tool calls to use the api definitions as the types in traces. For example "function_call" instead of "function" and "function_call_output" instead of "function"
+
 ### Bugs Fixed
+* Tracing: fixed a bug with computer use tool call output including screenshot binary data even when binary data tracing is off.
 
 ### Sample updates
+
+* Added OpenAPI tool sample. See `sample_agent_openapi.py`.
+* Added OpenAPI with Project Connection sample. See `sample_agent_openapi_with_project_connection.py`.
+* Added SharePoint grounding tool sample. See `sample_agent_sharepoint.py`.
+* Improved MCP client sample showing direct MCP tool invocation. See `samples/mcp_client/sample_mcp_tool_async.py`.
+* Samples that download generated files (code interpreter and image generation) now save files to the system temp directory instead of the current working directory. See `sample_agent_code_interpreter.py`, `sample_agent_code_interpreter_async.py`, `sample_agent_image_generation.py`, and `sample_agent_image_generation_async.py`.
+* The Agent to Agent sample was updated to allow "Custom keys" connection type.
 
 ## 2.0.0b2 (2025-11-14)
 
