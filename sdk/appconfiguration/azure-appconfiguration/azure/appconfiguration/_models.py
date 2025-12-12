@@ -768,7 +768,7 @@ class _BaseConfigurationSettingEtagPageIterator:
         :rtype: str
         """
         if self._base_iterator.continuation_token is None:
-            query_string = urlencode(self._build_query_params(), doseq=True)
+            query_string = urlencode(self._build_query_params(), doseq=True)  # cspell:disable-line
             return f"{self._client._impl._client._base_url}/kv?{query_string}"  # pylint: disable=protected-access
         base_url = self._client._impl._client._base_url  # pylint: disable=protected-access
         token = self._base_iterator.continuation_token
