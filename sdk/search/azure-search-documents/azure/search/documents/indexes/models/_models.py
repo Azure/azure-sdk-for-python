@@ -1196,68 +1196,6 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
         self.odata_type = "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"  # type: ignore
 
 
-class AzureOpenAiParameters(_Model):
-    """Specifies the parameters for connecting to the Azure OpenAI resource.
-
-    :ivar resource_uri: The resource URI of the Azure OpenAI resource.
-    :vartype resource_uri: str
-    :ivar deployment_id: ID of the Azure OpenAI model deployment on the designated resource.
-    :vartype deployment_id: str
-    :ivar api_key: API key of the designated Azure OpenAI resource.
-    :vartype api_key: str
-    :ivar auth_identity: The user-assigned managed identity used for outbound connections.
-    :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
-     path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
-     "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
-     "gpt-5", "gpt-5-mini", and "gpt-5-nano".
-    :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
-    """
-
-    resource_uri: Optional[str] = rest_field(
-        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource URI of the Azure OpenAI resource."""
-    deployment_id: Optional[str] = rest_field(
-        name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """ID of the Azure OpenAI model deployment on the designated resource."""
-    api_key: Optional[str] = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
-    """API key of the designated Azure OpenAI resource."""
-    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
-        name="authIdentity", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The user-assigned managed identity used for outbound connections."""
-    model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = rest_field(
-        name="modelName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of the embedding model that is deployed at the provided deploymentId path. Known
-     values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
-     \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
-     \"gpt-5-mini\", and \"gpt-5-nano\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_uri: Optional[str] = None,
-        deployment_id: Optional[str] = None,
-        api_key: Optional[str] = None,
-        auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
-        model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AzureOpenAITokenizerParameters(_Model):
     """Azure OpenAI Tokenizer parameters.
 
@@ -5856,12 +5794,13 @@ class KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator="azureOpen
     :ivar kind: Required. Use Azure Open AI models for query planning.
     :vartype kind: str or ~azure.search.documents.indexes.models.AZURE_OPEN_AI
     :ivar azure_open_ai_parameters: Azure OpenAI parameters. Required.
-    :vartype azure_open_ai_parameters: ~azure.search.documents.indexes.models.AzureOpenAiParameters
+    :vartype azure_open_ai_parameters:
+     ~azure.search.documents.indexes.models.AzureOpenAIVectorizerParameters
     """
 
     kind: Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Use Azure Open AI models for query planning."""
-    azure_open_ai_parameters: "_models.AzureOpenAiParameters" = rest_field(
+    azure_open_ai_parameters: "_models.AzureOpenAIVectorizerParameters" = rest_field(
         name="azureOpenAIParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure OpenAI parameters. Required."""
@@ -5870,7 +5809,7 @@ class KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator="azureOpen
     def __init__(
         self,
         *,
-        azure_open_ai_parameters: "_models.AzureOpenAiParameters",
+        azure_open_ai_parameters: "_models.AzureOpenAIVectorizerParameters",
     ) -> None: ...
 
     @overload

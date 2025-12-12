@@ -151,6 +151,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         else:
             self.actions.append(actions)
 
+
 def patch_sdk():
     """Do not remove from this file.
 

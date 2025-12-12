@@ -1469,13 +1469,14 @@ class KnowledgeSourceAzureOpenAIVectorizer(KnowledgeSourceVectorizer, discrimina
     :vartype kind: str or ~azure.search.documents.indexes.models.AZURE_OPEN_AI
     :ivar azure_open_ai_parameters: Contains the parameters specific to Azure OpenAI embedding
      vectorization.
-    :vartype azure_open_ai_parameters: ~azure.search.documents.indexes.models.AzureOpenAiParameters
+    :vartype azure_open_ai_parameters:
+     ~azure.search.documents.indexes.models.AzureOpenAIVectorizerParameters
     """
 
     kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. Generate embeddings using an Azure OpenAI resource at query
      time."""
-    azure_open_ai_parameters: Optional["_indexes_models3.AzureOpenAiParameters"] = rest_field(
+    azure_open_ai_parameters: Optional["_indexes_models3.AzureOpenAIVectorizerParameters"] = rest_field(
         name="azureOpenAIParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the parameters specific to Azure OpenAI embedding vectorization."""
@@ -1484,7 +1485,7 @@ class KnowledgeSourceAzureOpenAIVectorizer(KnowledgeSourceVectorizer, discrimina
     def __init__(
         self,
         *,
-        azure_open_ai_parameters: Optional["_indexes_models3.AzureOpenAiParameters"] = None,
+        azure_open_ai_parameters: Optional["_indexes_models3.AzureOpenAIVectorizerParameters"] = None,
     ) -> None: ...
 
     @overload
