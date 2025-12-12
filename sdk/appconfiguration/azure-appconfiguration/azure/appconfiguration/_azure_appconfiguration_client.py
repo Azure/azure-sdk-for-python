@@ -36,8 +36,8 @@ from ._utils import (
     get_key_filter,
     get_label_filter,
     parse_connection_string,
-    get_default_scope,
 )
+from ._scope import get_default_scope
 from ._sync_token import SyncTokenPolicy
 
 
