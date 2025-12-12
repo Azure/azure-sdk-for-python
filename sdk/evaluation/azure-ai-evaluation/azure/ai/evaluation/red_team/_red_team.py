@@ -1347,6 +1347,17 @@ class RedTeam:
                 # Update result processor with the AI studio URL now that it's available
                 self.result_processor.ai_studio_url = self.mlflow_integration.ai_studio_url
 
+                # Test storage connectivity early to catch issues before running attacks
+                try:
+                    tqdm.write("🔍 Validating storage account connectivity...")
+                    self.mlflow_integration.test_storage_upload()
+                    tqdm.write("✅ Storage account validation successful")
+                except Exception as e:
+                    # Log the error and re-raise to stop the scan early
+                    self.logger.error(f"Storage account validation failed: {str(e)}")
+                    tqdm.write(f"❌ Storage account validation failed: {str(e)}")
+                    raise
+
             # Process strategies and execute scan
             flattened_attack_strategies = get_flattened_attack_strategies(attack_strategies)
             self._validate_strategies(flattened_attack_strategies)
