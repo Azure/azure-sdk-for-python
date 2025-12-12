@@ -7,17 +7,11 @@ from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, get_pip_command
-from ci_tools.scenario.generation import create_package_and_install
-from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
-from ci_tools.environment_exclusions import is_check_enabled
-from ci_tools.logging import logger, run_logged
+from ci_tools.functions import install_into_venv
+from ci_tools.variables import discover_repo_root, set_envvar_defaults
+from ci_tools.logging import logger
 
-# TODO use subprocess32 still??
-try:
-    from subprocess import TimeoutExpired, check_call, CalledProcessError
-except ImportError:
-    from subprocess32 import TimeoutExpired, check_call, CalledProcessError
+from subprocess import TimeoutExpired, check_call, CalledProcessError
 from ci_tools.functions import compare_python_version
 
 REPO_ROOT = discover_repo_root()
