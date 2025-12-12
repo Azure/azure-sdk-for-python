@@ -61,7 +61,7 @@ setup(
     package_data={
         'pytyped': ['py.typed'],
     },
-    python_requires=">=3.7",
+    python_requires=">=3.9",
     install_requires=[
         'azure-core<2.0.0,>=1.26.0',
         'azure-mixedreality-authentication>=1.0.0b1',

@@ -67,7 +67,7 @@ setup(
     package_data={
         'azure.ai.formrecognizer': ['py.typed'],
     },
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "azure-core>=1.30.0",
         "msrest>=0.6.21",
