@@ -13,6 +13,7 @@ from ci_tools.logging import logger
 
 REPO_ROOT = discover_repo_root()
 
+
 class InstallAndTest(Check):
     """Shared implementation for build-and-test style checks."""
 
@@ -108,9 +109,7 @@ class InstallAndTest(Check):
                     continue
                 else:
                     results.append(pytest_result.returncode)
-                    logger.error(
-                        f"pytest failed for {package_name} with exit code {pytest_result.returncode}."
-                    )
+                    logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
                     continue
 
             if not self.coverage_enabled:

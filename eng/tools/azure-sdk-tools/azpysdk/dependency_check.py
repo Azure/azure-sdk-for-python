@@ -116,9 +116,7 @@ class DependencyCheck(Check):
                         package_name,
                     )
                     continue
-                logger.error(
-                    f"pytest failed for {package_name} with exit code {pytest_result.returncode}."
-                )
+                logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
                 results.append(pytest_result.returncode)
 
         return max(results) if results else 0

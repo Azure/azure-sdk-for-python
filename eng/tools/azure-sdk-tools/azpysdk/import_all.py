@@ -81,7 +81,9 @@ class import_all(Check):
                 if outcomes[-1] == 0:
                     logger.info("Verified module dependency, no issues found")
                 else:
-                    logger.error(f"Dependency issue found when invoking \"{import_script_all}\" against package {parsed.name}")
+                    logger.error(
+                        f'Dependency issue found when invoking "{import_script_all}" against package {parsed.name}'
+                    )
             else:
                 logger.info("Package {} is excluded from dependency check".format(parsed.name))
 

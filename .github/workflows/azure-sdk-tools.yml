@@ -92,7 +92,7 @@ jobs:
 
       - name: Run all discovered checks against azure-template using uv as package manager
         run: |
-          sdk_build azure-template -d $(pwd)/wheels
+          sdk_build azure-template -d $(pwd)/wheels --buildid 20250101.1
           python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
         shell: bash
         env:

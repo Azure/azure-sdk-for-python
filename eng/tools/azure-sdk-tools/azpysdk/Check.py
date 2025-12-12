@@ -39,6 +39,7 @@ PACKAGING_REQUIREMENTS = [
 TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
 DEPENDENCY_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/dependency_tools.txt")
 
+
 class Check(abc.ABC):
     """
     Base class for checks.
