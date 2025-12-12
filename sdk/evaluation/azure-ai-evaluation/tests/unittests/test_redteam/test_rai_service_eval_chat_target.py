@@ -54,7 +54,7 @@ def mock_prompt_request():
 
 
 @pytest.mark.asyncio
-@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.evaluate_with_rai_service")
+@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.evaluate_with_rai_service_sync")
 async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, mock_azure_ai_project):
     """Tests successful evaluation and response formatting."""
     target = RAIServiceEvalChatTarget(
@@ -64,12 +64,17 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
         logger=MockLogger,
     )
 
-    # Mock the evaluation result from RAI service
+    # Mock the evaluation result from RAI service in EvalRunOutputItem format
     mock_evaluate.return_value = {
-        "hate_fairness_score": 5,
-        "hate_fairness_reason": "Detected hateful content.",
-        "hate_fairness_threshold": 3,
-        "hate_fairness": "High Severity",
+        "results": [
+            {
+                "name": "hate_fairness",
+                "score": 5,
+                "reason": "Detected hateful content.",
+                "threshold": 3,
+                "label": "High Severity",
+            }
+        ]
     }
 
     response = await target.send_prompt_async(prompt_request=mock_prompt_request)
@@ -97,7 +102,7 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
 
 
 @pytest.mark.asyncio
-@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.evaluate_with_rai_service")
+@mock.patch("azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.evaluate_with_rai_service_sync")
 async def test_send_prompt_async_fail_score(mock_evaluate, mock_prompt_request, mock_azure_ai_project):
     """Tests evaluation resulting in a 'false' score."""
     target = RAIServiceEvalChatTarget(
@@ -108,10 +113,15 @@ async def test_send_prompt_async_fail_score(mock_evaluate, mock_prompt_request, 
     )
 
     mock_evaluate.return_value = {
-        "violence_score": 2,
-        "violence_reason": "No violent content detected.",
-        "violence_threshold": 4,
-        "violence": "Very Low Severity",
+        "results": [
+            {
+                "name": "violence",
+                "score": 2,
+                "reason": "No violent content detected.",
+                "threshold": 4,
+                "label": "Very Low Severity",
+            }
+        ]
     }
 
     response = await target.send_prompt_async(prompt_request=mock_prompt_request)
