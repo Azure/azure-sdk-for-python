@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `match_conditions` parameter to `by_page()` method in `list_configuration_settings()` to efficiently monitor configuration changes using etags without fetching unchanged data.
+
 ### Breaking Changes
 
 ### Bugs Fixed
