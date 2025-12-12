@@ -3265,3 +3265,152 @@ trigger:
             # action_id and previous_action_id should NOT be present when content recording is off
             assert "action_id" not in part["content"]
             assert "previous_action_id" not in part["content"]
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_non_streaming(self, **kwargs):
+        """Test prompt agent with responses API (async non-streaming) and verify agent id in traces."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = project_client.get_openai_client()
+
+            # Create a simple prompt agent
+            agent = await project_client.agents.create_version(
+                agent_name="PromptTestAgent",
+                definition=PromptAgentDefinition(
+                    model=deployment_name,
+                    instructions="You are a helpful assistant that answers general questions.",
+                ),
+            )
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # Create response with agent name and id
+            response = await client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                input="What is the capital of France?",
+            )
+            
+            assert hasattr(response, "output_text")
+            assert response.output_text is not None
+            assert len(response.output_text) > 0
+
+            # Cleanup
+            await client.conversations.delete(conversation_id=conversation.id)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+
+        # Verify traces contain agent name and id
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        assert len(spans) >= 1
+
+        # Validate span attributes
+        span = spans[0]
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.agent.name", agent.name),
+            ("gen_ai.agent.id", agent.id),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_streaming(self, **kwargs):
+        """Test prompt agent with responses API (async streaming) and verify agent id in traces."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = project_client.get_openai_client()
+
+            # Create a simple prompt agent
+            agent = await project_client.agents.create_version(
+                agent_name="PromptTestAgentStreaming",
+                definition=PromptAgentDefinition(
+                    model=deployment_name,
+                    instructions="You are a helpful assistant that answers general questions.",
+                ),
+            )
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # Create streaming response with agent name and id
+            stream = await client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                input="What is the capital of France?",
+                stream=True,
+            )
+
+            # Consume the stream
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(str(chunk.output))
+            
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+            # Cleanup
+            await client.conversations.delete(conversation_id=conversation.id)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+
+        # Verify traces contain agent name and id
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        assert len(spans) >= 1
+
+        # Validate span attributes
+        span = spans[0]
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.agent.name", agent.name),
+            ("gen_ai.agent.id", agent.id),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
