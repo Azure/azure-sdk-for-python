@@ -4471,7 +4471,7 @@ trigger:
                 extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the capital of France?",
             )
-            
+
             assert hasattr(response, "output_text")
             assert response.output_text is not None
             assert len(response.output_text) > 0
@@ -4548,7 +4548,7 @@ trigger:
                     accumulated_content.append(chunk.delta)
                 elif hasattr(chunk, "output") and chunk.output:
                     accumulated_content.append(str(chunk.output))
-            
+
             full_content = "".join(accumulated_content)
             assert full_content is not None
             assert len(full_content) > 0
