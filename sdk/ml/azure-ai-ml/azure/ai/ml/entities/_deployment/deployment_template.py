@@ -362,7 +362,9 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         )
 
         # Extract additional fields
-        allowed_instance_types = get_value(properties, "allowedInstanceTypes") or get_value(obj, "allowed_instance_types")
+        allowed_instance_types = get_value(properties, "allowedInstanceTypes") or get_value(
+            obj, "allowed_instance_types"
+        )
         scoring_port = get_value(properties, "scoringPort") or get_value(obj, "scoring_port")
         scoring_path = get_value(properties, "scoringPath") or get_value(obj, "scoring_path")
         model_mount_path = get_value(properties, "modelMountPath") or get_value(obj, "model_mount_path")
