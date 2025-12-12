@@ -1,5 +1,9 @@
 # Release History
 
+## 1.1.0b2 (2025-12-12)
+
+tool can't generate changelog for this release, please update manually.
+
 ## 1.1.0b2 (2025-12-11)
 
 tool can't generate changelog for this release, please update manually.

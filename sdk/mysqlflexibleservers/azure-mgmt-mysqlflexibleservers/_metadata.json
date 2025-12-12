@@ -1,6 +1,6 @@
 {
   "apiVersion": "2025-06-01-preview",
-  "commit": "038477df423d5f67548f984616e6550b97f13ec7",
+  "commit": "342e8540894e2ba2dc214cc30f3bb2ff2e21a50c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers",
   "emitterVersion": "0.53.1",
