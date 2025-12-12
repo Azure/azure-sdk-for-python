@@ -19,9 +19,12 @@ try:
 except ImportError:
     from subprocess32 import TimeoutExpired, check_call, CalledProcessError
 from ci_tools.functions import compare_python_version
-from common_tasks import run_check_call
 
 REPO_ROOT = discover_repo_root()
+
+common_task_path = os.path.abspath(os.path.join(REPO_ROOT, "scripts", "devops_tasks"))
+sys.path.append(common_task_path)
+from common_tasks import run_check_call
 
 MINIMUM_TESTED_PYTHON_VERSION = ">=3.8.0"
 
@@ -80,17 +83,15 @@ IGNORED_SAMPLES = {
     "azure-appconfiguration-provider": [
         "key_vault_reference_customized_clients_sample.py",
         "aad_sample.py",
-        "key_vault_reference_sample.py"
+        "key_vault_reference_sample.py",
     ],
-    "azure-ai-ml": [
-        "ml_samples_authentication_sovereign_cloud.py"
-    ],
+    "azure-ai-ml": ["ml_samples_authentication_sovereign_cloud.py"],
     "azure-eventgrid": [
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
         "consume_eventgrid_events_from_service_bus_queue.py",
         "sample_publish_events_to_a_topic_using_sas_credential.py",
-        "sample_publish_events_to_a_topic_using_sas_credential_async.py"
+        "sample_publish_events_to_a_topic_using_sas_credential_async.py",
     ],
     "azure-eventhub": [
         "client_identity_authentication.py",
@@ -144,12 +145,9 @@ IGNORED_SAMPLES = {
         "sample_translation_with_custom_model.py",
         "sample_translation_with_custom_model_async.py",
         "sample_begin_translation_with_filters.py",
-        "sample_begin_translation_with_filters_async.py"
+        "sample_begin_translation_with_filters_async.py",
     ],
-    "azure-ai-language-questionanswering": [
-        "sample_export_import_project.py",
-        "sample_export_import_project_async.py"
-    ],
+    "azure-ai-language-questionanswering": ["sample_export_import_project.py", "sample_export_import_project_async.py"],
     "azure-ai-textanalytics": [
         "sample_analyze_healthcare_entities_with_cancellation.py",
         "sample_analyze_healthcare_entities_with_cancellation_async.py",
@@ -160,9 +158,10 @@ IGNORED_SAMPLES = {
         "blob_samples_proxy_configuration.py",
         "blob_samples_container_access_policy.py",
         "blob_samples_container_access_policy_async.py",
-        "blob_samples_client_side_encryption_keyvault.py"
+        "blob_samples_client_side_encryption_keyvault.py",
     ],
 }
+
 
 def run_check_call_with_timeout(
     command_array,
@@ -176,11 +175,7 @@ def run_check_call_with_timeout(
     Don't want to break anyone that's using the original code.
     """
     try:
-        logger.info(
-            "Command Array: {0}, Target Working Directory: {1}".format(
-                command_array, working_directory
-            )
-        )
+        logger.info("Command Array: {0}, Target Working Directory: {1}".format(command_array, working_directory))
         check_call(command_array, cwd=working_directory, timeout=timeout)
     except CalledProcessError as err:
         if err.returncode not in acceptable_return_codes:
@@ -196,12 +191,13 @@ def run_check_call_with_timeout(
             logger.info("Fail: Sample timed out")
             return err
 
+
 def execute_sample(sample, samples_errors, timed):
+    timeout = None
+    pass_if_timeout = True
+
     if isinstance(sample, tuple):
         sample, timeout, pass_if_timeout = sample
-    else:
-        logger.error("Sample format incorrect.")
-        return 
 
     if sys.version_info < (3, 5) and sample.endswith("_async.py"):
         return
@@ -212,9 +208,7 @@ def execute_sample(sample, samples_errors, timed):
     if not timed:
         errors = run_check_call(command_array, REPO_ROOT, always_exit=False)
     else:
-        errors = run_check_call_with_timeout(
-            command_array, REPO_ROOT, timeout, pass_if_timeout
-        )
+        errors = run_check_call_with_timeout(command_array, REPO_ROOT, timeout, pass_if_timeout)
 
     sample_name = os.path.basename(sample)
     if errors:
@@ -225,21 +219,16 @@ def execute_sample(sample, samples_errors, timed):
 
 
 def resolve_sample_ignore(sample_file, package_name):
-    ignored_files = [
-        (f, ">=2.7") if not isinstance(f, tuple) else f
-        for f in IGNORED_SAMPLES.get(package_name, [])
-    ]
+    ignored_files = [(f, ">=2.7") if not isinstance(f, tuple) else f for f in IGNORED_SAMPLES.get(package_name, [])]
     ignored_files_dict = {key: value for (key, value) in ignored_files}
 
-    if sample_file in ignored_files_dict and compare_python_version(
-        ignored_files_dict[sample_file]
-    ):
+    if sample_file in ignored_files_dict and compare_python_version(ignored_files_dict[sample_file]):
         return False
     else:
         return True
-    
 
-def run_samples(targeted_package):
+
+def run_samples(executable: str, targeted_package: str) -> None:
     logger.info("running samples for {}".format(targeted_package))
 
     samples_errors = []
@@ -254,7 +243,7 @@ def run_samples(targeted_package):
     try:
         with open(samples_dir_path + "/sample_dev_requirements.txt") as sample_dev_reqs:
             for dep in sample_dev_reqs.readlines():
-                check_call([sys.executable, "-m", "pip", "install", dep])
+                install_into_venv(executable, ["-m", "pip", "install", dep.strip()], targeted_package)
     except IOError:
         pass
 
@@ -293,6 +282,7 @@ def run_samples(targeted_package):
 
     logger.info("All samples ran successfully in {}".format(targeted_package))
 
+
 class samples(Check):
     def __init__(self) -> None:
         super().__init__()
@@ -302,7 +292,11 @@ class samples(Check):
     ) -> None:
         """Register the samples check. The samples check runs a package's samples."""
         parents = parent_parsers or []
-        p = subparsers.add_parser("samples", parents=parents, help="Run a package's samples. Installs dependencies and packages, tests Azure packages' samples, called from DevOps YAML pipeline.")
+        p = subparsers.add_parser(
+            "samples",
+            parents=parents,
+            help="Run a package's samples. Installs dependencies and packages, tests Azure packages' samples, called from DevOps YAML pipeline.",
+        )
         p.set_defaults(func=self.run)
 
     def run(self, args: argparse.Namespace) -> int:
@@ -330,11 +324,12 @@ class samples(Check):
 
             if compare_python_version(MINIMUM_TESTED_PYTHON_VERSION):
                 try:
-                    logger.info(f"User opted to run samples for {package_name}, and package version is greater than minimum supported.")
-                    run_samples(target_dir)
+                    logger.info(
+                        f"User opted to run samples for {package_name}, and package version is greater than minimum supported."
+                    )
+                    run_samples(executable, target_dir)
                 except Exception as e:
                     logger.error(f"An error occurred while running samples for {package_name}: {e}")
                     results.append(1)
-
 
         return max(results) if results else 0
