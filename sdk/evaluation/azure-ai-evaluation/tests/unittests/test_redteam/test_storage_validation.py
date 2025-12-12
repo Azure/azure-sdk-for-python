@@ -42,15 +42,15 @@ class TestStorageValidation(unittest.TestCase):
             mock_container_client.__exit__ = Mock(return_value=None)
             mock_container_client_class.from_container_url.return_value = mock_container_client
             
-            # Mock the upload function to succeed
-            with patch('azure.ai.evaluation._common.evaluation_onedp_client.upload') as mock_upload:
-                # Act
-                client = EvaluationServiceOneDPClient(self.test_endpoint, self.mock_credential)
-                result = client.test_storage_upload()
-                
-                # Assert
-                self.assertTrue(result)
-                mock_upload.assert_called_once()
+            # Mock the upload_blob method to succeed
+            mock_container_client.upload_blob = Mock()
+            # Act
+            client = EvaluationServiceOneDPClient(self.test_endpoint, self.mock_credential)
+            result = client.test_storage_upload()
+            
+            # Assert
+            self.assertTrue(result)
+            mock_container_client.upload_blob.assert_called_once()
 
     @patch('azure.ai.evaluation._common.evaluation_onedp_client.RestEvaluationServiceClient')
     def test_test_storage_upload_failure(self, mock_rest_client_class):
