@@ -6,7 +6,7 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 from azure.ai.evaluation._common.evaluation_onedp_client import EvaluationServiceOneDPClient
 from azure.ai.evaluation._common.utils import upload
 from azure.ai.evaluation._exceptions import EvaluationException
