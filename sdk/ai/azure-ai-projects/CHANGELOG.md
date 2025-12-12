@@ -5,6 +5,7 @@
 ### Features Added
 
 * The package now takes dependency on openai and azure-identity packages. No need to install them separately.
+* Tracing: support for tracing the schema when agent is created with structured output definition.
 
 ### Breaking changes
 
@@ -19,6 +20,7 @@
 * Tracing: added the "parts" array to "gen_ai.input.messages" and "gen_ai.output.messages".
 * Tracing: removed "role" as a separate attribute and added "role" to "gen_ai.input.messages" and "gen_ai.output.messages" content.
 * Tracing: added "finish_reason" as part of "gen_ai.output.messages" content.
+* Tracing: changed the tool calls to use the api definitions as the types in traces. For example "function_call" instead of "function" and "function_call_output" instead of "function"
 
 ### Bugs Fixed
 * Tracing: fixed a bug with computer use tool call output including screenshot binary data even when binary data tracing is off.
@@ -29,6 +31,8 @@
 * Added OpenAPI with Project Connection sample. See `sample_agent_openapi_with_project_connection.py`.
 * Added SharePoint grounding tool sample. See `sample_agent_sharepoint.py`.
 * Improved MCP client sample showing direct MCP tool invocation. See `samples/mcp_client/sample_mcp_tool_async.py`.
+* Samples that download generated files (code interpreter and image generation) now save files to the system temp directory instead of the current working directory. See `sample_agent_code_interpreter.py`, `sample_agent_code_interpreter_async.py`, `sample_agent_image_generation.py`, and `sample_agent_image_generation_async.py`.
+* The Agent to Agent sample was updated to allow "Custom keys" connection type.
 
 ## 2.0.0b2 (2025-11-14)
 

@@ -24,6 +24,8 @@ USAGE:
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) A2A_PROJECT_CONNECTION_ID - The A2A project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
+    4) (Optional) A2A_ENDPOINT - If the connection is missing target i.e. if it is of "Custom keys" type, we need to set the A2A
+       endpoint on the tool.
 """
 
 import os
@@ -49,6 +51,9 @@ with (
     tool = A2ATool(
         project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
     )
+    # If the connection is missing target, we need to set the A2A endpoint URL.
+    if os.environ.get("A2A_ENDPOINT"):
+        tool.base_url = os.environ["A2A_ENDPOINT"]
     # [END tool_declaration]
 
     agent = project_client.agents.create_version(
@@ -79,9 +84,14 @@ with (
             print(f"\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             item = event.item
-            if item.type == "remote_function_call":  # TODO: support remote_function_call schema
-                print(f"Call ID: {getattr(item, 'call_id')}")
-                print(f"Label: {getattr(item, 'label')}")
+            if item.type == "a2a_preview_call":
+                print(f"Request ID: {getattr(item, 'id')}")
+                if hasattr(item, "model_extra"):
+                    extra = getattr(item, "model_extra")
+                    if isinstance(extra, dict):
+                        print(f"Arguments: {extra['arguments']}")
+            elif item.type == "a2a_preview_call_output":
+                print(f"Response ID: {getattr(item, 'id')}")
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")

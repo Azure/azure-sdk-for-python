@@ -163,7 +163,7 @@ def main(package_path: Path, *, enable_changelog: bool = True, package_result: d
         if is_arm_sdk(package_name) and not is_valid_changelog_content(md_output):
             log_failed_message(
                 f"Generated changelog content for {package_name} seems invalid. "
-                f"And we still update CHANGELOG.md so that you could know where need to update manually.",
+                f"And we still update CHANGELOG.md so that you could know where to update manually.",
                 enable_log_error,
             )
 

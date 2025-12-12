@@ -275,7 +275,7 @@ class CheckFile:
 
     def check_dev_requirement(self):
         file = self.package_path / "dev_requirements.txt"
-        content = ["-e ../../../eng/tools/azure-sdk-tools\n", "-e ../../identity/azure-identity\naiohttp\naiohttp\n"]
+        content = ["-e ../../../eng/tools/azure-sdk-tools\n", "-e ../../identity/azure-identity\naiohttp\n"]
         if not file.exists():
             with open(file, "w") as file_out:
                 file_out.writelines(content)
