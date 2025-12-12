@@ -594,12 +594,14 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             query_rewrites_count=query_rewrites_count,
             debug=debug,
             hybrid_search=hybrid_search,
-            query_source_authorization=query_source_authorization,
-            enable_elevated_read=enable_elevated_read,
         )
 
         # Create kwargs for the search_post call
         search_kwargs = dict(kwargs)
+        if query_source_authorization is not None:
+            search_kwargs["query_source_authorization"] = query_source_authorization
+        if enable_elevated_read is not None:
+            search_kwargs["enable_elevated_read"] = enable_elevated_read
 
         # Create a factory function that returns an async page iterator
         def page_iterator_factory(continuation_token=None):

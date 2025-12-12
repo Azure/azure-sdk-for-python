@@ -748,76 +748,6 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :dedent: 4
                 :caption: Get search result facets.
         """
-        # Convert list parameters to comma-separated strings if needed
-        if isinstance(search_fields, list):
-            search_fields = ",".join(search_fields)
-        if isinstance(select, list):
-            select = ",".join(select)
-        if isinstance(order_by, list):
-            order_by = ",".join(order_by)
-        if isinstance(semantic_fields, list):
-            semantic_fields = ",".join(semantic_fields)
-
-        # Build complex query parameters
-        answers = None
-        if query_answer:
-            answers = str(query_answer)
-            if query_answer_count is not None:
-                answers = f"{answers}|count-{query_answer_count}"
-            if query_answer_threshold is not None:
-                answers = f"{answers},threshold-{query_answer_threshold}"
-
-        captions = None
-        if query_caption:
-            captions = str(query_caption)
-            if query_caption_highlight_enabled is not None:
-                captions = f"{captions}|highlight-{str(query_caption_highlight_enabled).lower()}"
-
-        rewrites = None
-        if query_rewrites:
-            rewrites = str(query_rewrites)
-            if query_rewrites_count is not None:
-                rewrites = f"{rewrites}|count-{query_rewrites_count}"
-
-        # Build the search request
-        search_request = _models.SearchRequest(
-            search_text=search_text,
-            include_total_count=include_total_count,
-            facets=facets,
-            filter=filter,
-            highlight_fields=highlight_fields,
-            highlight_post_tag=highlight_post_tag,
-            highlight_pre_tag=highlight_pre_tag,
-            minimum_coverage=minimum_coverage,
-            order_by=order_by,
-            query_type=query_type,
-            scoring_parameters=scoring_parameters,
-            scoring_profile=scoring_profile,
-            semantic_query=semantic_query,
-            search_fields=search_fields,
-            search_mode=search_mode,
-            query_language=query_language,
-            query_speller=query_speller,
-            answers=answers,
-            captions=captions,
-            semantic_fields=semantic_fields,
-            semantic_configuration_name=semantic_configuration_name,
-            select=select,
-            skip=skip,
-            top=top,
-            session_id=session_id,
-            scoring_statistics=scoring_statistics,
-            vector_queries=vector_queries,
-            vector_filter_mode=vector_filter_mode,
-            semantic_error_handling=semantic_error_mode,
-            semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
-            query_rewrites=rewrites,
-            debug=debug,
-            hybrid_search=hybrid_search,
-            query_source_authorization=query_source_authorization,
-            enable_elevated_read=enable_elevated_read,
-        )
-
         # Build the search request using shared helper
         search_request = _build_search_request(
             search_text=search_text,
@@ -861,6 +791,10 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         # Create kwargs for the search_post call
         search_kwargs = dict(kwargs)
+        if query_source_authorization is not None:
+            search_kwargs["query_source_authorization"] = query_source_authorization
+        if enable_elevated_read is not None:
+            search_kwargs["enable_elevated_read"] = enable_elevated_read
 
         # Create a factory function that returns a page iterator
         # This is compatible with ItemPaged's by_page() pattern
