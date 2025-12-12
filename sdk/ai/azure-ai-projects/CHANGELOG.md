@@ -33,6 +33,7 @@
 * Added SharePoint grounding tool sample. See `sample_agent_sharepoint.py`.
 * Improved MCP client sample showing direct MCP tool invocation. See `samples/mcp_client/sample_mcp_tool_async.py`.
 * Samples that download generated files (code interpreter and image generation) now save files to the system temp directory instead of the current working directory. See `sample_agent_code_interpreter.py`, `sample_agent_code_interpreter_async.py`, `sample_agent_image_generation.py`, and `sample_agent_image_generation_async.py`.
+* The Agent to Agent sample was updated to allow "Custom keys" connection type.
 * Updated Azure Monitor tracing sample to include agent ID in response generation. See `sample_agent_basic_with_azure_monitor_tracing.py`.
 
 ## 2.0.0b2 (2025-11-14)

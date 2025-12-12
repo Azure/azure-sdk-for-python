@@ -108,6 +108,15 @@ def add_sanitizers(test_proxy, sanitized_values):
 
     sanitize_url_paths()
 
+    # Sanitize fine-tuning job IDs in URLs and response bodies
+    add_general_regex_sanitizer(regex=r"ftjob-[a-f0-9]+", value="sanitized-ftjob-id")
+
+    # Sanitize file IDs in URLs and response bodies
+    add_general_regex_sanitizer(regex=r"file-[a-f0-9]+", value="sanitized-file-id")
+
+    # Sanitize checkpoint IDs in URLs and response bodies
+    add_general_regex_sanitizer(regex=r"ftchkpt-[a-f0-9]+", value="sanitized-checkpoint-id")
+
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
 
