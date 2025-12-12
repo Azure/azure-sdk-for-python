@@ -3,21 +3,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import csv, os, pytest, re, inspect, sys, json
+import os, pytest, inspect, sys, json
 import importlib.util
 import unittest.mock as mock
 from typing import Union, cast, overload
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.exceptions import HttpResponseError
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, RecordedTransport
 from test_base import servicePreparer, patched_open_crlf_to_lf
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
-from azure.identity import DefaultAzureCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from pydantic import BaseModel
 
 
