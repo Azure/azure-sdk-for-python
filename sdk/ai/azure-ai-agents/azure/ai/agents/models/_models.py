@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -925,9 +926,8 @@ class BingCustomSearchConfiguration(_Model):
      maximum value is 50. The actual number delivered may be less than requested.
 
      * It is possible for multiple pages to include some overlap in results.
-     * This parameter affects only web page results. It's possible that AI model might not use all
-       search results returned by Bing.
-
+     * This parameter affects only web page results. It's possible that AI model might not use
+       all search results returned by Bing.
     :vartype count: int
     :ivar freshness: Filter search results by the following case-insensitive age values:
 
@@ -937,7 +937,6 @@ class BingCustomSearchConfiguration(_Model):
        discovered by Bing during a specific timeframe, specify a date range in the form:
        `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
        to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
-
     :vartype freshness: str
     """
 
@@ -977,22 +976,20 @@ class BingCustomSearchConfiguration(_Model):
      strings displayed in a different language."""
     count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of search results to return in the response. The default is 5 and the maximum value
-     is 50. The actual number delivered may be less than requested.
-     
-     * It is possible for multiple pages to include some overlap in results.
-     * This parameter affects only web page results. It's possible that AI model might not use all
-       search results returned by Bing.
-    """
+      is 50. The actual number delivered may be less than requested.
+ 
+      * It is possible for multiple pages to include some overlap in results.
+      * This parameter affects only web page results. It's possible that AI model might not use
+        all search results returned by Bing."""
     freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Filter search results by the following case-insensitive age values:
-     
-     * Day: Return webpages that Bing discovered within the last 24 hours.
-     * Week: Return webpages that Bing discovered within the last 7 days.
-     * Month: Return webpages that Bing discovered within the last 30 days. To get articles
-       discovered by Bing during a specific timeframe, specify a date range in the form:
-       `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
-       to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
-    """
+ 
+      * Day: Return webpages that Bing discovered within the last 24 hours.
+      * Week: Return webpages that Bing discovered within the last 7 days.
+      * Month: Return webpages that Bing discovered within the last 30 days. To get articles
+        discovered by Bing during a specific timeframe, specify a date range in the form:
+        `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
+        to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`."""
 
     @overload
     def __init__(
@@ -1126,9 +1123,8 @@ class BingGroundingSearchConfiguration(_Model):
      maximum value is 50. The actual number delivered may be less than requested.
 
      * It is possible for multiple pages to include some overlap in results.
-     * This parameter affects only web page results. It's possible that AI model might not use all
-       search results returned by Bing.
-
+     * This parameter affects only web page results. It's possible that AI model might not use
+       all search results returned by Bing.
     :vartype count: int
     :ivar freshness: Filter search results by the following case-insensitive age values:
 
@@ -1138,7 +1134,6 @@ class BingGroundingSearchConfiguration(_Model):
        discovered by Bing during a specific timeframe, specify a date range in the form:
        `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
        to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
-
     :vartype freshness: str
     """
 
@@ -1176,22 +1171,20 @@ class BingGroundingSearchConfiguration(_Model):
      strings displayed in a different language."""
     count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of search results to return in the response. The default is 5 and the maximum value
-     is 50. The actual number delivered may be less than requested.
-     
-     * It is possible for multiple pages to include some overlap in results.
-     * This parameter affects only web page results. It's possible that AI model might not use all
-       search results returned by Bing.
-    """
+      is 50. The actual number delivered may be less than requested.
+ 
+      * It is possible for multiple pages to include some overlap in results.
+      * This parameter affects only web page results. It's possible that AI model might not use
+        all search results returned by Bing."""
     freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Filter search results by the following case-insensitive age values:
-     
-     * Day: Return webpages that Bing discovered within the last 24 hours.
-     * Week: Return webpages that Bing discovered within the last 7 days.
-     * Month: Return webpages that Bing discovered within the last 30 days. To get articles
-       discovered by Bing during a specific timeframe, specify a date range in the form:
-       `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
-       to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
-    """
+ 
+      * Day: Return webpages that Bing discovered within the last 24 hours.
+      * Week: Return webpages that Bing discovered within the last 7 days.
+      * Month: Return webpages that Bing discovered within the last 30 days. To get articles
+        discovered by Bing during a specific timeframe, specify a date range in the form:
+        `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
+        to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`."""
 
     @overload
     def __init__(
@@ -2655,7 +2648,9 @@ class KeyPressAction(ComputerUseAction, discriminator="keypress"):
     type: Literal["keypress"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Specifies the event type. For a keypress action, this property is always set to keypress.
      Required. Default value is \"keypress\"."""
-    keys_property: list[str] = rest_field(name="keys", visibility=["read", "create", "update", "delete", "query"])
+    keys_property: list[str] = rest_field(
+        name="keys", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="keys"
+    )
     """The combination of keys the model is requesting to be pressed. This is an array of strings,
      each representing a key. Required."""
 
