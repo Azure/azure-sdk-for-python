@@ -52,7 +52,7 @@ class TestAgentMemorySearch(TestBase):
 
         model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
         chat_model = kwargs.get("azure_ai_projects_tests_memory_store_chat_model_deployment_name")
-        embedding_model = kwargs.get("azure_ai_projects_memory_store_embedding_model_deployment_name")
+        embedding_model = kwargs.get("azure_ai_projects_tests_memory_store_embedding_model_deployment_name")
 
         assert isinstance(model, str)
         assert isinstance(chat_model, str)
