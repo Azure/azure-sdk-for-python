@@ -212,7 +212,7 @@ class EvaluationServiceOneDPClient:
 
         except Exception as e:
             LOGGER.error(f"Storage account connectivity test failed: {str(e)}")
-            
+
             # Re-raise with helpful context
             error_msg = (
                 f"Failed to connect to Azure Blob Storage. Error: {str(e)}. "
@@ -222,7 +222,7 @@ class EvaluationServiceOneDPClient:
                 "  3. Network access to the storage account is not blocked by firewall rules\n"
                 "  4. The Azure AI project is properly configured"
             )
-            
+
             raise EvaluationException(
                 message=error_msg,
                 internal_message=f"Storage connectivity test failed: {e}",
