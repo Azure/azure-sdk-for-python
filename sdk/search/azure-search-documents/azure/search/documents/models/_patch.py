@@ -153,7 +153,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
 
 
 __all__: list[str] = [
-    "RequestEntityTooLargeError",
+    "IndexDocumentsBatch",
 ]  # Add all objects you want publicly available to users at this package level
 
 
