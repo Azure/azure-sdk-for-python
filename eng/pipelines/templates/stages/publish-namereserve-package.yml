@@ -66,7 +66,7 @@ extends:
                       SignCertName: 'azure-sdk-esrp-release-certificate'
                       Intent: 'PackageDistribution'
                       ContentType: 'PyPI'
-                      FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
+                      FolderLocation: "$(PUBLISHDIRECTORY)"
                       Owners: $(Build.RequestedForEmail)
                       Approvers: $(Build.RequestedForEmail)
                       ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
