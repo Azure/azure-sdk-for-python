@@ -307,25 +307,11 @@ class SearchPageIterator(PageIterator):
 
 
 class SearchItemPaged(ItemPaged[ReturnType]):
-    """A pageable list of search results with metadata accessors."""
+    """A pageable list of search results."""
 
-    def __init__(self, page_iterator_factory_func) -> None:
-        super(SearchItemPaged, self).__init__()
-        # Store the factory function that creates SearchPageIterator instances
-        self._page_iterator_factory = page_iterator_factory_func
+    def __init__(self, *args, **kwargs) -> None:
+        super(SearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance: Optional[SearchPageIterator] = None
-        # Initialize the parent without arguments - we'll override by_page()
-        self._page_iterator = None
-
-    def by_page(self, continuation_token=None):
-        """Get an iterator of pages of results.
-
-        :param continuation_token: Token to retrieve the next page of results
-        :type continuation_token: str or None
-        :return: An iterator of pages
-        :rtype: SearchPageIterator
-        """
-        return self._page_iterator_factory(continuation_token)
 
     def __next__(self) -> ReturnType:
         if self._page_iterator is None:
@@ -344,25 +330,25 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         :return: facet results
         :rtype: dict or None
         """
-        return self._first_iterator_instance().get_facets()
+        return cast(Dict, self._first_iterator_instance().get_facets())
 
-    def get_coverage(self) -> Optional[float]:
+    def get_coverage(self) -> float:
         """Return the coverage percentage, if `minimum_coverage` was
-        specified for the query.
+        specificied for the query.
 
         :return: coverage percentage
-        :rtype: float or None
+        :rtype: float
         """
-        return self._first_iterator_instance().get_coverage()
+        return cast(float, self._first_iterator_instance().get_coverage())
 
-    def get_count(self) -> Optional[int]:
+    def get_count(self) -> int:
         """Return the count of results if `include_total_count` was
         set for the query.
 
         :return: count of results
-        :rtype: int or None
+        :rtype: int
         """
-        return self._first_iterator_instance().get_count()
+        return cast(int, self._first_iterator_instance().get_count())
 
     def get_answers(self) -> Optional[List[_models.QueryAnswerResult]]:
         """Return semantic answers. Only included if the semantic ranker is used
@@ -373,13 +359,13 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """
         return self._first_iterator_instance().get_answers()
 
-    def get_debug_info(self) -> Optional[_models.DebugInfo]:
+    def get_debug_info(self) -> _models.DebugInfo:
         """Return the debug information for the query.
 
         :return: the debug information for the query
-        :rtype: ~azure.search.documents.models.DebugInfo or None
+        :rtype: ~azure.search.documents.models.DebugInfo
         """
-        return self._first_iterator_instance().get_debug_info()
+        return cast(_models.DebugInfo, self._first_iterator_instance().get_debug_info())
 
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
@@ -796,15 +782,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         if enable_elevated_read is not None:
             search_kwargs["enable_elevated_read"] = enable_elevated_read
 
-        # Create a factory function that returns a page iterator
-        # This is compatible with ItemPaged's by_page() pattern
-        def page_iterator_factory(continuation_token=None):
-            return SearchPageIterator(
-                client=self, initial_request=search_request, kwargs=search_kwargs, continuation_token=continuation_token
-            )
-
-        # Return SearchItemPaged with the factory function
-        return SearchItemPaged(page_iterator_factory)
+        return SearchItemPaged(self, search_request, search_kwargs, page_iterator_class=SearchPageIterator)
 
     @distributed_trace
     def autocomplete(

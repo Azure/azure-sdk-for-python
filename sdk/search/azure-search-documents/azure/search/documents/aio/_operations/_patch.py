@@ -108,39 +108,13 @@ class AsyncSearchPageIterator(AsyncPageIterator):
 
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
-    """An async pageable list of search results with metadata accessors."""
+    """An async pageable list of search results."""
 
-    def __init__(self, page_iterator_factory_func) -> None:
-        super(AsyncSearchItemPaged, self).__init__()
-        # Store the factory function that creates AsyncSearchPageIterator instances
-        self._page_iterator_factory = page_iterator_factory_func
+    def __init__(self, *args, **kwargs) -> None:
+        super(AsyncSearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance: Optional[AsyncSearchPageIterator] = None
-        self._page_iterator = None
-        self._page = None
 
-    def by_page(self, continuation_token=None):
-        """Get an async iterator of pages of results.
-
-        :param continuation_token: Token to retrieve the next page of results
-        :type continuation_token: str or None
-        :return: An async iterator of pages
-        :rtype: AsyncSearchPageIterator
-        """
-        return self._page_iterator_factory(continuation_token)
-
-    async def __anext__(self) -> ReturnType:
-        if self._page_iterator is None:
-            self._page_iterator = self.by_page()
-            self._first_page_iterator_instance = cast(AsyncSearchPageIterator, self._page_iterator)
-        if self._page is None:
-            self._page = await self._page_iterator.__anext__()
-        try:
-            return await self._page.__anext__()
-        except StopAsyncIteration:
-            self._page = None
-            return await self.__anext__()
-
-    async def _first_iterator_instance(self) -> AsyncSearchPageIterator:
+    def _first_iterator_instance(self) -> AsyncSearchPageIterator:
         if self._first_page_iterator_instance is None:
             self._first_page_iterator_instance = cast(AsyncSearchPageIterator, self.by_page())
         return self._first_page_iterator_instance
@@ -151,25 +125,25 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :return: facet results
         :rtype: dict or None
         """
-        return await (await self._first_iterator_instance()).get_facets()
+        return cast(Dict, await self._first_iterator_instance().get_facets())
 
-    async def get_coverage(self) -> Optional[float]:
+    async def get_coverage(self) -> float:
         """Return the coverage percentage, if `minimum_coverage` was
-        specified for the query.
+        specificied for the query.
 
         :return: coverage percentage
-        :rtype: float or None
+        :rtype: float
         """
-        return await (await self._first_iterator_instance()).get_coverage()
+        return cast(float, await self._first_iterator_instance().get_coverage())
 
-    async def get_count(self) -> Optional[int]:
+    async def get_count(self) -> int:
         """Return the count of results if `include_total_count` was
         set for the query.
 
         :return: count of results
-        :rtype: int or None
+        :rtype: int
         """
-        return await (await self._first_iterator_instance()).get_count()
+        return cast(int, await self._first_iterator_instance().get_count())
 
     async def get_answers(self) -> Optional[List[_models.QueryAnswerResult]]:
         """Return semantic answers. Only included if the semantic ranker is used
@@ -178,15 +152,15 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :return: answers
         :rtype: list[~azure.search.documents.models.QueryAnswerResult] or None
         """
-        return await (await self._first_iterator_instance()).get_answers()
+        return await self._first_iterator_instance().get_answers()
 
-    async def get_debug_info(self) -> Optional[_models.DebugInfo]:
+    async def get_debug_info(self) -> _models.DebugInfo:
         """Return the debug information for the query.
 
         :return: the debug information for the query
-        :rtype: ~azure.search.documents.models.DebugInfo or None
+        :rtype: ~azure.search.documents.models.DebugInfo
         """
-        return await (await self._first_iterator_instance()).get_debug_info()
+        return cast(_models.DebugInfo, await self._first_iterator_instance().get_debug_info())
 
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
@@ -603,14 +577,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         if enable_elevated_read is not None:
             search_kwargs["enable_elevated_read"] = enable_elevated_read
 
-        # Create a factory function that returns an async page iterator
-        def page_iterator_factory(continuation_token=None):
-            return AsyncSearchPageIterator(
-                client=self, initial_request=search_request, kwargs=search_kwargs, continuation_token=continuation_token
-            )
-
-        # Return AsyncSearchItemPaged with the factory function
-        return AsyncSearchItemPaged(page_iterator_factory)
+        return AsyncSearchItemPaged(self, search_request, search_kwargs, page_iterator_class=AsyncSearchPageIterator)
 
     @distributed_trace_async
     async def autocomplete(

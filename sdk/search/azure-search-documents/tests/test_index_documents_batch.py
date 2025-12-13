@@ -5,7 +5,8 @@
 
 import pytest
 
-from azure.search.documents.models import IndexAction, IndexDocumentsBatch
+from azure.search.documents.models import IndexAction
+from azure.search.documents import IndexDocumentsBatch
 
 METHOD_NAMES = [
     "add_upload_actions",

@@ -85,7 +85,7 @@ def _clean_up_indexers(endpoint, cred):
 def _set_up_index(service_name, endpoint, cred, schema, index_batch):
     from azure.search.documents import SearchClient
     from azure.search.documents.indexes.models import SearchIndex
-    from azure.search.documents.models import IndexDocumentsBatch
+    from azure.search.documents import IndexDocumentsBatch
     from azure.search.documents.indexes import SearchIndexClient
 
     schema = _load_schema(schema)

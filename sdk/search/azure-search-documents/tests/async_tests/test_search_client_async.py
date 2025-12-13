@@ -4,7 +4,7 @@
 # ------------------------------------
 from unittest import mock
 from azure.core.credentials import AzureKeyCredential
-from azure.core.async_paging import AsyncPageIterator
+from azure.search.documents.aio._operations._patch import AsyncSearchPageIterator
 from azure.search.documents.models import (
     FacetResult,
     SearchDocumentsResult,
@@ -22,7 +22,7 @@ class TestSearchClientAsync:
     async def test_get_count_reset_continuation_token(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = await client.search(search_text="search text")
-        assert result._page_iterator_class is AsyncPageIterator
+        assert result._page_iterator_class is AsyncSearchPageIterator
         search_result = SearchDocumentsResult()
         search_result.results = [SearchResult({"key": "val"})]
         mock_search_post.return_value = search_result
