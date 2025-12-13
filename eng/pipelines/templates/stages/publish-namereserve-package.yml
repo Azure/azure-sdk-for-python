@@ -10,7 +10,7 @@ extends:
   parameters:
     stages:
     - stage: Build
-      displayName: 'Build Name Reservation Package'
+      displayName: 'Build ${{ parameters.NameForReservation }}==${{ parameters.VersionForReservation }}'
       jobs:
         - template: ../jobs/build-namereserve-package.yml
           parameters:
@@ -20,10 +20,9 @@ extends:
     - stage: Publish
       displayName: 'Publish Name Reservation Package'
       dependsOn: Build
-      condition: and(succeeded(), ne(variables['Skip.Publish'], 'true'))
       jobs:
         - deployment: PublishPackage
-          displayName: "Publish name reservation package to PyPI"
+          displayName: "Publish to PyPI"
           environment: package-publish
 
           variables:
