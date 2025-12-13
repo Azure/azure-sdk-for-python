@@ -24,7 +24,7 @@ extends:
       jobs:
         - deployment: PublishPackage
           displayName: "Publish name reservation package to PyPI"
-          environment: ${{ parameters.PublicPublishEnvironment }}
+          environment: package-publish
 
           templateContext:
             type: releaseJob
