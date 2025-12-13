@@ -880,7 +880,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._wait_for_response(wait, ConnectionState.END)
         except Exception as exc:  # pylint:disable=broad-except
             # If error happened during closing, ignore the error and set state to END
-            _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
+            _LOGGER.debug("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
             self._set_state(ConnectionState.END)
         finally:
             self._disconnect()
