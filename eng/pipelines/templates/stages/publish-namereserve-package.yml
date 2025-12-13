@@ -14,8 +14,8 @@ extends:
       jobs:
         - template: ../jobs/build-namereserve-package.yml
           parameters:
-            PackageNameForReservation: ${{ parameters.NameForReservation }}
-            PackageVersionForReservation: ${{ parameters.VersionForReservation }}
+            NameForReservation: ${{ parameters.NameForReservation }}
+            VersionForReservation: ${{ parameters.VersionForReservation }}
 
     - stage: Publish
       displayName: 'Publish Name Reservation Package'
