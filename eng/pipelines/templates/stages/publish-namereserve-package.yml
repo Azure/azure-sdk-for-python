@@ -26,6 +26,9 @@ extends:
           displayName: "Publish name reservation package to PyPI"
           environment: package-publish
 
+          variables:
+            PUBLISHDIRECTORY: "$(Pipeline.Workspace)/esrp-release/"
+
           templateContext:
             type: releaseJob
             isProduction: true
@@ -44,14 +47,12 @@ extends:
               deploy:
                 steps:
                   - pwsh: |
-                      $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/"
-                      New-Item -ItemType Directory -Force -Path $esrpDirectory
+                      New-Item -ItemType Directory -Force -Path "$(PUBLISHDIRECTORY)"
 
                       Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}" `
                         | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
-                        | Copy-Item -Destination $esrpDirectory
-
-                      Get-ChildItem $esrpDirectory
+                        | Copy-Item -Destination "$(PUBLISHDIRECTORY)"
+                      Get-ChildItem "$(PUBLISHDIRECTORY)"
                     displayName: Isolate files for ESRP Publish
 
                   # - task: EsrpRelease@9
