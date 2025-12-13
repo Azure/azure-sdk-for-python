@@ -11,8 +11,6 @@ from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
 try:
-    from opentelemetry.trace import StatusCode, Span  # noqa: F401 # pylint: disable=unused-import
-
     _span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 except ModuleNotFoundError:
     _span_impl_type = None
@@ -47,7 +45,7 @@ GEN_AI_TOOL_CALL_ID = "gen_ai.tool.call.id"
 GEN_AI_REQUEST_RESPONSE_FORMAT = "gen_ai.request.response_format"
 GEN_AI_USAGE_INPUT_TOKENS = "gen_ai.usage.input_tokens"
 GEN_AI_USAGE_OUTPUT_TOKENS = "gen_ai.usage.output_tokens"
-GEN_AI_SYSTEM_MESSAGE = "gen_ai.system.instruction"
+GEN_AI_SYSTEM_MESSAGE = "gen_ai.system.instructions"
 GEN_AI_EVENT_CONTENT = "gen_ai.event.content"
 GEN_AI_RUN_STEP_START_TIMESTAMP = "gen_ai.run_step.start.timestamp"
 GEN_AI_RUN_STEP_END_TIMESTAMP = "gen_ai.run_step.end.timestamp"
@@ -62,6 +60,48 @@ GEN_AI_REQUEST_REASONING_EFFORT = "gen_ai.request.reasoning.effort"
 GEN_AI_REQUEST_REASONING_SUMMARY = "gen_ai.request.reasoning.summary"
 GEN_AI_REQUEST_STRUCTURED_INPUTS = "gen_ai.request.structured_inputs"
 GEN_AI_AGENT_VERSION = "gen_ai.agent.version"
+
+# Additional attribute names
+GEN_AI_CONVERSATION_ID = "gen_ai.conversation.id"
+GEN_AI_CONVERSATION_ITEM_ID = "gen_ai.conversation.item.id"
+GEN_AI_CONVERSATION_ITEM_ROLE = "gen_ai.conversation.item.role"
+GEN_AI_REQUEST_TOOLS = "gen_ai.request.tools"
+GEN_AI_RESPONSE_ID = "gen_ai.response.id"
+GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT = "gen_ai.openai.response.system_fingerprint"
+GEN_AI_OPENAI_RESPONSE_SERVICE_TIER = "gen_ai.openai.response.service_tier"
+GEN_AI_USAGE_TOTAL_TOKENS = "gen_ai.usage.total_tokens"
+GEN_AI_RESPONSE_FINISH_REASONS = "gen_ai.response.finish_reasons"
+GEN_AI_RESPONSE_OBJECT = "gen_ai.response.object"
+GEN_AI_TOKEN_TYPE = "gen_ai.token.type"
+GEN_AI_MESSAGE_ROLE = "gen_ai.message.role"
+GEN_AI_AGENT_TYPE = "gen_ai.agent.type"
+GEN_AI_CONVERSATION_ITEM_TYPE = "gen_ai.conversation.item.type"
+GEN_AI_AGENT_HOSTED_CPU = "gen_ai.agent.hosted.cpu"
+GEN_AI_AGENT_HOSTED_MEMORY = "gen_ai.agent.hosted.memory"
+GEN_AI_AGENT_HOSTED_IMAGE = "gen_ai.agent.hosted.image"
+GEN_AI_AGENT_HOSTED_PROTOCOL = "gen_ai.agent.hosted.protocol"
+GEN_AI_AGENT_HOSTED_PROTOCOL_VERSION = "gen_ai.agent.hosted.protocol_version"
+
+# Event names
+GEN_AI_USER_MESSAGE_EVENT = "gen_ai.input.messages"
+GEN_AI_ASSISTANT_MESSAGE_EVENT = "gen_ai.output.messages"
+GEN_AI_TOOL_MESSAGE_EVENT = "gen_ai.input.messages"  # Keep separate constant but use same value as user messages
+GEN_AI_WORKFLOW_ACTION_EVENT = "gen_ai.workflow.action"
+GEN_AI_CONVERSATION_ITEM_EVENT = "gen_ai.conversation.item"
+GEN_AI_SYSTEM_INSTRUCTION_EVENT = "gen_ai.system.instructions"
+GEN_AI_AGENT_WORKFLOW_EVENT = "gen_ai.agent.workflow"
+
+# Metric names
+GEN_AI_CLIENT_OPERATION_DURATION = "gen_ai.client.operation.duration"
+GEN_AI_CLIENT_TOKEN_USAGE = "gen_ai.client.token.usage"
+
+# Constant attribute values
+AZURE_AI_AGENTS_SYSTEM = "az.ai.agents"
+AZURE_AI_AGENTS_PROVIDER = "azure.ai.agents"
+AGENT_TYPE_PROMPT = "prompt"
+AGENT_TYPE_WORKFLOW = "workflow"
+AGENT_TYPE_HOSTED = "hosted"
+AGENT_TYPE_UNKNOWN = "unknown"
 
 
 class OperationName(Enum):
@@ -113,7 +153,9 @@ def start_span(
             return None
 
     span = _span_impl_type(
-        name=span_name or operation_name.value, kind=kind, schema_version=GEN_AI_SEMANTIC_CONVENTIONS_SCHEMA_VERSION
+        name=span_name or operation_name.value,
+        kind=kind,
+        schema_version=GEN_AI_SEMANTIC_CONVENTIONS_SCHEMA_VERSION,
     )
 
     if span and span.span_instance.is_recording:

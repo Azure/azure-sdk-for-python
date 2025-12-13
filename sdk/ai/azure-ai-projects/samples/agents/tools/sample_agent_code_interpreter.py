@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -24,7 +24,7 @@ USAGE:
 """
 
 import os
-import httpx
+import tempfile
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -84,29 +84,30 @@ with (
 
     # Get the last message which should contain file citations
     last_message = response.output[-1]  # ResponseOutputMessage
-    if last_message.type == "message":
-        # Get the last content item (contains the file annotations)
-        text_content = last_message.content[-1]  # ResponseOutputText
-        if text_content.type == "output_text":
-            # Get the last annotation (most recent file)
-            if text_content.annotations:
-                file_citation = text_content.annotations[-1]  # AnnotationContainerFileCitation
-                if file_citation.type == "container_file_citation":
-                    file_id = file_citation.file_id
-                    filename = file_citation.filename
-                    container_id = file_citation.container_id
-                    print(f"Found generated file: {filename} (ID: {file_id})")
-
-    # Download the generated file if available
-    if file_id and filename:
-        file_content = openai_client.containers.files.content.retrieve(file_id=file_id, container_id=container_id)
-        with open(filename, "wb") as f:
-            f.write(file_content.read())
-            print(f"File {filename} downloaded successfully.")
-        print(f"File ready for download: {filename}")
-    else:
-        print("No file generated in response")
+    if (
+        last_message.type == "message"
+        and last_message.content
+        and last_message.content[-1].type == "output_text"
+        and last_message.content[-1].annotations
+    ):
+        file_citation = last_message.content[-1].annotations[-1]  # AnnotationContainerFileCitation
+        if file_citation.type == "container_file_citation":
+            file_id = file_citation.file_id
+            filename = file_citation.filename
+            container_id = file_citation.container_id
+            print(f"Found generated file: {filename} (ID: {file_id})")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
+
+    # Download the generated file if available
+    if file_id and filename:
+        file_content = openai_client.containers.files.content.retrieve(file_id=file_id, container_id=container_id)
+        print(f"File ready for download: {filename}")
+        file_path = os.path.join(tempfile.gettempdir(), filename)
+        with open(file_path, "wb") as f:
+            f.write(file_content.read())
+        print(f"File downloaded successfully: {file_path}")
+    else:
+        print("No file generated in response")

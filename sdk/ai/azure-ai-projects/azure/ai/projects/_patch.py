@@ -9,15 +9,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
-from typing import List, Any, Optional, TYPE_CHECKING
+from typing import List, Any, Optional
+from openai import OpenAI
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
+from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -131,20 +130,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
          is not installed.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        try:
-            from openai import OpenAI
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "OpenAI SDK is not installed. Please install it using 'pip install openai'"
-            ) from e
-
-        try:
-            from azure.identity import get_bearer_token_provider
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "azure.identity package not installed. Please install it using 'pip install azure.identity'"
-            ) from e
 
         base_url = self._config.endpoint.rstrip("/") + "/openai"  # pylint: disable=protected-access
 
