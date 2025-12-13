@@ -4,7 +4,6 @@ import argparse
 import shutil
 import tempfile
 from pathlib import Path
-import logging
 from typing import Optional
 
 from ci_tools.build import build_packages
@@ -18,7 +17,7 @@ def _parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
         )
     )
     parser.add_argument(
-        "--working-dir",
+        "--working_dir",
         help=(
             "Temporary workspace used to author the placeholder project. "
             "Defaults to the current platform temp directory."
@@ -26,18 +25,18 @@ def _parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
         default=None,
     )
     parser.add_argument(
-        "--output-dir",
+        "--output_dir",
         required=True,
         help="Directory where the built distributions will be written.",
     )
     parser.add_argument(
-        "--package-version",
+        "--package_version",
         default="0.0.0",
         help="The distribution version to reserve on PyPI (Defaults to 0.0.0).",
     )
 
     parser.add_argument(
-        "package-name",
+        "package_name",
         help="The distribution name to reserve on PyPI (e.g. azure-mgmt-servicename).",
     )
     return parser.parse_args(argv)
@@ -47,7 +46,7 @@ def _normalise_module_name(dist_name: str) -> str:
     return dist_name.replace("-", "_")
 
 
-def _write_placeholder_project(project_dir: Path, package_name: str) -> None:
+def _write_placeholder_project(project_dir: Path, package_name: str, package_version: str) -> None:
     module_name = _normalise_module_name(package_name)
     src_dir = project_dir / "src" / module_name
     src_dir.mkdir(parents=True, exist_ok=True)
@@ -83,7 +82,7 @@ description = "This package will be released in the near future. Stay tuned!"
 keywords = ["azure", "azure sdk"]
 requires-python = ">=3.9"
 license = "MIT"
-version = "0.0.0"
+version = "{package_version}"
 classifiers = [
     "Development Status :: 1 - Planning",
     "Programming Language :: Python",
@@ -132,7 +131,7 @@ def generate_main(argv: Optional[list[str]] = None) -> int:
     project_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Creating placeholder project for {args.package_name} in {project_dir}")
-    _write_placeholder_project(project_dir, args.package_name)
+    _write_placeholder_project(project_dir, args.package_name, args.package_version)
 
     try:
         _build_distributions(str(project_dir), args.output_dir)
