@@ -12,10 +12,12 @@ jobs:
       image: windows-2022
       os: windows
     steps:
-      - template: /eng/pipelines/templates/steps/install-uv.yml
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.13'
 
       - pwsh: |
-          uv pip install --system -r eng/ci_tools.txt
+          python -m pip install -r eng/ci_tools.txt
         displayName: Install Dependencies
 
       - pwsh: |

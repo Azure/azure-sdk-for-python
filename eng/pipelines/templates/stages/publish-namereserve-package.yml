@@ -43,11 +43,6 @@ extends:
             runOnce:
               deploy:
                 steps:
-
-                  - task: UsePythonVersion@0
-                    inputs:
-                      versionSpec: '3.9'
-
                   - pwsh: |
                       $esrpDirectory = "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}"
                       New-Item -ItemType Directory -Force -Path $esrpDirectory
