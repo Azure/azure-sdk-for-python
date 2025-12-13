@@ -44,7 +44,7 @@ extends:
               deploy:
                 steps:
                   - pwsh: |
-                      $esrpDirectory = "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}"
+                      $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/"
                       New-Item -ItemType Directory -Force -Path $esrpDirectory
 
                       Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}" `
