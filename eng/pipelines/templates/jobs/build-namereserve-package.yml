@@ -12,6 +12,8 @@ jobs:
       image: windows-2022
       os: windows
     steps:
+      - template: /eng/pipelines/templates/steps/install-uv.yml
+
       - pwsh: |
           uv pip install --system -r eng/ci_tools.txt
         displayName: Install Dependencies
