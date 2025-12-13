@@ -3,6 +3,8 @@
 ## 1.8.4 (Unreleased)
 
 ### Features Added
+- Added ability to add additional Log Record Processors and Metric Readers via configure_azure_monitor
+  ([#44367](https://github.com/Azure/azure-sdk-for-python/pull/44367))
 
 ### Breaking Changes
 

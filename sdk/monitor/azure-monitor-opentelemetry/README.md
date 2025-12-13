@@ -68,6 +68,8 @@ You can use `configure_azure_monitor` to set up instrumentation for your app to 
 | `resource` | Specifies the OpenTelemetry [Resource][ot_spec_resource] associated with your application. Passed in [Resource Attributes][ot_spec_resource_attributes] take priority over default attributes and those from [Resource Detectors][ot_python_resource_detectors]. | [OTEL_SERVICE_NAME][ot_spec_service_name], [OTEL_RESOURCE_ATTRIBUTES][ot_spec_resource_attributes], [OTEL_EXPERIMENTAL_RESOURCE_DETECTORS][ot_python_resource_detectors] |
 | `span_processors` | A list of [span processors][ot_span_processor] that will perform processing on each of your spans before they are exported. Useful for filtering/modifying telemetry. | `N/A` |
 | `views` | A list of [views][ot_view] that will be used to customize metrics exported by the SDK. | `N/A` |
+| `log_record_processors` | A list of [log record processors][ot_log_record_processor] that will process log records before they are exported. | `N/A` |
+| `metric_readers` | A list of [metric reader][ot_metric_reader] that will process metric readers before they are exported | `N/A` |
 | `traces_per_second` | Configures the Rate Limited sampler by specifying the maximum number of traces to sample per second. When set, this automatically enables the rate-limited sampler. Alternatively, you can configure sampling using the `OTEL_TRACES_SAMPLER` and `OTEL_TRACES_SAMPLER_ARG` environment variables as described in the table below. Please note that the sampling configuration via environment variables will have precedence over the sampling exporter/distro options. | `N/A`
 
 You can configure further with [OpenTelemetry environment variables][ot_env_vars].
@@ -231,6 +233,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [ot_sdk_python]: https://github.com/open-telemetry/opentelemetry-python
 [ot_sdk_python_metric_reader]: https://opentelemetry-python.readthedocs.io/en/latest/sdk/metrics.export.html#opentelemetry.sdk.metrics.export.MetricReader
 [ot_span_processor]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#span-processor
+[ot_log_record_processor]: https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification/logs/sdk.md#log-record-processor
 [ot_view]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#view
 [ot_sdk_python_view_examples]: https://github.com/open-telemetry/opentelemetry-python/tree/main/docs/examples/metrics/views
 [ot_instrumentation_django]: https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-django

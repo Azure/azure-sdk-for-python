@@ -75,6 +75,8 @@ class TestConfigurations(TestCase):
             views=["test_view"],
             logger_name="test_logger",
             span_processors=["test_processor"],
+            log_record_processors=["test_log_record_processor"],
+            metric_readers=["test_metric_reader"],
             enable_trace_based_sampling_for_logs=True,
         )
 
@@ -109,6 +111,8 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["views"], ["test_view"])
         self.assertEqual(configurations["logger_name"], "test_logger")
         self.assertEqual(configurations["span_processors"], ["test_processor"])
+        self.assertEqual(configurations["log_record_processors"], ["test_log_record_processor"])
+        self.assertEqual(configurations["metric_readers"], ["test_metric_reader"])
         self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], True)
 
     @patch.dict("os.environ", {}, clear=True)
@@ -143,6 +147,8 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["enable_performance_counters"], True)
         self.assertEqual(configurations["logger_name"], "")
         self.assertEqual(configurations["span_processors"], [])
+        self.assertEqual(configurations["log_record_processors"], [])
+        self.assertEqual(configurations["metric_readers"], [])
         self.assertEqual(configurations["views"], [])
         self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], False)
 
@@ -423,7 +429,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["traces_per_second"], 0.5)
-    
+
     @patch.dict("os.environ", {}, clear=True)
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_get_configurations_rate_limited_sampler_param(self, resource_create_mock):
@@ -488,7 +494,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
-    
+
     @patch.dict(
         "os.environ",
         {
@@ -526,7 +532,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
-    
+
     @patch.dict(
         "os.environ",
         {
