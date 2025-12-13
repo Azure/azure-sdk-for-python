@@ -58,10 +58,9 @@ def _write_placeholder_project(project_dir: Path, package_name: str) -> None:
             f"""
 # This package will be `{package_name}`
 
-The `Azure SDK` team develops packages in public. As such, there is a window of time from when a package name is
-chosen publically, and when it becomes available on PyPI.
+The `Azure SDK` team is planning to soon release this package for public usage. This is a placeholder on PyPI for planning purposes and do not yet contain any code.
 
-This name-only package is being published by the Python team to prevent rename churn during this gap.
+If you have any questions about the future availability of this package, please create an issue on https://github.com/Azure/azure-sdk-for-python/issues or contact the email on this PyPI page.
 """
         ),
         encoding="utf-8",
