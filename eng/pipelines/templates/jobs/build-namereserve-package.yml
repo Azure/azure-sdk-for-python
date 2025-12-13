@@ -13,8 +13,18 @@ jobs:
       os: windows
     steps:
       - pwsh: |
-          uv pip install --system eng/ci_tools.txt
+          uv pip install --system -r eng/ci_tools.txt
         displayName: Install Dependencies
+
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+
+          generate_namereserve_package `
+            --package-version "${{ parameters.VersionForReservation }}" `
+            --output-dir "$(Build.ArtifactStagingDirectory)" `
+            "${{ parameters.NameForReservation }}"
+        displayName: Generate Name Reservation Package
 
       - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
         parameters:

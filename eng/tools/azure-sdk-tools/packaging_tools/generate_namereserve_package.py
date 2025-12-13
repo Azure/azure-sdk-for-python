@@ -9,8 +9,6 @@ from typing import Optional
 
 from ci_tools.build import build_packages
 
-logger = logging.getLogger("azure-sdk-tools.packaging.name-reserve")
-
 
 def _parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -33,13 +31,13 @@ def _parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
         help="Directory where the built distributions will be written.",
     )
     parser.add_argument(
-        "--package_version",
+        "--package-version",
         default="0.0.0",
         help="The distribution version to reserve on PyPI (Defaults to 0.0.0).",
     )
 
     parser.add_argument(
-        "package_name",
+        "package-name",
         help="The distribution name to reserve on PyPI (e.g. azure-mgmt-servicename).",
     )
     return parser.parse_args(argv)
@@ -121,27 +119,29 @@ def _build_distributions(project_dir: str, output_dir: str) -> None:
 def generate_main(argv: Optional[list[str]] = None) -> int:
     args = _parse_args(argv)
 
+    print(f"Generating name reservation package for {args.package_name}=={args.package_version}")
+
     work_root = Path(args.working_dir) if args.working_dir else Path(tempfile.gettempdir())
     work_root.mkdir(parents=True, exist_ok=True)
 
     project_dir = work_root / f"{args.package_name}"
 
     if project_dir.exists():
-        logger.info("Removing existing project directory %s", project_dir)
+        print(f"Removing existing project directory {project_dir}")
         shutil.rmtree(project_dir)
 
     project_dir.mkdir(parents=True, exist_ok=True)
 
-    logger.info("Creating placeholder project for %s in %s", args.package_name, project_dir)
+    print(f"Creating placeholder project for {args.package_name} in {project_dir}")
     _write_placeholder_project(project_dir, args.package_name)
 
     try:
         _build_distributions(str(project_dir), args.output_dir)
     finally:
-        logger.info("Cleaning up working directory %s", project_dir)
+        print(f"Cleaning up working directory {project_dir}")
         shutil.rmtree(project_dir, ignore_errors=True)
 
-    logger.info("Finished generating distributions for %s", args.package_name)
+    print(f"Finished generating distributions for {args.package_name}")
     return 0
 
 

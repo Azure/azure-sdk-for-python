@@ -5,70 +5,73 @@ parameters:
     type: string
     default: '0.0.0'
 
-stages:
-  - stage: Build
-    displayName: 'Build Name Reservation Package'
-    jobs:
-      - template: ../jobs/generate-namereserve-package.yml
-        parameters:
-          PackageNameForReservation: ${{ parameters.NameForReservation }}
-          PackageVersionForReservation: ${{ parameters.VersionForReservation }}
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+    - stage: Build
+      displayName: 'Build Name Reservation Package'
+      jobs:
+        - template: ../jobs/build-namereserve-package.yml
+          parameters:
+            PackageNameForReservation: ${{ parameters.NameForReservation }}
+            PackageVersionForReservation: ${{ parameters.VersionForReservation }}
 
-  - stage: Publish
-    displayName: 'Publish Name Reservation Package'
-    dependsOn: Build
-    condition: and(succeeded(), ne(variables['Skip.Publish'], 'true'))
-    jobs:
-      - deployment: PublishPackage
-        displayName: "Publish name reservation package to PyPI"
-        environment: ${{ parameters.PublicPublishEnvironment }}
+    - stage: Publish
+      displayName: 'Publish Name Reservation Package'
+      dependsOn: Build
+      condition: and(succeeded(), ne(variables['Skip.Publish'], 'true'))
+      jobs:
+        - deployment: PublishPackage
+          displayName: "Publish name reservation package to PyPI"
+          environment: ${{ parameters.PublicPublishEnvironment }}
 
-        templateContext:
-          type: releaseJob
-          isProduction: true
-          inputs:
-          - input: pipelineArtifact
-            artifactName: NameReservePackage
-            targetPath: $(Pipeline.Workspace)/NameReservePackage
+          templateContext:
+            type: releaseJob
+            isProduction: true
+            inputs:
+            - input: pipelineArtifact
+              artifactName: NameReservePackage
+              targetPath: $(Pipeline.Workspace)/NameReservePackage
 
-        pool:
-          image: ubuntu-24.04
-          name: azsdk-pool
-          os: linux
+          pool:
+            image: ubuntu-24.04
+            name: azsdk-pool
+            os: linux
 
-        strategy:
-          runOnce:
-            deploy:
-              steps:
+          strategy:
+            runOnce:
+              deploy:
+                steps:
 
-                - task: UsePythonVersion@0
-                  inputs:
-                    versionSpec: '3.9'
+                  - task: UsePythonVersion@0
+                    inputs:
+                      versionSpec: '3.9'
 
-                - pwsh: |
-                    $esrpDirectory = "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}"
-                    New-Item -ItemType Directory -Force -Path $esrpDirectory
+                  - pwsh: |
+                      $esrpDirectory = "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}"
+                      New-Item -ItemType Directory -Force -Path $esrpDirectory
 
-                    Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}" `
-                      | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
-                      | Copy-Item -Destination $esrpDirectory
+                      Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}" `
+                        | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
+                        | Copy-Item -Destination $esrpDirectory
 
-                    Get-ChildItem $esrpDirectory
-                  displayName: Isolate files for ESRP Publish
+                      Get-ChildItem $esrpDirectory
+                    displayName: Isolate files for ESRP Publish
 
-                # - task: EsrpRelease@9
-                #   displayName: 'Publish to ESRP'
-                #   inputs:
-                #     ConnectedServiceName: 'Azure SDK PME Managed Identity'
-                #     ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
-                #     DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
-                #     UseManagedIdentity: true
-                #     KeyVaultName: 'kv-azuresdk-codesign'
-                #     SignCertName: 'azure-sdk-esrp-release-certificate'
-                #     Intent: 'PackageDistribution'
-                #     ContentType: 'PyPI'
-                #     FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
-                #     Owners: $(Build.RequestedForEmail)
-                #     Approvers: $(Build.RequestedForEmail)
-                #     ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-                #     MainPublisher: 'ESRPRELPACMANTEST'
+                  # - task: EsrpRelease@9
+                  #   displayName: 'Publish to ESRP'
+                  #   inputs:
+                  #     ConnectedServiceName: 'Azure SDK PME Managed Identity'
+                  #     ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+                  #     DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
+                  #     UseManagedIdentity: true
+                  #     KeyVaultName: 'kv-azuresdk-codesign'
+                  #     SignCertName: 'azure-sdk-esrp-release-certificate'
+                  #     Intent: 'PackageDistribution'
+                  #     ContentType: 'PyPI'
+                  #     FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
+                  #     Owners: $(Build.RequestedForEmail)
+                  #     Approvers: $(Build.RequestedForEmail)
+                  #     ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+                  #     MainPublisher: 'ESRPRELPACMANTEST'
