@@ -18,7 +18,9 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
     async def test_search_client(self, endpoint, index_name):
-        client = SearchClient(endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60)
+        client = SearchClient(
+            endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60
+        )
         async with client:
             await self._test_get_search_simple(client)
             await self._test_get_search_simple_with_top(client)
@@ -28,6 +30,7 @@ class TestClientTestAsync(AzureRecordedTestCase):
             await self._test_get_search_coverage(client)
             await self._test_get_search_facets_none(client)
             await self._test_get_search_facets_result(client)
+            await self._test_get_search_facet_metrics(client)
             await self._test_autocomplete(client)
             await self._test_suggest(client)
 
@@ -63,7 +66,9 @@ class TestClientTestAsync(AzureRecordedTestCase):
             order_by="hotelName desc",
         ):
             results.append(x)
-        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
+        assert [x["hotelName"] for x in results] == sorted(
+            [x["hotelName"] for x in results], reverse=True
+        )
         expected = {
             "category",
             "hotelName",
@@ -88,7 +93,9 @@ class TestClientTestAsync(AzureRecordedTestCase):
             order_by="hotelName desc",
         ):
             results.append(x)
-        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
+        assert [x["hotelName"] for x in results] == sorted(
+            [x["hotelName"] for x in results], reverse=True
+        )
         expected = {
             "category",
             "hotelName",
@@ -126,13 +133,51 @@ class TestClientTestAsync(AzureRecordedTestCase):
 
     async def _test_get_search_facets_result(self, client):
         select = ("hotelName", "category", "description")
-        results = await client.search(search_text="WiFi", facets=["category"], select=",".join(select))
+        results = await client.search(
+            search_text="WiFi", facets=["category"], select=",".join(select)
+        )
         assert await results.get_facets() == {
             "category": [
                 {"value": "Budget", "count": 4},
                 {"value": "Luxury", "count": 1},
             ]
         }
+
+    async def _test_get_search_facet_metrics(self, client):
+        facets = [
+            "rooms/baseRate,metric:sum",
+            "rooms/baseRate,metric:avg",
+            "rooms/baseRate,metric:min",
+            "rooms/baseRate,metric:max,default:0",
+            "rooms/sleepsCount,metric:cardinality,precisionThreshold:10",
+        ]
+        results = await client.search(search_text="*", facets=facets)
+        facet_payload = await results.get_facets()
+        assert facet_payload is not None
+
+        base_rate_metrics = facet_payload.get("rooms/baseRate", [])
+        assert len(base_rate_metrics) == 4
+
+        observed_metrics = {}
+        for bucket in base_rate_metrics:
+            for metric in ("sum", "avg", "min", "max"):
+                value = bucket.get(metric)
+                if value is not None:
+                    observed_metrics[metric] = value
+
+        expected_metrics = {
+            "sum": 27.91,
+            "avg": 6.9775,
+            "min": 2.44,
+            "max": 9.69,
+        }
+        for metric, expected in expected_metrics.items():
+            assert metric in observed_metrics
+            assert observed_metrics[metric] == pytest.approx(expected, abs=0.001)
+
+        sleeps_metrics = facet_payload.get("rooms/sleepsCount", [])
+        assert len(sleeps_metrics) == 1
+        assert sleeps_metrics[0].get("cardinality") == 1
 
     async def _test_autocomplete(self, client):
         results = await client.autocomplete(search_text="mot", suggester_name="sg")

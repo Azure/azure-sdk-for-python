@@ -138,11 +138,11 @@ class SweepJobLimits(JobLimits):
         return self._trial_timeout
 
     @trial_timeout.setter
-    def trial_timeout(self, value: int) -> None:
+    def trial_timeout(self, value: Optional[Union[int, str]]) -> None:
         """Sets the timeout value for each Sweep Job trial.
 
         :param value: The timeout value, in seconds, for each Sweep Job trial.
-        :type value: int
+        :type value: Optional[Union[int, str]]
         """
         self._trial_timeout = _get_floored_timeout(value)
 

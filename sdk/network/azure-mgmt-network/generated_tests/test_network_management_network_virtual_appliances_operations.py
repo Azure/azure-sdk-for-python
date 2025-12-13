@@ -24,7 +24,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperations(AzureMgmtRecordedT
         response = self.client.network_virtual_appliances.begin_delete(
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperations(AzureMgmtRecordedT
         response = self.client.network_virtual_appliances.get(
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -115,7 +115,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperations(AzureMgmtRecordedT
                 "virtualApplianceSites": [{"id": "str"}],
                 "virtualHub": {"id": "str"},
             },
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -127,7 +127,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperations(AzureMgmtRecordedT
         response = self.client.network_virtual_appliances.begin_restart(
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -139,7 +139,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperations(AzureMgmtRecordedT
         response = self.client.network_virtual_appliances.begin_reimage(
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -152,7 +152,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
             request={"consoleScreenshotStorageSasUrl": "str", "instanceId": 0, "serialConsoleStorageSasUrl": "str"},
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -163,7 +163,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperations(AzureMgmtRecordedT
     def test_network_virtual_appliances_list_by_resource_group(self, resource_group):
         response = self.client.network_virtual_appliances.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -173,7 +173,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_network_virtual_appliances_list(self, resource_group):
         response = self.client.network_virtual_appliances.list(
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

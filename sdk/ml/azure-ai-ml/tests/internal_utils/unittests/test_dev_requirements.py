@@ -4,7 +4,8 @@ import sys
 
 import pytest
 
-PACKAGE_NAME = "azureml-dataprep-rslex"
+PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX = "azureml-dataprep-rslex"
+PACKAGE_NAME_SCIKIT_IMAGE = "scikit-image"
 IS_CPYTHON = platform.python_implementation() == "CPython"
 IS_PYPY = platform.python_implementation() == "PyPy"
 
@@ -28,15 +29,35 @@ class TestPackageInstallation:
     )
     def test_package_not_installed_in_cpython_3_13(self):
         assert not is_package_installed(
-            PACKAGE_NAME
-        ), f"{PACKAGE_NAME} should not be installed in CPython 3.13 or above environment."
+            PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX
+        ), f"{PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX} should not be installed in CPython 3.13 or above environment."
 
     @pytest.mark.skipif(
         not (IS_CPYTHON and sys.version_info < (3, 13)),
         reason="Skipping because environment is not below cpython 3.13",
     )
     def test_package_installed_below_cpython_3_13(self):
-        assert is_package_installed(PACKAGE_NAME), f"{PACKAGE_NAME} should be installed in CPython < 3.13."
+        assert is_package_installed(
+            PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX
+        ), f"{PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX} should be installed in CPython < 3.13."
+
+    @pytest.mark.skipif(
+        not (IS_CPYTHON and sys.version_info < (3, 14)),
+        reason="Skipping because environment is not below cpython 3.14",
+    )
+    def test_package_installed_below_cpython_3_14(self):
+        assert is_package_installed(
+            PACKAGE_NAME_SCIKIT_IMAGE
+        ), f"{PACKAGE_NAME_SCIKIT_IMAGE} should be installed in CPython < 3.14."
+
+    @pytest.mark.skipif(
+        not (IS_CPYTHON and sys.version_info >= (3, 14)),
+        reason="Skipping because environment is not below cpython 3.14",
+    )
+    def test_package_not_installed_above_cpython_3_13(self):
+        assert not is_package_installed(
+            PACKAGE_NAME_SCIKIT_IMAGE
+        ), f"{PACKAGE_NAME_SCIKIT_IMAGE} should not be installed in CPython >= 3.14."
 
     @pytest.mark.skipif(
         not (IS_PYPY and sys.version_info >= (3, 10)),
@@ -44,12 +65,14 @@ class TestPackageInstallation:
     )
     def test_package_not_installed_in_pypy_3_10(self):
         assert not is_package_installed(
-            PACKAGE_NAME
-        ), f"{PACKAGE_NAME} should not be installed in PyPy 3.10 or above environment."
+            PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX
+        ), f"{PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX} should not be installed in PyPy 3.10 or above environment."
 
     @pytest.mark.skipif(
         not (IS_PYPY and sys.version_info < (3, 10)),
         reason="Skipping because environment is not below pypy 3.10",
     )
     def test_package_installed_below_pypy_3_10(self):
-        assert is_package_installed(PACKAGE_NAME), f"{PACKAGE_NAME} should be installed in PyPy < 3.10 environment."
+        assert is_package_installed(
+            PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX
+        ), f"{PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX} should be installed in PyPy < 3.10 environment."

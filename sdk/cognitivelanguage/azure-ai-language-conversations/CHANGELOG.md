@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b2 (2025-11-08)
+
+### Features Added
+
+- Added new PII categories: DriversLicenseNumber, PassportNumber, PersonType, Organization, ABARoutingNumber, BankAccountNumber, DateOfBirth, InternationalBankingAccountNumber, SWIFTCode, VehicleIdentificationNumber, Age, Date, ZipCode, GovernmentIssuedId, CVV, HealthCardNumber, CASocialInsuranceNumber, USMedicareBeneficiaryId, GithubAccount, Location, and GPE.
+
 ## 2.0.0b1 (2025-08-22)
 
 ### Features Added

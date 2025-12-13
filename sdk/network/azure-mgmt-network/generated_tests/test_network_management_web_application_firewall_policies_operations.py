@@ -24,7 +24,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
     def test_web_application_firewall_policies_list(self, resource_group):
         response = self.client.web_application_firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
     @recorded_by_proxy
     def test_web_application_firewall_policies_list_all(self, resource_group):
         response = self.client.web_application_firewall_policies.list_all(
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
         response = self.client.web_application_firewall_policies.get(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -313,6 +313,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -383,6 +384,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "ipVersionType": "IPv4",
                                                                     "location": "str",
                                                                     "manualPrivateLinkServiceConnections": [
                                                                         {
@@ -426,6 +428,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                     "type": "str",
                                                                 },
                                                                 "privateLinkService": {
+                                                                    "accessMode": "str",
                                                                     "alias": "str",
                                                                     "autoApproval": {"subscriptions": ["str"]},
                                                                     "destinationIPAddress": "str",
@@ -514,6 +517,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "ipVersionType": "IPv4",
                                                                                 "location": "str",
                                                                                 "manualPrivateLinkServiceConnections": [
                                                                                     {
@@ -705,6 +709,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "ipVersionType": "IPv4",
                                                             "location": "str",
                                                             "manualPrivateLinkServiceConnections": [
                                                                 {
@@ -827,6 +832,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "location": "str",
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
+                                                                                "recordTypes": "str",
                                                                                 "retentionPolicy": {
                                                                                     "days": 0,
                                                                                     "enabled": False,
@@ -899,6 +905,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                     "primary": bool,
                                                                     "privateEndpoint": ...,
                                                                     "privateLinkService": {
+                                                                        "accessMode": "str",
                                                                         "alias": "str",
                                                                         "autoApproval": {"subscriptions": ["str"]},
                                                                         "destinationIPAddress": "str",
@@ -1362,6 +1369,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -1432,6 +1440,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "ipVersionType": "IPv4",
                                                             "location": "str",
                                                             "manualPrivateLinkServiceConnections": [
                                                                 {
@@ -1475,6 +1484,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                             "type": "str",
                                                         },
                                                         "privateLinkService": {
+                                                            "accessMode": "str",
                                                             "alias": "str",
                                                             "autoApproval": {"subscriptions": ["str"]},
                                                             "destinationIPAddress": "str",
@@ -1624,6 +1634,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "ipVersionType": "IPv4",
                                                                         "location": "str",
                                                                         "manualPrivateLinkServiceConnections": [
                                                                             {
@@ -1879,6 +1890,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -2001,6 +2013,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -2073,6 +2086,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                             "primary": bool,
                                                             "privateEndpoint": ...,
                                                             "privateLinkService": {
+                                                                "accessMode": "str",
                                                                 "alias": "str",
                                                                 "autoApproval": {"subscriptions": ["str"]},
                                                                 "destinationIPAddress": "str",
@@ -2612,6 +2626,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -2694,6 +2709,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "ipVersionType": "IPv4",
                                                                                 "location": "str",
                                                                                 "manualPrivateLinkServiceConnections": [
                                                                                     {
@@ -2737,6 +2753,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "type": "str",
                                                                             },
                                                                             "privateLinkService": {
+                                                                                "accessMode": "str",
                                                                                 "alias": "str",
                                                                                 "autoApproval": {
                                                                                     "subscriptions": ["str"]
@@ -2816,6 +2833,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "ipVersionType": "IPv4",
                                                                                             "location": "str",
                                                                                             "manualPrivateLinkServiceConnections": [
                                                                                                 {
@@ -2981,6 +2999,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "ipVersionType": "IPv4",
                                                                         "location": "str",
                                                                         "manualPrivateLinkServiceConnections": [
                                                                             {
@@ -3119,6 +3138,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                             "location": "str",
                                                                                             "name": "str",
                                                                                             "provisioningState": "str",
+                                                                                            "recordTypes": "str",
                                                                                             "retentionPolicy": {
                                                                                                 "days": 0,
                                                                                                 "enabled": False,
@@ -3201,6 +3221,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "primary": bool,
                                                                                 "privateEndpoint": ...,
                                                                                 "privateLinkService": {
+                                                                                    "accessMode": "str",
                                                                                     "alias": "str",
                                                                                     "autoApproval": {
                                                                                         "subscriptions": ["str"]
@@ -3617,6 +3638,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -3690,6 +3712,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "ipVersionType": "IPv4",
                                                                         "location": "str",
                                                                         "manualPrivateLinkServiceConnections": [
                                                                             {
@@ -3733,6 +3756,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                         "type": "str",
                                                                     },
                                                                     "privateLinkService": {
+                                                                        "accessMode": "str",
                                                                         "alias": "str",
                                                                         "autoApproval": {"subscriptions": ["str"]},
                                                                         "destinationIPAddress": "str",
@@ -3804,6 +3828,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "ipVersionType": "IPv4",
                                                                                     "location": "str",
                                                                                     "manualPrivateLinkServiceConnections": [
                                                                                         {
@@ -3964,6 +3989,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "ipVersionType": "IPv4",
                                                                 "location": "str",
                                                                 "manualPrivateLinkServiceConnections": [
                                                                     {
@@ -4094,6 +4120,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     "location": "str",
                                                                                     "name": "str",
                                                                                     "provisioningState": "str",
+                                                                                    "recordTypes": "str",
                                                                                     "retentionPolicy": {
                                                                                         "days": 0,
                                                                                         "enabled": False,
@@ -4168,6 +4195,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                         "primary": bool,
                                                                         "privateEndpoint": ...,
                                                                         "privateLinkService": {
+                                                                            "accessMode": "str",
                                                                             "alias": "str",
                                                                             "autoApproval": {"subscriptions": ["str"]},
                                                                             "destinationIPAddress": "str",
@@ -4416,6 +4444,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                         ],
                         "backendSettingsCollection": [
                             {
+                                "enableL4ClientIpPreservation": bool,
                                 "etag": "str",
                                 "hostName": "str",
                                 "id": "str",
@@ -4434,6 +4463,18 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                         "defaultPredefinedSslPolicy": "str",
                         "enableFips": bool,
                         "enableHttp2": bool,
+                        "entraJWTValidationConfigs": [
+                            {
+                                "audiences": ["str"],
+                                "clientId": "str",
+                                "etag": "str",
+                                "id": "str",
+                                "name": "str",
+                                "provisioningState": "str",
+                                "tenantId": "str",
+                                "unAuthorizedRequestAction": "str",
+                            }
+                        ],
                         "etag": "str",
                         "firewallPolicy": {"id": "str"},
                         "forceFirewallPolicyAssociation": bool,
@@ -4570,6 +4611,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                             "type": "str",
                                         }
                                     ],
+                                    "ipVersionType": "IPv4",
                                     "location": "str",
                                     "manualPrivateLinkServiceConnections": [
                                         {
@@ -4866,6 +4908,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -5252,6 +5295,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -5586,6 +5630,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                         "location": "str",
                                                                                         "name": "str",
                                                                                         "provisioningState": "str",
+                                                                                        "recordTypes": "str",
                                                                                         "retentionPolicy": {
                                                                                             "days": 0,
                                                                                             "enabled": False,
@@ -5994,6 +6039,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "location": "str",
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
+                                                                                "recordTypes": "str",
                                                                                 "retentionPolicy": {
                                                                                     "days": 0,
                                                                                     "enabled": False,
@@ -6263,6 +6309,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -6538,6 +6585,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                             "primary": bool,
                                             "privateEndpoint": ...,
                                             "privateLinkService": {
+                                                "accessMode": "str",
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
                                                 "destinationIPAddress": "str",
@@ -6748,6 +6796,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -7077,6 +7126,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                 "location": "str",
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
+                                                                                "recordTypes": "str",
                                                                                 "retentionPolicy": {
                                                                                     "days": 0,
                                                                                     "enabled": False,
@@ -7469,6 +7519,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -7839,6 +7890,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     "location": "str",
                                                                                     "name": "str",
                                                                                     "provisioningState": "str",
+                                                                                    "recordTypes": "str",
                                                                                     "retentionPolicy": {
                                                                                         "days": 0,
                                                                                         "enabled": False,
@@ -8235,6 +8287,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -8664,6 +8717,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                                     "location": "str",
                                                                                     "name": "str",
                                                                                     "provisioningState": "str",
+                                                                                    "recordTypes": "str",
                                                                                     "retentionPolicy": {
                                                                                         "days": 0,
                                                                                         "enabled": False,
@@ -9059,6 +9113,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -9446,6 +9501,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
+                                                    "recordTypes": "str",
                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                     "storageId": "str",
                                                     "tags": {"str": "str"},
@@ -9772,6 +9828,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                                                     "primary": bool,
                                                     "privateEndpoint": ...,
                                                     "privateLinkService": {
+                                                        "accessMode": "str",
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
                                                         "destinationIPAddress": "str",
@@ -10373,6 +10430,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                         ],
                         "probes": [
                             {
+                                "enableProbeProxyProtocolHeader": bool,
                                 "etag": "str",
                                 "host": "str",
                                 "id": "str",
@@ -10412,6 +10470,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                             {
                                 "backendAddressPool": {"id": "str"},
                                 "backendHttpSettings": {"id": "str"},
+                                "entraJWTValidationConfig": {"id": "str"},
                                 "etag": "str",
                                 "httpListener": {"id": "str"},
                                 "id": "str",
@@ -10511,6 +10570,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                         "sslProfiles": [
                             {
                                 "clientAuthConfiguration": {
+                                    "verifyClientAuthMode": "str",
                                     "verifyClientCertIssuerDN": bool,
                                     "verifyClientRevocation": "str",
                                 },
@@ -10696,7 +10756,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -10708,7 +10768,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
         response = self.client.web_application_firewall_policies.begin_delete(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

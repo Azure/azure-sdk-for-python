@@ -65,6 +65,8 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -77,7 +79,7 @@ setup(
     python_requires=">=3.9",
     install_requires=[
         "azure-core>=1.30.0",
-        "azure-storage-blob>=12.28.0b1",
+        "azure-storage-blob>=12.29.0b1",
         "typing-extensions>=4.6.0",
         "isodate>=0.6.1"
     ],

@@ -23,7 +23,7 @@ class TestWebSiteManagementCertificatesOperationsAsync(AzureMgmtRecordedTestCase
     @recorded_by_proxy_async
     async def test_certificates_list(self, resource_group):
         response = self.client.certificates.list(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestWebSiteManagementCertificatesOperationsAsync(AzureMgmtRecordedTestCase
     async def test_certificates_list_by_resource_group(self, resource_group):
         response = self.client.certificates.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestWebSiteManagementCertificatesOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.certificates.get(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestWebSiteManagementCertificatesOperationsAsync(AzureMgmtRecordedTestCase
                 "type": "str",
                 "valid": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestWebSiteManagementCertificatesOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.certificates.delete(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -138,7 +138,7 @@ class TestWebSiteManagementCertificatesOperationsAsync(AzureMgmtRecordedTestCase
                 "type": "str",
                 "valid": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

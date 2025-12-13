@@ -29,7 +29,9 @@ class TestSearchSkillset(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_skillset_crud(self, endpoint):
-        client = SearchIndexerClient(endpoint, get_credential(), retry_backoff_factor=60)
+        client = SearchIndexerClient(
+            endpoint, get_credential(), retry_backoff_factor=60
+        )
         self._test_create_skillset_validation()
         self._test_create_skillset(client)
         self._test_get_skillset(client)
@@ -43,32 +45,50 @@ class TestSearchSkillset(AzureRecordedTestCase):
     def _test_create_skillset_validation(self):
         name = "test-ss-validation"
         with pytest.raises(ValueError) as err:
-            client = SearchIndexerClient("fake_endpoint", AzureKeyCredential("fake_key"))
+            client = SearchIndexerClient(
+                "fake_endpoint", AzureKeyCredential("fake_key")
+            )
 
             s1 = EntityRecognitionSkill(
-                inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-                outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS1")],
+                inputs=[
+                    InputFieldMappingEntry(name="text", source="/document/content")
+                ],
+                outputs=[
+                    OutputFieldMappingEntry(
+                        name="organizations", target_name="organizationsS1"
+                    )
+                ],
                 description="Skill Version 1",
                 model_version="1",
                 include_typeless_entities=True,
             )
 
             s2 = EntityRecognitionSkill(
-                inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-                outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS2")],
+                inputs=[
+                    InputFieldMappingEntry(name="text", source="/document/content")
+                ],
+                outputs=[
+                    OutputFieldMappingEntry(
+                        name="organizations", target_name="organizationsS2"
+                    )
+                ],
                 skill_version=EntityRecognitionSkillVersion.LATEST,
                 description="Skill Version 3",
                 model_version="3",
                 include_typeless_entities=True,
             )
             s3 = SentimentSkill(
-                inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+                inputs=[
+                    InputFieldMappingEntry(name="text", source="/document/content")
+                ],
                 outputs=[OutputFieldMappingEntry(name="score", target_name="scoreS3")],
                 skill_version=SentimentSkillVersion.V1,
                 description="Sentiment V1",
                 include_opinion_mining=True,
             )
-            skillset = SearchIndexerSkillset(name=name, skills=list([s1, s2, s3]), description="desc")
+            skillset = SearchIndexerSkillset(
+                name=name, skills=list([s1, s2, s3]), description="desc"
+            )
             client.create_skillset(skillset)
         assert "include_typeless_entities" in str(err.value)
         assert "model_version" in str(err.value)
@@ -79,7 +99,11 @@ class TestSearchSkillset(AzureRecordedTestCase):
         s1 = EntityRecognitionSkill(
             name="skill1",
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS1")],
+            outputs=[
+                OutputFieldMappingEntry(
+                    name="organizations", target_name="organizationsS1"
+                )
+            ],
             description="Skill Version 1",
             include_typeless_entities=True,
         )
@@ -87,7 +111,11 @@ class TestSearchSkillset(AzureRecordedTestCase):
         s2 = EntityRecognitionSkill(
             name="skill2",
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS2")],
+            outputs=[
+                OutputFieldMappingEntry(
+                    name="organizations", target_name="organizationsS2"
+                )
+            ],
             skill_version=EntityRecognitionSkillVersion.LATEST,
             description="Skill Version 3",
             model_version="3",
@@ -103,7 +131,9 @@ class TestSearchSkillset(AzureRecordedTestCase):
         s4 = SentimentSkill(
             name="skill4",
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="confidenceScores", target_name="scoreS4")],
+            outputs=[
+                OutputFieldMappingEntry(name="confidenceScores", target_name="scoreS4")
+            ],
             skill_version=SentimentSkillVersion.V3,
             description="Sentiment V3",
             include_opinion_mining=True,
@@ -112,11 +142,15 @@ class TestSearchSkillset(AzureRecordedTestCase):
         s5 = EntityLinkingSkill(
             name="skill5",
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="entities", target_name="entitiesS5")],
+            outputs=[
+                OutputFieldMappingEntry(name="entities", target_name="entitiesS5")
+            ],
             minimum_precision=0.5,
         )
 
-        skillset = SearchIndexerSkillset(name=name, skills=list([s1, s2, s3, s4, s5]), description="desc")
+        skillset = SearchIndexerSkillset(
+            name=name, skills=list([s1, s2, s3, s4, s5]), description="desc"
+        )
 
         dict_skills = [skill.as_dict() for skill in skillset.skills]
         skillset.skills = dict_skills
@@ -146,9 +180,15 @@ class TestSearchSkillset(AzureRecordedTestCase):
         name = "test-ss-get"
         s = EntityRecognitionSkill(
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")],
+            outputs=[
+                OutputFieldMappingEntry(
+                    name="organizations", target_name="organizations"
+                )
+            ],
         )
-        skillset = SearchIndexerSkillset(name=name, skills=list([s]), description="desc")
+        skillset = SearchIndexerSkillset(
+            name=name, skills=list([s]), description="desc"
+        )
         client.create_skillset(skillset)
         result = client.get_skillset(name)
         assert isinstance(result, SearchIndexerSkillset)
@@ -163,29 +203,47 @@ class TestSearchSkillset(AzureRecordedTestCase):
         name2 = "test-ss-list-2"
         s = EntityRecognitionSkill(
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")],
+            outputs=[
+                OutputFieldMappingEntry(
+                    name="organizations", target_name="organizations"
+                )
+            ],
         )
 
-        skillset1 = SearchIndexerSkillset(name=name1, skills=list([s]), description="desc1")
+        skillset1 = SearchIndexerSkillset(
+            name=name1, skills=list([s]), description="desc1"
+        )
         client.create_skillset(skillset1)
-        skillset2 = SearchIndexerSkillset(name=name2, skills=list([s]), description="desc2")
+        skillset2 = SearchIndexerSkillset(
+            name=name2, skills=list([s]), description="desc2"
+        )
         client.create_skillset(skillset2)
         result = client.get_skillsets()
         assert isinstance(result, list)
         assert all(isinstance(x, SearchIndexerSkillset) for x in result)
-        assert set(x.name for x in result).intersection([name1, name2]) == set([name1, name2])
+        assert set(x.name for x in result).intersection([name1, name2]) == set(
+            [name1, name2]
+        )
 
     def _test_create_or_update_skillset(self, client):
         name = "test-ss-create-or-update"
         s = EntityRecognitionSkill(
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")],
+            outputs=[
+                OutputFieldMappingEntry(
+                    name="organizations", target_name="organizations"
+                )
+            ],
         )
 
-        skillset1 = SearchIndexerSkillset(name=name, skills=list([s]), description="desc1")
+        skillset1 = SearchIndexerSkillset(
+            name=name, skills=list([s]), description="desc1"
+        )
         client.create_or_update_skillset(skillset1)
         expected_count = len(client.get_skillsets())
-        skillset2 = SearchIndexerSkillset(name=name, skills=list([s]), description="desc2")
+        skillset2 = SearchIndexerSkillset(
+            name=name, skills=list([s]), description="desc2"
+        )
         client.create_or_update_skillset(skillset2)
         assert len(client.get_skillsets()) == expected_count
 
@@ -198,13 +256,21 @@ class TestSearchSkillset(AzureRecordedTestCase):
         name = "test-ss-create-or-update-inplace"
         s = EntityRecognitionSkill(
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")],
+            outputs=[
+                OutputFieldMappingEntry(
+                    name="organizations", target_name="organizations"
+                )
+            ],
         )
 
-        skillset1 = SearchIndexerSkillset(name=name, skills=list([s]), description="desc1")
+        skillset1 = SearchIndexerSkillset(
+            name=name, skills=list([s]), description="desc1"
+        )
         ss = client.create_or_update_skillset(skillset1)
         expected_count = len(client.get_skillsets())
-        skillset2 = SearchIndexerSkillset(name=name, skills=[s], description="desc2", skillset=ss)
+        skillset2 = SearchIndexerSkillset(
+            name=name, skills=[s], description="desc2", skillset=ss
+        )
         client.create_or_update_skillset(skillset2)
         assert len(client.get_skillsets()) == expected_count
 
@@ -217,35 +283,53 @@ class TestSearchSkillset(AzureRecordedTestCase):
         name = "test-ss-create-or-update-unchanged"
         s = EntityRecognitionSkill(
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")],
+            outputs=[
+                OutputFieldMappingEntry(
+                    name="organizations", target_name="organizations"
+                )
+            ],
         )
 
-        skillset1 = SearchIndexerSkillset(name=name, skills=list([s]), description="desc1")
+        skillset1 = SearchIndexerSkillset(
+            name=name, skills=list([s]), description="desc1"
+        )
         ss = client.create_or_update_skillset(skillset1)
 
         ss.e_tag = "changed_etag"
 
         with pytest.raises(HttpResponseError):
-            client.create_or_update_skillset(ss, match_condition=MatchConditions.IfNotModified)
+            client.create_or_update_skillset(
+                ss, match_condition=MatchConditions.IfNotModified
+            )
 
     def _test_delete_skillset_if_unchanged(self, client):
         name = "test-ss-deleted-unchanged"
         s = EntityRecognitionSkill(
             inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
-            outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")],
+            outputs=[
+                OutputFieldMappingEntry(
+                    name="organizations", target_name="organizations"
+                )
+            ],
         )
 
-        skillset = SearchIndexerSkillset(name=name, skills=list([s]), description="desc")
+        skillset = SearchIndexerSkillset(
+            name=name, skills=list([s]), description="desc"
+        )
 
         result = client.create_skillset(skillset)
         etag = result.e_tag
 
-        skillset = SearchIndexerSkillset(name=name, skills=list([s]), description="updated")
+        skillset = SearchIndexerSkillset(
+            name=name, skills=list([s]), description="updated"
+        )
         updated = client.create_or_update_skillset(skillset)
         updated.e_tag = etag
 
         with pytest.raises(HttpResponseError):
-            client.delete_skillset(updated, match_condition=MatchConditions.IfNotModified)
+            client.delete_skillset(
+                updated, match_condition=MatchConditions.IfNotModified
+            )
 
     def _test_delete_skillset(self, client):
         for skillset in client.get_skillset_names():

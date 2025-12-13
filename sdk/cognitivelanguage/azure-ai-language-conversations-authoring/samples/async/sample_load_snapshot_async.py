@@ -57,7 +57,9 @@ async def sample_load_snapshot_async():
             print(f"Operation failed: {e.message}")
             print(e.error)
 
+
 # [END conversation_authoring_load_snapshot_async]
+
 
 async def main():
     await sample_load_snapshot_async()

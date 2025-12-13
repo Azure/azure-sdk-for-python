@@ -96,3 +96,4 @@ opentelemetry-exporter-otlp-proto-grpc
 agent-framework-core
 langchain
 langchain-openai
+azure-ai-language-questionanswering

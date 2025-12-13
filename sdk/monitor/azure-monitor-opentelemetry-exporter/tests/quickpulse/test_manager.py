@@ -956,11 +956,11 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
     def test_record_log_record_no_log_record(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
-        """Test _record_log_record when log_data.log_record is None."""
+        """Test _record_log_record when readable_log_record.log_record is None."""
         post_state_mock.return_value = True
         log_data_mock = mock.Mock()
         log_data_mock.log_record = None
-        
+
         qpm = _QuickpulseManager()
         qpm.initialize(connection_string=self.connection_string, resource=self.resource)
         

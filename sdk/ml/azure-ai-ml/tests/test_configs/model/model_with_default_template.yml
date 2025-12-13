@@ -1,0 +1,8 @@
+$schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
+name: model_with_default_template
+version: "1"
+type: mlflow_model
+path: ./lightgbm_mlflow
+description: "Model with default deployment template"
+default_deployment_template:
+  asset_id: azureml://registries/test-registry/deploymenttemplates/template1/versions/1

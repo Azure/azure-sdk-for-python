@@ -1483,7 +1483,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @QueuePreparer()
-    async def test_user_delegation_oid(self, **kwargs):
+    async def test_queue_user_delegation_oid(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
         message = "addedmessage"
@@ -1505,7 +1505,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             queue.account_name,
             queue.queue_name,
             storage_account_key,
-            permission=QueueSasPermissions(add=True),
+            permission=QueueSasPermissions(add=True, read=True, process=True),
             expiry=expiry,
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid,
@@ -1515,12 +1515,10 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         queue_msg = await queue_client.send_message(message)
         assert queue_msg is not None
 
-        result = anext(queue.receive_messages())
-        assert message == result.content
-
         messages = []
-        async for m in queue.receive_messages():
+        async for m in queue_client.receive_messages():
             messages.append(m)
+        assert len(messages) > 0
         assert message == messages[0].content
 
 

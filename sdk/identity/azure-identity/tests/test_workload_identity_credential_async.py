@@ -70,10 +70,10 @@ async def test_workload_identity_credential_get_token(get_token_method):
 
 
 class TestWorkloadIdentityCredentialTokenProxyAsync:
-    """Async test cases for WorkloadIdentityCredential with use_token_proxy=True."""
+    """Async test cases for WorkloadIdentityCredential with enable_azure_proxy=True."""
 
-    def test_use_token_proxy_creates_custom_aiohttp_transport(self):
-        """Test that use_token_proxy=True creates a custom aiohttp transport with correct parameters."""
+    def test_enable_azure_proxy_creates_custom_aiohttp_transport(self):
+        """Test that enable_azure_proxy=True creates a custom aiohttp transport with correct parameters."""
         tenant_id = "tenant-id"
         client_id = "client-id"
         token_file_path = "foo-path"
@@ -96,7 +96,7 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
-                    use_token_proxy=True,
+                    enable_azure_proxy=True,
                 )
 
                 mock_get_transport.assert_called_once_with(
@@ -106,8 +106,8 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     ca_data=None,
                 )
 
-    def test_use_token_proxy_with_ca_data(self):
-        """Test use_token_proxy with CA data instead of CA file."""
+    def test_enable_azure_proxy_with_ca_data(self):
+        """Test enable_azure_proxy with CA data instead of CA file."""
         tenant_id = "tenant-id"
         client_id = "client-id"
         token_file_path = "foo-path"
@@ -128,7 +128,7 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
-                    use_token_proxy=True,
+                    enable_azure_proxy=True,
                 )
                 mock_get_transport.assert_called_once_with(
                     sni=None,
@@ -137,8 +137,8 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     ca_data=ca_data,
                 )
 
-    def test_use_token_proxy_minimal_config(self):
-        """Test use_token_proxy with minimal configuration (only proxy endpoint)."""
+    def test_enable_azure_proxy_minimal_config(self):
+        """Test enable_azure_proxy with minimal configuration (only proxy endpoint)."""
         tenant_id = "tenant-id"
         client_id = "client-id"
         token_file_path = "foo-path"
@@ -157,7 +157,7 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
-                    use_token_proxy=True,
+                    enable_azure_proxy=True,
                 )
 
                 mock_get_transport.assert_called_once_with(
@@ -167,8 +167,8 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     ca_data=None,
                 )
 
-    def test_use_token_proxy_missing_proxy_endpoint(self):
-        """Test that use_token_proxy=True without proxy endpoint uses the normal transport."""
+    def test_enable_azure_proxy_missing_proxy_endpoint(self):
+        """Test that enable_azure_proxy=True without proxy endpoint uses the normal transport."""
         tenant_id = "tenant-id"
         client_id = "client-id"
         token_file_path = "foo-path"
@@ -183,11 +183,11 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
-                    use_token_proxy=True,
+                    enable_azure_proxy=True,
                 )
                 mock_get_transport.assert_not_called()
 
-    def test_use_token_proxy_both_ca_file_and_data_raises_error(self):
+    def test_enable_azure_proxy_both_ca_file_and_data_raises_error(self):
         """Test that setting both CA file and CA data raises ValueError."""
         tenant_id = "tenant-id"
         client_id = "client-id"
@@ -208,11 +208,11 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
-                    use_token_proxy=True,
+                    enable_azure_proxy=True,
                 )
 
-    def test_use_token_proxy_missing_endpoint_with_custom_env_vars_raises_error(self):
-        """Test that use_token_proxy=True without proxy endpoint but with other custom env vars raises ValueError."""
+    def test_enable_azure_proxy_missing_endpoint_with_custom_env_vars_raises_error(self):
+        """Test that enable_azure_proxy=True without proxy endpoint but with other custom env vars raises ValueError."""
         tenant_id = "tenant-id"
         client_id = "client-id"
         token_file_path = "foo-path"
@@ -234,7 +234,7 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
-                    use_token_proxy=True,
+                    enable_azure_proxy=True,
                 )
 
         # Test with CA file set but no proxy endpoint
@@ -247,7 +247,7 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
-                    use_token_proxy=True,
+                    enable_azure_proxy=True,
                 )
 
         # Test with CA data set but no proxy endpoint
@@ -260,12 +260,12 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
-                    use_token_proxy=True,
+                    enable_azure_proxy=True,
                 )
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-    async def test_use_token_proxy_get_token_success(self, get_token_method):
+    async def test_enable_azure_proxy_get_token_success(self, get_token_method):
         """Test successful token acquisition when using token proxy."""
         tenant_id = "tenant-id"
         client_id = "client-id"
@@ -294,7 +294,7 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
-                    use_token_proxy=True,
+                    enable_azure_proxy=True,
                 )
 
                 open_mock = mock_open(read_data=assertion)
@@ -304,8 +304,8 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
 
                 open_mock.assert_called_once_with(token_file_path, encoding="utf-8")
 
-    def test_use_token_proxy_false_does_not_create_transport(self):
-        """Test that use_token_proxy=False (default) does not create a custom transport."""
+    def test_enable_azure_proxy_false_does_not_create_transport(self):
+        """Test that enable_azure_proxy=False (default) does not create a custom transport."""
         tenant_id = "tenant-id"
         client_id = "client-id"
         token_file_path = "foo-path"
@@ -315,7 +315,7 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                 tenant_id=tenant_id,
                 client_id=client_id,
                 token_file_path=token_file_path,
-                use_token_proxy=False,
+                enable_azure_proxy=False,
             )
             mock_get_transport.assert_not_called()
 

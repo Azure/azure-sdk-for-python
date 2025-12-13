@@ -77,7 +77,9 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
 
         result.e_tag = etag
         with pytest.raises(HttpResponseError):
-            client.delete_synonym_map(result, match_condition=MatchConditions.IfNotModified)
+            client.delete_synonym_map(
+                result, match_condition=MatchConditions.IfNotModified
+            )
         client.delete_synonym_map(name)
 
     def _test_get_synonym_map(self, client):

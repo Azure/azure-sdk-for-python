@@ -1580,27 +1580,4 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
         await new_directory_client.delete_directory()
 
-    @FileSharePreparer()
-    @recorded_by_proxy_async
-    async def test_create_directory_semantics(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        await self._setup(storage_account_name, storage_account_key)
-        share_client = self.fsc.get_share_client(self.share_name)
-
-        directory = await share_client.create_directory('dir1', file_property_semantics=None)
-        props = await directory.get_directory_properties()
-        assert props is not None
-
-        directory = await share_client.create_directory('dir2', file_property_semantics='New')
-        props = await directory.get_directory_properties()
-        assert props is not None
-
-        directory = await share_client.create_directory(
-            'dir3', file_property_semantics='Restore', file_permission=TEST_FILE_PERMISSIONS
-        )
-        props = await directory.get_directory_properties()
-        assert props is not None
-
 # ------------------------------------------------------------------------------

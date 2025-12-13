@@ -28,12 +28,17 @@ import time
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
+from . import _retry_utility_async
+from ._asynchronous_availability_strategy_handler import execute_with_availability_strategy
 from .. import exceptions
 from .. import http_constants
-from . import _retry_utility_async
+from .._availability_strategy_config import CrossRegionHedgingStrategyConfig
+from .._constants import _Constants
+from .._request_object import RequestObject
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
+from ..documents import _OperationType
 
-
+# cspell:ignore ppaf
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
 
@@ -49,8 +54,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     :rtype: tuple of (dict, dict)
 
     """
-    # pylint: disable=protected-access
-
+    # pylint: disable=protected-access, too-many-branches
+    kwargs.pop(_Constants.OperationStartTime, None)
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
@@ -80,8 +85,9 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         base_url = request_params.endpoint_override
     else:
         pk_range_wrapper = None
-        if global_endpoint_manager.is_circuit_breaker_applicable(request_params):
-            # Circuit breaker is applicable, so we need to use the endpoint from the request
+        if (global_endpoint_manager.is_circuit_breaker_applicable(request_params) or
+                global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)):
+            # Circuit breaker or per-partition failover are applicable, so we need to use the endpoint from the request
             pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
     if not request.url.startswith(base_url):
@@ -162,6 +168,21 @@ async def _PipelineRunFunction(pipeline_client, request, **kwargs):
 
     return await pipeline_client._pipeline.run(request, **kwargs)
 
+
+def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
+    """Determine if availability strategy should be applied to the request.
+
+    :param request_params: Request parameters containing operation details
+    :type request_params: ~azure.cosmos._request_object.RequestObject
+    :returns: True if availability strategy should be applied, False otherwise
+    :rtype: bool
+    """
+    return (request_params.availability_strategy_config is not None and
+            not request_params.is_hedging_request and
+            request_params.resource_type == http_constants.ResourceType.Document and
+            (not _OperationType.IsWriteOperation(request_params.operation_type) or
+             request_params.retry_write > 0))
+
 async def AsynchronousRequest(
     client,
     request_params,
@@ -175,7 +196,8 @@ async def AsynchronousRequest(
     """Performs one asynchronous http request according to the parameters.
 
     :param object client: Document client instance
-    :param dict request_params:
+    :param request_params: Request parameters containing operation details
+    :type request_params: ~azure.cosmos._request_object.RequestObject
     :param _GlobalEndpointManager global_endpoint_manager:
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client: PipelineClient to process the request.
@@ -189,6 +211,29 @@ async def AsynchronousRequest(
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
+
+    if request_params.availability_strategy_config is None:
+        # if ppaf is enabled, then hedging is enabled by default
+        if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
+            request_params.availability_strategy_config = CrossRegionHedgingStrategyConfig()
+
+    # Handle hedging if strategy is configured
+    if _is_availability_strategy_applicable(request_params):
+        return await execute_with_availability_strategy(
+            request_params,
+            global_endpoint_manager,
+            request,
+            lambda req_param, r: _retry_utility_async.ExecuteAsync(
+                client,
+                global_endpoint_manager,
+                _Request,
+                req_param,
+                connection_policy,
+                pipeline_client,
+                r,
+                **kwargs
+            )
+        )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return await _retry_utility_async.ExecuteAsync(

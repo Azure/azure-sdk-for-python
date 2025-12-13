@@ -44,8 +44,6 @@ class TestCrossPartitionQuery(unittest.TestCase):
             use_multiple_write_locations = True
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, multiple_write_locations=use_multiple_write_locations)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        if cls.host == "https://localhost:8081/":
-            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     def setUp(self):
         self.created_container = self.created_db.create_container(

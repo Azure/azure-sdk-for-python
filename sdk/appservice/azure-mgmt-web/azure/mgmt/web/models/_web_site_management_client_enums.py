@@ -520,6 +520,13 @@ class InsightStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
 
 
+class InstallScriptType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the install script."""
+
+    REMOTE_AZURE_BLOB = "RemoteAzureBlob"
+    PLATFORM_STORAGE = "PlatformStorage"
+
+
 class IpFilterTag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines what this IP filter will be used for. This is to support IP filtering on proxies."""
 
@@ -624,12 +631,12 @@ class ManagedPipelineMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of managed service identity."""
+    """ManagedServiceIdentityType."""
 
+    NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
-    NONE = "None"
 
 
 class MSDeployLogEntryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -766,6 +773,17 @@ class RedundancyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILOVER = "Failover"
     ACTIVE_ACTIVE = "ActiveActive"
     GEO_REDUNDANT = "GeoRedundant"
+
+
+class RegistryAdapterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the registry adapter."""
+
+    BINARY = "Binary"
+    STRING = "String"
+    EXPAND_STRING = "Expand_String"
+    MULTI_STRING = "Multi_String"
+    D_WORD = "DWord"
+    Q_WORD = "QWord"
 
 
 class RenderingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -966,6 +984,14 @@ class StatusOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     READY = "Ready"
     PENDING = "Pending"
     CREATING = "Creating"
+
+
+class StorageMountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the storage mount."""
+
+    AZURE_FILES = "AzureFiles"
+    LOCAL_STORAGE = "LocalStorage"
+    FILE_SHARE = "FileShare"
 
 
 class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

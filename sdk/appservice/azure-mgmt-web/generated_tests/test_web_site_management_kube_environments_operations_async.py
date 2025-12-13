@@ -23,7 +23,7 @@ class TestWebSiteManagementKubeEnvironmentsOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_kube_environments_list_by_subscription(self, resource_group):
         response = self.client.kube_environments.list_by_subscription(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestWebSiteManagementKubeEnvironmentsOperationsAsync(AzureMgmtRecordedTest
     async def test_kube_environments_list_by_resource_group(self, resource_group):
         response = self.client.kube_environments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestWebSiteManagementKubeEnvironmentsOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.kube_environments.get(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestWebSiteManagementKubeEnvironmentsOperationsAsync(AzureMgmtRecordedTest
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-11-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -110,7 +110,7 @@ class TestWebSiteManagementKubeEnvironmentsOperationsAsync(AzureMgmtRecordedTest
             await self.client.kube_environments.begin_delete(
                 resource_group_name=resource_group.name,
                 name="str",
-                api_version="2024-11-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -156,7 +156,7 @@ class TestWebSiteManagementKubeEnvironmentsOperationsAsync(AzureMgmtRecordedTest
                 "staticIp": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

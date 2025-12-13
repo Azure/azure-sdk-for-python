@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -31,7 +31,8 @@ from ...operations._restorable_sql_databases_operations import build_list_reques
 from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class RestorableSqlDatabasesOperations:
@@ -56,7 +57,7 @@ class RestorableSqlDatabasesOperations:
     @distributed_trace
     def list(
         self, location: str, instance_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.RestorableSqlDatabaseGetResult"]:
+    ) -> AsyncItemPaged["_models.RestorableSqlDatabaseGetResult"]:
         """Show the event feed of all mutations done on all the Azure Cosmos DB SQL databases under the
         restorable account.  This helps in scenario where database was accidentally deleted to get the
         deletion time.  This API requires

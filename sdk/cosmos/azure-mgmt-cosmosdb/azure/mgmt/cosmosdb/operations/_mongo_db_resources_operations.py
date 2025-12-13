@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -36,7 +36,8 @@ from .._configuration import CosmosDBManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -48,7 +49,7 @@ def build_list_mongo_db_databases_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -83,7 +84,7 @@ def build_get_mongo_db_database_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -119,7 +120,7 @@ def build_create_update_mongo_db_database_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -157,7 +158,7 @@ def build_delete_mongo_db_database_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -188,7 +189,7 @@ def build_get_mongo_db_database_throughput_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -224,7 +225,7 @@ def build_update_mongo_db_database_throughput_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -263,7 +264,7 @@ def build_migrate_mongo_db_database_to_autoscale_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -299,7 +300,7 @@ def build_migrate_mongo_db_database_to_manual_throughput_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -335,7 +336,7 @@ def build_list_mongo_db_collections_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -376,7 +377,7 @@ def build_get_mongo_db_collection_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -418,7 +419,7 @@ def build_create_update_mongo_db_collection_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -462,7 +463,7 @@ def build_delete_mongo_db_collection_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -499,7 +500,7 @@ def build_get_mongo_db_collection_throughput_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -541,7 +542,7 @@ def build_update_mongo_db_collection_throughput_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -586,7 +587,7 @@ def build_migrate_mongo_db_collection_to_autoscale_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -628,7 +629,7 @@ def build_migrate_mongo_db_collection_to_manual_throughput_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -665,7 +666,7 @@ def build_get_mongo_role_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -701,7 +702,7 @@ def build_create_update_mongo_role_definition_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -740,7 +741,7 @@ def build_delete_mongo_role_definition_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -776,7 +777,7 @@ def build_list_mongo_role_definitions_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -811,7 +812,7 @@ def build_get_mongo_user_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -847,7 +848,7 @@ def build_create_update_mongo_user_definition_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -886,7 +887,7 @@ def build_delete_mongo_user_definition_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -922,7 +923,7 @@ def build_list_mongo_user_definitions_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -962,7 +963,7 @@ def build_retrieve_continuous_backup_information_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1008,7 +1009,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: CosmosDBManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -1018,7 +1019,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_mongo_db_databases(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> Iterable["_models.MongoDBDatabaseGetResults"]:
+    ) -> ItemPaged["_models.MongoDBDatabaseGetResults"]:
         """Lists the MongoDB databases under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2016,7 +2017,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_mongo_db_collections(
         self, resource_group_name: str, account_name: str, database_name: str, **kwargs: Any
-    ) -> Iterable["_models.MongoDBCollectionGetResults"]:
+    ) -> ItemPaged["_models.MongoDBCollectionGetResults"]:
         """Lists the MongoDB collection under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3446,7 +3447,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_mongo_role_definitions(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> Iterable["_models.MongoRoleDefinitionGetResults"]:
+    ) -> ItemPaged["_models.MongoRoleDefinitionGetResults"]:
         """Retrieves the list of all Azure Cosmos DB Mongo Role Definitions.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3918,7 +3919,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_mongo_user_definitions(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> Iterable["_models.MongoUserDefinitionGetResults"]:
+    ) -> ItemPaged["_models.MongoUserDefinitionGetResults"]:
         """Retrieves the list of all Azure Cosmos DB Mongo User Definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

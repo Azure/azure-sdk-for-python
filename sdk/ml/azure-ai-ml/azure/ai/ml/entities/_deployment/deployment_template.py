@@ -69,7 +69,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         code_configuration: Optional[Dict[str, Any]] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         app_insights_enabled: Optional[bool] = None,
-        allowed_instance_type: Optional[str] = None,
+        allowed_instance_types: Optional[str] = None,
         default_instance_type: Optional[str] = None,  # Handle default instance type
         scoring_port: Optional[int] = None,
         scoring_path: Optional[str] = None,
@@ -99,7 +99,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         self.code_configuration = code_configuration
         self.environment_variables = environment_variables
         self.app_insights_enabled = app_insights_enabled
-        self.allowed_instance_type = allowed_instance_type
+        self.allowed_instance_types = allowed_instance_types
         self.default_instance_type = default_instance_type
         self.scoring_port = scoring_port
         self.scoring_path = scoring_path
@@ -362,7 +362,9 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         )
 
         # Extract additional fields
-        allowed_instance_type = get_value(properties, "allowedInstanceType") or get_value(obj, "allowed_instance_type")
+        allowed_instance_types = get_value(properties, "allowedInstanceTypes") or get_value(
+            obj, "allowed_instance_types"
+        )
         scoring_port = get_value(properties, "scoringPort") or get_value(obj, "scoring_port")
         scoring_path = get_value(properties, "scoringPath") or get_value(obj, "scoring_path")
         model_mount_path = get_value(properties, "modelMountPath") or get_value(obj, "model_mount_path")
@@ -387,12 +389,12 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             except (ValueError, SyntaxError):
                 environment_variables = {}
 
-        # Parse allowed_instance_type if it's a string
-        if isinstance(allowed_instance_type, str):
+        # Parse allowed_instance_types if it's a string
+        if isinstance(allowed_instance_types, str):
             try:
-                allowed_instance_type = ast.literal_eval(allowed_instance_type)
+                allowed_instance_types = ast.literal_eval(allowed_instance_types)
             except (ValueError, SyntaxError):
-                allowed_instance_type = None
+                allowed_instance_types = None
 
         # Convert request_settings to OnlineRequestSettings object using the built-in conversion method
         request_settings_obj = OnlineRequestSettings._from_rest_object(request_settings) if request_settings else None
@@ -434,7 +436,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             environment_variables=environment_variables,
             app_insights_enabled=get_value(obj, "app_insights_enabled"),  # May not be present in this API format
             deployment_template_type=deployment_template_type,  # Include deployment template type
-            allowed_instance_type=allowed_instance_type,  # Include allowed instance types
+            allowed_instance_types=allowed_instance_types,  # Include allowed instance types
             scoring_port=scoring_port,  # Include scoring port
             scoring_path=scoring_path,  # Include scoring path
             model_mount_path=model_mount_path,  # Include model mount path
@@ -466,7 +468,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             "code_configuration": get_value(obj, "code_configuration"),
             "app_insights_enabled": get_value(obj, "app_insights_enabled"),
             "deployment_template_type": deployment_template_type,
-            "allowed_instance_type": allowed_instance_type,
+            "allowed_instance_types": allowed_instance_types,
             "scoring_port": scoring_port,
             "scoring_path": scoring_path,
             "model_mount_path": model_mount_path,
@@ -564,15 +566,15 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             result["appInsightsEnabled"] = self.app_insights_enabled  # type: ignore
 
         # Handle allowed instance types - convert string to array format for API
-        if hasattr(self, "allowed_instance_type") and self.allowed_instance_type:
-            if isinstance(self.allowed_instance_type, str):
+        if hasattr(self, "allowed_instance_types") and self.allowed_instance_types:
+            if isinstance(self.allowed_instance_types, str):
                 # Convert space-separated string to array
-                instance_types_array = self.allowed_instance_type.split()
-            elif isinstance(self.allowed_instance_type, list):
-                instance_types_array = self.allowed_instance_type
+                instance_types_array = self.allowed_instance_types.split()
+            elif isinstance(self.allowed_instance_types, list):
+                instance_types_array = self.allowed_instance_types
             else:
-                instance_types_array = [str(self.allowed_instance_type)]
-            result["allowedInstanceType"] = instance_types_array  # type: ignore[assignment]
+                instance_types_array = [str(self.allowed_instance_types)]
+            result["allowedInstanceTypes"] = instance_types_array  # type: ignore[assignment]
 
         return result
 
@@ -637,8 +639,8 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 result["readinessProbe"] = readiness_dict  # type: ignore[assignment]
 
         # Add instance configuration
-        if hasattr(self, "allowed_instance_type") and self.allowed_instance_type:
-            result["allowedInstanceType"] = self.allowed_instance_type  # type: ignore[assignment]
+        if hasattr(self, "allowed_instance_types") and self.allowed_instance_types:
+            result["allowedInstanceTypes"] = self.allowed_instance_types  # type: ignore[assignment]
         if self.default_instance_type:
             result["defaultInstanceType"] = self.default_instance_type
         elif self.instance_type:

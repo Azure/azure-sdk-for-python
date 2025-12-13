@@ -338,7 +338,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_offline_store_role_assignment = True
             update_online_store_role_assignment = True
 
-        self._validate_offline_store(offline_store=offline_store)
+        self._validate_offline_store(offline_store=offline_store)  # type: ignore[arg-type]
 
         if (
             rest_workspace_obj.feature_store_settings
@@ -491,9 +491,12 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_online_store_role_assignment=update_online_store_role_assignment,
             materialization_identity_id=(
                 materialization_identity.resource_id
-                if update_workspace_role_assignment
-                or update_offline_store_role_assignment
-                or update_online_store_role_assignment
+                if materialization_identity
+                and (
+                    update_workspace_role_assignment
+                    or update_offline_store_role_assignment
+                    or update_online_store_role_assignment
+                )
                 else None
             ),
             offline_store_target=offline_store_target_to_update if update_offline_store_role_assignment else None,

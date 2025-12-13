@@ -28,7 +28,7 @@ class TestMySQLManagementBackupAndExportOperations(AzureMgmtRecordedTestCase):
                 "backupSettings": {"backupName": "str", "backupFormat": "str"},
                 "targetDetails": "backup_store_details",
             },
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestMySQLManagementBackupAndExportOperations(AzureMgmtRecordedTestCase):
         response = self.client.backup_and_export.validate_backup(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -47,7 +47,7 @@ DELIMITER = "|"
 class SearchIndexerSkillset(_serialization.Model):
     """A list of skills.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the skillset. Required.
     :vartype name: str
@@ -57,7 +57,8 @@ class SearchIndexerSkillset(_serialization.Model):
     :vartype skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
     :ivar cognitive_services_account: Details about the Azure AI service to be used when running
      skills.
-    :vartype cognitive_services_account: ~azure.search.documents.indexes.models.CognitiveServicesAccount
+    :vartype cognitive_services_account:
+     ~azure.search.documents.indexes.models.CognitiveServicesAccount
     :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
      enriched data.
     :vartype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
@@ -215,12 +216,11 @@ class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
 
 class EntityRecognitionSkill(SearchIndexerSkill):
-    """Using the Text Analytics API, extracts entities of different types from text.
+    """This skill is deprecated. Use the V3.EntityRecognitionSkill instead.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: Required. Identifies the concrete type of the skill.Constant filled by
-     server.
+    :ivar odata_type: A URI fragment specifying the type of skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -232,23 +232,23 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     :ivar context: Represents the level at which operations take place, such as the document root
      or document content (for example, /document or /document/content). The default is /document.
     :vartype context: str
-    :ivar inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
+    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
+     an upstream skill. Required.
     :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
+    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
+     be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :ivar categories: A list of entity categories that should be extracted.
-    :vartype categories: list[str] or list[~azure.search.documents.indexes.models.EntityCategory]
-    :ivar default_language_code: A value indicating which language code to use. Default is en.
-     Possible values include: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
-     "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", "tr".
+    :vartype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
+    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+     Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de", "el",
+     "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
     :vartype default_language_code: str or
      ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
     :ivar include_typeless_entities: Determines whether or not to include entities which are well
      known but don't conform to a pre-defined type. If this configuration is not set (default), set
      to null or set to false, entities which don't conform to one of the pre-defined types will not
-     be surfaced. Only valid for skill version 1.
+     be surfaced.
     :vartype include_typeless_entities: bool
     :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
@@ -256,7 +256,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     :vartype minimum_precision: float
     :ivar model_version: The version of the model to use when calling the Text Analytics service.
      It will default to the latest available when not specified. We recommend you do not specify
-     this value unless absolutely necessary. Only valid from skill version 3.
+     this value unless absolutely necessary.
     :vartype model_version: str
     :ivar skill_version: The version of the skill to use when calling the Text Analytics service.
      It will default to V1 when not specified.
@@ -338,16 +338,11 @@ class SentimentSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SentimentSkill(SearchIndexerSkill):
-    """V1: Text analytics positive-negative sentiment analysis, scored as a floating point value in a range of zero
-    to 1.
-    V3: Using the Text Analytics API, evaluates unstructured text and for each record, provides sentiment labels
-    (such as "negative", "neutral" and "positive") based on the highest confidence score found by the service at
-    a sentence and document-level.
+    """This skill is deprecated. Use the V3.SentimentSkill instead.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: Required. Identifies the concrete type of the skill.Constant filled by
-     server.
+    :ivar odata_type: A URI fragment specifying the type of skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
@@ -359,28 +354,28 @@ class SentimentSkill(SearchIndexerSkill):
     :ivar context: Represents the level at which operations take place, such as the document root
      or document content (for example, /document or /document/content). The default is /document.
     :vartype context: str
-    :ivar inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
+    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
+     an upstream skill. Required.
     :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
+    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
+     be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is en.
-     Possible values include: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT",
-     "ru", "es", "sv", "tr".
+    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+     Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
+     "es", "sv", and "tr".
     :vartype default_language_code: str or
      ~azure.search.documents.indexes.models.SentimentSkillLanguage
+    :ivar skill_version: The version of the skill to use when calling the Text Analytics service.
+     It will default to V1 when not specified.
+    :vartype skill_version: ~azure.search.documents.indexes.models.SentimentSkillVersion
     :ivar include_opinion_mining: If set to true, the skill output will include information from
      Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
-     assessment (adjective) in the text. Default is false.
+     assessment (adjective) in the text. Default is false. Only used when ``skill_version`` is V3.
     :vartype include_opinion_mining: bool
     :ivar model_version: The version of the model to use when calling the Text Analytics service.
      It will default to the latest available when not specified. We recommend you do not specify
      this value unless absolutely necessary.
     :vartype model_version: str
-    :ivar skill_version: The version of the skill to use when calling the Text Analytics service.
-     It will default to V1 when not specified.
-    :vartype skill_version: ~azure.search.documents.indexes.models.SentimentSkillVersion
     """
 
     _validation = {
@@ -586,34 +581,33 @@ class AnalyzeTextOptions(_serialization.Model):
 
 
 class CustomAnalyzer(LexicalAnalyzer):
-    """Allows you to take control over the process of converting text into indexable/searchable tokens.
-    It's a user-defined configuration consisting of a single predefined tokenizer and one or more filters.
-    The tokenizer is responsible for breaking text into tokens, and the filters for modifying tokens
-    emitted by the tokenizer.
+    """Allows you to take control over the process of converting text into indexable/searchable
+    tokens. It's a user-defined configuration consisting of a single predefined tokenizer and one
+    or more filters. The tokenizer is responsible for breaking text into tokens, and the filters
+    for modifying tokens emitted by the tokenizer.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
-     server.
+    :ivar odata_type: A URI fragment specifying the type of analyzer. Required.
     :vartype odata_type: str
-    :ivar name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
+    :ivar name: The name of the analyzer. It must only contain letters, digits, spaces, dashes or
+     underscores, can only start and end with alphanumeric characters, and is limited to 128
+     characters. Required.
     :vartype name: str
-    :ivar tokenizer_name: Required. The name of the tokenizer to use to divide continuous text into a
-     sequence of tokens, such as breaking a sentence into words. Possible values include: "classic",
+    :ivar tokenizer_name: The name of the tokenizer to use to divide continuous text into a sequence
+     of tokens, such as breaking a sentence into words. Required. Known values are: "classic",
      "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
      "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
-     "standard_v2", "uax_url_email", "whitespace".
+     "standard_v2", "uax_url_email", and "whitespace".
     :vartype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
     :ivar token_filters: A list of token filters used to filter out or modify the tokens generated
      by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
      lowercase. The filters are run in the order in which they are listed.
-    :vartype token_filters: list[str] or list[~azure.search.documents.indexes.models.TokenFilterName]
+    :vartype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
     :ivar char_filters: A list of character filters used to prepare input text before it is
      processed by the tokenizer. For instance, they can replace certain characters or symbols. The
      filters are run in the order in which they are listed.
-    :vartype char_filters: list[str]
+    :vartype char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
     """
 
     def __init__(self, **kwargs):
@@ -646,24 +640,26 @@ class CustomAnalyzer(LexicalAnalyzer):
 
 
 class PatternAnalyzer(LexicalAnalyzer):
-    """Flexibly separates text into terms via a regular expression.
-    This analyzer is implemented using Apache Lucene.
+    """Flexibly separates text into terms via a regular expression pattern. This analyzer is
+    implemented using Apache Lucene.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
+    :ivar odata_type: A URI fragment specifying the type of analyzer. Required.
+    :vartype odata_type: str
+    :ivar name: The name of the analyzer. It must only contain letters, digits, spaces, dashes or
+     underscores, can only start and end with alphanumeric characters, and is limited to 128
+     characters. Required.
     :vartype name: str
     :ivar lower_case_terms: A value indicating whether terms should be lower-cased. Default is
      true.
     :vartype lower_case_terms: bool
-    :ivar pattern: A regular expression to match token separators. Default is an
-     expression that matches one or more white space characters.
+    :ivar pattern: A regular expression pattern to match token separators. Default is an expression
+     that matches one or more non-word characters.
     :vartype pattern: str
-    :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
-     'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
-    :vartype flags: list[str] or list[~azure.search.documents.indexes.models.RegexFlags]
+    :ivar flags: Regular expression flags. Known values are: "CANON_EQ", "CASE_INSENSITIVE",
+     "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", and "UNIX_LINES".
+    :vartype flags: list[str or ~azure.search.documents.indexes.models.RegexFlags]
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
     """
@@ -718,22 +714,24 @@ class PatternAnalyzer(LexicalAnalyzer):
 
 
 class PatternTokenizer(LexicalTokenizer):
-    """Tokenizer that uses regex pattern matching to construct distinct tokens.
-    This tokenizer is implemented using Apache Lucene.
+    """Tokenizer that uses regex pattern matching to construct distinct tokens. This tokenizer is
+    implemented using Apache Lucene.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and is limited to
-     128 characters.
+    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :vartype odata_type: str
+    :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
+     underscores, can only start and end with alphanumeric characters, and is limited to 128
+     characters. Required.
     :vartype name: str
-    :ivar pattern: A regular expression to match token separators. Default is an
-     expression that matches one or more white space characters.
+    :ivar pattern: A regular expression pattern to match token separators. Default is an expression
+     that matches one or more non-word characters.
     :vartype pattern: str
-    :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
-     'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
-    :vartype flags: list[str] or list[~azure.search.documents.indexes.models.RegexFlags]
-    :ivar group: The zero-based ordinal of the matching group in the regular expression to
+    :ivar flags: Regular expression flags. Known values are: "CANON_EQ", "CASE_INSENSITIVE",
+     "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", and "UNIX_LINES".
+    :vartype flags: list[str or ~azure.search.documents.indexes.models.RegexFlags]
+    :ivar group: The zero-based ordinal of the matching group in the regular expression pattern to
      extract into tokens. Use -1 if you want to use the entire pattern to split the input into
      tokens, irrespective of matching groups. Default is -1.
     :vartype group: int
@@ -786,25 +784,25 @@ class PatternTokenizer(LexicalTokenizer):
 
 class SearchResourceEncryptionKey(_serialization.Model):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
-    used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
+    used to encrypt or decrypt data-at-rest, such as indexes and synonym maps.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
-     at rest.
+    :ivar key_name: The name of your Azure Key Vault key to be used to encrypt your data at rest.
+     Required.
     :vartype key_name: str
-    :ivar key_version: Required. The version of your Azure Key Vault key to be used to encrypt
-     your data at rest.
+    :ivar key_version: The version of your Azure Key Vault key to be used to encrypt your data at
+     rest.
     :vartype key_version: str
-    :ivar vault_uri: Required. The URI of your Azure Key Vault, also referred to as DNS name, that
-     contains the key to be used to encrypt your data at rest. An example URI might be https://my-
-     keyvault-name.vault.azure.net.
+    :ivar vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
+     the key to be used to encrypt your data at rest. An example URI might be
+     ``https://my-keyvault-name.vault.azure.net``. Required.
     :vartype vault_uri: str
-    :ivar application_id: Required. An AAD Application ID that was granted the required access
-     permissions to the Azure Key Vault that is to be used when encrypting your data at rest. The
-     Application ID should not be confused with the Object ID for your AAD Application.
+    :ivar application_id: Optional Azure Active Directory application ID used to construct access
+     credentials. Supply this together with ``application_secret`` instead of ``access_credentials``.
     :vartype application_id: str
-    :ivar application_secret: The authentication key of the specified AAD application.
+    :ivar application_secret: The authentication key of the specified AAD application. Used with
+     ``application_id`` to populate access credentials.
     :vartype application_secret: str
     :ivar identity: An explicit managed identity to use for this encryption key. If not specified
      and the access credentials property is null, the system-assigned managed identity is used. On
@@ -936,24 +934,24 @@ class SynonymMap(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar name: Required. The name of the synonym map.
+    :ivar name: The name of the synonym map. Required.
     :vartype name: str
-    :ivar format: Required. The format of the synonym map. Only the 'solr' format is currently
-     supported. Default value: "solr".
+    :ivar format: The format of the synonym map. Only the 'solr' format is currently supported.
+     Required. Default value is "solr".
     :vartype format: str
-    :ivar synonyms: Required. A series of synonym rules in the specified synonym map format. The
-     rules must be separated by newlines.
+    :ivar synonyms: A series of synonym rules in the specified synonym map format. The rules must
+     be separated by newlines. Required.
     :vartype synonyms: list[str]
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
-     want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
-     Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
-     Search will ignore attempts to set this property to null. You can change this property as
-     needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
-     customer-managed keys is not available for free search services, and is only available for paid
-     services created on or after January 1, 2019.
+     want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
+     encrypted your data, it will always remain encrypted. The search service will ignore attempts
+     to set this property to null. You can change this property as needed if you want to rotate your
+     encryption key; Your data will be unaffected. Encryption with customer-managed keys is not
+     available for free search services, and is only available for paid services created on or after
+     January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :ivar e_tag: The ETag of the synonym map.
     :vartype e_tag: str
@@ -1071,7 +1069,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
     :ivar description: The description of the datasource connection.
     :vartype description: str
     :ivar type: Required. The type of the datasource connection. Possible values include: "azuresql",
-     "cosmosdb", "azureblob", "azuretable", "mysql", "adlsgen2".
+     "cosmosdb", "azureblob", "azuretable", "mysql", "adlsgen2", "onelake", "sharepoint".
     :vartype type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
     :ivar connection_string: The connection string for the datasource connection.
     :vartype connection_string: str

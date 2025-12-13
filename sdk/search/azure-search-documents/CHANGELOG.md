@@ -1,6 +1,6 @@
 # Release History
 
-## 11.7.0b2 (Unreleased)
+## 11.7.0b3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,92 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.7.0b2 (2025-11-13)
+
+### Features Added
+
+- Added new models:
+  - `azure.search.documents.indexes.models.AIServices`
+  - `azure.search.documents.indexes.models.CompletedSynchronizationState`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkill`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingProperties`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingUnit`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkillExtractionOptions`
+  - `azure.search.documents.indexes.models.IndexedOneLakeKnowledgeSource`
+  - `azure.search.documents.indexes.models.IndexedOneLakeKnowledgeSourceParameters`
+  - `azure.search.documents.indexes.models.IndexedSharePointContainerName`
+  - `azure.search.documents.indexes.models.IndexedSharePointKnowledgeSource`
+  - `azure.search.documents.indexes.models.IndexedSharePointKnowledgeSourceParameters`
+  - `azure.search.documents.indexes.models.IndexerRuntime`
+  - `azure.search.documents.indexes.models.KnowledgeRetrievalLowReasoningEffort`
+  - `azure.search.documents.indexes.models.KnowledgeRetrievalMediumReasoningEffort`
+  - `azure.search.documents.indexes.models.KnowledgeRetrievalMinimalReasoningEffort`
+  - `azure.search.documents.indexes.models.KnowledgeRetrievalOutputMode`
+  - `azure.search.documents.indexes.models.KnowledgeRetrievalReasoningEffort`
+  - `azure.search.documents.indexes.models.KnowledgeRetrievalReasoningEffortKind`
+  - `azure.search.documents.indexes.models.KnowledgeSourceAzureOpenAIVectorizer`
+  - `azure.search.documents.indexes.models.KnowledgeSourceContentExtractionMode`
+  - `azure.search.documents.indexes.models.KnowledgeSourceIngestionParameters`
+  - `azure.search.documents.indexes.models.KnowledgeSourceIngestionPermissionOption`
+  - `azure.search.documents.indexes.models.KnowledgeSourceStatistics`
+  - `azure.search.documents.indexes.models.KnowledgeSourceStatus`
+  - `azure.search.documents.indexes.models.KnowledgeSourceSynchronizationStatus`
+  - `azure.search.documents.indexes.models.KnowledgeSourceVectorizer`
+  - `azure.search.documents.indexes.models.RemoteSharePointKnowledgeSource`
+  - `azure.search.documents.indexes.models.RemoteSharePointKnowledgeSourceParameters`
+  - `azure.search.documents.indexes.models.SearchIndexFieldReference`
+  - `azure.search.documents.indexes.models.ServiceIndexersRuntime`
+  - `azure.search.documents.indexes.models.SynchronizationState`
+  - `azure.search.documents.indexes.models.WebKnowledgeSource`
+  - `azure.search.documents.indexes.models.WebKnowledgeSourceDomain`
+  - `azure.search.documents.indexes.models.WebKnowledgeSourceDomains`
+  - `azure.search.documents.indexes.models.WebKnowledgeSourceParameters`
+
+- Expanded existing models and enums:
+  - Added support for `avg`, `min`, `max`, and `cardinality` metrics on `azure.search.documents.models.FacetResult`.
+  - Added `is_adls_gen2` and `ingestion_parameters` options on `azure.search.documents.indexes.models.AzureBlobKnowledgeSourceParameters`.
+  - Added support for `gpt-5`, `gpt-5-mini`, and `gpt-5-nano` values on `azure.search.documents.indexes.models.AzureOpenAIModelName`.
+  - Added support for `web`, `remoteSharePoint`, `indexedSharePoint`, and `indexedOneLake` values on `azure.search.documents.indexes.models.KnowledgeSourceKind`.
+  - Added support for `onelake` and `sharepoint` values on `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.type`.
+  - Added `azure.search.documents.indexes.models.SearchField.sensitivity_label`.
+  - Added `azure.search.documents.indexes.models.SearchIndexerStatus.runtime`.
+  - Added `azure.search.documents.indexes.models.SearchIndex.purview_enabled`.
+  - Added `azure.search.documents.indexes.models.SearchServiceLimits.max_cumulative_indexer_runtime_seconds`.
+  - Added `azure.search.documents.indexes.models.SearchServiceStatistics.indexers_runtime`.
+  - Added `product` aggregation support to `azure.search.documents.indexes.models.ScoringFunctionAggregation`.
+  - Added `share_point` to `azure.search.documents.indexes.models.SearchIndexerDataSourceType`.
+  - Added `include_references`, `include_reference_source_data`, `always_query_source`, and `reranker_threshold` options on `azure.search.documents.knowledgebases.models.SearchIndexKnowledgeSourceParams`.
+  - Added `error` tracking details on `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord` derivatives.
+
+- Client and service enhancements:
+  - Added support for HTTP 206 partial content responses when calling `azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient.knowledge_retrieval.retrieve`.
+  - Added optional `x_ms_enable_elevated_read` keyword to `azure.search.documents.SearchClient.search` and `azure.search.documents.aio.SearchClient.search` for elevated document reads.
+
+### Breaking Changes
+
+> These changes apply to the latest preview release only and do not affect generally available versions.
+
+- Knowledge base naming and routing refresh:
+  - Renamed the knowledge agent surface area to the knowledge base equivalents:
+    - `azure.search.documents.indexes.models.KnowledgeAgent` -> `azure.search.documents.indexes.models.KnowledgeBase`
+    - `azure.search.documents.indexes.models.KnowledgeAgentAzureOpenAIModel` -> `azure.search.documents.indexes.models.KnowledgeBaseAzureOpenAIModel`
+    - `azure.search.documents.indexes.models.KnowledgeAgentModel` -> `azure.search.documents.indexes.models.KnowledgeBaseModel`
+    - `azure.search.documents.indexes.models.KnowledgeAgentModelKind` -> `azure.search.documents.indexes.models.KnowledgeBaseModelKind`
+  - Knowledge base clients now target `/knowledgebases` REST routes and accept `knowledge_base_name` instead of the agent name parameter.
+  - Replaced `azure.search.documents.indexes.models.KnowledgeAgentOutputConfiguration` with `azure.search.documents.indexes.models.KnowledgeBase.output_mode`.
+  - Replaced `azure.search.documents.indexes.models.KnowledgeAgentOutputConfigurationModality` with `azure.search.documents.indexes.models.KnowledgeRetrievalOutputMode`.
+  - Removed `azure.search.documents.indexes.models.KnowledgeAgentRequestLimits`; callers should apply request guardrails at the service level.
+- Knowledge source parameterization updates:
+  - Updated `azure.search.documents.indexes.models.AzureBlobKnowledgeSourceParameters` to use `azure.search.documents.indexes.models.KnowledgeSourceIngestionParameters`, replacing the previous `identity`, `embedding_model`, `chat_completion_model`, `ingestion_schedule`, and `disable_image_verbalization` properties with the new `is_adls_gen2` and `ingestion_parameters` shape.
+  - Updated `azure.search.documents.indexes.models.KnowledgeSourceReference` to carry only the source name, moving the `include_references`, `include_reference_source_data`, `always_query_source`, `max_sub_queries`, and `reranker_threshold` options onto the concrete parameter types.
+- Compression configuration cleanup:
+  - Removed the `default_oversampling` property from `azure.search.documents.indexes.models.BinaryQuantizationCompression`, `azure.search.documents.indexes.models.ScalarQuantizationCompression`, and `azure.search.documents.indexes.models.VectorSearchCompression`.
+  - Removed the `rerank_with_original_vectors` property from `azure.search.documents.indexes.models.BinaryQuantizationCompression`, `azure.search.documents.indexes.models.ScalarQuantizationCompression`, and `azure.search.documents.indexes.models.VectorSearchCompression`.
+- Knowledge source parameter field realignment:
+  - Replaced `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceParameters.source_data_select` with `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceParameters.source_data_fields`.
+  - Added `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceParameters.search_fields` for field mapping.
+  - Added optional `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceParameters.semantic_configuration_name`.
 
 ## 11.7.0b1 (2025-09-05)
 

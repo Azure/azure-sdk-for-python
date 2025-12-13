@@ -30,7 +30,7 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_get_deployment_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
 
@@ -66,7 +66,9 @@ async def sample_get_deployment_async():
                     print(f"AOAI Resource ID: {aoai.resource_id}")
                     print(f"AOAI Deployment Name: {aoai.deployment_name}")
 
+
 # [END conversation_authoring_get_deployment_async]
+
 
 async def main():
     await sample_get_deployment_async()

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -36,19 +36,20 @@ from .._configuration import PostgreSQLManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_request(
+def build_create_or_update_request(
     resource_group_name: str, server_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -86,7 +87,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -124,7 +125,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -157,7 +158,7 @@ def build_get_request(resource_group_name: str, server_name: str, subscription_i
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -190,7 +191,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -216,11 +217,11 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -248,7 +249,7 @@ def build_restart_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -284,7 +285,7 @@ def build_start_request(resource_group_name: str, server_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -317,7 +318,7 @@ def build_stop_request(resource_group_name: str, server_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -358,7 +359,7 @@ class ServersOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: PostgreSQLManagementClientConfiguration = (
@@ -367,7 +368,7 @@ class ServersOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def _create_initial(
+    def _create_or_update_initial(
         self, resource_group_name: str, server_name: str, parameters: Union[_models.Server, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -393,7 +394,7 @@ class ServersOperations:
         else:
             _json = self._serialize.body(parameters, "Server")
 
-        _request = build_create_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             subscription_id=self._config.subscription_id,
@@ -414,18 +415,24 @@ class ServersOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 202]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -435,7 +442,7 @@ class ServersOperations:
         return deserialized  # type: ignore
 
     @overload
-    def begin_create(
+    def begin_create_or_update(
         self,
         resource_group_name: str,
         server_name: str,
@@ -451,7 +458,8 @@ class ServersOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The required parameters for creating or updating a server. Required.
+        :param parameters: Parameters required to create a new server or to update an existing server.
+         Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Server
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -462,7 +470,7 @@ class ServersOperations:
         """
 
     @overload
-    def begin_create(
+    def begin_create_or_update(
         self,
         resource_group_name: str,
         server_name: str,
@@ -478,7 +486,8 @@ class ServersOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The required parameters for creating or updating a server. Required.
+        :param parameters: Parameters required to create a new server or to update an existing server.
+         Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -489,7 +498,7 @@ class ServersOperations:
         """
 
     @distributed_trace
-    def begin_create(
+    def begin_create_or_update(
         self, resource_group_name: str, server_name: str, parameters: Union[_models.Server, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Server]:
         """Creates a new server.
@@ -499,8 +508,8 @@ class ServersOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The required parameters for creating or updating a server. Is either a
-         Server type or a IO[bytes] type. Required.
+        :param parameters: Parameters required to create a new server or to update an existing server.
+         Is either a Server type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Server or IO[bytes]
         :return: An instance of LROPoller that returns either Server or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.postgresqlflexibleservers.models.Server]
@@ -516,7 +525,7 @@ class ServersOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_initial(
+            raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 parameters=parameters,
@@ -559,7 +568,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerForUpdate, IO[bytes]],
+        parameters: Union[_models.ServerForPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -583,7 +592,7 @@ class ServersOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "ServerForUpdate")
+            _json = self._serialize.body(parameters, "ServerForPatch")
 
         _request = build_update_request(
             resource_group_name=resource_group_name,
@@ -612,12 +621,18 @@ class ServersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -631,21 +646,21 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: _models.ServerForUpdate,
+        parameters: _models.ServerForPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Server]:
-        """Updates an existing server. The request body can contain one to many of the properties present
-        in the normal server definition.
+        """Updates an existing server. The request body can contain one or multiple of the properties
+        present in the normal server definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The required parameters for updating a server. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ServerForUpdate
+        :param parameters: Parameters required to update a server. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ServerForPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -664,15 +679,15 @@ class ServersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Server]:
-        """Updates an existing server. The request body can contain one to many of the properties present
-        in the normal server definition.
+        """Updates an existing server. The request body can contain one or multiple of the properties
+        present in the normal server definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The required parameters for updating a server. Required.
+        :param parameters: Parameters required to update a server. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -687,20 +702,20 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerForUpdate, IO[bytes]],
+        parameters: Union[_models.ServerForPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Server]:
-        """Updates an existing server. The request body can contain one to many of the properties present
-        in the normal server definition.
+        """Updates an existing server. The request body can contain one or multiple of the properties
+        present in the normal server definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The required parameters for updating a server. Is either a ServerForUpdate
-         type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ServerForUpdate or IO[bytes]
+        :param parameters: Parameters required to update a server. Is either a ServerForPatch type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ServerForPatch or IO[bytes]
         :return: An instance of LROPoller that returns either Server or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.postgresqlflexibleservers.models.Server]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -787,18 +802,24 @@ class ServersOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -809,7 +830,7 @@ class ServersOperations:
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, server_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Deletes a server.
+        """Deletes or drops an existing server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -864,7 +885,7 @@ class ServersOperations:
 
     @distributed_trace
     def get(self, resource_group_name: str, server_name: str, **kwargs: Any) -> _models.Server:
-        """Gets information about a server.
+        """Gets information about an existing server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -908,7 +929,10 @@ class ServersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Server", pipeline_response.http_response)
@@ -919,8 +943,8 @@ class ServersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.Server"]:
-        """List all the servers in a given resource group.
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.Server"]:
+        """Lists all servers in a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -933,7 +957,7 @@ class ServersOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ServerListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ServerList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -973,7 +997,7 @@ class ServersOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ServerListResult", pipeline_response)
+            deserialized = self._deserialize("ServerList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -990,7 +1014,10 @@ class ServersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -998,8 +1025,8 @@ class ServersOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Server"]:
-        """List all the servers in a given subscription.
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.Server"]:
+        """Lists all servers in a subscription.
 
         :return: An iterator like instance of either Server or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.postgresqlflexibleservers.models.Server]
@@ -1009,7 +1036,7 @@ class ServersOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ServerListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ServerList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1022,7 +1049,7 @@ class ServersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_list_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -1048,7 +1075,7 @@ class ServersOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ServerListResult", pipeline_response)
+            deserialized = self._deserialize("ServerList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -1065,7 +1092,10 @@ class ServersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1092,9 +1122,10 @@ class ServersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -1126,18 +1157,23 @@ class ServersOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -1156,14 +1192,14 @@ class ServersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Restarts a server.
+        """Restarts PostgreSQL database engine in a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The parameters for restarting a server. Default value is None.
+        :param parameters: Parameters to restart a server. Default value is None.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.RestartParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1183,14 +1219,14 @@ class ServersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Restarts a server.
+        """Restarts PostgreSQL database engine in a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The parameters for restarting a server. Default value is None.
+        :param parameters: Parameters to restart a server. Default value is None.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1208,15 +1244,15 @@ class ServersOperations:
         parameters: Optional[Union[_models.RestartParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Restarts a server.
+        """Restarts PostgreSQL database engine in a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The parameters for restarting a server. Is either a RestartParameter type or
-         a IO[bytes] type. Default value is None.
+        :param parameters: Parameters to restart a server. Is either a RestartParameter type or a
+         IO[bytes] type. Default value is None.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.RestartParameter or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -1227,6 +1263,7 @@ class ServersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1300,18 +1337,23 @@ class ServersOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -1322,7 +1364,7 @@ class ServersOperations:
 
     @distributed_trace
     def begin_start(self, resource_group_name: str, server_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Starts a server.
+        """Starts a stopped server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1408,18 +1450,23 @@ class ServersOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 

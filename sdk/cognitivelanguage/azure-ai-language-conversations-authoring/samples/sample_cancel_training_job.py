@@ -45,8 +45,8 @@ def sample_cancel_training_job():
     project_client = client.get_project_client(project_name)
 
     poller = project_client.project.begin_cancel_training_job(
-            job_id=job_id,
-        )
+        job_id=job_id,
+    )
 
     result = poller.result()  # TrainingJobResult
     print(f"Model Label: {result.model_label}")
@@ -62,6 +62,7 @@ def sample_cancel_training_job():
         print(f"Evaluation Status: {result.evaluation_status.status}")
         print(f"Evaluation %: {result.evaluation_status.percent_complete}")
     print(f"Estimated End: {result.estimated_end_on}")
+
 
 # [END conversation_authoring_cancel_training_job]
 

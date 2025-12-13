@@ -160,12 +160,34 @@ class DefaultConsistencyLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONSISTENT_PREFIX = "ConsistentPrefix"
 
 
+class DefaultPriorityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate default priorityLevel of requests."""
+
+    HIGH = "High"
+    LOW = "Low"
+
+
 class DistanceFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The distance function to use for distance calculation in between vectors."""
 
     EUCLIDEAN = "euclidean"
     COSINE = "cosine"
     DOTPRODUCT = "dotproduct"
+
+
+class FleetspacePropertiesFleetspaceApiKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of API this fleetspace belongs to. Acceptable values: 'NoSQL'."""
+
+    NO_SQL = "NoSQL"
+
+
+class FleetspacePropertiesServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Service Tier for the fleetspace. GeneralPurpose types refers to single write region accounts
+    that can be added to this fleetspace, whereas BusinessCritical refers to multi write region.
+    """
+
+    GENERAL_PURPOSE = "GeneralPurpose"
+    BUSINESS_CRITICAL = "BusinessCritical"
 
 
 class IndexingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -388,6 +410,11 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNALLY_READY = "InternallyReady"
     ONLINE = "Online"
     DELETING = "Deleting"
+    CREATING = "Creating"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    UPDATING = "Updating"
 
 
 class TriggerOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -439,6 +466,7 @@ class VectorDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FLOAT32 = "float32"
     UINT8 = "uint8"
     INT8 = "int8"
+    FLOAT16 = "float16"
 
 
 class VectorIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

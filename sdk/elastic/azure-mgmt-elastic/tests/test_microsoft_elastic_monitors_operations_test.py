@@ -26,4 +26,3 @@ class TestMicrosoftElasticMonitorsOperations(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-        

@@ -24,7 +24,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
         response = self.client.metrics_configurations.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             cluster_name="str",
             metrics_configuration_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             cluster_name="str",
             metrics_configuration_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             cluster_name="str",
             metrics_configuration_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -31,7 +31,8 @@ from ...operations._restorable_mongodb_collections_operations import build_list_
 from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class RestorableMongodbCollectionsOperations:
@@ -62,7 +63,7 @@ class RestorableMongodbCollectionsOperations:
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RestorableMongodbCollectionGetResult"]:
+    ) -> AsyncItemPaged["_models.RestorableMongodbCollectionGetResult"]:
         """Show the event feed of all mutations done on all the Azure Cosmos DB MongoDB collections under
         a specific database.  This helps in scenario where container was accidentally deleted.  This
         API requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.36.1 (Unreleased)
+## 1.37.1 (Unreleased)
 
 ### Features Added
 
@@ -11,6 +11,12 @@
 ### Other Changes
 
 - Updated `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to set the `enable_cae` parameter to `True` by default. This change enables Continuous Access Evaluation (CAE) for all token requests made through these policies.  #42941
+
+## 1.37.0 (2025-12-11)
+
+### Features Added
+
+- Added `get_backcompat_attr_name` to `azure.core.serialization`. `get_backcompat_attr_name` gets the backcompat name of an attribute using backcompat attribute access.  #44084
 
 ## 1.36.0 (2025-10-14)
 

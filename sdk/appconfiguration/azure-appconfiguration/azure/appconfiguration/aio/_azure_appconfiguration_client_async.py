@@ -67,8 +67,13 @@ class AzureAppConfigurationClient:
         if not credential:
             raise ValueError("Missing credential")
 
-        credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = AsyncSyncTokenPolicy()
+
+        credential_scopes = kwargs.pop("credential_scopes", [f"{base_url.strip('/')}/.default"])
+        # Ensure all scopes end with /.default
+        kwargs["credential_scopes"] = [
+            scope if scope.endswith("/.default") else f"{scope}/.default" for scope in credential_scopes
+        ]
 
         if isinstance(credential, AzureKeyCredential):
             id_credential = kwargs.pop("id_credential")

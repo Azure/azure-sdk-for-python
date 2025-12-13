@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -56,7 +56,8 @@ from ...operations._gremlin_resources_operations import (
 from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
@@ -81,7 +82,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_gremlin_databases(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.GremlinDatabaseGetResults"]:
+    ) -> AsyncItemPaged["_models.GremlinDatabaseGetResults"]:
         """Lists the Gremlin databases under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1088,7 +1089,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_gremlin_graphs(
         self, resource_group_name: str, account_name: str, database_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.GremlinGraphGetResults"]:
+    ) -> AsyncItemPaged["_models.GremlinGraphGetResults"]:
         """Lists the Gremlin graph under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

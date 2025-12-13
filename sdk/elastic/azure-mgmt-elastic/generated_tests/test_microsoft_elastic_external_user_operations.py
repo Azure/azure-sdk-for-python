@@ -20,11 +20,11 @@ class TestMicrosoftElasticExternalUserOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_external_user_create_or_update(self, resource_group):
         response = self.client.external_user.create_or_update(
             resource_group_name=resource_group.name,
             monitor_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself

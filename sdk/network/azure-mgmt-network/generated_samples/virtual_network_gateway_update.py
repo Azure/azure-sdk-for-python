@@ -35,6 +35,12 @@ def main():
         resource_group_name="rg1",
         virtual_network_gateway_name="vpngw",
         parameters={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1": {}
+                },
+            },
             "location": "centralus",
             "properties": {
                 "activeActive": False,
@@ -106,6 +112,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-10-01/examples/VirtualNetworkGatewayUpdate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/VirtualNetworkGatewayUpdate.json
 if __name__ == "__main__":
     main()

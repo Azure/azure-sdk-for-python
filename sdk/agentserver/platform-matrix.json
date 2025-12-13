@@ -1,6 +1,62 @@
 {
+  "displayNames": {
+    "--disablecov": "",
+    "false": "",
+    "true": ""
+  },
   "matrix": {
-    "$IMPORT": "eng/pipelines/templates/stages/platform-matrix.json",
-    "InstallPortAudio": [ "1" ]
-  }
+    "Agent": {
+      "ubuntu-24.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
+      "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" }
+    },
+    "PythonVersion": [ "3.10", "3.12" ],
+    "CoverageArg": "--disablecov",
+    "TestSamples": "false"
+  },
+  "include": [
+    {
+      "MacTestConfig": {
+        "macos311": {
+          "OSVmImage": "env:MACVMIMAGE",
+          "Pool": "env:MACPOOL",
+          "PythonVersion": "3.11",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    },
+    {
+      "CoverageConfig": {
+        "ubuntu2404_39_coverage": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.9",
+          "CoverageArg": "",
+          "TestSamples": "false"
+        }
+      }
+    },
+    {
+      "Config": {
+        "Ubuntu2404_313": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    },
+    {
+      "Config": {
+        "Ubuntu2404_314": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.14",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    }
+  ]
 }

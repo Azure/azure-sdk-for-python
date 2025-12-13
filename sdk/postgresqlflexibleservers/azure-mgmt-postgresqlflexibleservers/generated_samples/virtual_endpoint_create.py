@@ -32,14 +32,14 @@ def main():
     )
 
     response = client.virtual_endpoints.begin_create(
-        resource_group_name="testrg",
-        server_name="pgtestsvc4",
-        virtual_endpoint_name="pgVirtualEndpoint1",
-        parameters={"properties": {"endpointType": "ReadWrite", "members": ["testPrimary1"]}},
+        resource_group_name="exampleresourcegroup",
+        server_name="exampleserver",
+        virtual_endpoint_name="examplebasename",
+        parameters={"properties": {"endpointType": "ReadWrite", "members": ["exampleprimaryserver"]}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/VirtualEndpointCreate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2025-08-01/examples/VirtualEndpointCreate.json
 if __name__ == "__main__":
     main()

@@ -517,9 +517,19 @@ class DistillationJob(Job, JobIOMixin):
         """
         if not isinstance(other, DistillationJob):
             return False
+        parent_eq = super().__eq__(other)
+
+        if parent_eq is NotImplemented:
+            # Parent doesn't implement comparison, we'll continue comparison on our end
+            pass
+        # Adding this case for future
+        # currently the parent doesn't implement __eq__ so we will always get NotImplemented only
+        elif not parent_eq:
+            # Parent says objects are not equal
+            return False
+
         return (
-            super().__eq__(other)
-            and self.data_generation_type == other.data_generation_type
+            self.data_generation_type == other.data_generation_type
             and self.data_generation_task_type == other.data_generation_task_type
             and self.teacher_model_endpoint_connection.name == other.teacher_model_endpoint_connection.name
             and self.student_model == other.student_model

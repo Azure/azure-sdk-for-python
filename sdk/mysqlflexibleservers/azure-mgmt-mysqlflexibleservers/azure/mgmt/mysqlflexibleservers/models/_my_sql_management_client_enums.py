@@ -257,6 +257,15 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
 
 
+class ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The replication Mode."""
+
+    BINARY_LOG = "BinaryLog"
+    """Binary log replication"""
+    REDO_LOG = "RedoLog"
+    """Redo log replication"""
+
+
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The replication role."""
 
@@ -297,6 +306,7 @@ class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIVE7 = "5.7"
     EIGHT0_21 = "8.0.21"
+    EIGHT4 = "8.4"
 
 
 class StorageRedundancyEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):

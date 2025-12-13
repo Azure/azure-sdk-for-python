@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Configuration type of the Elasticsearch project."""
+
+    GENERAL_PURPOSE = "GeneralPurpose"
+    VECTOR = "Vector"
+    TIME_SERIES = "TimeSeries"
+    NOT_APPLICABLE = "NotApplicable"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -24,6 +33,13 @@ class ElasticDeploymentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     HEALTHY = "Healthy"
     UNHEALTHY = "Unhealthy"
+
+
+class HostingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Hosting type of the monitor resource - either Hosted deployments or Serverless Projects."""
+
+    HOSTED = "Hosted"
+    SERVERLESS = "Serverless"
 
 
 class LiftrResourceCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -61,6 +77,15 @@ class OperationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ADD = "Add"
     DELETE = "Delete"
+
+
+class ProjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Project type; ex: Elasticsearch / Observability / Security."""
+
+    ELASTICSEARCH = "Elasticsearch"
+    OBSERVABILITY = "Observability"
+    SECURITY = "Security"
+    NOT_APPLICABLE = "NotApplicable"
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

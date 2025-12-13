@@ -75,7 +75,7 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
             on_refresh_success=mock_callback,
-            refresh_on=[WatchKey("secret")],
+            refresh_on=[WatchKey("secret", "prod")],
             refresh_interval=1,
             secret_refresh_interval=1,  # Using a short interval for testing
         )

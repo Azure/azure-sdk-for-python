@@ -1,47 +1,85 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Tuple, Union, cast, Any
+from typing import List, Optional, Tuple, Union, cast, Any, MutableMapping, overload, Mapping
 from ._models import (
     MetadataFilter as MetadataFilterGenerated,
     AnswersFromTextOptions as AnswersFromTextOptionsGenerated,
     TextDocument,
-    JSON,
+    MetadataRecord
 )
+
+JSON = MutableMapping[str, Any]
 
 
 class MetadataFilter(MetadataFilterGenerated):
     """Find QnAs that are associated with the given list of metadata.
 
     :ivar metadata:
-    :vartype metadata: list[tuple[str, str]]
+    :vartype metadata: list[tuple[str, str]] or list[~azure.ai.language.questionanswering.models.MetadataRecord]
     :ivar logical_operation: Operation used to join metadata filters. Possible values include:
      "AND", "OR".
     :vartype logical_operation: str
     """
-
+    @overload
     def __init__(
         self,
         *,
         metadata: Optional[List[Tuple[str, str]]] = None,
         logical_operation: Optional[str] = None,
         **kwargs: Any
-    ) -> None:
-        """
-        :keyword metadata:
-        :paramtype metadata: list[tuple[str, str]]
-        :keyword logical_operation: Operation used to join metadata filters. Possible values include:
-         "AND", "OR".
-        :paramtype logical_operation: str
-        """
-        # pylint:disable=useless-super-delegation
-        super().__init__(metadata=cast(Optional[List[JSON]], metadata), logical_operation=logical_operation, **kwargs)
+    ) -> None:  # pragma: no cover - overload definition
+        """Overload accepting list of (key, value) tuples."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: Optional[List[MetadataRecord]] = None,
+        logical_operation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:  # pragma: no cover - overload definition
+        """Overload accepting list of MetadataRecord objects."""
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:  # pragma: no cover - overload definition
+        """Overload accepting raw JSON mapping used during deserialization."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: D401 - docstring covered by overloads
+        """Create a MetadataFilter.
+
+        Accepts either keyword-only parameters (``metadata``/``logical_operation``) or a single
+        raw JSON ``mapping`` positional argument used internally for deserialization.
+        """
+        # Mapping form: pass straight through to generated model
+        if args and isinstance(args[0], Mapping):
+            super().__init__(*args, **kwargs)
+            return
+
+        metadata = kwargs.pop("metadata", None)
+        logical_operation = kwargs.pop("logical_operation", None)
+
+        converted: Optional[List[MetadataRecord]]
+        if metadata is not None:
+            converted = []
+            for item in metadata:
+                if isinstance(item, tuple):
+                    converted.append(MetadataRecord(key=item[0], value=item[1]))
+                elif isinstance(item, MetadataRecord):
+                    converted.append(item)
+                else:
+                    raise TypeError(
+                        f"metadata items must be tuples or MetadataRecord objects, got {type(item)}"
+                    )
+        else:
+            converted = None
+        super().__init__(metadata=converted, logical_operation=logical_operation, **kwargs)
 
 class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
     """The question and text record parameters to answer.
@@ -77,17 +115,18 @@ class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
         :paramtype language: str
         """
         super().__init__(
-            question=question, text_documents=cast(List[TextDocument], text_documents), language=language, **kwargs
+            question=question,
+            text_documents=cast(List[TextDocument], text_documents),
+            language=language,
+            string_index_type="UnicodeCodePoint",
+            **kwargs
         )
-        self.string_index_type = "UnicodeCodePoint"
-        self._attribute_map.update({"string_index_type": {"key": "stringIndexType", "type": "str"}})
 
 
 __all__: List[str] = [
     "MetadataFilter",
     "AnswersFromTextOptions",
-]  # Add all objects you want publicly available to users at this package level
-
+]
 
 def patch_sdk():
     """Do not remove from this file.

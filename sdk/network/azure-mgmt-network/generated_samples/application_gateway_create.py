@@ -65,6 +65,16 @@ def main():
                         },
                     }
                 ],
+                "entraJWTValidationConfigs": [
+                    {
+                        "name": "entraJWTValidationConfig1",
+                        "properties": {
+                            "clientId": "37293f5a-97b3-451d-b786-f532d711c9ff",
+                            "tenantId": "70a036f6-8e4d-4615-bad6-149c02e7720d",
+                            "unAuthorizedRequestAction": "Deny",
+                        },
+                    }
+                ],
                 "frontendIPConfigurations": [
                     {
                         "name": "appgwfip",
@@ -132,6 +142,9 @@ def main():
                             },
                             "backendHttpSettings": {
                                 "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendHttpSettingsCollection/appgwbhs"
+                            },
+                            "entraJWTValidationConfig": {
+                                "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/entraJWTValidationConfigs/entraJWTValidationConfig1"
                             },
                             "httpListener": {
                                 "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/httpListeners/appgwhl"
@@ -214,6 +227,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-10-01/examples/ApplicationGatewayCreate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/ApplicationGatewayCreate.json
 if __name__ == "__main__":
     main()

@@ -148,13 +148,15 @@ class EvaluationProcessor:
             try:
                 self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
 
+                use_sync_endpoint = is_onedp_project(self.azure_ai_project)
+                effective_metric_name = (
+                    "hate_unfairness" if use_sync_endpoint and metric_name == "hate_fairness" else metric_name
+                )
+
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
                     try:
-                        # Use sync_evals endpoint for OneDP projects, legacy endpoint for others
-                        if is_onedp_project(self.azure_ai_project):
-                            # If using sync API use hate_unfairness rather than hate_fairness
-                            effective_metric_name = "hate_unfairness" if metric_name == "hate_fairness" else metric_name
+                        if use_sync_endpoint:
                             return await evaluate_with_rai_service_sync(
                                 data=query_response,
                                 metric_name=effective_metric_name,
@@ -213,9 +215,12 @@ class EvaluationProcessor:
 
                     # Find the result matching our metric/risk category
                     eval_result = None
+                    lookup_names = {metric_name, risk_cat_value, effective_metric_name}
                     for result_item in results:
                         result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
-                        if result_dict.get("name") == metric_name or result_dict.get("metric") == metric_name:
+                        result_name = str(result_dict.get("name") or "")
+                        metric_field = str(result_dict.get("metric") or "")
+                        if result_name in lookup_names or metric_field in lookup_names:
                             eval_result = result_dict
                             break
 

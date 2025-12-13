@@ -591,6 +591,10 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use Ubuntu2204 as the OS for node images, however, Ubuntu 22.04 may not be supported for all
     nodepools. For limitations and supported kubernetes versions, see
     https://aka.ms/aks/supported-ubuntu-versions"""
+    UBUNTU2404 = "Ubuntu2404"
+    """Use Ubuntu2404 as the OS for node images, however, Ubuntu 24.04 may not be supported for all
+    nodepools. For limitations and supported kubernetes versions, see
+    https://aka.ms/aks/supported-ubuntu-versions"""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

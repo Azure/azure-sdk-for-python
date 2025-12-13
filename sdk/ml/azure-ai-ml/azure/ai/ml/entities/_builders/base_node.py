@@ -205,11 +205,11 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         return self._name
 
     @name.setter
-    def name(self, value: str) -> None:
+    def name(self, value: Optional[str]) -> None:
         """Set the name of the node.
 
         :param value: The name to set for the node.
-        :type value: str
+        :type value: Optional[str]
         :return: None
         """
         # when name is not lower case, lower it to make sure it's a valid node name

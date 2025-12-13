@@ -28,7 +28,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsRequestHistoriesOperation
             run_name="str",
             action_name="str",
             repetition_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsRequestHistoriesOperation
             action_name="str",
             repetition_name="str",
             request_history_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

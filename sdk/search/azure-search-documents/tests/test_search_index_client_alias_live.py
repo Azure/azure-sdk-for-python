@@ -39,7 +39,9 @@ class TestSearchClientAlias(AzureRecordedTestCase):
 
         # point an old alias to a new index
         new_index_name = "hotel"
-        self._test_update_alias_to_new_index(client, aliases[1], new_index_name, index_name)
+        self._test_update_alias_to_new_index(
+            client, aliases[1], new_index_name, index_name
+        )
 
         self._test_get_alias(client, aliases)
 

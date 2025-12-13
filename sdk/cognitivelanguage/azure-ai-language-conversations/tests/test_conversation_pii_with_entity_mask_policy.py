@@ -34,7 +34,7 @@ from azure.core.credentials import AzureKeyCredential
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,
     "conversations",
-    conversations_endpoint="https://Sanitized.cognitiveservices.azure.com/",
+    conversations_endpoint="https://Sanitized.azure-api.net/",
     conversations_key="fake_key",
 )
 

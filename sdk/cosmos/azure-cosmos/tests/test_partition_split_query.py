@@ -51,8 +51,6 @@ class TestPartitionSplitQuery(unittest.TestCase):
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"),
             offer_throughput=cls.throughput)
-        if cls.host == "https://localhost:8081/":
-            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     @classmethod
     def tearDownClass(cls) -> None:

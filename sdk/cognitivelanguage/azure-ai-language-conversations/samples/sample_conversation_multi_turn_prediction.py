@@ -142,8 +142,7 @@ def sample_conversation_multi_turn_prediction():
                     print(f"  Confidence: {ent.confidence_score}")
                     print(f"  Offset: {ent.offset}, Length: {ent.length}")
                     print(
-                        f"  Conversation Item ID: {ent.conversation_item_id}, "
-                        f"Index: {ent.conversation_item_index}"
+                        f"  Conversation Item ID: {ent.conversation_item_id}, " f"Index: {ent.conversation_item_index}"
                     )
 
                     for extra in ent.extra_information or []:
@@ -154,6 +153,8 @@ def sample_conversation_multi_turn_prediction():
                 print("-" * 40)
     else:
         print("No Conversational AI result returned.")
+
+
 # [END conversation_multi_turn_prediction]
 
 

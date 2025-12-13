@@ -21,7 +21,9 @@ class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
     async def test_search_client_index_buffered_sender(self, endpoint, index_name):
-        client = SearchClient(endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60)
+        client = SearchClient(
+            endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60
+        )
         batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60
         )
@@ -29,13 +31,27 @@ class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
             async with client:
                 async with batch_client:
                     doc_count = 10
-                    doc_count = await self._test_upload_documents_new(client, batch_client, doc_count)
-                    doc_count = await self._test_upload_documents_existing(client, batch_client, doc_count)
-                    doc_count = await self._test_delete_documents_existing(client, batch_client, doc_count)
-                    doc_count = await self._test_delete_documents_missing(client, batch_client, doc_count)
-                    doc_count = await self._test_merge_documents_existing(client, batch_client, doc_count)
-                    doc_count = await self._test_merge_documents_missing(client, batch_client, doc_count)
-                    doc_count = await self._test_merge_or_upload_documents(client, batch_client, doc_count)
+                    doc_count = await self._test_upload_documents_new(
+                        client, batch_client, doc_count
+                    )
+                    doc_count = await self._test_upload_documents_existing(
+                        client, batch_client, doc_count
+                    )
+                    doc_count = await self._test_delete_documents_existing(
+                        client, batch_client, doc_count
+                    )
+                    doc_count = await self._test_delete_documents_missing(
+                        client, batch_client, doc_count
+                    )
+                    doc_count = await self._test_merge_documents_existing(
+                        client, batch_client, doc_count
+                    )
+                    doc_count = await self._test_merge_documents_missing(
+                        client, batch_client, doc_count
+                    )
+                    doc_count = await self._test_merge_or_upload_documents(
+                        client, batch_client, doc_count
+                    )
         finally:
             await batch_client.close()
 

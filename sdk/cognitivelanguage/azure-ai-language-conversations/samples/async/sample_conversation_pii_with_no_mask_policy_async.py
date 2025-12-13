@@ -67,10 +67,16 @@ async def sample_conversation_pii_with_no_mask_policy_async():
                     language="en",
                     conversation_items=[
                         TextConversationItem(
-                            id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"
+                            id="1",
+                            participant_id="Agent_1",
+                            role=ParticipantRole.AGENT,
+                            text="Can you provide your name?",
                         ),
                         TextConversationItem(
-                            id="2", participant_id="Customer_1", role=ParticipantRole.CUSTOMER, text="Hi, my name is John Doe."
+                            id="2",
+                            participant_id="Customer_1",
+                            role=ParticipantRole.CUSTOMER,
+                            text="Hi, my name is John Doe.",
                         ),
                         TextConversationItem(
                             id="3",
@@ -126,9 +132,9 @@ async def sample_conversation_pii_with_no_mask_policy_async():
                                     ent_text = entity.text or ""
                                     detected_entities.append(ent_text)
                                     if ent_text not in returned_text:
-                                        print(
-                                            f"WARNING: Expected entity '{ent_text}' in returned text but not found."
-                                        )
+                                        print(f"WARNING: Expected entity '{ent_text}' in returned text but not found.")
+
+
 # [END conversation_pii_with_no_mask_policy_async]
 
 

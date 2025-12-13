@@ -44,7 +44,9 @@ class TestComplexField:
     def test_collection(self):
         fld = ComplexField(name="foo", fields=[], collection=True)
         assert fld.name == "foo"
-        assert fld.type == SearchFieldDataType.Collection(SearchFieldDataType.ComplexType)
+        assert fld.type == SearchFieldDataType.Collection(
+            SearchFieldDataType.ComplexType
+        )
 
         assert fld.sortable is None
         assert fld.facetable is None

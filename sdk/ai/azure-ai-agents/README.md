@@ -762,7 +762,7 @@ def foo(arguments: func.QueueMessage, outputQueue: func.Out[str]) -> None:
 To deploy your function to Azure properly, follow Microsoft's official documentation step by step:
 
 [Azure Functions Python Developer Guide](https://learn.microsoft.com/azure/azure-functions/create-first-function-cli-python?tabs=windows%2Cbash%2Cazure-cli%2Cbrowser)
-**Note:** The Azure Function may be only used in standard agent setup. Please follow the [instruction](https://github.com/azure-ai-foundry/foundry-samples/tree/main/samples/microsoft/infrastructure-setup/41-standard-agent-setup) to deploy an agent, capable of calling Azure Functions.
+**Note:** The Azure Function may be only used in standard agent setup. Please follow the [instruction](https://github.com/azure-ai-foundry/foundry-samples/tree/main/infrastructure/infrastructure-setup-bicep/41-standard-agent-setup) to deploy an agent, capable of calling Azure Functions.
 
 **Summary of required steps:**
 

@@ -1,3 +1,4 @@
+import inspect
 import sys
 from enum import Enum as PyEnum
 from io import StringIO
@@ -71,9 +72,6 @@ class TestDSLGroup:
         assert isinstance(result.ab, _GroupAttrDict)
         assert isinstance(result.ab.c, PipelineInput)
 
-    @pytest.mark.skipif(
-        condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
-    )
     def test_auto_generated_functions(self) -> None:
         class EnumOps(PyEnum):
             Option1 = "Option1"
@@ -89,15 +87,27 @@ class TestDSLGroup:
 
         # __init__ func test
         assert hasattr(MixedGroup, "__init__") is True
-        original_out = sys.stdout
-        sys.stdout = stdout_str_IO = StringIO()
-        help(MixedGroup.__init__)
-        assert (
-            "__init__(self,*,int_param:int=None,str_param:str=None,enum_param:str=None,"
-            "str_default_param:str='test',optional_int_param:int=5)->None"
-            in remove_extra_character(stdout_str_IO.getvalue())
-        )
-        sys.stdout = original_out
+        sig = inspect.signature(MixedGroup.__init__)
+        params = sig.parameters
+
+        # Verify all expected parameters exist
+        assert "self" in params
+        assert "int_param" in params
+        assert "str_param" in params
+        assert "enum_param" in params
+        assert "str_default_param" in params
+        assert "optional_int_param" in params
+
+        # Verify default values
+        assert params["int_param"].default is None
+        assert params["str_param"].default is None
+        assert params["enum_param"].default is None
+        assert params["str_default_param"].default == "test"
+        assert params["optional_int_param"].default == 5
+
+        # Verify keyword-only parameters (after *)
+        assert params["int_param"].kind == inspect.Parameter.KEYWORD_ONLY
+        assert params["str_param"].kind == inspect.Parameter.KEYWORD_ONLY
 
         # __repr__ func test
         var = MixedGroup(
@@ -415,9 +425,6 @@ class TestDSLGroup:
 
         assert "Only primitive types can be used as input of group, got uri_file" in str(e.value)
 
-    @pytest.mark.skipif(
-        condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
-    )
     def test_group_defaults_with_outputs(self):
         @group
         class MixedGroup:
@@ -428,21 +435,28 @@ class TestDSLGroup:
             optional_int_param: Input(type="integer", optional=True) = 5
             output_folder: Output(type="uri_folder")
 
+        # __init__ func test
         assert hasattr(MixedGroup, "__init__") is True
-        original_out = sys.stdout
-        sys.stdout = stdout_str_IO = StringIO()
-        help(MixedGroup.__init__)
-        assert (
-            "__init__(self,*,"
-            "int_param:int=None,"
-            "str_default_param:str='test',"
-            "str_param:str=None,"
-            "input_folder:{'type':'uri_folder'}=None,"
-            "optional_int_param:int=5,"
-            "output_folder:{'type':'uri_folder'}=None)"
-            "->None" in remove_extra_character(stdout_str_IO.getvalue())
-        )
-        sys.stdout = original_out
+        sig = inspect.signature(MixedGroup.__init__)
+        params = sig.parameters
+
+        # Verify all expected parameters exist
+        assert "int_param" in params
+        assert "str_default_param" in params
+        assert "str_param" in params
+        assert "input_folder" in params
+        assert "optional_int_param" in params
+        assert "output_folder" in params
+
+        # Verify default values
+        assert params["int_param"].default is None
+        assert params["str_default_param"].default == "test"
+        assert params["str_param"].default is None
+        assert params["optional_int_param"].default == 5
+        # input_folder and output_folder should have None as default
+        assert params["input_folder"].default is None
+        assert params["output_folder"].default is None
+
         # __repr__ func test
         var = MixedGroup(
             int_param=1, str_param="test-str", input_folder=Input(path="input"), output_folder=Output(path="output")

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -31,7 +31,8 @@ from .._configuration import CosmosDBManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -50,7 +51,7 @@ def build_list_metrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -95,7 +96,7 @@ def build_list_usages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -140,7 +141,7 @@ class CollectionPartitionOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: CosmosDBManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -156,7 +157,7 @@ class CollectionPartitionOperations:
         collection_rid: str,
         filter: str,
         **kwargs: Any
-    ) -> Iterable["_models.PartitionMetric"]:
+    ) -> ItemPaged["_models.PartitionMetric"]:
         """Retrieves the metrics determined by the given filter for the given collection, split by
         partition.
 
@@ -257,7 +258,7 @@ class CollectionPartitionOperations:
         collection_rid: str,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.PartitionUsage"]:
+    ) -> ItemPaged["_models.PartitionUsage"]:
         """Retrieves the usages (most recent storage data) for the given collection, split by partition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

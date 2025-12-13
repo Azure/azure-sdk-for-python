@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar
+from typing import Any, Callable, Literal, Optional, TypeVar
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -28,7 +28,7 @@ from .._configuration import AzureQueueStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -38,7 +38,7 @@ def build_create_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -137,7 +137,7 @@ def build_set_metadata_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -267,7 +267,7 @@ class QueueOperations:
     def create(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -324,7 +324,10 @@ class QueueOperations:
 
         if response.status_code not in [201, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -385,7 +388,10 @@ class QueueOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -449,7 +455,10 @@ class QueueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -468,7 +477,7 @@ class QueueOperations:
     def set_metadata(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -528,7 +537,10 @@ class QueueOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -542,7 +554,7 @@ class QueueOperations:
     @distributed_trace
     def get_access_policy(
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
-    ) -> List[_models.SignedIdentifier]:
+    ) -> list[_models.SignedIdentifier]:
         """returns details about any stored access policies specified on the queue that may be used with
         Shared Access Signatures.
 
@@ -570,7 +582,7 @@ class QueueOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _request = build_get_access_policy_request(
             url=self._config.url,
@@ -592,7 +604,10 @@ class QueueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -612,7 +627,7 @@ class QueueOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        queue_acl: Optional[List[_models.SignedIdentifier]] = None,
+        queue_acl: Optional[list[_models.SignedIdentifier]] = None,
         **kwargs: Any
     ) -> None:
         """sets stored access policies for the queue that may be used with Shared Access Signatures.
@@ -643,7 +658,8 @@ class QueueOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if queue_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         serialization_ctxt = {"xml": {"name": "SignedIdentifiers", "wrapped": True}}
@@ -676,7 +692,10 @@ class QueueOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

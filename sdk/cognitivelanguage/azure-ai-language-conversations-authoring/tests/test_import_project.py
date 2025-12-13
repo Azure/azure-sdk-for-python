@@ -42,7 +42,7 @@ class TestConversationsImportCase(TestConversations):
     @recorded_by_proxy
     def test_import_project(self, authoring_endpoint, authoring_key):
         authoring_client = self.create_client(authoring_endpoint, authoring_key)
-        project_name = "PythonImportProject0820"
+        project_name = "PythonImportProject1113"
         project_client = authoring_client.get_project_client(project_name)
 
         # ----- Build assets using objects -----

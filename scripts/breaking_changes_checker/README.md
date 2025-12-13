@@ -7,6 +7,21 @@ The breaking changes tool compares the last stable/GA version of the library (if
 
 Add your package name to the `RUN_BREAKING_CHANGES_PACKAGES` found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/scripts/breaking_changes_checker/breaking_changes_allowlist.py).
 
+## Run locally with `azpysdk`
+
+**1) Install azpysdk:**
+
+`pip install -e eng/tools/azure-sdk-tools[build]`
+
+**2) Run the `breaking` check.**
+
+Here we run the breaking changes tool against azure-storage-blob, for example:
+
+```bash
+cd ./sdk/storage/azure-storage-blob
+azpysdk breaking .
+```
+
 ## Run locally with tox
 
 **1) Install tox:**

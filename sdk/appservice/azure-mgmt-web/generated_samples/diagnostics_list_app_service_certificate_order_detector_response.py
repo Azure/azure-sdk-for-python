@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.CertificateRegistration/stable/2024-11-01/examples/Diagnostics_ListAppServiceCertificateOrderDetectorResponse.json
+# x-ms-original-file: specification/certificateregistration/resource-manager/Microsoft.CertificateRegistration/CertificateRegistration/stable/2024-11-01/examples/Diagnostics_ListAppServiceCertificateOrderDetectorResponse.json
 if __name__ == "__main__":
     main()

@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-10-01/examples/NetworkManagerScopeConnectionDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/NetworkManagerScopeConnectionDelete.json
 if __name__ == "__main__":
     main()

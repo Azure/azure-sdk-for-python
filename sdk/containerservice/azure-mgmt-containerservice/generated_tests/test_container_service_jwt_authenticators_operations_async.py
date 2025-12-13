@@ -25,7 +25,7 @@ class TestContainerServiceJWTAuthenticatorsOperationsAsync(AzureMgmtRecordedTest
         response = self.client.jwt_authenticators.list_by_managed_cluster(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerServiceJWTAuthenticatorsOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             resource_name="str",
             jwt_authenticator_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestContainerServiceJWTAuthenticatorsOperationsAsync(AzureMgmtRecordedTest
                     },
                     "type": "str",
                 },
-                api_version="2025-08-02-preview",
+                api_version="2025-09-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -92,7 +92,7 @@ class TestContainerServiceJWTAuthenticatorsOperationsAsync(AzureMgmtRecordedTest
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 jwt_authenticator_name="str",
-                api_version="2025-08-02-preview",
+                api_version="2025-09-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

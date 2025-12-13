@@ -21,11 +21,11 @@ class TestLogAnalyticsManagementOperationStatusesOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_operation_statuses_get(self, resource_group):
         response = await self.client.operation_statuses.get(
             location="str",
             async_operation_id="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

@@ -23,5 +23,4 @@ for file in ./*_workload.py; do
     done
 done
 
-wait
 echo "[Info] All workloads started successfully."

@@ -50,8 +50,6 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
             self.TEST_CONTAINER_ID,
             PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
-        if self.host == "https://localhost:8081/":
-            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     async def asyncTearDown(self):
         try:

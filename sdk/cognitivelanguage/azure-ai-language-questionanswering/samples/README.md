@@ -9,63 +9,63 @@ products:
 urlFragment: languagequestionanswering-samples
 ---
 
-# Samples for Language QuestionAnswering client library for Python
+# Samples for Azure Language Question Answering (Inference)
 
-Question Answering is a cloud-based API service that lets you create a conversational question-and-answer layer over your existing data. Use it to build a knowledge base by extracting questions and answers from your semi-structured content, including FAQ, manuals, and documents. Answer users' questions with the best answers from the QnAs in your knowledge base—automatically. Your knowledge base gets smarter, too, as it continually learns from user behavior.
+These samples demonstrate how to use the runtime Question Answering features to query an existing knowledge base
+or ad‑hoc text content. Authoring (project creation / deployment / source management) samples have been moved
+to a separate location and are intentionally not referenced here.
 
-These code samples show common scenario operations with the Azure Language QuestionAnswering client library.
-You can authenticate your client with a QuestionAnswering API key.
+## Samples Included
 
-These sample programs show common scenarios for the QuestionAnswering client's offerings.
+| File | Description |
+|------|-------------|
+| `sample_query_knowledgebase.py` / `async_samples/sample_query_knowledgebase_async.py` | Ask a question against a deployed knowledge base project (flattened parameters) |
+| `sample_chat.py` / `async_samples/sample_chat_async.py` | Ask a follow‑up contextual question using `answer_context` |
+| `sample_query_text.py` / `async_samples/sample_query_text_async.py` | Ask a question over ad‑hoc text documents (options object pattern) |
 
-|**File Name**|**Description**|
-|-------------|---------------|
-|[sample_query_knowledgebase.py][query_knowledgebase] and [sample_query_knowledgebase_async.py][query_knowledgebase_async]|Ask a question from a knowledge base|
-|[sample_chat.py][chat] and [sample_chat_async.py][chat_async]|Ask a follow-up question (chit-chat)|
-|[sample_query_text.py][query_text] and [sample_query_text_async.py][query_text_async]|Ask a question from provided text data|
-|[sample_create_and_deploy_project.py][create_and_deploy] and [sample_create_and_deploy_project_async.py][create_and_deploy_async]|sample for creating and deploying a Qna project|
-|[sample_export_import_project.py][export_import] and [sample_export_import_project_async.py][export_import_async]|sample for exporting and importing a project|
-|[sample_update_knowledge_sources.py][add_knowledge_sources] and [sample_update_knowledge_sources_async.py][add_knowledge_sources_async]|sample for adding knowledge sources|
+> Note: The deprecated wrapper methods `client.get_answers` and `client.get_answers_from_text`
+> have been replaced in these samples by the recommended operations group access:
+> `client.get_answers` and `client.get_answers_from_text`.
 
+## Prerequisites
 
+- Python 3.9+ (match the package's `python_requires`)
+- An [Azure subscription][azure_subscription]
+- A deployed Language Question Answering resource (project + deployment for knowledge base queries)
 
-### Prerequisites
+## Environment Variables
 
-* Python 3.7 or later is required to use this package.
-* An [Azure subscription][azure_subscription]
-* A [Language Service][language_service] resource
+Set the following environment variables before running a sample:
 
+Required (all runtime samples):
+- `AZURE_QUESTIONANSWERING_ENDPOINT` – your resource endpoint
+- `AZURE_QUESTIONANSWERING_KEY` – the API key
 
-## Setup
+Additional for knowledge base & chat samples:
+- `AZURE_QUESTIONANSWERING_PROJECT` – project (knowledge base) name
+- `AZURE_QUESTIONANSWERING_DEPLOYMENT` – deployment name (if omitted, samples default to `production`)
 
-1. Install the Azure QuestionAnswering client library for Python with [pip][pip]:
+## Install the Library
+
 ```bash
 pip install azure-ai-language-questionanswering
 ```
-2. Clone or download this sample repository
-3. Open the sample folder in Visual Studio Code or your IDE of choice.
 
-## Running the samples
+## Run
 
-1. Open a terminal window and `cd` to the directory that the samples are saved in.
-2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python sample_chat.py`
+```bash
+python sample_query_knowledgebase.py
+python sample_chat.py
+python sample_query_text.py
+# Async examples:
+python async_samples/sample_query_knowledgebase_async.py
+```
 
+Ensure you are in this `samples` directory (or adjust paths accordingly).
 
-[query_knowledgebase]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/sample_query_knowledgebase.py
-[query_knowledgebase_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/async_samples/sample_query_knowledgebase_async.py
-[chat]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/sample_chat.py
-[chat_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/async_samples/sample_chat_async.py
-[query_text]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/sample_query_text.py
-[query_text_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/async_samples/sample_query_text_async.py
+## Authentication
 
-[create_and_deploy]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/sample_create_and_deploy_project.py
-[create_and_deploy_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/async_samples/sample_create_and_deploy_project_async.py
-[export_import]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/sample_export_import_project.py
-[export_import_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/async_samples/sample_export_import_project_async.py
-[add_knowledge_sources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/sample_update_knowledge_sources.py
-[add_knowledge_sources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/async_samples/sample_update_knowledge_sources_async.py
+These samples use `AzureKeyCredential`. For AAD / `DefaultAzureCredential` usage, see the main package documentation.
 
-[language_service]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
-[pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
+[language_service]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics

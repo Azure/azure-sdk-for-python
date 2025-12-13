@@ -139,10 +139,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             raise ValueError("environment is required but was not found in the data")
 
         # Handle field name variations for constructor parameters
-        allowed_instance_type = get_field_value(data, "allowed_instance_type", "allowedInstanceType")
-        if isinstance(allowed_instance_type, str):
+        allowed_instance_types = get_field_value(data, "allowed_instance_types", "allowedInstanceTypes")
+        if isinstance(allowed_instance_types, str):
             # Convert space-separated string to list
-            allowed_instance_type = allowed_instance_type.split()
+            allowed_instance_types = allowed_instance_types.split()
 
         default_instance_type = get_field_value(data, "default_instance_type", "defaultInstanceType")
         deployment_template_type = get_field_value(data, "deployment_template_type", "deploymentTemplateType")
@@ -252,7 +252,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             code_configuration=code_configuration,
             environment_variables=environment_variables,
             app_insights_enabled=app_insights_enabled,
-            allowed_instance_type=allowed_instance_type,
+            allowed_instance_types=allowed_instance_types,
             default_instance_type=default_instance_type,
             scoring_port=scoring_port,
             scoring_path=scoring_path,

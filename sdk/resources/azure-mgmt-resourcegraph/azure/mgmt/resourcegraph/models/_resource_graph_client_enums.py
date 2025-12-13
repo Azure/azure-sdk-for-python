@@ -10,32 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AuthorizationScopeFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines what level of authorization resources should be returned based on the which
-    subscriptions and management groups are passed as scopes.
-    """
-
-    AT_SCOPE_AND_BELOW = "AtScopeAndBelow"
-    AT_SCOPE_AND_ABOVE = "AtScopeAndAbove"
-    AT_SCOPE_EXACT = "AtScopeExact"
-    AT_SCOPE_ABOVE_AND_BELOW = "AtScopeAboveAndBelow"
-
-
-class ChangeCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The change category."""
-
-    USER = "User"
-    SYSTEM = "System"
-
-
-class ChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The change type for snapshot. PropertyChanges will be provided in case of Update change type."""
-
-    CREATE = "Create"
-    UPDATE = "Update"
-    DELETE = "Delete"
-
-
 class ColumnDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data type of a column in a table."""
 
@@ -44,7 +18,6 @@ class ColumnDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NUMBER = "number"
     BOOLEAN = "boolean"
     OBJECT = "object"
-    DATETIME = "datetime"
 
 
 class FacetSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -54,19 +27,17 @@ class FacetSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DESC = "desc"
 
 
-class PropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The property change Type."""
-
-    INSERT = "Insert"
-    UPDATE = "Update"
-    REMOVE = "Remove"
-
-
 class ResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines in which format query result returned."""
 
     TABLE = "table"
     OBJECT_ARRAY = "objectArray"
+
+
+class ResultKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum indicating a type of graph query."""
+
+    BASIC = "basic"
 
 
 class ResultTruncated(str, Enum, metaclass=CaseInsensitiveEnumMeta):

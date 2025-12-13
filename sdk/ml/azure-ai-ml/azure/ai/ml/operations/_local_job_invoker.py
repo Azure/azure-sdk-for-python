@@ -147,7 +147,7 @@ def get_execution_service_response(
         body_dict: Dict = json.loads(body)
         response = requests_pipeline.post(url, json=body_dict, headers={"Authorization": "Bearer " + token})
         response.raise_for_status()
-        return (response.content, body_dict.get("SnapshotId", None))
+        return (response.content, body_dict.get("SnapshotId", None))  # type: ignore[return-value]
     except AzureError as err:
         raise SystemExit(err) from err
     except Exception as e:
@@ -417,7 +417,7 @@ def start_run_if_local(
         msg = LOCAL_JOB_FAILURE_MSG.format(e)
         raise MlException(message=msg, no_personal_data_message=msg) from e
 
-    return snapshot_id
+    return snapshot_id  # type: ignore[return-value]
 
 
 def _log_subprocess(output_io: Any, file: Any, show_in_console: bool = False) -> None:

@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/StartWebSiteNetworkTraceOperation.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/AppService/stable/2025-03-01/examples/StartWebSiteNetworkTraceOperation.json
 if __name__ == "__main__":
     main()

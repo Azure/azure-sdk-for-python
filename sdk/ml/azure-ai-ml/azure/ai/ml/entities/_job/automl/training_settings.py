@@ -190,7 +190,9 @@ class ClassificationTrainingSettings(TrainingSettings):
         return self._allowed_training_algorithms
 
     @allowed_training_algorithms.setter
-    def allowed_training_algorithms(self, allowed_model_list: Union[List[str], List[ClassificationModels]]) -> None:
+    def allowed_training_algorithms(
+        self, allowed_model_list: Optional[Union[List[str], List[ClassificationModels]]]
+    ) -> None:
         self._allowed_training_algorithms = (
             None
             if allowed_model_list is None
@@ -202,7 +204,9 @@ class ClassificationTrainingSettings(TrainingSettings):
         return self._blocked_training_algorithms
 
     @blocked_training_algorithms.setter
-    def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ClassificationModels]]) -> None:
+    def blocked_training_algorithms(
+        self, blocked_model_list: Optional[Union[List[str], List[ClassificationModels]]]
+    ) -> None:
         self._blocked_training_algorithms = (
             None
             if blocked_model_list is None
@@ -253,7 +257,9 @@ class ForecastingTrainingSettings(TrainingSettings):
         return self._allowed_training_algorithms
 
     @allowed_training_algorithms.setter
-    def allowed_training_algorithms(self, allowed_model_list: Union[List[str], List[ForecastingModels]]) -> None:
+    def allowed_training_algorithms(
+        self, allowed_model_list: Optional[Union[List[str], List[ForecastingModels]]]
+    ) -> None:
         self._allowed_training_algorithms = (
             None if allowed_model_list is None else [ForecastingModels[camel_to_snake(o)] for o in allowed_model_list]
         )
@@ -263,7 +269,9 @@ class ForecastingTrainingSettings(TrainingSettings):
         return self._blocked_training_algorithms
 
     @blocked_training_algorithms.setter
-    def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ForecastingModels]]) -> None:
+    def blocked_training_algorithms(
+        self, blocked_model_list: Optional[Union[List[str], List[ForecastingModels]]]
+    ) -> None:
         self._blocked_training_algorithms = (
             None if blocked_model_list is None else [ForecastingModels[camel_to_snake(o)] for o in blocked_model_list]
         )
@@ -312,7 +320,9 @@ class RegressionTrainingSettings(TrainingSettings):
         return self._allowed_training_algorithms
 
     @allowed_training_algorithms.setter
-    def allowed_training_algorithms(self, allowed_model_list: Union[List[str], List[ForecastingModels]]) -> None:
+    def allowed_training_algorithms(
+        self, allowed_model_list: Optional[Union[List[str], List[ForecastingModels]]]
+    ) -> None:
         self._allowed_training_algorithms = (
             None if allowed_model_list is None else [RegressionModels[camel_to_snake(o)] for o in allowed_model_list]
         )
@@ -322,7 +332,9 @@ class RegressionTrainingSettings(TrainingSettings):
         return self._blocked_training_algorithms
 
     @blocked_training_algorithms.setter
-    def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ForecastingModels]]) -> None:
+    def blocked_training_algorithms(
+        self, blocked_model_list: Optional[Union[List[str], List[ForecastingModels]]]
+    ) -> None:
         self._blocked_training_algorithms = (
             None if blocked_model_list is None else [RegressionModels[camel_to_snake(o)] for o in blocked_model_list]
         )

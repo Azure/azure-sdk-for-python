@@ -49,16 +49,11 @@ from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     _exception_categories,
 )
-from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
-    _get_os,
-    _get_attach_type,
-    _get_rp,
-    ext_version,
-    _get_sha256_hash
+    _get_sha256_hash,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
@@ -112,8 +107,9 @@ class BaseExporter:
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
+        # TODO: Uncomment configuration changes once testing is completed
         # Get the configuration manager
-        self._configuration_manager = get_configuration_manager()
+        # self._configuration_manager = get_configuration_manager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         # We do not need to use entra Id if this is a sdkStats exporter
@@ -175,15 +171,16 @@ class BaseExporter:
         self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
-        if self._configuration_manager:
-            self._configuration_manager.initialize(
-                os=_get_os(),
-                rp=_get_rp(),
-                attach=_get_attach_type(),
-                component="ext",
-                version=ext_version,
-                region=self._region,
-            )
+        # TODO: Uncomment configuration changes once testing is completed
+        # if self._configuration_manager:
+        #    self._configuration_manager.initialize(
+        #        os=_get_os(),
+        #        rp=_get_rp(),
+        #        attach=_get_attach_type(),
+        #        component="ext",
+        #        version=ext_version,
+        #        region=self._region,
+        #    )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
             self.storage = LocalFileStorage(  # pyright: ignore
@@ -267,6 +264,7 @@ class BaseExporter:
             # Currently only used for statsbeat exporter to detect shutdown cases
             reach_ingestion = False
             start_time = time.time()
+            final_result = None
             try:
                 track_response = self.client.track(envelopes)
                 if not track_response.errors:  # 200
@@ -467,11 +465,11 @@ class BaseExporter:
                             )
 
                             shutdown_statsbeat_metrics()
+                            final_result = ExportResult.FAILED_NOT_RETRYABLE
 
-                            # pylint: disable=lost-exception
-                            return ExportResult.FAILED_NOT_RETRYABLE  # pylint: disable=W0134
-                # pylint: disable=lost-exception
-                return result  # pylint: disable=W0134
+                if final_result is None:
+                    final_result = result
+            return final_result
 
         # No spans to export
         self._consecutive_redirects = 0

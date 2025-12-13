@@ -16,6 +16,7 @@ USAGE:
 
 import os
 from azure.ai.ml import MLClient
+from azure.ai.ml import load_deployment_template
 from azure.identity import DefaultAzureCredential
 
 ml_client = MLClient(
@@ -29,7 +30,7 @@ print(ml_client)
 
 # Create a deployment template
 ml_client.deployment_templates.create_or_update(
-    "C:/Projects/azure-sdk-for-python/sdk/ml/azure-ai-ml/samples/deployment-template-schema.yaml"
+    load_deployment_template("./sdk/ml/azure-ai-ml/samples/deployment-template-schema.yaml")
 )
 
 # List all deployment templates

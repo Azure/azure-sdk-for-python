@@ -43,8 +43,6 @@ class TestMultiOrderBy(unittest.TestCase):
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
-        if cls.host == "https://localhost:8081/":
-            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     def generate_multi_orderby_item(self):
         item = {'id': str(uuid.uuid4()), self.NUMBER_FIELD: random.randint(0, 5),

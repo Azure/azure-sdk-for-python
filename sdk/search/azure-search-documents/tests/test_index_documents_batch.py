@@ -62,7 +62,9 @@ class TestIndexDocumentsBatch:
         method(("doc6", "doc7"))
         assert len(batch.actions) == 7
 
-        assert all(action.action_type == METHOD_MAP[method_name] for action in batch.actions)
+        assert all(
+            action.action_type == METHOD_MAP[method_name] for action in batch.actions
+        )
         assert all(type(action) == IndexAction for action in batch.actions)
 
         expected = ["doc{}".format(i) for i in range(1, 8)]

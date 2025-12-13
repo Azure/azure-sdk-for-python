@@ -8,6 +8,7 @@ import unittest
 import pytest
 import sys
 
+from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.provider import WatchKey
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
@@ -89,6 +90,57 @@ try:
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
                 assert mock_callback.call_count == 2
+
+        # method: refresh
+        @app_config_decorator_async
+        @recorded_by_proxy_async
+        @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
+        @pytest.mark.asyncio
+        async def test_no_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+
+            appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+
+            watch_key = ConfigurationSetting(key="watch key", value="0")
+            await appconfig_client.set_configuration_setting(watch_key)
+
+            mock_callback = Mock()
+            async with await self.create_client(
+                endpoint=appconfiguration_endpoint_string,
+                keyvault_secret_url=appconfiguration_keyvault_secret_url,
+                refresh_on=[WatchKey("watch key")],
+                refresh_interval=1,
+                on_refresh_success=mock_callback,
+                feature_flag_enabled=True,
+                feature_flag_refresh_enabled=True,
+            ) as client:
+                assert client["refresh_message"] == "original value"
+                assert client["my_json"]["key"] == "value"
+                assert FEATURE_MANAGEMENT_KEY in client
+                assert has_feature_flag(client, "Alpha")
+
+                setting = await appconfig_client.get_configuration_setting(key="refresh_message")
+                setting.value = "updated value"
+                await appconfig_client.set_configuration_setting(setting)
+
+                # Waiting for the refresh interval to pass
+                time.sleep(2)
+
+                await client.refresh()
+                # No Change the Watch Key wasn't updated
+                assert client["refresh_message"] == "original value"
+                assert has_feature_flag(client, "Alpha", False)
+                assert mock_callback.call_count == 0
+
+                watch_key.value = "1"
+                await appconfig_client.set_configuration_setting(watch_key)
+
+                # Waiting for the refresh interval to pass
+                time.sleep(2)
+
+                await client.refresh()
+                assert client["refresh_message"] == "updated value"
+                assert has_feature_flag(client, "Alpha", False)
+                assert mock_callback.call_count == 1
 
         # method: refresh
         @app_config_decorator_async

@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,9 +7,9 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+
+__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
