@@ -11,25 +11,26 @@ import os
 import tempfile
 from typing import Optional, Any, Dict, Final, IO, Union, overload, Literal, TextIO, BinaryIO
 from azure.ai.projects.models import (
+    ApiKeyCredentials,
+    AzureAISearchIndex,
     Connection,
     ConnectionType,
-    CustomCredential,
     CredentialType,
-    ApiKeyCredentials,
+    CustomCredential,
+    DatasetCredential,
+    DatasetType,
+    DatasetVersion,
     Deployment,
     DeploymentType,
-    ModelDeployment,
     Index,
     IndexType,
-    AzureAISearchIndex,
-    DatasetVersion,
-    DatasetType,
-    DatasetCredential,
+    ItemContentType,
     ItemResource,
     ItemType,
+    ModelDeployment,
     ResponsesMessageRole,
-    ItemContentType,
 )
+from openai.types.responses import Response
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
@@ -46,6 +47,8 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_agents_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_projects_tests_model_deployment_name="gpt-4o",
+    azure_ai_projects_tests_image_generation_model_deployment_name="gpt-image-1-mini",
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
     azure_ai_projects_tests_bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
@@ -53,6 +56,14 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_ai_search_index_name="sanitized-index-name",
     azure_ai_projects_tests_mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
     azure_ai_projects_tests_sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    azure_ai_projects_tests_completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_completed_oai_model_dpo_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_completed_oss_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_running_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_paused_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_projects_tests_azure_resource_group="sanitized-resource-group",
     azure_ai_projects_tests_ai_search_user_input="What is Azure AI Projects?",
     azure_ai_projects_tests_sharepoint_user_input="What is SharePoint?",
 )
@@ -153,12 +164,7 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_agents_params = {
-        "model_deployment_name": "gpt-4o",
         "agent_name": "agent-for-python-projects-sdk-testing",
-    }
-
-    test_agents_tools_params = {
-        "image_generation_model_deployment_name": "gpt-image-1-mini",
     }
 
     test_inference_params = {
@@ -357,8 +363,18 @@ class TestBase(AzureRecordedTestCase):
                 assert TestBase.is_valid_dict(connection.credentials.credential_keys)
 
     @classmethod
+    def validate_response(cls, response: Response, *, print_message: Optional[str] = None):
+        assert response.id
+        assert response.output is not None
+        assert len(response.output) > 0
+        if print_message:
+            print(f"{print_message} (id: {response.id})")
+        else:
+            print(f"Response completed (id: {response.id})")
+
+    @classmethod
     def validate_red_team_response(
-        cls, response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
+        cls, response: Response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
     ):
         """Assert basic red team scan response properties."""
         assert response is not None

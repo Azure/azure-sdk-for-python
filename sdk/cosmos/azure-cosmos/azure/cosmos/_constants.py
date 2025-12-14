@@ -54,8 +54,6 @@ class _Constants:
     EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
 
     # Environment variables
-    NON_STREAMING_ORDER_BY_DISABLED_CONFIG: str = "AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"
-    NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT: str = "False"
     HS_MAX_ITEMS_CONFIG: str = "AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"
     HS_MAX_ITEMS_CONFIG_DEFAULT: int = 1000
     MAX_ITEM_BUFFER_VS_CONFIG: str = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"

@@ -19,6 +19,7 @@ from azure.ai.projects.models import (
 # The tests in this file rely on an existing Azure AI Search project connection that has been populated with the following document:
 # https://arxiv.org/pdf/2508.03680
 
+
 class TestAgentAISearch(TestBase):
 
     # Test questions with expected answers
@@ -80,17 +81,17 @@ class TestAgentAISearch(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         # Get AI Search connection and index from environment
         ai_search_connection_id = kwargs.get("azure_ai_projects_tests_ai_search_project_connection_id")
         ai_search_index_name = kwargs.get("azure_ai_projects_tests_ai_search_index_name")
 
         if not ai_search_connection_id:
-            pytest.skip("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.fail("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_PROJECT_CONNECTION_ID environment variable not set")
 
         if not ai_search_index_name:
-            pytest.skip("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_INDEX_NAME environment variable not set")
+            pytest.fail("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_INDEX_NAME environment variable not set")
 
         assert isinstance(ai_search_connection_id, str), "ai_search_connection_id must be a string"
         assert isinstance(ai_search_index_name, str), "ai_search_index_name must be a string"
@@ -99,9 +100,11 @@ class TestAgentAISearch(TestBase):
             self.create_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
+            agent_name = "ai-search-qa-agent"
+
             # Create agent with Azure AI Search tool
             agent = project_client.agents.create_version(
-                agent_name="ai-search-qa-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="""You are a helpful assistant that answers true/false questions based on the provided search results.
@@ -124,10 +127,7 @@ class TestAgentAISearch(TestBase):
                 ),
                 description="Agent for testing AI Search question answering.",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "ai-search-qa-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Test each question
             correct_answers = 0

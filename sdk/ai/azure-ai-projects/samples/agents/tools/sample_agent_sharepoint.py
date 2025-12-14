@@ -101,7 +101,7 @@ with (
                             )
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
-            print(f"==> Result: {event.response.output_text}")
+            print(f"Agent response: {event.response.output_text}")
 
     print("Cleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
