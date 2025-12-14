@@ -60,7 +60,8 @@ class TestBuiltInEvaluators:
             fluency_eval(response=None)
 
         assert (
-            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided."
+            in exc_info.value.args[0]
         )
 
     def test_similarity_evaluator_keys(self, mock_model_config):
@@ -111,7 +112,10 @@ class TestBuiltInEvaluators:
                     "content": "2 + 2 = 4",
                     "context": {
                         "citations": [
-                            {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
+                            {
+                                "id": "math_doc.md",
+                                "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4",
+                            }
                         ]
                     },
                 },
@@ -143,14 +147,21 @@ class TestBuiltInEvaluators:
         quality_eval._flow = MagicMock(return_value=quality_response_async_mock())
 
         with pytest.raises(EvaluationException) as exc_info:
-            quality_eval(response="The capital of Japan is Tokyo.")  # Retrieval requires query and context
+            quality_eval(
+                response="The capital of Japan is Tokyo."
+            )  # Retrieval requires query and context
 
         assert (
-            "RetrievalEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+            "RetrievalEvaluator: Either 'conversation' or individual inputs must be provided."
+            in exc_info.value.args[0]
         )
 
-    @patch("azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load")
-    def test_groundedness_evaluator_with_agent_response(self, mock_async_prompty, mock_model_config):
+    @patch(
+        "azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load"
+    )
+    def test_groundedness_evaluator_with_agent_response(
+        self, mock_async_prompty, mock_model_config
+    ):
         """Test GroundednessEvaluator with query, response, and tool_definitions"""
         groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
         mock_async_prompty.return_value = quality_response_async_mock
@@ -189,7 +200,10 @@ class TestBuiltInEvaluators:
                     "run_id": "run_CmSdDdrq0CzwGOwqmWVADYwi",
                     "role": "assistant",
                     "content": [
-                        {"type": "text", "text": "One of the Contoso products identified is the **SmartView Glasses**"}
+                        {
+                            "type": "text",
+                            "text": "One of the Contoso products identified is the **SmartView Glasses**",
+                        }
                     ],
                 },
                 {
@@ -201,13 +215,22 @@ class TestBuiltInEvaluators:
                             "type": "tool_call",
                             "tool_call_id": "call_AU6kCcVwxv1cjM8HIQHMFFGh",
                             "name": "file_search",
-                            "arguments": {"ranking_options": {"ranker": "default_2024_08_21", "score_threshold": 0.0}},
+                            "arguments": {
+                                "ranking_options": {
+                                    "ranker": "default_2024_08_21",
+                                    "score_threshold": 0.0,
+                                }
+                            },
                         }
                     ],
                 },
             ],
             tool_definitions=[
-                {"name": "file_search", "type": "file_search", "description": "Search for information in files"}
+                {
+                    "name": "file_search",
+                    "type": "file_search",
+                    "description": "Search for information in files",
+                }
             ],
         )
 
@@ -250,7 +273,7 @@ class TestBuiltInEvaluators:
         qa_eval = QAEvaluator(model_config=mock_model_config)
         # Check that all model-based evaluators have is_reasoning_model set to False
         for evaluator in qa_eval._evaluators:
-            if hasattr(evaluator, '_is_reasoning_model'):
+            if hasattr(evaluator, "_is_reasoning_model"):
                 assert evaluator._is_reasoning_model is False
 
     def test_qa_evaluator_is_reasoning_model_true(self, mock_model_config):
@@ -258,5 +281,5 @@ class TestBuiltInEvaluators:
         qa_eval = QAEvaluator(model_config=mock_model_config, is_reasoning_model=True)
         # Check that all model-based evaluators have is_reasoning_model set to True
         for evaluator in qa_eval._evaluators:
-            if hasattr(evaluator, '_is_reasoning_model'):
+            if hasattr(evaluator, "_is_reasoning_model"):
                 assert evaluator._is_reasoning_model is True
