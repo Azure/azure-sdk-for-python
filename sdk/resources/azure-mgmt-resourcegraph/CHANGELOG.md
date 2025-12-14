@@ -1,5 +1,11 @@
 # Release History
 
+## 8.0.1 (2025-11-24)
+
+### Other Changes
+
+  - Regenerated with latest codegen tool for api-version "2021-03-01"
+
 ## 8.1.0b3 (2022-12-26)
 
 ### Features Added

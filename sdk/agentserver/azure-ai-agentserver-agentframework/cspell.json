@@ -1,0 +1,16 @@
+{
+    "ignoreWords": [
+      "azureai",
+      "fstring",
+      "mslearn",
+      "envtemplate",
+      "pysort",
+      "redef"
+    ],
+    "ignorePaths": [
+      "*.csv",
+      "*.json",
+      "*.rst",
+      "*/samples/*"
+    ]
+  }

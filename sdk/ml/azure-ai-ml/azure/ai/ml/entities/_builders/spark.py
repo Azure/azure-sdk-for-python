@@ -292,13 +292,15 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @identity.setter
     def identity(
         self,
-        value: Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration],
+        value: Optional[
+            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ],
     ) -> None:
         """Sets the identity that the Spark job will use while running on compute.
 
         :param value: The identity that the Spark job will use while running on compute.
-        :type value: Union[Dict[str, str], ~azure.ai.ml.entities.ManagedIdentityConfiguration,
-            ~azure.ai.ml.entities.AmlTokenConfiguration, ~azure.ai.ml.entities.UserIdentityConfiguration]
+        :type value: Optional[Union[Dict[str, str], ~azure.ai.ml.entities.ManagedIdentityConfiguration,
+            ~azure.ai.ml.entities.AmlTokenConfiguration, ~azure.ai.ml.entities.UserIdentityConfiguration]]
         """
         if isinstance(value, dict):
             identify_schema = UnionField(

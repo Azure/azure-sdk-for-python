@@ -1,6 +1,10 @@
 # Release History
 
-## 12.15.0b1 (Unreleased)
+## 12.16.0b1 (Unreleased)
+
+### Features Added
+
+## 12.15.0b1 (2025-12-04)
 
 ### Features Added
 - Added support for service version 2026-02-06.
@@ -10,6 +14,7 @@ for the purposes of signing SAS tokens.
 of the user that is authorized to use the generated SAS URL.
 - Added support for the keyword `user_delegation_key` to `generate_queue_sas` used with 
 `user_delegation_oid` to authenticate the request to generate a new SAS URL.
+- Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
 
 ## 12.14.1 (2025-10-29)
 

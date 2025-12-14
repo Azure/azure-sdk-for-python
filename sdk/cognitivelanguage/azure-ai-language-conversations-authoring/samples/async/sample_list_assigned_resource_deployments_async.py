@@ -1,0 +1,70 @@
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+"""
+FILE: sample_list_assigned_resource_deployments_async.py
+DESCRIPTION:
+    This sample demonstrates how to list all assigned resource deployments for Conversation Authoring projects (async).
+
+USAGE:
+    python sample_list_assigned_resource_deployments_async.py
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
+    AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+"""
+
+# [START conversation_authoring_list_assigned_resource_deployments_async]
+import os
+import asyncio
+from datetime import date, datetime
+from azure.identity.aio import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
+from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
+from azure.ai.language.conversations.authoring.models import (
+    AssignedProjectDeploymentsMetadata,
+    AssignedProjectDeploymentMetadata,
+)
+
+
+async def sample_list_assigned_resource_deployments_async():
+    # settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
+
+    credential = DefaultAzureCredential()
+    async with ConversationAuthoringClient(endpoint, credential=credential) as client:
+        try:
+            paged = client.list_assigned_resource_deployments()
+            print("Assigned resource deployments retrieved successfully.")
+
+            async for meta in paged:
+                print(f"\nProject Name: {meta.project_name}")
+                for d in meta.deployments_metadata:
+                    print(f"  Deployment Name: {d.deployment_name}")
+                    print(f"  Last Deployed On: {d.last_deployed_on}")
+                    print(f"  Expires On: {d.deployment_expires_on}")
+        except HttpResponseError as e:
+            print(f"Operation failed: {e.message}")
+            print(e.error)
+
+
+# [END conversation_authoring_list_assigned_resource_deployments_async]
+
+
+async def main():
+    await sample_list_assigned_resource_deployments_async()
+
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

@@ -1640,9 +1640,11 @@ class RedTeam:
         # Extract AOAI summary for passing to MLflow logging
         aoai_summary = red_team_result.scan_result.get("AOAI_Compatible_Summary")
         if self._app_insights_configuration:
-            emit_eval_result_events_to_app_insights(
-                self._app_insights_configuration, aoai_summary["output_items"]["data"]
+            # Get redacted results from the result processor for App Insights logging
+            redacted_results = self.result_processor.get_app_insights_redacted_results(
+                aoai_summary["output_items"]["data"]
             )
+            emit_eval_result_events_to_app_insights(self._app_insights_configuration, redacted_results)
         # Log results to MLFlow if not skipping upload
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")
