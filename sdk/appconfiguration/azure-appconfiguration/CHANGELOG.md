@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(timezone.utc)`.
+
 ## 1.7.2 (2025-10-20)
 
 ### Bugs Fixed

@@ -232,7 +232,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
-        file_property_semantics: Optional[Literal["New", "Restore"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ShareDirectoryClient: ...
