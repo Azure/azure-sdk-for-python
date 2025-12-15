@@ -1,0 +1,4 @@
+azure_ai_agentserver_agentframework==1.0.0b5
+agent-framework
+pytest==8.4.2
+python-dotenv==1.1.1
