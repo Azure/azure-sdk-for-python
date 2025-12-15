@@ -225,13 +225,13 @@ class _SharedAccessHelper(object):
     def add_request_headers(self, request_headers):
         if not request_headers:
             return
-        serialized = [str(k) + ":" + str(v) for k, v in request_headers.items()]
+        serialized = [f"{k}:{v}" for k, v in request_headers.items()]
         self._add_query(QueryStringConstants.SIGNED_REQUEST_HEADERS, "\n".join(serialized) + "\n")
 
     def add_request_query_params(self, request_query_params):
         if not request_query_params:
             return
-        serialized = [str(k) + ":" + str(v) for k, v in request_query_params.items()]
+        serialized = [f"{k}:{v}" for k, v in request_query_params.items()]
         self._add_query(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS, "\n" + "\n".join(serialized))
 
     def add_account_signature(self, account_name, account_key):
