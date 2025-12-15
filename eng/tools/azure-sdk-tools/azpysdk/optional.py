@@ -1,14 +1,18 @@
 import argparse
+import os
 import sys
 
 from typing import Optional, List
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, get_pip_command
-from ci_tools.scenario.generation import create_package_and_install, prepare_and_test_optional
-
-from ci_tools.variables import set_envvar_defaults
+from ci_tools.functions import is_error_code_5_allowed, pytest, pip_install, pip_uninstall, pip_install
+from ci_tools.scenario.generation import create_package_and_install, prepare_environment
+from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
+from ci_tools.environment_exclusions import is_check_enabled
+from ci_tools.parsing import get_config_setting
 from ci_tools.logging import logger
+
+REPO_ROOT = discover_repo_root()
 
 
 class optional(Check):
@@ -39,7 +43,7 @@ class optional(Check):
         """Run the optional check command."""
         logger.info("Running optional check...")
 
-        set_envvar_defaults()
+        set_envvar_defaults({"PROXY_URL": "http://localhost:5004"})
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
@@ -50,9 +54,136 @@ class optional(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for optional check")
 
-            # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
 
-            prepare_and_test_optional(args)
+            if in_ci():
+                if not is_check_enabled(package_dir, "optional", False):
+                    logger.info(f"Package {package_name} opts-out of optional check.")
+                    continue
+
+            try:
+                self.prepare_and_test_optional(package_name, package_dir, staging_directory, args.optional)
+            except Exception as e:
+                logger.error(f"Optional check for package {package_name} failed with exception: {e}")
+                results.append(1)
+                continue
 
         return max(results) if results else 0
+
+    # TODO: copying from generation.py, remove old code later
+    # TODO remove pytest() function from ci_tools.functions as it wasn't used elsewhere
+    def prepare_and_test_optional(self, package_name: str, package_dir: str, temp_dir: str, optional: str) -> int:
+        optional_configs = get_config_setting(package_dir, "optional")
+
+        if len(optional_configs) == 0:
+            logger.info(f"No optional environments detected in pyproject.toml within {package_dir}.")
+            return 0
+
+        config_results = []
+
+        for config in optional_configs:
+            env_name = config.get("name")
+
+            if optional:
+                if env_name != optional:
+                    logger.info(
+                        f"{env_name} does not match targeted environment {optional}, skipping this environment."
+                    )
+                    continue
+
+            environment_exe = prepare_environment(package_dir, temp_dir, env_name)
+
+            # install the package (either building manually or pulling from prebuilt directory)
+            create_package_and_install(
+                distribution_directory=temp_dir,
+                target_setup=package_dir,
+                skip_install=False,
+                cache_dir=None,  # todo, resolve this for CI builds
+                work_dir=temp_dir,
+                force_create=False,
+                package_type="wheel",
+                pre_download_disabled=False,
+                python_executable=environment_exe,
+            )
+
+            dev_reqs = os.path.join(package_dir, "dev_requirements.txt")
+            test_tools = os.path.join(REPO_ROOT, "eng", "test_tools.txt")
+
+            # install the dev requirements and test_tools requirements files to ensure tests can run
+            install_result = pip_install(["-r", dev_reqs, "-r", test_tools], python_executable=environment_exe)
+            if not install_result:
+                logger.error(
+                    f"Unable to complete installation of dev_requirements.txt/ci_tools.txt for {package_name}, check command output above."
+                )
+                config_results.append(False)
+                break
+
+            # install any packages that are added in the optional config
+            additional_installs = config.get("install", [])
+            install_result = pip_install(additional_installs, python_executable=environment_exe)
+            if not install_result:
+                logger.error(
+                    f"Unable to complete installation of additional packages {additional_installs} for {package_name}, check command output above."
+                )
+                config_results.append(False)
+                break
+
+            # uninstall any configured packages from the optional config
+            additional_uninstalls = config.get("uninstall", [])
+            uninstall_result = pip_uninstall(additional_uninstalls, python_executable=environment_exe)
+            if not uninstall_result:
+                logger.error(
+                    f"Unable to complete removal of packages targeted for uninstall {additional_uninstalls} for {package_name}, check command output above."
+                )
+                config_results.append(False)
+                break
+
+            # invoke tests
+            log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
+            junit_path = os.path.join(package_dir, f"test-junit-optional-{env_name}.xml")
+
+            pytest_args = [
+                "-rsfE",
+                f"--junitxml={junit_path}",
+                "--verbose",
+                "--cov-branch",
+                "--durations=10",
+                "--ignore=azure",
+                "--ignore=.tox",
+                "--ignore-glob=.venv*",
+                "--ignore=build",
+                "--ignore=.eggs",
+                "--ignore=samples",
+                f"--log-cli-level={log_level}",
+            ]
+            pytest_args.extend(config.get("additional_pytest_args", []))
+
+            logger.info(f"Invoking tests for package {package_name} and optional environment {env_name}")
+
+            pytest_command = ["-m", "pytest", *pytest_args]
+            pytest_result = self.run_venv_command(
+                environment_exe, pytest_command, cwd=package_dir, immediately_dump=True
+            )
+
+            if pytest_result.returncode != 0:
+                if pytest_result.returncode == 5 and is_error_code_5_allowed(package_dir, package_name):
+                    logger.info(
+                        "pytest exited with code 5 for %s, which is allowed for management or opt-out packages.",
+                        package_name,
+                    )
+                    # Align with tox: skip coverage when tests are skipped entirely
+                    continue
+                logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
+                config_results.append(False)
+
+        if all(config_results):
+            logger.info(f"All optional environment(s) for {package_name} completed successfully.")
+            sys.exit(0)
+        else:
+            for i, config in enumerate(optional_configs):
+                if not config_results[i]:
+                    config_name = config.get("name")
+                    logger.error(
+                        f"Optional environment {config_name} for {package_name} completed with non-zero exit-code. Check test results above."
+                    )
+            sys.exit(1)
