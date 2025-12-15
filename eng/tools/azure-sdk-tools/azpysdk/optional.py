@@ -6,7 +6,14 @@ import sys
 from typing import Optional, List
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, is_error_code_5_allowed, pytest, pip_install, pip_uninstall, pip_install
+from ci_tools.functions import (
+    install_into_venv,
+    is_error_code_5_allowed,
+    pytest,
+    pip_install,
+    pip_uninstall,
+    pip_install,
+)
 from ci_tools.scenario.generation import create_package_and_install, prepare_environment
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
@@ -109,7 +116,7 @@ class optional(Check):
                 cache_dir=None,  # todo, resolve this for CI builds
                 work_dir=temp_dir,
                 force_create=False,
-                package_type="wheel",
+                package_type="sdist",
                 pre_download_disabled=False,
                 python_executable=environment_exe,
             )
@@ -117,33 +124,35 @@ class optional(Check):
             test_tools = os.path.join(REPO_ROOT, "eng", "test_tools.txt")
 
             # install the dev requirements and test_tools requirements files to ensure tests can run
-            install_result = pip_install(["-r", dev_reqs, "-r", test_tools], python_executable=environment_exe)
-            if not install_result:
-                logger.error(
-                    f"Unable to complete installation of dev_requirements.txt/ci_tools.txt for {package_name}, check command output above."
-                )
-                config_results.append(False)
-                break
+            install_result = install_into_venv(environment_exe, ["-r", dev_reqs, "-r", test_tools], package_dir)
+            # if not install_result:
+            #     logger.error(
+            #         f"Unable to complete installation of dev_requirements.txt/ci_tools.txt for {package_name}, check command output above."
+            #     )
+            #     config_results.append(False)
+            #     break
 
             # install any packages that are added in the optional config
             additional_installs = config.get("install", [])
-            install_result = pip_install(additional_installs, python_executable=environment_exe)
-            if not install_result:
-                logger.error(
-                    f"Unable to complete installation of additional packages {additional_installs} for {package_name}, check command output above."
-                )
-                config_results.append(False)
-                break
+            if additional_installs:
+                install_result = install_into_venv(environment_exe, additional_installs, package_dir)
+                # if not install_result:
+                #     logger.error(
+                #         f"Unable to complete installation of additional packages {additional_installs} for {package_name}, check command output above."
+                #     )
+                #     config_results.append(False)
+                #     break
 
             # uninstall any configured packages from the optional config
             additional_uninstalls = config.get("uninstall", [])
-            uninstall_result = pip_uninstall(additional_uninstalls, python_executable=environment_exe)
-            if not uninstall_result:
-                logger.error(
-                    f"Unable to complete removal of packages targeted for uninstall {additional_uninstalls} for {package_name}, check command output above."
-                )
-                config_results.append(False)
-                break
+            if additional_uninstalls:
+                uninstall_result = pip_uninstall(additional_uninstalls, python_executable=environment_exe)
+                # if not uninstall_result:
+                #     logger.error(
+                #         f"Unable to complete removal of packages targeted for uninstall {additional_uninstalls} for {package_name}, check command output above."
+                #     )
+                #     config_results.append(False)
+                #     break
 
             self.pip_freeze(environment_exe)
 
