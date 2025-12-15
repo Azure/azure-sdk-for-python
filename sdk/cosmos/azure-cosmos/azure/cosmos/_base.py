@@ -184,7 +184,7 @@ def _merge_query_results(
     )
 
     if is_partial_agg and is_results_agg:
-        agg_results = results_docs[0]["_aggregate"]
+        agg_results = results_docs[0]["_aggregate"] # pylint: disable=unsubscriptable-object
         agg_partial = partial_docs[0]["_aggregate"]
         for key in agg_partial:
             if key not in agg_results:
@@ -223,10 +223,13 @@ def _merge_query_results(
             # Without robust query parsing, we can't distinguish them reliably.
             # Defaulting to sum for COUNT/SUM. MIN/MAX VALUE queries are not fully supported client-side.
             if " SELECT VALUE MIN" in query_upper:
+                # pylint: disable=unsubscriptable-object, unsupported-assignment-operation
                 results_docs[0] = min(results_docs[0], partial_docs[0])
             elif " SELECT VALUE MAX" in query_upper:
+                # pylint: disable=unsubscriptable-object, unsupported-assignment-operation
                 results_docs[0] = max(results_docs[0], partial_docs[0])
             else:  # For COUNT/SUM, we sum the partial results
+                # pylint: disable=unsubscriptable-object, unsupported-assignment-operation
                 results_docs[0] += partial_docs[0]
         return results
 
