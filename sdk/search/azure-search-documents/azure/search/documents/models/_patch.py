@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, Dict, List, Tuple, Union, cast
-from threading import Lock
 from azure.core.exceptions import HttpResponseError
 
 from ._models import IndexDocumentsBatch as IndexDocumentsBatchGenerated
@@ -18,7 +18,7 @@ from ._enums import IndexActionType
 
 def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]) -> List[Dict]:
     """Flatten variadic arguments into a single list of documents.
-    
+
     Supports both:
     - add_upload_actions([doc1, doc2])  # single list
     - add_upload_actions(doc1, doc2)    # multiple args
@@ -43,7 +43,6 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._actions_queue: List[IndexAction] = []
-        self._lock = Lock()
 
     def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions) if self.actions else 0)[:1024]
@@ -149,11 +148,10 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :return: the current actions
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
-        with self._lock:
-            if not hasattr(self, "_actions") or self._actions is None:
-                return []
-            result = list(self._actions)
-            self._actions = []
+        if not hasattr(self, "_actions") or self._actions is None:
+            return []
+        result = list(self._actions)
+        self._actions = []
         return result
 
     def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any) -> None:
@@ -167,11 +165,9 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
             self._actions = []
 
         if isinstance(new_actions, IndexAction):
-            with self._lock:
-                self._actions.append(new_actions)
+            self._actions.append(new_actions)
         else:
-            with self._lock:
-                self._actions.extend(new_actions)
+            self._actions.extend(new_actions)
 
     def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
         """Internal helper to extend the batch with new actions.
@@ -193,8 +189,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
             action = IndexAction(action_dict)
             new_actions.append(action)
 
-        with self._lock:
-            self._actions.extend(new_actions)
+        self._actions.extend(new_actions)
         return new_actions
 
 

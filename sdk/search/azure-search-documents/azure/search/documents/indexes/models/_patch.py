@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, Dict, List, Optional, Union
-from ._models import SearchField as _SearchField
+from ._models import SearchField
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
@@ -54,229 +54,17 @@ def Collection(typ) -> str:
     return "Collection({})".format(typ)
 
 
-class SearchField(_SearchField):
-    # pylint: disable=too-many-instance-attributes
-    """Represents a field in an index definition, which describes the name, data type, and search
-    behavior of a field.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: The name of the field, which must be unique within the fields collection of the
-        index or parent field. Required.
-    :vartype name: str
-    :ivar type: The data type of the field. Required. Known values are: "Edm.String", "Edm.Int32",
-        "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset", "Edm.GeographyPoint",
-        "Edm.ComplexType", "Edm.Single", "Edm.Half", "Edm.Int16", "Edm.SByte", and "Edm.Byte".
-    :vartype type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
-    :ivar key: A value indicating whether the field uniquely identifies documents in the index.
-        Exactly one top-level field in each index must be chosen as the key field and it must be of
-        type Edm.String. Key fields can be used to look up documents directly and update or delete
-        specific documents. Default is false for simple fields and null for complex fields.
-    :vartype key: bool
-    :ivar hidden: Convenience property that mirrors the generated ``retrievable`` flag. Set this to
-        true to prevent the field from being returned in search results. Defaults to false for simple
-        fields, true for vector fields, and null for complex fields.
-    :vartype hidden: bool
-    :ivar stored: An immutable value indicating whether the field will be persisted separately on
-        disk to be returned in a search result. You can disable this option if you don't plan to return
-        the field contents in a search response to save on storage overhead. This can only be set
-        during index creation and only for vector fields. This property cannot be changed for existing
-        fields or set as false for new fields. If this property is set to false, ``hidden`` must be set
-        to true. This property must be true or unset for key fields, for new fields, and for
-        non-vector fields, and it must be null for complex fields. Disabling this property will reduce
-        index storage requirements. The default is true for vector fields.
-    :vartype stored: bool
-    :ivar searchable: A value indicating whether the field is full-text searchable. This means it will
-        undergo analysis such as word-breaking during indexing. If you set a searchable field to a value
-        like "sunny day", internally it will be split into the individual tokens "sunny" and "day".
-        This enables full-text searches for these terms. Fields of type Edm.String or Collection(Edm.String)
-        are searchable by default. This property must be false for simple fields of other non-string data
-        types, and it must be null for complex fields. Note: searchable fields consume extra space in your
-        index to accommodate additional tokenized versions of the field value for full-text searches. If
-        you want to save space in your index and you don't need a field to be included in searches, set
-        searchable to false.
-    :vartype searchable: bool
-    :ivar filterable: A value indicating whether to enable the field to be referenced in $filter
-        queries. filterable differs from searchable in how strings are handled. Fields of type
-        Edm.String or Collection(Edm.String) that are filterable do not undergo word-breaking, so
-        comparisons are for exact matches only. For example, if you set such a field f to "sunny day",
-        $filter=f eq 'sunny' will find no matches, but $filter=f eq 'sunny day' will. This property must
-        be null for complex fields. Default is true for simple fields and null for complex fields.
-    :vartype filterable: bool
-    :ivar sortable: A value indicating whether to enable the field to be referenced in $orderby
-        expressions. By default, the search engine sorts results by score, but in many experiences users
-        will want to sort by fields in the documents. A simple field can be sortable only if it is
-        single-valued (it has a single value in the scope of the parent document). Simple collection
-        fields cannot be sortable, since they are multi-valued. Simple sub-fields of complex collections
-        are also multi-valued, and therefore cannot be sortable. This is true whether it's an immediate
-        parent field, or an ancestor field, that's the complex collection. Complex fields cannot be
-        sortable and the sortable property must be null for such fields. The default for sortable is true
-        for single-valued simple fields, false for multi-valued simple fields, and null for complex fields.
-    :vartype sortable: bool
-    :ivar facetable: A value indicating whether to enable the field to be referenced in facet queries.
-        Typically used in a presentation of search results that includes hit count by category (for
-        example, search for digital cameras and see hits by brand, by megapixels, by price, and so on).
-        This property must be null for complex fields. Fields of type Edm.GeographyPoint or
-        Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple fields.
-    :vartype facetable: bool
-    :ivar permission_filter: A value indicating whether the field should be used as a permission filter.
-        Known values are: "userIds", "groupIds", and "rbacScope".
-    :vartype permission_filter: str or ~azure.search.documents.indexes.models.PermissionFilter
-    :ivar sensitivity_label: A value indicating whether the field should be used for sensitivity label
-        filtering. This enables document-level filtering based on Microsoft Purview sensitivity labels.
-    :vartype sensitivity_label: bool
-    :ivar analyzer_name: The name of the analyzer to use for the field. This option can be used only with
-        searchable fields and it can't be set together with either searchAnalyzer or indexAnalyzer. Once
-        the analyzer is chosen, it cannot be changed for the field. Must be null for complex fields. Known
-        values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene",
-        "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
-        "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft",
-        "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft",
-        "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene",
-        "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft",
-        "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft",
-        "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft",
-        "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene",
-        "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene",
-        "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
-        "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
-        "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
-        "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
-        "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
-        "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
-        "whitespace".
-    :vartype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar search_analyzer_name: The name of the analyzer used at search time for the field. This option
-        can be used only with searchable fields. It must be set together with indexAnalyzer and it cannot
-        be set together with the analyzer option. This property cannot be set to the name of a language
-        analyzer; use the analyzer property instead if you need a language analyzer. This analyzer can be
-        updated on an existing field. Must be null for complex fields. Known values are: "ar.microsoft",
-        "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene",
-        "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft",
-        "zh-Hant.lucene", "hr.microsoft", "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene",
-        "nl.microsoft", "nl.lucene", "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft",
-        "fi.lucene", "fr.microsoft", "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene",
-        "el.microsoft", "el.lucene", "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene",
-        "hu.microsoft", "hu.lucene", "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene",
-        "it.microsoft", "it.lucene", "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft",
-        "ko.lucene", "lv.microsoft", "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft",
-        "mr.microsoft", "nb.microsoft", "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene",
-        "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft", "pt-PT.lucene", "pa.microsoft",
-        "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene", "sr-cyrillic.microsoft",
-        "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft", "es.lucene",
-        "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft", "th.lucene",
-        "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
-        "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
-        "whitespace".
-    :vartype search_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar index_analyzer_name: The name of the analyzer used at indexing time for the field. This option
-        can be used only with searchable fields. It must be set together with searchAnalyzer and it cannot
-        be set together with the analyzer option. This property cannot be set to the name of a language
-        analyzer; use the analyzer property instead if you need a language analyzer. Once the analyzer is
-        chosen, it cannot be changed for the field. Must be null for complex fields. Known values are:
-        "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
-        "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
-        "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft", "cs.lucene",
-        "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft", "en.lucene",
-        "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene", "gl.lucene",
-        "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft", "he.microsoft",
-        "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft", "id.microsoft",
-        "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft", "ja.lucene",
-        "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene", "lt.microsoft",
-        "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene", "fa.lucene",
-        "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
-        "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
-        "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
-        "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
-        "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
-        "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
-        "whitespace".
-    :vartype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar normalizer_name: The name of the normalizer to use for the field. This option can be used only
-        with fields with filterable, sortable, or facetable enabled. Once the normalizer is chosen, it
-        cannot be changed for the field. Must be null for complex fields. Known values are: "asciifolding",
-        "elision", "lowercase", "standard", and "uppercase".
-    :vartype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
-    :ivar vector_search_dimensions: The dimensionality of the vector field.
-    :vartype vector_search_dimensions: int
-    :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
-        and vectorizer to use when searching the vector field.
-    :vartype vector_search_profile_name: str
-    :ivar vector_encoding_format: The encoding format to interpret the field contents. "packedBit"
-    :vartype vector_encoding_format: str or ~azure.search.documents.indexes.models.VectorEncodingFormat
-    :ivar synonym_map_names: A list of the names of synonym maps to associate with this field. This option
-        can be used only with searchable fields. Currently only one synonym map per field is supported.
-        Assigning a synonym map to a field ensures that query terms targeting that field are expanded at
-        query-time using the rules in the synonym map. This attribute can be changed on existing fields.
-        Must be null or an empty collection for complex fields.
-    :vartype synonym_map_names: list[str]
-    :ivar fields: A list of sub-fields if this is a field of type Edm.ComplexType or
-        Collection(Edm.ComplexType). Must be null or empty for simple fields.
-    :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
-    """
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        type: Union[str, SearchFieldDataType],
-        key: Optional[bool] = None,
-        hidden: Optional[bool] = None,
-        stored: Optional[bool] = None,
-        searchable: Optional[bool] = None,
-        filterable: Optional[bool] = None,
-        sortable: Optional[bool] = None,
-        facetable: Optional[bool] = None,
-        permission_filter: Optional[Union[str, PermissionFilter]] = None,
-        sensitivity_label: Optional[bool] = None,
-        analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
-        search_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
-        index_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
-        synonym_map_names: Optional[List[str]] = None,
-        fields: Optional[List["SearchField"]] = None,
-        normalizer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
-        vector_search_dimensions: Optional[int] = None,
-        vector_search_profile_name: Optional[str] = None,
-        vector_encoding_format: Optional[Union[str, VectorEncodingFormat]] = None,
-        **kwargs
-    ):
-        retrievable = not hidden if hidden is not None else None
-        super().__init__(
-            name=name,
-            type=type,
-            key=key,
-            retrievable=retrievable,
-            stored=stored,
-            searchable=searchable,
-            filterable=filterable,
-            sortable=sortable,
-            facetable=facetable,
-            permission_filter=permission_filter,
-            sensitivity_label=sensitivity_label,
-            analyzer_name=analyzer_name,
-            search_analyzer_name=search_analyzer_name,
-            index_analyzer_name=index_analyzer_name,
-            synonym_map_names=synonym_map_names,
-            fields=fields,
-            normalizer_name=normalizer_name,
-            vector_search_dimensions=vector_search_dimensions,
-            vector_search_profile_name=vector_search_profile_name,
-            vector_encoding_format=vector_encoding_format,
-            **kwargs
-        )
-
-
 def SimpleField(
     *,
     name: str,
     type: str,
     key: bool = False,
-    hidden: bool = False,
+    retrievable: bool = True,
     filterable: bool = False,
     sortable: bool = False,
     facetable: bool = False,
     **kw  # pylint:disable=unused-argument
-) -> _SearchField:
+) -> SearchField:
     """Configure a simple field for an Azure Search Index
 
     :keyword name: Required. The name of the field, which must be unique within the fields collection
@@ -292,13 +80,13 @@ def SimpleField(
         type SearchFieldDataType.String. Key fields can be used to look up documents directly and
         update or delete specific documents. Default is False
     :paramtype key: bool
-    :keyword hidden: A value indicating whether the field can be returned in a search result.
-        You can enable this option if you want to use a field (for example, margin) as a filter,
+    :ivar retrievable: A value indicating whether the field can be returned in a search result.
+        You can disable this option if you want to use a field (for example, margin) as a filter,
         sorting, or scoring mechanism but do not want the field to be visible to the end user. This
-        property must be False for key fields. This property can be changed on existing fields.
-        Enabling this property does not cause any increase in index storage requirements. Default is
-        False.
-    :paramtype hidden: bool
+        property must be true for key fields, and it must be null for complex fields. This property can be
+        changed on existing fields. Enabling this property does not cause any increase in index storage
+        requirements. Default is true for simple fields, false for vector fields, and null for complex
+        fields.
     :keyword filterable: A value indicating whether to enable the field to be referenced in $filter
         queries. filterable differs from searchable in how strings are handled. Fields of type
         SearchFieldDataType.String or Collection(SearchFieldDataType.String) that are filterable do
@@ -332,7 +120,7 @@ def SimpleField(
         "filterable": filterable,
         "facetable": facetable,
         "sortable": sortable,
-        "hidden": hidden,
+        "retrievable": retrievable,
     }
     return SearchField(**result)
 
@@ -342,7 +130,7 @@ def SearchableField(
     name: str,
     collection: bool = False,
     key: bool = False,
-    hidden: bool = False,
+    retrievable: bool = True,
     searchable: bool = True,
     filterable: bool = False,
     sortable: bool = False,
@@ -365,13 +153,13 @@ def SearchableField(
         type SearchFieldDataType.String. Key fields can be used to look up documents directly and update or delete
         specific documents. Default is False
     :paramtype key: bool
-    :keyword hidden: A value indicating whether the field can be returned in a search result.
-        You can enable this option if you want to use a field (for example, margin) as a filter,
+    :ivar retrievable: A value indicating whether the field can be returned in a search result.
+        You can disable this option if you want to use a field (for example, margin) as a filter,
         sorting, or scoring mechanism but do not want the field to be visible to the end user. This
-        property must be False for key fields. This property can be changed on existing fields.
-        Enabling this property does not cause any increase in index storage requirements. Default is
-        False.
-    :paramtype hidden: bool
+        property must be true for key fields, and it must be null for complex fields. This property can be
+        changed on existing fields. Enabling this property does not cause any increase in index storage
+        requirements. Default is true for simple fields, false for vector fields, and null for complex
+        fields.
     :keyword searchable: A value indicating whether the field is full-text searchable. This means it
         will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
         value like "sunny day", internally it will be split into the individual tokens "sunny" and
@@ -479,7 +267,7 @@ def SearchableField(
         "filterable": filterable,
         "facetable": facetable,
         "sortable": sortable,
-        "hidden": hidden,
+        "retrievable": retrievable,
     }
     if analyzer_name:
         result["analyzer_name"] = analyzer_name
@@ -496,9 +284,9 @@ def ComplexField(
     *,
     name: str,
     collection: bool = False,
-    fields: Optional[List[_SearchField]] = None,
+    fields: Optional[List[SearchField]] = None,
     **kw  # pylint:disable=unused-argument
-) -> _SearchField:
+) -> SearchField:
     """Configure a Complex or Complex collection field for an Azure Search Index
 
     :keyword name: Required. The name of the field, which must be unique within the fields collection
@@ -513,7 +301,7 @@ def ComplexField(
     """
     typ = Collection(SearchFieldDataType.COMPLEX) if collection else SearchFieldDataType.COMPLEX
     result: Dict[str, Any] = {"name": name, "type": typ, "fields": fields}
-    return _SearchField(**result)
+    return SearchField(**result)
 
 
 __all__: list[str] = [

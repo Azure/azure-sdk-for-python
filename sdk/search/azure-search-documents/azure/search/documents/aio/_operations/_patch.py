@@ -119,6 +119,20 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
             self._first_page_iterator_instance = cast(AsyncSearchPageIterator, self.by_page())
         return self._first_page_iterator_instance
 
+    async def __anext__(self) -> ReturnType:
+        if self._page_iterator is None:
+            self._page_iterator = self._first_iterator_instance()
+            return await self.__anext__()
+        if self._page is None:
+            # Let it raise StopAsyncIteration
+            self._page = await self._page_iterator.__anext__()
+            return await self.__anext__()
+        try:
+            return await self._page.__anext__()
+        except StopAsyncIteration:
+            self._page = None
+            return await self.__anext__()
+
     async def get_facets(self) -> Optional[Dict]:
         """Return any facet results if faceting was requested.
 
