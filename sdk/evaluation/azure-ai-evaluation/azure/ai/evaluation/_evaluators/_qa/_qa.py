@@ -90,7 +90,6 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         fluency_threshold: int = 3,
         similarity_threshold: int = 3,
         f1_score_threshold: float = 0.5,
-        is_reasoning_model: bool = False,
         **kwargs,
     ):
         # Type checking
@@ -104,6 +103,8 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         ]:
             if not isinstance(value, (int, float)):
                 raise TypeError(f"{name} must be an int or float, got {type(value)}")
+
+        is_reasoning_model = kwargs.pop("is_reasoning_model", False)
 
         evaluators = [
             GroundednessEvaluator(
