@@ -162,11 +162,11 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if isinstance(llm_output, dict):
             success = llm_output.get("success", False)
-            details = llm_output.get('details', {})
-            
+            details = llm_output.get("details", {})
+
             if "success" not in llm_output and "success" in details:
                 success = details.get("success", False)
-            
+
             if isinstance(success, str):
                 success = success.upper() == "TRUE"
 
@@ -176,7 +176,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}": success * 1.0,
                 f"{self._result_key}_result": success_result,
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_reason": f"{reason} {llm_output.get('details', '')}",
+                f"{self._result_key}_reason": f"{reason} {details or ''}",
                 f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
                 f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
                 f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
