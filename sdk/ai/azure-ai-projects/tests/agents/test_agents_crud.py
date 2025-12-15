@@ -38,7 +38,7 @@ class TestAgentCrud(TestBase):
         GET    /agents/{agent_name}/versions/{agent_version} project_client.agents.get_version()
         """
         print("\n")
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
         project_client = self.create_client(operation_group="agents", **kwargs)
         first_agent_name = "MyAgent1"
         second_agent_name = "MyAgent2"
