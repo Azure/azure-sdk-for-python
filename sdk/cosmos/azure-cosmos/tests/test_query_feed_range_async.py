@@ -8,7 +8,6 @@ import unittest
 import uuid
 
 from azure.cosmos.aio import CosmosClient
-from itertools import combinations
 from azure.cosmos.partition_key import PartitionKey
 from typing import List, Mapping, Set
 
@@ -133,6 +132,86 @@ class TestQueryFeedRangeAsync:
          )]
         await add_all_pk_values_to_set_async(items, actual_pk_values)
         assert expected_pk_values.issubset(actual_pk_values)
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_feed_range_async_during_partition_split(self, container_id):
+        container = await get_container(container_id)
+        query = 'SELECT * from c'
+
+        expected_pk_values = set(PK_VALUES)
+        actual_pk_values = set()
+
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        await test_config.TestConfig.trigger_split_async(container, 11000)
+        for feed_range in feed_ranges:
+            items = [item async for item in
+                     (container.query_items(
+                         query=query,
+                         feed_range=feed_range
+                     )
+                     )]
+            await add_all_pk_values_to_set_async(items, actual_pk_values)
+        assert expected_pk_values == actual_pk_values
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_order_by_and_feed_range_async_during_partition_split(self, container_id):
+        container = await get_container(container_id)
+        query = 'SELECT * FROM c ORDER BY c.id'
+
+        expected_pk_values = set(PK_VALUES)
+        actual_pk_values = set()
+
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        await test_config.TestConfig.trigger_split_async(container, 11000)
+
+        for feed_range in feed_ranges:
+            items = [item async for item in
+                     (container.query_items(
+                         query=query,
+                         feed_range=feed_range
+                     )
+                     )]
+            await add_all_pk_values_to_set_async(items, actual_pk_values)
+
+        assert expected_pk_values == actual_pk_values
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_aggregate_and_feed_range_async_during_partition_split(self, container_id):
+        container = await get_container(container_id)
+        # Get initial counts per feed range before split
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        initial_total_count = 0
+
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE COUNT(1) FROM c'
+            items = [item async for item in
+                     (container.query_items(
+                         query=query,
+                         feed_range=feed_range
+                     )
+                     )]
+            if items:
+                initial_total_count += items[0]
+
+        # Trigger split
+        await test_config.TestConfig.trigger_split_async(container, 11000)
+
+        # Query with aggregate after split using original feed ranges
+        post_split_total_count = 0
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE COUNT(1) FROM c'
+            items = [item async for item in
+                     (container.query_items(
+                         query=query,
+                         feed_range=feed_range
+                     )
+                     )]
+            if items:
+                post_split_total_count += items[0]
+
+        # Verify counts match (no data loss during split)
+        assert initial_total_count == post_split_total_count
+        assert post_split_total_count == len(PK_VALUES)
 
     async def test_query_with_static_continuation_async(self):
         container = await get_container(SINGLE_PARTITION_CONTAINER_ID)

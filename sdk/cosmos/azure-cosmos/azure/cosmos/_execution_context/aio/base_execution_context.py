@@ -27,7 +27,8 @@ from collections import deque
 import copy
 
 from ...aio import _retry_utility_async
-from ... import http_constants
+from ... import http_constants, exceptions
+
 
 # pylint: disable=protected-access
 
@@ -136,12 +137,26 @@ class _QueryExecutionContextBase(object):
         # ExecuteAsync passes retry context parameters (timeout, operation start time, logger, etc.)
         # The callback need to accept these parameters even if unused
         # Removing **kwargs results in a TypeError when ExecuteAsync tries to pass these parameters
-        async def callback(**kwargs):  # pylint: disable=unused-argument
-            return await self._fetch_items_helper_no_retries(fetch_function)
+        async def execute_fetch():
+            async def callback(**kwargs):  # pylint: disable=unused-argument
+                return await self._fetch_items_helper_no_retries(fetch_function)
 
-        return await _retry_utility_async.ExecuteAsync(
-            self._client, self._client._global_endpoint_manager, callback, **self._options
-        )
+            return await _retry_utility_async.ExecuteAsync(
+                self._client, self._client._global_endpoint_manager, callback, **self._options
+            )
+
+        try:
+            return await execute_fetch()
+        except exceptions.CosmosHttpResponseError as e:
+            if exceptions._partition_range_is_gone(e) and not self._has_started:
+                # Refresh routing map to get new partition key ranges
+                self._client.refresh_routing_map_provider()
+                # Reset state to refetch with new ranges
+                self._has_started = False
+                self._continuation = self._get_initial_continuation()
+                # Retry once after refresh
+                return await execute_fetch()
+            raise
 
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
