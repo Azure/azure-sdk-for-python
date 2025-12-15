@@ -139,7 +139,7 @@ def build_search_index_get_synonym_map_request(  # pylint: disable=name-too-long
 
 
 def build_search_index_get_synonym_maps_request(  # pylint: disable=name-too-long
-    *, select: Optional[str] = None, **kwargs: Any
+    *, select: Optional[list[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -153,7 +153,7 @@ def build_search_index_get_synonym_maps_request(  # pylint: disable=name-too-lon
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "str")
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -280,7 +280,7 @@ def build_search_index_get_index_request(name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_list_indexes_request(*, select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_search_index_list_indexes_request(*, select: Optional[list[str]] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -293,7 +293,7 @@ def build_search_index_list_indexes_request(*, select: Optional[str] = None, **k
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "str")
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -939,7 +939,7 @@ def build_search_indexer_get_data_source_connection_request(  # pylint: disable=
 
 
 def build_search_indexer_get_data_source_connections_request(  # pylint: disable=name-too-long
-    *, select: Optional[str] = None, **kwargs: Any
+    *, select: Optional[list[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -953,7 +953,7 @@ def build_search_indexer_get_data_source_connections_request(  # pylint: disable
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "str")
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1186,7 +1186,7 @@ def build_search_indexer_get_indexer_request(name: str, **kwargs: Any) -> HttpRe
 
 
 def build_search_indexer_get_indexers_request(  # pylint: disable=name-too-long
-    *, select: Optional[str] = None, **kwargs: Any
+    *, select: Optional[list[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1200,7 +1200,7 @@ def build_search_indexer_get_indexers_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "str")
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1361,7 +1361,7 @@ def build_search_indexer_get_skillset_request(name: str, **kwargs: Any) -> HttpR
 
 
 def build_search_indexer_get_skillsets_request(  # pylint: disable=name-too-long
-    *, select: Optional[str] = None, **kwargs: Any
+    *, select: Optional[list[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1375,7 +1375,7 @@ def build_search_indexer_get_skillsets_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "str")
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1700,14 +1700,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     def _get_synonym_maps(
-        self, *, select: Optional[str] = None, **kwargs: Any
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
     ) -> _models1._models.ListSynonymMapsResult:
         """Lists all synonym maps available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: ListSynonymMapsResult. The ListSynonymMapsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListSynonymMapsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2171,13 +2171,13 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_indexes(self, *, select: Optional[str] = None, **kwargs: Any) -> ItemPaged["_models1.SearchIndex"]:
+    def list_indexes(self, *, select: Optional[list[str]] = None, **kwargs: Any) -> ItemPaged["_models1.SearchIndex"]:
         """Lists all indexes available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: An iterator like instance of SearchIndex
         :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchIndex]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4502,14 +4502,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def _get_data_source_connections(
-        self, *, select: Optional[str] = None, **kwargs: Any
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
     ) -> _models1._models.ListDataSourcesResult:
         """Lists all datasources available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: ListDataSourcesResult. The ListDataSourcesResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListDataSourcesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5385,13 +5385,15 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_indexers(self, *, select: Optional[str] = None, **kwargs: Any) -> _models1._models.ListIndexersResult:
+    def _get_indexers(
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
+    ) -> _models1._models.ListIndexersResult:
         """Lists all indexers available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: ListIndexersResult. The ListIndexersResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListIndexersResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5923,13 +5925,15 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_skillsets(self, *, select: Optional[str] = None, **kwargs: Any) -> _models1._models.ListSkillsetsResult:
+    def _get_skillsets(
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
+    ) -> _models1._models.ListSkillsetsResult:
         """List all skillsets in a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: ListSkillsetsResult. The ListSkillsetsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListSkillsetsResult
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -832,11 +832,11 @@ class _SearchClientOperationsMixin(
         include_total_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
         filter: Optional[str] = None,
-        highlight_fields: Optional[str] = None,
+        highlight_fields: Optional[list[str]] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        order_by: Optional[str] = None,
+        order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, _models1.QueryType]] = None,
         scoring_statistics: Optional[Union[str, _models1.ScoringStatistics]] = None,
         session_id: Optional[str] = None,
@@ -844,11 +844,11 @@ class _SearchClientOperationsMixin(
         scoring_profile: Optional[str] = None,
         debug: Optional[Union[str, _models1.QueryDebugMode]] = None,
         search_text: Optional[str] = None,
-        search_fields: Optional[str] = None,
+        search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, _models1.SearchMode]] = None,
         query_language: Optional[Union[str, _models1.QueryLanguage]] = None,
         query_speller: Optional[Union[str, _models1.QuerySpellerType]] = None,
-        select: Optional[str] = None,
+        select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
         semantic_configuration_name: Optional[str] = None,
@@ -858,7 +858,7 @@ class _SearchClientOperationsMixin(
         answers: Optional[Union[str, _models1.QueryAnswerType]] = None,
         captions: Optional[Union[str, _models1.QueryCaptionType]] = None,
         query_rewrites: Optional[Union[str, _models1.QueryRewritesType]] = None,
-        semantic_fields: Optional[str] = None,
+        semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list[_models1.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models1.VectorFilterMode]] = None,
         hybrid_search: Optional[_models1.HybridSearch] = None,
@@ -895,11 +895,11 @@ class _SearchClientOperationsMixin(
         include_total_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
         filter: Optional[str] = None,
-        highlight_fields: Optional[str] = None,
+        highlight_fields: Optional[list[str]] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        order_by: Optional[str] = None,
+        order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, _models1.QueryType]] = None,
         scoring_statistics: Optional[Union[str, _models1.ScoringStatistics]] = None,
         session_id: Optional[str] = None,
@@ -907,11 +907,11 @@ class _SearchClientOperationsMixin(
         scoring_profile: Optional[str] = None,
         debug: Optional[Union[str, _models1.QueryDebugMode]] = None,
         search_text: Optional[str] = None,
-        search_fields: Optional[str] = None,
+        search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, _models1.SearchMode]] = None,
         query_language: Optional[Union[str, _models1.QueryLanguage]] = None,
         query_speller: Optional[Union[str, _models1.QuerySpellerType]] = None,
-        select: Optional[str] = None,
+        select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
         semantic_configuration_name: Optional[str] = None,
@@ -921,7 +921,7 @@ class _SearchClientOperationsMixin(
         answers: Optional[Union[str, _models1.QueryAnswerType]] = None,
         captions: Optional[Union[str, _models1.QueryCaptionType]] = None,
         query_rewrites: Optional[Union[str, _models1.QueryRewritesType]] = None,
-        semantic_fields: Optional[str] = None,
+        semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list[_models1.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models1.VectorFilterMode]] = None,
         hybrid_search: Optional[_models1.HybridSearch] = None,
@@ -951,7 +951,7 @@ class _SearchClientOperationsMixin(
         :paramtype filter: str
         :keyword highlight_fields: The comma-separated list of field names to use for hit highlights.
          Only searchable fields can be used for hit highlighting. Default value is None.
-        :paramtype highlight_fields: str
+        :paramtype highlight_fields: list[str]
         :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
          highlightPreTag. Default is &lt;/em&gt;. Default value is None.
         :paramtype highlight_post_tag: str
@@ -969,7 +969,7 @@ class _SearchClientOperationsMixin(
          desc to indicate descending. The default is ascending order. Ties will be broken by the match
          scores of documents. If no $orderby is specified, the default sort order is descending by
          document match score. There can be at most 32 $orderby clauses. Default value is None.
-        :paramtype order_by: str
+        :paramtype order_by: list[str]
         :keyword query_type: A value that specifies the syntax of the search query. The default is
          'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
          "full", and "semantic". Default value is None.
@@ -1006,7 +1006,7 @@ class _SearchClientOperationsMixin(
          search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
          field names of each fielded search expression take precedence over any field names listed in
          this parameter. Default value is None.
-        :paramtype search_fields: str
+        :paramtype search_fields: list[str]
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
          matched in order to count the document as a match. Known values are: "any" and "all". Default
          value is None.
@@ -1026,7 +1026,7 @@ class _SearchClientOperationsMixin(
         :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
         :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
          marked as retrievable in the schema are included. Default value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :keyword skip: The number of search results to skip. This value cannot be greater than 100,000.
          If you need to scan documents in sequence, but cannot use skip due to this limitation, consider
          using orderby on a totally-ordered key and filter with a range query instead. Default value is
@@ -1064,7 +1064,7 @@ class _SearchClientOperationsMixin(
         :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
         :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
          Default value is None.
-        :paramtype semantic_fields: str
+        :paramtype semantic_fields: list[str]
         :keyword vector_queries: The query parameters for vector and hybrid search queries. Default
          value is None.
         :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
@@ -1414,9 +1414,9 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        order_by: Optional[str] = None,
-        search_fields: Optional[str] = None,
-        select: Optional[str] = None,
+        order_by: Optional[list[str]] = None,
+        search_fields: Optional[list[str]] = None,
+        select: Optional[list[str]] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models1._models.SuggestDocumentsResult: ...
@@ -1441,9 +1441,9 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        order_by: Optional[str] = None,
-        search_fields: Optional[str] = None,
-        select: Optional[str] = None,
+        order_by: Optional[list[str]] = None,
+        search_fields: Optional[list[str]] = None,
+        select: Optional[list[str]] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models1._models.SuggestDocumentsResult:
@@ -1485,13 +1485,13 @@ class _SearchClientOperationsMixin(
          desc to indicate descending. The default is ascending order. Ties will be broken by the match
          scores of documents. If no $orderby is specified, the default sort order is descending by
          document match score. There can be at most 32 $orderby clauses. Default value is None.
-        :paramtype order_by: str
+        :paramtype order_by: list[str]
         :keyword search_fields: The comma-separated list of field names to search for the specified
          search text. Target fields must be included in the specified suggester. Default value is None.
-        :paramtype search_fields: str
+        :paramtype search_fields: list[str]
         :keyword select: The comma-separated list of fields to retrieve. If unspecified, only the key
          field will be included in the results. Default value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :keyword top: The number of suggestions to retrieve. This must be a value between 1 and 100.
          The default is 5. Default value is None.
         :paramtype top: int
@@ -1813,7 +1813,7 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        search_fields: Optional[str] = None,
+        search_fields: Optional[list[str]] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models1._models.AutocompleteResult: ...
@@ -1839,7 +1839,7 @@ class _SearchClientOperationsMixin(
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        search_fields: Optional[str] = None,
+        search_fields: Optional[list[str]] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models1._models.AutocompleteResult:
@@ -1880,7 +1880,7 @@ class _SearchClientOperationsMixin(
         :keyword search_fields: The comma-separated list of field names to consider when querying for
          auto-completed terms. Target fields must be included in the specified suggester. Default value
          is None.
-        :paramtype search_fields: str
+        :paramtype search_fields: list[str]
         :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
          and 100. The default is 5. Default value is None.
         :paramtype top: int

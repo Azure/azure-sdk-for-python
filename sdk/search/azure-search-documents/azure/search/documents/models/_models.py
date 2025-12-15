@@ -623,7 +623,7 @@ class SearchRequest(_Model):
     :vartype filter: str
     :ivar highlight_fields: The comma-separated list of field names to use for hit highlights. Only
      searchable fields can be used for hit highlighting.
-    :vartype highlight_fields: str
+    :vartype highlight_fields: list[str]
     :ivar highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. Default is &lt;/em&gt;.
     :vartype highlight_post_tag: str
@@ -641,7 +641,7 @@ class SearchRequest(_Model):
      desc to indicate descending. The default is ascending order. Ties will be broken by the match
      scores of documents. If no $orderby is specified, the default sort order is descending by
      document match score. There can be at most 32 $orderby clauses.
-    :vartype order_by: str
+    :vartype order_by: list[str]
     :ivar query_type: A value that specifies the syntax of the search query. The default is
      'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
      "full", and "semantic".
@@ -678,7 +678,7 @@ class SearchRequest(_Model):
      search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
      field names of each fielded search expression take precedence over any field names listed in
      this parameter.
-    :vartype search_fields: str
+    :vartype search_fields: list[str]
     :ivar search_mode: A value that specifies whether any or all of the search terms must be
      matched in order to count the document as a match. Known values are: "any" and "all".
     :vartype search_mode: str or ~azure.search.documents.models.SearchMode
@@ -697,7 +697,7 @@ class SearchRequest(_Model):
     :vartype query_speller: str or ~azure.search.documents.models.QuerySpellerType
     :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
      as retrievable in the schema are included.
-    :vartype select: str
+    :vartype select: list[str]
     :ivar skip: The number of search results to skip. This value cannot be greater than 100,000. If
      you need to scan documents in sequence, but cannot use skip due to this limitation, consider
      using orderby on a totally-ordered key and filter with a range query instead.
@@ -732,7 +732,7 @@ class SearchRequest(_Model):
      augment the search query. Known values are: "none" and "generative".
     :vartype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
     :ivar semantic_fields: The comma-separated list of field names used for semantic ranking.
-    :vartype semantic_fields: str
+    :vartype semantic_fields: list[str]
     :ivar vector_queries: The query parameters for vector and hybrid search queries.
     :vartype vector_queries: list[~azure.search.documents.models.VectorQuery]
     :ivar vector_filter_mode: Determines whether or not filters are applied before or after the
@@ -754,8 +754,8 @@ class SearchRequest(_Model):
      field name, optionally followed by a comma-separated list of name:value pairs."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The OData $filter expression to apply to the search query."""
-    highlight_fields: Optional[str] = rest_field(
-        name="highlight", visibility=["read", "create", "update", "delete", "query"]
+    highlight_fields: Optional[list[str]] = rest_field(
+        name="highlight", visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
     )
     """The comma-separated list of field names to use for hit highlights. Only searchable fields can
      be used for hit highlighting."""
@@ -775,7 +775,9 @@ class SearchRequest(_Model):
     """A number between 0 and 100 indicating the percentage of the index that must be covered by a
      search query in order for the query to be reported as a success. This parameter can be useful
      for ensuring search availability even for services with only one replica. The default is 100."""
-    order_by: Optional[str] = rest_field(name="orderby", visibility=["read", "create", "update", "delete", "query"])
+    order_by: Optional[list[str]] = rest_field(
+        name="orderby", visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
+    )
     """The comma-separated list of OData $orderby expressions by which to sort the results. Each
      expression can be either a field name or a call to either the geo.distance() or the
      search.score() functions. Each expression can be followed by asc to indicate ascending, or desc
@@ -822,8 +824,8 @@ class SearchRequest(_Model):
      \"all\"."""
     search_text: Optional[str] = rest_field(name="search", visibility=["read", "create", "update", "delete", "query"])
     """A full-text search query expression; Use \"*\" or omit this parameter to match all documents."""
-    search_fields: Optional[str] = rest_field(
-        name="searchFields", visibility=["read", "create", "update", "delete", "query"]
+    search_fields: Optional[list[str]] = rest_field(
+        name="searchFields", visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
     )
     """The comma-separated list of field names to which to scope the full-text search. When using
      fielded search (fieldName:searchExpression) in a full Lucene query, the field names of each
@@ -851,7 +853,9 @@ class SearchRequest(_Model):
     )
     """A value that specifies the type of the speller to use to spell-correct individual search query
      terms. Known values are: \"none\" and \"lexicon\"."""
-    select: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    select: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
+    )
     """The comma-separated list of fields to retrieve. If unspecified, all fields marked as
      retrievable in the schema are included."""
     skip: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -899,8 +903,8 @@ class SearchRequest(_Model):
     )
     """A value that specifies whether query rewrites should be generated to augment the search query.
      Known values are: \"none\" and \"generative\"."""
-    semantic_fields: Optional[str] = rest_field(
-        name="semanticFields", visibility=["read", "create", "update", "delete", "query"]
+    semantic_fields: Optional[list[str]] = rest_field(
+        name="semanticFields", visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
     )
     """The comma-separated list of field names used for semantic ranking."""
     vector_queries: Optional[list["_models.VectorQuery"]] = rest_field(
@@ -925,11 +929,11 @@ class SearchRequest(_Model):
         include_total_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
         filter: Optional[str] = None,  # pylint: disable=redefined-builtin
-        highlight_fields: Optional[str] = None,
+        highlight_fields: Optional[list[str]] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        order_by: Optional[str] = None,
+        order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, "_models.QueryType"]] = None,
         scoring_statistics: Optional[Union[str, "_models.ScoringStatistics"]] = None,
         session_id: Optional[str] = None,
@@ -937,11 +941,11 @@ class SearchRequest(_Model):
         scoring_profile: Optional[str] = None,
         debug: Optional[Union[str, "_models.QueryDebugMode"]] = None,
         search_text: Optional[str] = None,
-        search_fields: Optional[str] = None,
+        search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, "_models.SearchMode"]] = None,
         query_language: Optional[Union[str, "_models.QueryLanguage"]] = None,
         query_speller: Optional[Union[str, "_models.QuerySpellerType"]] = None,
-        select: Optional[str] = None,
+        select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
         semantic_configuration_name: Optional[str] = None,
@@ -951,7 +955,7 @@ class SearchRequest(_Model):
         answers: Optional[Union[str, "_models.QueryAnswerType"]] = None,
         captions: Optional[Union[str, "_models.QueryCaptionType"]] = None,
         query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = None,
-        semantic_fields: Optional[str] = None,
+        semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list["_models.VectorQuery"]] = None,
         vector_filter_mode: Optional[Union[str, "_models.VectorFilterMode"]] = None,
         hybrid_search: Optional["_models.HybridSearch"] = None,

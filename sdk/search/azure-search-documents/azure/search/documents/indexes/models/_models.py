@@ -6983,9 +6983,8 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     :ivar pattern: A regular expression pattern to match token separators. Default is an expression
      that matches one or more non-word characters.
     :vartype pattern: str
-    :ivar flags: Regular expression flags. Known values are: "CANON_EQ", "CASE_INSENSITIVE",
-     "COMMENTS", "DOTALL", "LITERAL", "MULTILINE", "UNICODE_CASE", and "UNIX_LINES".
-    :vartype flags: str or ~azure.search.documents.indexes.models.RegexFlags
+    :ivar flags: Regular expression flags.
+    :vartype flags: list[str or ~azure.search.documents.indexes.models.RegexFlags]
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
     :ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
@@ -7000,11 +6999,10 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     pattern: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A regular expression pattern to match token separators. Default is an expression that matches
      one or more non-word characters."""
-    flags: Optional[Union[str, "_models.RegexFlags"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    flags: Optional[list[Union[str, "_models.RegexFlags"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="pipeDelimited"
     )
-    """Regular expression flags. Known values are: \"CANON_EQ\", \"CASE_INSENSITIVE\", \"COMMENTS\",
-     \"DOTALL\", \"LITERAL\", \"MULTILINE\", \"UNICODE_CASE\", and \"UNIX_LINES\"."""
+    """Regular expression flags."""
     stopwords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of stopwords."""
     odata_type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -7018,7 +7016,7 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
         name: str,
         lower_case_terms: Optional[bool] = None,
         pattern: Optional[str] = None,
-        flags: Optional[Union[str, "_models.RegexFlags"]] = None,
+        flags: Optional[list[Union[str, "_models.RegexFlags"]]] = None,
         stopwords: Optional[list[str]] = None,
     ) -> None: ...
 
@@ -11095,7 +11093,7 @@ class SynonymMap(_Model):
     :vartype format: str
     :ivar synonyms: A series of synonym rules in the specified synonym map format. The rules must
      be separated by newlines. Required.
-    :vartype synonyms: str
+    :vartype synonyms: list[str]
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
@@ -11114,7 +11112,9 @@ class SynonymMap(_Model):
     format: Literal["solr"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The format of the synonym map. Only the 'solr' format is currently supported. Required. Default
      value is \"solr\"."""
-    synonyms: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    synonyms: list[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="newlineDelimited"
+    )
     """A series of synonym rules in the specified synonym map format. The rules must be separated by
      newlines. Required."""
     encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
@@ -11135,7 +11135,7 @@ class SynonymMap(_Model):
         self,
         *,
         name: str,
-        synonyms: str,
+        synonyms: list[str],
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         e_tag: Optional[str] = None,
     ) -> None: ...
