@@ -191,7 +191,9 @@ class optional(Check):
                     )
                     # Align with tox: skip coverage when tests are skipped entirely
                     continue
-                logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
+                logger.error(
+                    f"pytest failed for {package_name} and optional environment {env_name} with exit code {pytest_result.returncode}."
+                )
                 config_results.append(False)
 
         if all(config_results):
