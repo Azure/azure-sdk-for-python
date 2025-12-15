@@ -20,7 +20,7 @@ from test_base import (
 from devtools_testutils import (
     recorded_by_proxy,
     RecordedTransport,
-    is_live_and_not_recording,
+    is_live
 )
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
@@ -346,9 +346,9 @@ class TestFineTuning(TestBase):
                         print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
 
                     print(f"[{test_prefix}] Deployment completed successfully")
-                    # Uncomment below section if running the deployment tests in live mode.
-                    # print(f"[{test_prefix}] Waiting for 10 minutes for deployment to be fully ready.")
-                    # time.sleep(600)
+                    if is_live():
+                        print(f"[{test_prefix}] Waiting for 10 minutes for deployment to be fully ready.")
+                        time.sleep(600)
                     print(f"[{test_prefix}] Testing inference on deployment: {deployment_name}")
 
                     response = openai_client.responses.create(
