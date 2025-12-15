@@ -1,5 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+from unittest import mock
 
 import pytest
 import pytest_asyncio
@@ -32,16 +33,28 @@ async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_valu
 @pytest_asyncio.fixture(scope="class", autouse=True)
 async def setup_and_teardown_async():
     print("Setup: This runs before any tests")
-    document_definitions = [{PARTITION_KEY: pk, 'id': str(uuid.uuid4())} for pk in PK_VALUES]
+    document_definitions = [{PARTITION_KEY: pk, 'id': str(uuid.uuid4()), 'value': 100} for pk in PK_VALUES]
     database = CosmosClient(HOST, KEY).get_database_client(DATABASE_ID)
 
     for container_id, offer_throughput in zip(TEST_CONTAINERS_IDS, TEST_OFFER_THROUGHPUTS):
-        container = await database.create_container_if_not_exists(
+        # Delete container if it exists to ensure clean state
+        try:
+            await database.delete_container(container_id)
+            print(f"Deleted existing container: {container_id}")
+        except Exception as e:
+            print(f"Container {container_id} doesn't exist, creating new: {e}")
+
+        # Create fresh container
+        container = await database.create_container(
             id=container_id,
             partition_key=PartitionKey(path='/' + PARTITION_KEY, kind='Hash'),
             offer_throughput=offer_throughput)
+
+        # Insert test data
         for document_definition in document_definitions:
             await container.upsert_item(body=document_definition)
+
+        print(f"Created container {container_id} with {len(document_definitions)} documents")
 
     yield
     # Code to run after tests
@@ -176,42 +189,77 @@ class TestQueryFeedRangeAsync:
         assert expected_pk_values == actual_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    async def test_query_with_aggregate_and_feed_range_async_during_partition_split(self, container_id):
+    async def test_query_with_count_aggregate_and_feed_range_async_during_partition_split(self, container_id):
         container = await get_container(container_id)
         # Get initial counts per feed range before split
         feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        print(f"BEFORE SPLIT: Number of feed ranges: {len(feed_ranges)}")
         initial_total_count = 0
 
-        for feed_range in feed_ranges:
+        for i, feed_range in enumerate(feed_ranges):
             query = 'SELECT VALUE COUNT(1) FROM c'
-            items = [item async for item in
-                     (container.query_items(
-                         query=query,
-                         feed_range=feed_range
-                     )
-                     )]
-            if items:
-                initial_total_count += items[0]
+            items = [item async for item in container.query_items(query=query, feed_range=feed_range)]
+            count = items[0] if items else 0
+            print(f"Feed range {i} count BEFORE split: {count}")
+            initial_total_count += count
+
+        print(f"Total count BEFORE split: {initial_total_count}")
 
         # Trigger split
         await test_config.TestConfig.trigger_split_async(container, 11000)
 
         # Query with aggregate after split using original feed ranges
         post_split_total_count = 0
-        for feed_range in feed_ranges:
+        for i, feed_range in enumerate(feed_ranges):
             query = 'SELECT VALUE COUNT(1) FROM c'
-            items = [item async for item in
-                     (container.query_items(
-                         query=query,
-                         feed_range=feed_range
-                     )
-                     )]
-            if items:
-                post_split_total_count += items[0]
+            items = [item async for item in container.query_items(query=query, feed_range=feed_range)]
+            count = items[0] if items else 0
+            print(f"Original feed range {i} count AFTER split: {count}")
+            post_split_total_count += count
 
-        # Verify counts match (no data loss during split)
+        print(f"Total count AFTER split using OLD ranges: {post_split_total_count}")
+        print(f"Expected: {len(PK_VALUES)}")
+
         assert initial_total_count == post_split_total_count
         assert post_split_total_count == len(PK_VALUES)
+
+        # Verify counts match (no data loss during split)
+        print(f"Initial total count: {initial_total_count}, Post-split total count: {post_split_total_count}")
+        assert initial_total_count == post_split_total_count
+        print(f"len(PK_VALUES): {len(PK_VALUES)}, Post-split total count: {post_split_total_count}")
+        assert post_split_total_count == len(PK_VALUES)
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_sum_aggregate_and_feed_range_async_during_partition_split(self, container_id):
+        container = await get_container(container_id)
+        # Get initial sums per feed range before split
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        initial_total_sum = 0
+        expected_total_sum = len(PK_VALUES) * 100
+
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+            items = [item async for item in container.query_items(query=query, feed_range=feed_range)]
+            # The result for a SUM query on an empty set of rows is `undefined`.
+            # The query returns no result pages in this case.
+            current_sum = items[0] if items else 0
+            initial_total_sum += current_sum
+
+        # Trigger split
+        await test_config.TestConfig.trigger_split_async(container, 11000)
+
+        # Query with aggregate after split using original feed ranges
+        post_split_total_sum = 0
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+            items = [item async for item in container.query_items(query=query, feed_range=feed_range)]
+            current_sum = items[0] if items else 0
+            post_split_total_sum += current_sum
+
+        # Verify sums match (no data loss during split)
+        assert initial_total_sum == post_split_total_sum
+        assert post_split_total_sum == expected_total_sum
+
 
     async def test_query_with_static_continuation_async(self):
         container = await get_container(SINGLE_PARTITION_CONTAINER_ID)

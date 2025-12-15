@@ -6,8 +6,7 @@ import test_config
 import unittest
 import uuid
 
-from azure.cosmos import CosmosClient
-from itertools import combinations
+from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from typing import List, Mapping, Set
 
@@ -32,16 +31,31 @@ def add_all_pk_values_to_set(items: List[Mapping[str, str]], pk_value_set: Set[s
 @pytest.fixture(scope="class", autouse=True)
 def setup_and_teardown():
     print("Setup: This runs before any tests")
-    document_definitions = [{PARTITION_KEY: pk, 'id': str(uuid.uuid4())} for pk in PK_VALUES]
-    database = CosmosClient(HOST, KEY).get_database_client(DATABASE_ID)
+    document_definitions = [{PARTITION_KEY: pk, 'id': str(uuid.uuid4()), 'value': 100} for pk in PK_VALUES]
+    client = CosmosClient(HOST, KEY)
+    database = client.get_database_client(DATABASE_ID)
 
     for container_id, offer_throughput in zip(TEST_CONTAINERS_IDS, TEST_OFFER_THROUGHPUTS):
-        container = database.create_container_if_not_exists(
+        # Delete container if it exists to ensure clean state
+        try:
+            database.delete_container(container_id)
+            print(f"Deleted existing container: {container_id}")
+        except exceptions.CosmosResourceNotFoundError:
+            print(f"Container {container_id} did not exist, creating new.")
+        except Exception as e:
+            print(f"An unexpected error occurred during container deletion: {e}")
+
+        # Create fresh container
+        container = database.create_container(
             id=container_id,
             partition_key=PartitionKey(path='/' + PARTITION_KEY, kind='Hash'),
             offer_throughput=offer_throughput)
+
+        # Insert test data
         for document_definition in document_definitions:
             container.upsert_item(body=document_definition)
+        print(f"Created container {container_id} with {len(document_definitions)} documents")
+
     yield
     # Code to run after tests
     print("Teardown: This runs after all tests")
@@ -122,6 +136,103 @@ class TestQueryFeedRange:
         ))
         add_all_pk_values_to_set(items, actual_pk_values)
         assert expected_pk_values.issubset(actual_pk_values)
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    def test_query_with_feed_range_during_partition_split(self, container_id):
+        container = get_container(container_id)
+        query = 'SELECT * from c'
+
+        expected_pk_values = set(PK_VALUES)
+        actual_pk_values = set()
+
+        feed_ranges = list(container.read_feed_ranges())
+        test_config.TestConfig.trigger_split(container, 11000)
+        for feed_range in feed_ranges:
+            items = list(container.query_items(
+                query=query,
+                feed_range=feed_range
+            ))
+            add_all_pk_values_to_set(items, actual_pk_values)
+        assert expected_pk_values == actual_pk_values
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    def test_query_with_order_by_and_feed_range_during_partition_split(self, container_id):
+        container = get_container(container_id)
+        query = 'SELECT * FROM c ORDER BY c.id'
+
+        expected_pk_values = set(PK_VALUES)
+        actual_pk_values = set()
+
+        feed_ranges = list(container.read_feed_ranges())
+        test_config.TestConfig.trigger_split(container, 11000)
+
+        for feed_range in feed_ranges:
+            items = list(container.query_items(
+                query=query,
+                feed_range=feed_range
+            ))
+            add_all_pk_values_to_set(items, actual_pk_values)
+
+        assert expected_pk_values == actual_pk_values
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    def test_query_with_count_aggregate_and_feed_range_during_partition_split(self, container_id):
+        container = get_container(container_id)
+        # Get initial counts per feed range before split
+        feed_ranges = list(container.read_feed_ranges())
+        initial_total_count = 0
+
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE COUNT(1) FROM c'
+            items = list(container.query_items(query=query, feed_range=feed_range))
+            count = items[0] if items else 0
+            initial_total_count += count
+
+        # Trigger split
+        test_config.TestConfig.trigger_split(container, 11000)
+
+        # Query with aggregate after split using original feed ranges
+        post_split_total_count = 0
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE COUNT(1) FROM c'
+            items = list(container.query_items(query=query, feed_range=feed_range))
+            count = items[0] if items else 0
+            post_split_total_count += count
+
+        # Verify counts match (no data loss during split)
+        assert initial_total_count == post_split_total_count
+        assert post_split_total_count == len(PK_VALUES)
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    def test_query_with_sum_aggregate_and_feed_range_during_partition_split(self, container_id):
+        container = get_container(container_id)
+        # Get initial sums per feed range before split
+        feed_ranges = list(container.read_feed_ranges())
+        initial_total_sum = 0
+        expected_total_sum = len(PK_VALUES) * 100
+
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+            items = list(container.query_items(query=query, feed_range=feed_range))
+            # The result for a SUM query on an empty set of rows is `undefined`.
+            # The query returns no result pages in this case.
+            current_sum = items[0] if items else 0
+            initial_total_sum += current_sum
+
+        # Trigger split
+        test_config.TestConfig.trigger_split(container, 11000)
+
+        # Query with aggregate after split using original feed ranges
+        post_split_total_sum = 0
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+            items = list(container.query_items(query=query, feed_range=feed_range))
+            current_sum = items[0] if items else 0
+            post_split_total_sum += current_sum
+
+        # Verify sums match (no data loss during split)
+        assert initial_total_sum == post_split_total_sum
+        assert post_split_total_sum == expected_total_sum
 
     def test_query_with_static_continuation(self):
         container = get_container(SINGLE_PARTITION_CONTAINER_ID)

@@ -129,6 +129,116 @@ def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
         options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': if_none_match}
     return options
 
+def _merge_query_results(
+        results: dict[str, Any],
+        partial_result: dict[str, Any],
+        query: Optional[Union[str, dict[str, Any]]]
+) -> dict[str, Any]:
+    """Merges partial query results from different partitions.
+
+    This method is required for queries that are manually fanned out to multiple
+    partitions or ranges within the SDK, such as prefix partition key queries.
+    For non-aggregated queries, results from each partition are simply concatenated.
+    However, for aggregate queries (COUNT, SUM, MIN, MAX, AVG), each partition
+    returns a partial aggregate. This method merges these partial results to compute
+    the final, correct aggregate value.
+
+    This client-side aggregation is a temporary workaround. Ideally, this logic
+    should be integrated into the core pipeline or handled by the service, which
+    can perform these aggregations more efficiently.
+
+    This method handles the aggregation of results when a query spans multiple
+    partitions. It specifically handles:
+    1. Standard queries: Appends documents from partial_result to results.
+    2. Aggregate queries that return a JSON object (e.g., `SELECT COUNT(1) FROM c`, `SELECT MIN(c.field) FROM c`).
+    3. VALUE queries with aggregation that return a scalar value (e.g., `SELECT VALUE COUNT(1) FROM c`).
+
+    :param dict[str, Any] results: The accumulated result's dictionary.
+    :param dict[str, Any] partial_result: The new partial result dictionary to merge.
+    :param query: The query being executed.
+    :type query: str or dict[str, Any]
+    :return: The merged result's dictionary.
+    :rtype: dict[str, Any]
+    """
+    if not results:
+        return partial_result
+
+    partial_docs = partial_result.get("Documents")
+    if not partial_docs:
+        return results
+
+    results_docs = results.get("Documents")
+
+    # Check if both results are aggregate queries
+    is_partial_agg = (
+            isinstance(partial_docs, list)
+            and len(partial_docs) == 1
+            and isinstance(partial_docs[0], dict)
+            and partial_docs[0].get("_aggregate") is not None
+    )
+    is_results_agg = (
+            results_docs
+            and isinstance(results_docs, list)
+            and len(results_docs) == 1
+            and isinstance(results_docs[0], dict)
+            and results_docs[0].get("_aggregate") is not None
+    )
+
+    if is_partial_agg and is_results_agg:
+        agg_results = results_docs[0]["_aggregate"]
+        agg_partial = partial_docs[0]["_aggregate"]
+        for key in agg_partial:
+            if key not in agg_results:
+                agg_results[key] = agg_partial[key]
+            elif isinstance(agg_partial.get(key), dict) and "count" in agg_partial[key]:  # AVG
+                if isinstance(agg_results.get(key), dict):
+                    agg_results[key]["sum"] += agg_partial[key]["sum"]
+                    agg_results[key]["count"] += agg_partial[key]["count"]
+            elif key.lower().startswith("min"):
+                agg_results[key] = min(agg_results[key], agg_partial[key])
+            elif key.lower().startswith("max"):
+                agg_results[key] = max(agg_results[key], agg_partial[key])
+            else:  # COUNT, SUM
+                agg_results[key] += agg_partial[key]
+        return results
+
+    # Check if both are VALUE aggregate queries
+    is_partial_value_agg = (
+            isinstance(partial_docs, list)
+            and len(partial_docs) == 1
+            and isinstance(partial_docs[0], (int, float))
+    )
+    is_results_value_agg = (
+            results_docs
+            and isinstance(results_docs, list)
+            and len(results_docs) == 1
+            and isinstance(results_docs[0], (int, float))
+    )
+
+    if is_partial_value_agg and is_results_value_agg:
+        query_text = query.get("query") if isinstance(query, dict) else query
+        if query_text:
+            query_upper = query_text.upper()
+            # For MIN/MAX, we find the min/max of the partial results.
+            # For COUNT/SUM, we sum the partial results.
+            # Without robust query parsing, we can't distinguish them reliably.
+            # Defaulting to sum for COUNT/SUM. MIN/MAX VALUE queries are not fully supported client-side.
+            if " SELECT VALUE MIN" in query_upper:
+                results_docs[0] = min(results_docs[0], partial_docs[0])
+            elif " SELECT VALUE MAX" in query_upper:
+                results_docs[0] = max(results_docs[0], partial_docs[0])
+            else:  # For COUNT/SUM, we sum the partial results
+                results_docs[0] += partial_docs[0]
+        return results
+
+    # Standard query, append documents
+    if results_docs is None:
+        results["Documents"] = partial_docs
+    else:
+        results_docs.extend(partial_docs)
+    results["_count"] = len(results["Documents"])
+    return results
+
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],

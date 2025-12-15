@@ -3149,7 +3149,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
                 self.last_response_headers = last_response_headers
                 self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
-                results = self._merge_query_results(results, partial_result, query)
+
+                # Introducing a temporary complex function into a critical path to handle aggregated queries during splits,
+                # as a precaution falling back to the original logic if anything goes wrong
+                try:
+                    results = base._merge_query_results(results, partial_result, query)
+                except Exception:
+                    # If the new merge logic fails, fall back to the original logic.
+                    if results:
+                        results["Documents"].extend(partial_result["Documents"])
+                    else:
+                        results = partial_result
+
                 if response_hook:
                     response_hook(self.last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
@@ -3170,60 +3181,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return __GetBodiesFromQueryResult(result)
 
-    def _merge_query_results(
-            self,
-            results: dict[str, Any],
-            partial_result: dict[str, Any],
-            query: Optional[Union[str, dict[str, Any]]]
-    ) -> dict[str, Any]:
-        """Merges partial query results from different partitions.
-
-        This method handles the aggregation of results when a query spans multiple
-        partitions. It specifically handles:
-        1. Standard queries: Appends documents from partial_result to results.
-        2. Aggregate queries (e.g., SELECT COUNT(1)): Sums up the aggregate values.
-        3. VALUE queries with aggregation (e.g., SELECT VALUE COUNT(1)): Sums the scalar values.
-
-        :param dict[str, Any] results: The accumulated result's dictionary.
-        :param dict[str, Any] partial_result: The new partial result dictionary to merge.
-        :param query: The query being executed.
-        :type query: str or dict[str, Any]
-        :return: The merged result's dictionary.
-        :rtype: dict[str, Any]
-        """
-        if not results:
-            return partial_result
-
-        partial_docs = partial_result.get("Documents")
-        if not partial_docs:
-            return results
-
-        # Check if both results are aggregate queries
-        is_partial_agg = (
-                isinstance(partial_docs[0], dict) and partial_docs[0].get("_aggregate") is not None
-        )
-        results_docs = results.get("Documents")
-        is_results_agg = (
-                results_docs and isinstance(results_docs[0], dict) and results_docs[0].get("_aggregate") is not None
-        )
-
-        # Handle VALUE queries (e.g., SELECT VALUE COUNT(1))
-        is_value_query = "VALUE" in str(query).upper()
-        if is_value_query and isinstance(partial_docs[0], (int, float)) and isinstance(results_docs[0], (int, float)):
-            results["Documents"][0] += partial_docs[0]
-
-        # Handle aggregate queries (e.g., SELECT COUNT(c.id))
-        elif is_partial_agg and is_results_agg:
-            # Sum up all aggregate items. Assumes they are numeric.
-            for key in results["Documents"][0]["_aggregate"]:
-                if key in partial_docs[0]["_aggregate"]:
-                    results["Documents"][0]["_aggregate"][key] += partial_docs[0]["_aggregate"][key]
-
-        # Handle regular queries
-        else:
-            results["Documents"].extend(partial_docs)
-
-        return results
 
     def __CheckAndUnifyQueryFormat(
         self,

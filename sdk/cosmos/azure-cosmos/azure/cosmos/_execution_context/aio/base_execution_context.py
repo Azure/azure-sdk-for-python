@@ -148,12 +148,9 @@ class _QueryExecutionContextBase(object):
         try:
             return await execute_fetch()
         except exceptions.CosmosHttpResponseError as e:
-            if exceptions._partition_range_is_gone(e) and not self._has_started:
+            if exceptions._partition_range_is_gone(e):
                 # Refresh routing map to get new partition key ranges
                 self._client.refresh_routing_map_provider()
-                # Reset state to refetch with new ranges
-                self._has_started = False
-                self._continuation = self._get_initial_continuation()
                 # Retry once after refresh
                 return await execute_fetch()
             raise

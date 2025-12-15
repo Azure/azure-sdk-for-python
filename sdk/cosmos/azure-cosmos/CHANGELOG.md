@@ -2,13 +2,8 @@
 
 ### 4.15.0b2 (Unreleased)
 
-#### Features Added
-
-#### Breaking Changes
-
 #### Bugs Fixed
-
-#### Other Changes
+* Fix bug where sdk was not properly handling updates to pkrangeids during partition splits.See [PR 44425](https://github.com/Azure/azure-sdk-for-python/pull/44425)
 
 ### 4.15.0b1 (2025-11-26)
 
