@@ -41,8 +41,8 @@ class TestAgentImageGeneration(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
-        image_model = self.test_agents_tools_params["image_generation_model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        image_model = kwargs.get("azure_ai_projects_tests_image_generation_model_deployment_name")
         agent_name = "image-gen-agent"
 
         with (

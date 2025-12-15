@@ -159,4 +159,4 @@ def print_final_output(response):
                 final_output += getattr(part, "text", None) or getattr(part, "refusal", None) or "" + "\n"
 
     print(f"Final status: {response.status}")
-    print(f"==> Result: {final_output.strip()}")
+    print(f"Final result: {final_output.strip()}")
