@@ -1,11 +1,12 @@
 import argparse
 import os
+from subprocess import CalledProcessError
 import sys
 
 from typing import Optional, List
 
 from .Check import Check
-from ci_tools.functions import is_error_code_5_allowed, pytest, pip_install, pip_uninstall, pip_install
+from ci_tools.functions import install_into_venv, is_error_code_5_allowed, pytest, pip_install, pip_uninstall, pip_install
 from ci_tools.scenario.generation import create_package_and_install, prepare_environment
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
@@ -62,6 +63,13 @@ class optional(Check):
                     continue
 
             try:
+                self.install_dev_reqs(executable, args, package_dir)
+            except CalledProcessError as exc:
+                logger.error(f"Failed to install dependencies for {package_name}: {exc}")
+                results.append(exc.returncode)
+                continue
+
+            try:
                 self.prepare_and_test_optional(package_name, package_dir, staging_directory, args.optional)
             except Exception as e:
                 logger.error(f"Optional check for package {package_name} failed with exception: {e}")
@@ -105,7 +113,6 @@ class optional(Check):
                 pre_download_disabled=False,
                 python_executable=environment_exe,
             )
-
             dev_reqs = os.path.join(package_dir, "dev_requirements.txt")
             test_tools = os.path.join(REPO_ROOT, "eng", "test_tools.txt")
 
@@ -137,6 +144,8 @@ class optional(Check):
                 )
                 config_results.append(False)
                 break
+
+            self.pip_freeze(environment_exe)
 
             # invoke tests
             log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
