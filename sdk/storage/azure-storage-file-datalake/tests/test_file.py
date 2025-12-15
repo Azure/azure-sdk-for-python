@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
+from urllib.parse import urlencode, urlparse, urlunparse
 
 import pytest
 from azure.core import MatchConditions
@@ -1778,6 +1779,66 @@ class TestFile(StorageRecordedTestCase):
 
         result = file_client.download_file(decompress=False).readall()
         assert result == compressed_data
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    def test_dynamic_user_delegation_sas(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+
+        token_credential = self.get_credential(DataLakeServiceClient)
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "dfs"), credential=token_credential)
+        fs_name, file_name = self.get_resource_name('oauthfs'), self.get_resource_name('oauthfile')
+        fs = dsc.create_file_system(fs_name)
+        file = fs.create_file(file_name)
+        file.upload_data(b"abc", overwrite=True)
+
+        user_delegation_key = dsc.get_user_delegation_key(
+            key_start_time=datetime.utcnow(),
+            key_expiry_time=datetime.utcnow() + timedelta(hours=1)
+        )
+
+        request_headers = {
+            "foo$": "bar!",
+            "company": "msft",
+            "city": "redmond,atlanta,reston",
+        }
+
+        request_query_params = {
+            "hello$": "world!",
+            "abra": "cadabra",
+            "firstName": "john,Tim",
+        }
+
+        sas_token = generate_file_sas(
+            file.account_name,
+            file.file_system_name,
+            None,
+            file.path_name,
+            user_delegation_key,
+            permission=FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            request_headers=request_headers,
+            request_query_params=request_query_params
+        )
+
+        def callback(request):
+            request.http_request.headers["foo$"] = "world"
+            request.http_request.headers["company"] = "microsoft"
+            request.http_request.headers["city"] = "redmond,atlanta,reston"
+
+            parsed_url = urlparse(request.http_request.url)
+            query = urlencode(request_query_params)
+            url = urlunparse(parsed_url._replace(query=query))
+            request.http_request.url = url
+
+        identity_file = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file.file_system_name,
+            file.path_name,
+            credential=sas_token
+        )
+        props = identity_file.get_file_properties(raw_request_hook=callback)
+        assert props is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
