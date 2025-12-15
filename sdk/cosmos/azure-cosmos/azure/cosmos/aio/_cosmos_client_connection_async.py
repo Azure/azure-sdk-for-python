@@ -3150,11 +3150,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 self.last_response_headers = last_response_headers
                 self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
 
-                # Introducing a temporary complex function into a critical path to handle aggregated queries during splits,
-                # as a precaution falling back to the original logic if anything goes wrong
+                # Introducing a temporary complex function into a critical path to handle aggregated queries,
+                # during splits as a precaution falling back to the original logic if anything goes wrong
                 try:
                     results = base._merge_query_results(results, partial_result, query)
-                except Exception:
+                except Exception: # pylint: disable=broad-exception-caught
                     # If the new merge logic fails, fall back to the original logic.
                     if results:
                         results["Documents"].extend(partial_result["Documents"])

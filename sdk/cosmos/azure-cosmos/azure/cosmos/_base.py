@@ -143,10 +143,9 @@ def _merge_query_results(
     returns a partial aggregate. This method merges these partial results to compute
     the final, correct aggregate value.
 
-    This client-side aggregation is a temporary workaround. Ideally, this logic
-    should be integrated into the core pipeline or handled by the service, which
-    can perform these aggregations more efficiently.
-
+    TODO:This client-side aggregation is a temporary workaround. Ideally, this logic
+    should be integrated into the core pipeline as aggregate queries are handled by DefaultExecutionContext,
+    not MultiAggregatorExecutionContext, which is not split proof until the logic is moved to the core pipeline.
     This method handles the aggregation of results when a query spans multiple
     partitions. It specifically handles:
     1. Standard queries: Appends documents from partial_result to results.
@@ -184,7 +183,8 @@ def _merge_query_results(
             and results_docs[0].get("_aggregate") is not None
     )
 
-    if is_partial_agg and is_results_agg:
+    if (is_partial_agg and is_results_agg and isinstance(results_docs, list)
+            and isinstance(partial_docs, list)):
         agg_results = results_docs[0]["_aggregate"]
         agg_partial = partial_docs[0]["_aggregate"]
         for key in agg_partial:
@@ -215,7 +215,8 @@ def _merge_query_results(
             and isinstance(results_docs[0], (int, float))
     )
 
-    if is_partial_value_agg and is_results_value_agg:
+    if (is_partial_value_agg and is_results_value_agg and isinstance(results_docs, list)
+            and isinstance(partial_docs, list)):
         query_text = query.get("query") if isinstance(query, dict) else query
         if query_text:
             query_upper = query_text.upper()
@@ -234,7 +235,7 @@ def _merge_query_results(
     # Standard query, append documents
     if results_docs is None:
         results["Documents"] = partial_docs
-    else:
+    elif isinstance(results_docs, list) and isinstance(partial_docs, list):
         results_docs.extend(partial_docs)
     results["_count"] = len(results["Documents"])
     return results
