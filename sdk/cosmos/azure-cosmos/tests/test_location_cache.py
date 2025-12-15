@@ -218,9 +218,9 @@ class TestLocationCache:
             location_cache.perform_on_database_account_read(database_account)
 
             # Init requests and set excluded regions on requests
-            write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+            write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, {})
             write_doc_request.excluded_locations = excluded_locations_on_requests
-            read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+            read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, {})
             read_doc_request.excluded_locations = excluded_locations_on_requests
 
             # Test if read endpoints were correctly filtered on client level
@@ -250,7 +250,7 @@ class TestLocationCache:
         options: Mapping[str, Any] = {"excludedLocations": excluded_locations}
 
         expected_excluded_locations = excluded_locations
-        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, {})
         read_doc_request.set_excluded_location_from_options(options)
         actual_excluded_locations = read_doc_request.excluded_locations
         assert actual_excluded_locations == expected_excluded_locations

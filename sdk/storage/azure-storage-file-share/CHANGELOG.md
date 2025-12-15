@@ -1,6 +1,10 @@
 # Release History
 
-## 12.24.0b1 (Unreleased)
+## 12.25.0b1 (Unreleased)
+
+### Features Added
+
+## 12.24.0b1 (2025-12-04)
 
 ### Features Added
 - Added support for service version 2026-02-06.
@@ -12,6 +16,7 @@ which specifies the Entra ID of the user that is authorized to use the generated
 `user_delegation_oid` to authenticate the request to generate a new SAS URL.
 - Added support for the keyword `encryption_in_transit`in `ShareSmbSettings` used by `set_service_properties` 
 for the SMB protocol to specify whether encryption in transit is required.
+- Added the ability to skip auto decompression on `ShareFileClient.download_file` via the `decompress` keyword.
 
 ### Bugs Fixed
 - Fixed an issue where `FileProperties` and `DirectoryProperties` did not contain timezone information for

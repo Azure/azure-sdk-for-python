@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects>=2.0.0b1 azure-identity openai python-dotenv aiohttp azure-mgmt-cognitiveservices
+    pip install azure-ai-projects>=2.0.0b1 python-dotenv aiohttp azure-mgmt-cognitiveservices
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -57,6 +57,112 @@ resource_group = os.environ["AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP"]
 account_name = os.environ["AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT"]
 
 
+async def pause_job(openai_client, job_id):
+    """Pause a fine-tuning job.
+
+    Job needs to be in running state in order to pause.
+    """
+    print(f"Pausing fine-tuning job with ID: {job_id}")
+    paused_job = await openai_client.fine_tuning.jobs.pause(job_id)
+    print(paused_job)
+
+
+async def resume_job(openai_client, job_id):
+    """Resume a fine-tuning job.
+
+    Job needs to be in paused state in order to resume.
+    """
+    print(f"Resuming fine-tuning job with ID: {job_id}")
+    resumed_job = await openai_client.fine_tuning.jobs.resume(job_id)
+    print(resumed_job)
+
+
+async def deploy_model(openai_client, credential, job_id):
+    """Deploy the fine-tuned model.
+
+    Deploy model using Azure Management SDK (azure-mgmt-cognitiveservices).
+    Note: Deployment can only be started after the fine-tuning job completes successfully.
+    """
+    print(f"Retrieving fine-tuning job with ID: {job_id}")
+    fine_tuned_model_name = (await openai_client.fine_tuning.jobs.retrieve(job_id)).fine_tuned_model
+    deployment_name = "gpt-4-1-fine-tuned"
+
+    async with CognitiveServicesManagementClientAsync(
+        credential=credential, subscription_id=subscription_id
+    ) as cogsvc_client:
+
+        deployment_model = DeploymentModel(format="OpenAI", name=fine_tuned_model_name, version="1")
+
+        deployment_properties = DeploymentProperties(model=deployment_model)
+
+        deployment_sku = Sku(name="GlobalStandard", capacity=100)
+
+        deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
+
+        print(f"Deploying fine-tuned model: {fine_tuned_model_name} with deployment name: {deployment_name}")
+        deployment = await cogsvc_client.deployments.begin_create_or_update(
+            resource_group_name=resource_group,
+            account_name=account_name,
+            deployment_name=deployment_name,
+            deployment=deployment_config,
+        )
+
+        while deployment.status() not in ["Succeeded", "Failed"]:
+            await asyncio.sleep(30)
+            print(f"Deployment status: {deployment.status()}")
+
+    print(f"Model deployment completed: {deployment_name}")
+    return deployment_name
+
+
+async def infer(openai_client, deployment_name):
+    """Perform inference on the deployed fine-tuned model."""
+    print(f"Testing fine-tuned model via deployment: {deployment_name}")
+
+    response = await openai_client.responses.create(
+        model=deployment_name, input=[{"role": "user", "content": "Who invented the telephone?"}]
+    )
+    print(f"Model response: {response.output_text}")
+
+
+async def list_jobs(openai_client):
+    """List fine-tuning jobs."""
+    print("Listing all fine-tuning jobs:")
+    async for job in await openai_client.fine_tuning.jobs.list():
+        print(job)
+
+
+async def list_events(openai_client, job_id):
+    """List events of a fine-tuning job."""
+    print(f"Listing events for fine-tuning job: {job_id}")
+    async for event in await openai_client.fine_tuning.jobs.list_events(job_id, limit=10):
+        print(event)
+
+
+async def list_checkpoints(openai_client, job_id):
+    """List checkpoints of a fine-tuning job.
+
+    Note that to retrieve the checkpoints, job needs to be in terminal state.
+    """
+    print(f"Listing checkpoints for fine-tuning job: {job_id}")
+    async for checkpoint in await openai_client.fine_tuning.jobs.checkpoints.list(job_id, limit=10):
+        print(checkpoint)
+
+
+async def cancel_job(openai_client, job_id):
+    """Cancel a fine-tuning job."""
+    print(f"Cancelling fine-tuning job with ID: {job_id}")
+    cancelled_job = await openai_client.fine_tuning.jobs.cancel(job_id)
+    print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
+
+
+async def retrieve_job(openai_client, job_id):
+    """Retrieve a fine-tuning job."""
+    print(f"Getting fine-tuning job with ID: {job_id}")
+    retrieved_job = await openai_client.fine_tuning.jobs.retrieve(job_id)
+    print(retrieved_job)
+
+
 async def main():
 
     async with (
@@ -75,8 +181,10 @@ async def main():
             validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
         print(f"Uploaded validation file with ID: {validation_file.id}")
 
-        # For OpenAI model supervised fine-tuning jobs, "Standard" is the default training type.
-        # To use global standard training, uncomment the extra_body parameter below.
+        print("Waits for the training and validation files to be processed...")
+        await openai_client.files.wait_for_processing(train_file.id)
+        await openai_client.files.wait_for_processing(validation_file.id)
+
         print("Creating supervised fine-tuning job")
         fine_tuning_job = await openai_client.fine_tuning.jobs.create(
             training_file=train_file.id,
@@ -86,78 +194,30 @@ async def main():
                 "type": "supervised",
                 "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
             },
-            # extra_body={"trainingType":"GlobalStandard"}
+            extra_body={
+                "trainingType": "Standard"
+            },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
         )
         print(fine_tuning_job)
 
-        print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
-        retrieved_job = await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
-        print(retrieved_job)
+        # Uncomment any of the following methods to test specific functionalities:
+        # await retrieve_job(openai_client, fine_tuning_job.id)
 
-        print("Listing all fine-tuning jobs:")
-        async for job in await openai_client.fine_tuning.jobs.list():
-            print(job)
+        # await list_jobs(openai_client)
 
-        print("Listing only 10 fine-tuning jobs:")
-        async for job in await openai_client.fine_tuning.jobs.list(limit=10):
-            print(job)
+        # await pause_job(openai_client, fine_tuning_job.id)
 
-        print(f"Pausing fine-tuning job with ID: {fine_tuning_job.id}")
-        paused_job = await openai_client.fine_tuning.jobs.pause(fine_tuning_job.id)
-        print(paused_job)
+        # await resume_job(openai_client, fine_tuning_job.id)
 
-        print(f"Resuming fine-tuning job with ID: {fine_tuning_job.id}")
-        resumed_job = await openai_client.fine_tuning.jobs.resume(fine_tuning_job.id)
-        print(resumed_job)
+        # await list_events(openai_client, fine_tuning_job.id)
 
-        print(f"Listing events for fine-tuning job: {fine_tuning_job.id}")
-        async for event in await openai_client.fine_tuning.jobs.list_events(fine_tuning_job.id, limit=10):
-            print(event)
+        # await list_checkpoints(openai_client, fine_tuning_job.id)
 
-        # Note that to retrieve the checkpoints, job needs to be in terminal state.
-        print(f"Listing checkpoints for fine-tuning job: {fine_tuning_job.id}")
-        async for checkpoint in await openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id, limit=10):
-            print(checkpoint)
+        # await cancel_job(openai_client, fine_tuning_job.id)
 
-        print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
-        cancelled_job = await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-        print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
+        # deployment_name = await deploy_model(openai_client, credential, fine_tuning_job.id)
 
-        # Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
-        # Note: Deployment can only be started after the fine-tuning job completes successfully.
-        print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
-        fine_tuned_model_name = (await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)).fine_tuned_model
-        deployment_name = "gpt-4-1-fine-tuned"
-
-        async with CognitiveServicesManagementClientAsync(
-            credential=credential, subscription_id=subscription_id
-        ) as cogsvc_client:
-
-            deployment_model = DeploymentModel(format="OpenAI", name=fine_tuned_model_name, version="1")
-
-            deployment_properties = DeploymentProperties(model=deployment_model)
-
-            deployment_sku = Sku(name="GlobalStandard", capacity=100)
-
-            deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
-
-            deployment = await cogsvc_client.deployments.begin_create_or_update(
-                resource_group_name=resource_group,
-                account_name=account_name,
-                deployment_name=deployment_name,
-                deployment=deployment_config,
-            )
-
-            while deployment.status() not in ["Succeeded", "Failed"]:
-                await asyncio.sleep(30)
-                print(f"Status: {deployment.status()}")
-
-        print(f"Testing fine-tuned model via deployment: {deployment_name}")
-
-        response = await openai_client.responses.create(
-            model=deployment_name, input=[{"role": "user", "content": "Who invented the telephone?"}]
-        )
-        print(f"Model response: {response.output_text}")
+        # await infer(openai_client, deployment_name)
 
 
 if __name__ == "__main__":
