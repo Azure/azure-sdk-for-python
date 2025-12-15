@@ -149,6 +149,17 @@ def test_dictionary_basic(json_dumps_with_encoder):
     assert json.dumps(test_obj) == complex_serialized
     assert json.loads(complex_serialized) == test_obj
 
+def test_dictionary_set():
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MyModel(my_dict={"a": 1, "b": 2})
+    assert m.my_dict == {"a": 1, "b": 2}
+    
+    m.my_dict["c"] = 3
+    assert m.my_dict["c"] == 3
+
 
 def test_model_basic(json_dumps_with_encoder):
     class BasicModel(SerializerMixin):
