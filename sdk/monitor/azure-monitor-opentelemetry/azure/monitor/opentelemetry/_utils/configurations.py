@@ -187,15 +187,16 @@ def _default_sampling_ratio(configurations):
 
     # Handle all other cases (no sampler type specified or unsupported sampler type)
     else:
-        configurations[SAMPLING_RATIO_ARG] = default_value
+        if configurations.get(SAMPLING_RATIO_ARG) is None:
+            configurations[SAMPLING_RATIO_ARG] = default_value
         if sampler_type is not None:
             _logger.error(  # pylint: disable=C
                 "Invalid argument for the sampler to be used for tracing. "
                 "Supported values are %s and %s. Defaulting to %s: %s",
                 RATE_LIMITED_SAMPLER,
                 FIXED_PERCENTAGE_SAMPLER,
-                OTEL_TRACES_SAMPLER,
-                OTEL_TRACES_SAMPLER_ARG,
+                FIXED_PERCENTAGE_SAMPLER,
+                configurations[SAMPLING_RATIO_ARG],
             )
 
 def _default_instrumentation_options(configurations):

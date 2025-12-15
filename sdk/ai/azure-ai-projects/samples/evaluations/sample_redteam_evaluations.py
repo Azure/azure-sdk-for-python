@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -31,7 +31,7 @@ from azure.ai.projects.models._models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AgentVersionObject,
+    AgentVersionDetails,
     EvaluationTaxonomy,
     AzureAIAgentTarget,
     AgentTaxonomyInput,
@@ -65,10 +65,8 @@ def main() -> None:
                 instructions="You are a helpful assistant that answers general questions",
             ),
         )
-        print(
-            f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})"
-        )
-        
+        print(f"Agent created (id: {agent_version.id}, name: {agent_version.name}, version: {agent_version.version})")
+
         eval_group_name = "Red Team Agent Safety Evaluation -" + str(int(time.time()))
         eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
         data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
@@ -80,8 +78,8 @@ def main() -> None:
         print("Creating red teaming evaluation")
         eval_object = client.evals.create(
             name=eval_group_name,
-            data_source_config=data_source_config,   # type: ignore
-            testing_criteria=testing_criteria,   # type: ignore
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Evaluation created for red teaming: {eval_group_name}")
 
@@ -144,7 +142,7 @@ def main() -> None:
                 print(
                     f"RedTeam Eval Run completed with status: {run.status}. Output items written to {output_items_path}"
                 )
-                break            
+                break
             time.sleep(5)
             print(f"Waiting for eval run to complete... {run.status}")
 
@@ -155,7 +153,7 @@ def main() -> None:
         print("Agent deleted")
 
 
-def _get_tool_descriptions(agent: AgentVersionObject):
+def _get_tool_descriptions(agent: AgentVersionDetails):
     tools = agent.definition.get("tools", [])
     tool_descriptions = []
     for tool in tools:

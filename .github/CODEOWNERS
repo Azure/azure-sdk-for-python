@@ -191,11 +191,11 @@
 
 # ServiceLabel: %Monitor - Distro
 # PRLabel: %Monitor - Distro
-/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
+/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss @hectorhdzg @rads-1996 @MSNev @JacksonWeber
 
 # ServiceLabel: %Monitor - Exporter
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @jeremydvoss @hectorhdzg @rads-1996 @Karlie-777 @MSNev @JacksonWeber
+/sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lzchen @jeremydvoss @hectorhdzg @rads-1996 @MSNev @JacksonWeber
 
 # ServiceLabel: %Consumption
 # PRLabel: %Consumption
@@ -261,7 +261,7 @@
 
 # PRLabel: %Voice Live
 # ServiceLabel: %Voice Live %Service Attention
-/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
 
 
 # PRLabel: %HDInsight
@@ -412,12 +412,11 @@
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
-# ServiceOwners: @MikeyMCZ @Han-msft
 # ServiceLabel: %Cognitive - Translator
+# ServiceOwners: @jrjrguo @SG-MS
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/azure-ai-translation-document/                      @Han-msft
-/sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
+/sdk/translation/                                                    @jrjrguo @SG-MS
 
 # PRLabel: %Cognitive - Language
 /sdk/cognitivelanguage/                                              @quentinRobinson @bidisha-c @mikaelsitruk @sarkar-rajarshi @ahmedaashour
@@ -844,6 +843,7 @@
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
+/eng/tools/                                                          @scbedd @mccoyp
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 /.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
@@ -853,7 +853,6 @@
 /.devcontainer/                                                      @scbedd @mccoyp @benbp @weshaggard
 /.vscode/                                                            @scbedd @mccoyp @benbp @weshaggard
 
-/tools/                                                              @scbedd @mccoyp
 /scripts/                                                            @scbedd @mccoyp
 /scripts/breaking_changes_checker/                                   @catalinaperalta
 /doc/                                                                @scbedd @mccoyp

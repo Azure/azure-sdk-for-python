@@ -130,7 +130,38 @@ class GenAiTraceVerifier:
 
     def check_json_string(self, expected_json, actual_json):
         assert self.is_valid_json(expected_json) and self.is_valid_json(actual_json)
-        return self.check_event_attributes(json.loads(expected_json), json.loads(actual_json))
+        expected_obj = json.loads(expected_json)
+        actual_obj = json.loads(actual_json)
+
+        # Handle both dict and list (array) formats
+        if isinstance(expected_obj, list) and isinstance(actual_obj, list):
+            return self.check_event_lists(expected_obj, actual_obj)
+        elif isinstance(expected_obj, dict) and isinstance(actual_obj, dict):
+            return self.check_event_attributes(expected_obj, actual_obj)
+        else:
+            raise AssertionError(
+                f"check_json_string: type mismatch - expected {type(expected_obj).__name__}, got {type(actual_obj).__name__}"
+            )
+
+    def check_event_lists(self, expected_list, actual_list):
+        """Check if two lists match, handling nested dicts/lists."""
+        if len(expected_list) != len(actual_list):
+            raise AssertionError(
+                f"check_event_lists: list lengths do not match: {len(expected_list)} != {len(actual_list)}"
+            )
+
+        for i, (expected_item, actual_item) in enumerate(zip(expected_list, actual_list)):
+            if isinstance(expected_item, dict) and isinstance(actual_item, dict):
+                self.check_event_attributes(expected_item, actual_item)
+            elif isinstance(expected_item, list) and isinstance(actual_item, list):
+                self.check_event_lists(expected_item, actual_item)
+            else:
+                # For primitive values, do direct comparison
+                if expected_item != actual_item:
+                    raise AssertionError(
+                        f"check_event_lists: item at index {i} does not match: {expected_item} != {actual_item}"
+                    )
+        return True
 
     def check_event_attributes(self, expected_dict, actual_dict):
         if set(expected_dict.keys()) != set(actual_dict.keys()):
@@ -160,13 +191,8 @@ class GenAiTraceVerifier:
                 self.check_event_attributes(expected_val, actual_val)
             elif isinstance(expected_val, list):
                 if not isinstance(actual_val, list):
-                    raise AssertionError(f"check_event_attributes: actual_val for {key}  is not list")
-                if len(expected_val) != len(actual_val):
-                    raise AssertionError(
-                        f"check_event_attributes: list lengths do not match for key {key}: expected {len(expected_val)}, actual {len(actual_val)}"
-                    )
-                for expected_list, actual_list in zip(expected_val, actual_val):
-                    self.check_event_attributes(expected_list, actual_list)
+                    raise AssertionError(f"check_event_attributes: actual_val for {key} is not list")
+                self.check_event_lists(expected_val, actual_val)
             elif isinstance(expected_val, str) and expected_val == "*":
                 if actual_val == "":
                     raise AssertionError(f"check_event_attributes: actual_val for {key} is empty")

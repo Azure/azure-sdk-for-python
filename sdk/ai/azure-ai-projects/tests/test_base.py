@@ -7,51 +7,38 @@ import random
 import re
 import functools
 import json
-from typing import Optional, Any, Dict
+import os
+import tempfile
+from typing import Optional, Any, Dict, Final, IO, Union, overload, Literal, TextIO, BinaryIO
 from azure.ai.projects.models import (
+    ApiKeyCredentials,
+    AzureAISearchIndex,
     Connection,
     ConnectionType,
-    CustomCredential,
     CredentialType,
-    ApiKeyCredentials,
+    CustomCredential,
+    DatasetCredential,
+    DatasetType,
+    DatasetVersion,
     Deployment,
     DeploymentType,
-    ModelDeployment,
     Index,
     IndexType,
-    AzureAISearchIndex,
-    DatasetVersion,
-    DatasetType,
-    DatasetCredential,
+    ItemContentType,
     ItemResource,
     ItemType,
+    ModelDeployment,
     ResponsesMessageRole,
-    ItemContentType,
 )
-from azure.ai.projects.models._models import AgentObject, AgentVersionObject
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live_and_not_recording
+from openai.types.responses import Response
+from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 
-# temporary requirements for recorded_by_proxy_httpx and recorded_by_proxy_async_httpx
-import logging
-import urllib.parse as url_parse
+# Store reference to built-in open before any mocking occurs
+_BUILTIN_OPEN = open
 
-try:
-    import httpx
-except ImportError:
-    httpx = None
-
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline.policies import ContentDecodePolicy
-
-from devtools_testutils import is_live_internal, is_live_and_not_recording, trim_kwargs_from_test_function
-from devtools_testutils.proxy_testcase import (
-    get_test_id,
-    start_record_or_playback,
-    stop_record_or_playback,
-    get_proxy_netloc,
-)
 
 # Load secrets from environment variables
 servicePreparer = functools.partial(
@@ -60,9 +47,100 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_agents_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_projects_tests_model_deployment_name="gpt-4o",
+    azure_ai_projects_tests_image_generation_model_deployment_name="gpt-image-1-mini",
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
+    azure_ai_projects_tests_bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
+    azure_ai_projects_tests_ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    azure_ai_projects_tests_ai_search_index_name="sanitized-index-name",
+    azure_ai_projects_tests_mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
+    azure_ai_projects_tests_sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    azure_ai_projects_tests_completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_completed_oai_model_dpo_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_completed_oss_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_running_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_paused_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_ai_projects_tests_azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_projects_tests_azure_resource_group="sanitized-resource-group",
+    azure_ai_projects_tests_ai_search_user_input="What is Azure AI Projects?",
+    azure_ai_projects_tests_sharepoint_user_input="What is SharePoint?",
 )
+
+# Fine-tuning job type constants
+SFT_JOB_TYPE: Final[str] = "sft"
+DPO_JOB_TYPE: Final[str] = "dpo"
+RFT_JOB_TYPE: Final[str] = "rft"
+
+# Training type constants
+STANDARD_TRAINING_TYPE: Final[str] = "Standard"
+GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
+DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
+
+
+def patched_open_crlf_to_lf(*args, **kwargs):
+    """
+    Patched open function that converts CRLF to LF for text files.
+
+    This function should be used with mock.patch("builtins.open", side_effect=TestBase.patched_open_crlf_to_lf)
+    to ensure consistent line endings in test files during recording and playback.
+
+    Note: CRLF to LF conversion is only performed when opening text-like files (.txt, .json, .jsonl, .csv,
+    .md, .yaml, .yml, .xml) in binary read mode ("rb"). For all other modes or file types, the call is
+    forwarded to the built-in open function as is.
+    """
+    # Extract file path - first positional arg or 'file' keyword arg
+    if args:
+        file_path = args[0]
+    elif "file" in kwargs:
+        file_path = kwargs["file"]
+    else:
+        # No file path provided, just pass through
+        return _BUILTIN_OPEN(*args, **kwargs)
+
+    # Extract mode - second positional arg or 'mode' keyword arg
+    if len(args) > 1:
+        mode = str(args[1])
+    else:
+        mode = str(kwargs.get("mode", "r"))
+
+    # Check if this is binary read mode for text-like files
+    if "r" in mode and "b" in mode and file_path and isinstance(file_path, str):
+        # Check file extension to determine if it's a text file
+        text_extensions = {".txt", ".json", ".jsonl", ".csv", ".md", ".yaml", ".yml", ".xml"}
+        ext = os.path.splitext(file_path)[1].lower()
+        if ext in text_extensions:
+            # Read the original file
+            with _BUILTIN_OPEN(file_path, "rb") as f:
+                content = f.read()
+
+            # Convert CRLF to LF
+            converted_content = content.replace(b"\r\n", b"\n")
+
+            # Only create temp file if conversion was needed
+            if converted_content != content:
+                # Create a sub temp folder and save file with same filename
+                temp_dir = tempfile.mkdtemp()
+                original_filename = os.path.basename(file_path)
+                temp_path = os.path.join(temp_dir, original_filename)
+
+                # Write the converted content to the temp file
+                print(f"Converting CRLF to LF for {file_path} and saving to {temp_path}")
+                with _BUILTIN_OPEN(temp_path, "wb") as temp_file:
+                    temp_file.write(converted_content)
+
+                # Replace file path with temp path
+                if args:
+                    # File path was passed as positional arg
+                    return _BUILTIN_OPEN(temp_path, *args[1:], **kwargs)
+                else:
+                    # File path was passed as keyword arg
+                    kwargs = kwargs.copy()
+                    kwargs["file"] = temp_path
+                    return _BUILTIN_OPEN(**kwargs)
+
+    return _BUILTIN_OPEN(*args, **kwargs)
 
 
 class TestBase(AzureRecordedTestCase):
@@ -86,7 +164,6 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_agents_params = {
-        "model_deployment_name": "gpt-4o",
         "agent_name": "agent-for-python-projects-sdk-testing",
     }
 
@@ -122,10 +199,6 @@ class TestBase(AzureRecordedTestCase):
         "sft": {
             "openai": {
                 "model_name": "gpt-4.1",
-                "deployment": {
-                    "deployment_name": "gpt-4-1-fine-tuned-test",
-                    "pre_finetuned_model": "ft:gpt-4.1:azure-ai-test::ABCD1234",
-                },
             },
             "oss": {"model_name": "Ministral-3B"},
             "training_file_name": "sft_training_set.jsonl",
@@ -150,6 +223,64 @@ class TestBase(AzureRecordedTestCase):
     REGEX_APPINSIGHTS_CONNECTION_STRING = re.compile(
         r"^InstrumentationKey=[0-9a-fA-F-]{36};IngestionEndpoint=https://.+.applicationinsights.azure.com/;LiveEndpoint=https://.+.monitor.azure.com/;ApplicationId=[0-9a-fA-F-]{36}$"
     )
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: Literal["r", "w", "a", "x", "r+", "w+", "a+", "x+"] = "r",
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> TextIO: ...
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: Literal["rb", "wb", "ab", "xb", "r+b", "w+b", "a+b", "x+b"],
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> BinaryIO: ...
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: str,
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> IO[Any]: ...
+
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: str = "r",
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> IO[Any]:
+        """
+        Open function that converts CRLF to LF for text files.
+
+        This function has the same signature as built-in open and converts line endings
+        to ensure consistent behavior during test recording and playback.
+        """
+        return patched_open_crlf_to_lf(file, mode, buffering, encoding, errors, newline, closefd, opener)
 
     # helper function: create projects client using environment variables
     def create_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AIProjectClient:
@@ -232,8 +363,18 @@ class TestBase(AzureRecordedTestCase):
                 assert TestBase.is_valid_dict(connection.credentials.credential_keys)
 
     @classmethod
+    def validate_response(cls, response: Response, *, print_message: Optional[str] = None):
+        assert response.id
+        assert response.output is not None
+        assert len(response.output) > 0
+        if print_message:
+            print(f"{print_message} (id: {response.id})")
+        else:
+            print(f"Response completed (id: {response.id})")
+
+    @classmethod
     def validate_red_team_response(
-        cls, response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
+        cls, response: Response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
     ):
         """Assert basic red team scan response properties."""
         assert response is not None
@@ -371,27 +512,35 @@ class TestBase(AzureRecordedTestCase):
         print(f"Conversation validated (id: {conversation.id})")
 
     def _validate_agent_version(
-        self, agent: AgentVersionObject, expected_name: Optional[str] = None, expected_version: Optional[str] = None
+        self, agent: AgentVersionDetails, expected_name: Optional[str] = None, expected_version: Optional[str] = None
     ) -> None:
         assert agent is not None
-        assert isinstance(agent, AgentVersionObject)
-        assert agent.id is not None
+        assert isinstance(agent, AgentVersionDetails)
+        assert agent.id
         if expected_name:
             assert agent.name == expected_name
+        else:
+            assert agent.name
         if expected_version:
             assert agent.version == expected_version
+        else:
+            assert agent.version
         print(f"Agent version validated (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     def _validate_agent(
-        self, agent: AgentObject, expected_name: Optional[str] = None, expected_latest_version: Optional[str] = None
+        self, agent: AgentDetails, expected_name: Optional[str] = None, expected_latest_version: Optional[str] = None
     ) -> None:
         assert agent is not None
-        assert isinstance(agent, AgentObject)
-        assert agent.id is not None
+        assert isinstance(agent, AgentDetails)
+        assert agent.id
         if expected_name:
             assert agent.name == expected_name
+        else:
+            assert agent.name
         if expected_latest_version:
             assert agent.versions.latest.version == expected_latest_version
+        else:
+            assert agent.versions.latest.version
         print(f"Agent validated (id: {agent.id}, name: {agent.name}, latest version: {agent.versions.latest.version})")
 
     def _validate_conversation_item(
@@ -488,212 +637,3 @@ class TestBase(AzureRecordedTestCase):
         except json.JSONDecodeError as e:
             print(f"Invalid JSON: {e}")
             return False
-
-
-# The following two decorators recorded_by_proxy_httpx and recorded_by_proxy_async_httpx will be supplanted as part of #43794.
-# These are provided here temporarily to support existing tests that use httpx-based clients until they can be migrated.
-def recorded_by_proxy_httpx(test_func):
-    """Decorator that redirects httpx network requests to target the azure-sdk-tools test proxy.
-
-    Use this decorator for tests that use httpx-based clients (like OpenAI SDK) instead of Azure SDK clients.
-    It monkeypatches httpx.HTTPTransport.handle_request to route requests through the test proxy.
-
-    For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
-    """
-    if httpx is None:
-        raise ImportError("httpx is required to use recorded_by_proxy_httpx. Install it with: pip install httpx")
-
-    def record_wrap(*args, **kwargs):
-        def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
-            """Transform an httpx.Request to route through the test proxy."""
-            parsed_result = url_parse.urlparse(str(request.url))
-
-            # Store original upstream URI
-            if "x-recording-upstream-base-uri" not in request.headers:
-                request.headers["x-recording-upstream-base-uri"] = f"{parsed_result.scheme}://{parsed_result.netloc}"
-
-            # Set recording headers
-            request.headers["x-recording-id"] = recording_id
-            request.headers["x-recording-mode"] = "record" if is_live_internal() else "playback"
-
-            # Remove all request headers that start with `x-stainless`, since they contain CPU info, OS info, etc.
-            # Those change depending on which machine the tests are run on, so we cannot have a single test recording with those.
-            headers_to_remove = [key for key in request.headers.keys() if key.lower().startswith("x-stainless")]
-            for header in headers_to_remove:
-                del request.headers[header]
-
-            # Rewrite URL to proxy
-            updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
-            request.url = httpx.URL(updated_target)
-
-        def restore_httpx_response_url(response: httpx.Response) -> httpx.Response:
-            """Restore the response's request URL to the original upstream target."""
-            try:
-                parsed_resp = url_parse.urlparse(str(response.request.url))
-                upstream_uri_str = response.request.headers.get("x-recording-upstream-base-uri", "")
-                if upstream_uri_str:
-                    upstream_uri = url_parse.urlparse(upstream_uri_str)
-                    original_target = parsed_resp._replace(
-                        scheme=upstream_uri.scheme or parsed_resp.scheme, netloc=upstream_uri.netloc
-                    ).geturl()
-                    response.request.url = httpx.URL(original_target)
-            except Exception:
-                # Best-effort restore; don't fail the call if something goes wrong
-                pass
-            return response
-
-        trimmed_kwargs = {k: v for k, v in kwargs.items()}
-        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
-
-        if is_live_and_not_recording():
-            return test_func(*args, **trimmed_kwargs)
-
-        test_id = get_test_id()
-        recording_id, variables = start_record_or_playback(test_id)
-        original_transport_func = httpx.HTTPTransport.handle_request
-
-        def combined_call(transport_self, request: httpx.Request) -> httpx.Response:
-            transform_httpx_request(request, recording_id)
-            result = original_transport_func(transport_self, request)
-            return restore_httpx_response_url(result)
-
-        httpx.HTTPTransport.handle_request = combined_call
-
-        # Call the test function
-        test_variables = None
-        test_run = False
-        try:
-            try:
-                test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
-                test_run = True
-            except TypeError as error:
-                if "unexpected keyword argument" in str(error) and "variables" in str(error):
-                    logger = logging.getLogger()
-                    logger.info(
-                        "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
-                        "`variables` parameter to make use of recorded test variables."
-                    )
-                else:
-                    raise error
-            # If the test couldn't accept `variables`, run without passing them
-            if not test_run:
-                test_variables = test_func(*args, **trimmed_kwargs)
-
-        except ResourceNotFoundError as error:
-            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-            message = error_body.get("message") or error_body.get("Message")
-            error_with_message = ResourceNotFoundError(message=message, response=error.response)
-            raise error_with_message from error
-
-        finally:
-            httpx.HTTPTransport.handle_request = original_transport_func
-            stop_record_or_playback(test_id, recording_id, test_variables)
-
-        return test_variables
-
-    return record_wrap
-
-
-def recorded_by_proxy_async_httpx(test_func):
-    """Decorator that redirects async httpx network requests to target the azure-sdk-tools test proxy.
-
-    Use this decorator for async tests that use httpx-based clients (like OpenAI AsyncOpenAI SDK)
-    instead of Azure SDK clients. It monkeypatches httpx.AsyncHTTPTransport.handle_async_request
-    to route requests through the test proxy.
-
-    For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
-    """
-    if httpx is None:
-        raise ImportError("httpx is required to use recorded_by_proxy_async_httpx. Install it with: pip install httpx")
-
-    async def record_wrap(*args, **kwargs):
-        def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
-            """Transform an httpx.Request to route through the test proxy."""
-            parsed_result = url_parse.urlparse(str(request.url))
-
-            # Store original upstream URI
-            if "x-recording-upstream-base-uri" not in request.headers:
-                request.headers["x-recording-upstream-base-uri"] = f"{parsed_result.scheme}://{parsed_result.netloc}"
-
-            # Set recording headers
-            request.headers["x-recording-id"] = recording_id
-            request.headers["x-recording-mode"] = "record" if is_live_internal() else "playback"
-
-            # Remove all request headers that start with `x-stainless`, since they contain CPU info, OS info, etc.
-            # Those change depending on which machine the tests are run on, so we cannot have a single test recording with those.
-            headers_to_remove = [key for key in request.headers.keys() if key.lower().startswith("x-stainless")]
-            for header in headers_to_remove:
-                del request.headers[header]
-
-            # Rewrite URL to proxy
-            updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
-            request.url = httpx.URL(updated_target)
-
-        def restore_httpx_response_url(response: httpx.Response) -> httpx.Response:
-            """Restore the response's request URL to the original upstream target."""
-            try:
-                parsed_resp = url_parse.urlparse(str(response.request.url))
-                upstream_uri_str = response.request.headers.get("x-recording-upstream-base-uri", "")
-                if upstream_uri_str:
-                    upstream_uri = url_parse.urlparse(upstream_uri_str)
-                    original_target = parsed_resp._replace(
-                        scheme=upstream_uri.scheme or parsed_resp.scheme, netloc=upstream_uri.netloc
-                    ).geturl()
-                    response.request.url = httpx.URL(original_target)
-            except Exception:
-                # Best-effort restore; don't fail the call if something goes wrong
-                pass
-            return response
-
-        trimmed_kwargs = {k: v for k, v in kwargs.items()}
-        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
-
-        if is_live_and_not_recording():
-            return await test_func(*args, **trimmed_kwargs)
-
-        test_id = get_test_id()
-        recording_id, variables = start_record_or_playback(test_id)
-        original_transport_func = httpx.AsyncHTTPTransport.handle_async_request
-
-        async def combined_call(transport_self, request: httpx.Request) -> httpx.Response:
-            transform_httpx_request(request, recording_id)
-            result = await original_transport_func(transport_self, request)
-            return restore_httpx_response_url(result)
-
-        httpx.AsyncHTTPTransport.handle_async_request = combined_call
-
-        # Call the test function
-        test_variables = None
-        test_run = False
-        try:
-            try:
-                test_variables = await test_func(*args, variables=variables, **trimmed_kwargs)
-                test_run = True
-            except TypeError as error:
-                if "unexpected keyword argument" in str(error) and "variables" in str(error):
-                    logger = logging.getLogger()
-                    logger.info(
-                        "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
-                        "`variables` parameter to make use of recorded test variables."
-                    )
-                else:
-                    raise error
-            # If the test couldn't accept `variables`, run without passing them
-            if not test_run:
-                test_variables = await test_func(*args, **trimmed_kwargs)
-
-        except ResourceNotFoundError as error:
-            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-            message = error_body.get("message") or error_body.get("Message")
-            error_with_message = ResourceNotFoundError(message=message, response=error.response)
-            raise error_with_message from error
-
-        finally:
-            httpx.AsyncHTTPTransport.handle_async_request = original_transport_func
-            stop_record_or_playback(test_id, recording_id, test_variables)
-
-        return test_variables
-
-    return record_wrap

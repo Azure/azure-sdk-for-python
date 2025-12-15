@@ -92,6 +92,13 @@ omit_function_dict = {
 
 
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    """
+    Unzips a zip or tar.gz file to a given location.
+
+    :param path_to_zip_file: The path to the zip or tar.gz file.
+    :param extract_location: The directory where the contents will be extracted.
+    :return: The path to the directory where the archive was extracted.
+    """
     if path_to_zip_file.endswith(".zip"):
         with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
             zip_ref.extractall(extract_location)
@@ -585,7 +592,7 @@ def get_pip_list_output(python_executable: Optional[str] = None):
     if stdout and (stderr is None):
         # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
         for line in stdout.decode("utf-8").split(os.linesep)[2:]:
-            if line:
+            if line and "==" in line:
                 package, version = re.split("==", line)
                 collected_output[package] = version
     else:

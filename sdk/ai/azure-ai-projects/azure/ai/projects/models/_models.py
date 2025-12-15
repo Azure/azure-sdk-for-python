@@ -325,6 +325,49 @@ class AgentDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AgentDetails(_Model):
+    """AgentDetails.
+
+    :ivar object: The object type, which is always 'agent'. Required. Default value is "agent".
+    :vartype object: str
+    :ivar id: The unique identifier of the agent. Required.
+    :vartype id: str
+    :ivar name: The name of the agent. Required.
+    :vartype name: str
+    :ivar versions: The latest version of the agent. Required.
+    :vartype versions: ~azure.ai.projects.models.AgentObjectVersions
+    """
+
+    object: Literal["agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always 'agent'. Required. Default value is \"agent\"."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the agent. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the agent. Required."""
+    versions: "_models.AgentObjectVersions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The latest version of the agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        versions: "_models.AgentObjectVersions",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["agent"] = "agent"
+
+
 class BaseCredentials(_Model):
     """A base class for connection credentials.
 
@@ -425,64 +468,21 @@ class AgentId(_Model):
         self.type: Literal["agent_id"] = "agent_id"
 
 
-class AgentObject(_Model):
-    """AgentObject.
-
-    :ivar object: The object type, which is always 'agent'. Required. Default value is "agent".
-    :vartype object: str
-    :ivar id: The unique identifier of the agent. Required.
-    :vartype id: str
-    :ivar name: The name of the agent. Required.
-    :vartype name: str
-    :ivar versions: The latest version of the agent. Required.
-    :vartype versions: ~azure.ai.projects.models.AgentObjectVersions
-    """
-
-    object: Literal["agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type, which is always 'agent'. Required. Default value is \"agent\"."""
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique identifier of the agent. Required."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the agent. Required."""
-    versions: "_models.AgentObjectVersions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The latest version of the agent. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        name: str,
-        versions: "_models.AgentObjectVersions",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.object: Literal["agent"] = "agent"
-
-
 class AgentObjectVersions(_Model):
     """AgentObjectVersions.
 
     :ivar latest: Required.
-    :vartype latest: ~azure.ai.projects.models.AgentVersionObject
+    :vartype latest: ~azure.ai.projects.models.AgentVersionDetails
     """
 
-    latest: "_models.AgentVersionObject" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    latest: "_models.AgentVersionDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        latest: "_models.AgentVersionObject",
+        latest: "_models.AgentVersionDetails",
     ) -> None: ...
 
     @overload
@@ -607,8 +607,8 @@ class AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator="agent"):
         self.type = EvaluationTaxonomyInputType.AGENT  # type: ignore
 
 
-class AgentVersionObject(_Model):
-    """AgentVersionObject.
+class AgentVersionDetails(_Model):
+    """AgentVersionDetails.
 
     :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
@@ -8369,7 +8369,7 @@ class MemoryStoreDeleteScopeResult(_Model):
         self.object: Literal["memory_store.scope.deleted"] = "memory_store.scope.deleted"
 
 
-class MemoryStoreObject(_Model):
+class MemoryStoreDetails(_Model):
     """A memory store that can store and retrieve user memories.
 
     :ivar object: The object type, which is always 'memory_store'. Required. Default value is
@@ -9702,7 +9702,7 @@ class Reasoning(_Model):
     Configuration options for `reasoning models
     <https://platform.openai.com/docs/guides/reasoning>`_.
 
-    :ivar effort: Known values are: "low", "medium", and "high".
+    :ivar effort: Known values are: "none", "minimal", "low", "medium", and "high".
     :vartype effort: str or ~azure.ai.projects.models.ReasoningEffort
     :ivar summary: A summary of the reasoning performed by the model. This can be
      useful for debugging and understanding the model's reasoning process.
@@ -9719,7 +9719,7 @@ class Reasoning(_Model):
     effort: Optional[Union[str, "_models.ReasoningEffort"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"low\", \"medium\", and \"high\"."""
+    """Known values are: \"none\", \"minimal\", \"low\", \"medium\", and \"high\"."""
     summary: Optional[Literal["auto", "concise", "detailed"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10117,16 +10117,19 @@ class Response(_Model):
      and `Structured Outputs <https://platform.openai.com/docs/guides/structured-outputs>`_.
     :vartype text: ~azure.ai.projects.models.ResponseText
     :ivar tools: An array of tools the model may call while generating a response. You
-     can specify which tool to use by setting the _tool_choice_ parameter.
+     can specify which tool to use by setting the ``tool_choice`` parameter.
      The two categories of tools you can provide the model are:
-
-     * Built-in tools: Tools that are provided by OpenAI that extend the
-       model's capabilities, like web search or file search.
-     * Function calls (custom tools): Functions that are defined by you,
-       enabling the model to call your own code.
+     * **Built-in tools**: Tools that are provided by OpenAI that extend the
+     model's capabilities, like [web
+     search](https://platform.openai.com/docs/guides/tools-web-search)
+     or [file search](https://platform.openai.com/docs/guides/tools-file-search). Learn more about
+     [built-in tools](https://platform.openai.com/docs/guides/tools).
+     * **Function calls (custom tools)**: Functions that are defined by you,
+     enabling the model to call your own code. Learn more about
+     [function calling](https://platform.openai.com/docs/guides/function-calling).
     :vartype tools: list[~azure.ai.projects.models.Tool]
     :ivar tool_choice: How the model should select which tool (or tools) to use when generating
-     a response. See the tools parameter to see how to specify which tools
+     a response. See the ``tools`` parameter to see how to specify which tools
      the model can call. Is either a Union[str, "_models.ToolChoiceOptions"] type or a
      ToolChoiceObject type.
     :vartype tool_choice: str or ~azure.ai.projects.models.ToolChoiceOptions or
@@ -10139,7 +10142,8 @@ class Response(_Model):
      response to fit the context window by dropping input items in the
      middle of the conversation.
      * `disabled` (default): If a model response will exceed the context window
-     size for a model, the request will fail with a 400 error. Is either a Literal["auto"] type or a Literal["disabled"] type.
+     size for a model, the request will fail with a 400 error. Is either a Literal["auto"] type or a
+     Literal["disabled"] type.
     :vartype truncation: str or str
     :ivar id: Unique identifier for this Response. Required.
     :vartype id: str
@@ -10158,7 +10162,8 @@ class Response(_Model):
     :ivar incomplete_details: Details about why the response is incomplete. Required.
     :vartype incomplete_details: ~azure.ai.projects.models.ResponseIncompleteDetails1
     :ivar output: An array of content items generated by the model.
-     * The length and order of items in the `output` array is dependent on the model's response.
+     * The length and order of items in the `output` array is dependent
+     on the model's response.
      * Rather than accessing the first item in the `output` array and
      assuming it's an `assistant` message with the content generated by
      the model, you might consider using the `output_text` property where
@@ -10201,8 +10206,7 @@ class Response(_Model):
     """An alternative to sampling with temperature, called nucleus sampling,
      where the model considers the results of the tokens with top_p probability
      mass. So 0.1 means only the tokens comprising the top 10% probability mass
-     are considered.
-     We generally recommend altering this or ``temperature`` but not both. Required."""
+     are considered. We generally recommend altering this or ``temperature`` but not both. Required."""
     user: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A unique identifier representing your end-user, which can help OpenAI to monitor and detect
      abuse. `Learn more about safety best practices
@@ -10239,20 +10243,21 @@ class Response(_Model):
      and `Structured Outputs <https://platform.openai.com/docs/guides/structured-outputs>`_."""
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of tools the model may call while generating a response. You
-     can specify which tool to use by setting the tool_choice parameter.
+     can specify which tool to use by setting the ``tool_choice`` parameter.
      The two categories of tools you can provide the model are:
-
-     * Built-in tools: Tools that are provided by OpenAI that extend the
-       model's capabilities, like web search or file search. Learn more about
-       built-in tools at https://platform.openai.com/docs/guides/tools.
-     * Function calls (custom tools): Functions that are defined by you,
-       enabling the model to call your own code. Learn more about
-       function calling at https://platform.openai.com/docs/guides/function-calling."""
+     * **Built-in tools**: Tools that are provided by OpenAI that extend the
+     model's capabilities, like [web
+     search](https://platform.openai.com/docs/guides/tools-web-search)
+     or [file search](https://platform.openai.com/docs/guides/tools-file-search). Learn more about
+     [built-in tools](https://platform.openai.com/docs/guides/tools).
+     * **Function calls (custom tools)**: Functions that are defined by you,
+     enabling the model to call your own code. Learn more about
+     [function calling](https://platform.openai.com/docs/guides/function-calling)."""
     tool_choice: Optional[Union[str, "_models.ToolChoiceOptions", "_models.ToolChoiceObject"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """How the model should select which tool (or tools) to use when generating
-     a response. See the tools parameter to see how to specify which tools
+     a response. See the ``tools`` parameter to see how to specify which tools
      the model can call. Is either a Union[str, \"_models.ToolChoiceOptions\"] type or a
      ToolChoiceObject type."""
     prompt: Optional["_models.Prompt"] = rest_field(visibility=["read", "create", "update", "delete", "query"])

@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -87,7 +87,7 @@ with (
     testing_criteria = [
         {
             "type": "label_model",
-            "model": "{{aoai_deployment_and_model}}",
+            "model": model_deployment_name,
             "input": [
                 {
                     "role": "developer",
@@ -117,7 +117,7 @@ with (
         {
             "type": "score_model",
             "name": "score",
-            "model": "{{aoai_deployment_and_model}}",
+            "model": model_deployment_name,
             "input": [
                 {
                     "role": "system",
@@ -133,8 +133,8 @@ with (
     print("Creating evaluation")
     eval_object = client.evals.create(
         name="OpenAI graders test",
-        data_source_config=data_source_config, 
-        testing_criteria=testing_criteria,   # type: ignore
+        data_source_config=data_source_config,
+        testing_criteria=testing_criteria,  # type: ignore
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 

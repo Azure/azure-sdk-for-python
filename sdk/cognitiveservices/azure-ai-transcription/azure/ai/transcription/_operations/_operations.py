@@ -109,7 +109,7 @@ class _TranscriptionClientOperationsMixin(
 
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = ["audio"]
-        _data_fields: list[str] = ["options"]
+        _data_fields: list[str] = ["definition"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_transcription_transcribe_request(
@@ -120,7 +120,7 @@ class _TranscriptionClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
