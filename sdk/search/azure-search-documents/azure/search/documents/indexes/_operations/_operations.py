@@ -35,6 +35,7 @@ from ... import models as _models2
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Serializer
 from ..._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match
+from ...knowledgebase import models as _knowledgebase_models3
 from .._configuration import SearchIndexClientConfiguration, SearchIndexerClientConfiguration
 
 JSON = MutableMapping[str, Any]
@@ -770,6 +771,32 @@ def build_search_index_create_knowledge_source_request(**kwargs: Any) -> HttpReq
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_search_index_get_knowledge_source_status_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/knowledgesources('{sourceName}')/status"
+    path_format_arguments = {
+        "sourceName": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_search_index_get_service_statistics_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
@@ -3981,6 +4008,70 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
+    def get_knowledge_source_status(self, name: str, **kwargs: Any) -> _knowledgebase_models3.KnowledgeSourceStatus:
+        """Retrieves the status of a knowledge source.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :return: KnowledgeSourceStatus. The KnowledgeSourceStatus is compatible with MutableMapping
+        :rtype: ~azure.search.documents.knowledgebase.models.KnowledgeSourceStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_knowledgebase_models3.KnowledgeSourceStatus] = kwargs.pop("cls", None)
+
+        _request = build_search_index_get_knowledge_source_status_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_knowledgebase_models3.KnowledgeSourceStatus, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
     def get_service_statistics(self, **kwargs: Any) -> _models1.SearchServiceStatistics:
         """Gets service level statistics for a search service.
 
@@ -4482,15 +4573,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @overload
     def create_data_source_connection(
         self,
-        data_source: _models1.SearchIndexerDataSourceConnection,
+        data_source_connection: _models1.SearchIndexerDataSourceConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models1.SearchIndexerDataSourceConnection:
         """Creates a new datasource.
 
-        :param data_source: The definition of the datasource to create. Required.
-        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :param data_source_connection: The definition of the datasource to create. Required.
+        :type data_source_connection:
+         ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4502,12 +4594,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @overload
     def create_data_source_connection(
-        self, data_source: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, data_source_connection: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.SearchIndexerDataSourceConnection:
         """Creates a new datasource.
 
-        :param data_source: The definition of the datasource to create. Required.
-        :type data_source: JSON
+        :param data_source_connection: The definition of the datasource to create. Required.
+        :type data_source_connection: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4519,12 +4611,12 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @overload
     def create_data_source_connection(
-        self, data_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, data_source_connection: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.SearchIndexerDataSourceConnection:
         """Creates a new datasource.
 
-        :param data_source: The definition of the datasource to create. Required.
-        :type data_source: IO[bytes]
+        :param data_source_connection: The definition of the datasource to create. Required.
+        :type data_source_connection: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4536,14 +4628,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def create_data_source_connection(
-        self, data_source: Union[_models1.SearchIndexerDataSourceConnection, JSON, IO[bytes]], **kwargs: Any
+        self, data_source_connection: Union[_models1.SearchIndexerDataSourceConnection, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.SearchIndexerDataSourceConnection:
         """Creates a new datasource.
 
-        :param data_source: The definition of the datasource to create. Is one of the following types:
-         SearchIndexerDataSourceConnection, JSON, IO[bytes] Required.
-        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or
-         JSON or IO[bytes]
+        :param data_source_connection: The definition of the datasource to create. Is one of the
+         following types: SearchIndexerDataSourceConnection, JSON, IO[bytes] Required.
+        :type data_source_connection:
+         ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or JSON or IO[bytes]
         :return: SearchIndexerDataSourceConnection. The SearchIndexerDataSourceConnection is compatible
          with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
@@ -4565,10 +4657,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(data_source, (IOBase, bytes)):
-            _content = data_source
+        if isinstance(data_source_connection, (IOBase, bytes)):
+            _content = data_source_connection
         else:
-            _content = json.dumps(data_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(data_source_connection, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_indexer_create_data_source_connection_request(
             content_type=content_type,

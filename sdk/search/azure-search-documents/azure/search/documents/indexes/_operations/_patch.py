@@ -377,15 +377,15 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     @distributed_trace
     def delete_data_source_connection(
         self,
-        data_source: Union[str, _models.SearchIndexerDataSourceConnection],
+        data_source_connection: Union[str, _models.SearchIndexerDataSourceConnection],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
         """Deletes a data source connection.
 
-        :param data_source: The name of the data source connection to delete or a SearchIndexerDataSourceConnection object. Required.
-        :type data_source: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :param data_source_connection: The name of the data source connection to delete or a SearchIndexerDataSourceConnection object. Required.
+        :type data_source_connection: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
@@ -393,15 +393,15 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         try:
-            name: str = data_source.name  # type: ignore
+            name: str = data_source_connection.name  # type: ignore
             return self._delete_data_source_connection(
                 name=name,
                 match_condition=match_condition,
-                etag=data_source.e_tag,  # type: ignore
+                etag=data_source_connection.e_tag,  # type: ignore
                 **kwargs,
             )
         except AttributeError:
-            name = data_source  # type: ignore
+            name = data_source_connection  # type: ignore
             return self._delete_data_source_connection(
                 name=name,
                 **kwargs,
@@ -410,7 +410,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     @distributed_trace
     def create_or_update_data_source_connection(
         self,
-        data_source: _models.SearchIndexerDataSourceConnection,
+        data_source_connection: _models.SearchIndexerDataSourceConnection,
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -418,8 +418,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     ) -> _models.SearchIndexerDataSourceConnection:
         """Creates a new data source connection or updates a data source connection if it already exists.
 
-        :param data_source: The SearchIndexerDataSourceConnection object to create or update. Required.
-        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :param data_source_connection: The SearchIndexerDataSourceConnection object to create or update. Required.
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
          value is None.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
@@ -430,10 +430,10 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._create_or_update_data_source_connection(
-            name=data_source.name,
-            data_source=data_source,
+            name=data_source_connection.name,
+            data_source=data_source_connection,
             prefer="return=representation",
-            etag=data_source.e_tag,
+            etag=data_source_connection.e_tag,
             match_condition=match_condition,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             **kwargs,
