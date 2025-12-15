@@ -9,7 +9,7 @@ import os
 import base64
 import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -17,10 +17,7 @@ from azure.core.exceptions import ResourceNotFoundError
 class TestAgentImageGeneration(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_image_generation(self, **kwargs):
         """
         Test agent with Image Generation tool.
@@ -44,12 +41,9 @@ class TestAgentImageGeneration(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        # Get the image model deployment name from environment variable
-        image_model_deployment = os.environ.get(
-            "AZURE_AI_PROJECTS_TESTS_IMAGE_MODEL_DEPLOYMENT_NAME", "gpt-image-1-mini"
-        )
-
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        image_model = kwargs.get("azure_ai_projects_tests_image_generation_model_deployment_name")
+        agent_name = "image-gen-agent"
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -57,44 +51,39 @@ class TestAgentImageGeneration(TestBase):
         ):
             # Check if the image model deployment exists in the project
             try:
-                deployment = project_client.deployments.get(image_model_deployment)
+                deployment = project_client.deployments.get(image_model)
                 print(f"Image model deployment found: {deployment.name}")
             except ResourceNotFoundError:
-                pytest.skip(f"Image generation model '{image_model_deployment}' not available in this project")
+                pytest.fail(f"Image generation model '{image_model}' not available in this project")
             except Exception as e:
-                pytest.skip(f"Unable to verify image model deployment: {e}")
+                pytest.fail(f"Unable to verify image model deployment: {e}")
 
             # Disable retries for faster failure when service returns 500
             openai_client.max_retries = 0
 
             # Create agent with image generation tool
             agent = project_client.agents.create_version(
-                agent_name="image-gen-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="Generate images based on user prompts",
-                    tools=[ImageGenTool(quality="low", size="1024x1024")],
+                    tools=[ImageGenTool(model=image_model, quality="low", size="1024x1024")],  # type: ignore
                 ),
                 description="Agent for testing image generation.",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "image-gen-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Request image generation
             print("\nAsking agent to generate an image of a simple geometric shape...")
 
             response = openai_client.responses.create(
                 input="Generate an image of a blue circle on a white background.",
-                extra_headers={
-                    "x-ms-oai-image-generation-deployment": image_model_deployment
-                },  # Required for image generation
+                extra_headers={"x-ms-oai-image-generation-deployment": image_model},  # Required for image generation
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
             print(f"Response created (id: {response.id})")
-            assert response.id is not None
+            assert response.id
             assert response.output is not None
             assert len(response.output) > 0
 
@@ -126,6 +115,12 @@ class TestAgentImageGeneration(TestBase):
             print(f"✓ Image size is reasonable ({len(image_bytes):,} bytes)")
 
             print("\n✓ Agent successfully generated and returned a valid image")
+
+            # Save the image to a file in the .assets directory (which is .gitignored)
+            os.makedirs(".assets", exist_ok=True)
+            with open(".assets/generated_image_sync.png", "wb") as f:
+                f.write(image_bytes)
+            print("✓ Image saved to .assets/generated_image_sync.png")
 
             # Teardown
             project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
