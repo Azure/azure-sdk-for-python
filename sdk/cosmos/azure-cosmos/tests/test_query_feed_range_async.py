@@ -147,6 +147,33 @@ class TestQueryFeedRangeAsync:
         assert expected_pk_values.issubset(actual_pk_values)
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_feed_range_async_during_back_to_back_partition_splits_async(self, container_id):
+        container = await get_container(container_id)
+        query = 'SELECT * from c'
+
+        expected_pk_values = set(PK_VALUES)
+        actual_pk_values = set()
+
+        # Get feed ranges before any splits
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+
+        # Trigger two consecutive splits
+        await test_config.TestConfig.trigger_split_async(container, 11000)
+        await test_config.TestConfig.trigger_split_async(container, 12000)
+
+        # Query using the original feed ranges, the SDK should handle the splits
+        for feed_range in feed_ranges:
+            items = [item async for item in
+                     (container.query_items(
+                         query=query,
+                         feed_range=feed_range
+                     )
+                     )]
+            await add_all_pk_values_to_set_async(items, actual_pk_values)
+
+        assert expected_pk_values == actual_pk_values
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     async def test_query_with_feed_range_async_during_partition_split_async(self, container_id):
         container = await get_container(container_id)
         query = 'SELECT * from c'
