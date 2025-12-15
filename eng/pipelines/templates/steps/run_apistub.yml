@@ -31,14 +31,18 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
     displayName: 'Generate API stub files'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      scriptPath: 'eng/scripts/dispatch_checks.py'
       arguments: >-
         "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
         -d "$(Build.ArtifactStagingDirectory)"
         --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="apistub"
+        --checks="apistub"
         --disablecov
         --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
