@@ -4,7 +4,6 @@ import os
 from fnmatch import fnmatch
 
 from typing import Optional, List
-from subprocess import CalledProcessError, check_call
 
 from .Check import Check
 from ci_tools.functions import install_into_venv
