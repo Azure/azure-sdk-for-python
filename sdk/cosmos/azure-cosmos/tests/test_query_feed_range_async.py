@@ -147,7 +147,7 @@ class TestQueryFeedRangeAsync:
         assert expected_pk_values.issubset(actual_pk_values)
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    async def test_query_with_feed_range_async_during_partition_split(self, container_id):
+    async def test_query_with_feed_range_async_during_partition_split_async(self, container_id):
         container = await get_container(container_id)
         query = 'SELECT * from c'
 
@@ -167,7 +167,7 @@ class TestQueryFeedRangeAsync:
         assert expected_pk_values == actual_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    async def test_query_with_order_by_and_feed_range_async_during_partition_split(self, container_id):
+    async def test_query_with_order_by_and_feed_range_async_during_partition_split_async(self, container_id):
         container = await get_container(container_id)
         query = 'SELECT * FROM c ORDER BY c.id'
 
@@ -189,7 +189,7 @@ class TestQueryFeedRangeAsync:
         assert expected_pk_values == actual_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    async def test_query_with_count_aggregate_and_feed_range_async_during_partition_split(self, container_id):
+    async def test_query_with_count_aggregate_and_feed_range_async_during_partition_split_async(self, container_id):
         container = await get_container(container_id)
         # Get initial counts per feed range before split
         feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
@@ -230,7 +230,7 @@ class TestQueryFeedRangeAsync:
         assert post_split_total_count == len(PK_VALUES)
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    async def test_query_with_sum_aggregate_and_feed_range_async_during_partition_split(self, container_id):
+    async def test_query_with_sum_aggregate_and_feed_range_async_during_partition_split_async(self, container_id):
         container = await get_container(container_id)
         # Get initial sums per feed range before split
         feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]

@@ -143,14 +143,16 @@ class _QueryExecutionContextBase(object):
                 self._client, self._client._global_endpoint_manager, callback, **self._options
             )
 
-        try:
-            return execute_fetch()
-        except exceptions.CosmosHttpResponseError as e:
-            if exceptions._partition_range_is_gone(e):
-                # Refresh routing map to get new partition key ranges and retry
-                self._client.refresh_routing_map_provider()
+        while True:
+            try:
                 return execute_fetch()
-            raise
+            except exceptions.CosmosHttpResponseError as e:
+                if exceptions._partition_range_is_gone(e):
+                    # Refresh routing map to get new partition key ranges
+                    self._client.refresh_routing_map_provider()
+                    # Retry the fetch
+                    continue
+                raise
 
     next = __next__  # Python 2 compatibility.
 
