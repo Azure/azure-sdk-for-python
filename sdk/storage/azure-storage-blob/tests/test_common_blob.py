@@ -11,6 +11,7 @@ import uuid
 from datetime import datetime, timedelta
 from enum import Enum
 from io import BytesIO
+from urllib.parse import urlencode, urlparse, urlunparse
 
 from azure.mgmt.storage import StorageManagementClient
 
@@ -3745,5 +3746,60 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         result = blob.download_blob(decompress=False).readall()
         assert result == compressed_data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_dynamic_user_delegation_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container_name, blob_name = self.get_resource_name('oauthcontainer'), self.get_resource_name('oauthblob')
+        container = service.create_container(container_name)
+        blob = container.get_blob_client(blob_name)
+        blob.upload_blob(b"abc")
+
+        user_delegation_key = service.get_user_delegation_key(
+            key_start_time=datetime.utcnow(),
+            key_expiry_time=datetime.utcnow() + timedelta(hours=1)
+        )
+
+        request_headers = {
+            "foo$": "bar!",
+            "company": "msft",
+            "city": "redmond,atlanta,reston",
+        }
+
+        request_query_params = {
+            "hello$": "world!",
+            "abra": "cadabra",
+            "firstName": "john,Tim",
+        }
+
+        blob_token = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            request_headers=request_headers,
+            request_query_params=request_query_params
+        )
+
+        def callback(request):
+            request.http_request.headers["foo$"] = "world"
+            request.http_request.headers["company"] = "microsoft"
+            request.http_request.headers["city"] = "redmond,atlanta,reston"
+
+            parsed_url = urlparse(request.http_request.url)
+            query = urlencode(request_query_params)
+            url = urlunparse(parsed_url._replace(query=query))
+            request.http_request.url = url
+
+        identity_blob = BlobClient.from_blob_url(f"{blob.url}?{blob_token}", credential=token_credential)
+        props = identity_blob.get_blob_properties(raw_request_hook=callback)
+        assert props is not None
 
     # ------------------------------------------------------------------------------
