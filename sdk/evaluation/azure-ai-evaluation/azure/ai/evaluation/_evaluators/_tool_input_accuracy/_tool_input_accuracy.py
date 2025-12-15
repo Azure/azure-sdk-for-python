@@ -25,11 +25,11 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Input Accuracy evaluator performs a strict binary evaluation (PASS/FAIL) of parameters
     passed to tool calls. It ensures that ALL parameters meet ALL criteria:
 
-        - Parameter grounding: All parameters must be derived from conversation history/query
-        - Type compliance: All parameters must match exact types specified in tool definitions
-        - Format compliance: All parameters must follow exact format and structure requirements
-        - Completeness: All required parameters must be provided
-        - No unexpected parameters: Only defined parameters are allowed
+        - Parameter grounding: All parameters must be derived from conversation history/query.
+        - Type compliance: All parameters must match exact types specified in tool definitions.
+        - Format compliance: All parameters must follow exact format and structure requirements.
+        - Completeness: All required parameters must be provided.
+        - No unexpected parameters: Only defined parameters are allowed.
 
     The evaluator uses strict binary evaluation:
         - 1: Only when ALL criteria are satisfied perfectly for ALL parameters
