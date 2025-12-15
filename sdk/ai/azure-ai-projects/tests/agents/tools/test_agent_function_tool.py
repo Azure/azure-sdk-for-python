@@ -40,7 +40,7 @@ class TestAgentFunctionTool(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
         agent_name = "function-tool-agent"
 
         with (
@@ -85,9 +85,7 @@ class TestAgentFunctionTool(TestBase):
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Initial response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
+            self.validate_response(response, print_message="Initial response completed")
 
             # Check for function calls in the response
             function_calls_found = 0
@@ -140,8 +138,7 @@ class TestAgentFunctionTool(TestBase):
                 extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Final response completed (id: {response.id})")
-            assert response.id is not None
+            self.validate_response(response, print_message="Final response completed")
 
             # Get the final response text
             response_text = response.output_text
@@ -174,7 +171,7 @@ class TestAgentFunctionTool(TestBase):
         - Ability to use previous function results in subsequent queries
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -383,7 +380,7 @@ class TestAgentFunctionTool(TestBase):
         remembering parameters from the first query.
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
