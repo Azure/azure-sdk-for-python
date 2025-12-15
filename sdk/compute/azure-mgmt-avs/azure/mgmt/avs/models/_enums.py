@@ -671,6 +671,15 @@ class RescheduleOperationConstraintKind(str, Enum, metaclass=CaseInsensitiveEnum
     """Blocked time range constraint"""
 
 
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (either system assigned, or none)."""
+
+    NONE = "None"
+    """No managed system identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed system identity."""
+
+
 class ResourceSkuResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the type of resource the SKU applies to."""
 
@@ -832,15 +841,6 @@ class SslEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """is enabled"""
     DISABLED = "Disabled"
     """is disabled"""
-
-
-class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of managed service identity (either system assigned, or none)."""
-
-    NONE = "None"
-    """No managed system identity."""
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    """System assigned managed system identity."""
 
 
 class TrialStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

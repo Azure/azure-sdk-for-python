@@ -3076,7 +3076,7 @@ class PrivateCloud(TrackedResource):
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource. Required.
     :vartype sku: ~azure.mgmt.avs.models.Sku
     :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.avs.models.SystemAssignedServiceIdentity
+    :vartype identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
     :ivar zones: The availability zones.
     :vartype zones: list[str]
     """
@@ -3087,7 +3087,7 @@ class PrivateCloud(TrackedResource):
     """The resource-specific properties for this resource."""
     sku: "_models.Sku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SKU (Stock Keeping Unit) assigned to this resource. Required."""
-    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field(
+    identity: Optional["_models.PrivateCloudIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
@@ -3128,7 +3128,7 @@ class PrivateCloud(TrackedResource):
         sku: "_models.Sku",
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.PrivateCloudProperties"] = None,
-        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
+        identity: Optional["_models.PrivateCloudIdentity"] = None,
         zones: Optional[list[str]] = None,
     ) -> None: ...
 
@@ -3159,6 +3159,50 @@ class PrivateCloud(TrackedResource):
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class PrivateCloudIdentity(_Model):
+    """Managed service identity (either system assigned, or none).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None" and "SystemAssigned".
+    :vartype type: str or ~azure.mgmt.avs.models.ResourceIdentityType
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.ResourceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\"
+     and \"SystemAssigned\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ResourceIdentityType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class PrivateCloudProperties(_Model):
@@ -3345,7 +3389,7 @@ class PrivateCloudUpdate(_Model):
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
     :vartype sku: ~azure.mgmt.avs.models.Sku
     :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.avs.models.SystemAssignedServiceIdentity
+    :vartype identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
     :ivar properties: The updatable properties of a private cloud resource.
     :vartype properties: ~azure.mgmt.avs.models.PrivateCloudUpdateProperties
     """
@@ -3354,7 +3398,7 @@ class PrivateCloudUpdate(_Model):
     """Resource tags."""
     sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SKU (Stock Keeping Unit) assigned to this resource."""
-    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field(
+    identity: Optional["_models.PrivateCloudIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
@@ -3379,7 +3423,7 @@ class PrivateCloudUpdate(_Model):
         *,
         tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.Sku"] = None,
-        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
+        identity: Optional["_models.PrivateCloudIdentity"] = None,
         properties: Optional["_models.PrivateCloudUpdateProperties"] = None,
     ) -> None: ...
 
@@ -4770,50 +4814,6 @@ class SpecializedHostProperties(HostProperties, discriminator="Specialized"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = HostKind.SPECIALIZED  # type: ignore
-
-
-class SystemAssignedServiceIdentity(_Model):
-    """Managed service identity (either system assigned, or none).
-
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
-     provided for a system assigned identity.
-    :vartype tenant_id: str
-    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None" and "SystemAssigned".
-    :vartype type: str or ~azure.mgmt.avs.models.SystemAssignedServiceIdentityType
-    """
-
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The service principal ID of the system assigned identity. This property will only be provided
-     for a system assigned identity."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
-    """The tenant ID of the system assigned identity. This property will only be provided for a system
-     assigned identity."""
-    type: Union[str, "_models.SystemAssignedServiceIdentityType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of managed identity assigned to this resource. Required. Known values are: \"None\"
-     and \"SystemAssigned\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.SystemAssignedServiceIdentityType"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SystemData(_Model):
