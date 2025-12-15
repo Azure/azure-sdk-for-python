@@ -295,6 +295,8 @@ class TestBase(AzureRecordedTestCase):
         endpoint = kwargs.pop(project_endpoint_env_variable)
         credential = self.get_credential(AIProjectClient, is_async=False)
 
+        print(f"Creating AIProjectClient with endpoint: {endpoint}")
+
         # create and return client
         client = AIProjectClient(
             endpoint=endpoint,
@@ -313,6 +315,8 @@ class TestBase(AzureRecordedTestCase):
         )
         endpoint = kwargs.pop(project_endpoint_env_variable)
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
+
+        print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")
 
         # create and return async client
         client = AsyncAIProjectClient(

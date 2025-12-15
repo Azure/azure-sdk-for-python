@@ -5,10 +5,11 @@
 # ------------------------------------
 # cSpell:disable
 
-import time
+import asyncio
 from typing import Final
 from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live, is_live_and_not_recording
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport, is_live, is_live_and_not_recording
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
@@ -18,37 +19,11 @@ from azure.ai.projects.models import (
 )
 
 
-class TestAgentMemorySearch(TestBase):
+class TestAgentMemorySearchAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_memory_search(self, **kwargs):
-        """
-        Test agent with Memory Search tool for contextual memory retrieval.
-
-        This test verifies that an agent can:
-        1. Create a memory store with chat and embedding models
-        2. Use MemorySearchTool to store user preferences/information
-        3. Retrieve stored memories across different conversations
-        4. Answer questions based on previously stored context
-
-        Routes used in this test:
-
-        Action REST API Route                                Client Method
-        ------+---------------------------------------------+-----------------------------------
-        # Setup:
-        POST   /memory_stores                                project_client.memory_stores.create()
-        POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
-        POST   /conversations                                openai_client.conversations.create()
-
-        # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (with MemorySearchTool)
-
-        # Teardown:
-        DELETE /conversations/{conversation_id}              openai_client.conversations.delete()
-        DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
-        DELETE /memory_stores/{memory_store_name}            project_client.memory_stores.delete()
-        """
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_agent_memory_search_async(self, **kwargs):
 
         model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
         chat_model = kwargs.get("azure_ai_projects_tests_memory_store_chat_model_deployment_name")
@@ -62,8 +37,8 @@ class TestAgentMemorySearch(TestBase):
         print(f"Using chat model: {chat_model}")
         print(f"Using embedding model: {embedding_model}")
 
-        with (
-            self.create_client(operation_group="agents", **kwargs) as project_client,
+        async with (
+            self.create_async_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
 
@@ -74,14 +49,14 @@ class TestAgentMemorySearch(TestBase):
             new_conversation = None
 
             memory_store_name: Final[str] = "test_memory_store"
-            agent_name: Final[str] = "memory-search-agent"
+            agent_name: Final[str] = "memory-search-agent-async"
             scope: Final[str]  = "test_user_123"
 
             # Delete memory store, if it already exists. Do this cleaup only
             # in live mode so we don't get logs of this call in test recordings.
             if is_live_and_not_recording():
                 try:
-                    project_client.memory_stores.delete(memory_store_name)
+                    await project_client.memory_stores.delete(memory_store_name)
                     print(f"Memory store `{memory_store_name}` deleted")
                 except ResourceNotFoundError:
                     pass
@@ -93,7 +68,7 @@ class TestAgentMemorySearch(TestBase):
                     embedding_model=embedding_model,
                     options=MemoryStoreDefaultOptions(user_profile_enabled=True, chat_summary_enabled=True),
                 )
-                memory_store = project_client.memory_stores.create(
+                memory_store = await project_client.memory_stores.create(
                     name=memory_store_name,
                     description="Test memory store for agent conversations",
                     definition=definition,
@@ -112,7 +87,7 @@ class TestAgentMemorySearch(TestBase):
                 )
 
                 # Create agent with memory search tool
-                agent = project_client.agents.create_version(
+                agent = await project_client.agents.create_version(
                     agent_name=agent_name,
                     definition=PromptAgentDefinition(
                         model=model,
@@ -124,13 +99,13 @@ class TestAgentMemorySearch(TestBase):
                 self._validate_agent_version(agent, expected_name=agent_name)
 
                 # Create first conversation to store user preferences
-                conversation = openai_client.conversations.create()
+                conversation = await openai_client.conversations.create()
                 print(f"First conversation created (id: {conversation.id})")
                 assert conversation.id
 
                 # Store user preference in memory
                 print("\nStoring user preference in memory...")
-                response = openai_client.responses.create(
+                response = await openai_client.responses.create(
                     input="I prefer dark roast coffee",
                     conversation=conversation.id,
                     extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -145,17 +120,17 @@ class TestAgentMemorySearch(TestBase):
                 # In a real scenario, this happens after inactivity period (update_delay)
                 print("\nWaiting for memories to be stored (this may take up to 60 seconds)...")
                 if is_live():
-                    time.sleep(60)
+                    await asyncio.sleep(60)
 
                 # Create a new conversation to test memory retrieval
-                new_conversation = openai_client.conversations.create()
+                new_conversation = await openai_client.conversations.create()
                 print(f"Second conversation created (id: {new_conversation.id})")
                 assert new_conversation.id
                 assert new_conversation.id != conversation.id, "New conversation should have different ID"
 
                 # Query agent with information that should be retrieved from memory
                 print("\nQuerying agent with stored memory context...")
-                new_response = openai_client.responses.create(
+                new_response = await openai_client.responses.create(
                     input="Please order my usual coffee",
                     conversation=new_conversation.id,
                     extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -180,7 +155,7 @@ class TestAgentMemorySearch(TestBase):
 
                 if conversation:
                     try:
-                        openai_client.conversations.delete(conversation.id)
+                        await openai_client.conversations.delete(conversation.id)
                         print(f"First conversation deleted (id: {conversation.id})")
                     except Exception as e:
                         print(f"Failed to delete first conversation: {e}")
@@ -189,7 +164,7 @@ class TestAgentMemorySearch(TestBase):
 
                 if new_conversation:
                     try:
-                        openai_client.conversations.delete(new_conversation.id)
+                        await openai_client.conversations.delete(new_conversation.id)
                         print(f"Second conversation deleted (id: {new_conversation.id})")
                     except Exception as e:
                         print(f"Failed to delete second conversation: {e}")
@@ -198,7 +173,7 @@ class TestAgentMemorySearch(TestBase):
 
                 if agent:
                     try:
-                        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+                        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
                         print("Agent deleted")
                     except Exception as e:
                         print(f"Failed to delete agent: {e}")
@@ -207,7 +182,7 @@ class TestAgentMemorySearch(TestBase):
 
                 if memory_store:
                     try:
-                        project_client.memory_stores.delete(memory_store.name)
+                        await project_client.memory_stores.delete(memory_store.name)
                         print("Memory store deleted")
                     except Exception as e:
                         print(f"Failed to delete memory store: {e}")

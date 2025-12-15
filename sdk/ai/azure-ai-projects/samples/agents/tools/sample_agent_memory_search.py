@@ -52,7 +52,7 @@ load_dotenv()
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 with (
-    DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
+    DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
