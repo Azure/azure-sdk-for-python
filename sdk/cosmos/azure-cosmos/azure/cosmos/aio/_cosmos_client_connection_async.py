@@ -3181,7 +3181,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return __GetBodiesFromQueryResult(result)
 
-
     def __CheckAndUnifyQueryFormat(
         self,
         query_body: Union[str, dict[str, Any]]

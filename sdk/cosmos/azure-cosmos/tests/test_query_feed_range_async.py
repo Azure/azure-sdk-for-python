@@ -159,7 +159,7 @@ class TestQueryFeedRangeAsync:
 
         # Trigger two consecutive splits
         await test_config.TestConfig.trigger_split_async(container, 11000)
-        await test_config.TestConfig.trigger_split_async(container, 12000)
+        await test_config.TestConfig.trigger_split_async(container, 24000)
 
         # Query using the original feed ranges, the SDK should handle the splits
         for feed_range in feed_ranges:
