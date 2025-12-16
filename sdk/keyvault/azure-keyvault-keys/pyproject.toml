@@ -44,7 +44,7 @@ dynamic = [
 repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure.keyvault.keys._generated._version.VERSION"}
+version = {attr = "azure.keyvault.keys._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
@@ -56,7 +56,6 @@ exclude = [
     "doc*",
     "azure",
     "azure.keyvault",
-    "azure.keyvault.keys",
 ]
 
 [tool.setuptools.package-data]

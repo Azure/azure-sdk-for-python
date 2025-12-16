@@ -14,10 +14,9 @@ from setuptools import setup, find_packages
 
 PACKAGE_NAME = "azure-keyvault-administration"
 PACKAGE_PPRINT_NAME = "Key Vault Administration"
-PACKAGE_NAMESPACE = "azure.keyvault.administration._generated"
 
-# a.b.c => a/b/c
-package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace("-", "/")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
@@ -57,7 +56,6 @@ setup(
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.keyvault",
-            "azure.keyvault.administration",
         ]
     ),
     include_package_data=True,
