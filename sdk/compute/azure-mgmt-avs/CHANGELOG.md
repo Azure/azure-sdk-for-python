@@ -53,49 +53,20 @@
   - Added model `VcfLicense`
   - Added enum `VcfLicenseKind`
   - Added model `VmwareFirewallLicenseProperties`
-  - Model `PrivateCloudsOperations` added method `get_vcf_license`
-  - Added model `LicensesOperations`
-  - Added model `MaintenancesOperations`
+  - Operation group `PrivateCloudsOperations` added method `get_vcf_license`
+  - Added operation group `LicensesOperations`
+  - Added operation group `MaintenancesOperations`
 
 ### Breaking Changes
 
-  - Model `Host` deleted or renamed its instance variable `kind`
-  - Model `Host` deleted or renamed its instance variable `provisioning_state`
-  - Model `Host` deleted or renamed its instance variable `display_name`
-  - Model `Host` deleted or renamed its instance variable `mo_ref_id`
-  - Model `Host` deleted or renamed its instance variable `fqdn`
-  - Model `Host` deleted or renamed its instance variable `maintenance`
-  - Model `Host` deleted or renamed its instance variable `fault_domain`
-  - Model `PlacementPolicyUpdate` deleted or renamed its instance variable `state`
-  - Model `PlacementPolicyUpdate` deleted or renamed its instance variable `vm_members`
-  - Model `PlacementPolicyUpdate` deleted or renamed its instance variable `host_members`
-  - Model `PlacementPolicyUpdate` deleted or renamed its instance variable `affinity_strength`
-  - Model `PlacementPolicyUpdate` deleted or renamed its instance variable `azure_hybrid_benefit_type`
-  - Model `ResourceSkuRestrictions` deleted or renamed its instance variable `values`
-  - Deleted or renamed model `AddonList`
-  - Deleted or renamed model `CloudLinkList`
-  - Deleted or renamed model `ClusterList`
-  - Deleted or renamed model `DatastoreList`
-  - Deleted or renamed model `ExpressRouteAuthorizationList`
-  - Deleted or renamed model `GlobalReachConnectionList`
-  - Deleted or renamed model `HcxEnterpriseSiteList`
-  - Deleted or renamed model `PagedResourceSku`
-  - Deleted or renamed model `PlacementPoliciesList`
-  - Deleted or renamed model `PrivateCloudList`
-  - Deleted or renamed model `ScriptCmdletsList`
-  - Deleted or renamed model `ScriptExecutionsList`
-  - Deleted or renamed model `ScriptPackagesList`
-  - Deleted or renamed model `VirtualMachinesList`
-  - Deleted or renamed model `WorkloadNetworkDhcpList`
-  - Deleted or renamed model `WorkloadNetworkDnsServicesList`
-  - Deleted or renamed model `WorkloadNetworkDnsZonesList`
-  - Deleted or renamed model `WorkloadNetworkGatewayList`
-  - Deleted or renamed model `WorkloadNetworkList`
-  - Deleted or renamed model `WorkloadNetworkPortMirroringList`
-  - Deleted or renamed model `WorkloadNetworkPublicIPsList`
-  - Deleted or renamed model `WorkloadNetworkSegmentsList`
-  - Deleted or renamed model `WorkloadNetworkVMGroupsList`
-  - Deleted or renamed model `WorkloadNetworkVirtualMachinesList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `Host` moved instance variables `kind`, `provisioning_state`, `display_name`, `mo_ref_id`, `fqdn`, `maintenance` and `fault_domain` under property `properties`
+  - Model `PlacementPolicyUpdate` moved instance variables `state`, `vm_members`, `host_members`, `affinity_strength` and `azure_hybrid_benefit_type` under property `properties`
+  - Model `ResourceSkuRestrictions` renamed its instance variable `values` to `values_property`
+
+### Other Changes
+
+  - Deleted model `PagedResourceSku`/`AddonList`/`CloudLinkList`/`ClusterList`/`DatastoreList`/`ExpressRouteAuthorizationList`/`GlobalReachConnectionList`/`HcxEnterpriseSiteList`/`PlacementPoliciesList`/`PrivateCloudList`/`ScriptCmdletsList`/`ScriptExecutionsList`/`ScriptPackagesList`/`VirtualMachinesList`/`WorkloadNetworkDhcpList`/`WorkloadNetworkDnsServicesList`/`WorkloadNetworkDnsZonesList`/`WorkloadNetworkGatewayList`/`WorkloadNetworkList`/`WorkloadNetworkPortMirroringList`/`WorkloadNetworkPublicIPsList`/`WorkloadNetworkSegmentsList`/`WorkloadNetworkVMGroupsList`/`WorkloadNetworkVirtualMachinesList` which actually were not used by SDK users
 
 ## 9.1.0 (2025-06-03)
 
