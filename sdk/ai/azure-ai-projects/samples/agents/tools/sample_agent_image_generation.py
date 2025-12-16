@@ -62,9 +62,9 @@ with (
 
     # [START tool_declaration]
     tool = ImageGenTool(  # type: ignore[call-overload]
-        model=image_generation_model,
+        model=image_generation_model,  # Model such as "gpt-image-1-mini"  # type: ignore
         quality="low",
-        size="1024x1024",  # Model such as "gpt-image-1-mini"  # type: ignore
+        size="1024x1024",
     )
     # [END tool_declaration]
 

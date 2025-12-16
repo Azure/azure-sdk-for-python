@@ -188,7 +188,7 @@ Always respond with `reason` indicating the reason for the response.""",
 
     def _validate_output(self):
         """Validate sample output using synchronous OpenAI client."""
-        endpoint = os.environ["AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT"]
+        endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
         print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
         assert isinstance(self.tokenCredential, TokenCredential) or isinstance(
             self.tokenCredential, FakeTokenCredential
@@ -205,7 +205,7 @@ Always respond with `reason` indicating the reason for the response.""",
 
     async def _validate_output_async(self):
         """Validate sample output using asynchronous OpenAI client."""
-        endpoint = os.environ["AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT"]
+        endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
         print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
         assert isinstance(self.tokenCredential, AsyncTokenCredential) or isinstance(
             self.tokenCredential, AsyncFakeCredential
