@@ -123,8 +123,8 @@ with (
     else:
         print("\n✗ Evaluation run failed.")
 
-    # openai_client.evals.delete(eval_id=eval_object.id)
+    openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
 
-    # project_client.agents.delete(agent_name=agent.name)
+    project_client.agents.delete(agent_name=agent.name)
     print("Agent deleted")
