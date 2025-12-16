@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Using an OpenAI client, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list evaluation and eval runs
+    `openai.evals.*` methods to create, get evaluation and eval runs
     using inline dataset content.
 
 USAGE:
@@ -146,14 +146,10 @@ eval_run_object = client.evals.runs.create(
 print(f"Eval Run created")
 pprint(eval_run_object)
 
-print("Get Eval Run by Id")
-eval_run_response = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-print("Eval Run Response:")
-pprint(eval_run_response)
-
 while True:
-    run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
+    run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
     if run.status == "completed" or run.status == "failed":
+        print("Get Eval Run by Id")
         output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
         pprint(output_items)
         print(f"Eval Run Report URL: {run.report_url}")
