@@ -1709,7 +1709,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         request_query_params = {
             "hello$": "world!",
-            "abra": "cadabra",
+            "check": "spelling",
             "firstName": "john,Tim",
         }
 
