@@ -12,7 +12,7 @@ import uuid
 from datetime import datetime, timedelta
 from enum import Enum
 from io import BytesIO
-from urllib.parse import urlencode, urlparse, urlunparse
+from urllib.parse import parse_qsl, quote, urlparse, urlunparse
 
 import aiohttp
 import pytest
@@ -3699,7 +3699,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         user_delegation_key = await service.get_user_delegation_key(
             key_start_time=datetime.utcnow(),
-            key_expiry_time=datetime.utcnow() + timedelta(hours=1)
+            key_expiry_time=datetime.utcnow() + timedelta(hours=1),
         )
 
         request_headers = {
@@ -3727,13 +3727,16 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         )
 
         def callback(request):
-            request.http_request.headers["foo$"] = "world"
-            request.http_request.headers["company"] = "microsoft"
-            request.http_request.headers["city"] = "redmond,atlanta,reston"
+            for k, v in request_headers.items():
+                request.http_request.headers[k] = v
 
             parsed_url = urlparse(request.http_request.url)
-            query = urlencode(request_query_params)
-            url = urlunparse(parsed_url._replace(query=query))
+            existing_queries = dict(parse_qsl(parsed_url.query))
+            existing_queries["srh"] = ",".join([quote(h) for h in request_headers.keys()])
+            existing_queries["srq"] = ",".join([quote(qp) for qp in request_query_params.keys()])
+            quoted_query_params = {k: quote(v) for k, v in request_query_params.items()}
+            new_queries = {**existing_queries, **quoted_query_params}
+            url = urlunparse(parsed_url._replace(query="&".join([f"{k}={v}" for k, v in new_queries.items()])))
             request.http_request.url = url
 
         identity_blob = BlobClient.from_blob_url(f"{blob.url}?{blob_token}", credential=token_credential)

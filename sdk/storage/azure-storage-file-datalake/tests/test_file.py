@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
-from urllib.parse import urlencode, urlparse, urlunparse
+from urllib.parse import parse_qsl, quote, urlparse, urlunparse
 
 import pytest
 from azure.core import MatchConditions
@@ -1787,14 +1787,14 @@ class TestFile(StorageRecordedTestCase):
 
         token_credential = self.get_credential(DataLakeServiceClient)
         dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "dfs"), credential=token_credential)
-        fs_name, file_name = self.get_resource_name('oauthfs'), self.get_resource_name('oauthfile')
+        fs_name, file_name = self.get_resource_name('filesystem'), self.get_resource_name('file')
         fs = dsc.create_file_system(fs_name)
         file = fs.create_file(file_name)
         file.upload_data(b"abc", overwrite=True)
 
         user_delegation_key = dsc.get_user_delegation_key(
             key_start_time=datetime.utcnow(),
-            key_expiry_time=datetime.utcnow() + timedelta(hours=1)
+            key_expiry_time=datetime.utcnow() + timedelta(hours=1),
         )
 
         request_headers = {
@@ -1822,13 +1822,16 @@ class TestFile(StorageRecordedTestCase):
         )
 
         def callback(request):
-            request.http_request.headers["foo$"] = "world"
-            request.http_request.headers["company"] = "microsoft"
-            request.http_request.headers["city"] = "redmond,atlanta,reston"
+            for k, v in request_headers.items():
+                request.http_request.headers[k] = v
 
             parsed_url = urlparse(request.http_request.url)
-            query = urlencode(request_query_params)
-            url = urlunparse(parsed_url._replace(query=query))
+            existing_queries = dict(parse_qsl(parsed_url.query))
+            existing_queries["srh"] = ",".join([quote(h) for h in request_headers.keys()])
+            existing_queries["srq"] = ",".join([quote(qp) for qp in request_query_params.keys()])
+            quoted_query_params = {k: quote(v) for k, v in request_query_params.items()}
+            new_queries = {**existing_queries, **quoted_query_params}
+            url = urlunparse(parsed_url._replace(query="&".join([f"{k}={v}" for k, v in new_queries.items()])))
             request.http_request.url = url
 
         identity_file = DataLakeFileClient(
