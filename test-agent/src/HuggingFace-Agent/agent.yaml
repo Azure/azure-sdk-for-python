@@ -5,7 +5,7 @@ name: HuggingFace-Agent
 description: Hugging Face agent
 metadata:
     example:
-        - content: What's are the trending models in the OpenLLM Leaderboard?
+        - content: What are the trending models in the OpenLLM Leaderboard?
           role: user
     tags:
         - Microsoft Agent Framework
