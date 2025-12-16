@@ -11,14 +11,16 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from collections.abc import MutableMapping
 from typing import Any, cast, IO, List, Optional, overload, Union
-from azure.core import MatchConditions, PipelineClient
 
-JSON = MutableMapping[str, Any]
+from azure.core import MatchConditions, PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
+
 from .. import models as _models
 from .._configuration import TextTranslationClientConfiguration
 from .._utils.utils import ClientMixinABC
 from ._operations import _TextTranslationClientOperationsMixin as _TextTranslationClientOperationsMixinGenerated
+
+JSON = MutableMapping[str, Any]
 
 
 class _TextTranslationClientOperationsMixin(
@@ -26,11 +28,14 @@ class _TextTranslationClientOperationsMixin(
 ):
     """Mixin class that delegates to the generated operations class while providing custom method signatures."""
 
-    def _get_generated_operations(self) -> _TextTranslationClientOperationsMixinGenerated:
+    def _get_generated_operations(self) -> _TextTranslationClientOperationsMixinGenerated:  # pylint: disable=protected-access
         """Get an instance of the generated operations mixin.
 
         This creates a wrapper object that shares the same _client, _config, _serialize, and _deserialize
         attributes with self, allowing the generated operations to work correctly.
+
+        :return: An instance of the generated operations mixin.
+        :rtype: _TextTranslationClientOperationsMixinGenerated
         """
         if not hasattr(self, "_generated_ops_cache"):
             # Create a lightweight wrapper that shares attributes with self
@@ -355,8 +360,7 @@ class _TextTranslationClientOperationsMixin(
         from_script: str,
         to_script: str,
         client_trace_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        content_type: str = "application/json"
     ) -> List[_models.TransliteratedText]:
         request_body: Union[_models.TransliterateBody, JSON, IO[bytes]]
         if isinstance(body, list):
