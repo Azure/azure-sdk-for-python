@@ -237,41 +237,11 @@ class SamplePathPasser:
             return _wrapper_sync
 
 
-@overload
-def _get_sample_paths(sub_folder: str, *, samples_to_test: list[str]) -> list:
-    """Get sample paths for testing (whitelist mode).
-
-    Args:
-        sub_folder: Relative path to the samples subfolder (e.g., "agents/tools")
-        samples_to_test: Whitelist of sample filenames to include
-
-    Returns:
-        List of pytest.param objects with sample paths and test IDs
-    """
-    ...
-
-
-@overload
-def _get_sample_paths(sub_folder: str, *, samples_to_skip: list[str], is_async: bool) -> list:
-    """Get sample paths for testing (blacklist mode).
-
-    Args:
-        sub_folder: Relative path to the samples subfolder (e.g., "agents/tools")
-        samples_to_skip: Blacklist of sample filenames to exclude (auto-discovers all samples)
-        is_async: Whether to filter for async samples (_async.py suffix)
-
-    Returns:
-        List of pytest.param objects with sample paths and test IDs
-    """
-    ...
-
-
-def _get_sample_paths(
+def get_sample_paths(
     sub_folder: str,
     *,
-    samples_to_skip: Union[list[str], None] = None,
-    is_async: Union[bool, None] = None,
-    samples_to_test: Union[list[str], None] = None,
+    samples_to_skip: Optional[list[str]] = None,
+    is_async: Optional[bool] = False,
 ) -> list:
     # Get the path to the samples folder
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -281,22 +251,25 @@ def _get_sample_paths(
     if not os.path.exists(target_folder):
         raise ValueError(f"Target folder does not exist: {target_folder}")
 
-    # Discover all sample files in the folder
-    all_files = [f for f in os.listdir(target_folder) if f.startswith("sample_") and f.endswith(".py")]
+    print("Target folder for samples:", target_folder)
+    print("is_async:", is_async)
+    print("samples_to_skip:", samples_to_skip)
+    # Discover all sync or async sample files in the folder
+    all_files = [
+        f
+        for f in os.listdir(target_folder)
+        if (
+            f.startswith("sample_")
+            and (f.endswith("_async.py") if is_async else (f.endswith(".py") and not f.endswith("_async.py")))
+        )
+    ]
 
-    # Filter by async suffix only when using samples_to_skip
-    if samples_to_skip is not None and is_async is not None:
-        if is_async:
-            all_files = [f for f in all_files if f.endswith("_async.py")]
-        else:
-            all_files = [f for f in all_files if not f.endswith("_async.py")]
-
-    # Apply whitelist or blacklist
-    if samples_to_test is not None:
-        files_to_test = [f for f in all_files if f in samples_to_test]
-    else:  # samples_to_skip is not None
-        assert samples_to_skip is not None
+    if samples_to_skip:
         files_to_test = [f for f in all_files if f not in samples_to_skip]
+    else:
+        files_to_test = all_files
+
+    print(f"Running the following samples as test:\n{files_to_test}")
 
     # Create pytest.param objects
     samples = []
@@ -308,6 +281,33 @@ def _get_sample_paths(
     return samples
 
 
+def get_sample_environment_variables_map(operation_group: Optional[str] = None) -> dict[str, str]:
+    """Get the mapping of sample environment variables to test environment variables.
+
+    Args:
+        operation_group: Optional operation group name (e.g., "agents") to scope the endpoint variable.
+
+    Returns:
+        Dictionary mapping sample env var names to test env var names.
+    """
+    return {
+        "AZURE_AI_PROJECT_ENDPOINT": (
+            "azure_ai_projects_tests_project_endpoint"
+            if operation_group is None
+            else f"azure_ai_projects_tests_{operation_group}_project_endpoint"
+        ),
+        "AZURE_AI_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_model_deployment_name",
+        "IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_image_generation_model_deployment_name",
+        "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
+        "AI_SEARCH_INDEX_NAME": "azure_ai_projects_tests_ai_search_index_name",
+        "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",
+        "SHAREPOINT_USER_INPUT": "azure_ai_projects_tests_sharepoint_user_input",
+        "SHAREPOINT_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_sharepoint_project_connection_id",
+        "MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_memory_store_chat_model_deployment_name",
+        "MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_memory_store_embedding_model_deployment_name",
+    }
+
+
 class TestSamples(AzureRecordedTestCase):
 
     # To run this test with a specific sample, use:
@@ -315,7 +315,7 @@ class TestSamples(AzureRecordedTestCase):
     @servicePreparer()
     @pytest.mark.parametrize(
         "sample_path",
-        _get_sample_paths(
+        get_sample_paths(
             "agents/tools",
             samples_to_skip=[
                 "sample_agent_bing_custom_search.py",
@@ -332,24 +332,6 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = self._get_sample_environment_variables_map(operation_group="agents")
+        env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
         executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         executor.execute()
-
-    def _get_sample_environment_variables_map(self, operation_group: Optional[str] = None) -> dict[str, str]:
-        return {
-            "AZURE_AI_PROJECT_ENDPOINT": (
-                "azure_ai_projects_tests_project_endpoint"
-                if operation_group is None
-                else f"azure_ai_projects_tests_{operation_group}_project_endpoint"
-            ),
-            "AZURE_AI_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_model_deployment_name",
-            "IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_image_generation_model_deployment_name",
-            "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
-            "AI_SEARCH_INDEX_NAME": "azure_ai_projects_tests_ai_search_index_name",
-            "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",
-            "SHAREPOINT_USER_INPUT": "azure_ai_projects_tests_sharepoint_user_input",
-            "SHAREPOINT_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_sharepoint_project_connection_id",
-            "MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_memory_store_chat_model_deployment_name",
-            "MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_memory_store_embedding_model_deployment_name",
-        }
