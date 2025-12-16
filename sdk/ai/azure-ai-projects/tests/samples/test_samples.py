@@ -6,20 +6,23 @@
 import os, pytest, inspect, sys, json
 import importlib.util
 import unittest.mock as mock
-from typing import Union, cast, overload
+from typing import Optional, Union, cast, overload
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, RecordedTransport
+from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
+from devtools_testutils.fake_credentials import FakeTokenCredential
+from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from test_base import servicePreparer, patched_open_crlf_to_lf
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from pydantic import BaseModel
 
-
 class SampleExecutor:
     """Helper class for executing sample files with proper environment setup and credential mocking."""
+
+    tokenCredential: Optional[TokenCredential | AsyncTokenCredential | FakeTokenCredential | AsyncFakeCredential] = None
 
     class TestReport(BaseModel):
         """Schema for validation test report."""
@@ -64,7 +67,7 @@ class SampleExecutor:
 
     def _get_mock_credential(self, is_async: bool):
         """Get a mock credential that supports context manager protocol."""
-        credential_instance = self.test_instance.get_credential(AIProjectClient, is_async=is_async)
+        self.tokenCredential = self.test_instance.get_credential(AIProjectClient, is_async=is_async)
         if is_async:
             patch_target = "azure.identity.aio.DefaultAzureCredential"
         else:
@@ -72,9 +75,9 @@ class SampleExecutor:
 
         # Create a mock that returns a context manager wrapping the credential
         mock_credential_class = mock.MagicMock()
-        mock_credential_class.return_value.__enter__ = mock.MagicMock(return_value=credential_instance)
+        mock_credential_class.return_value.__enter__ = mock.MagicMock(return_value=self.tokenCredential)
         mock_credential_class.return_value.__exit__ = mock.MagicMock(return_value=None)
-        mock_credential_class.return_value.__aenter__ = mock.AsyncMock(return_value=credential_instance)
+        mock_credential_class.return_value.__aenter__ = mock.AsyncMock(return_value=self.tokenCredential)
         mock_credential_class.return_value.__aexit__ = mock.AsyncMock(return_value=None)
 
         return mock.patch(patch_target, new=mock_credential_class)
@@ -180,10 +183,12 @@ Always respond with `reason` indicating the reason for the response.""",
 
     def _validate_output(self):
         """Validate sample output using synchronous OpenAI client."""
-        credential = self.test_instance.get_credential(AIProjectClient, is_async=False)
+        endpoint = os.environ["AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT"]
+        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        assert isinstance(self.tokenCredential, TokenCredential) or isinstance(self.tokenCredential, FakeTokenCredential)
         with (
             AIProjectClient(
-                endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=cast(TokenCredential, credential)
+                endpoint=endpoint, credential=cast(TokenCredential, self.tokenCredential)
             ) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
@@ -193,10 +198,12 @@ Always respond with `reason` indicating the reason for the response.""",
 
     async def _validate_output_async(self):
         """Validate sample output using asynchronous OpenAI client."""
-        credential = self.test_instance.get_credential(AIProjectClient, is_async=True)
+        endpoint = os.environ["AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT"]
+        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        assert isinstance(self.tokenCredential, AsyncTokenCredential) or isinstance(self.tokenCredential, AsyncFakeCredential)
         async with (
             AsyncAIProjectClient(
-                endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=cast(AsyncTokenCredential, credential)
+                endpoint=endpoint, credential=cast(AsyncTokenCredential, self.tokenCredential)
             ) as project_client,
         ):
             async with project_client.get_openai_client() as openai_client:
@@ -294,6 +301,8 @@ def _get_sample_paths(
 
 class TestSamples(AzureRecordedTestCase):
 
+    # To run this test with a specific sample, use:
+    # pytest tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_memory_search]
     @servicePreparer()
     @pytest.mark.parametrize(
         "sample_path",
@@ -314,10 +323,12 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = self._get_sample_environment_variables_map()
+        env_var_mapping = self._get_sample_environment_variables_map(operation_group="agents")
         executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         executor.execute()
 
+    # To run this test with a specific sample, use:
+    # pytest tests/samples/test_samples.py::TestSamples::test_agent_tools_samples_async[sample_agent_memory_search_async]
     @servicePreparer()
     @pytest.mark.parametrize(
         "sample_path",
@@ -325,7 +336,6 @@ class TestSamples(AzureRecordedTestCase):
             "agents/tools",
             samples_to_skip=[
                 "sample_agent_mcp_with_project_connection_async.py",
-                "sample_agent_memory_search_async.py",
             ],
             is_async=True,
         ),
@@ -333,13 +343,13 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = self._get_sample_environment_variables_map()
+        env_var_mapping = self._get_sample_environment_variables_map(operation_group="agents")
         executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         await executor.execute_async()
 
-    def _get_sample_environment_variables_map(self) -> dict[str, str]:
+    def _get_sample_environment_variables_map(self, operation_group: Optional[str] = None) -> dict[str, str]:
         return {
-            "AZURE_AI_PROJECT_ENDPOINT": "azure_ai_projects_tests_project_endpoint",
+            "AZURE_AI_PROJECT_ENDPOINT": "azure_ai_projects_tests_project_endpoint" if operation_group is None else f"azure_ai_projects_tests_{operation_group}_project_endpoint",
             "AZURE_AI_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_model_deployment_name",
             "IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_image_generation_model_deployment_name",
             "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
