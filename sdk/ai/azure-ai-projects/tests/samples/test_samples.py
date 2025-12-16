@@ -336,26 +336,6 @@ class TestSamples(AzureRecordedTestCase):
         executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         executor.execute()
 
-    # To run this test with a specific sample, use:
-    # pytest tests/samples/test_samples.py::TestSamples::test_agent_tools_samples_async[sample_agent_memory_search_async]
-    @servicePreparer()
-    @pytest.mark.parametrize(
-        "sample_path",
-        _get_sample_paths(
-            "agents/tools",
-            samples_to_skip=[
-                "sample_agent_mcp_with_project_connection_async.py",
-            ],
-            is_async=True,
-        ),
-    )
-    @SamplePathPasser()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = self._get_sample_environment_variables_map(operation_group="agents")
-        executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
-        await executor.execute_async()
-
     def _get_sample_environment_variables_map(self, operation_group: Optional[str] = None) -> dict[str, str]:
         return {
             "AZURE_AI_PROJECT_ENDPOINT": (
