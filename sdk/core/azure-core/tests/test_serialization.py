@@ -404,6 +404,77 @@ def test_dictionary_set_datetime():
     assert isinstance(dict_ref2["start"], datetime)
 
 
+def test_dict_access_modification_clears_cache():
+    """Test that modifying through dict access clears cache and updates attribute access."""
+    
+    # Test 1: Dictionary modification
+    class DictModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    
+    m = DictModel(my_dict={"a": 1, "b": 2})
+    
+    # Access via attribute to cache it
+    assert m.my_dict == {"a": 1, "b": 2}
+    
+    # Modify through dict access
+    m["my_dict"] = {"x": 10, "y": 20}
+    
+    # Attribute access should reflect the new value
+    assert m.my_dict == {"x": 10, "y": 20}
+    assert m["my_dict"] == {"x": 10, "y": 20}
+    
+    # Test 2: List modification
+    class ListModel(HybridModel):
+        my_list: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    
+    m2 = ListModel(my_list=[1, 2, 3])
+    
+    # Access via attribute to cache it
+    assert m2.my_list == [1, 2, 3]
+    
+    # Modify through dict access
+    m2["my_list"] = [10, 20, 30]
+    
+    # Attribute access should reflect the new value
+    assert m2.my_list == [10, 20, 30]
+    assert m2["my_list"] == [10, 20, 30]
+    
+    # Test 3: Set modification
+    class SetModel(HybridModel):
+        my_set: typing.Set[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    
+    m3 = SetModel(my_set={1, 2, 3})
+    
+    # Access via attribute to cache it
+    assert m3.my_set == {1, 2, 3}
+    
+    # Modify through dict access
+    m3["my_set"] = {10, 20, 30}
+    
+    # Attribute access should reflect the new value
+    assert m3.my_set == {10, 20, 30}
+    assert m3["my_set"] == {10, 20, 30}
+    
+    # Test 4: Comma-delimited format example (simulating custom format)
+    class ColorModel(HybridModel):
+        colors: List[str] = rest_field(format="csv", visibility=["read", "create", "update", "delete", "query"])
+    
+    m4 = ColorModel(colors=["green", "yellow", "purple"])
+    assert m4.colors == ["green", "yellow", "purple"]
+    
+    # With format="csv", the serialized form would be comma-delimited
+    # But since we don't have that format implemented, let's test the principle:
+    # Access via attribute creates cache
+    cached_colors = m4.colors
+    
+    # Modify through dict access with serialized form
+    m4["colors"] = ["orange", "pink"]
+    
+    # Attribute access should deserialize the new value
+    assert m4.colors == ["orange", "pink"]
+    assert m4["colors"] == ["orange", "pink"]
+
+
 def test_model_basic(json_dumps_with_encoder):
     class BasicModel(SerializerMixin):
         def __init__(self):
