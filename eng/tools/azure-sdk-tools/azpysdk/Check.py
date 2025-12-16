@@ -74,7 +74,7 @@ class Check(abc.ABC):
             # ensure uv venv has pip for tools that require pip
             if venv_cmd[0] == "uv":
                 try:
-                    subprocess.check_call([venv_python, "-m", "ensurepip", "--upgrade"])
+                    subprocess.check_call(["uv", "pip", "install", "--python", venv_python, "pip"])
                 except subprocess.CalledProcessError as e:
                     logger.error(f"Failed to ensure pip in uv venv: {e}")
 
