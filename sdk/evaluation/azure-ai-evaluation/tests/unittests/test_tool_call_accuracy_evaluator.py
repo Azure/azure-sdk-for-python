@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from azure.ai.evaluation import ToolCallAccuracyEvaluator
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import ErrorCategory, EvaluationException
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
@@ -688,3 +688,84 @@ class TestToolCallAccuracyEvaluator:
         assert result is not None
         assert result[key] == 5.0
         assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_tools_missing_arguments_in_response(self, mock_model_config):
+        """Test that an exception is raised when response contains tool calls without arguments field."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        query = "What's the weather in Paris?"
+        # Response with tool call missing the 'arguments' field
+        response = [
+            {
+                'role': 'assistant',
+                'content': [
+                    {
+                        'type': 'tool_call',
+                        'tool_call_id': 'call_123',
+                        'name': 'fetch_weather',
+                        # Missing 'arguments' field here
+                    }
+                ]
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "fetch_weather",
+                "type": "function",
+                "description": "Fetches the weather information for the specified location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for.",
+                        }
+                    },
+                },
+            },
+        ]
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
+
+        assert "Tool call at index 0 missing 'arguments' key" in str(exc_info.value)
+        assert exc_info.value.category == ErrorCategory.MISSING_FIELD
+
+    def test_evaluate_tools_missing_arguments_in_tool_calls_param(self, mock_model_config):
+        """Test that an exception is raised when tool_calls parameter contains calls without arguments field."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        query = "What's the weather in Paris?"
+        # Tool calls parameter with missing 'arguments' field
+        tool_calls = [
+            {
+                'type': 'tool_call',
+                'tool_call_id': 'call_123',
+                'name': 'fetch_weather',
+                # Missing 'arguments' field here
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "fetch_weather",
+                "type": "function",
+                "description": "Fetches the weather information for the specified location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for.",
+                        }
+                    },
+                },
+            },
+        ]
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Tool call at index 0 missing 'arguments' key" in str(exc_info.value)
+        assert exc_info.value.category == ErrorCategory.MISSING_FIELD

@@ -172,6 +172,19 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if not isinstance(tool_calls, list):
             tool_calls = [tool_calls]
+        
+        # Validate that all tool calls have the "arguments" key
+        for i, tool_call in enumerate(tool_calls):
+            if isinstance(tool_call, dict):
+                if "arguments" not in tool_call:
+                    raise EvaluationException(
+                        message=f"Tool call at index {i} missing 'arguments' key: {tool_call}",
+                        internal_message="Tool call validation failed - missing arguments field",
+                        category=ErrorCategory.MISSING_FIELD,
+                        target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                        blame=ErrorBlame.USER_ERROR,
+                    )
+        
         if not isinstance(tool_definitions, list):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
