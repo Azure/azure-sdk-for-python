@@ -242,21 +242,27 @@ class TestToolSelectionEvaluator:
         assert result[f"{key}_result"] == "pass"
         assert f"{key}_reason" in result
 
-    def test_evaluate_tool_selection_not_applicable_no_tool_definitions(self, mock_model_config):
+    def test_evaluate_tool_selection_no_tool_definitions_throws_exception(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
 
         query = "What's the weather like today?"
-        tool_calls = []
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_weather",
+                "name": "get_weather",
+                "arguments": {"location": "current"},
+            }
+        ]
         tool_definitions = []
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-
-        key = _ToolSelectionEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert f"{key}_reason" in result
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        
+        # The error message should mention the specific tool that's missing
+        assert "get_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
 
     def test_evaluate_tool_selection_exception_invalid_score(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)

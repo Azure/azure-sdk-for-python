@@ -347,17 +347,16 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        
+        # Should throw an exception because buy_jacket definition has invalid type (not "function")
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        
+        # The error should mention the specific tool that's missing
+        # because "another_built_in" is not a valid type (not "function")
+        assert "buy_jacket" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
-        assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-        assert result[f"{key}_details"] == {}
-
-    def test_evaluate_tools_all_not_applicable(self, mock_model_config):
+    def test_evaluate_tools_missing_tool_definitions_throws_exception(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
@@ -387,15 +386,13 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
-        assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-        assert result[f"{key}_details"] == {}
+        
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        
+        # The error should mention the specific tool that's missing
+        assert "fetch_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -605,12 +602,13 @@ class TestToolCallAccuracyEvaluator:
             },
         ]
         tool_definitions = []
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
+        # OpenAPI is not a simple built-in tool - it requires a full definition with functions
+        # So calling without tool_definitions should throw an exception
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        
+        assert "openapi" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
 
     def test_evaluate_open_api_with_tool_definition(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)

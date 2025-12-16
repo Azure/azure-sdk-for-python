@@ -147,15 +147,18 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             needed_tool_definitions = self._extract_needed_tool_definitions(
                 tool_calls, tool_definitions, ErrorTarget.TOOL_SELECTION_EVALUATOR
             )
-        except EvaluationException as e:
-            # Check if this is because no tool definitions were provided at all
-            if len(tool_definitions) == 0:
-                return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
-            else:
-                return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+        except EvaluationException:
+            # Re-raise the exception from _extract_needed_tool_definitions as it already has specific error details
+            raise
 
+        # Check if no tool definitions were found at all (including built-in tools)
         if len(needed_tool_definitions) == 0:
-            return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
+            raise EvaluationException(
+                message=self._NO_TOOL_DEFINITIONS_MESSAGE,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
         # Extract only tool names from tool calls, removing parameters and results
         tool_names = self._extract_tool_names_from_calls(tool_calls)

@@ -431,7 +431,7 @@ class TestToolInputAccuracyEvaluator:
         assert result[f"{key}_result"] == "pass"
         assert _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in result[f"{key}_reason"]
 
-    def test_evaluate_no_tool_definitions(self, mock_model_config):
+    def test_evaluate_no_tool_definitions_throws_exception(self, mock_model_config):
         """Test evaluation when no tool definitions are provided."""
         evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
@@ -452,15 +452,14 @@ class TestToolInputAccuracyEvaluator:
         ]
         tool_definitions = []
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        
+        # The error message should mention the specific tool that's missing
+        assert "get_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE in result[f"{key}_reason"]
-
-    def test_evaluate_missing_tool_definitions(self, mock_model_config):
+    def test_evaluate_missing_tool_definitions_throws_exception(self, mock_model_config):
         """Test evaluation when tool definitions are missing for some tool calls."""
         evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
@@ -481,13 +480,12 @@ class TestToolInputAccuracyEvaluator:
         ]
         tool_definitions = [{"name": "different_function", "type": "function", "description": "A different function"}]
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
-
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        
+        # The error should mention the specific tool that's missing
+        assert "get_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
 
     def test_evaluate_invalid_result_value(self, mock_model_config):
         """Test that invalid result values raise an exception."""
