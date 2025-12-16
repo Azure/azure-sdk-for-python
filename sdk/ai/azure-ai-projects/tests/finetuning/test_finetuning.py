@@ -336,10 +336,10 @@ class TestFineTuning(TestBase):
                         deployment_name=deployment_name,
                         deployment=deployment_config,
                     )
-
-                    while deployment_operation.status() not in ["Succeeded", "Failed"]:
-                        time.sleep(30)
-                        print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
+                    if is_live():
+                        while deployment_operation.status() not in ["Succeeded", "Failed"]:
+                            time.sleep(30)
+                            print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
 
                     print(f"[{test_prefix}] Deployment completed successfully")
                     if is_live():
