@@ -4,7 +4,7 @@ metadata:
   example:
     - role: user
       content: |-
-        What's are the trending models in the OpenLLM Leaderboard?
+        What are the trending models in the OpenLLM Leaderboard?
   tags:
     - Microsoft Agent Framework
 template:
