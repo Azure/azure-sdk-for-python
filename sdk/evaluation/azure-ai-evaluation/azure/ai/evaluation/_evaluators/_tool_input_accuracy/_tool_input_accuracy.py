@@ -110,7 +110,16 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if not response:
             return {"error_message": "Response parameter is required to extract tool calls."}
 
-        tool_calls = self._parse_tools_from_response(response)
+        try:
+            tool_calls = self._parse_tools_from_response(response, ensure_arguments=True)
+        except EvaluationException as e:
+            raise EvaluationException(
+                    message=e.message,
+                    category=e.category,
+                    target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
+                    blame=ErrorBlame.USER_ERROR,
+            ) from e
+
         if not tool_calls:
             return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
 

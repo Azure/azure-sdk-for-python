@@ -162,10 +162,20 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         query = kwargs.get("query")
         response = kwargs.get("response")
         # TODO : Support classes that represents tool calls, messages etc once client side definitions are available
+
+        # Initially try to extract tool calls from the response whether or not tool_calls parameter is provided
         if response:
-            parsed_tool_calls = self._parse_tools_from_response(response)
-            if parsed_tool_calls:
-                tool_calls = parsed_tool_calls
+            try:
+                parsed_tool_calls = self._parse_tools_from_response(response, ensure_arguments=True)
+                if parsed_tool_calls:
+                    tool_calls = parsed_tool_calls
+            except EvaluationException as e:
+                raise EvaluationException(
+                    message=e.message,
+                    category=e.category,
+                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                    blame=ErrorBlame.USER_ERROR,
+                ) from e
 
         if not tool_calls:
             return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
@@ -174,12 +184,11 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_calls = [tool_calls]
         
         # Validate that all tool calls have the "arguments" key
-        for i, tool_call in enumerate(tool_calls):
+        for tool_call in tool_calls:
             if isinstance(tool_call, dict):
                 if "arguments" not in tool_call:
                     raise EvaluationException(
-                        message=f"Tool call at index {i} missing 'arguments' key: {tool_call}",
-                        internal_message="Tool call validation failed - missing arguments field",
+                        message=f"Tool call missing 'arguments' field: {tool_call}",
                         category=ErrorCategory.MISSING_FIELD,
                         target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                         blame=ErrorBlame.USER_ERROR,

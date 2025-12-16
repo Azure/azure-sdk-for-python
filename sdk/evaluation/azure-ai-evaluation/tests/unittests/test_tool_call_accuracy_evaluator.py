@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from azure.ai.evaluation import ToolCallAccuracyEvaluator
-from azure.ai.evaluation._exceptions import ErrorCategory, EvaluationException
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
@@ -729,8 +729,7 @@ class TestToolCallAccuracyEvaluator:
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        assert "Tool call at index 0 missing 'arguments' key" in str(exc_info.value)
-        assert exc_info.value.category == ErrorCategory.MISSING_FIELD
+        assert "Tool call missing 'arguments' field" in str(exc_info.value)
 
     def test_evaluate_tools_missing_arguments_in_tool_calls_param(self, mock_model_config):
         """Test that an exception is raised when tool_calls parameter contains calls without arguments field."""
@@ -767,5 +766,4 @@ class TestToolCallAccuracyEvaluator:
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        assert "Tool call at index 0 missing 'arguments' key" in str(exc_info.value)
-        assert exc_info.value.category == ErrorCategory.MISSING_FIELD
+        assert "Tool call missing 'arguments' field" in str(exc_info.value)

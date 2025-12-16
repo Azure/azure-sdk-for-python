@@ -486,7 +486,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
 
-    def _parse_tools_from_response(self, response):
+    def _parse_tools_from_response(self, response, ensure_arguments=False):
         """Parse the response to extract tool calls and results.
         :param response: The response to parse.
         :type response: Union[str, List[dict]]
@@ -505,6 +505,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 if message.get("role") == "assistant" and isinstance(message.get("content"), list):
                     for content_item in message.get("content"):
                         if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
+                            if ensure_arguments and "arguments" not in content_item:
+                                raise EvaluationException(
+                                    message=f"Tool call missing 'arguments' field: {content_item}",
+                                    category=ErrorCategory.MISSING_FIELD,
+                                )
                             tool_calls.append(copy.deepcopy(content_item))
 
                 # Extract tool results from tool messages

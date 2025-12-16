@@ -652,3 +652,45 @@ class TestToolInputAccuracyEvaluator:
         assert result is not None
         assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_missing_arguments_field(self, mock_model_config):
+        """Test that an exception is raised when response contains tool calls without arguments field."""
+        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        query = "What's the weather in Paris?"
+        # Response with tool call missing the 'arguments' field
+        response = [
+            {
+                'role': 'assistant',
+                'content': [
+                    {
+                        'type': 'tool_call',
+                        'tool_call_id': 'call_123',
+                        'name': 'get_weather',
+                        # Missing 'arguments' field here
+                    }
+                ]
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information for a location",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to get weather for.",
+                        }
+                    },
+                },
+            },
+        ]
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
+
+        assert "Tool call missing 'arguments' field" in str(exc_info.value)
