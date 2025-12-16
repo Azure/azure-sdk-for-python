@@ -9,7 +9,6 @@
   - Client `AVSClient` added operation group `licenses`
   - Client `AVSClient` added operation group `maintenances`
   - Model `Host` added property `properties`
-  - Model `ResourceSkuRestrictions` added property `values_property`
   - Added model `AvailableWindowForMaintenanceWhileRescheduleOperation`
   - Added model `AvailableWindowForMaintenanceWhileScheduleOperation`
   - Added enum `BlockedDatesConstraintCategory`
