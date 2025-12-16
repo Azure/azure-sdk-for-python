@@ -744,7 +744,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         self,
         skillset_name: str,
         skill_names: _models.SkillNames,
-        request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -756,8 +755,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :param skill_names: The names of the skills to reset. If not specified, all skills in the
          skillset will be reset.
         :type skill_names: ~azure.search.documents.indexes.models.SkillNames
-        :param request_options: Parameter group. Default value is None.
-        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Default value is "application/json".
         :paramtype content_type: str
         :return: None
