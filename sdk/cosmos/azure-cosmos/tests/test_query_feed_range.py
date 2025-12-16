@@ -138,6 +138,92 @@ class TestQueryFeedRange:
         assert expected_pk_values.issubset(actual_pk_values)
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    def test_query_with_feed_range_during_partition_split_combined(self, container_id):
+        container = get_container(container_id)
+
+        # Get feed ranges before split
+        feed_ranges_before_split = list(container.read_feed_ranges())
+        print(f"BEFORE SPLIT: Number of feed ranges: {len(feed_ranges_before_split)}")
+
+        # Get initial counts and sums before split
+        initial_count = 0
+        initial_sum = 0
+        expected_sum = len(PK_VALUES) * 100
+
+        for feed_range in feed_ranges_before_split:
+            count_items = list(container.query_items(
+                query='SELECT VALUE COUNT(1) FROM c',
+                feed_range=feed_range
+            ))
+            initial_count += count_items[0] if count_items else 0
+
+            sum_items = list(container.query_items(
+                query='SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])',
+                feed_range=feed_range
+            ))
+            initial_sum += sum_items[0] if sum_items else 0
+
+        print(f"Initial count: {initial_count}, Initial sum: {initial_sum}")
+        assert initial_count == len(PK_VALUES), f"Expected {len(PK_VALUES)} documents before split, got {initial_count}"
+        assert initial_sum == expected_sum, f"Expected sum {expected_sum} before split, got {initial_sum}"
+
+        # Trigger split once
+        test_config.TestConfig.trigger_split(container, 11000)
+
+        # Test 1: Basic query with stale feed ranges (SDK should handle split)
+        expected_pk_values = set(PK_VALUES)
+        actual_pk_values = set()
+        query = 'SELECT * from c'
+
+        for feed_range in feed_ranges_before_split:
+            items = list(container.query_items(query=query, feed_range=feed_range))
+            add_all_pk_values_to_set(items, actual_pk_values)
+
+        assert expected_pk_values == actual_pk_values, f"Expected PKs {expected_pk_values}, got {actual_pk_values}"
+        print("Test 1 (basic query with stale feed ranges) passed")
+
+        # Test 2: Order by query with stale feed ranges
+        actual_pk_values_order_by = set()
+        query_order_by = 'SELECT * FROM c ORDER BY c.id'
+
+        for feed_range in feed_ranges_before_split:
+            items = list(container.query_items(query=query_order_by, feed_range=feed_range))
+            add_all_pk_values_to_set(items, actual_pk_values_order_by)
+
+        assert expected_pk_values == actual_pk_values_order_by, f"Expected PKs {expected_pk_values}, got {actual_pk_values_order_by}"
+        print("Test 2 (order by query with stale feed ranges) passed")
+
+        # Test 3: Count aggregate query with stale feed ranges
+        post_split_count = 0
+        query_count = 'SELECT VALUE COUNT(1) FROM c'
+
+        for i, feed_range in enumerate(feed_ranges_before_split):
+            items = list(container.query_items(query=query_count, feed_range=feed_range))
+            count = items[0] if items else 0
+            print(f"Feed range {i} count AFTER split: {count}")
+            post_split_count += count
+
+        print(f"Total count AFTER split: {post_split_count}, Expected: {len(PK_VALUES)}")
+        assert post_split_count == len(PK_VALUES), f"Expected {len(PK_VALUES)}, got {post_split_count}"
+        assert initial_count == post_split_count, f"Count mismatch: before={initial_count}, after={post_split_count}"
+        print("Test 3 (count aggregate with stale feed ranges) passed")
+
+        # Test 4: Sum aggregate query with stale feed ranges
+        post_split_sum = 0
+        query_sum = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        for feed_range in feed_ranges_before_split:
+            items = list(container.query_items(query=query_sum, feed_range=feed_range))
+            current_sum = items[0] if items else 0
+            post_split_sum += current_sum
+
+        print(f"Total sum AFTER split: {post_split_sum}, Expected: {expected_sum}")
+        assert post_split_sum == expected_sum, f"Expected {expected_sum}, got {post_split_sum}"
+        assert initial_sum == post_split_sum, f"Sum mismatch: before={initial_sum}, after={post_split_sum}"
+        print("Test 4 (sum aggregate with stale feed ranges) passed")
+
+    @pytest.mark.skip(reason="Covered by test_query_with_feed_range_during_partition_split_combined")
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_feed_range_during_partition_split(self, container_id):
         container = get_container(container_id)
         query = 'SELECT * from c'
@@ -155,6 +241,7 @@ class TestQueryFeedRange:
             add_all_pk_values_to_set(items, actual_pk_values)
         assert expected_pk_values == actual_pk_values
 
+    @pytest.mark.skip(reason="Covered by test_query_with_feed_range_during_partition_split_combined")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_order_by_and_feed_range_during_partition_split(self, container_id):
         container = get_container(container_id)
@@ -175,6 +262,7 @@ class TestQueryFeedRange:
 
         assert expected_pk_values == actual_pk_values
 
+    @pytest.mark.skip(reason="Covered by test_query_with_feed_range_during_partition_split_combined")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_count_aggregate_and_feed_range_during_partition_split(self, container_id):
         container = get_container(container_id)
@@ -203,6 +291,7 @@ class TestQueryFeedRange:
         assert initial_total_count == post_split_total_count
         assert post_split_total_count == len(PK_VALUES)
 
+    @pytest.mark.skip(reason="Covered by test_query_with_feed_range_during_partition_split_combined")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_sum_aggregate_and_feed_range_during_partition_split(self, container_id):
         container = get_container(container_id)
