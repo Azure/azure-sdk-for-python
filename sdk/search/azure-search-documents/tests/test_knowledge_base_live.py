@@ -206,7 +206,7 @@ class TestKnowledgeBaseLive(AzureRecordedTestCase):
             snapshots = self._poll_status_snapshots(ctx)
             assert snapshots, "Expected at least one status snapshot"
 
-            service_stats = ctx.index_client._client.get_service_statistics()  # pylint:disable=protected-access
+            service_stats = ctx.index_client.get_service_statistics()  # pylint:disable=protected-access
             assert isinstance(service_stats, SearchServiceStatistics)
 
             runtime = service_stats.indexers_runtime
