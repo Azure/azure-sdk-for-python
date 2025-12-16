@@ -1,6 +1,8 @@
 -e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
+# pinning remote version due to limitations of azdo feeds with this package
+https://azuresdkartifacts.z5.web.core.windows.net/python/distributions/distros/opentelemetry_resource_detector_azure-0.1.5-py3-none-any.whl
 aiohttp
 python-dotenv
 opentelemetry-sdk
