@@ -41,10 +41,10 @@ class _TextTranslationClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, 
 
             wrapper = GeneratedOpsWrapper.__new__(GeneratedOpsWrapper)
             # Share the client infrastructure from self
-            wrapper._client = self._client  # type: ignore
-            wrapper._config = self._config  # type: ignore
-            wrapper._serialize = self._serialize  # type: ignore
-            wrapper._deserialize = self._deserialize  # type: ignore
+            wrapper._client = self._client  # type: ignore  # pylint: disable=protected-access
+            wrapper._config = self._config  # type: ignore  # pylint: disable=protected-access
+            wrapper._serialize = self._serialize  # type: ignore  # pylint: disable=protected-access
+            wrapper._deserialize = self._deserialize  # type: ignore  # pylint: disable=protected-access
             self._generated_ops_cache = wrapper  # type: ignore
         return self._generated_ops_cache  # type: ignore
 
@@ -357,7 +357,8 @@ class _TextTranslationClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, 
         from_script: str,
         to_script: str,
         client_trace_id: Optional[str] = None,
-        content_type: str = "application/json"
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> List[_models.TransliteratedText]:
         request_body: Union[_models.TransliterateBody, JSON, IO[bytes]]
         if isinstance(body, list):
@@ -379,6 +380,7 @@ class _TextTranslationClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, 
             to_script=to_script,
             content_type=content_type,
             client_trace_id=client_trace_id,
+            **kwargs
         )
         return result.value
 
