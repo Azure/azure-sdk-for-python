@@ -66,7 +66,7 @@ with (
             "type": "azure_ai_evaluator",
             "name": "violence_detection",
             "evaluator_name": "builtin.violence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
+            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
         }
     ]
     eval_object = openai_client.evals.create(
@@ -123,8 +123,8 @@ with (
     else:
         print("\n✗ Evaluation run failed.")
 
-    openai_client.evals.delete(eval_id=eval_object.id)
+    # openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
 
-    project_client.agents.delete(agent_name=agent.name)
+    # project_client.agents.delete(agent_name=agent.name)
     print("Agent deleted")
