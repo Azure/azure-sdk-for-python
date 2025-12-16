@@ -1,4 +1,5 @@
 import argparse
+from subprocess import CalledProcessError
 import sys
 import os
 import glob
@@ -158,19 +159,29 @@ class devtest(Check):
             logger.info(f"Processing {package_name} for devtest check")
 
             # install dependencies
-            self.install_dev_reqs(executable, args, package_dir)
+            try:
+                self.install_dev_reqs(executable, args, package_dir)
+            except CalledProcessError as e:
+                logger.error(f"Failed to install dev requirements: {e}")
+                results.append(1)
+                continue
 
-            create_package_and_install(
-                distribution_directory=staging_directory,
-                target_setup=package_dir,
-                skip_install=False,
-                cache_dir=None,
-                work_dir=staging_directory,
-                force_create=False,
-                package_type="sdist",
-                pre_download_disabled=False,
-                python_executable=executable,
-            )
+            try:
+                create_package_and_install(
+                    distribution_directory=staging_directory,
+                    target_setup=package_dir,
+                    skip_install=False,
+                    cache_dir=None,
+                    work_dir=staging_directory,
+                    force_create=False,
+                    package_type="sdist",
+                    pre_download_disabled=False,
+                    python_executable=executable,
+                )
+            except CalledProcessError as e:
+                logger.error(f"Failed to create and install package {package_name}: {e}")
+                results.append(1)
+                continue
 
             if os.path.exists(TEST_TOOLS_REQUIREMENTS):
                 try:

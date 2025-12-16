@@ -519,7 +519,7 @@ def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
-    # we do not use get_pip_command here because uv pip doesn't have an uninstall command
+    # use uninstall_from_venv() for uv venvs
     exe = python_executable or sys.executable
     command = [exe, "-m", "pip", "uninstall", "-y"]
 
