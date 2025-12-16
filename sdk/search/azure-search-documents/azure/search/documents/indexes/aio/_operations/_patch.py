@@ -380,6 +380,29 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         names = self.list_aliases(cls=lambda objs: [x.name for x in objs], **kwargs)
         return cast(AsyncItemPaged[str], names)
 
+    @distributed_trace_async
+    async def analyze_text(
+        self,
+        index_name: str,
+        analyze_request: _models.AnalyzeTextOptions,
+        **kwargs: Any,
+    ) -> _models.AnalyzeResult:
+        """Shows how an analyzer breaks text into tokens.
+
+        :param index_name: The name of the index to test an analyzer on. Required.
+        :type index_name: str
+        :param analyze_request: The text and analyzer or analysis components to test. Required.
+        :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
+        :return: AnalyzeResult
+        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self._analyze_text(
+            name=index_name,
+            request=analyze_request,
+            **kwargs,
+        )
+
 
 class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGenerated):
     """Custom operations mixin for SearchIndexerClient (async)."""
@@ -685,6 +708,99 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """
         result = await self.get_skillsets(**kwargs)
         return [x.name for x in result]
+
+    @distributed_trace_async
+    async def reset_documents(
+        self,
+        indexer: Union[str, _models.SearchIndexer],
+        keys_or_ids: _models.DocumentKeysOrIds,
+        *,
+        overwrite: bool = False,
+        **kwargs: Any,
+    ) -> None:
+        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
+
+        :param indexer: The indexer to reset documents for. Can be the indexer name or a SearchIndexer object.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
+        :param keys_or_ids: The document keys or ids to reset.
+        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
+        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
+         keys or ids in this payload will be queued to be re-ingested. Default value is False.
+        :paramtype overwrite: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        try:
+            name: str = indexer.name  # type: ignore
+        except AttributeError:
+            name = indexer  # type: ignore
+        return await self._reset_documents(
+            name=name,
+            keys_or_ids=keys_or_ids,
+            overwrite=overwrite,
+            **kwargs,
+        )
+
+    @distributed_trace_async
+    async def reset_skills(
+        self,
+        skillset_name: str,
+        skill_names: _models.SkillNames,
+        request_options: Optional[_models.RequestOptions] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Reset an existing skillset in a search service.
+
+        :param skillset_name: The name of the skillset to reset. Required.
+        :type skillset_name: str
+        :param skill_names: The names of the skills to reset. If not specified, all skills in the
+         skillset will be reset.
+        :type skill_names: ~azure.search.documents.indexes.models.SkillNames
+        :param request_options: Parameter group. Default value is None.
+        :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword content_type: Body Parameter content-type. Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self._reset_skills(
+            name=skillset_name,
+            skill_names=skill_names,
+            content_type=content_type,
+            **kwargs,
+        )
+
+    @distributed_trace_async
+    async def resync(
+        self,
+        indexer: Union[str, _models.SearchIndexer],
+        indexer_resync_options: List[Union[str, _models.IndexerResyncOption]],
+        **kwargs: Any,
+    ) -> None:
+        """Resync selective options from the datasource to be re-ingested by the indexer.
+
+        :param indexer: The indexer to resync. Can be the indexer name or a SearchIndexer object.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
+        :param indexer_resync_options: Re-sync options that have been pre-defined from data source.
+        :type indexer_resync_options: list[str or ~azure.search.documents.indexes.models.IndexerResyncOption]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        try:
+            name: str = indexer.name  # type: ignore
+        except AttributeError:
+            name = indexer  # type: ignore
+        indexer_resync = _models.IndexerResyncBody(options=indexer_resync_options)
+        return await self._resync(
+            name=name,
+            indexer_resync=indexer_resync,
+            **kwargs,
+        )
 
 
 __all__: list[str] = [

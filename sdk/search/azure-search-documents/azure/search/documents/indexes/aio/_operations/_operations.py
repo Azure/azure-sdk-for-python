@@ -1119,61 +1119,20 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @overload
-    async def analyze_text(
+    async def _analyze_text(
         self, name: str, request: _models2.AnalyzeTextOptions, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.AnalyzeResult:
-        """Shows how an analyzer breaks text into tokens.
-
-        :param name: The name of the index. Required.
-        :type name: str
-        :param request: The text and analyzer or analysis components to test. Required.
-        :type request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AnalyzeResult. The AnalyzeResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.AnalyzeResult: ...
     @overload
-    async def analyze_text(
+    async def _analyze_text(
         self, name: str, request: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.AnalyzeResult:
-        """Shows how an analyzer breaks text into tokens.
-
-        :param name: The name of the index. Required.
-        :type name: str
-        :param request: The text and analyzer or analysis components to test. Required.
-        :type request: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AnalyzeResult. The AnalyzeResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.AnalyzeResult: ...
     @overload
-    async def analyze_text(
+    async def _analyze_text(
         self, name: str, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.AnalyzeResult:
-        """Shows how an analyzer breaks text into tokens.
-
-        :param name: The name of the index. Required.
-        :type name: str
-        :param request: The text and analyzer or analysis components to test. Required.
-        :type request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AnalyzeResult. The AnalyzeResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.AnalyzeResult: ...
 
     @distributed_trace_async
-    async def analyze_text(
+    async def _analyze_text(
         self, name: str, request: Union[_models2.AnalyzeTextOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
@@ -3434,66 +3393,25 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def resync(
+    async def _resync(
         self,
         name: str,
         indexer_resync: _models2.IndexerResyncBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Resync selective options from the datasource to be re-ingested by the indexer.".
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param indexer_resync: The definition of the indexer resync options. Required.
-        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    async def resync(
+    async def _resync(
         self, name: str, indexer_resync: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Resync selective options from the datasource to be re-ingested by the indexer.".
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param indexer_resync: The definition of the indexer resync options. Required.
-        :type indexer_resync: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    async def resync(
+    async def _resync(
         self, name: str, indexer_resync: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Resync selective options from the datasource to be re-ingested by the indexer.".
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param indexer_resync: The definition of the indexer resync options. Required.
-        :type indexer_resync: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> None: ...
 
     @distributed_trace_async
-    async def resync(
+    async def _resync(
         self, name: str, indexer_resync: Union[_models2.IndexerResyncBody, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
@@ -3561,7 +3479,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def reset_documents(
+    async def _reset_documents(
         self,
         name: str,
         keys_or_ids: Optional[_models2.DocumentKeysOrIds] = None,
@@ -3569,28 +3487,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         overwrite: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
-         the document key field must be specified in the indexer configuration. If ids are provided, the
-         document key field is ignored. Default value is None.
-        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. Default value is None.
-        :paramtype overwrite: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    async def reset_documents(
+    async def _reset_documents(
         self,
         name: str,
         keys_or_ids: Optional[JSON] = None,
@@ -3598,28 +3497,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         overwrite: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
-         the document key field must be specified in the indexer configuration. If ids are provided, the
-         document key field is ignored. Default value is None.
-        :type keys_or_ids: JSON
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. Default value is None.
-        :paramtype overwrite: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    async def reset_documents(
+    async def _reset_documents(
         self,
         name: str,
         keys_or_ids: Optional[IO[bytes]] = None,
@@ -3627,28 +3507,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         overwrite: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
-         the document key field must be specified in the indexer configuration. If ids are provided, the
-         document key field is ignored. Default value is None.
-        :type keys_or_ids: IO[bytes]
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. Default value is None.
-        :paramtype overwrite: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> None: ...
 
     @distributed_trace_async
-    async def reset_documents(
+    async def _reset_documents(
         self,
         name: str,
         keys_or_ids: Optional[Union[_models2.DocumentKeysOrIds, JSON, IO[bytes]]] = None,
@@ -4802,64 +4664,20 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @overload
-    async def reset_skills(
+    async def _reset_skills(
         self, name: str, skill_names: _models2.SkillNames, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param name: The name of the skillset. Required.
-        :type name: str
-        :param skill_names: The names of the skills to reset. If not specified, all skills in the
-         skillset will be reset. Required.
-        :type skill_names: ~azure.search.documents.indexes.models.SkillNames
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    async def reset_skills(
+    async def _reset_skills(
         self, name: str, skill_names: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param name: The name of the skillset. Required.
-        :type name: str
-        :param skill_names: The names of the skills to reset. If not specified, all skills in the
-         skillset will be reset. Required.
-        :type skill_names: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    async def reset_skills(
+    async def _reset_skills(
         self, name: str, skill_names: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param name: The name of the skillset. Required.
-        :type name: str
-        :param skill_names: The names of the skills to reset. If not specified, all skills in the
-         skillset will be reset. Required.
-        :type skill_names: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> None: ...
 
     @distributed_trace_async
-    async def reset_skills(
+    async def _reset_skills(
         self, name: str, skill_names: Union[_models2.SkillNames, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Reset an existing skillset in a search service.

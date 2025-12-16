@@ -49,7 +49,7 @@ def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/retrieve/{knowledgeBaseName}"
@@ -63,13 +63,13 @@ def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if query_source_authorization is not None:
         _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
             "query_source_authorization", query_source_authorization, "str"
         )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 

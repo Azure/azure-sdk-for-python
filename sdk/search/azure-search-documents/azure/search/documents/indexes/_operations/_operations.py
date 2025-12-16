@@ -55,7 +55,7 @@ def build_search_index_create_or_update_synonym_map_request(  # pylint: disable=
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/synonymmaps('{synonymMapName}')"
@@ -69,10 +69,10 @@ def build_search_index_create_or_update_synonym_map_request(  # pylint: disable=
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -90,6 +90,8 @@ def build_search_index_delete_synonym_map_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/synonymmaps('{synonymMapName}')"
     path_format_arguments = {
@@ -102,6 +104,7 @@ def build_search_index_delete_synonym_map_request(  # pylint: disable=name-too-l
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -119,7 +122,7 @@ def build_search_index_get_synonym_map_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/synonymmaps('{synonymMapName}')"
@@ -145,7 +148,7 @@ def build_search_index_get_synonym_maps_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/synonymmaps"
@@ -167,7 +170,7 @@ def build_search_index_create_synonym_map_request(**kwargs: Any) -> HttpRequest:
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/synonymmaps"
@@ -176,9 +179,9 @@ def build_search_index_create_synonym_map_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -197,7 +200,7 @@ def build_search_index_create_or_update_index_request(  # pylint: disable=name-t
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexes('{indexName}')"
@@ -213,10 +216,10 @@ def build_search_index_create_or_update_index_request(  # pylint: disable=name-t
         _params["allowIndexDowntime"] = _SERIALIZER.query("allow_index_downtime", allow_index_downtime, "bool")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -234,6 +237,8 @@ def build_search_index_delete_index_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/indexes('{indexName}')"
     path_format_arguments = {
@@ -246,6 +251,7 @@ def build_search_index_delete_index_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -261,7 +267,7 @@ def build_search_index_get_index_request(name: str, **kwargs: Any) -> HttpReques
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexes('{indexName}')"
@@ -285,7 +291,7 @@ def build_search_index_list_indexes_request(*, select: Optional[str] = None, **k
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexes"
@@ -307,7 +313,7 @@ def build_search_index_create_index_request(**kwargs: Any) -> HttpRequest:
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexes"
@@ -316,9 +322,9 @@ def build_search_index_create_index_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -330,7 +336,7 @@ def build_search_index_get_index_statistics_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexes('{indexName}')/search.stats"
@@ -355,7 +361,7 @@ def build_search_index_analyze_text_request(name: str, **kwargs: Any) -> HttpReq
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexes('{indexName}')/search.analyze"
@@ -369,9 +375,9 @@ def build_search_index_analyze_text_request(name: str, **kwargs: Any) -> HttpReq
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -385,7 +391,7 @@ def build_search_index_create_or_update_alias_request(  # pylint: disable=name-t
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/aliases('{aliasName}')"
@@ -399,10 +405,10 @@ def build_search_index_create_or_update_alias_request(  # pylint: disable=name-t
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -420,6 +426,8 @@ def build_search_index_delete_alias_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/aliases('{aliasName}')"
     path_format_arguments = {
@@ -432,6 +440,7 @@ def build_search_index_delete_alias_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -447,7 +456,7 @@ def build_search_index_get_alias_request(name: str, **kwargs: Any) -> HttpReques
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/aliases('{aliasName}')"
@@ -471,7 +480,7 @@ def build_search_index_list_aliases_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/aliases"
@@ -491,7 +500,7 @@ def build_search_index_create_alias_request(**kwargs: Any) -> HttpRequest:
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/aliases"
@@ -500,9 +509,9 @@ def build_search_index_create_alias_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -516,7 +525,7 @@ def build_search_index_create_or_update_knowledge_base_request(  # pylint: disab
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgebases('{knowledgeBaseName}')"
@@ -530,10 +539,10 @@ def build_search_index_create_or_update_knowledge_base_request(  # pylint: disab
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -551,6 +560,8 @@ def build_search_index_delete_knowledge_base_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/knowledgebases('{knowledgeBaseName}')"
     path_format_arguments = {
@@ -563,6 +574,7 @@ def build_search_index_delete_knowledge_base_request(  # pylint: disable=name-to
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -580,7 +592,7 @@ def build_search_index_get_knowledge_base_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgebases('{knowledgeBaseName}')"
@@ -604,7 +616,7 @@ def build_search_index_list_knowledge_bases_request(**kwargs: Any) -> HttpReques
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgebases"
@@ -624,7 +636,7 @@ def build_search_index_create_knowledge_base_request(**kwargs: Any) -> HttpReque
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgebases"
@@ -633,9 +645,9 @@ def build_search_index_create_knowledge_base_request(**kwargs: Any) -> HttpReque
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -649,7 +661,7 @@ def build_search_index_create_or_update_knowledge_source_request(  # pylint: dis
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgesources('{sourceName}')"
@@ -663,10 +675,10 @@ def build_search_index_create_or_update_knowledge_source_request(  # pylint: dis
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -684,6 +696,8 @@ def build_search_index_delete_knowledge_source_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/knowledgesources('{sourceName}')"
     path_format_arguments = {
@@ -696,6 +710,7 @@ def build_search_index_delete_knowledge_source_request(  # pylint: disable=name-
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -713,7 +728,7 @@ def build_search_index_get_knowledge_source_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgesources('{sourceName}')"
@@ -737,7 +752,7 @@ def build_search_index_list_knowledge_sources_request(**kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgesources"
@@ -757,7 +772,7 @@ def build_search_index_create_knowledge_source_request(**kwargs: Any) -> HttpReq
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgesources"
@@ -766,9 +781,9 @@ def build_search_index_create_knowledge_source_request(**kwargs: Any) -> HttpReq
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -780,7 +795,7 @@ def build_search_index_get_knowledge_source_status_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/knowledgesources('{sourceName}')/status"
@@ -804,7 +819,7 @@ def build_search_index_get_service_statistics_request(**kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/servicestats"
@@ -823,7 +838,7 @@ def build_search_index_list_index_stats_summary_request(**kwargs: Any) -> HttpRe
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexstats"
@@ -851,7 +866,7 @@ def build_search_indexer_create_or_update_data_source_connection_request(  # pyl
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/datasources('{dataSourceName}')"
@@ -869,10 +884,10 @@ def build_search_indexer_create_or_update_data_source_connection_request(  # pyl
         )
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -890,6 +905,8 @@ def build_search_indexer_delete_data_source_connection_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/datasources('{dataSourceName}')"
     path_format_arguments = {
@@ -902,6 +919,7 @@ def build_search_indexer_delete_data_source_connection_request(  # pylint: disab
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -919,7 +937,7 @@ def build_search_indexer_get_data_source_connection_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/datasources('{dataSourceName}')"
@@ -945,7 +963,7 @@ def build_search_indexer_get_data_source_connections_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/datasources"
@@ -969,7 +987,7 @@ def build_search_indexer_create_data_source_connection_request(  # pylint: disab
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/datasources"
@@ -978,9 +996,9 @@ def build_search_indexer_create_data_source_connection_request(  # pylint: disab
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -992,6 +1010,8 @@ def build_search_indexer_reset_indexer_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/indexers('{indexerName}')/search.reset"
     path_format_arguments = {
@@ -1004,6 +1024,7 @@ def build_search_indexer_reset_indexer_request(  # pylint: disable=name-too-long
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1014,6 +1035,8 @@ def build_search_indexer_resync_request(name: str, **kwargs: Any) -> HttpRequest
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/indexers('{indexerName}')/search.resync"
     path_format_arguments = {
@@ -1026,6 +1049,7 @@ def build_search_indexer_resync_request(name: str, **kwargs: Any) -> HttpRequest
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -1040,6 +1064,8 @@ def build_search_indexer_reset_documents_request(  # pylint: disable=name-too-lo
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/indexers('{indexerName}')/search.resetdocs"
     path_format_arguments = {
@@ -1054,6 +1080,7 @@ def build_search_indexer_reset_documents_request(  # pylint: disable=name-too-lo
         _params["overwrite"] = _SERIALIZER.query("overwrite", overwrite, "bool")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -1065,6 +1092,8 @@ def build_search_indexer_run_indexer_request(name: str, **kwargs: Any) -> HttpRe
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/indexers('{indexerName}')/search.run"
     path_format_arguments = {
@@ -1077,6 +1106,7 @@ def build_search_indexer_run_indexer_request(name: str, **kwargs: Any) -> HttpRe
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1096,7 +1126,7 @@ def build_search_indexer_create_or_update_indexer_request(  # pylint: disable=na
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexers('{indexerName}')"
@@ -1118,10 +1148,10 @@ def build_search_indexer_create_or_update_indexer_request(  # pylint: disable=na
         )
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1139,6 +1169,8 @@ def build_search_indexer_delete_indexer_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/indexers('{indexerName}')"
     path_format_arguments = {
@@ -1151,6 +1183,7 @@ def build_search_indexer_delete_indexer_request(  # pylint: disable=name-too-lon
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1166,7 +1199,7 @@ def build_search_indexer_get_indexer_request(name: str, **kwargs: Any) -> HttpRe
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexers('{indexerName}')"
@@ -1192,7 +1225,7 @@ def build_search_indexer_get_indexers_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexers"
@@ -1214,7 +1247,7 @@ def build_search_indexer_create_indexer_request(**kwargs: Any) -> HttpRequest:  
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexers"
@@ -1223,9 +1256,9 @@ def build_search_indexer_create_indexer_request(**kwargs: Any) -> HttpRequest:  
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1237,7 +1270,7 @@ def build_search_indexer_get_indexer_status_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/indexers('{indexerName}')/search.status"
@@ -1271,7 +1304,7 @@ def build_search_indexer_create_or_update_skillset_request(  # pylint: disable=n
     prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/skillsets('{skillsetName}')"
@@ -1293,10 +1326,10 @@ def build_search_indexer_create_or_update_skillset_request(  # pylint: disable=n
         )
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     _headers["Prefer"] = _SERIALIZER.header("prefer", prefer, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1314,6 +1347,8 @@ def build_search_indexer_delete_skillset_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/skillsets('{skillsetName}')"
     path_format_arguments = {
@@ -1326,6 +1361,7 @@ def build_search_indexer_delete_skillset_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1341,7 +1377,7 @@ def build_search_indexer_get_skillset_request(name: str, **kwargs: Any) -> HttpR
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/skillsets('{skillsetName}')"
@@ -1367,7 +1403,7 @@ def build_search_indexer_get_skillsets_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/skillsets"
@@ -1389,7 +1425,7 @@ def build_search_indexer_create_skillset_request(**kwargs: Any) -> HttpRequest: 
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
     _url = "/skillsets"
@@ -1398,9 +1434,9 @@ def build_search_indexer_create_skillset_request(**kwargs: Any) -> HttpRequest: 
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1411,6 +1447,8 @@ def build_search_indexer_reset_skills_request(name: str, **kwargs: Any) -> HttpR
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
     # Construct URL
     _url = "/skillsets('{skillsetName}')/search.resetskills"
     path_format_arguments = {
@@ -1423,6 +1461,7 @@ def build_search_indexer_reset_skills_request(name: str, **kwargs: Any) -> HttpR
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -2449,61 +2488,20 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @overload
-    def analyze_text(
+    def _analyze_text(
         self, name: str, request: _models1.AnalyzeTextOptions, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models1.AnalyzeResult:
-        """Shows how an analyzer breaks text into tokens.
-
-        :param name: The name of the index. Required.
-        :type name: str
-        :param request: The text and analyzer or analysis components to test. Required.
-        :type request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AnalyzeResult. The AnalyzeResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models1.AnalyzeResult: ...
     @overload
-    def analyze_text(
+    def _analyze_text(
         self, name: str, request: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models1.AnalyzeResult:
-        """Shows how an analyzer breaks text into tokens.
-
-        :param name: The name of the index. Required.
-        :type name: str
-        :param request: The text and analyzer or analysis components to test. Required.
-        :type request: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AnalyzeResult. The AnalyzeResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models1.AnalyzeResult: ...
     @overload
-    def analyze_text(
+    def _analyze_text(
         self, name: str, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models1.AnalyzeResult:
-        """Shows how an analyzer breaks text into tokens.
-
-        :param name: The name of the index. Required.
-        :type name: str
-        :param request: The text and analyzer or analysis components to test. Required.
-        :type request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AnalyzeResult. The AnalyzeResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models1.AnalyzeResult: ...
 
     @distributed_trace
-    def analyze_text(
+    def _analyze_text(
         self, name: str, request: Union[_models1.AnalyzeTextOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
@@ -4757,64 +4755,25 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def resync(
+    def _resync(
         self,
         name: str,
         indexer_resync: _models1.IndexerResyncBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> None:
-        """Resync selective options from the datasource to be re-ingested by the indexer.".
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param indexer_resync: The definition of the indexer resync options. Required.
-        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    def resync(self, name: str, indexer_resync: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
-        """Resync selective options from the datasource to be re-ingested by the indexer.".
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param indexer_resync: The definition of the indexer resync options. Required.
-        :type indexer_resync: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    def _resync(
+        self, name: str, indexer_resync: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None: ...
     @overload
-    def resync(
+    def _resync(
         self, name: str, indexer_resync: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Resync selective options from the datasource to be re-ingested by the indexer.".
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param indexer_resync: The definition of the indexer resync options. Required.
-        :type indexer_resync: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> None: ...
 
     @distributed_trace
-    def resync(  # pylint: disable=inconsistent-return-statements
+    def _resync(  # pylint: disable=inconsistent-return-statements
         self, name: str, indexer_resync: Union[_models1.IndexerResyncBody, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
@@ -4882,7 +4841,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def reset_documents(
+    def _reset_documents(
         self,
         name: str,
         keys_or_ids: Optional[_models1.DocumentKeysOrIds] = None,
@@ -4890,28 +4849,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         overwrite: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
-         the document key field must be specified in the indexer configuration. If ids are provided, the
-         document key field is ignored. Default value is None.
-        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. Default value is None.
-        :paramtype overwrite: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    def reset_documents(
+    def _reset_documents(
         self,
         name: str,
         keys_or_ids: Optional[JSON] = None,
@@ -4919,28 +4859,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         overwrite: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
-         the document key field must be specified in the indexer configuration. If ids are provided, the
-         document key field is ignored. Default value is None.
-        :type keys_or_ids: JSON
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. Default value is None.
-        :paramtype overwrite: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    def reset_documents(
+    def _reset_documents(
         self,
         name: str,
         keys_or_ids: Optional[IO[bytes]] = None,
@@ -4948,28 +4869,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         overwrite: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param name: The name of the indexer. Required.
-        :type name: str
-        :param keys_or_ids: The keys or ids of the documents to be re-ingested. If keys are provided,
-         the document key field must be specified in the indexer configuration. If ids are provided, the
-         document key field is ignored. Default value is None.
-        :type keys_or_ids: IO[bytes]
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. Default value is None.
-        :paramtype overwrite: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> None: ...
 
     @distributed_trace
-    def reset_documents(  # pylint: disable=inconsistent-return-statements
+    def _reset_documents(  # pylint: disable=inconsistent-return-statements
         self,
         name: str,
         keys_or_ids: Optional[Union[_models1.DocumentKeysOrIds, JSON, IO[bytes]]] = None,
@@ -6119,64 +6022,20 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @overload
-    def reset_skills(
+    def _reset_skills(
         self, name: str, skill_names: _models1.SkillNames, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param name: The name of the skillset. Required.
-        :type name: str
-        :param skill_names: The names of the skills to reset. If not specified, all skills in the
-         skillset will be reset. Required.
-        :type skill_names: ~azure.search.documents.indexes.models.SkillNames
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    def reset_skills(
+    def _reset_skills(
         self, name: str, skill_names: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param name: The name of the skillset. Required.
-        :type name: str
-        :param skill_names: The names of the skills to reset. If not specified, all skills in the
-         skillset will be reset. Required.
-        :type skill_names: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> None: ...
     @overload
-    def reset_skills(
+    def _reset_skills(
         self, name: str, skill_names: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param name: The name of the skillset. Required.
-        :type name: str
-        :param skill_names: The names of the skills to reset. If not specified, all skills in the
-         skillset will be reset. Required.
-        :type skill_names: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> None: ...
 
     @distributed_trace
-    def reset_skills(  # pylint: disable=inconsistent-return-statements
+    def _reset_skills(  # pylint: disable=inconsistent-return-statements
         self, name: str, skill_names: Union[_models1.SkillNames, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Reset an existing skillset in a search service.
