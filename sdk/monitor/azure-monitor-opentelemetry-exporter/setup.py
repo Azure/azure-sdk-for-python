@@ -80,7 +80,7 @@ setup(
     package_data={
         "pytyped": ["py.typed"],
     },
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "azure-core<2.0.0,>=1.28.0",
         "azure-identity~=1.17",

@@ -30,7 +30,7 @@ To report an issue with the client library, or request additional features, plea
 
 ### Prerequisites
 
-* [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
+* [Python 3.9](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
 * For GitHub models
   * The AI model name, such as "gpt-4o" or "mistral-large"
   * A GitHub personal access token. [Create one here](https://github.com/settings/tokens). You do not need to give any permissions to the token. The token is a string that starts with `github_pat_`.
