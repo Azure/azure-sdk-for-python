@@ -18,6 +18,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _RequestData,
 )
 
+
 class TestProjection(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._projection._set_quickpulse_projection_map")

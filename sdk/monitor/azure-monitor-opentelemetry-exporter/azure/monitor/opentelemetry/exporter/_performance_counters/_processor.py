@@ -11,7 +11,7 @@ from azure.monitor.opentelemetry.exporter._performance_counters._manager import 
 class _PerformanceCountersLogRecordProcessor(LogRecordProcessor):
     def __init__(self):
         super().__init__()
-        self.call_on_emit = hasattr(super(), 'on_emit')
+        self.call_on_emit = hasattr(super(), "on_emit")
 
     def on_emit(self, readable_log_record: ReadableLogRecord) -> None:  # type: ignore # pylint: disable=arguments-renamed
         pcm = _PerformanceCountersManager()

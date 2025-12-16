@@ -4,6 +4,7 @@
 from typing import Dict, Optional, Any
 import json
 import logging
+
 # mypy: disable-error-code="import-untyped"
 import requests
 
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 class _ConfigurationProfile:
     """Profile for the current running SDK."""
+
     os: str = ""
     rp: str = ""
     attach: str = ""
@@ -28,18 +30,18 @@ class _ConfigurationProfile:
     @classmethod
     def fill(cls, **kwargs) -> None:
         """Update only the class variables that are provided in kwargs and haven't been updated yet."""
-        if 'os' in kwargs and cls.os == "":
-            cls.os = kwargs['os']
-        if 'version' in kwargs and cls.version == "":
-            cls.version = kwargs['version']
-        if 'component' in kwargs and cls.component == "":
-            cls.component = kwargs['component']
-        if 'rp' in kwargs and cls.rp == "":
-            cls.rp = kwargs['rp']
-        if 'attach' in kwargs and cls.attach == "":
-            cls.attach = kwargs['attach']
-        if 'region' in kwargs and cls.region == "":
-            cls.region = kwargs['region']
+        if "os" in kwargs and cls.os == "":
+            cls.os = kwargs["os"]
+        if "version" in kwargs and cls.version == "":
+            cls.version = kwargs["version"]
+        if "component" in kwargs and cls.component == "":
+            cls.component = kwargs["component"]
+        if "rp" in kwargs and cls.rp == "":
+            cls.rp = kwargs["rp"]
+        if "attach" in kwargs and cls.attach == "":
+            cls.attach = kwargs["attach"]
+        if "region" in kwargs and cls.region == "":
+            cls.region = kwargs["region"]
 
 
 class OneSettingsResponse:
@@ -64,7 +66,7 @@ class OneSettingsResponse:
         settings: Optional[Dict[str, str]] = None,
         version: Optional[int] = None,
         status_code: int = 200,
-        has_exception: bool = False
+        has_exception: bool = False,
     ):
         """Initialize OneSettingsResponse with configuration data.
 
@@ -86,8 +88,9 @@ class OneSettingsResponse:
         self.has_exception = has_exception
 
 
-def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = None,
-                           headers: Optional[Dict[str, str]] = None) -> OneSettingsResponse:
+def make_onesettings_request(
+    url: str, query_dict: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None
+) -> OneSettingsResponse:
     """Make an HTTP request to the OneSettings API and parse the response.
 
     This function handles the complete OneSettings request lifecycle including:
@@ -326,6 +329,7 @@ def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
     # All conditions in this rule matched
     return True
 
+
 # pylint:disable=too-many-return-statements
 def _matches_condition(condition_key: str, condition_value: Any) -> bool:
     """Check if a specific condition matches the current configuration profile.
@@ -458,14 +462,15 @@ def _parse_version_with_beta(version: str) -> tuple:
     :rtype: tuple
     """
     # Check if version contains beta suffix
-    if 'b' in version:
+    if "b" in version:
         # Split on 'b' to separate base version and beta number
-        base_version, beta_part = version.split('b', 1)
-        base_parts = [int(x) for x in base_version.split('.')]
+        base_version, beta_part = version.split("b", 1)
+        base_parts = [int(x) for x in base_version.split(".")]
         beta_number = int(beta_part) if beta_part.isdigit() else 0
         return tuple(base_parts + [beta_number])
     # Release version - use infinity for beta part so it sorts after beta versions
-    base_parts = [int(x) for x in version.split('.')]
-    return tuple(base_parts + [float('inf')])
+    base_parts = [int(x) for x in version.split(".")]
+    return tuple(base_parts + [float("inf")])
+
 
 # cSpell:enable

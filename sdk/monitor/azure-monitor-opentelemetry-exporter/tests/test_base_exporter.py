@@ -21,8 +21,8 @@ from azure.monitor.opentelemetry.exporter.export._base import (
 )
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _REQUESTS_MAP, 
-    _STATSBEAT_STATE, 
+    _REQUESTS_MAP,
+    _STATSBEAT_STATE,
 )
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
@@ -38,8 +38,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _UNKNOWN,
     _exception_categories,
 )
-from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorExporterClient
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     MessageData,
     MetricDataPoint,
     MetricsData,
@@ -101,13 +101,15 @@ class TestBaseExporter(unittest.TestCase):
     def setUp(self) -> None:
         _REQUESTS_MAP.clear()
         _STATSBEAT_STATE.clear()
-        _STATSBEAT_STATE.update({
-            "INITIAL_FAILURE_COUNT": 0,
-            "INITIAL_SUCCESS": False,
-            "SHUTDOWN": False,
-            "CUSTOM_EVENTS_FEATURE_SET": False,
-            "LIVE_METRICS_FEATURE_SET": False,
-        })
+        _STATSBEAT_STATE.update(
+            {
+                "INITIAL_FAILURE_COUNT": 0,
+                "INITIAL_SUCCESS": False,
+                "SHUTDOWN": False,
+                "CUSTOM_EVENTS_FEATURE_SET": False,
+                "LIVE_METRICS_FEATURE_SET": False,
+            }
+        )
 
     def tearDown(self):
         clean_folder(self._base.storage._path)
@@ -177,10 +179,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
         storage_directory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
-        self.assertEqual(
-            base._storage_directory,
-            storage_directory
-        )
+        self.assertEqual(base._storage_directory, storage_directory)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_no_storage_directory_and_invalid_instrumentation_key(self, mock_get_temp_dir):
@@ -212,10 +211,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
         storage_directory = _get_storage_directory(instrumentation_key="")
-        self.assertNotEqual(
-            base._storage_directory,
-            storage_directory
-        )
+        self.assertNotEqual(base._storage_directory, storage_directory)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.getpass.getuser")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
@@ -249,10 +245,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
         storage_directory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
-        self.assertEqual(
-            base._storage_directory,
-            storage_directory
-        )
+        self.assertEqual(base._storage_directory, storage_directory)
         mock_get_user.assert_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
@@ -320,19 +313,15 @@ class TestBaseExporter(unittest.TestCase):
     # STORAGE TESTS
     # ========================================================================
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
-    @mock.patch.object(TelemetryItem, "from_dict")
-    def test_transmit_from_storage_success(self, dict_patch, format_patch):
+    def test_transmit_from_storage_success(self):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
         blob_mock.lease.return_value = True
         envelope_mock = {"name": "test", "time": "time"}
         blob_mock.get.return_value = [envelope_mock]
-        dict_patch.return_value = {"name": "test", "time": "time"}
-        format_patch.return_value = envelope_mock
         exporter.storage.gets.return_value = [blob_mock]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=1,
@@ -343,20 +332,16 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_called_once()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
-    @mock.patch.object(TelemetryItem, "from_dict")
-    def test_transmit_from_storage_store_again(self, dict_patch, format_patch):
+    def test_transmit_from_storage_store_again(self):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
         blob_mock.lease.return_value = True
         envelope_mock = {"name": "test", "time": "time"}
         blob_mock.get.return_value = [envelope_mock]
-        dict_patch.return_value = {"name": "test", "time": "time"}
-        format_patch.return_value = envelope_mock
         exporter.storage.gets.return_value = [blob_mock]
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code"):
-            with mock.patch.object(AzureMonitorClient, "track", throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorExporterClient, "track", throw(HttpResponseError)):
                 exporter._transmit_from_storage()
         exporter.storage.gets.assert_called_once()
         blob_mock.lease.assert_called()
@@ -382,22 +367,21 @@ class TestBaseExporter(unittest.TestCase):
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
         blob_mock.lease.return_value = True
-        
+
         blob_mock.get.return_value = None
         exporter.storage.gets.return_value = [blob_mock]
         transmit_mock = mock.Mock()
         exporter._transmit = transmit_mock
-        
+
         # This should not raise a TypeError
         exporter._transmit_from_storage()
-        
+
         # Verify that the blob was leased and deleted (since data was None)
         exporter.storage.gets.assert_called_once()
         blob_mock.lease.assert_called_once()
         blob_mock.get.assert_called_once()
         blob_mock.delete.assert_called_once()  # Corrupted blob should be deleted
         transmit_mock.assert_not_called()  # No transmission should occur
-
 
     def test_format_storage_telemetry_item(self):
         time = datetime.now()
@@ -425,7 +409,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "MessageData")
@@ -443,7 +427,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "EventData")
@@ -465,7 +449,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "ExceptionData")
@@ -503,7 +487,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "MetricData")
@@ -539,7 +523,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "RemoteDependencyData")
@@ -563,7 +547,7 @@ class TestBaseExporter(unittest.TestCase):
         ti.data = base
 
         # Format is called on custom serialized TelemetryItem
-        converted_ti = ti.from_dict(ti.as_dict())
+        converted_ti = TelemetryItem(ti.as_dict())
         format_ti = _format_storage_telemetry_item(converted_ti)
         self.assertTrue(validate_telemetry_item(format_ti, ti))
         self.assertEqual(format_ti.data.base_type, "RequestData")
@@ -573,43 +557,43 @@ class TestBaseExporter(unittest.TestCase):
         """Test that when storage.put() returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
         the method continues without any special handling."""
         exporter = BaseExporter(disable_offline_storage=False)
-        
+
         # Mock storage.put() to return success
         exporter.storage = mock.Mock()
         exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
-        
+
         test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
         serialized_envelopes = [envelope.as_dict() for envelope in test_envelopes]
         exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-        
+
         # Verify storage.put was called with the serialized envelopes
         exporter.storage.put.assert_called_once_with(serialized_envelopes)
 
     def test_handle_transmit_from_storage_success_triggers_transmit(self):
         exporter = BaseExporter(disable_offline_storage=False)
-        
-        with mock.patch.object(exporter, '_transmit_from_storage') as mock_transmit_from_storage:
+
+        with mock.patch.object(exporter, "_transmit_from_storage") as mock_transmit_from_storage:
             test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
-            
+
             exporter._handle_transmit_from_storage(test_envelopes, ExportResult.SUCCESS)
-            
+
             mock_transmit_from_storage.assert_called_once()
 
     def test_handle_transmit_from_storage_no_storage(self):
         exporter = BaseExporter(disable_offline_storage=True)
-        
+
         self.assertIsNone(exporter.storage)
-        
+
         test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
-        
+
         exporter._handle_transmit_from_storage(test_envelopes, ExportResult.SUCCESS)
         exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_from_storage_no_storage(self):
         exporter = BaseExporter(disable_offline_storage=True)
-        
+
         self.assertIsNone(exporter.storage)
-        
+
         exporter._transmit_from_storage()
 
     # ========================================================================
@@ -619,14 +603,14 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmit_http_error_retryable(self):
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
             m.return_value = True
-            with mock.patch.object(AzureMonitorClient, "track", throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorExporterClient, "track", throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_http_error_not_retryable(self):
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
             m.return_value = False
-            with mock.patch.object(AzureMonitorClient, "track", throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorExporterClient, "track", throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
@@ -638,7 +622,7 @@ class TestBaseExporter(unittest.TestCase):
         self._base.client._config.redirect_policy.max_redirects = 2
         prev_host = self._base.client._config.host
         error = HttpResponseError(response=response)
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.side_effect = error
             result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
@@ -653,7 +637,7 @@ class TestBaseExporter(unittest.TestCase):
         response.headers = None
         error = HttpResponseError(response=response)
         prev_host = self._base.client._config.host
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.side_effect = error
             result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
@@ -666,7 +650,7 @@ class TestBaseExporter(unittest.TestCase):
         response.headers = {"location": "123"}
         error = HttpResponseError(response=response)
         prev_host = self._base.client._config.host
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.side_effect = error
             result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
@@ -674,12 +658,12 @@ class TestBaseExporter(unittest.TestCase):
             self.assertEqual(self._base.client._config.host, prev_host)
 
     def test_transmit_request_error(self):
-        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceRequestError, message="error")):
+        with mock.patch.object(AzureMonitorExporterClient, "track", throw(ServiceRequestError, message="error")):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_200(self):
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=1,
@@ -697,7 +681,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test", time=datetime.now()),
             test_envelope,
         ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=3,
                 items_accepted=1,
@@ -723,7 +707,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test", time=datetime.now()),
             test_envelope,
         ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=3,
                 items_accepted=2,
@@ -811,7 +795,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_transmit_request_error_statsbeat(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceRequestError, message="error")):
+        with mock.patch.object(AzureMonitorExporterClient, "track", throw(ServiceRequestError, message="error")):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -821,7 +805,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_request_exception(self):
-        with mock.patch.object(AzureMonitorClient, "track", throw(Exception)):
+        with mock.patch.object(AzureMonitorExporterClient, "track", throw(Exception)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
@@ -835,7 +819,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_transmit_request_exception_statsbeat(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch.object(AzureMonitorClient, "track", throw(Exception)):
+        with mock.patch.object(AzureMonitorExporterClient, "track", throw(Exception)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -853,7 +837,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_200(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=1,
@@ -883,7 +867,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test", time=datetime.now()),
             test_envelope,
         ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=3,
                 items_accepted=1,
@@ -900,7 +884,7 @@ class TestBaseExporter(unittest.TestCase):
         stats_mock.assert_called_once()
         # We do not record any network statsbeat for 206 status code
         self.assertEqual(len(_REQUESTS_MAP), 2)
-        self.assertIsNone(_REQUESTS_MAP.get('retry'))
+        self.assertIsNone(_REQUESTS_MAP.get("retry"))
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
@@ -921,7 +905,7 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test", time=datetime.now()),
             test_envelope,
         ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
+        with mock.patch.object(AzureMonitorExporterClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=3,
                 items_accepted=2,
@@ -1143,9 +1127,7 @@ class TestBaseExporter(unittest.TestCase):
             authentication_policy=TEST_AUTH_POLICY,
         )
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "TEST_CREDENTIAL_ENV_VAR"
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "TEST_CREDENTIAL_ENV_VAR"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_authentication_credential")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_auth_policy")
     def test_credential_env_var_and_arg(self, mock_add_credential_policy, mock_get_authentication_credential):
@@ -1155,16 +1137,14 @@ class TestBaseExporter(unittest.TestCase):
         mock_add_credential_policy.assert_called_once_with("TEST_CREDENTIAL_ENV_VAR", TEST_AUTH_POLICY, None)
         mock_get_authentication_credential.assert_called_once_with(authentication_policy=TEST_AUTH_POLICY)
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "TEST_CREDENTIAL_ENV_VAR"
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "TEST_CREDENTIAL_ENV_VAR"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_authentication_credential")
     def test_statsbeat_no_credential(self, mock_get_authentication_credential):
         mock_get_authentication_credential.return_value = "TEST_CREDENTIAL_ENV_VAR"
         statsbeat_exporter = AzureMonitorMetricExporter(is_sdkstats=True)
         self.assertIsNone(statsbeat_exporter._credential)
         mock_get_authentication_credential.assert_not_called()
-    
+
     def test_get_auth_policy(self):
         class TestCredential:
             def get_token(self):
@@ -1197,9 +1177,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result._credential, credential)
         self.assertEqual(result._scopes, ("test_audience/.default",))
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"})
     def test_get_authentication_credential_arg(self):
         TEST_CREDENTIAL = "TEST_CREDENTIAL"
         result = _get_authentication_credential(
@@ -1207,89 +1185,73 @@ class TestBaseExporter(unittest.TestCase):
         )
         self.assertEqual(result, TEST_CREDENTIAL)
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
     def test_get_authentication_credential_system_assigned(self, mock_managed_identity, mock_logger):
         MOCK_MANAGED_IDENTITY_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CREDENTIAL
-        result = _get_authentication_credential(
-            foo="bar"
-        )
+        result = _get_authentication_credential(foo="bar")
         mock_logger.assert_not_called()
         self.assertEqual(result, MOCK_MANAGED_IDENTITY_CREDENTIAL)
         mock_managed_identity.assert_called_once_with()
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID"
-    })
+    @mock.patch.dict(
+        "os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID"}
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
     def test_get_authentication_credential_client_id(self, mock_managed_identity, mock_logger):
         MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
-        result = _get_authentication_credential(
-            foo="bar"
-        )
+        result = _get_authentication_credential(foo="bar")
         mock_logger.assert_not_called()
         self.assertEqual(result, MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL)
         mock_managed_identity.assert_called_once_with(client_id="TEST_CLIENT_ID")
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID=bar"
-    })
+    @mock.patch.dict(
+        "os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID=bar"}
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
     def test_get_authentication_credential_misformatted(self, mock_managed_identity, mock_logger):
         # Even a single misformatted pair means Entra ID auth is skipped.
         MOCK_MANAGED_IDENTITY_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CREDENTIAL
-        result = _get_authentication_credential(
-            foo="bar"
-        )
+        result = _get_authentication_credential(foo="bar")
         mock_logger.error.assert_called_once()
         self.assertIsNone(result)
         mock_managed_identity.assert_not_called()
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "ClientId=TEST_CLIENT_ID"
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "ClientId=TEST_CLIENT_ID"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
     def test_get_authentication_credential_no_auth(self, mock_managed_identity):
         MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
-        result = _get_authentication_credential(
-            foo="bar"
-        )
+        result = _get_authentication_credential(foo="bar")
         self.assertIsNone(result)
         mock_managed_identity.assert_not_called()
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=foobar;ClientId=TEST_CLIENT_ID"
-    })
+    @mock.patch.dict(
+        "os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=foobar;ClientId=TEST_CLIENT_ID"}
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
     def test_get_authentication_credential_no_aad(self, mock_managed_identity):
         MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
-        result = _get_authentication_credential(
-            foo="bar"
-        )
+        result = _get_authentication_credential(foo="bar")
         self.assertIsNone(result)
         mock_managed_identity.assert_not_called()
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID"
-    })
+    @mock.patch.dict(
+        "os.environ", {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID"}
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
     def test_get_authentication_credential_error(self, mock_managed_identity):
         MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         mock_managed_identity.side_effect = ValueError("TEST ERROR")
-        result = _get_authentication_credential(
-            foo="bar"
-        )
+        result = _get_authentication_credential(foo="bar")
         self.assertIsNone(result)
         mock_managed_identity.assert_called_once_with(client_id="TEST_CLIENT_ID")
 
@@ -1320,9 +1282,21 @@ class MockResponse:
         self.reason = reason
         self.content = content
         self.raw = MockRaw()
+        self._content_consumed = False
+
+    def iter_content(self, chunk_size=1):
+        content_bytes = self.content.encode() if isinstance(self.content, str) else self.content
+        for i in range(0, len(content_bytes), chunk_size):
+            yield content_bytes[i : i + chunk_size]
+        self._content_consumed = True
+
+    def iter_bytes(self, chunk_size=None):
+        return self.iter_content(chunk_size or 1)
+
+    def close(self):
+        pass
 
 
 class MockRaw:
     def __init__(self):
         self.enforce_content_length = False
-

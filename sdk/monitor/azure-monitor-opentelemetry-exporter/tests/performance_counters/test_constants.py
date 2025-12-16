@@ -15,9 +15,7 @@ from azure.monitor.opentelemetry.exporter._performance_counters._constants impor
     _PROCESSOR_TIME,
     _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
-    _QUICKPULSE_METRIC_NAME_MAPPINGS
-)
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPULSE_METRIC_NAME_MAPPINGS
 
 
 class TestPerformanceCounterConstants(unittest.TestCase):
@@ -42,7 +40,9 @@ class TestPerformanceCounterConstants(unittest.TestCase):
         self.assertIsInstance(_REQUEST_EXECUTION_TIME, tuple)
         self.assertEqual(len(_REQUEST_EXECUTION_TIME), 2)
         self.assertEqual(_REQUEST_EXECUTION_TIME[0], "azuremonitor.performancecounter.requestexecutiontime")
-        self.assertEqual(_REQUEST_EXECUTION_TIME[1], "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Request Execution Time")
+        self.assertEqual(
+            _REQUEST_EXECUTION_TIME[1], "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Request Execution Time"
+        )
 
     def test_request_rate_constant(self):
         """Test request rate constant values."""
@@ -99,10 +99,10 @@ class TestPerformanceCounterConstants(unittest.TestCase):
             _PROCESS_PRIVATE_BYTES,
             _PROCESSOR_TIME,
         ]
-        
+
         self.assertIsInstance(_PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS, dict)
         self.assertEqual(len(_PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS), len(expected_mappings))
-        
+
         for metric_tuple in expected_mappings:
             otel_name, quickpulse_name = metric_tuple
             self.assertIn(otel_name, _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS)
@@ -121,7 +121,7 @@ class TestPerformanceCounterConstants(unittest.TestCase):
             _PROCESS_PRIVATE_BYTES,
             _PROCESSOR_TIME,
         ]
-        
+
         for constant in constants:
             with self.subTest(constant=constant):
                 self.assertIsInstance(constant, tuple)
@@ -142,12 +142,11 @@ class TestPerformanceCounterConstants(unittest.TestCase):
             _PROCESS_PRIVATE_BYTES,
             _PROCESSOR_TIME,
         ]
-        
+
         otel_names = [constant[0] for constant in constants]
         unique_names = set(otel_names)
-        
-        self.assertEqual(len(otel_names), len(unique_names), 
-                        "Duplicate OpenTelemetry metric names found")
+
+        self.assertEqual(len(otel_names), len(unique_names), "Duplicate OpenTelemetry metric names found")
 
     def test_quickpulse_perf_counters_unique_otel(self):
         """Test that all Quickpulse and Performance Counters metric names are unique."""
@@ -168,17 +167,18 @@ class TestPerformanceCounterConstants(unittest.TestCase):
             _PROCESS_PRIVATE_BYTES,
             _PROCESSOR_TIME,
         ]
-        
+
         expected_prefix = "azuremonitor.performancecounter."
-        
+
         for constant in constants:
             otel_name = constant[0]
             with self.subTest(metric_name=otel_name):
-                self.assertTrue(otel_name.startswith(expected_prefix),
-                               f"Metric name '{otel_name}' does not start with '{expected_prefix}'")
+                self.assertTrue(
+                    otel_name.startswith(expected_prefix),
+                    f"Metric name '{otel_name}' does not start with '{expected_prefix}'",
+                )
                 # Check that it doesn't end with the prefix (i.e., has additional content)
-                self.assertGreater(len(otel_name), len(expected_prefix),
-                                  f"Metric name '{otel_name}' is too short")
+                self.assertGreater(len(otel_name), len(expected_prefix), f"Metric name '{otel_name}' is too short")
 
     def test_quickpulse_metric_names_follow_convention(self):
         """Test that all Quickpulse metric names follow the expected Windows performance counter convention."""
@@ -193,14 +193,16 @@ class TestPerformanceCounterConstants(unittest.TestCase):
             _PROCESS_PRIVATE_BYTES,
             _PROCESSOR_TIME,
         ]
-        
+
         for constant in constants:
             quickpulse_name = constant[1]
             with self.subTest(metric_name=quickpulse_name):
                 # All should start with backslash (Windows performance counter format)
-                self.assertTrue(quickpulse_name.startswith("\\"),
-                               f"Quickpulse name '{quickpulse_name}' does not start with '\\'")
+                self.assertTrue(
+                    quickpulse_name.startswith("\\"), f"Quickpulse name '{quickpulse_name}' does not start with '\\'"
+                )
                 # Should contain at least one more backslash (category\\counter format)
                 backslash_count = quickpulse_name.count("\\")
-                self.assertGreaterEqual(backslash_count, 2,
-                                       f"Quickpulse name '{quickpulse_name}' doesn't follow \\Category\\Counter format")
+                self.assertGreaterEqual(
+                    backslash_count, 2, f"Quickpulse name '{quickpulse_name}' doesn't follow \\Category\\Counter format"
+                )
