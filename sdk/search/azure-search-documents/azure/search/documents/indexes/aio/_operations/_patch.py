@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, cast, List, Sequence, Union, Optional
+from typing import Any, cast, List, Sequence, Union, Optional, TYPE_CHECKING
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -16,6 +16,9 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+
+if TYPE_CHECKING:
+    from ....aio import SearchClient
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
     _SearchIndexerClientOperationsMixin as _SearchIndexerClientOperationsMixinGenerated,
@@ -419,6 +422,24 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """
         return await self._get_index_statistics(
             name=index_name,
+            **kwargs,
+        )
+
+    def get_search_client(self, index_name: str, **kwargs: Any) -> "SearchClient":
+        """Return a client to perform operations on Search.
+
+        :param index_name: The name of the index. Required.
+        :type index_name: str
+        :return: A SearchClient for operations on the named index.
+        :rtype: ~azure.search.documents.aio.SearchClient
+        """
+        # pylint: disable=import-outside-toplevel
+        from ....aio import SearchClient
+
+        return SearchClient(
+            endpoint=self._config.endpoint,
+            index_name=index_name,
+            credential=self._config.credential,
             **kwargs,
         )
 
