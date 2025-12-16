@@ -393,6 +393,25 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             **kwargs,
         )
 
+    @distributed_trace
+    def get_index_statistics(
+        self,
+        index_name: str,
+        **kwargs: Any,
+    ) -> _models.GetIndexStatisticsResult:
+        """Returns statistics for the given index, including a document count and storage usage.
+
+        :param index_name: The name of the index to retrieve statistics for. Required.
+        :type index_name: str
+        :return: GetIndexStatisticsResult
+        :rtype: ~azure.search.documents.indexes.models.GetIndexStatisticsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self._get_index_statistics(
+            name=index_name,
+            **kwargs,
+        )
+
 
 class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGenerated):
     """Custom operations mixin for SearchIndexerClient."""
@@ -742,29 +761,27 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     @distributed_trace
     def reset_skills(
         self,
-        skillset_name: str,
-        skill_names: _models.SkillNames,
-        *,
-        content_type: str = "application/json",
+        skillset: Union[str, _models.SearchIndexerSkillset],
+        skill_names: List[str],
         **kwargs: Any,
     ) -> None:
         """Reset an existing skillset in a search service.
 
-        :param skillset_name: The name of the skillset to reset. Required.
-        :type skillset_name: str
-        :param skill_names: The names of the skills to reset. If not specified, all skills in the
-         skillset will be reset.
-        :type skill_names: ~azure.search.documents.indexes.models.SkillNames
-        :keyword content_type: Body Parameter content-type. Default value is "application/json".
-        :paramtype content_type: str
+        :param skillset: The skillset to reset skills for. Can be the skillset name or a SearchIndexerSkillset object.
+        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :param skill_names: The names of the skills to reset.
+        :type skill_names: list[str]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        try:
+            name: str = skillset.name  # type: ignore
+        except AttributeError:
+            name = skillset  # type: ignore
         return self._reset_skills(
-            name=skillset_name,
-            skill_names=skill_names,
-            content_type=content_type,
+            name=name,
+            skill_names=_models.SkillNames(skill_names=skill_names),
             **kwargs,
         )
 

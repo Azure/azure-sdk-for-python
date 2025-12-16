@@ -1054,7 +1054,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_index_statistics(self, name: str, **kwargs: Any) -> _models2.GetIndexStatisticsResult:
+    async def _get_index_statistics(self, name: str, **kwargs: Any) -> _models2.GetIndexStatisticsResult:
         """Returns statistics for the given index, including a document count and storage usage.
 
         :param name: The name of the index. Required.
