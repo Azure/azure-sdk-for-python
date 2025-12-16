@@ -133,3 +133,23 @@ class KeyVaultSettingsClientPreparer(BaseClientPreparer):
         return self.create_client_from_credential(
             KeyVaultSettingsClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
+    
+
+class KeyVaultEkmClientPreparer(BaseClientPreparer):
+    def __call__(self, fn):
+        async def _preparer(test_class, api_version, **kwargs):
+            self._skip_if_not_configured(api_version)
+            client = self.create_ekm_client(api_version=api_version, **kwargs)
+
+            async with client:
+                await fn(test_class, client, **kwargs)
+
+        return _preparer
+
+    def create_ekm_client(self, **kwargs):
+        from azure.keyvault.administration.aio import KeyVaultEkmClient
+
+        credential = self.get_credential(KeyVaultEkmClient, is_async=True)
+        return self.create_client_from_credential(
+            KeyVaultEkmClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
+        )

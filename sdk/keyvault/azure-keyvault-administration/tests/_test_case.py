@@ -148,6 +148,28 @@ class KeyVaultSettingsClientPreparer(BaseClientPreparer):
             KeyVaultSettingsClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
 
+class KeyVaultEkmClientPreparer(BaseClientPreparer):
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+
+    def __call__(self, fn):
+        def _preparer(test_class, api_version, **kwargs):
+            self._skip_if_not_configured(api_version)
+            client = self.create_ekm_client(api_version=api_version, **kwargs)
+
+            with client:
+                fn(test_class, client, **kwargs)
+
+        return _preparer
+
+    def create_ekm_client(self, **kwargs):
+        from azure.keyvault.administration import KeyVaultEkmClient
+
+        credential = self.get_credential(KeyVaultEkmClient)
+        return self.create_client_from_credential(
+            KeyVaultEkmClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
+        )
+
 
 def get_decorator(**kwargs):
     """returns a test decorator for test parameterization"""
