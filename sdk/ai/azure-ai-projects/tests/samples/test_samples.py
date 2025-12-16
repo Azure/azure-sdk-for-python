@@ -19,10 +19,15 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from pydantic import BaseModel
 
+
 class SampleExecutor:
     """Helper class for executing sample files with proper environment setup and credential mocking."""
 
-    tokenCredential: Optional[TokenCredential | AsyncTokenCredential | FakeTokenCredential | AsyncFakeCredential] = None
+    # Note that Python 3.9 doesn't support the | operator for type unions in annotations. That syntax was introduced
+    # in Python 3.10. So here we use Union from the typing module instead.
+    tokenCredential: Optional[
+        Union[TokenCredential, AsyncTokenCredential, FakeTokenCredential, AsyncFakeCredential]
+    ] = None
 
     class TestReport(BaseModel):
         """Schema for validation test report."""
@@ -185,7 +190,9 @@ Always respond with `reason` indicating the reason for the response.""",
         """Validate sample output using synchronous OpenAI client."""
         endpoint = os.environ["AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT"]
         print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
-        assert isinstance(self.tokenCredential, TokenCredential) or isinstance(self.tokenCredential, FakeTokenCredential)
+        assert isinstance(self.tokenCredential, TokenCredential) or isinstance(
+            self.tokenCredential, FakeTokenCredential
+        )
         with (
             AIProjectClient(
                 endpoint=endpoint, credential=cast(TokenCredential, self.tokenCredential)
@@ -200,7 +207,9 @@ Always respond with `reason` indicating the reason for the response.""",
         """Validate sample output using asynchronous OpenAI client."""
         endpoint = os.environ["AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT"]
         print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
-        assert isinstance(self.tokenCredential, AsyncTokenCredential) or isinstance(self.tokenCredential, AsyncFakeCredential)
+        assert isinstance(self.tokenCredential, AsyncTokenCredential) or isinstance(
+            self.tokenCredential, AsyncFakeCredential
+        )
         async with (
             AsyncAIProjectClient(
                 endpoint=endpoint, credential=cast(AsyncTokenCredential, self.tokenCredential)
@@ -349,7 +358,11 @@ class TestSamples(AzureRecordedTestCase):
 
     def _get_sample_environment_variables_map(self, operation_group: Optional[str] = None) -> dict[str, str]:
         return {
-            "AZURE_AI_PROJECT_ENDPOINT": "azure_ai_projects_tests_project_endpoint" if operation_group is None else f"azure_ai_projects_tests_{operation_group}_project_endpoint",
+            "AZURE_AI_PROJECT_ENDPOINT": (
+                "azure_ai_projects_tests_project_endpoint"
+                if operation_group is None
+                else f"azure_ai_projects_tests_{operation_group}_project_endpoint"
+            ),
             "AZURE_AI_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_model_deployment_name",
             "IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_image_generation_model_deployment_name",
             "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",

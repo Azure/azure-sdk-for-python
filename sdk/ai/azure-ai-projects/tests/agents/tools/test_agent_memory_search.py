@@ -75,9 +75,9 @@ class TestAgentMemorySearch(TestBase):
 
             memory_store_name: Final[str] = "test_memory_store"
             agent_name: Final[str] = "memory-search-agent"
-            scope: Final[str]  = "test_user_123"
+            scope: Final[str] = "test_user_123"
 
-            # Delete memory store, if it already exists. Do this cleaup only
+            # Delete memory store, if it already exists. Do this cleanup only
             # in live mode so we don't get logs of this call in test recordings.
             if is_live_and_not_recording():
                 try:
@@ -102,7 +102,6 @@ class TestAgentMemorySearch(TestBase):
                 assert memory_store.name == memory_store_name
                 assert memory_store.id
                 assert memory_store.description == "Test memory store for agent conversations"
-
 
                 # Create memory search tool
                 tool = MemorySearchTool(

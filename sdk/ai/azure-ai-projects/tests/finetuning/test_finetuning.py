@@ -17,11 +17,7 @@ from test_base import (
     GLOBAL_STANDARD_TRAINING_TYPE,
     DEVELOPER_TIER_TRAINING_TYPE,
 )
-from devtools_testutils import (
-    recorded_by_proxy,
-    RecordedTransport,
-    is_live
-)
+from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
