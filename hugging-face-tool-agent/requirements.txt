@@ -1,4 +1,4 @@
-./azure-ai-agentserver-core/dist/azure_ai_agentserver_core-1.0.0b7-py3-none-any.whl
-./azure-ai-agentserver-agentframework/dist/azure_ai_agentserver_agentframework-1.0.0b7-py3-none-any.whl
+azure-ai-agentserver-core/dist/azure_ai_agentserver_core-1.0.0b7-py3-none-any.whl
+azure-ai-agentserver-agentframework/dist/azure_ai_agentserver_agentframework-1.0.0b7-py3-none-any.whl
 pytest==8.4.2
 python-dotenv==1.1.1
