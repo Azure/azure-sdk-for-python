@@ -927,7 +927,7 @@ print(fine_tuning_job)
 
 ## Tracing
 
-**Note:** Tracing functionality is in preliminary preview and is subject to change. Spans, attributes, and events may be modified in future versions.
+**Note:** Tracing functionality is in preliminary preview and is subject to change. Spans, attributes and events may be modified in future versions.
 
 You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
 
