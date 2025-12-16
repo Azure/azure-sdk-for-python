@@ -95,8 +95,7 @@ with (
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
 
-    # Print result (should contain "Azure")
-    print(f"==> Result: {response.output_text}")
+    print(f"Agent response: {response.output_text}")
 
     # Clean up resources by deleting the agent version
     # This prevents accumulation of unused agent versions in your project
