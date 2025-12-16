@@ -40,9 +40,8 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
     to the batch.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self._actions_queue: List[IndexAction] = []
+    def __init__(self) -> None:
+        self._actions: List[IndexAction] = []
 
     def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions) if self.actions else 0)[:1024]
@@ -132,14 +131,14 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
             self._actions = []
         return list(self._actions)
 
-    @actions.setter
-    def actions(self, value: List[IndexAction]) -> None:
-        """Set the list of index actions.
+    # @actions.setter
+    # def actions(self, value: List[IndexAction]) -> None:
+    #     """Set the list of index actions.
 
-        :param value: The list of index actions
-        :type value: list[~azure.search.documents.models.IndexAction]
-        """
-        self._actions = value if value is not None else []
+    #     :param value: The list of index actions
+    #     :type value: list[~azure.search.documents.models.IndexAction]
+    #     """
+    #     self._actions = value if value is not None else []
 
     def dequeue_actions(self, **kwargs: Any) -> List[IndexAction]:
         # pylint: disable=unused-argument

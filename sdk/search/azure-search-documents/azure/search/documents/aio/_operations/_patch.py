@@ -348,7 +348,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
         semantic_query: Optional[str] = None,
-        search_fields: Optional[Union[List[str], str]] = None,
+        search_fields: Optional[List[str]] = None,
         search_mode: Optional[Union[str, _models.SearchMode]] = None,
         query_language: Optional[Union[str, _models.QueryLanguage]] = None,
         query_speller: Optional[Union[str, _models.QuerySpellerType]] = None,
@@ -357,7 +357,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         query_answer_threshold: Optional[float] = None,
         query_caption: Optional[Union[str, _models.QueryCaptionType]] = None,
         query_caption_highlight_enabled: Optional[bool] = None,
-        semantic_fields: Optional[Union[List[str], str]] = None,
+        semantic_fields: Optional[List[str]] = None,
         semantic_configuration_name: Optional[str] = None,
         select: Optional[Union[List[str], str]] = None,
         skip: Optional[int] = None,
@@ -419,10 +419,11 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
             is a need to use different queries between the base retrieval and ranking phase, and the L2
             semantic phase.
-        :keyword search_fields: The list of field names to which to scope the full-text search. When
-            using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
-            each fielded search expression take precedence over any field names listed in this parameter.
-        :paramtype search_fields: list[str] or str
+        :keyword search_fields: The comma-separated list of field names to which to scope the full-text
+            search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
+            field names of each fielded search expression take precedence over any field names listed in
+            this parameter.
+        :paramtype search_fields: list[str]
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
             matched in order to count the document as a match. Possible values include: 'any', 'all'.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
@@ -453,8 +454,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :keyword bool query_caption_highlight_enabled: This parameter is only valid if the query type is 'semantic' when
             query caption is set to 'extractive'. Determines whether highlighting is enabled.
             Defaults to 'true'.
-        :keyword semantic_fields: The list of field names used for semantic search.
-        :paramtype semantic_fields: list[str] or str
+        :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
+        :paramtype semantic_fields: list[str]
         :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
             processing documents for queries of type semantic.
         :paramtype semantic_configuration_name: str
@@ -605,7 +606,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        search_fields: Optional[str] = None,
+        search_fields: Optional[list[str]] = None,
         top: Optional[int] = None,
         **kwargs: Any,
     ) -> List[_models.AutocompleteItem]:
@@ -634,8 +635,10 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             that must be covered by an autocomplete query in order for the query to be reported as a
             success. This parameter can be useful for ensuring search availability even for services with
             only one replica. The default is 80.
-        :keyword str search_fields: The comma-separated list of field names to consider when querying for
-            auto-completed terms. Target fields must be included in the specified suggester.
+        :keyword search_fields: The comma-separated list of field names to consider when querying for
+            auto-completed terms. Target fields must be included in the specified suggester. Default value
+            is None.
+        :paramtype search_fields: list[str]
         :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1
             and 100. The default is 5.
         :return: List of autocomplete results.
