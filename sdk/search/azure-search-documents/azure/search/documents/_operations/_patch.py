@@ -97,7 +97,7 @@ def _build_search_request(
     highlight_post_tag: Optional[str] = None,
     highlight_pre_tag: Optional[str] = None,
     minimum_coverage: Optional[float] = None,
-    order_by: Optional[Union[List[str], str]] = None,
+    order_by: Optional[List[str]] = None,
     query_type: Optional[Union[str, _models.QueryType]] = None,
     scoring_parameters: Optional[List[str]] = None,
     scoring_profile: Optional[str] = None,
@@ -113,7 +113,7 @@ def _build_search_request(
     query_caption_highlight_enabled: Optional[bool] = None,
     semantic_fields: Optional[List[str]] = None,
     semantic_configuration_name: Optional[str] = None,
-    select: Optional[Union[List[str], str]] = None,
+    select: Optional[List[str]] = None,
     skip: Optional[int] = None,
     top: Optional[int] = None,
     scoring_statistics: Optional[Union[str, _models.ScoringStatistics]] = None,
@@ -142,6 +142,7 @@ def _build_search_request(
     :keyword float minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
         must be covered by a search query in order for the query to be reported as a success.
     :keyword order_by: The list of OData $orderby expressions by which to sort the results.
+    :paramtype order_by: list[str]
     :keyword query_type: The type of query syntax to use for the search text.
     :keyword list[str] scoring_parameters: The list of scoring parameters to use for the search query.
     :keyword str scoring_profile: The name of the scoring profile to evaluate match scores for the search query.
@@ -162,7 +163,7 @@ def _build_search_request(
     :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
     :paramtype semantic_fields: list[str]
     :keyword str semantic_configuration_name: The name of the semantic configuration to use for the search.
-    :keyword select: The list of field names to retrieve in the search results.
+    :keyword list[str] select: The list of field names to retrieve in the search results.
     :keyword int skip: The number of search results to skip.
     :keyword int top: The maximum number of search results to retrieve.
     :keyword scoring_statistics: The scoring statistics to retrieve for the search query.
@@ -178,12 +179,6 @@ def _build_search_request(
     :return: SearchRequest
     :rtype: ~azure.search.documents.models.SearchRequest
     """
-    # Convert list parameters to comma-separated strings if needed
-    if isinstance(select, list):
-        select = ",".join(select)
-    if isinstance(order_by, list):
-        order_by = ",".join(order_by)
-
     # Build complex query parameters
     answers = None
     if query_answer:
@@ -536,7 +531,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        order_by: Optional[Union[List[str], str]] = None,
+        order_by: Optional[List[str]] = None,
         query_type: Optional[Union[str, _models.QueryType]] = None,
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
@@ -552,7 +547,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         query_caption_highlight_enabled: Optional[bool] = None,
         semantic_fields: Optional[List[str]] = None,
         semantic_configuration_name: Optional[str] = None,
-        select: Optional[Union[List[str], str]] = None,
+        select: Optional[List[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
         scoring_statistics: Optional[Union[str, _models.ScoringStatistics]] = None,
@@ -597,7 +592,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             desc to indicate descending. The default is ascending order. Ties will be broken by the match
             scores of documents. If no OrderBy is specified, the default sort order is descending by
             document match score. There can be at most 32 $orderby clauses.
-        :paramtype order_by: list[str] or str
+        :paramtype order_by: list[str]
         :keyword query_type: A value that specifies the syntax of the search query. The default is
             'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
             'simple', 'full', "semantic".
@@ -654,7 +649,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :paramtype semantic_configuration_name: str
         :keyword select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
             in the schema are included.
-        :paramtype select: list[str] or str
+        :paramtype select: list[str]
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
             If you need to scan documents in sequence, but cannot use $skip due to this limitation,
             consider using $orderby on a totally-ordered key and $filter with a range query instead.
@@ -874,9 +869,9 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
-        order_by: Optional[str] = None,
-        search_fields: Optional[str] = None,
-        select: Optional[str] = None,
+        order_by: Optional[List[str]] = None,
+        search_fields: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
         top: Optional[int] = None,
         **kwargs: Any,
     ) -> List[_models.SuggestResult]:
@@ -900,15 +895,15 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             that must be covered by a suggestion query in order for the query to be reported as a success.
             This parameter can be useful for ensuring search availability even for services with only one
             replica. The default is 80.
-        :keyword str order_by: The comma-separated list of OData $orderby expressions by which to sort the
+        :keyword list[str] order_by: The comma-separated list of OData $orderby expressions by which to sort the
             results. Each expression can be either a field name or a call to either the geo.distance() or
             the search.score() functions. Each expression can be followed by asc to indicate ascending, or
             desc to indicate descending. The default is ascending order. Ties will be broken by the match
             scores of documents. If no $orderby is specified, the default sort order is descending by
             document match score. There can be at most 32 $orderby clauses.
-        :keyword str search_fields: The comma-separated list of field names to search for the specified
+        :keyword list[str] search_fields: The comma-separated list of field names to search for the specified
             search text. Target fields must be included in the specified suggester.
-        :keyword str select: The comma-separated list of fields to retrieve. If unspecified, only the key
+        :keyword list[str] select: The comma-separated list of fields to retrieve. If unspecified, only the key
             field will be included in the results.
         :keyword int top: The number of suggestions to retrieve. This must be a value between 1 and 100.
             The default is 5.
