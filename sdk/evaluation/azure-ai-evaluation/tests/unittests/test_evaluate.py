@@ -37,6 +37,8 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _apply_target_to_data,
     _rename_columns_conditionally,
     _convert_results_to_aoai_evaluation_results,
+    _process_rows,
+    _aggregate_label_defect_metrics,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -718,6 +720,31 @@ class TestEvaluate:
         assert "bad_thing.mixed_metric" not in aggregation
         assert "bad_thing.boolean_with_nan" not in aggregation
         assert "bad_thing.boolean_with_none" not in aggregation
+
+    def test_aggregate_label_defect_metrics_with_nan_in_details(self):
+        """Test that NaN/None values in details column are properly ignored during aggregation."""
+        data = {
+            "evaluator.protected_material_label": [True, False, True, False],
+            "evaluator.protected_material_details": [
+                {"detail1": 1, "detail2": 0},
+                np.nan,  # Failed evaluation
+                {"detail1": 0, "detail2": 1},
+                None,  # Another failure case
+            ],
+        }
+        df = pd.DataFrame(data)
+        
+        label_cols, defect_rates = _aggregate_label_defect_metrics(df)
+        
+        # Should calculate defect rate for label column (all 4 rows)
+        assert "evaluator.protected_material_defect_rate" in defect_rates
+        assert defect_rates["evaluator.protected_material_defect_rate"] == 0.5
+        
+        # Should calculate defect rates for detail keys (only from 2 valid dict rows)
+        assert "evaluator.protected_material_details.detail1_defect_rate" in defect_rates
+        assert "evaluator.protected_material_details.detail2_defect_rate" in defect_rates
+        assert defect_rates["evaluator.protected_material_details.detail1_defect_rate"] == 0.5
+        assert defect_rates["evaluator.protected_material_details.detail2_defect_rate"] == 0.5
 
     @pytest.mark.skip(reason="Breaking CI by crashing pytest somehow")
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file):
