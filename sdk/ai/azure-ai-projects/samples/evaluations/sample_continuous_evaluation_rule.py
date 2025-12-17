@@ -12,8 +12,8 @@ DESCRIPTION:
     the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference
     for more information.
 
-PREQUISITE:
-    To enable continuous evaluation, plase assign project managed identity with the following steps:
+PREREQUISITE:
+    To enable continuous evaluation, please assign project managed identity with the following steps:
     1) Open https://portal.azure.com
     2) Search for the AI Foundry project from search bar
     3) Choose "Access control (IAM)" -> "Add"
