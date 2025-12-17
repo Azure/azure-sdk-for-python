@@ -15,7 +15,6 @@ from ._constants import (
     KubernetesEnvironmentVariable,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
-    SNAPSHOT_REFERENCE_TAG,
 )
 
 # Feature flag filter names
@@ -41,6 +40,7 @@ LOAD_BALANCING_FEATURE = "LB"
 AI_CONFIGURATION_FEATURE = "AI"
 AI_CHAT_COMPLETION_FEATURE = "AICC"
 AI_FOUNDRY_SDK_FEATURE = "USE_AI_FOUNDRY_SDK"
+SNAPSHOT_REFERENCE_TAG = "SnapshotRef"
 
 # Package name constants
 AZURE_AI_PROJECTS_PACKAGE = "azure-ai-projects"

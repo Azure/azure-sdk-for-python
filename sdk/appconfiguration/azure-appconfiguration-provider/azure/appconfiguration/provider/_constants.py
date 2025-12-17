@@ -12,6 +12,8 @@ FEATURE_MANAGEMENT_KEY = "feature_management"
 FEATURE_FLAG_KEY = "feature_flags"
 FEATURE_FLAG_PREFIX = ".appconfig.featureflag/"
 FEATURE_FLAG_REFERENCE_KEY = "FeatureFlagReference"
+ALLOCATION_ID_KEY = "AllocationId"
+ETAG_KEY = "ETag"
 
 # ------------------------------------------------------------------------
 # Environment Variable Constants
@@ -46,5 +48,3 @@ SNAPSHOT_NAME_FIELD = "snapshot_name"
 # Miscellaneous Constants
 # ------------------------------------------------------------------------
 NULL_CHAR = "\0"
-ALLOCATION_ID_KEY = "AllocationId"
-ETAG_KEY = "ETag"
