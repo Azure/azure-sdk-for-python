@@ -1097,10 +1097,8 @@ class _RestField:
     def __set__(self, obj: Model, value) -> None:
         # Clear the cached deserialized object when setting a new value
         cache_attr = f"_deserialized_{self._rest_name}"
-        try:
+        if hasattr(obj, cache_attr):
             object.__delattr__(obj, cache_attr)
-        except AttributeError:
-            pass
 
         if value is None:
             # we want to wipe out entries if users set attr to None
