@@ -145,16 +145,22 @@ class _QueryExecutionContextBase(object):
                 self._client, self._client._global_endpoint_manager, callback, **self._options
             )
 
-        while True:
+        max_retries = 3
+        attempt = 0
+        while attempt <= max_retries:
             try:
                 return await execute_fetch()
             except exceptions.CosmosHttpResponseError as e:
                 if exceptions._partition_range_is_gone(e):
+                    attempt += 1
+                    if attempt > max_retries:
+                        raise  # Exhausted retries, propagate error
+
                     # Refresh routing map to get new partition key ranges
                     self._client.refresh_routing_map_provider()
-                    # Retry the fetch
+                    # Retry immediately (no backoff needed for partition splits)
                     continue
-                raise
+                raise  # Not a partition split error, propagate immediately
 
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):

@@ -1,5 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+import time
 from unittest import mock
 
 import pytest
@@ -167,6 +168,16 @@ class TestQueryFeedRangeAsync:
     async def test_query_with_feed_range_async_during_partition_split_combined_async(self, container_id):
         container = await get_container(container_id)
 
+        # Differentiate behavior based on container type
+        if container_id == SINGLE_PARTITION_CONTAINER_ID:
+            # Single partition: starts at 400 RU/s, increase to trigger split
+            target_throughput = 11000
+            print(f"Single-partition container: increasing from ~400 to {target_throughput}")
+        else:  # MULTI_PARTITION_CONTAINER_ID
+            # Multi-partition: starts at 30000 RU/s, increase further to trigger more splits
+            target_throughput = 60000
+            print(f"Multi-partition container: increasing from 30000 to {target_throughput}")
+
         # Get feed ranges before split
         feed_ranges_before_split = [feed_range async for feed_range in container.read_feed_ranges()]
         print(f"BEFORE SPLIT: Number of feed ranges: {len(feed_ranges_before_split)}")
@@ -201,8 +212,11 @@ class TestQueryFeedRangeAsync:
 
         print(f"Found {len(expected_pk_values)} unique partition keys before split")
 
-        # Trigger split once
-        await test_config.TestConfig.trigger_split_async(container, 11000)
+        # Trigger split
+        # await test_config.TestConfig.trigger_split_async(container, target_throughput)
+        container.replace_throughput(target_throughput)
+        # wait for the split to begin
+        time.sleep(20)
 
         # Test 1: Basic query with stale feed ranges (SDK should handle split)
         actual_pk_values = set()
