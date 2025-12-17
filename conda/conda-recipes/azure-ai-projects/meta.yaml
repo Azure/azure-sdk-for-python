@@ -36,7 +36,7 @@ test:
     - azure.ai.projects
 
 about:
-  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects"
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/aiprojects/azure-ai-projects"
   license: MIT
   license_family: MIT
   license_file: 

@@ -28,28 +28,19 @@ pr:
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: ai
+    ServiceDirectory: aiprojects
     TestProxy: true
     BuildDocs: true
     TestTimeoutInMinutes: 60
-    # The job "Test ubuntu2404_pypy39" in the "python - ai" pipeline hangs and eventually times out.
+    # The job "Test ubuntu2404_pypy39" in the "python - aiprojects" pipeline hangs and eventually times out.
     # Disable it until the issue is understood.
     MatrixConfigs:
       - Name: communication_ci_matrix
-        Path: sdk/ai/platform-matrix.json
+        Path: sdk/aiprojects/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
     MatrixFilters:
       - PythonVersion=^(?!pypy3).*
     Artifacts:
-    - name: azure-ai-agents
-      safeName: azureaiagents
-    - name: azure-ai-voicelive
-      safeName: azureaivoicelive
-    # These packages are deprecated:
-    # - name: azure-ai-inference
-    #   safeName: azureaiinference
-    # - name: azure-ai-generative
-    #   safeName: azureaigenerative
-    # - name: azure-ai-resources
-    #   safeName: azureairesources
+    - name: azure-ai-projects
+      safeName: azureaiprojects
