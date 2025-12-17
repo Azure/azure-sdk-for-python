@@ -31,6 +31,7 @@ This repo is currently migrating all checks from a slower `tox`-based framework,
 |`generate`| Regenerates the code. | `azpysdk generate .` |
 |`breaking`| Checks for breaking changes. | `azpysdk breaking .` |
 |`samples`| Runs the package's samples. | `azpysdk samples .` |
+|`devtest`| Tests a package against dependencies installed from a dev index. | `azpysdk devtest .` |
 
 ## Common arguments
 
