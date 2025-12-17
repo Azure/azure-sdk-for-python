@@ -3732,8 +3732,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
             parsed_url = urlparse(request.http_request.url)
             existing_queries = dict(parse_qsl(parsed_url.query))
-            existing_queries["srh"] = ",".join([quote(h) for h in request_headers.keys()])
-            existing_queries["srq"] = ",".join([quote(qp) for qp in request_query_params.keys()])
             quoted_query_params = {k: quote(v) for k, v in request_query_params.items()}
             new_queries = {**existing_queries, **quoted_query_params}
             url = urlunparse(parsed_url._replace(query="&".join([f"{k}={v}" for k, v in new_queries.items()])))

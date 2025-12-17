@@ -309,6 +309,10 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         self._add_query(QueryStringConstants.SIGNED_CORRELATION_ID, kwargs.pop('correlation_id', None))
 
     def get_value_to_append(self, query):
+        if query == QueryStringConstants.SIGNED_REQUEST_HEADERS:
+            return (self._sts_srh or "") + "\n"
+        if query == QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS:
+            return (self._sts_srq or "") + "\n"
         return_value = self.query_dict.get(query) or ''
         return return_value + '\n'
 

@@ -190,6 +190,10 @@ class _SharedAccessHelper(object):
         self.query_dict = {}
         self.string_to_sign = ""
 
+        # STS-only values for dynamic user delegation SAS
+        self._sts_srh = ""  # newline-delimited "k:v" + trailing newline (or empty)
+        self._sts_srq = ""  # newline-delimited "k:v" + leading newline (or empty)
+
     def _add_query(self, name, val):
         if val:
             self.query_dict[name] = str(val) if val is not None else None
@@ -233,14 +237,24 @@ class _SharedAccessHelper(object):
     def add_request_headers(self, request_headers):
         if not request_headers:
             return
-        serialized = [f"{k}:{v}" for k, v in request_headers.items()]
-        self._add_query(QueryStringConstants.SIGNED_REQUEST_HEADERS, "\n".join(serialized) + "\n")
+
+        # String-to-Sign (not encoded): "k1:v1\nk2:v2\n...kn:vn\n"
+        self._sts_srh = "\n".join([f"{k}:{v}" for k, v in request_headers.items()]) + "\n"
+
+        # SAS query param: comma-separated list of encoded header keys only
+        srh_keys = ",".join([url_quote(k) for k, _ in request_headers.items()])
+        self._add_query(QueryStringConstants.SIGNED_REQUEST_HEADERS, srh_keys)
 
     def add_request_query_params(self, request_query_params):
         if not request_query_params:
             return
-        serialized = [f"{k}:{v}" for k, v in request_query_params.items()]
-        self._add_query(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS, "\n" + "\n".join(serialized))
+
+        # String-to-Sign (not encoded): "k1:v1\nk2:v2\n...kn:vn\n"
+        self._sts_srq = "\n" + "\n".join([f"{k}:{v}" for k, v in request_query_params.items()])
+
+        # SAS query param: comma-separated list of encoded query-param keys only
+        srq_keys = ",".join([url_quote(k) for k, _ in request_query_params.items()])
+        self._add_query(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS, srq_keys)
 
     def add_account_signature(self, account_name, account_key):
         def get_value_to_append(query):
