@@ -1,5 +1,10 @@
 # Release History
 
+## 3.3.1 (2025-12-15)
+
+### Other Changes
+  - This package has been deprecated and will no longer be maintained after 09-30-2025. This package will only receive security fixes until 09-30-2025.
+
 ## 3.3.0 (2024-06-17)
 
 ### Features Added
