@@ -1,20 +1,16 @@
 import argparse
-from subprocess import CalledProcessError
 import sys
 import os
 import glob
 
 from typing import Optional, List
 
-from .Check import Check
 from ci_tools.functions import (
     install_into_venv,
     uninstall_from_venv,
-    is_error_code_5_allowed,
     discover_targeted_packages,
 )
-from ci_tools.scenario.generation import create_package_and_install
-from ci_tools.variables import discover_repo_root, set_envvar_defaults
+from ci_tools.variables import discover_repo_root
 from ci_tools.logging import logger
 
 from .install_and_test import InstallAndTest
