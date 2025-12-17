@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from azure.appconfiguration._scope import get_default_scope
+from azure.appconfiguration._credential_scope import get_default_scope
 
 # Expected scope constants
 _EXPECTED_PUBLIC_CLOUD_SCOPE = "https://appconfig.azure.com/.default"
