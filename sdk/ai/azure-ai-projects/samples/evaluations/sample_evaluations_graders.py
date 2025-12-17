@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -87,7 +87,7 @@ with (
     testing_criteria = [
         {
             "type": "label_model",
-            "model": "{{aoai_deployment_and_model}}",
+            "model": model_deployment_name,
             "input": [
                 {
                     "role": "developer",
@@ -117,7 +117,7 @@ with (
         {
             "type": "score_model",
             "name": "score",
-            "model": "{{aoai_deployment_and_model}}",
+            "model": model_deployment_name,
             "input": [
                 {
                     "role": "system",

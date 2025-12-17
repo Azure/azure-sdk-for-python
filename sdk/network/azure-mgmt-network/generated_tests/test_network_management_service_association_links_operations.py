@@ -25,7 +25,7 @@ class TestNetworkManagementServiceAssociationLinksOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             subnet_name="str",
-            api_version="2024-10-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

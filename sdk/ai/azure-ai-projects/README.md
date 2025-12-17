@@ -259,7 +259,11 @@ Generate images based on text prompts with customizable resolution, quality, and
 <!-- SNIPPET:sample_agent_image_generation.tool_declaration -->
 
 ```python
-tool = ImageGenTool(quality="low", size="1024x1024")
+tool = ImageGenTool(  # type: ignore[call-overload]
+    model=image_generation_model,  # Model such as "gpt-image-1-mini"  # type: ignore
+    quality="low",
+    size="1024x1024",
+)
 ```
 
 <!-- END SNIPPET -->
@@ -269,11 +273,10 @@ After calling `responses.create()`, you can download file using the returned res
 
 ```python
 image_data = [output.result for output in response.output if output.type == "image_generation_call"]
-
 if image_data and image_data[0]:
     print("Downloading generated image...")
     filename = "microsoft.png"
-    file_path = os.path.abspath(filename)
+    file_path = os.path.join(tempfile.gettempdir(), filename)
 
     with open(file_path, "wb") as f:
         f.write(base64.b64decode(image_data[0]))
@@ -348,7 +351,7 @@ tool = OpenApiAgentTool(
     openapi=OpenApiFunctionDefinition(
         name="get_weather",
         spec=openapi_weather,
-        description="Retrieve weather information for a location",
+        description="Retrieve weather information for a location.",
         auth=OpenApiAnonymousAuthDetails(),
     )
 )
@@ -573,6 +576,9 @@ Enable multi-agent collaboration where agents can communicate and delegate tasks
 tool = A2ATool(
     project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
 )
+# If the connection is missing target, we need to set the A2A endpoint URL.
+if os.environ.get("A2A_ENDPOINT"):
+    tool.base_url = os.environ["A2A_ENDPOINT"]
 ```
 
 <!-- END SNIPPET -->
@@ -917,6 +923,42 @@ fine_tuning_job = openai_client.fine_tuning.jobs.create(
     # Learn more - https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/en-us/explore/global-infrastructure/data-residency/
 )
 print(fine_tuning_job)
+```
+
+<!-- END SNIPPET -->
+
+## Tracing
+
+**Note:** Tracing functionality is in preliminary preview and is subject to change. Spans, attributes, and events may be modified in future versions.
+
+You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
+
+### Installation
+
+Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
+
+```bash
+pip install "azure-ai-projects>=2.0.0b1" azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry azure-monitor-opentelemetry
+```
+
+You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
+
+To connect to Aspire Dashboard or another OpenTelemetry compatible backend, install OTLP exporter:
+
+```bash
+pip install opentelemetry-exporter-otlp
+```
+
+### How to enable tracing
+
+Here is a code sample that shows how to enable Azure Monitor tracing:
+
+<!-- SNIPPET:sample_agent_basic_with_azure_monitor_tracing.setup_azure_monitor_tracing -->
+
+```python
+# Enable Azure Monitor tracing
+application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()
+configure_azure_monitor(connection_string=application_insights_connection_string)
 ```
 
 <!-- END SNIPPET -->

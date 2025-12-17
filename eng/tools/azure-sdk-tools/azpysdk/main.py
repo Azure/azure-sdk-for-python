@@ -8,7 +8,7 @@ A minimal command-line interface using argparse. This file provides a
 from __future__ import annotations
 
 import argparse
-import sys
+import shutil
 import os
 from typing import Sequence, Optional
 
@@ -24,6 +24,7 @@ from .pyright import pyright
 from .next_pyright import next_pyright
 from .ruff import ruff
 from .verifytypes import verifytypes
+from .apistub import apistub
 from .verify_sdist import verify_sdist
 from .whl import whl
 from .sdist import sdist
@@ -35,6 +36,7 @@ from .generate import generate
 from .breaking import breaking
 from .mindependency import mindependency
 from .latestdependency import latestdependency
+from .devtest import devtest
 
 from ci_tools.logging import configure_logging, logger
 
@@ -90,6 +92,7 @@ def build_parser() -> argparse.ArgumentParser:
     next_pyright().register(subparsers, [common])
     ruff().register(subparsers, [common])
     verifytypes().register(subparsers, [common])
+    apistub().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])
     whl().register(subparsers, [common])
     sdist().register(subparsers, [common])
@@ -101,6 +104,7 @@ def build_parser() -> argparse.ArgumentParser:
     breaking().register(subparsers, [common])
     mindependency().register(subparsers, [common])
     latestdependency().register(subparsers, [common])
+    devtest().register(subparsers, [common])
 
     return parser
 
@@ -122,6 +126,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if not hasattr(args, "func"):
         parser.print_help()
         return 1
+
+    # default to uv if available
+    uv_path = shutil.which("uv")
+    if uv_path:
+        os.environ["TOX_PIP_IMPL"] = "uv"
 
     try:
         result = args.func(args)

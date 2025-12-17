@@ -13,22 +13,23 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 
-class TextTranslationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class TextTranslationClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for TextTranslationClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
-         https://api.cognitive.microsofttranslator.com). Required.
+         `https://api.cognitive.microsofttranslator.com
+     <https://api.cognitive.microsofttranslator.com>`_). Required.
     :type endpoint: str
-    :keyword api_version: Mandatory API version parameter. Default value is "3.0". Note that
-     overriding this default value may result in unsupported behavior.
+    :keyword api_version: Mandatory API version parameter. Default value is "2025-10-01-preview".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "3.0")
+        api_version: str = kwargs.pop("api_version", "2025-10-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

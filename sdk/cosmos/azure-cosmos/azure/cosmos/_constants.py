@@ -22,17 +22,25 @@
 """Class for defining internal constants in the Azure Cosmos database service.
 """
 
-
+from enum import IntEnum
 from typing_extensions import Literal
+# cspell:ignore PPAF
+
+class TimeoutScope:
+    """Defines the scope of timeout application"""
+    OPERATION: Literal["operation"] = "operation"  # Apply timeout to entire logical operation
+    PAGE: Literal["page"] = "page"  # Apply timeout to individual page requests
 
 # cspell:ignore reranker
-
 
 class _Constants:
     """Constants used in the azure-cosmos package"""
 
     UserConsistencyPolicy: Literal["userConsistencyPolicy"] = "userConsistencyPolicy"
     DefaultConsistencyLevel: Literal["defaultConsistencyLevel"] = "defaultConsistencyLevel"
+    OperationStartTime: Literal["operationStartTime"] = "operationStartTime"
+    # whether to apply timeout to the whole logical operation or just a page request
+    TimeoutScope: Literal["timeoutScope"] = "timeoutScope"
 
     # GlobalDB related constants
     WritableLocations: Literal["writableLocations"] = "writableLocations"
@@ -40,13 +48,12 @@ class _Constants:
     Name: Literal["name"] = "name"
     DatabaseAccountEndpoint: Literal["databaseAccountEndpoint"] = "databaseAccountEndpoint"
     DefaultEndpointsRefreshTime: int = 5 * 60 * 1000 # milliseconds
+    EnablePerPartitionFailoverBehavior: Literal["enablePerPartitionFailoverBehavior"] = "enablePerPartitionFailoverBehavior" #pylint: disable=line-too-long
 
     # ServiceDocument Resource
     EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
 
     # Environment variables
-    NON_STREAMING_ORDER_BY_DISABLED_CONFIG: str = "AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"
-    NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT: str = "False"
     HS_MAX_ITEMS_CONFIG: str = "AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"
     HS_MAX_ITEMS_CONFIG_DEFAULT: int = 1000
     MAX_ITEM_BUFFER_VS_CONFIG: str = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"
@@ -74,6 +81,10 @@ class _Constants:
     FAILURE_PERCENTAGE_TOLERATED = "AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"
     FAILURE_PERCENTAGE_TOLERATED_DEFAULT: int = 90
     # -------------------------------------------------------------------------
+    # Only applicable when per partition automatic failover is enabled --------
+    TIMEOUT_ERROR_THRESHOLD_PPAF = "AZURE_COSMOS_TIMEOUT_ERROR_THRESHOLD_FOR_PPAF"
+    TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT: int = 10
+    # -------------------------------------------------------------------------
 
     # Error code translations
     ERROR_TRANSLATIONS: dict[int, str] = {
@@ -97,5 +108,25 @@ class _Constants:
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
-
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
+        AVAILABILITY_STRATEGY_CONFIG: Literal["availabilityStrategyConfig"] = "availabilityStrategyConfig"
+        """Availability strategy config. Used either at client level or request level"""
+
+    class UserAgentFeatureFlags(IntEnum):
+        """
+        User agent feature flags.
+        Each flag represents a bit in a number to encode what features are enabled. Therefore, the first feature flag
+        will be 1, the second 2, the third 4, etc. When constructing the user agent suffix, the feature flags will be
+        used to encode a unique number representing the features enabled. This number will be converted into a hex
+        string following the prefix "F" to save space in the user agent as it is limited and appended to the user agent
+        suffix. This number will then be used to determine what features are enabled by decoding the hex string back
+        to a number and checking what bits are set.
+
+        Features being developed should align with the .NET SDK as a source of truth for feature flag assignments:
+        https://github.com/Azure/azure-cosmos-dotnet-v3/blob/master/Microsoft.Azure.Cosmos/src/Diagnostics/UserAgentFeatureFlags.cs
+
+        Example:
+            If the user agent suffix has "F3", this means that flags 1 and 2.
+        """
+        PER_PARTITION_AUTOMATIC_FAILOVER = 1
+        PER_PARTITION_CIRCUIT_BREAKER = 2

@@ -1,10 +1,15 @@
 # Release History
 
-## 1.0.2 (Unreleased)
+## 2.0.0b1 (Unreleased)
 
 ### Features Added
 
+- Added support for the latest Azure AI Translator API, including translations using LLM models, adaptive custom translations, tone variant translations, and gender-specific language translations.
+
 ### Breaking Changes
+
+- Dictionary, sentence boundaries and text alignments features have been removed, and relevant models and properties have been removed.
+- 
 
 ### Bugs Fixed
 

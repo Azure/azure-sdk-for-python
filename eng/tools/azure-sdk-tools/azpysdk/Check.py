@@ -260,3 +260,33 @@ class Check(abc.ABC):
             logger.error(f"Failed to run pip freeze: {e}")
             logger.error(e.stdout)
             logger.error(e.stderr)
+
+    def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
+        """
+        Builds the pytest arguments used for the given package directory.
+
+        :param package_dir: The package directory to build pytest args for.
+        :param args: The argparse.Namespace object containing command-line arguments.
+        :return: A list of pytest arguments.
+        """
+        log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
+        junit_path = os.path.join(package_dir, f"test-junit-{args.command}.xml")
+
+        default_args = [
+            "-rsfE",
+            f"--junitxml={junit_path}",
+            "--verbose",
+            "--cov-branch",
+            "--durations=10",
+            "--ignore=azure",
+            "--ignore=.tox",
+            "--ignore-glob=.venv*",
+            "--ignore=build",
+            "--ignore=.eggs",
+            "--ignore=samples",
+            f"--log-cli-level={log_level}",
+        ]
+
+        additional = args.pytest_args if args.pytest_args else []
+
+        return [*default_args, *additional, package_dir]
