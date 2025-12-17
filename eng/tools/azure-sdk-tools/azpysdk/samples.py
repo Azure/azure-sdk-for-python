@@ -165,9 +165,10 @@ def run_check_call_with_timeout(
     acceptable_return_codes=[],
     always_exit=False,
 ):
-    """This is copied from common_tasks.py with some additions.
-    Don't want to break anyone that's using the original code.
     """
+    Run a subprocess command with a timeout.
+    """
+
     try:
         logger.info("Command Array: {0}, Target Working Directory: {1}".format(command_array, working_directory))
         check_call(command_array, cwd=working_directory, timeout=timeout)
@@ -236,8 +237,12 @@ def run_samples(executable: str, targeted_package: str) -> None:
     # install extra dependencies for samples if needed
     try:
         with open(samples_dir_path + "/sample_dev_requirements.txt") as sample_dev_reqs:
+            logger.info("Installing extra dependencies for samples from sample_dev_requirements.txt")
             for dep in sample_dev_reqs.readlines():
-                install_into_venv(executable, ["-m", "pip", "install", dep.strip()], targeted_package)
+                try:
+                    install_into_venv(executable, [dep.strip()], targeted_package)
+                except Exception as e:
+                    logger.error(f"Failed to install dependency {dep.strip()}: {e}")
     except IOError:
         pass
 
