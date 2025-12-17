@@ -8,8 +8,8 @@ from typing import Optional, List
 from .Check import Check
 from ci_tools.functions import (
     install_into_venv,
+    uninstall_from_venv,
     is_error_code_5_allowed,
-    pip_uninstall,
 )
 from ci_tools.scenario.generation import create_package_and_install, prepare_environment
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
@@ -59,8 +59,6 @@ class optional(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for optional check")
 
-            self.install_dev_reqs(executable, args, package_dir)
-
             if in_ci():
                 if not is_check_enabled(package_dir, "optional", False):
                     logger.info(f"Package {package_name} opts-out of optional check.")
@@ -84,22 +82,27 @@ class optional(Check):
 
     # TODO copying from generation.py, remove old code later
     # TODO remove pytest() function from ci_tools.functions as it was only used in the old version of this logic
-    def prepare_and_test_optional(self, package_name: str, package_dir: str, temp_dir: str, optional: str) -> int:
+    def prepare_and_test_optional(
+        self, package_name: str, package_dir: str, temp_dir: str, target_env_name: str
+    ) -> None:
+        """
+        Prepare and test the optional environment for the given package.
+        """
         optional_configs = get_config_setting(package_dir, "optional")
 
         if len(optional_configs) == 0:
             logger.info(f"No optional environments detected in pyproject.toml within {package_dir}.")
-            return 0
+            exit(0)
 
         config_results = []
 
         for config in optional_configs:
             env_name = config.get("name")
 
-            if optional:
-                if env_name != optional:
+            if target_env_name:
+                if env_name != target_env_name:
                     logger.info(
-                        f"{env_name} does not match targeted environment {optional}, skipping this environment."
+                        f"{env_name} does not match targeted environment {target_env_name}, skipping this environment."
                     )
                     continue
 
@@ -110,7 +113,7 @@ class optional(Check):
                 distribution_directory=temp_dir,
                 target_setup=package_dir,
                 skip_install=False,
-                cache_dir=None,  # todo, resolve this for CI builds
+                cache_dir=None,
                 work_dir=temp_dir,
                 force_create=False,
                 package_type="sdist",
@@ -145,9 +148,9 @@ class optional(Check):
             # uninstall any configured packages from the optional config
             additional_uninstalls = config.get("uninstall", [])
             if additional_uninstalls:
-                # TODO merge PR that creates uninstall_from_venv to use here ?
-                uninstall_result = pip_uninstall(additional_uninstalls, python_executable=environment_exe)
-                if not uninstall_result:
+                try:
+                    uninstall_from_venv(environment_exe, additional_uninstalls, package_dir)
+                except CalledProcessError as exc:
                     logger.error(
                         f"Unable to complete removal of packages targeted for uninstall {additional_uninstalls} for {package_name}, check command output above."
                     )
@@ -156,6 +159,7 @@ class optional(Check):
 
             self.pip_freeze(environment_exe)
 
+            # TODO refactor with InstallAndTest
             # invoke tests
             log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
             junit_path = os.path.join(package_dir, f"test-junit-optional-{env_name}.xml")
@@ -195,10 +199,13 @@ class optional(Check):
                     f"pytest failed for {package_name} and optional environment {env_name} with exit code {pytest_result.returncode}."
                 )
                 config_results.append(False)
+            else:
+                logger.info(f"pytest succeeded for {package_name} and optional environment {env_name}.")
+                config_results.append(True)
 
         if all(config_results):
             logger.info(f"All optional environment(s) for {package_name} completed successfully.")
-            sys.exit(0)
+            exit(0)
         else:
             for i, config in enumerate(optional_configs):
                 if not config_results[i]:
@@ -206,4 +213,4 @@ class optional(Check):
                     logger.error(
                         f"Optional environment {config_name} for {package_name} completed with non-zero exit-code. Check test results above."
                     )
-            sys.exit(1)
+            exit(1)
