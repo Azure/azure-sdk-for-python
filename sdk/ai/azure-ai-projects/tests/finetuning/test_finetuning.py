@@ -17,11 +17,7 @@ from test_base import (
     GLOBAL_STANDARD_TRAINING_TYPE,
     DEVELOPER_TIER_TRAINING_TYPE,
 )
-from devtools_testutils import (
-    recorded_by_proxy,
-    RecordedTransport,
-    is_live
-)
+from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
@@ -340,10 +336,10 @@ class TestFineTuning(TestBase):
                         deployment_name=deployment_name,
                         deployment=deployment_config,
                     )
-
-                    while deployment_operation.status() not in ["Succeeded", "Failed"]:
-                        time.sleep(30)
-                        print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
+                    if is_live():
+                        while deployment_operation.status() not in ["Succeeded", "Failed"]:
+                            time.sleep(30)
+                            print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
 
                     print(f"[{test_prefix}] Deployment completed successfully")
                     if is_live():
