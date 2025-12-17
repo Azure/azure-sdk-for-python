@@ -56,7 +56,9 @@ __all__ = ["AzureMonitorLogExporter"]
 class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
 
-    def export(self, batch: Sequence[ReadableLogRecord], **kwargs: Any) -> LogRecordExportResult:  # pylint: disable=unused-argument
+    def export(
+        self, batch: Sequence[ReadableLogRecord], **kwargs: Any
+    ) -> LogRecordExportResult:  # pylint: disable=unused-argument
         """Export log data.
 
         :param batch: OpenTelemetry ReadableLogRecord(s) to export.
