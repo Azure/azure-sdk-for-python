@@ -28,7 +28,7 @@ ServiceFabricEnvironmentVariable = "Fabric_NodeName"  # cspell:disable-line
 # ------------------------------------------------------------------------
 TELEMETRY_KEY = "telemetry"
 METADATA_KEY = "metadata"
-SNAPSHOT_REFERENCE_TAG = "UsesSnapshotReference"
+SNAPSHOT_REFERENCE_TAG = "SnapshotRef"
 
 # ------------------------------------------------------------------------
 # Content Type and Mime Profile Constants

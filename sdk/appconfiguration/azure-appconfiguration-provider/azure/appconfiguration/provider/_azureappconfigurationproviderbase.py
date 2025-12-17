@@ -572,17 +572,15 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             is_failover_request=is_failover_request,
         )
 
-    def _deduplicate_settings(
-        self, configuration_settings: List[ConfigurationSetting]
-    ) -> Dict[str, ConfigurationSetting]:
+    def _deduplicate_settings(self, configuration_settings: List[ConfigurationSetting]) -> List[ConfigurationSetting]:
         """
         Deduplicates configuration settings by key.
 
         :param List[ConfigurationSetting] configuration_settings: The list of configuration settings to deduplicate
-        :return: A dictionary mapping keys to their unique configuration settings
-        :rtype: Dict[str, ConfigurationSetting]
+        :return: A list of unique configuration settings
+        :rtype: List[ConfigurationSetting]
         """
         unique_settings: Dict[str, ConfigurationSetting] = {}
         for settings in configuration_settings:
             unique_settings[settings.key] = settings
-        return unique_settings
+        return list(unique_settings.values())

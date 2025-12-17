@@ -426,13 +426,41 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     def _process_configurations(
         self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
     ) -> Dict[str, Any]:
+
+        expanded_settings: List[ConfigurationSetting] = []
+
+        for setting in configuration_settings:
+            if setting.content_type and SNAPSHOT_REF_CONTENT_TYPE == setting.content_type:
+                # Check if this is a snapshot reference
+
+                # Track snapshot reference usage for telemetry
+                self._tracing_context.uses_snapshot_reference = True
+                try:
+                    # Resolve the snapshot reference to actual settings
+                    snapshot_settings = client.resolve_snapshot_reference(setting)
+
+                    # Recursively process the resolved snapshot settings to handle feature flags,
+                    # configuration mapping
+                    snapshot_configuration_list = list(snapshot_settings.values())
+                    expanded_settings.extend(snapshot_configuration_list)
+                except (ValueError, AzureError) as e:
+                    logger.warning(
+                        "Failed to resolve snapshot reference for key '%s' (label: '%s'): %s",
+                        setting.key,
+                        setting.label,
+                        str(e),
+                    )
+                    # Continue processing other settings even if snapshot resolution fails
+            else:
+                expanded_settings.append(setting)
+
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
         # precedence. Only process the settings with the highest priority (i.e. the last one in the list).
-        unique_settings = self._deduplicate_settings(configuration_settings)
+        unique_settings = self._deduplicate_settings(expanded_settings)
 
         configuration_settings_processed = {}
         feature_flags_processed = []
-        for settings in unique_settings.values():
+        for settings in unique_settings:
             if self._configuration_mapper:
                 # If a map function is provided, use it to process the configuration setting
                 self._configuration_mapper(settings)
@@ -443,31 +471,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
                 if self._feature_flag_refresh_enabled:
                     self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
-            elif settings.content_type and SNAPSHOT_REF_CONTENT_TYPE == settings.content_type:
-                # Check if this is a snapshot reference
-
-                # Track snapshot reference usage for telemetry
-                self._tracing_context.uses_snapshot_reference = True
-                try:
-                    # Resolve the snapshot reference to actual settings
-                    snapshot_settings = client.resolve_snapshot_reference(settings)
-
-                    # Recursively process the resolved snapshot settings to handle feature flags,
-                    # configuration mapping
-                    snapshot_configuration_list = list(snapshot_settings.values())
-                    resolved_settings = self._process_configurations(snapshot_configuration_list, client)
-
-                    # Merge the resolved settings into our configuration
-                    configuration_settings_processed.update(resolved_settings)
-                except (ValueError, AzureError) as e:
-                    logger.warning(
-                        "Failed to resolve snapshot reference for key '%s' (label: '%s'): %s",
-                        settings.key,
-                        settings.label,
-                        str(e),
-                    )
-                    # Continue processing other settings even if snapshot resolution fails
-
             else:
                 key = self._process_key_name(settings)
                 value = self._process_key_value(settings)
