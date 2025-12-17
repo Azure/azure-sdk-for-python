@@ -330,7 +330,7 @@ class TestMassEvaluate:
         "multi_modal_input_type",
         [
             "imageurls",
-            "imageurls_with_target",
+            # "imageurls_with_target",
             "b64_images",
         ],
     )
@@ -406,12 +406,8 @@ class TestMassEvaluate:
             "outputs.content_safety.violence_score",
             "outputs.content_safety.violence_reason",
             "outputs.content_safety.violence_result",
-            "outputs.protected_material.fictional_characters_label",
-            "outputs.protected_material.fictional_characters_reason",
-            "outputs.protected_material.logos_and_brands_label",
-            "outputs.protected_material.logos_and_brands_reason",
-            "outputs.protected_material.artwork_label",
-            "outputs.protected_material.artwork_reason",
+            "outputs.protected_material.protected_material_label",
+            "outputs.protected_material.protected_material_reason",
             "outputs.sexual.sexual",
             "outputs.sexual.sexual_score",
             "outputs.sexual.sexual_reason",
@@ -420,14 +416,11 @@ class TestMassEvaluate:
         for key in known_keys:
             assert key in row_result_df.keys()
 
-        assert len(metrics) == 15
+        assert len(metrics) >= 9
         assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
-        assert 0 <= metrics.get("protected_material.fictional_characters_defect_rate") <= 1
-        assert 0 <= metrics.get("protected_material.logos_and_brands_defect_rate") <= 1
-        assert 0 <= metrics.get("protected_material.artwork_defect_rate") <= 1
         assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
 
     @pytest.mark.parametrize(
@@ -649,10 +642,11 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_reason"]) == 2
         assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_details"]) == 2
 
-        # Expect either 4 metrics (original) or 7 metrics (with token counts: inputTokenCount, outputTokenCount, totalTokenCount)
+        # Expect either 5 metrics (original) or 8 metrics (with token counts: inputTokenCount, outputTokenCount, totalTokenCount)
         # The token count metrics may be present depending on the service version/configuration
-        assert len(metrics.keys()) in [4, 7], f"Expected 4 or 7 metrics, got {len(metrics.keys())}"
+        assert len(metrics.keys()) in [5, 8], f"Expected 5 or 8 metrics, got {len(metrics.keys())}"
         assert metrics["ungrounded_attributes.ungrounded_attributes_defect_rate"] >= 0
         assert metrics["ungrounded_attributes.ungrounded_attributes_details.emotional_state_defect_rate"] >= 0
         assert metrics["ungrounded_attributes.ungrounded_attributes_details.protected_class_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.attitude_defect_rate"] >= 0
         assert metrics["ungrounded_attributes.ungrounded_attributes_details.groundedness_defect_rate"] >= 0

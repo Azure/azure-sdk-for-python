@@ -26,7 +26,7 @@ from tenacity import retry
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
-from azure.ai.evaluation._common.utils import get_default_threshold_for_evaluator
+from azure.ai.evaluation._common.utils import get_default_threshold_for_evaluator, is_onedp_project
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
