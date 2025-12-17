@@ -62,28 +62,27 @@ class StatsbeatConfig:
             self.connection_string = _get_stats_connection_string(endpoint)
 
     @classmethod
+    # pylint: disable=protected-access
     def from_exporter(cls, exporter: Any) -> Optional["StatsbeatConfig"]:
         # Create configuration from an exporter instance
         # Validate required fields from exporter
-        if (
-            not hasattr(exporter, "_instrumentation_key") or not exporter._instrumentation_key
-        ):  # pylint: disable=protected-access
+        if not hasattr(exporter, "_instrumentation_key") or not exporter._instrumentation_key:
             logger.warning("Exporter is missing a valid instrumentation key.")
             return None
-        if not hasattr(exporter, "_endpoint") or not exporter._endpoint:  # pylint: disable=protected-access
+        if not hasattr(exporter, "_endpoint") or not exporter._endpoint:
             logger.warning("Exporter is missing a valid endpoint.")
             return None
-        if not hasattr(exporter, "_region") or not exporter._region:  # pylint: disable=protected-access
+        if not hasattr(exporter, "_region") or not exporter._region:
             logger.warning("Exporter is missing a valid region.")
             return None
 
         return cls(
-            endpoint=exporter._endpoint,  # pylint: disable=protected-access
-            region=exporter._region,  # pylint: disable=protected-access
-            instrumentation_key=exporter._instrumentation_key,  # pylint: disable=protected-access
-            disable_offline_storage=exporter._disable_offline_storage,  # pylint: disable=protected-access
-            credential=exporter._credential,  # pylint: disable=protected-access
-            distro_version=exporter._distro_version,  # pylint: disable=protected-access
+            endpoint=exporter._endpoint,
+            region=exporter._region,
+            instrumentation_key=exporter._instrumentation_key,
+            disable_offline_storage=exporter._disable_offline_storage,
+            credential=exporter._credential,
+            distro_version=exporter._distro_version,
         )
 
     @classmethod

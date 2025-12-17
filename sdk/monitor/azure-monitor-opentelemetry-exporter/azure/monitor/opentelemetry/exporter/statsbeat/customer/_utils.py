@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import os
-from typing import Optional, List, Tuple, Union
+from typing import Optional, List, Tuple, Union, Any
 
 # mypy: disable-error-code="import-untyped"
 from requests import ReadTimeout, Timeout
@@ -83,11 +83,12 @@ def categorize_status_code(status_code: int) -> str:
 
 
 def _determine_client_retry_code(
-    error,
-) -> Tuple[RetryCodeType, Optional[str]]:  # pylint: disable=docstring-missing-type
+    error: Any,
+) -> Tuple[RetryCodeType, Optional[str]]:
     """Determine the retry code and message for a given error.
 
     :param error: The error that occurred
+    :type error: Any
     :return: Tuple of retry code and optional message
     :rtype: Tuple[RetryCodeType, Optional[str]]
     """

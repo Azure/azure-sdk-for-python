@@ -237,7 +237,7 @@ class _ConfigurationManager(metaclass=Singleton):
                         )
                     else:
                         logger.warning(
-                            "Version mismatch between change and config responses." "No configurations updated."
+                            "Version mismatch between change and config responses. No configurations updated."
                         )
                         # We do not update etag to allow retry on next call
                         new_state_updates.pop("etag", None)

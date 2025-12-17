@@ -297,8 +297,8 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             reason_map[reason] = current_count + count
 
     def _item_success_callback(
-        self, options: CallbackOptions
-    ) -> Iterable[Observation]:  # pylint: disable=unused-argument
+        self, _options: CallbackOptions
+    ) -> Iterable[Observation]:
         if not self.is_initialized or not self._base_attributes:
             return []
 
@@ -317,7 +317,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
 
         return observations
 
-    def _item_drop_callback(self, options: CallbackOptions) -> Iterable[Observation]:  # pylint: disable=unused-argument
+    def _item_drop_callback(self, _options: CallbackOptions) -> Iterable[Observation]:
         if not self.is_initialized or not self._base_attributes:
             return []
         observations: List[Observation] = []
@@ -344,8 +344,8 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
         return observations
 
     def _item_retry_callback(
-        self, options: CallbackOptions
-    ) -> Iterable[Observation]:  # pylint: disable=unused-argument
+        self, _options: CallbackOptions
+    ) -> Iterable[Observation]:
         if not self.is_initialized or not self._base_attributes:
             return []
         observations: List[Observation] = []

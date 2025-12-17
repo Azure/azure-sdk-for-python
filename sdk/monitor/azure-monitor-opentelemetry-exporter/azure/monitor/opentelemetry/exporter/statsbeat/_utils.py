@@ -3,7 +3,7 @@
 import os
 import logging
 import json
-from collections.abc import Iterable
+from collections.abc import Iterable  # pylint: disable=import-error
 from typing import Optional, Dict
 
 from azure.monitor.opentelemetry.exporter._constants import (
