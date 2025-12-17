@@ -27,8 +27,8 @@ def get_default_scope(endpoint: str) -> str:
     :return: The default scope for the given endpoint.
     :rtype: str
     """
-    # Normalize endpoint by stripping trailing slashes for suffix checks
-    normalized_endpoint = endpoint.rstrip("/")
+    # Normalize endpoint by stripping trailing slashes and converting to lowercase for suffix checks
+    normalized_endpoint = endpoint.rstrip("/").lower()
     if normalized_endpoint.endswith(_US_GOVERNMENT_SUFFIX_LEGACY) or normalized_endpoint.endswith(
         _US_GOVERNMENT_SUFFIX
     ):
