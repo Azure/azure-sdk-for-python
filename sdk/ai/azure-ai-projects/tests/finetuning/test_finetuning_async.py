@@ -351,8 +351,8 @@ class TestFineTuningAsync(TestBase):
                     print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
 
                 print(f"[{test_prefix}] Deployment completed successfully")
-                print(f"[{test_prefix}] Waiting for 120 seconds for deployment to be fully ready.")
-                await asyncio.sleep(120)
+                print(f"[{test_prefix}] Waiting for 10 minutes for deployment to be fully ready.")
+                await asyncio.sleep(600)
                 print(f"[{test_prefix}] Testing inference on deployment: {deployment_name}")
 
                 response = await openai_client.responses.create(
@@ -654,10 +654,6 @@ class TestFineTuningAsync(TestBase):
             await self._cleanup_test_file_async(openai_client, train_file.id)
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because not able to pause any job",
-    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_pause_job_async(self, **kwargs):
@@ -691,10 +687,6 @@ class TestFineTuningAsync(TestBase):
             print(f"[test_finetuning_pause_job] Job status after pause: {paused_job.status}")
             print(f"[test_finetuning_pause_job] Successfully paused and verified job: {running_job_id}")
 
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because not able to pause any job",
-    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_resume_job_async(self, **kwargs):
