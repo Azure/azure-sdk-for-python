@@ -24,7 +24,7 @@ from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClien
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
-    ContentCategory,
+    ContentCategoryDefinition,
 )
 
 
@@ -50,15 +50,15 @@ class TestSampleCreateClassifier(ContentUnderstandingClientTestBase):
 
         print(f"[PASS] Classifier ID generated: {analyzer_id}")
 
-        # Define content categories for classification using ContentCategory objects
+        # Define content categories for classification using ContentCategoryDefinition objects
         categories = {
-            "Loan_Application": ContentCategory(
+            "Loan_Application": ContentCategoryDefinition(
                 description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation."
             ),
-            "Invoice": ContentCategory(
+            "Invoice": ContentCategoryDefinition(
                 description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms."
             ),
-            "Bank_Statement": ContentCategory(
+            "Bank_Statement": ContentCategoryDefinition(
                 description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
             ),
         }
