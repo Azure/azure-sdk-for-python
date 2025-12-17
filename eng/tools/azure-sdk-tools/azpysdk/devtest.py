@@ -17,6 +17,8 @@ from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
 
+from .install_and_test import InstallAndTest
+
 REPO_ROOT = discover_repo_root()
 common_task_path = os.path.abspath(os.path.join(REPO_ROOT, "scripts", "devops_tasks"))
 sys.path.append(common_task_path)
@@ -122,9 +124,9 @@ def install_dev_build_packages(executable: str, pkg_name_to_exclude: str, workin
     install_packages(executable, azure_pkgs, working_directory)
 
 
-class devtest(Check):
+class devtest(InstallAndTest):
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__(package_type="sdist", proxy_url="http://localhost:5002", display_name="devtest")
 
     def register(
         self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
@@ -143,79 +145,7 @@ class devtest(Check):
             help="Additional arguments forwarded to pytest.",
         )
 
-    def run(self, args: argparse.Namespace) -> int:
-        """Run the devtest check command."""
-        logger.info("Running devtest check...")
-
-        set_envvar_defaults({"PROXY_URL": "http://localhost:5002"})
-        targeted = self.get_targeted_directories(args)
-
-        results: List[int] = []
-
-        for parsed in targeted:
-            package_dir = parsed.folder
-            package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
-            logger.info(f"Processing {package_name} for devtest check")
-
-            # install dependencies
-            try:
-                self.install_dev_reqs(executable, args, package_dir)
-            except CalledProcessError as e:
-                logger.error(f"Failed to install dev requirements: {e}")
-                results.append(1)
-                continue
-
-            try:
-                create_package_and_install(
-                    distribution_directory=staging_directory,
-                    target_setup=package_dir,
-                    skip_install=False,
-                    cache_dir=None,
-                    work_dir=staging_directory,
-                    force_create=False,
-                    package_type="sdist",
-                    pre_download_disabled=False,
-                    python_executable=executable,
-                )
-            except CalledProcessError as e:
-                logger.error(f"Failed to create and install package {package_name}: {e}")
-                results.append(1)
-                continue
-
-            if os.path.exists(TEST_TOOLS_REQUIREMENTS):
-                try:
-                    install_into_venv(executable, ["-r", TEST_TOOLS_REQUIREMENTS], package_dir)
-                except Exception as e:
-                    logger.error(f"Failed to install test tools requirements: {e}")
-                    results.append(1)
-                    continue
-            else:
-                logger.warning(f"Test tools requirements file not found at {TEST_TOOLS_REQUIREMENTS}.")
-
-            try:
-                install_dev_build_packages(executable, package_name, package_dir)
-            except Exception as e:
-                logger.error(f"Failed to install dev build packages: {e}")
-                results.append(1)
-                continue
-
-            pytest_args = self._build_pytest_args(package_dir, args)
-
-            pytest_result = self.run_venv_command(
-                executable, ["-m", "pytest", *pytest_args], cwd=package_dir, immediately_dump=True
-            )
-
-            if pytest_result.returncode != 0:
-                if pytest_result.returncode == 5 and is_error_code_5_allowed(package_dir, package_name):
-                    logger.info(
-                        "pytest exited with code 5 for %s, which is allowed for management or opt-out packages.",
-                        package_name,
-                    )
-                    # Align with tox: skip coverage when tests are skipped entirely
-                    continue
-
-                logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
-                results.append(pytest_result.returncode)
-
-        return max(results) if results else 0
+    def before_pytest(
+        self, executable: str, package_dir: str, package_name: str, staging_directory: str, args: argparse.Namespace
+    ) -> None:
+        install_dev_build_packages(executable, package_name, package_dir)

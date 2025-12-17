@@ -87,7 +87,7 @@ class InstallAndTest(Check):
                 continue
 
             try:
-                self.before_pytest(executable, package_dir, staging_directory, args)
+                self.before_pytest(executable, package_dir, package_name, staging_directory, args)
             except CalledProcessError as exc:
                 logger.error(f"Pre-pytest hook failed for {package_name}: {exc}")
                 results.append(exc.returncode or 1)
@@ -151,9 +151,9 @@ class InstallAndTest(Check):
         return None
 
     def before_pytest(
-        self, executable: str, package_dir: str, staging_directory: str, args: argparse.Namespace
+        self, executable: str, package_dir: str, package_name: str, staging_directory: str, args: argparse.Namespace
     ) -> None:
-        del executable, package_dir, staging_directory, args
+        del executable, package_dir, package_name, staging_directory, args
         return None
 
     def _install_common_requirements(self, executable: str, package_dir: str) -> None:

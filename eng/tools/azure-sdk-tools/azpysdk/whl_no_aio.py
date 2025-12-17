@@ -28,7 +28,7 @@ class whl_no_aio(InstallAndTest):
         )
 
     def before_pytest(
-        self, executable: str, package_dir: str, staging_directory: str, args: argparse.Namespace
+        self, executable: str, package_dir: str, package_name: str, staging_directory: str, args: argparse.Namespace
     ) -> None:
         uninstall_cmd = ["-m", "pip", "uninstall", "aiohttp", "--yes"]
         result = self.run_venv_command(executable, uninstall_cmd, cwd=package_dir)
