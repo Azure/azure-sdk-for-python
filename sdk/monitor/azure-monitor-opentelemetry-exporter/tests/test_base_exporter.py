@@ -1222,8 +1222,8 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_misformatted(self, mock_managed_identity, mock_logger):
-        # Even a single misformatted pair means Entra ID auth is skipped.
+    def test_get_authentication_credential_malformed(self, mock_managed_identity, mock_logger):
+        # Even a single malformed pair means Entra ID auth is skipped.
         MOCK_MANAGED_IDENTITY_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CREDENTIAL
         result = _get_authentication_credential(foo="bar")
