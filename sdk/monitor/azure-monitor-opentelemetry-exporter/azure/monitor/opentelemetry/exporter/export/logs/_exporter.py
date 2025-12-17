@@ -56,9 +56,7 @@ __all__ = ["AzureMonitorLogExporter"]
 class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
 
-    def export(
-        self, batch: Sequence[ReadableLogRecord], **_kwargs: Any
-    ) -> LogRecordExportResult:
+    def export(self, batch: Sequence[ReadableLogRecord], **_kwargs: Any) -> LogRecordExportResult:
         """Export log data.
 
         :param batch: OpenTelemetry ReadableLogRecord(s) to export.

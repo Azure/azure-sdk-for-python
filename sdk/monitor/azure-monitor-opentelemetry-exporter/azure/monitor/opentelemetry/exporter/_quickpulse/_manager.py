@@ -428,9 +428,9 @@ def _derive_metrics_from_telemetry_data(data: _TelemetryData):
 # Called by record_span/record_log when processing a span/log_record for docs filtering
 # Finds doc stream Ids and their doc filter configurations
 def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: Optional[str] = None):
-    doc_config_dict: Dict[
-        TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]
-    ] = _get_quickpulse_doc_stream_infos()  # pylint: disable=C0301
+    doc_config_dict: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = (
+        _get_quickpulse_doc_stream_infos()
+    )  # pylint: disable=C0301
     stream_ids = set()
     doc_config = {}  # type: ignore
     if isinstance(data, _RequestData):
