@@ -153,10 +153,11 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = prompty_output_dict.get("llm_output", {})
 
         if isinstance(llm_output, dict):
-            if isinstance(llm_output.get("success", ""), str):
-                success = 1 if llm_output.get("success", "").lower() == "true" else 0
+            success_value = llm_output.get("success", False)
+            if isinstance(success_value, str):
+                success = 1 if success_value.lower() == "true" else 0
             else:
-                success = 1 if llm_output.get("success", False) == True else 0
+                success = 1 if success_value else 0
             success_result = "pass" if success == 1 else "fail"
             reason = llm_output.get("explanation", "")
             return {
