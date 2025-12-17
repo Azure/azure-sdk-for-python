@@ -44,6 +44,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _THROTTLE_STATUS_CODES,
     DropCode,
 )
+
 # from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
@@ -178,8 +179,8 @@ class BaseExporter:
         # Initialize customer sdkstats if enabled
         self._customer_sdkstats_metrics = None
         if self._should_collect_customer_sdkstats():
-
             from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import collect_customer_sdkstats
+
             # Collect customer sdkstats metrics
             collect_customer_sdkstats(self)
 
@@ -197,14 +198,15 @@ class BaseExporter:
                 else:
                     blob.delete()
 
-
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
         if self.storage:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
                 result_from_storage_put = self.storage.put(envelopes_to_store)
                 if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                    _track_dropped_items_from_storage(self._customer_sdkstats_metrics, result_from_storage_put, envelopes)
+                    _track_dropped_items_from_storage(
+                        self._customer_sdkstats_metrics, result_from_storage_put, envelopes
+                    )
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
@@ -266,7 +268,9 @@ class BaseExporter:
                                 # Track dropped items in customer sdkstats, non-retryable scenario
                                 if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
                                     if error is not None and hasattr(error, "index") and error.index is not None:
-                                        _track_dropped_items(self._customer_sdkstats_metrics, [envelopes[error.index]], error.status_code)
+                                        _track_dropped_items(
+                                            self._customer_sdkstats_metrics, [envelopes[error.index]], error.status_code
+                                        )
                                 logger.error(
                                     "Data drop %s: %s %s.",
                                     error.status_code,
@@ -277,12 +281,16 @@ class BaseExporter:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                         result_from_storage = self.storage.put(envelopes_to_store, 0)
                         if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                            _track_dropped_items_from_storage(self._customer_sdkstats_metrics, result_from_storage, resend_envelopes)
+                            _track_dropped_items_from_storage(
+                                self._customer_sdkstats_metrics, result_from_storage, resend_envelopes
+                            )
                         self._consecutive_redirects = 0
                     elif resend_envelopes:
                         # Track items that would have been retried but are dropped since client has local storage disabled
                         if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                            _track_dropped_items(self._customer_sdkstats_metrics, resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+                            _track_dropped_items(
+                                self._customer_sdkstats_metrics, resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED
+                            )
                     # Mark as not retryable because we already write to storage here
                     result = ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
@@ -299,8 +307,8 @@ class BaseExporter:
                             _track_retry_items(self._customer_sdkstats_metrics, envelopes, response_error)
                         if response_error.status_code == 401:
                             logger.error(
-                                "Retryable server side error: %s. " \
-                                "Your Application Insights resource may be configured to use entra ID authentication. " \
+                                "Retryable server side error: %s. "
+                                "Your Application Insights resource may be configured to use entra ID authentication. "
                                 "Please make sure your application is configured to use the correct token credential.",
                                 response_error.message,
                             )
@@ -308,10 +316,10 @@ class BaseExporter:
                             if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
                                 _track_retry_items(self._customer_sdkstats_metrics, envelopes, response_error)
                             logger.error(
-                                "Retryable server side error: %s. " \
-                                "Your application may be configured with a token credential " \
-                                "but your Application Insights resource may be configured incorrectly. Please make sure " \
-                                "your Application Insights resource has enabled entra Id authentication and " \
+                                "Retryable server side error: %s. "
+                                "Your application may be configured with a token credential "
+                                "but your Application Insights resource may be configured incorrectly. Please make sure "
+                                "your Application Insights resource has enabled entra Id authentication and "
                                 "has the correct `Monitoring Metrics Publisher` role assigned.",
                                 response_error.message,
                             )
@@ -341,7 +349,12 @@ class BaseExporter:
                         else:
                             if not self._is_stats_exporter():
                                 if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                                    _track_dropped_items(self._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, "Error parsing redirect information.")
+                                    _track_dropped_items(
+                                        self._customer_sdkstats_metrics,
+                                        envelopes,
+                                        DropCode.CLIENT_EXCEPTION,
+                                        "Error parsing redirect information.",
+                                    )
                                 logger.error(
                                     "Error parsing redirect information.",
                                 )
@@ -354,7 +367,7 @@ class BaseExporter:
                                     self._customer_sdkstats_metrics,
                                     envelopes,
                                     DropCode.CLIENT_EXCEPTION,
-                                    "Error sending telemetry because of circular redirects. Please check the integrity of your connection string."
+                                    "Error sending telemetry because of circular redirects. Please check the integrity of your connection string.",
                                 )
                             logger.error(
                                 "Error sending telemetry because of circular redirects. "
@@ -409,7 +422,9 @@ class BaseExporter:
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
-                logger.exception("Envelopes could not be exported and are not retryable: %s.", ex)  # pylint: disable=C4769
+                logger.exception(
+                    "Envelopes could not be exported and are not retryable: %s.", ex
+                )  # pylint: disable=C4769
 
                 # Track dropped items in customer sdkstats for general exceptions
                 if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
@@ -456,7 +471,6 @@ class BaseExporter:
             and not self._instrumentation_collection
         )
 
-
     # check to see whether its the case of customer sdkstats collection
     def _should_collect_customer_sdkstats(self):
         # Import here to avoid circular dependencies
@@ -480,7 +494,8 @@ class BaseExporter:
         return self.__class__.__name__ == "_StatsBeatExporter"
 
     def _is_customer_sdkstats_exporter(self):
-        return getattr(self, '_is_customer_sdkstats', False)
+        return getattr(self, "_is_customer_sdkstats", False)
+
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:
     """Determine if response is a invalid response.
@@ -558,6 +573,7 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
                     item.data.base_data.additional_properties = None  # type: ignore
     return item
 
+
 # mypy: disable-error-code="union-attr"
 def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
     if "credential" in kwargs:
@@ -575,7 +591,11 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
                 credential = ManagedIdentityCredential()
                 return credential
     except ValueError as exc:
-        logger.error("APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc)  # pylint: disable=do-not-log-exceptions-if-not-debug
+        logger.error(
+            "APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc
+        )  # pylint: disable=do-not-log-exceptions-if-not-debug
     except Exception as e:
-        logger.error("Failed to get authentication credential and enable AAD: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
+        logger.error(
+            "Failed to get authentication credential and enable AAD: %s", e
+        )  # pylint: disable=do-not-log-exceptions-if-not-debug
     return None

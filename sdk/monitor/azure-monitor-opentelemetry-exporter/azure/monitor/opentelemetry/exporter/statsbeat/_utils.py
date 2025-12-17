@@ -34,6 +34,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
 )
 
+
 def _get_stats_connection_string(endpoint: str) -> str:
     cs_env = os.environ.get(_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME)
     if cs_env:
@@ -82,6 +83,7 @@ def _update_requests_map(type_name, value):
                 _REQUESTS_MAP[type_name] = {}
             _REQUESTS_MAP[type_name][value] = prev + 1
 
+
 def categorize_status_code(status_code: int) -> str:
     status_map = {
         400: "bad_request",
@@ -105,10 +107,11 @@ def categorize_status_code(status_code: int) -> str:
         return "server_error_5xx"
     return f"status_{status_code}"
 
+
 def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]:
-    if hasattr(error, 'status_code') and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
+    if hasattr(error, "status_code") and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
         # For specific status codes, preserve the custom message if available
-        error_message = getattr(error, 'message', None) if hasattr(error, 'message') else None
+        error_message = getattr(error, "message", None) if hasattr(error, "message") else None
         return (error.status_code, error_message or _UNKNOWN)
 
     if isinstance(error, ServiceRequestError):
@@ -117,43 +120,34 @@ def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]:
         error_message = str(error)
 
     error_message_lower = error_message.lower()
-    if 'timeout' in error_message_lower or 'timed out' in error_message_lower:
+    if "timeout" in error_message_lower or "timed out" in error_message_lower:
         return (RetryCode.CLIENT_TIMEOUT, error_message)
     return (RetryCode.CLIENT_EXCEPTION, error_message)
+
 
 def _track_successful_items(customer_sdkstats_metrics, envelopes: List[TelemetryItem]):
     if customer_sdkstats_metrics:
         for envelope in envelopes:
             telemetry_type = _get_telemetry_type(envelope)
-            customer_sdkstats_metrics.count_successful_items(
-                1,
-                telemetry_type
-            )
+            customer_sdkstats_metrics.count_successful_items(1, telemetry_type)
+
 
 def _track_dropped_items(
-        customer_sdkstats_metrics,
-        envelopes: List[TelemetryItem],
-        drop_code: DropCodeType,
-        error_message: Optional[str] = None
-    ):
+    customer_sdkstats_metrics,
+    envelopes: List[TelemetryItem],
+    drop_code: DropCodeType,
+    error_message: Optional[str] = None,
+):
     if customer_sdkstats_metrics:
         if error_message is None:
             for envelope in envelopes:
                 telemetry_type = _get_telemetry_type(envelope)
-                customer_sdkstats_metrics.count_dropped_items(
-                    1,
-                    telemetry_type,
-                    drop_code
-                )
+                customer_sdkstats_metrics.count_dropped_items(1, telemetry_type, drop_code)
         else:
             for envelope in envelopes:
                 telemetry_type = _get_telemetry_type(envelope)
-                customer_sdkstats_metrics.count_dropped_items(
-                    1,
-                    telemetry_type,
-                    drop_code,
-                    error_message
-                )
+                customer_sdkstats_metrics.count_dropped_items(1, telemetry_type, drop_code, error_message)
+
 
 def _track_retry_items(customer_sdkstats_metrics, envelopes: List[TelemetryItem], error) -> None:
     if customer_sdkstats_metrics:
@@ -163,25 +157,12 @@ def _track_retry_items(customer_sdkstats_metrics, envelopes: List[TelemetryItem]
             if isinstance(retry_code, int):
                 # For status codes, include the message if available
                 if message:
-                    customer_sdkstats_metrics.count_retry_items(
-                        1,
-                        telemetry_type,
-                        retry_code,
-                        str(message)
-                    )
+                    customer_sdkstats_metrics.count_retry_items(1, telemetry_type, retry_code, str(message))
                 else:
-                    customer_sdkstats_metrics.count_retry_items(
-                        1,
-                        telemetry_type,
-                        retry_code
-                    )
+                    customer_sdkstats_metrics.count_retry_items(1, telemetry_type, retry_code)
             else:
-                customer_sdkstats_metrics.count_retry_items(
-                    1,
-                    telemetry_type,
-                    retry_code,
-                    str(message)
-                )
+                customer_sdkstats_metrics.count_retry_items(1, telemetry_type, retry_code, str(message))
+
 
 def _track_dropped_items_from_storage(customer_sdkstats_metrics, result_from_storage_put, envelopes):
     if customer_sdkstats_metrics:
@@ -196,13 +177,18 @@ def _track_dropped_items_from_storage(customer_sdkstats_metrics, result_from_sto
             _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
         elif get_local_storage_setup_state_exception() != "":
             # For exceptions caught in _check_and_set_folder_permissions during storage setup
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put) # pylint: disable=line-too-long
+            _track_dropped_items(
+                customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put
+            )  # pylint: disable=line-too-long
         elif isinstance(result_from_storage_put, str):
             # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason # pylint: disable=line-too-long
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put) # pylint: disable=line-too-long
+            _track_dropped_items(
+                customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put
+            )  # pylint: disable=line-too-long
         else:
             # LocalFileBlob.put returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS here. Don't need to track anything in this case. # pylint: disable=line-too-long
             pass
+
 
 def _get_customer_sdkstats_export_interval() -> int:
     customer_sdkstats_ei_env = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL)

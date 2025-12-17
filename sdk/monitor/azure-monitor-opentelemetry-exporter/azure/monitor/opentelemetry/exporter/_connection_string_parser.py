@@ -45,26 +45,21 @@ class ConnectionStringParser:
         # 3. Key from connection string in environment variable
         # 4. Key from instrumentation key in environment variable
         self.instrumentation_key = (
-            code_cs.get(INSTRUMENTATION_KEY) or code_ikey or \
-                env_cs.get(INSTRUMENTATION_KEY) or env_ikey  # type: ignore
+            code_cs.get(INSTRUMENTATION_KEY) or code_ikey or env_cs.get(INSTRUMENTATION_KEY) or env_ikey  # type: ignore
         )
         # The priority of the endpoints is as follows:
         # 1. The endpoint explicitly passed in connection string
         # 2. The endpoint from the connection string in environment variable
         # 3. The default breeze endpoint
         self.endpoint = (
-            code_cs.get(INGESTION_ENDPOINT) or env_cs.get(INGESTION_ENDPOINT) or \
-                "https://dc.services.visualstudio.com"
+            code_cs.get(INGESTION_ENDPOINT) or env_cs.get(INGESTION_ENDPOINT) or "https://dc.services.visualstudio.com"
         )
         self.live_endpoint = (
-            code_cs.get(LIVE_ENDPOINT) or env_cs.get(LIVE_ENDPOINT) or \
-                "https://rt.services.visualstudio.com"
+            code_cs.get(LIVE_ENDPOINT) or env_cs.get(LIVE_ENDPOINT) or "https://rt.services.visualstudio.com"
         )
         # The AUDIENCE is a url that identifies Azure Monitor in a specific cloud
         # (For example: "https://monitor.azure.com/").
-        self.aad_audience = (
-            code_cs.get(AAD_AUDIENCE) or env_cs.get(AAD_AUDIENCE)  # type: ignore
-        )
+        self.aad_audience = code_cs.get(AAD_AUDIENCE) or env_cs.get(AAD_AUDIENCE)  # type: ignore
 
     def _validate_instrumentation_key(self) -> None:
         """Validates the instrumentation key used for Azure Monitor.

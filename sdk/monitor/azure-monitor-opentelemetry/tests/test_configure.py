@@ -295,10 +295,13 @@ class TestConfigure(unittest.TestCase):
         }
         with patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled") as instr_mock:
             instr_mock.return_value = True
-            with patch.dict('sys.modules', {
-                'azure.core.settings': Mock(settings=settings_mock),
-                'azure.core.tracing.ext.opentelemetry_span': Mock(OpenTelemetrySpan=opentelemetry_span_mock)
-            }):
+            with patch.dict(
+                "sys.modules",
+                {
+                    "azure.core.settings": Mock(settings=settings_mock),
+                    "azure.core.tracing.ext.opentelemetry_span": Mock(OpenTelemetrySpan=opentelemetry_span_mock),
+                },
+            ):
                 _setup_tracing(configurations)
                 sampler_mock.assert_called_once_with(sampling_ratio=0.5)
                 tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
@@ -308,7 +311,6 @@ class TestConfigure(unittest.TestCase):
                 self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
                 tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
                 self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
-
 
     @patch("azure.monitor.opentelemetry._configure.getLogger")
     def test_setup_logging(self, get_logger_mock):
@@ -340,21 +342,21 @@ class TestConfigure(unittest.TestCase):
             "connection_string": "test_cs",
             "logger_name": "test",
             "resource": TEST_RESOURCE,
-            "logging_formatter": formatter_init_mock
+            "logging_formatter": formatter_init_mock,
         }
 
         # Patch all the necessary modules and imports
-        with patch.dict('sys.modules', {
-            'opentelemetry._logs': Mock(set_logger_provider=set_logger_provider_mock),
-            'opentelemetry.sdk._logs': Mock(
-                LoggerProvider=lp_mock,
-                LoggingHandler=logging_handler_mock
-            ),
-            'opentelemetry.sdk._logs.export': Mock(BatchLogRecordProcessor=blrp_mock),
-            'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
-            'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
-            'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
-        }):
+        with patch.dict(
+            "sys.modules",
+            {
+                "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
+                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock, LoggingHandler=logging_handler_mock),
+                "opentelemetry.sdk._logs.export": Mock(BatchLogRecordProcessor=blrp_mock),
+                "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
+                "opentelemetry._events": Mock(_set_event_logger_provider=set_elp_mock),
+                "opentelemetry.sdk._events": Mock(EventLoggerProvider=elp_mock),
+            },
+        ):
             _setup_logging(configurations)
 
         # Verify the correct behavior
@@ -391,7 +393,7 @@ class TestConfigure(unittest.TestCase):
 
         # Create a mock handler that looks like LoggingHandler
         logging_handler_init_mock = Mock()
-        
+
         # Set up the logger to already have a LoggingHandler
         logger_mock = Mock()
         logger_mock.handlers = [logging_handler_init_mock]
@@ -400,25 +402,28 @@ class TestConfigure(unittest.TestCase):
 
         elp_init_mock = Mock()
         elp_mock.return_value = elp_init_mock
-        
+
         configurations = {
             "connection_string": "test_cs",
             "logger_name": "test",
             "resource": TEST_RESOURCE,
             "logging_formatter": None,
         }
-        
+
         # Patch all the necessary modules and imports
-        with patch.dict('sys.modules', {
-            'opentelemetry._logs': Mock(set_logger_provider=set_logger_provider_mock),
-            'opentelemetry.sdk._logs': Mock(LoggerProvider=lp_mock),
-            'opentelemetry.sdk._logs.export': Mock(BatchLogRecordProcessor=blrp_mock),
-            'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
-            'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
-            'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
-        }):
+        with patch.dict(
+            "sys.modules",
+            {
+                "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
+                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock),
+                "opentelemetry.sdk._logs.export": Mock(BatchLogRecordProcessor=blrp_mock),
+                "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
+                "opentelemetry._events": Mock(_set_event_logger_provider=set_elp_mock),
+                "opentelemetry.sdk._events": Mock(EventLoggerProvider=elp_mock),
+            },
+        ):
             _setup_logging(configurations)
-        
+
         # Verify the correct behavior
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)

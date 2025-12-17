@@ -159,7 +159,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
             # This could possibly be due to breaking change in upstream OpenTelemetry
             # Advise user to upgrade to latest OpenTelemetry version
             _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                "Exception occurred when importing Azure SDK Tracing." \
+                "Exception occurred when importing Azure SDK Tracing."
                 "Please upgrade to the latest OpenTelemetry version: %s.",
                 ex,
             )
@@ -179,7 +179,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
-            AzureMonitorLogExporter
+            AzureMonitorLogExporter,
         )
 
         resource: Resource = configurations[RESOURCE_ARG]  # type: ignore

@@ -318,10 +318,9 @@ def _is_synthetic_load(properties: Optional[Any]) -> bool:
         return False
 
     # Check both old and new semantic convention attributes for HTTP user agent
-    user_agent = (
-        properties.get("user_agent.original") or  # type: ignore  # New semantic convention
-        properties.get("http.user_agent")  # type: ignore  # Legacy semantic convention
-    )
+    user_agent = properties.get("user_agent.original") or properties.get(  # type: ignore  # New semantic convention
+        "http.user_agent"
+    )  # type: ignore  # Legacy semantic convention
 
     if user_agent and isinstance(user_agent, str):
         return "AlwaysOn" in user_agent
@@ -386,12 +385,14 @@ class Singleton(type):
             cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instance
 
+
 def _get_telemetry_type(item: TelemetryItem):
     if hasattr(item, "data") and item.data is not None:
         base_type = getattr(item.data, "base_type", None)
         if base_type:
             return _TYPE_MAP.get(base_type, _UNKNOWN)
     return _UNKNOWN
+
 
 def get_compute_type():
     if _is_on_functions():

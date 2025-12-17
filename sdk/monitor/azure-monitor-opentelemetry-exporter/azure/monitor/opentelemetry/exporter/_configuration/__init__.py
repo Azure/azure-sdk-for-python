@@ -20,18 +20,19 @@ logger = logging.getLogger(__name__)
 @dataclass
 class _ConfigurationState:
     """Immutable state object for configuration data."""
+
     etag: str = ""
     refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     version_cache: int = -1
     settings_cache: Dict[str, str] = field(default_factory=dict)
 
-    def with_updates(self, **kwargs) -> '_ConfigurationState':  # pylint: disable=C4741,C4742
+    def with_updates(self, **kwargs) -> "_ConfigurationState":  # pylint: disable=C4741,C4742
         """Create a new state object with updated values."""
         return _ConfigurationState(
-            etag=kwargs.get('etag', self.etag),
-            refresh_interval=kwargs.get('refresh_interval', self.refresh_interval),
-            version_cache=kwargs.get('version_cache', self.version_cache),
-            settings_cache=kwargs.get('settings_cache', self.settings_cache.copy())
+            etag=kwargs.get("etag", self.etag),
+            refresh_interval=kwargs.get("refresh_interval", self.refresh_interval),
+            version_cache=kwargs.get("version_cache", self.version_cache),
+            settings_cache=kwargs.get("settings_cache", self.settings_cache.copy()),
         )
 
 
@@ -65,23 +66,23 @@ class _ConfigurationManager:
 
     def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
         """Fetch configuration from OneSettings and update local cache atomically.
-        
+
         This method performs a conditional HTTP request to OneSettings using the
         current ETag for efficient caching. It atomically updates the local configuration
         state with any new settings and manages version tracking for change detection.
-        
+
         The method implements a check-and-set pattern for thread safety:
         1. Reads current state atomically to prepare request headers
         2. Makes HTTP request to OneSettings CHANGE endpoint outside locks
         3. Re-reads current state to make version comparison decisions
         4. Conditionally fetches from CONFIG endpoint if version increased
         5. Updates all state fields atomically in a single operation
-        
+
         Version comparison logic:
         - Version increase: New configuration available, fetches and caches new settings
         - Version same: No changes detected, ETag and refresh interval updated safely
         - Version decrease: Unexpected rollback state, logged as warning, no updates applied
-        
+
         Error handling:
         - CONFIG endpoint failure: ETag not updated to preserve retry capability on next call
         - Network failures: Handled by make_onesettings_request, returns default values
@@ -96,23 +97,23 @@ class _ConfigurationManager:
             This value comes from the OneSettings response and determines how frequently
             the background worker should call this method.
         :rtype: int
-        
+
         Thread Safety:
             This method is thread-safe using atomic state updates. Multiple threads can
             call this method concurrently without data corruption. The implementation uses
             a single state lock with minimal critical sections to reduce lock contention.
-            
+
             HTTP requests are performed outside locks to prevent blocking other threads
             during potentially slow network operations.
-        
+
         Caching Behavior:
             The method automatically includes ETag headers for conditional requests to
             minimize unnecessary data transfer. If the server responds with 304 Not Modified,
             only the refresh interval is updated while preserving existing configuration.
-            
+
             On CONFIG endpoint failures, the ETag is intentionally not updated to ensure
             the next request can retry fetching the same configuration version.
-            
+
         State Consistency:
             All configuration state (ETag, refresh interval, version, settings) is updated
             atomically using immutable state objects. This prevents race conditions where
@@ -135,9 +136,9 @@ class _ConfigurationManager:
         # Prepare new state updates
         new_state_updates = {}
         if response.etag is not None:
-            new_state_updates['etag'] = response.etag
+            new_state_updates["etag"] = response.etag
         if response.refresh_interval and response.refresh_interval > 0:
-            new_state_updates['refresh_interval'] = response.refresh_interval  # type: ignore
+            new_state_updates["refresh_interval"] = response.refresh_interval  # type: ignore
 
         if response.status_code == 304:
             # Not modified: Only update etag and refresh interval below
@@ -165,19 +166,22 @@ class _ConfigurationManager:
                 if config_response.status_code == 200 and config_response.settings:
                     # Validate that the versions from change and config match
                     if config_response.version == response.version:
-                        new_state_updates.update({
-                            'version_cache': response.version,  # type: ignore
-                            'settings_cache': config_response.settings  # type: ignore
-                        })
+                        new_state_updates.update(
+                            {
+                                "version_cache": response.version,  # type: ignore
+                                "settings_cache": config_response.settings,  # type: ignore
+                            }
+                        )
                     else:
-                        logger.warning("Version mismatch between change and config responses." \
-                        "No configurations updated.")
+                        logger.warning(
+                            "Version mismatch between change and config responses." "No configurations updated."
+                        )
                         # We do not update etag to allow retry on next call
-                        new_state_updates.pop('etag', None)
+                        new_state_updates.pop("etag", None)
                 else:
                     logger.warning("Unexpected response status: %d", config_response.status_code)
                     # We do not update etag to allow retry on next call
-                    new_state_updates.pop('etag', None)
+                    new_state_updates.pop("etag", None)
         else:
             # No settings or version provided
             logger.warning("No settings or version provided in config response. Config not updated.")

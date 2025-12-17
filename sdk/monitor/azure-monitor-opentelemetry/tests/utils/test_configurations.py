@@ -302,6 +302,7 @@ class TestConfigurations(TestCase):
         self.assertIsInstance(formatter, Formatter)
         # Test that the formatter works correctly with a sample log record
         import logging
+
         record = logging.LogRecord(
             name="test_logger",
             level=logging.INFO,
@@ -346,6 +347,7 @@ class TestConfigurations(TestCase):
     )
     def test_get_configurations_logging_format_param_overrides_env_var(self):
         from logging import Formatter
+
         custom_formatter = Formatter("%(levelname)s: %(message)s")
         configurations = _get_configurations(logging_formatter=custom_formatter)
 

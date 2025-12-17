@@ -33,7 +33,7 @@ class OneSettingsResponse:
         refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
         settings: Optional[Dict[str, str]] = None,
         version: Optional[int] = None,
-        status_code: int = 200
+        status_code: int = 200,
     ):
         """Initialize OneSettingsResponse with configuration data.
 
@@ -53,8 +53,9 @@ class OneSettingsResponse:
         self.status_code = status_code
 
 
-def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = None,
-                           headers: Optional[Dict[str, str]] = None) -> OneSettingsResponse:
+def make_onesettings_request(
+    url: str, query_dict: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None
+) -> OneSettingsResponse:
     """Make an HTTP request to the OneSettings API and parse the response.
 
     This function handles the complete OneSettings request lifecycle including:
@@ -96,6 +97,7 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
     except Exception as ex:  # pylint: disable=broad-exception-caught
         logger.warning("Unexpected error while fetching configuration: %s", str(ex))
         return OneSettingsResponse()
+
 
 def _parse_onesettings_response(response: requests.Response) -> OneSettingsResponse:
     """Parse an HTTP response from OneSettings into a structured response object.

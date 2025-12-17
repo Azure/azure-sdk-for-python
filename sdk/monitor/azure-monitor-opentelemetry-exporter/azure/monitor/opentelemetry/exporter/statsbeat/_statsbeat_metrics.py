@@ -80,7 +80,6 @@ class _AttachTypes:
 
 # pylint: disable=R0902
 class _StatsbeatMetrics:
-
     _COMMON_ATTRIBUTES: Dict[str, Any] = {
         "rp": _RP_Names.UNKNOWN.value,
         "attach": _AttachTypes.MANUAL,
@@ -191,7 +190,7 @@ class _StatsbeatMetrics:
             if _AKS_ARM_NAMESPACE_ID in os.environ:
                 rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
             else:
-                rpId = os.environ.get(_KUBERNETES_SERVICE_HOST , "")
+                rpId = os.environ.get(_KUBERNETES_SERVICE_HOST, "")
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_Names.VM.value

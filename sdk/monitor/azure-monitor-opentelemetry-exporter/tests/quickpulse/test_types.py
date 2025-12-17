@@ -24,9 +24,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
 )
 
 
-
 class TestTelemetryData(unittest.TestCase):
-
     @patch("azure.monitor.opentelemetry.exporter._quickpulse._types._RequestData")
     def test_from_span_server_kind_server(self, fn_mock):
         span = Mock()
@@ -62,7 +60,7 @@ class TestTelemetryData(unittest.TestCase):
         log_record = Mock()
         log_record.attributes = {
             SpanAttributes.EXCEPTION_TYPE: "SomeException",
-            SpanAttributes.EXCEPTION_MESSAGE: "An error occurred"
+            SpanAttributes.EXCEPTION_MESSAGE: "An error occurred",
         }
         data_mock = Mock()
         fn_mock._from_log_record.return_value = data_mock
@@ -82,7 +80,6 @@ class TestTelemetryData(unittest.TestCase):
 
 
 class TestRequestData(unittest.TestCase):
-
     @patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request")
     def test_from_span_with_valid_data(self, utils_mock):
         span = Mock(spec=ReadableSpan)
@@ -90,10 +87,7 @@ class TestRequestData(unittest.TestCase):
         span.start_time = 1000000000
         span.name = "test_span"
         span.status.is_ok = True
-        span.attributes = {
-            SpanAttributes.HTTP_STATUS_CODE: 200,
-            "custom_attribute": "value"
-        }
+        span.attributes = {SpanAttributes.HTTP_STATUS_CODE: 200, "custom_attribute": "value"}
         utils_mock.return_value = "http://example.com"
 
         result = _RequestData._from_span(span)
@@ -112,10 +106,7 @@ class TestRequestData(unittest.TestCase):
         span.start_time = 1000000000
         span.name = "test_span"
         span.status.is_ok = True
-        span.attributes = {
-            SpanAttributes.HTTP_STATUS_CODE: 404,
-            "custom_attribute": "value"
-        }
+        span.attributes = {SpanAttributes.HTTP_STATUS_CODE: 404, "custom_attribute": "value"}
         utils_mock.return_value = "http://example.com"
 
         result = _RequestData._from_span(span)
@@ -134,10 +125,7 @@ class TestRequestData(unittest.TestCase):
         span.start_time = 1000000000
         span.name = "test_span"
         span.status.is_ok = True
-        span.attributes = {
-            HTTP_RESPONSE_STATUS_CODE: 200,
-            "custom_attribute": "value"
-        }
+        span.attributes = {HTTP_RESPONSE_STATUS_CODE: 200, "custom_attribute": "value"}
         utils_mock.return_value = "http://example.com"
 
         result = _RequestData._from_span(span)
@@ -174,21 +162,15 @@ class TestDependencyData(unittest.TestCase):
 
     def test_http_dependency(self):
         self.span.kind = SpanKind.CLIENT
-        self.span.attributes = {
-            SpanAttributes.HTTP_METHOD: "GET",
-            SpanAttributes.HTTP_URL: "http://example.com"
-        }
+        self.span.attributes = {SpanAttributes.HTTP_METHOD: "GET", SpanAttributes.HTTP_URL: "http://example.com"}
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "HTTP")
         self.assertEqual(result.data, "http://example.com")
         self.assertEqual(result.target, "example.com")
-    
+
     def test_http_dependency_stable_semconv(self):
         self.span.kind = SpanKind.CLIENT
-        self.span.attributes = {
-            HTTP_REQUEST_METHOD: "GET",
-            SpanAttributes.HTTP_URL: "http://example.com"
-        }
+        self.span.attributes = {HTTP_REQUEST_METHOD: "GET", SpanAttributes.HTTP_URL: "http://example.com"}
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "HTTP")
         self.assertEqual(result.data, "http://example.com")
@@ -196,10 +178,7 @@ class TestDependencyData(unittest.TestCase):
 
     def test_db_dependency(self):
         self.span.kind = SpanKind.CLIENT
-        self.span.attributes = {
-            SpanAttributes.DB_SYSTEM: "mysql",
-            SpanAttributes.DB_STATEMENT: "SELECT * FROM table"
-        }
+        self.span.attributes = {SpanAttributes.DB_SYSTEM: "mysql", SpanAttributes.DB_STATEMENT: "SELECT * FROM table"}
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "mysql")
         self.assertEqual(result.data, "SELECT * FROM table")
@@ -207,51 +186,43 @@ class TestDependencyData(unittest.TestCase):
 
     def test_messaging_dependency(self):
         self.span.kind = SpanKind.CLIENT
-        self.span.attributes = {
-            SpanAttributes.MESSAGING_SYSTEM: "kafka"
-        }
+        self.span.attributes = {SpanAttributes.MESSAGING_SYSTEM: "kafka"}
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "kafka")
         self.assertEqual(result.target, "kafka")
 
     def test_rpc_dependency(self):
         self.span.kind = SpanKind.CLIENT
-        self.span.attributes = {
-            SpanAttributes.RPC_SYSTEM: "grpc"
-        }
+        self.span.attributes = {SpanAttributes.RPC_SYSTEM: "grpc"}
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "grpc")
         self.assertEqual(result.target, "grpc")
 
     def test_genai_dependency(self):
         self.span.kind = SpanKind.CLIENT
-        self.span.attributes = {
-            gen_ai_attributes.GEN_AI_SYSTEM: "genai"
-        }
+        self.span.attributes = {gen_ai_attributes.GEN_AI_SYSTEM: "genai"}
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "genai")
 
     def test_producer_dependency(self):
         self.span.kind = SpanKind.PRODUCER
-        self.span.attributes = {
-            SpanAttributes.MESSAGING_SYSTEM: "kafka"
-        }
+        self.span.attributes = {SpanAttributes.MESSAGING_SYSTEM: "kafka"}
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "Queue Message | kafka")
 
-class TestExceptionData(unittest.TestCase):
 
+class TestExceptionData(unittest.TestCase):
     def setUp(self):
         self.log_record = Mock(spec=LogRecord)
         self.log_record.attributes = {
             SpanAttributes.EXCEPTION_MESSAGE: "Test exception message",
-            SpanAttributes.EXCEPTION_STACKTRACE: "Test stack trace"
+            SpanAttributes.EXCEPTION_STACKTRACE: "Test stack trace",
         }
 
         self.span_event = Mock(spec=Event)
         self.span_event.attributes = {
             SpanAttributes.EXCEPTION_MESSAGE: "Test span event message",
-            SpanAttributes.EXCEPTION_STACKTRACE: "Test span event stack trace"
+            SpanAttributes.EXCEPTION_STACKTRACE: "Test span event stack trace",
         }
 
     def test_from_log_record(self):
@@ -279,5 +250,6 @@ class TestExceptionData(unittest.TestCase):
         self.assertEqual(result.message, "")
         self.assertEqual(result.stack_trace, "")
         self.assertEqual(result.custom_dimensions, self.span_event.attributes)
+
 
 # cSpell:enable

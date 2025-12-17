@@ -8,6 +8,7 @@ from azure.monitor.opentelemetry.exporter._configuration import _update_configur
 
 logger = logging.getLogger(__name__)
 
+
 class _ConfigurationWorker:
     """Background worker thread for periodic configuration refresh from OneSettings.
 
@@ -49,11 +50,7 @@ class _ConfigurationWorker:
         self._state_lock = threading.Lock()
 
         self._shutdown_event = threading.Event()
-        self._refresh_thread = threading.Thread(
-            target=self._get_configuration,
-            name="ConfigurationWorker",
-            daemon=True
-        )
+        self._refresh_thread = threading.Thread(target=self._get_configuration, name="ConfigurationWorker", daemon=True)
         self._refresh_interval = refresh_interval or self._default_refresh_interval
         self._shutdown_event.clear()
         self._refresh_thread.start()

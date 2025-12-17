@@ -42,13 +42,15 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _CUSTOMER_SDKSTATS_STATE_LOCK,
 )
 
+
 class _CustomerSdkStatsTelemetryCounters:
     def __init__(self):
         self.total_item_success_count: Dict[str, Any] = {}
         self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, int]]] = {}
         self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}
 
-class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-instance-attributes
+
+class CustomerSdkStatsMetrics(metaclass=Singleton):  # pylint: disable=too-many-instance-attributes
     def __init__(self, connection_string):
         self._counters = _CustomerSdkStatsTelemetryCounters()
         self._language = _CUSTOMER_SDKSTATS_LANGUAGE
@@ -65,12 +67,10 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
         self._customer_sdkstats_exporter._is_customer_sdkstats = True
         metric_reader_options = {
             "exporter": self._customer_sdkstats_exporter,
-            "export_interval_millis": _get_customer_sdkstats_export_interval()
+            "export_interval_millis": _get_customer_sdkstats_export_interval(),
         }
         self._customer_sdkstats_metric_reader = PeriodicExportingMetricReader(**metric_reader_options)
-        self._customer_sdkstats_meter_provider = MeterProvider(
-            metric_readers=[self._customer_sdkstats_metric_reader]
-        )
+        self._customer_sdkstats_meter_provider = MeterProvider(metric_readers=[self._customer_sdkstats_metric_reader])
         self._customer_sdkstats_meter = self._customer_sdkstats_meter_provider.get_meter(__name__)
 
         self._customer_properties = CustomerSdkStatsProperties(
@@ -82,17 +82,17 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
         self._success_gauge = self._customer_sdkstats_meter.create_observable_gauge(
             name=CustomerSdkStatsMetricName.ITEM_SUCCESS_COUNT.value,
             description="Tracks successful telemetry items sent to Azure Monitor",
-            callbacks=[self._item_success_callback]
+            callbacks=[self._item_success_callback],
         )
         self._dropped_gauge = self._customer_sdkstats_meter.create_observable_gauge(
             name=CustomerSdkStatsMetricName.ITEM_DROP_COUNT.value,
             description="Tracks dropped telemetry items sent to Azure Monitor",
-            callbacks=[self._item_drop_callback]
+            callbacks=[self._item_drop_callback],
         )
         self._retry_gauge = self._customer_sdkstats_meter.create_observable_gauge(
             name=CustomerSdkStatsMetricName.ITEM_RETRY_COUNT.value,
             description="Tracks retry attempts for telemetry items sent to Azure Monitor",
-            callbacks=[self._item_retry_callback]
+            callbacks=[self._item_retry_callback],
         )
 
     def count_successful_items(self, count: int, telemetry_type: str) -> None:
@@ -105,8 +105,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             self._counters.total_item_success_count[telemetry_type] = count
 
     def count_dropped_items(
-        self, count: int, telemetry_type: str, drop_code: DropCodeType,
-        exception_message: Optional[str] = None
+        self, count: int, telemetry_type: str, drop_code: DropCodeType, exception_message: Optional[str] = None
     ) -> None:
         if not self._is_enabled or count <= 0:
             return
@@ -129,8 +128,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
         reason_map[reason] = current_count + count
 
     def count_retry_items(
-        self, count: int, telemetry_type: str, retry_code: RetryCodeType,
-        exception_message: Optional[str] = None
+        self, count: int, telemetry_type: str, retry_code: RetryCodeType, exception_message: Optional[str] = None
     ) -> None:
         if not self._is_enabled or count <= 0:
             return
@@ -148,7 +146,9 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
         current_count = reason_map.get(reason, 0)
         reason_map[reason] = current_count + count
 
-    def _item_success_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
+    def _item_success_callback(
+        self, options: CallbackOptions
+    ) -> Iterable[Observation]:  # pylint: disable=unused-argument
         if not getattr(self, "_is_enabled", False):
             return []
 
@@ -160,13 +160,13 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
                     "language": self._customer_properties.language,
                     "version": self._customer_properties.version,
                     "compute_type": self._customer_properties.compute_type,
-                    "telemetry_type": telemetry_type
+                    "telemetry_type": telemetry_type,
                 }
                 observations.append(Observation(count, dict(attributes)))
 
         return observations
 
-    def _item_drop_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
+    def _item_drop_callback(self, options: CallbackOptions) -> Iterable[Observation]:  # pylint: disable=unused-argument
         if not getattr(self, "_is_enabled", False):
             return []
         observations: List[Observation] = []
@@ -180,13 +180,15 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
                             "compute_type": self._customer_properties.compute_type,
                             "drop.code": drop_code,
                             "drop.reason": reason,
-                            "telemetry_type": telemetry_type
+                            "telemetry_type": telemetry_type,
                         }
                         observations.append(Observation(count, dict(attributes)))
 
         return observations
 
-    def _item_retry_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
+    def _item_retry_callback(
+        self, options: CallbackOptions
+    ) -> Iterable[Observation]:  # pylint: disable=unused-argument
         if not getattr(self, "_is_enabled", False):
             return []
         observations: List[Observation] = []
@@ -200,7 +202,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
                             "compute_type": self._customer_properties.compute_type,
                             "retry.code": retry_code,
                             "retry.reason": reason,
-                            "telemetry_type": telemetry_type
+                            "telemetry_type": telemetry_type,
                         }
                         observations.append(Observation(count, dict(attributes)))
 
@@ -234,6 +236,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
         }
         return retry_code_reasons.get(retry_code, "unknown_reason")
 
+
 # Global customer sdkstats singleton
 _CUSTOMER_SDKSTATS_METRICS = None
 _CUSTOMER_SDKSTATS_LOCK = threading.Lock()
@@ -248,15 +251,13 @@ def collect_customer_sdkstats(exporter):
         with _CUSTOMER_SDKSTATS_LOCK:
             # Double-check inside the lock to avoid race conditions
             if _CUSTOMER_SDKSTATS_METRICS is None:
-
                 connection_string = (
-                    f"InstrumentationKey={exporter._instrumentation_key};"
-                    f"IngestionEndpoint={exporter._endpoint}"
+                    f"InstrumentationKey={exporter._instrumentation_key};" f"IngestionEndpoint={exporter._endpoint}"
                 )
                 _CUSTOMER_SDKSTATS_METRICS = CustomerSdkStatsMetrics(connection_string)
 
     exporter._customer_sdkstats_metrics = _CUSTOMER_SDKSTATS_METRICS
-    if hasattr(exporter, 'storage') and exporter.storage:
+    if hasattr(exporter, "storage") and exporter.storage:
         exporter.storage._customer_sdkstats_metrics = _CUSTOMER_SDKSTATS_METRICS
 
 

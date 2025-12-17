@@ -9,6 +9,7 @@ from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
     HTTP_SERVER_REQUEST_DURATION,
 )
+
 # pylint:disable=no-name-in-module
 from fixedint import Int32
 from azure.core import CaseInsensitiveEnumMeta
@@ -151,6 +152,7 @@ _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_EN
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
 _CUSTOMER_SDKSTATS_LANGUAGE = "python"
 
+
 class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_READONLY = "CLIENT_READONLY"
     CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
@@ -158,41 +160,49 @@ class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_STORAGE_DISABLED = "CLIENT_STORAGE_DISABLED"
     UNKNOWN = "UNKNOWN"
 
+
 DropCodeType = Union[DropCode, int]
+
 
 class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
     CLIENT_TIMEOUT = "CLIENT_TIMEOUT"
     UNKNOWN = "UNKNOWN"
 
+
 RetryCodeType = Union[RetryCode, int]
+
 
 class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_SUCCESS_COUNT = "preview.item.success.count"
     ITEM_DROP_COUNT = "preview.item.dropped.count"
     ITEM_RETRY_COUNT = "preview.item.retry.count"
 
+
 class CustomerSdkStatsProperties:
     language: str
     version: str
     compute_type: str
+
     def __init__(self, language: str, version: str, compute_type: str):
         self.language = language
         self.version = version
         self.compute_type = compute_type
 
+
 ## Map from Azure Monitor envelope names to TelemetryType
 _TYPE_MAP = {
-                _EVENT_ENVELOPE_NAME: _CUSTOM_EVENT,
-                _METRIC_ENVELOPE_NAME: _CUSTOM_METRIC,
-                _REMOTE_DEPENDENCY_ENVELOPE_NAME: _DEPENDENCY,
-                _EXCEPTION_ENVELOPE_NAME: _EXCEPTION,
-                _PAGE_VIEW_ENVELOPE_NAME: _PAGE_VIEW,
-                _MESSAGE_ENVELOPE_NAME: _TRACE,
-                _REQUEST_ENVELOPE_NAME: _REQUEST,
-                _PERFORMANCE_COUNTER_ENVELOPE_NAME: _PERFORMANCE_COUNTER,
-                _AVAILABILITY_ENVELOPE_NAME: _AVAILABILITY,
-            }
+    _EVENT_ENVELOPE_NAME: _CUSTOM_EVENT,
+    _METRIC_ENVELOPE_NAME: _CUSTOM_METRIC,
+    _REMOTE_DEPENDENCY_ENVELOPE_NAME: _DEPENDENCY,
+    _EXCEPTION_ENVELOPE_NAME: _EXCEPTION,
+    _PAGE_VIEW_ENVELOPE_NAME: _PAGE_VIEW,
+    _MESSAGE_ENVELOPE_NAME: _TRACE,
+    _REQUEST_ENVELOPE_NAME: _REQUEST,
+    _PERFORMANCE_COUNTER_ENVELOPE_NAME: _PERFORMANCE_COUNTER,
+    _AVAILABILITY_ENVELOPE_NAME: _AVAILABILITY,
+}
+
 
 # Map RP names
 class _RP_Names(Enum):
@@ -201,6 +211,7 @@ class _RP_Names(Enum):
     AKS = "aks"
     VM = "vm"
     UNKNOWN = "unknown"
+
 
 # Instrumentations
 
@@ -267,7 +278,7 @@ _INSTRUMENTATIONS_LIST = [
     "openai_v2",
     "vertexai",
     # Instrumentations below this line have not been added to statsbeat report yet
-    _AZURE_AI_SDK_NAME
+    _AZURE_AI_SDK_NAME,
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}

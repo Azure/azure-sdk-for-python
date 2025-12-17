@@ -109,8 +109,9 @@ def _log_data_is_event(log_data: LogData) -> bool:
     log_record = log_data.log_record
     is_event = None
     if log_record.attributes:
-        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or \
-            log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE)  # type: ignore
+        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or log_record.attributes.get(
+            _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE
+        )  # type: ignore
     return is_event is not None
 
 
