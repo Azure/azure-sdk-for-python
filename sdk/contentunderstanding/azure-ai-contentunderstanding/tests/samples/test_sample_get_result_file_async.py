@@ -11,6 +11,7 @@ TEST FILE: test_sample_get_result_file_async.py
 
 DESCRIPTION:
     These tests validate the sample_get_result_file.py sample code (async version).
+    This sample demonstrates retrieving result files (like keyframe images) from video analysis.
 
 USAGE:
     pytest test_sample_get_result_file_async.py

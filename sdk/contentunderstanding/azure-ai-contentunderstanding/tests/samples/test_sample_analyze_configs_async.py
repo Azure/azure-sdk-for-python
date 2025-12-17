@@ -12,6 +12,17 @@ TEST FILE: test_sample_analyze_configs_async.py
 DESCRIPTION:
     These tests validate the sample_analyze_configs.py sample code (async version).
 
+    The prebuilt-documentSearch analyzer has the following configurations enabled by default:
+    - ReturnDetails: true - Returns detailed information about document elements
+    - EnableOcr: true - Performs OCR on documents
+    - EnableLayout: true - Extracts layout information (tables, figures, hyperlinks, annotations)
+    - EnableFormula: true - Extracts mathematical formulas from documents
+    - EnableFigureDescription: true - Generates descriptions for figures
+    - EnableFigureAnalysis: true - Analyzes figures including charts
+    - ChartFormat: "chartjs" - Chart figures are returned in Chart.js format
+    - TableFormat: "html" - Tables are returned in HTML format
+    - AnnotationFormat: "markdown" - Annotations are returned in markdown format
+
 USAGE:
     pytest test_sample_analyze_configs_async.py
 """
@@ -32,7 +43,8 @@ class TestSampleAnalyzeConfigsAsync(ContentUnderstandingClientTestBaseAsync):
 
         This test validates:
         1. Document analysis with prebuilt-documentSearch analyzer
-        2. Configuration options (formulas, layout, OCR enabled)
+        2. Configuration options (ReturnDetails, EnableOcr, EnableLayout, EnableFormula,
+           EnableFigureDescription, EnableFigureAnalysis enabled by default)
         3. Document features extraction (charts, annotations, hyperlinks, formulas)
 
         10_AnalyzeConfigs.AnalyzeConfigsAsync()

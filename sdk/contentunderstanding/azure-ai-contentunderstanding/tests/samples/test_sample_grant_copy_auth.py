@@ -12,6 +12,7 @@ TEST FILE: test_sample_grant_copy_auth.py
 
 DESCRIPTION:
     These tests validate the sample_grant_copy_auth.py sample code.
+    This sample demonstrates cross-resource analyzer copying with authorization.
 
 USAGE:
     pytest test_sample_grant_copy_auth.py

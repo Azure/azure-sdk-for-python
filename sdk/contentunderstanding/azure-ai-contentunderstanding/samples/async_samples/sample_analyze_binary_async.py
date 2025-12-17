@@ -9,14 +9,16 @@ FILE: sample_analyze_binary_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze a PDF file from disk using the prebuilt-documentSearch
-    analyzer. The prebuilt-documentSearch analyzer transforms unstructured documents into structured,
-    machine-readable data optimized for RAG scenarios.
+    analyzer.
 
-    Content Understanding supports multiple content types:
-    - Documents: Extract text, tables, figures, layout information, and structured markdown
-    - Images: Analyze standalone images to generate descriptions and extract visual features
-    - Audio: Transcribe audio content with speaker diarization and timing information
-    - Video: Analyze video content with visual frame extraction and audio transcription
+    One of the key values of Content Understanding is taking a content file and extracting the content
+    for you in one call. The service returns an AnalyzeResult that contains an array of MediaContent
+    items in AnalyzeResult.contents. This sample starts with a document file, so each item is a
+    DocumentContent (a subtype of MediaContent) that exposes markdown plus detailed structure such
+    as pages, tables, figures, and paragraphs.
+
+    This sample focuses on document analysis. For prebuilt RAG analyzers covering images, audio, and
+    video, see sample_analyze_url_async.py.
 
 USAGE:
     python sample_analyze_binary_async.py
@@ -25,8 +27,7 @@ USAGE:
     1) AZURE_CONTENT_UNDERSTANDING_ENDPOINT - the endpoint to your Content Understanding resource.
     2) AZURE_CONTENT_UNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
 
-    Before using prebuilt analyzers, you MUST configure model deployments for your Microsoft Foundry
-    resource. See sample_configure_defaults.py for setup instructions.
+    See sample_configure_defaults_async.py for model deployment setup guidance.
 """
 
 import asyncio
@@ -37,7 +38,6 @@ from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     AnalyzeResult,
     DocumentContent,
-    MediaContentKind,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
@@ -70,40 +70,27 @@ async def main() -> None:
         print("=" * 50)
 
         # A PDF file has only one content element even if it contains multiple pages
-        if result.contents and len(result.contents) > 0:
-            content = result.contents[0]
-            if content.markdown:
-                print(content.markdown)
-            else:
-                print("No markdown content available.")
-        else:
-            print("No content found in the analysis result.")
+        content = result.contents[0]
+        print(content.markdown)
 
         print("=" * 50)
         # [END extract_markdown]
 
-        # Extract document properties
-        if result.contents and len(result.contents) > 0:
-            content = result.contents[0]
+        # Access document properties
+        # Cast MediaContent to DocumentContent to access document-specific properties
+        # DocumentContent derives from MediaContent and provides additional properties
+        # to access full information about document, including pages, tables and many others
+        document_content: DocumentContent = content  # type: ignore
+        print(f"\nDocument Information:")
+        print(f"  Start page: {document_content.start_page_number}")
+        print(f"  End page: {document_content.end_page_number}")
 
-            # Check if this is document content to access document-specific properties
-            if content.kind == MediaContentKind.DOCUMENT:
-                # Type assertion: we know this is DocumentContent for PDF files
-                document_content: DocumentContent = content  # type: ignore
-                print(f"\nDocument Information:")
-                print(f"  Start page: {document_content.start_page_number}")
-                print(f"  End page: {document_content.end_page_number}")
-
-                if document_content.start_page_number and document_content.end_page_number:
-                    total_pages = document_content.end_page_number - document_content.start_page_number + 1
-                    print(f"  Total pages: {total_pages}")
-
-                # Check for pages
-                if document_content.pages:
-                    print(f"\nPages ({len(document_content.pages)}):")
-                    for page in document_content.pages:
-                        unit = document_content.unit or "units"
-                        print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
+        # Check for pages
+        if document_content.pages and len(document_content.pages) > 0:
+            print(f"\nNumber of pages: {len(document_content.pages)}")
+            for page in document_content.pages:
+                unit = document_content.unit or "units"
+                print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
 
     if not isinstance(credential, AzureKeyCredential):
         await credential.close()

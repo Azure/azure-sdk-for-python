@@ -12,15 +12,24 @@ DESCRIPTION:
     hyperlinks, formulas, and annotations using the prebuilt-documentSearch analyzer.
 
     The prebuilt-documentSearch analyzer has the following configurations enabled by default:
-    - EnableFormula: Extracts mathematical formulas from documents
-    - EnableLayout: Extracts layout information (tables, figures, etc.)
-    - EnableOcr: Performs OCR on documents
+    - ReturnDetails: true - Returns detailed information about document elements
+    - EnableOcr: true - Performs OCR on documents
+    - EnableLayout: true - Extracts layout information (tables, figures, hyperlinks, annotations)
+    - EnableFormula: true - Extracts mathematical formulas from documents
+    - EnableFigureDescription: true - Generates descriptions for figures
+    - EnableFigureAnalysis: true - Analyzes figures including charts
+    - ChartFormat: "chartjs" - Chart figures are returned in Chart.js format
+    - TableFormat: "html" - Tables are returned in HTML format
+    - AnnotationFormat: "markdown" - Annotations are returned in markdown format
 
-    These configs enable extraction of:
-    - Charts: Chart figures with Chart.js configuration
-    - Hyperlinks: URLs and links found in the document
-    - Formulas: Mathematical formulas in LaTeX format
-    - Annotations: PDF annotations, comments, and markup
+    The following code snippets demonstrate extraction of features enabled by these configs:
+    - Charts: Enabled by EnableFigureAnalysis - Chart figures with Chart.js configuration
+    - Hyperlinks: Enabled by EnableLayout - URLs and links found in the document
+    - Formulas: Enabled by EnableFormula - Mathematical formulas in LaTeX format
+    - Annotations: Enabled by EnableLayout - PDF annotations, comments, and markup
+
+    For custom analyzers, you can configure these options in ContentAnalyzerConfig when creating
+    the analyzer.
 
 USAGE:
     python sample_analyze_configs.py
@@ -40,9 +49,7 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     AnalyzeResult,
     DocumentContent,
-    MediaContentKind,
     DocumentChartFigure,
-    DocumentFigureKind,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
@@ -75,96 +82,51 @@ def main() -> None:
     # [END analyze_with_configs]
 
     # [START extract_charts]
-    if result.contents and len(result.contents) > 0:
-        content = result.contents[0]
-
-        if content.kind == MediaContentKind.DOCUMENT:
-            document_content: DocumentContent = content  # type: ignore
-
-            if document_content.figures and len(document_content.figures) > 0:
-                # Filter for chart figures
-                chart_figures = [
-                    f
-                    for f in document_content.figures
-                    if isinstance(f, DocumentChartFigure) or (hasattr(f, "kind") and f.kind == DocumentFigureKind.CHART)
-                ]
-
-                print(f"\nFound {len(chart_figures)} chart(s)")
-                for chart in chart_figures:
-                    print(f"  Chart ID: {chart.id}")
-                    if hasattr(chart, "description") and chart.description:
-                        print(f"    Description: {chart.description}")
-                    if hasattr(chart, "caption") and chart.caption and chart.caption.content:
-                        print(f"    Caption: {chart.caption.content}")
-            else:
-                print("\nNo figures found in the document.")
-    else:
-        print("\nNo content found in the analysis result.")
+    # Extract charts from document content (enabled by EnableFigureAnalysis config)
+    document_content: DocumentContent = result.contents[0]  # type: ignore
+    if document_content.figures:
+        for figure in document_content.figures:
+            if isinstance(figure, DocumentChartFigure):
+                print(f"  Chart ID: {figure.id}")
+                print(f"    Description: {figure.description or '(not available)'}")
+                print(f"    Caption: {figure.caption.content if figure.caption else '(not available)'}")
     # [END extract_charts]
 
     # [START extract_hyperlinks]
-    if result.contents and len(result.contents) > 0:
-        content = result.contents[0]
-
-        if content.kind == MediaContentKind.DOCUMENT:
-            document_content: DocumentContent = content  # type: ignore
-
-            if document_content.hyperlinks and len(document_content.hyperlinks) > 0:
-                print(f"\nFound {len(document_content.hyperlinks)} hyperlink(s)")
-                for hyperlink in document_content.hyperlinks:
-                    print(f"  URL: {hyperlink.url or '(not available)'}")
-                    print(f"    Content: {hyperlink.content or '(not available)'}")
-            else:
-                print("\nNo hyperlinks found in the document.")
+    # Extract hyperlinks from document content (enabled by EnableLayout config)
+    doc_content: DocumentContent = result.contents[0]  # type: ignore
+    print(f"Found {len(doc_content.hyperlinks) if doc_content.hyperlinks else 0} hyperlink(s)")
+    for hyperlink in doc_content.hyperlinks or []:
+        print(f"  URL: {hyperlink.url or '(not available)'}")
+        print(f"    Content: {hyperlink.content or '(not available)'}")
     # [END extract_hyperlinks]
 
     # [START extract_formulas]
-    if result.contents and len(result.contents) > 0:
-        content = result.contents[0]
+    # Extract formulas from document pages (enabled by EnableFormula config)
+    content: DocumentContent = result.contents[0]  # type: ignore
+    all_formulas = []
+    for page in content.pages or []:
+        all_formulas.extend(page.formulas or [])
 
-        if content.kind == MediaContentKind.DOCUMENT:
-            document_content: DocumentContent = content  # type: ignore
-
-            all_formulas = []
-            if document_content.pages:
-                for page in document_content.pages:
-                    if hasattr(page, "formulas") and page.formulas:
-                        all_formulas.extend(page.formulas)
-
-            if len(all_formulas) > 0:
-                print(f"\nFound {len(all_formulas)} formula(s)")
-                for formula in all_formulas:
-                    print(f"  Formula: {formula.value or '(no value)'}")
-                    if hasattr(formula, "kind") and formula.kind:
-                        print(f"    Kind: {formula.kind}")
-            else:
-                print("\nNo formulas found in the document.")
+    print(f"Found {len(all_formulas)} formula(s)")
+    for formula in all_formulas:
+        print(f"  Formula Kind: {formula.kind}")
+        print(f"    LaTeX: {formula.value or '(not available)'}")
+        print(f"    Confidence: {f'{formula.confidence:.2f}' if formula.confidence else 'N/A'}")
     # [END extract_formulas]
 
-    # Extract annotations
-    if result.contents and len(result.contents) > 0:
-        content = result.contents[0]
-
-        if content.kind == MediaContentKind.DOCUMENT:
-            document_content: DocumentContent = content  # type: ignore
-
-            if (
-                hasattr(document_content, "annotations")
-                and document_content.annotations
-                and len(document_content.annotations) > 0
-            ):
-                print(f"\nFound {len(document_content.annotations)} annotation(s)")
-                for annotation in document_content.annotations:
-                    print(f"  Annotation ID: {annotation.id}")
-                    print(f"    Kind: {annotation.kind}")
-                    if hasattr(annotation, "author") and annotation.author:
-                        print(f"    Author: {annotation.author}")
-                    if hasattr(annotation, "comments") and annotation.comments and len(annotation.comments) > 0:
-                        print(f"    Comments: {len(annotation.comments)}")
-                        for comment in annotation.comments:
-                            print(f"      - {comment.message}")
-            else:
-                print("\nNo annotations found in the document.")
+    # [START extract_annotations]
+    # Extract annotations from document content (enabled by EnableLayout config)
+    document: DocumentContent = result.contents[0]  # type: ignore
+    print(f"Found {len(document.annotations) if document.annotations else 0} annotation(s)")
+    for annotation in document.annotations or []:
+        print(f"  Annotation ID: {annotation.id}")
+        print(f"    Kind: {annotation.kind}")
+        print(f"    Author: {annotation.author or '(not available)'}")
+        print(f"    Comments: {len(annotation.comments) if annotation.comments else 0}")
+        for comment in annotation.comments or []:
+            print(f"      - {comment.message}")
+    # [END extract_annotations]
 
 
 if __name__ == "__main__":

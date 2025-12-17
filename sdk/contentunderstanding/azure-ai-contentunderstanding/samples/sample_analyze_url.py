@@ -8,11 +8,19 @@
 FILE: sample_analyze_url.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze a document from a URL using the prebuilt-documentSearch
-    analyzer. This shows how to analyze a document from a publicly accessible URL instead of a local file.
+    Another great value of Content Understanding is its rich set of prebuilt analyzers. Great examples
+    of these are the RAG analyzers that work for all modalities (prebuilt-documentSearch, prebuilt-imageSearch,
+    prebuilt-audioSearch, and prebuilt-videoSearch).
 
-    For understanding basic analysis concepts, authentication, and result processing,
-    see sample_analyze_binary.py first.
+    This sample demonstrates these RAG analyzers with URL inputs. Content Understanding supports both
+    local binary inputs (see sample_analyze_binary.py) and URL inputs across all modalities.
+
+    Important: For URL inputs, use begin_analyze() with AnalyzeInput objects that wrap the URL.
+    For binary data (local files), use begin_analyze_binary() instead.
+
+    Documents, HTML, and images with text are returned as DocumentContent (derived from MediaContent),
+    while audio and video are returned as AudioVisualContent (also derived from MediaContent). These
+    prebuilt RAG analyzers return markdown and a one-paragraph Summary for each content item.
 
 USAGE:
     python sample_analyze_url.py
@@ -21,8 +29,7 @@ USAGE:
     1) AZURE_CONTENT_UNDERSTANDING_ENDPOINT - the endpoint to your Content Understanding resource.
     2) AZURE_CONTENT_UNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
 
-    Before using prebuilt analyzers, you MUST configure model deployments for your Microsoft Foundry
-    resource. See sample_configure_defaults.py for setup instructions.
+    See sample_configure_defaults.py for model deployment setup guidance.
 """
 
 import os
@@ -33,7 +40,6 @@ from azure.ai.contentunderstanding.models import (
     AnalyzeInput,
     AnalyzeResult,
     DocumentContent,
-    MediaContentKind,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
@@ -49,9 +55,8 @@ def main() -> None:
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
     # [START analyze_document_from_url]
-    document_url = (
-        "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
-    )
+    # You can replace this URL with your own publicly accessible document URL.
+    document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
 
     print(f"Analyzing document from URL with prebuilt-documentSearch...")
     print(f"  URL: {document_url}")
@@ -63,28 +68,22 @@ def main() -> None:
     result: AnalyzeResult = poller.result()
 
     # Extract markdown content
-    print("\nMarkdown Content:")
-    print("=" * 50)
+    print("\nMarkdown:")
+    content = result.contents[0]
+    print(content.markdown)
 
-    if result.contents and len(result.contents) > 0:
-        content = result.contents[0]
-        if content.markdown:
-            print(content.markdown)
-        else:
-            print("No markdown content available.")
-    else:
-        print("No content found in the analysis result.")
+    # Cast MediaContent to DocumentContent to access document-specific properties
+    # DocumentContent derives from MediaContent and provides additional properties
+    # to access full information about document, including Pages, Tables and many others
+    document_content: DocumentContent = content  # type: ignore
+    print(f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}")
 
-    print("=" * 50)
-
-    # Display document properties
-    if result.contents and len(result.contents) > 0:
-        content = result.contents[0]
-        if content.kind == MediaContentKind.DOCUMENT:
-            document_content: DocumentContent = content  # type: ignore
-            print(f"\nDocument Information:")
-            print(f"  Start page: {document_content.start_page_number}")
-            print(f"  End page: {document_content.end_page_number}")
+    # Check for pages
+    if document_content.pages and len(document_content.pages) > 0:
+        print(f"Number of pages: {len(document_content.pages)}")
+        for page in document_content.pages:
+            unit = document_content.unit or "units"
+            print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
     # [END analyze_document_from_url]
 
 

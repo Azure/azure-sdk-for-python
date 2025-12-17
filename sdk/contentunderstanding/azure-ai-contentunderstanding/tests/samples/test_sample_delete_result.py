@@ -11,6 +11,7 @@ TEST FILE: test_sample_delete_result.py
 
 DESCRIPTION:
     These tests validate the sample_delete_result.py sample code.
+    This sample demonstrates deleting analysis results for immediate cleanup.
 
 USAGE:
     pytest test_sample_delete_result.py

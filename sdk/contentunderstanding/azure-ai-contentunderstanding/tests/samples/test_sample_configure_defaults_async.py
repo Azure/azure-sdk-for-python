@@ -11,6 +11,7 @@ TEST FILE: test_sample_configure_defaults_async.py
 
 DESCRIPTION:
     These tests validate the sample_configure_defaults.py sample code (async version).
+    This sample demonstrates configuring model deployment settings for prebuilt analyzers.
 
 USAGE:
     pytest test_sample_configure_defaults_async.py
@@ -34,7 +35,7 @@ class TestSampleConfigureDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
         2. Getting current defaults (GetDefaults)
         3. Model deployment mappings structure
 
-        00_ConfigureDefaults.ConfigureDefaultsAsync()
+        00_UpdateDefaults.UpdateDefaultsAsync()
         """
         client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
 

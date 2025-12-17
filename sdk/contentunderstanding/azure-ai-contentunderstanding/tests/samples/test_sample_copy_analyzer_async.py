@@ -11,6 +11,7 @@ TEST FILE: test_sample_copy_analyzer_async.py
 
 DESCRIPTION:
     These tests validate the sample_copy_analyzer.py sample code (async version).
+    This sample demonstrates copying an analyzer within the same resource.
 
 USAGE:
     pytest test_sample_copy_analyzer_async.py

@@ -40,7 +40,6 @@ from azure.ai.contentunderstanding.models import (
     ContentCategoryDefinition,
     AnalyzeResult,
     DocumentContent,
-    MediaContentKind,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
@@ -118,28 +117,24 @@ async def main() -> None:
 
         analyze_poller = await client.begin_analyze_binary(
             analyzer_id=analyzer_id,
-            content_type="application/pdf",
             binary_input=file_bytes,
         )
         analyze_result: AnalyzeResult = await analyze_poller.result()
 
         # Display classification results
         if analyze_result.contents and len(analyze_result.contents) > 0:
-            content = analyze_result.contents[0]
+            document_content: DocumentContent = analyze_result.contents[0]  # type: ignore
+            print(f"Pages: {document_content.start_page_number}-{document_content.end_page_number}")
 
-            if content.kind == MediaContentKind.DOCUMENT:
-                document_content: DocumentContent = content  # type: ignore
-                print(f"Pages: {document_content.start_page_number}-{document_content.end_page_number}")
-
-                # Display segments (classification results)
-                if document_content.segments and len(document_content.segments) > 0:
-                    print(f"\nFound {len(document_content.segments)} segment(s):")
-                    for segment in document_content.segments:
-                        print(f"  Category: {segment.category or '(unknown)'}")
-                        print(f"  Pages: {segment.start_page_number}-{segment.end_page_number}")
-                        print()
-                else:
-                    print("No segments found (document classified as a single unit).")
+            # Display segments (classification results)
+            if document_content.segments and len(document_content.segments) > 0:
+                print(f"\nFound {len(document_content.segments)} segment(s):")
+                for segment in document_content.segments:
+                    print(f"  Category: {segment.category or '(unknown)'}")
+                    print(f"  Pages: {segment.start_page_number}-{segment.end_page_number}")
+                    print()
+            else:
+                print("No segments found (document classified as a single unit).")
         else:
             print("No content found in the analysis result.")
         # [END analyze_with_classifier]

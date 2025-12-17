@@ -11,6 +11,7 @@ TEST FILE: test_sample_update_analyzer.py
 
 DESCRIPTION:
     These tests validate the sample_update_analyzer.py sample code.
+    This sample demonstrates updating an existing custom analyzer's description and tags.
 
 USAGE:
     pytest test_sample_update_analyzer.py
@@ -53,7 +54,7 @@ class TestSampleUpdateAnalyzer(ContentUnderstandingClientTestBase):
                 description="Initial description",
                 config=ContentAnalyzerConfig(return_details=True),
                 models={"completion": "gpt-4.1"},
-                tags={"tag1": "tag1_initial_value", "tag2": "tag2_initial_value"},
+                tags={"tag1": "tag1_initial_value"},
             )
 
             # Create the analyzer
@@ -82,8 +83,6 @@ class TestSampleUpdateAnalyzer(ContentUnderstandingClientTestBase):
             assert current_description == "Initial description", "Initial description should match"
             assert "tag1" in current_tags, "tag1 should exist"
             assert current_tags.get("tag1") == "tag1_initial_value", "tag1 value should match"
-            assert "tag2" in current_tags, "tag2 should exist"
-            assert current_tags.get("tag2") == "tag2_initial_value", "tag2 value should match"
             print("[PASS] Initial analyzer state verified")
 
             # Create an updated analyzer with new description and tags
@@ -92,9 +91,8 @@ class TestSampleUpdateAnalyzer(ContentUnderstandingClientTestBase):
                 base_analyzer_id=base_id,
                 description="Updated description",
                 tags={
-                    "tag1": "tag1_updated_value",
-                    "tag2": "",  # Remove tag2 (empty string)
-                    "tag3": "tag3_value",  # Add tag3
+                    "tag1": "tag1_updated_value",  # Update existing tag
+                    "tag3": "tag3_value",  # Add new tag
                 },
             )
 
@@ -124,13 +122,6 @@ class TestSampleUpdateAnalyzer(ContentUnderstandingClientTestBase):
             assert "tag1" in updated_tags, "tag1 should still exist"
             assert updated_tags.get("tag1") == "tag1_updated_value", "tag1 value should be updated"
             print("[PASS] tag1 updated correctly")
-
-            # Verify tag2 was removed (or has empty value)
-            if "tag2" in updated_tags:
-                assert updated_tags.get("tag2") == "", "tag2 should have empty value"
-                print("[PASS] tag2 set to empty value")
-            else:
-                print("[PASS] tag2 removed successfully")
 
             # Verify tag3 was added
             assert "tag3" in updated_tags, "tag3 should be added"

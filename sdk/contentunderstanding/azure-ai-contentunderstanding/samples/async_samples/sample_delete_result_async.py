@@ -40,7 +40,6 @@ from azure.ai.contentunderstanding.models import (
     AnalyzeInput,
     AnalyzeResult,
     DocumentContent,
-    MediaContentKind,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
@@ -56,7 +55,7 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_and_delete_result]
-        document_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+        document_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/docs/invoice.pdf"
 
         print("Document Analysis Workflow")
         print("=" * 60)
@@ -87,15 +86,12 @@ async def main() -> None:
 
         # Display some sample results
         if result.contents and len(result.contents) > 0:
-            content = result.contents[0]
-            if content.kind == MediaContentKind.DOCUMENT:
-                doc_content: DocumentContent = content  # type: ignore
-                if doc_content.fields:
-                    print(f"  Total fields extracted: {len(doc_content.fields)}")
-                    customer_name_field = doc_content.fields.get("CustomerName")
-                    if customer_name_field:
-                        print(f"  Customer Name: {customer_name_field.value or '(not found)'}")
-
+            doc_content: DocumentContent = result.contents[0]  # type: ignore
+            if doc_content.fields:
+                print(f"  Total fields extracted: {len(doc_content.fields)}")
+                customer_name_field = doc_content.fields.get("CustomerName")
+                if customer_name_field:
+                    print(f"  Customer Name: {customer_name_field.value or '(not found)'}")
         # Step 2: Delete the analysis result
         print(f"\nStep 2: Deleting analysis result (Operation ID: {operation_id})...")
         await client.delete_result(operation_id=operation_id)

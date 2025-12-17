@@ -14,7 +14,7 @@ DESCRIPTION:
 
     Content Understanding prebuilt analyzers require specific GPT model deployments to function:
     - GPT-4.1: Used by most prebuilt analyzers (e.g., prebuilt-invoice, prebuilt-receipt)
-    - GPT-4.1-mini: Used by RAG analyzers (e.g., prebuilt-documentSearch, prebuilt-audioSearch)
+    - GPT-4.1-mini: Used by RAG analyzers (e.g., prebuilt-documentSearch, prebuilt-imageSearch, prebuilt-audioSearch)
     - text-embedding-3-large: Used for semantic search and embeddings
 
 USAGE:
@@ -84,7 +84,7 @@ async def main() -> None:
         print("Model deployments configured successfully!")
         if updated_defaults.model_deployments:
             for model_name, deployment_name in updated_defaults.model_deployments.items():
-                print(f"  {model_name} -> {deployment_name}")
+                print(f"  {model_name}: {deployment_name}")
         # [END update_defaults]
 
         # [START get_defaults]
@@ -94,7 +94,7 @@ async def main() -> None:
         print("\nCurrent model deployment mappings:")
         if defaults.model_deployments and len(defaults.model_deployments) > 0:
             for model_name, deployment_name in defaults.model_deployments.items():
-                print(f"  {model_name} -> {deployment_name}")
+                print(f"  {model_name}: {deployment_name}")
         else:
             print("  No model deployments configured yet.")
         # [END get_defaults]

@@ -11,6 +11,7 @@ TEST FILE: test_sample_delete_analyzer_async.py
 
 DESCRIPTION:
     These tests validate the sample_delete_analyzer.py sample code (async version).
+    This sample demonstrates permanently deleting a custom analyzer.
 
 USAGE:
     pytest test_sample_delete_analyzer_async.py

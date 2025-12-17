@@ -15,8 +15,6 @@ DESCRIPTION:
 
     Important notes:
     - Only custom analyzers can be deleted. Prebuilt analyzers cannot be deleted.
-    - Deleting an analyzer does not delete analysis results that were created using that analyzer.
-    - Once deleted, the analyzer ID cannot be reused immediately.
 
 USAGE:
     python sample_delete_analyzer.py

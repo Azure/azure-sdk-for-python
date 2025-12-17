@@ -40,7 +40,6 @@ from azure.ai.contentunderstanding.models import (
     AnalyzeInput,
     AnalyzeResult,
     AudioVisualContent,
-    MediaContentKind,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
@@ -84,52 +83,48 @@ async def main() -> None:
         content = result.contents[0]
 
         # For video analysis, keyframes would be found in AudioVisualContent.KeyFrameTimesMs
-        if content.kind == MediaContentKind.AUDIO_VISUAL:
-            video_content: AudioVisualContent = content  # type: ignore
+        video_content: AudioVisualContent = result.contents[0]  # type: ignore
 
-            if video_content.key_frame_times_ms and len(video_content.key_frame_times_ms) > 0:
-                total_keyframes = len(video_content.key_frame_times_ms)
-                first_frame_time_ms = video_content.key_frame_times_ms[0]
+        if video_content.key_frame_times_ms and len(video_content.key_frame_times_ms) > 0:
+            total_keyframes = len(video_content.key_frame_times_ms)
+            first_frame_time_ms = video_content.key_frame_times_ms[0]
 
-                print(f"\nTotal keyframes: {total_keyframes}")
-                print(f"First keyframe time: {first_frame_time_ms} ms")
+            print(f"\nTotal keyframes: {total_keyframes}")
+            print(f"First keyframe time: {first_frame_time_ms} ms")
 
-                # Get the first keyframe as an example
-                frame_path = f"keyframes/{first_frame_time_ms}"
+            # Get the first keyframe as an example
+            frame_path = f"keyframes/{first_frame_time_ms}"
 
-                print(f"Getting result file: {frame_path}")
+            print(f"Getting result file: {frame_path}")
 
-                # Get the result file (keyframe image)
-                file_response = await client.get_result_file(
-                    operation_id=operation_id,
-                    path=frame_path,
-                )
+            # Get the result file (keyframe image)
+            file_response = await client.get_result_file(
+                operation_id=operation_id,
+                path=frame_path,
+            )
 
-                image_bytes = b"".join([chunk async for chunk in file_response])
-                print(f"Retrieved keyframe image ({len(image_bytes):,} bytes)")
+            image_bytes = b"".join([chunk async for chunk in file_response])
+            print(f"Retrieved keyframe image ({len(image_bytes):,} bytes)")
 
-                # Save the keyframe image to sample_output directory
-                output_dir = Path(__file__).parent.parent / "sample_output"
-                output_dir.mkdir(exist_ok=True)
-                output_filename = f"keyframe_{first_frame_time_ms}.jpg"
-                output_path = output_dir / output_filename
+            # Save the keyframe image to sample_output directory
+            output_dir = Path(__file__).parent.parent / "sample_output"
+            output_dir.mkdir(exist_ok=True)
+            output_filename = f"keyframe_{first_frame_time_ms}.jpg"
+            output_path = output_dir / output_filename
 
-                with open(output_path, "wb") as f:
-                    f.write(image_bytes)
+            with open(output_path, "wb") as f:
+                f.write(image_bytes)
 
-                print(f"Keyframe image saved to: {output_path}")
-            else:
-                print("\nNote: This sample demonstrates GetResultFile API usage.")
-                print("      For video analysis with keyframes, use prebuilt-videoSearch analyzer.")
-                print("      Keyframes are available in AudioVisualContent.key_frame_times_ms.")
-                print()
-                print(f"Example usage with operation ID '{operation_id}':")
-                print("  file_response = await client.get_result_file(")
-                print("      operation_id=operation_id,")
-                print('      path="keyframes/1000")')
+            print(f"Keyframe image saved to: {output_path}")
         else:
-            print("\nNote: This sample is designed for video analysis.")
-            print("      The analyzed content is not a video.")
+            print("\nNote: This sample demonstrates GetResultFile API usage.")
+            print("      For video analysis with keyframes, use prebuilt-videoSearch analyzer.")
+            print("      Keyframes are available in AudioVisualContent.key_frame_times_ms.")
+            print()
+            print(f"Example usage with operation ID '{operation_id}':")
+            print("  file_response = await client.get_result_file(")
+            print("      operation_id=operation_id,")
+            print('      path="keyframes/1000")')
         # [END get_result_file]
 
     if not isinstance(credential, AzureKeyCredential):

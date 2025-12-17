@@ -12,6 +12,10 @@ TEST FILE: test_sample_analyze_binary_async.py
 
 DESCRIPTION:
     These tests validate the sample_analyze_binary.py sample code (async version).
+    This sample demonstrates how to analyze a PDF file from disk using the prebuilt-documentSearch
+    analyzer. The service returns an AnalyzeResult that contains an array of MediaContent items
+    in AnalyzeResult.contents. For documents, each item is a DocumentContent that exposes markdown
+    plus detailed structure such as pages, tables, figures, and paragraphs.
 
 USAGE:
     pytest test_sample_analyze_binary_async.py
@@ -62,7 +66,7 @@ class TestSampleAnalyzeBinaryAsync(ContentUnderstandingClientTestBaseAsync):
 
         # Analyze the document
         poller = await client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch", binary_input=file_bytes, content_type="application/pdf"
+            analyzer_id="prebuilt-documentSearch", binary_input=file_bytes
         )
 
         result = await poller.result()

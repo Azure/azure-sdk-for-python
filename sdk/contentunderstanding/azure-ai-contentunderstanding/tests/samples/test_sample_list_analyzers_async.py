@@ -11,6 +11,7 @@ TEST FILE: test_sample_list_analyzers_async.py
 
 DESCRIPTION:
     These tests validate the sample_list_analyzers.py sample code (async version).
+    This sample demonstrates listing all available analyzers (prebuilt and custom).
 
 USAGE:
     pytest test_sample_list_analyzers_async.py

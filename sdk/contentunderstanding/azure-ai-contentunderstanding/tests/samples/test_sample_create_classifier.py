@@ -12,6 +12,8 @@ TEST FILE: test_sample_create_classifier.py
 
 DESCRIPTION:
     These tests validate the sample_create_classifier.py sample code.
+    This sample demonstrates creating a classifier analyzer to categorize documents
+    into predefined categories with optional automatic segmentation.
 
 USAGE:
     pytest test_sample_create_classifier.py

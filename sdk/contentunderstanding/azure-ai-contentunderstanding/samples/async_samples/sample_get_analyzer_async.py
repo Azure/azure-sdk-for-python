@@ -59,9 +59,20 @@ async def main() -> None:
         print("Retrieving prebuilt-documentSearch analyzer...")
         analyzer = await client.get_analyzer(analyzer_id="prebuilt-documentSearch")
 
+        # Print a few properties from the analyzer
+        print(f"Analyzer ID: {analyzer.analyzer_id}")
+        print(f"Base Analyzer ID: {analyzer.base_analyzer_id}")
+        print(f"Description: {analyzer.description}")
+        if analyzer.config:
+            print(f"Enable OCR: {analyzer.config.enable_ocr}")
+            print(f"Enable Layout: {analyzer.config.enable_layout}")
+        if analyzer.models:
+            models_str = ", ".join(f"{k}={v}" for k, v in analyzer.models.items())
+            print(f"Models: {models_str}")
+
         # Display full analyzer JSON
         print("\n" + "=" * 80)
-        print("Prebuilt-documentSearch Analyzer:")
+        print("Prebuilt-documentSearch Analyzer (Raw JSON):")
         print("=" * 80)
         analyzer_json = json.dumps(analyzer.as_dict(), indent=2, default=str)
         print(analyzer_json)

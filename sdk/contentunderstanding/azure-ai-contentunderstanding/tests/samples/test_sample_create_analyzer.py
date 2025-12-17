@@ -11,6 +11,8 @@ TEST FILE: test_sample_create_analyzer.py
 
 DESCRIPTION:
     These tests validate the sample_create_analyzer.py sample code.
+    This sample demonstrates creating a custom analyzer with a field schema to extract
+    structured data from documents.
 
 USAGE:
     pytest test_sample_create_analyzer.py
