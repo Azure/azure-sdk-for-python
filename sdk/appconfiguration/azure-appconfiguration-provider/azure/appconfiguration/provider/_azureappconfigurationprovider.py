@@ -460,20 +460,20 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
         configuration_settings_processed = {}
         feature_flags_processed = []
-        for settings in unique_settings:
+        for setting in unique_settings:
             if self._configuration_mapper:
                 # If a map function is provided, use it to process the configuration setting
-                self._configuration_mapper(settings)
-            if isinstance(settings, FeatureFlagConfigurationSetting):
+                self._configuration_mapper(setting)
+            if isinstance(setting, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
-                feature_flag_value = self._process_feature_flag(settings)
+                feature_flag_value = self._process_feature_flag(setting)
                 feature_flags_processed.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
-                    self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
+                    self._watched_feature_flags[(setting.key, setting.label)] = setting.etag
             else:
-                key = self._process_key_name(settings)
-                value = self._process_key_value(settings)
+                key = self._process_key_name(setting)
+                value = self._process_key_value(setting)
                 configuration_settings_processed[key] = value
         return configuration_settings_processed
 
