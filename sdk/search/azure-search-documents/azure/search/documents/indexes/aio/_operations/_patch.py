@@ -348,14 +348,18 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         return cast(AsyncItemPaged[str], names)
 
     @distributed_trace_async
-    async def get_synonym_maps(self, **kwargs: Any) -> List[_models.SynonymMap]:
+    async def get_synonym_maps(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[_models.SynonymMap]:
         """Lists all synonym maps available for a search service.
 
+        :keyword select: Selects which top-level properties of the synonym maps to retrieve. Specified
+            as a comma-separated list of JSON property names, or '*' for all properties. The default is
+            all properties. Default value is None.
+        :paramtype select: list[str]
         :return: List of synonym maps
         :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = await self._get_synonym_maps(**kwargs)
+        result = await self._get_synonym_maps(select=select, **kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
         # typed_result = [cast(_models.SynonymMap, x) for x in result.synonym_maps]
         typed_result = result.synonym_maps
