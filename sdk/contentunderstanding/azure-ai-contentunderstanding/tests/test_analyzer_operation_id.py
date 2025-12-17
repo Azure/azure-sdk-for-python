@@ -157,9 +157,7 @@ class TestPollerIntegration:
         mock_polling_method._initial_response = mock_initial_response
 
         # Create actual AnalyzeLROPoller instance
-        result = AnalyzeLROPoller(
-            mock_client, mock_initial_response, Mock(), mock_polling_method
-        )
+        result = AnalyzeLROPoller(mock_client, mock_initial_response, Mock(), mock_polling_method)
 
         # Verify it has the operation_id property
         assert isinstance(result, AnalyzeLROPoller)

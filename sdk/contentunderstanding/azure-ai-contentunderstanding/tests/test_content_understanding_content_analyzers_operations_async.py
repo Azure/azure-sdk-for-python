@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -231,7 +231,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         text_embedding_deployment = os.getenv("CONTENTUNDERSTANDING_TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
 
         if not gpt41_deployment or not gpt41_mini_deployment or not text_embedding_deployment:
-            pytest.skip("Model deployments are not configured in test environment. Skipping test_update_defaults_async.")
+            pytest.skip(
+                "Model deployments are not configured in test environment. Skipping test_update_defaults_async."
+            )
             return
 
         # Update defaults with configured deployments
@@ -327,9 +329,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_create_analyzer_async(
-        self, azure_content_understanding_endpoint: str
-    ) -> None:
+    async def test_create_analyzer_async(self, azure_content_understanding_endpoint: str) -> None:
         """
         Tests creating a custom analyzer using ContentAnalyzer object.
         Verifies analyzer creation, poller properties, and proper cleanup.
@@ -506,9 +506,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_delete_analyzer_async(
-        self, azure_content_understanding_endpoint: str
-    ) -> None:
+    async def test_delete_analyzer_async(self, azure_content_understanding_endpoint: str) -> None:
         """
         Tests deleting an analyzer.
         Verifies that an analyzer can be successfully deleted.
@@ -556,9 +554,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @pytest.mark.skip(reason="TEMPORARILY SKIPPED: List operation is too long - too many analyzers")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_list_analyzers_async(
-        self, azure_content_understanding_endpoint: str
-    ) -> None:
+    async def test_list_analyzers_async(self, azure_content_understanding_endpoint: str) -> None:
         """
         Tests listing all available analyzers.
         Verifies that prebuilt analyzers are included and have required properties.
@@ -816,17 +812,19 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Additional specific validations
             assert analysis_result.contents is not None, "Should have contents"
             first_content = analysis_result.contents[0]
-            
+
             # Verify markdown output exists (basic OCR result)
-            assert hasattr(first_content, 'markdown'), "Content should have markdown attribute"
+            assert hasattr(first_content, "markdown"), "Content should have markdown attribute"
             if first_content.markdown:
-                assert len(first_content.markdown) > 100, "Markdown content should contain substantial text from the document"
+                assert (
+                    len(first_content.markdown) > 100
+                ), "Markdown content should contain substantial text from the document"
                 print(f"✓ Markdown content length: {len(first_content.markdown)} characters")
-            
+
             # Verify fields were extracted if field schema was defined
-            if hasattr(first_content, 'fields') and first_content.fields:
-                assert 'amount_due' in first_content.fields, "Should extract amount_due field"
-                amount_due = first_content.fields['amount_due']
+            if hasattr(first_content, "fields") and first_content.fields:
+                assert "amount_due" in first_content.fields, "Should extract amount_due field"
+                amount_due = first_content.fields["amount_due"]
                 assert amount_due is not None, "amount_due field should have a value"
                 print(f"✓ Extracted amount_due: {amount_due}")
 
@@ -891,42 +889,49 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Additional validation - verify at least amount_due is extracted (most critical field)
             first_content = analysis_result.contents[0]
-            assert hasattr(first_content, 'fields'), "Content should have fields"
+            assert hasattr(first_content, "fields"), "Content should have fields"
             assert first_content.fields is not None, "Fields should not be None"
-            
+
             fields = first_content.fields
-            assert 'amount_due' in fields, "Should extract amount_due field (most critical invoice field)"
-            
-            amount_due_field = fields['amount_due']
+            assert "amount_due" in fields, "Should extract amount_due field (most critical invoice field)"
+
+            amount_due_field = fields["amount_due"]
             print(f"\n✓ Critical field verification:")
             print(f"  - amount_due extracted successfully")
-            
-            if isinstance(amount_due_field, dict) and 'valueNumber' in amount_due_field:
-                amount_due_value = amount_due_field['valueNumber']
+
+            if isinstance(amount_due_field, dict) and "valueNumber" in amount_due_field:
+                amount_due_value = amount_due_field["valueNumber"]
                 print(f"  - Total amount value: {amount_due_value}")
                 assert amount_due_value > 0, "Total amount should be positive"
-                
+
                 # Verify confidence if available
-                if 'confidence' in amount_due_field:
-                    confidence = amount_due_field['confidence']
+                if "confidence" in amount_due_field:
+                    confidence = amount_due_field["confidence"]
                     print(f"  - Confidence: {confidence:.2%}")
                     # Note: We don't enforce a minimum confidence as it depends on document quality
-                
+
                 # Verify source information if available
-                if 'spans' in amount_due_field:
-                    spans = amount_due_field['spans']
+                if "spans" in amount_due_field:
+                    spans = amount_due_field["spans"]
                     print(f"  - Source locations: {len(spans)} span(s)")
                     assert len(spans) > 0, "Should have source location for extracted field"
-                
-                if 'source' in amount_due_field:
-                    source = amount_due_field['source']
+
+                if "source" in amount_due_field:
+                    source = amount_due_field["source"]
                     print(f"  - Source: {source[:50]}..." if len(source) > 50 else f"  - Source: {source}")
 
             # Count how many invoice fields were successfully extracted
             invoice_field_names = [
-                'invoice_number', 'invoice_date', 'due_date',
-                'vendor_name', 'vendor_address', 'customer_name', 'customer_address',
-                'subtotal', 'tax_amount', 'amount_due'
+                "invoice_number",
+                "invoice_date",
+                "due_date",
+                "vendor_name",
+                "vendor_address",
+                "customer_name",
+                "customer_address",
+                "subtotal",
+                "tax_amount",
+                "amount_due",
             ]
             extracted_count = sum(1 for field in invoice_field_names if field in fields)
             print(f"\n✓ Successfully extracted {extracted_count}/{len(invoice_field_names)} invoice fields")
@@ -940,26 +945,26 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @recorded_by_proxy_async
     async def test_analyze_binary_extract_markdown_async(self, azure_content_understanding_endpoint: str) -> None:
         """Test extracting markdown content from analyzed binary documents.
-        
+
         This test corresponds to .NET AnalyzeBinaryAsync_ExtractMarkdown.
         Verifies that markdown is successfully extracted and is non-empty.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
-        
+
         print("\n=== Test: Extract Markdown from Binary Document ===")
-        
+
         # Get test file path
         current_dir = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.join(current_dir, "test_data", "sample_invoice.pdf")
         assert os.path.exists(file_path), f"Sample file should exist at {file_path}"
         print(f"Test file: {file_path}")
-        
+
         # Read file content
         with open(file_path, "rb") as f:
             file_bytes = f.read()
         assert len(file_bytes) > 0, "File should not be empty"
         print(f"File size: {len(file_bytes)} bytes")
-        
+
         # Analyze the document
         print("\nAnalyzing document with prebuilt-documentSearch...")
         poller = await client.begin_analyze_binary(
@@ -967,11 +972,11 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             binary_input=file_bytes,
             content_type="application/pdf",
         )
-        
+
         # Wait for completion
         result = await poller.result()
         assert_poller_properties(poller)
-        
+
         # Verify result
         assert result is not None, "Analysis result should not be null"
         assert hasattr(result, "contents"), "Result should have contents attribute"
@@ -979,18 +984,18 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         assert len(result.contents) > 0, "Result should contain at least one content element"
         assert len(result.contents) == 1, "PDF file should have exactly one content element"
         print(f"✓ Analysis completed with {len(result.contents)} content element(s)")
-        
+
         # Extract markdown from first content
         content = result.contents[0]
         assert content is not None, "Content should not be null"
-        
+
         # Verify markdown content
         assert hasattr(content, "markdown"), "Content should have markdown attribute"
         assert content.markdown is not None, "Markdown content should not be null"
         assert isinstance(content.markdown, str), "Markdown should be a string"
         assert len(content.markdown) > 0, "Markdown content should not be empty"
         assert content.markdown.strip(), "Markdown content should not be just whitespace"
-        
+
         print(f"\n✓ Markdown extraction successful:")
         print(f"  - Markdown length: {len(content.markdown)} characters")
         print(f"  - First 100 chars: {content.markdown[:100]}...")
@@ -1000,18 +1005,18 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @recorded_by_proxy_async
     async def test_create_classifier_async(self, azure_content_understanding_endpoint: str) -> None:
         """Test creating a classifier with content categories and document segmentation.
-        
+
         This test corresponds to .NET CreateClassifierAsync.
-        Verifies that the classifier is created successfully with the specified categories 
+        Verifies that the classifier is created successfully with the specified categories
         and configuration, and can segment documents into different categories.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
         created_analyzer = False
         analyzer_id = generate_analyzer_id(client, "test_classifier", is_async=True)
-        
+
         print(f"\n=== Test: Create Classifier with Segmentation ===")
         print(f"Analyzer ID: {analyzer_id}")
-        
+
         try:
             # Define content categories for classification
             content_categories = {
@@ -1023,40 +1028,34 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 },
                 "Bank_Statement": {
                     "description": "Official statements issued by banks that summarize account activity"
-                }
+                },
             }
-            
+
             # Create analyzer configuration with categories and segmentation enabled
-            config = {
-                "returnDetails": True,
-                "enableSegment": True,
-                "contentCategories": content_categories
-            }
-            
+            config = {"returnDetails": True, "enableSegment": True, "contentCategories": content_categories}
+
             # Create the classifier analyzer
             classifier = {
                 "baseAnalyzerId": "prebuilt-document",
                 "description": "Custom classifier for financial document categorization",
                 "config": config,
-                "models": {
-                    "completion": "gpt-4.1"
-                }
+                "models": {"completion": "gpt-4.1"},
             }
-            
+
             print(f"\nCreating classifier with {len(content_categories)} categories...")
             print(f"Categories: {', '.join(content_categories.keys())}")
-            
+
             # Create the classifier
             poller = await create_analyzer_and_assert_async(client, analyzer_id, classifier)
             created_analyzer = True
-            
+
             # Get the created classifier to verify full details
             get_response = await client.get_analyzer(analyzer_id=analyzer_id)
             assert get_response is not None, "Get analyzer response should not be null"
-            
+
             result = get_response
             assert result is not None, "Classifier result should not be null"
-            
+
             # Verify config
             if hasattr(result, "config") and result.config is not None:
                 config_dict = result.config if isinstance(result.config, dict) else result.config.as_dict()
@@ -1069,9 +1068,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                     print("  (Config exists but contentCategories not verified - may be service behavior)")
             else:
                 print("  (Config verification skipped - result.config is None)")
-            
+
             print(f"✓ Classifier test completed successfully")
-            
+
         finally:
             # Always clean up the created analyzer
             await delete_analyzer_and_assert(client, analyzer_id, created_analyzer)
@@ -1080,27 +1079,27 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @recorded_by_proxy_async
     async def test_analyze_configs_async(self, azure_content_understanding_endpoint: str) -> None:
         """Test analyzing a document with specific configurations enabled.
-        
+
         This test corresponds to .NET AnalyzeConfigsAsync.
         Verifies that document features can be extracted with formulas, layout, and OCR enabled.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
-        
+
         print("\n=== Test: Analyze with Specific Configurations ===")
-        
+
         # Get test file path
         current_dir = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.join(current_dir, "test_data", "sample_invoice.pdf")
-        
+
         assert os.path.exists(file_path), f"Test file should exist at {file_path}"
         print(f"Test file: {file_path}")
-        
+
         # Read file content
         with open(file_path, "rb") as f:
             file_bytes = f.read()
         assert len(file_bytes) > 0, "File should not be empty"
         print(f"File size: {len(file_bytes)} bytes")
-        
+
         # Analyze with prebuilt-documentSearch which has formulas, layout, and OCR enabled
         print("\nAnalyzing document with prebuilt-documentSearch (formulas, layout, OCR enabled)...")
         poller = await client.begin_analyze_binary(
@@ -1108,11 +1107,11 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             binary_input=file_bytes,
             content_type="application/pdf",
         )
-        
+
         # Wait for completion
         result = await poller.result()
         assert_poller_properties(poller)
-        
+
         # Verify result
         assert result is not None, "Analysis result should not be null"
         assert hasattr(result, "contents"), "Result should have contents attribute"
@@ -1120,50 +1119,49 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         assert len(result.contents) > 0, "Result should have at least one content"
         assert len(result.contents) == 1, "PDF file should have exactly one content element"
         print(f"✓ Analysis completed with {len(result.contents)} content element(s)")
-        
+
         # Verify document content
         document_content = result.contents[0]
         assert document_content is not None, "Content should not be null"
         assert hasattr(document_content, "start_page_number"), "Should have start_page_number"
         start_page = getattr(document_content, "start_page_number", None)
         assert start_page is not None and start_page >= 1, "Start page should be >= 1"
-        
+
         if hasattr(document_content, "end_page_number"):
             end_page = getattr(document_content, "end_page_number", None)
-            assert end_page is not None and end_page >= start_page, \
-                "End page should be >= start page"
+            assert end_page is not None and end_page >= start_page, "End page should be >= start page"
             print(f"✓ Document page range: {start_page}-{end_page}")
-        
+
         # Verify markdown was extracted (OCR/layout result)
         if hasattr(document_content, "markdown") and document_content.markdown:
             print(f"✓ Markdown extracted ({len(document_content.markdown)} characters)")
-        
+
         print(f"✓ Configuration test completed successfully")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_analyze_return_raw_json_async(self, azure_content_understanding_endpoint: str) -> None:
         """Test analyzing a document and returning raw JSON response.
-        
+
         This test corresponds to .NET AnalyzeReturnRawJsonAsync.
         Verifies that the raw JSON response can be retrieved and parsed.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
-        
+
         print("\n=== Test: Analyze and Return Raw JSON ===")
-        
+
         # Get test file path
         current_dir = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.join(current_dir, "test_data", "sample_invoice.pdf")
         assert os.path.exists(file_path), f"Sample file should exist at {file_path}"
         print(f"Test file: {file_path}")
-        
+
         # Read file content
         with open(file_path, "rb") as f:
             file_bytes = f.read()
         assert len(file_bytes) > 0, "File should not be empty"
         print(f"File size: {len(file_bytes)} bytes")
-        
+
         # Analyze the document
         print("\nAnalyzing document with prebuilt-documentSearch...")
         poller = await client.begin_analyze_binary(
@@ -1171,25 +1169,26 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             binary_input=file_bytes,
             content_type="application/pdf",
         )
-        
+
         # Wait for completion
         result = await poller.result()
         assert_poller_properties(poller)
-        
+
         # Verify operation completed successfully
         assert result is not None, "Analysis result should not be null"
-        
+
         # Verify response can be serialized to JSON
         import json
-        result_dict = result.as_dict() if hasattr(result, 'as_dict') else dict(result)
+
+        result_dict = result.as_dict() if hasattr(result, "as_dict") else dict(result)
         json_str = json.dumps(result_dict, indent=2)
         assert len(json_str) > 0, "JSON string should not be empty"
-        
+
         # Verify JSON can be parsed back
         parsed = json.loads(json_str)
         assert parsed is not None, "Parsed JSON should not be null"
         assert isinstance(parsed, dict), "Parsed JSON should be a dictionary"
-        
+
         print(f"✓ JSON serialization successful:")
         print(f"  - JSON length: {len(json_str)} characters")
         print(f"  - Top-level keys: {', '.join(list(parsed.keys())[:5])}...")
@@ -1199,18 +1198,18 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @recorded_by_proxy_async
     async def test_delete_result_async(self, azure_content_understanding_endpoint: str) -> None:
         """Test deleting an analysis result.
-        
+
         This test corresponds to .NET DeleteResultAsync.
         Verifies that an analysis result can be deleted using its operation ID.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=azure_content_understanding_endpoint)
-        
+
         print("\n=== Test: Delete Analysis Result ===")
-        
+
         # Get test file URI
         document_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
         print(f"Document URL: {document_url}")
-        
+
         # Start the analysis operation
         print("\nStarting analysis operation...")
         poller = await client.begin_analyze(
@@ -1218,30 +1217,30 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             inputs=[AnalyzeInput(url=document_url)],
             polling_interval=1,
         )
-        
+
         # Get the operation ID from the poller
-        operation_id = poller._polling_method._operation.get_polling_url().split('/')[-1]  # type: ignore[attr-defined]
-        if '?' in operation_id:
-            operation_id = operation_id.split('?')[0]
+        operation_id = poller._polling_method._operation.get_polling_url().split("/")[-1]  # type: ignore[attr-defined]
+        if "?" in operation_id:
+            operation_id = operation_id.split("?")[0]
         assert operation_id is not None, "Operation ID should not be null"
         assert len(operation_id) > 0, "Operation ID should not be empty"
         print(f"Operation ID: {operation_id}")
-        
+
         # Wait for completion
         print("Waiting for analysis to complete...")
         result = await poller.result()
-        
+
         # Verify analysis completed successfully
         assert result is not None, "Analysis result should not be null"
         assert hasattr(result, "contents"), "Result should have contents"
         assert result.contents is not None, "Result should contain contents"
         assert len(result.contents) > 0, "Result should have at least one content"
         print(f"✓ Analysis completed successfully")
-        
+
         # Delete the analysis result
         print(f"\nDeleting analysis result (operation ID: {operation_id})...")
         await client.delete_result(operation_id=operation_id)
-        
+
         print(f"✓ Delete result completed successfully")
         print("Note: Deletion success verified by no exception thrown")
         print(f"✓ Delete result test completed successfully")

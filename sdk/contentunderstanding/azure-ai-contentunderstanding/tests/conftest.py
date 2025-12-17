@@ -75,7 +75,7 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
-    
+
     # Sanitize cross-resource copy fields in request body
     # These fields are required for grant_copy_authorization and copy_analyzer API calls
     # Sanitizing them allows playback mode to use placeholder values

@@ -284,7 +284,9 @@ class ContentUnderstandingClient(GeneratedClient):
             poller._polling_method,  # pylint: disable=protected-access
         )
 
-    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> AsyncHttpResponse:  # pylint: disable=invalid-overridden-method,useless-parent-delegation
+    async def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> AsyncHttpResponse:  # pylint: disable=invalid-overridden-method,useless-parent-delegation
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

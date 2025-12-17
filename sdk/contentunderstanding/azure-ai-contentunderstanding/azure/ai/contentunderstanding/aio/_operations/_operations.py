@@ -576,7 +576,7 @@ class _ContentUnderstandingClientOperationsMixin(
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 201]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -850,10 +850,10 @@ class _ContentUnderstandingClientOperationsMixin(
             raise HttpResponseError(response=response)
 
         response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         deserialized = response.iter_bytes()
 
@@ -999,14 +999,14 @@ class _ContentUnderstandingClientOperationsMixin(
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
 
-            deserialized = _deserialize(_models.ContentAnalyzer, response.json().get("result", {}))
+            deserialized = _deserialize(_models.ContentAnalyzer, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized

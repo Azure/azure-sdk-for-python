@@ -693,7 +693,8 @@ class ContentAnalyzerConfig(_Model):
     :ivar estimate_field_source_and_confidence: Return field grounding source and confidence.
     :vartype estimate_field_source_and_confidence: bool
     :ivar content_categories: Map of categories to classify the input content(s) against.
-    :vartype content_categories: dict[str, ~azure.ai.contentunderstanding.models.ContentCategory]
+    :vartype content_categories: dict[str,
+     ~azure.ai.contentunderstanding.models.ContentCategoryDefinition]
     :ivar enable_segment: Enable segmentation of the input by contentCategories.
     :vartype enable_segment: bool
     :ivar segment_per_page: Force segmentation of document content by page.
@@ -752,7 +753,7 @@ class ContentAnalyzerConfig(_Model):
         name="estimateFieldSourceAndConfidence", visibility=["read", "create", "update", "delete", "query"]
     )
     """Return field grounding source and confidence."""
-    content_categories: Optional[dict[str, "_models.ContentCategory"]] = rest_field(
+    content_categories: Optional[dict[str, "_models.ContentCategoryDefinition"]] = rest_field(
         name="contentCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """Map of categories to classify the input content(s) against."""
@@ -786,7 +787,7 @@ class ContentAnalyzerConfig(_Model):
         annotation_format: Optional[Union[str, "_models.AnnotationFormat"]] = None,
         disable_face_blurring: Optional[bool] = None,
         estimate_field_source_and_confidence: Optional[bool] = None,
-        content_categories: Optional[dict[str, "_models.ContentCategory"]] = None,
+        content_categories: Optional[dict[str, "_models.ContentCategoryDefinition"]] = None,
         enable_segment: Optional[bool] = None,
         segment_per_page: Optional[bool] = None,
         omit_content: Optional[bool] = None,
@@ -855,7 +856,7 @@ class ContentAnalyzerOperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentCategory(_Model):
+class ContentCategoryDefinition(_Model):
     """Content category definition.
 
     :ivar description: The description of the category.
@@ -2613,6 +2614,10 @@ class ObjectField(ContentField, discriminator="object"):
         self.field_type = ContentFieldType.OBJECT  # type: ignore
 
 
+class RecordMergePatchUpdate(_Model):
+    """RecordMergePatchUpdate."""
+
+
 class StringField(ContentField, discriminator="string"):
     """String field extracted from the content.
 
@@ -2668,23 +2673,23 @@ class StringField(ContentField, discriminator="string"):
 class SupportedModels(_Model):
     """Chat completion and embedding models supported by the analyzer.
 
-    :ivar completion: Chat completion models supported by the analyzer. Required.
+    :ivar completion: Chat completion models supported by the analyzer.
     :vartype completion: list[str]
-    :ivar embedding: Embedding models supported by the analyzer. Required.
+    :ivar embedding: Embedding models supported by the analyzer.
     :vartype embedding: list[str]
     """
 
-    completion: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Chat completion models supported by the analyzer. Required."""
-    embedding: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Embedding models supported by the analyzer. Required."""
+    completion: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Chat completion models supported by the analyzer."""
+    embedding: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Embedding models supported by the analyzer."""
 
     @overload
     def __init__(
         self,
         *,
-        completion: list[str],
-        embedding: list[str],
+        completion: Optional[list[str]] = None,
+        embedding: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload

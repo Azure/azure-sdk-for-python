@@ -323,44 +323,44 @@ def assert_document_properties(analysis_result: Any, expected_min_pages: int = 1
         AssertionError: If any document property assertion fails
     """
     print(f"Validating document properties")
-    
+
     assert analysis_result is not None, "Analysis result should not be None"
     assert analysis_result.contents is not None, "Analysis result should have contents"
     assert len(analysis_result.contents) > 0, "Analysis result should have at least one content item"
-    
+
     # Verify the first content has expected structure
     first_content = analysis_result.contents[0]
     assert first_content is not None, "First content should not be None"
-    
+
     # Check if markdown content is present (most common output format)
-    if hasattr(first_content, 'markdown') and first_content.markdown:
+    if hasattr(first_content, "markdown") and first_content.markdown:
         markdown_content = first_content.markdown
         assert isinstance(markdown_content, str), "Markdown content should be a string"
         assert len(markdown_content) > 0, "Markdown content should not be empty"
         print(f"✓ Markdown content found: {len(markdown_content)} characters")
-    
+
     # Check pages information if available
-    if hasattr(first_content, 'pages') and first_content.pages:
+    if hasattr(first_content, "pages") and first_content.pages:
         pages = first_content.pages
         assert len(pages) >= expected_min_pages, f"Expected at least {expected_min_pages} page(s), got {len(pages)}"
         print(f"✓ Document has {len(pages)} page(s)")
-        
+
         # Validate first page properties
         first_page = pages[0]
-        if hasattr(first_page, 'page_number'):
+        if hasattr(first_page, "page_number"):
             assert first_page.page_number >= 1, "Page number should be >= 1"
             print(f"✓ First page number: {first_page.page_number}")
-    
+
     # Check if fields were extracted (if using field schema)
-    if hasattr(first_content, 'fields') and first_content.fields:
+    if hasattr(first_content, "fields") and first_content.fields:
         fields = first_content.fields
         assert isinstance(fields, dict), "Fields should be a dictionary"
         print(f"✓ Extracted {len(fields)} field(s): {list(fields.keys())}")
-        
+
         # Validate each field has value
         for field_name, field_value in fields.items():
             assert field_value is not None, f"Field '{field_name}' should have a value"
-    
+
     print(f"✓ Document properties validation completed successfully")
 
 
@@ -484,82 +484,88 @@ def assert_invoice_fields(analysis_result: Any, result_name: str = "Invoice anal
         AssertionError: If any invoice field assertion fails
     """
     print(f"Validating {result_name} invoice fields")
-    
+
     assert analysis_result is not None, f"{result_name} should not be None"
     assert analysis_result.contents is not None, f"{result_name} should have contents"
     assert len(analysis_result.contents) > 0, f"{result_name} should have at least one content item"
-    
+
     first_content = analysis_result.contents[0]
     assert first_content is not None, "First content should not be None"
-    
+
     # Verify fields were extracted
-    assert hasattr(first_content, 'fields'), "Content should have fields attribute"
+    assert hasattr(first_content, "fields"), "Content should have fields attribute"
     assert first_content.fields is not None, "Fields should not be None"
     fields = first_content.fields
     assert isinstance(fields, dict), "Fields should be a dictionary"
     assert len(fields) > 0, "Should have extracted at least one field"
-    
+
     print(f"✓ Extracted {len(fields)} invoice field(s): {list(fields.keys())}")
-    
+
     # Define expected invoice fields (at least some should be present)
     expected_fields = [
-        'invoice_number', 'invoice_date', 'due_date',
-        'vendor_name', 'vendor_address',
-        'customer_name', 'customer_address',
-        'subtotal', 'tax_amount', 'amount_due'
+        "invoice_number",
+        "invoice_date",
+        "due_date",
+        "vendor_name",
+        "vendor_address",
+        "customer_name",
+        "customer_address",
+        "subtotal",
+        "tax_amount",
+        "amount_due",
     ]
-    
+
     found_fields = [f for f in expected_fields if f in fields]
     print(f"✓ Found {len(found_fields)} expected invoice fields: {found_fields}")
-    
+
     # Validate numeric fields if present
-    numeric_fields = ['amount_due', 'subtotal', 'tax_amount']
+    numeric_fields = ["amount_due", "subtotal", "tax_amount"]
     for field_name in numeric_fields:
         if field_name in fields:
             field_value = fields[field_name]
             assert field_value is not None, f"Field '{field_name}' should have a value"
-            
+
             # Check if it's a dict with 'valueNumber' (common response format)
             if isinstance(field_value, dict):
-                assert 'type' in field_value, f"Field '{field_name}' should have a type"
-                assert field_value['type'] == 'number', f"Field '{field_name}' should have type 'number'"
-                
-                if 'valueNumber' in field_value:
-                    value = field_value['valueNumber']
+                assert "type" in field_value, f"Field '{field_name}' should have a type"
+                assert field_value["type"] == "number", f"Field '{field_name}' should have type 'number'"
+
+                if "valueNumber" in field_value:
+                    value = field_value["valueNumber"]
                     assert isinstance(value, (int, float)), f"Field '{field_name}' valueNumber should be numeric"
                     assert value >= 0, f"Field '{field_name}' value should be non-negative"
                     print(f"✓ {field_name}: {value}")
-                
+
                 # Check confidence if available
-                if 'confidence' in field_value:
-                    confidence = field_value['confidence']
+                if "confidence" in field_value:
+                    confidence = field_value["confidence"]
                     assert isinstance(confidence, (int, float)), f"Confidence should be numeric"
                     assert 0 <= confidence <= 1, f"Confidence should be between 0 and 1"
                     print(f"  - Confidence: {confidence:.2%}")
-                
+
                 # Check spans/source if available
-                if 'spans' in field_value:
-                    spans = field_value['spans']
+                if "spans" in field_value:
+                    spans = field_value["spans"]
                     assert isinstance(spans, list), "Spans should be a list"
                     assert len(spans) > 0, "Should have at least one span"
                     print(f"  - Source spans: {len(spans)} location(s)")
-    
+
     # Validate string fields if present
-    string_fields = ['invoice_number', 'vendor_name', 'customer_name']
+    string_fields = ["invoice_number", "vendor_name", "customer_name"]
     for field_name in string_fields:
         if field_name in fields:
             field_value = fields[field_name]
             assert field_value is not None, f"Field '{field_name}' should have a value"
-            
+
             # Check if it's a dict with 'valueString' (common response format)
             if isinstance(field_value, dict):
-                assert 'type' in field_value, f"Field '{field_name}' should have a type"
-                assert field_value['type'] == 'string', f"Field '{field_name}' should have type 'string'"
-                
-                if 'valueString' in field_value:
-                    value = field_value['valueString']
+                assert "type" in field_value, f"Field '{field_name}' should have a type"
+                assert field_value["type"] == "string", f"Field '{field_name}' should have type 'string'"
+
+                if "valueString" in field_value:
+                    value = field_value["valueString"]
                     assert isinstance(value, str), f"Field '{field_name}' valueString should be string"
                     assert len(value) > 0, f"Field '{field_name}' value should not be empty"
                     print(f"✓ {field_name}: {value}")
-    
+
     print(f"✓ Invoice fields validation completed successfully")

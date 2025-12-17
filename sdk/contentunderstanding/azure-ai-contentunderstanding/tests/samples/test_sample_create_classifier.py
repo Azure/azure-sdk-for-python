@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -34,21 +35,21 @@ class TestSampleCreateClassifier(ContentUnderstandingClientTestBase):
     @recorded_by_proxy
     def test_sample_create_classifier(self, azure_content_understanding_endpoint: str) -> None:
         """Test creating a custom classifier with content categories.
-        
+
         This test validates:
         1. Content categories definition
         2. Analyzer configuration with segmentation
         3. Classifier creation
-        
+
         05_CreateClassifier.CreateClassifierAsync()
         """
         client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
         # Generate a unique analyzer ID
         analyzer_id = f"test_classifier_{uuid.uuid4().hex[:16]}"
-        
+
         print(f"[PASS] Classifier ID generated: {analyzer_id}")
-        
+
         # Define content categories for classification using ContentCategory objects
         categories = {
             "Loan_Application": ContentCategory(
@@ -59,70 +60,64 @@ class TestSampleCreateClassifier(ContentUnderstandingClientTestBase):
             ),
             "Bank_Statement": ContentCategory(
                 description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
-            )
+            ),
         }
-        
+
         # Assertions for categories
         assert categories is not None, "Categories should not be null"
         assert len(categories) == 3, "Should have 3 categories"
         print(f"[PASS] Content categories defined: {len(categories)} categories")
-        
+
         # Validate each category has description
         for cat_name, cat_def in categories.items():
             assert cat_def.description is not None, f"Category {cat_name} should have description"
             assert cat_def.description.strip(), f"Category {cat_name} description should not be empty"
-        
+
         print("[PASS] All category definitions validated")
-        
+
         # Create analyzer configuration using ContentAnalyzerConfig model
         config = ContentAnalyzerConfig(
             return_details=True,
             enable_segment=True,  # Enable automatic segmentation by category
-            content_categories=categories
+            content_categories=categories,
         )
-        
+
         # Assertions for config
         assert config is not None, "Config should not be null"
         assert config.enable_segment is True, "Segmentation should be enabled"
         assert config.content_categories is not None, "Config should have content categories"
         assert len(config.content_categories) == 3, "Config should have 3 content categories"
         print("[PASS] Classifier configuration created")
-        
+
         # Create the classifier analyzer using ContentAnalyzer model
         classifier = ContentAnalyzer(
             base_analyzer_id="prebuilt-document",
             description="Custom classifier for financial document categorization",
             config=config,
-            models={
-                "completion": "gpt-4.1"
-            }
+            models={"completion": "gpt-4.1"},
         )
-        
+
         # Assertions for classifier
         assert classifier is not None, "Classifier should not be null"
-        assert classifier.base_analyzer_id == "prebuilt-document", \
-            "Base analyzer should be prebuilt-document"
+        assert classifier.base_analyzer_id == "prebuilt-document", "Base analyzer should be prebuilt-document"
         assert classifier.models is not None, "Classifier should have models"
         assert "completion" in classifier.models, "Classifier should have completion model"
         print("[PASS] Classifier definition validated")
-        
+
         # Create the classifier
         try:
-            poller = client.begin_create_analyzer(
-                analyzer_id=analyzer_id,
-                resource=classifier
-            )
-            
+            poller = client.begin_create_analyzer(analyzer_id=analyzer_id, resource=classifier)
+
             result = poller.result()
-            
+
             # Assertions
             assert poller is not None, "Create classifier operation should not be null"
             assert poller.done(), "Operation should be completed"
             print(f"[PASS] Classifier '{analyzer_id}' created successfully")
-            
+
             assert result is not None, "Create classifier result should not be null"
             print("[PASS] Create classifier result validated")
-            
+
             # Cleanup
             try:
                 client.delete_analyzer(analyzer_id=analyzer_id)
@@ -133,5 +128,5 @@ class TestSampleCreateClassifier(ContentUnderstandingClientTestBase):
             error_msg = str(e)
             print(f"\n[ERROR] Full error message:\n{error_msg}")
             pytest.skip(f"Classifier creation not available or failed: {error_msg[:100]}")
-        
+
         print("\n[SUCCESS] All test_sample_create_classifier assertions passed")

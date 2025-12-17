@@ -151,7 +151,7 @@ async def main() -> None:
 
                         description = description_field.value if description_field else "(no description)"
                         quantity = quantity_field.value if quantity_field else "N/A"
-                        
+
                         # Display price information - prefer UnitPrice if available, otherwise Amount
                         # UnitPrice is an ObjectField with Amount and CurrencyCode sub-fields (like TotalAmount)
                         price_info = ""
@@ -164,7 +164,7 @@ async def main() -> None:
                                 price_info = f"Unit Price: {unit_price_amount_field.value} {currency}".strip()
                         elif amount_field and amount_field.value is not None:
                             price_info = f"Amount: {amount_field.value}"
-                        
+
                         print(f"  {i}. {description}")
                         print(f"     Quantity: {quantity}" + (f", {price_info}" if price_info else ""))
         # [END extract_invoice_fields]

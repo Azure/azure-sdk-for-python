@@ -63,10 +63,14 @@ def patch_sdk():
             request.url = request.url.replace(":copyAnalyzer", ":copy")
         return request
 
-    _operations.build_content_understanding_copy_analyzer_request = _patched_build_content_understanding_copy_analyzer_request
+    _operations.build_content_understanding_copy_analyzer_request = (
+        _patched_build_content_understanding_copy_analyzer_request
+    )
 
     # 2. SDK-FIX: Wrap _copy_analyzer_initial to accept both 201 and 202 status codes
-    _original_copy_initial = _operations._ContentUnderstandingClientOperationsMixin._copy_analyzer_initial  # pylint: disable=protected-access
+    _original_copy_initial = (
+        _operations._ContentUnderstandingClientOperationsMixin._copy_analyzer_initial
+    )  # pylint: disable=protected-access
 
     def _patched_copy_analyzer_initial(  # pylint: disable=protected-access
         self,
@@ -125,6 +129,7 @@ def patch_sdk():
             _content = body
         else:
             from .._utils.model_base import SdkJSONEncoder
+
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = _operations.build_content_understanding_copy_analyzer_request(
@@ -170,4 +175,6 @@ def patch_sdk():
 
         return deserialized  # type: ignore
 
-    _operations._ContentUnderstandingClientOperationsMixin._copy_analyzer_initial = _patched_copy_analyzer_initial  # pylint: disable=protected-access
+    _operations._ContentUnderstandingClientOperationsMixin._copy_analyzer_initial = (
+        _patched_copy_analyzer_initial  # pylint: disable=protected-access
+    )

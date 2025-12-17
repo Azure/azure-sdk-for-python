@@ -128,6 +128,7 @@ def _add_value_property_to_field(field_class: type, value_attr: str, return_type
     :return: None
     :rtype: None
     """
+
     def value_getter(self: Any) -> Any:
         """Get the value of this field.
 
@@ -137,7 +138,7 @@ def _add_value_property_to_field(field_class: type, value_attr: str, return_type
         return getattr(self, value_attr, None)
 
     # Set return type annotation for better type checking
-    value_getter.__annotations__['return'] = return_type
+    value_getter.__annotations__["return"] = return_type
 
     # Create property with type annotation
     value_property = property(value_getter)
@@ -197,7 +198,7 @@ def patch_sdk():
         return None
 
     # Set return type annotation
-    _content_field_value_getter.__annotations__['return'] = Any
+    _content_field_value_getter.__annotations__["return"] = Any
 
     # Add property to ContentField base class
     content_field_value = property(_content_field_value_getter)

@@ -284,7 +284,9 @@ class ContentUnderstandingClient(GeneratedClient):
             poller._polling_method,  # pylint: disable=protected-access
         )
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:  # pylint: disable=useless-parent-delegation
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> HttpResponse:  # pylint: disable=useless-parent-delegation
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
