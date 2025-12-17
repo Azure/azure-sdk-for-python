@@ -20,7 +20,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MESSAGE_ENVELOPE_NAME,
     _DEFAULT_LOG_MESSAGE,
 )
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MessageData,
     MonitorBase,
@@ -56,7 +56,9 @@ __all__ = ["AzureMonitorLogExporter"]
 class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
 
-    def export(self, batch: Sequence[ReadableLogRecord], **kwargs: Any) -> LogRecordExportResult:  # pylint: disable=unused-argument
+    def export(
+        self, batch: Sequence[ReadableLogRecord], **kwargs: Any  # pylint: disable=unused-argument
+    ) -> LogRecordExportResult:
         """Export log data.
 
         :param batch: OpenTelemetry ReadableLogRecord(s) to export.
@@ -110,8 +112,9 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
     log_record = readable_log_record.log_record
     is_event = None
     if log_record.attributes:
-        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or \
-            log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE)  # type: ignore
+        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or log_record.attributes.get(
+            _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE
+        )  # type: ignore
     return is_event is not None
 
 
@@ -121,27 +124,28 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
-    envelope.tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
-    envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
-        log_record.trace_id or _DEFAULT_TRACE_ID
-    )
-    envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
-        log_record.span_id or _DEFAULT_SPAN_ID
-    )
+
+    # Build tags dict all at once to avoid issues with descriptor creating new dicts on each access
+    tags = envelope.tags or {}
+    tags.update(_utils._populate_part_a_fields(readable_log_record.resource))
+    tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(log_record.trace_id or _DEFAULT_TRACE_ID)
+    tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(log_record.span_id or _DEFAULT_SPAN_ID)
     if (
         log_record.attributes
         and ContextTagKeys.AI_OPERATION_NAME in log_record.attributes
         and log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] is not None
     ):
-        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get( # type: ignore
-            ContextTagKeys.AI_OPERATION_NAME
-        )
+        tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(ContextTagKeys.AI_OPERATION_NAME)
     if _utils._is_any_synthetic_source(log_record.attributes):
-        envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
+        tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"
     # Special use case: Customers want to be able to set location ip on log records
     location_ip = trace_utils._get_location_ip(log_record.attributes)
     if location_ip:
-        envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
+        tags[ContextTagKeys.AI_LOCATION_IP] = location_ip
+
+    # Assign the complete tags dict back to envelope
+    envelope.tags = tags
+
     properties = _utils._filter_custom_properties(
         log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
     )

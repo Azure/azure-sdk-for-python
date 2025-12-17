@@ -8,7 +8,7 @@ import time
 import unittest
 
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
 from opentelemetry.sdk.resources import Resource
 from unittest.mock import patch
 
@@ -24,8 +24,6 @@ TEST_AZURE_MONITOR_CONTEXT = {
         TEST_SDK_VERSION_PREFIX,
     ),
 }
-TEST_TIMESTAMP = "TEST_TIMESTAMP"
-TEST_TIME = "TEST_TIME"
 TEST_WEBSITE_SITE_NAME = "TEST_WEBSITE_SITE_NAME"
 TEST_KUBERNETES_SERVICE_HOST = "TEST_KUBERNETES_SERVICE_HOST"
 TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
@@ -222,7 +220,6 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-
     def test_populate_part_a_fields_aks_with_service(self):
         resource = Resource(
             {
@@ -263,16 +260,17 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str", return_value=TEST_TIME)
     @patch("azure.monitor.opentelemetry.exporter._utils.azure_monitor_context", TEST_AZURE_MONITOR_CONTEXT)
-    def test_create_telemetry_item(self, mock_ns_to_iso_str):
-        result = _utils._create_telemetry_item(TEST_TIMESTAMP)
+    def test_create_telemetry_item(self):
+        time_ns = time.time_ns()
+        expected_datetime = datetime.datetime.fromtimestamp(time_ns / 1e9, tz=datetime.timezone.utc)
+        result = _utils._create_telemetry_item(time_ns)
         expected_tags = dict(TEST_AZURE_MONITOR_CONTEXT)
         expected = TelemetryItem(
             name="",
             instrumentation_key="",
             tags=expected_tags,
-            time=TEST_TIME,
+            time=expected_datetime,
         )
         self.assertEqual(result, expected)
 
@@ -554,17 +552,25 @@ class TestUtils(unittest.TestCase):
         # This is not an expected scenario and just tests the default
         self.assertFalse(_utils._is_attach_enabled())
 
-    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {
-        "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
-        "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
-    }, clear=True)
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+            "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
+        },
+        clear=True,
+    )
     def test_attach_aks(self):
         # This is not an expected scenario and just tests the default
         self.assertTrue(_utils._is_attach_enabled())
 
-    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {
-        "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
-    }, clear=True)
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+        },
+        clear=True,
+    )
     def test_aks_no_attach(self):
         # This is not an expected scenario and just tests the default
         self.assertFalse(_utils._is_attach_enabled())
@@ -616,10 +622,7 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(_utils._is_any_synthetic_source(properties))
 
     def test_is_any_synthetic_source_both(self):
-        properties = {
-            "user_agent.synthetic.type": "bot",
-            "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn"
-        }
+        properties = {"user_agent.synthetic.type": "bot", "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn"}
         self.assertTrue(_utils._is_any_synthetic_source(properties))
 
     def test_is_any_synthetic_source_none(self):

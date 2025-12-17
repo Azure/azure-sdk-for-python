@@ -51,4 +51,5 @@ class TestCpu(unittest.TestCase):
         num_cpus = psutil.cpu_count()
         self.assertAlmostEqual(obs.value, 1.2 / num_cpus, delta=1)
 
+
 # cSpell:enable

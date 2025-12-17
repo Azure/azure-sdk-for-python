@@ -26,9 +26,9 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
         self._options = options or {}
         self._enable_trace_based_sampling_for_logs = self._options.get("enable_trace_based_sampling_for_logs")
 
-    def on_emit(self, readable_log_record: ReadableLogRecord) -> None: # pylint: disable=arguments-renamed
+    def on_emit(self, readable_log_record: ReadableLogRecord) -> None:  # pylint: disable=arguments-renamed
         # cspell: disable
-        """ Determines whether the logger should drop log records associated with unsampled traces.
+        """Determines whether the logger should drop log records associated with unsampled traces.
         If `trace_based_sampling` is `true`, log records associated with unsampled traces are dropped by the `Logger`.
         A log record is considered associated with an unsampled trace if it has a valid `SpanId` and its
         `TraceFlags` indicate that the trace is unsampled. A log record that isn't associated with a trace
@@ -41,7 +41,10 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
         # cspell: enable
         if self._enable_trace_based_sampling_for_logs:
             if hasattr(readable_log_record, "log_record") and readable_log_record.log_record is not None:
-                if hasattr(readable_log_record.log_record, "context") and readable_log_record.log_record.context is not None: # pylint: disable=line-too-long
+                if (
+                    hasattr(readable_log_record.log_record, "context")
+                    and readable_log_record.log_record.context is not None
+                ):  # pylint: disable=line-too-long
                     span = get_current_span(readable_log_record.log_record.context)
                     span_context = span.get_span_context()
                     if span_context.is_valid and not span_context.trace_flags.sampled:

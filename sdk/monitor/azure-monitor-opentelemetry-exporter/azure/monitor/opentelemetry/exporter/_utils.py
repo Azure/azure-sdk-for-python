@@ -14,11 +14,10 @@ from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys, TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
@@ -107,11 +106,13 @@ def _get_os():
         os = "w"
     return os
 
+
 def _get_attach_type():
     attach_type = "m"
     if _is_attach_enabled():
         attach_type = "i"
     return attach_type
+
 
 def _get_sdk_version_prefix():
     sdk_version_prefix = ""
@@ -234,11 +235,12 @@ class PeriodicTask(threading.Thread):
 
 
 def _create_telemetry_item(timestamp: int) -> TelemetryItem:
+    ts = datetime.datetime.fromtimestamp(timestamp / 1e9, tz=datetime.timezone.utc)
     return TelemetryItem(
         name="",
         instrumentation_key="",
         tags=dict(azure_monitor_context),  # type: ignore
-        time=ns_to_iso_str(timestamp),  # type: ignore
+        time=ts,
     )
 
 
@@ -330,10 +332,9 @@ def _is_synthetic_load(properties: Optional[Any]) -> bool:
         return False
 
     # Check both old and new semantic convention attributes for HTTP user agent
-    user_agent = (
-        properties.get("user_agent.original") or  # type: ignore  # New semantic convention
-        properties.get("http.user_agent")  # type: ignore  # Legacy semantic convention
-    )
+    user_agent = properties.get("user_agent.original") or properties.get(  # type: ignore  # New semantic convention
+        "http.user_agent"
+    )  # type: ignore  # Legacy semantic convention
 
     if user_agent and isinstance(user_agent, str):
         return "AlwaysOn" in user_agent
@@ -392,10 +393,11 @@ def _get_scope(aad_audience=None):
 
 class Singleton(type):
     """Metaclass for creating thread-safe singleton instances.
-    
+
     Supports multiple singleton classes by maintaining a separate instance
     for each class that uses this metaclass.
     """
+
     _instances = {}  # type: ignore
     _lock = threading.Lock()
 
@@ -408,12 +410,14 @@ class Singleton(type):
                     cls._instances[cls] = instance  # type: ignore
         return cls._instances[cls]
 
+
 def _get_telemetry_type(item: TelemetryItem):
     if hasattr(item, "data") and item.data is not None:
         base_type = getattr(item.data, "base_type", None)
         if base_type:
             return _TYPE_MAP.get(base_type, _UNKNOWN)
     return _UNKNOWN
+
 
 def get_compute_type():
     if _is_on_functions():
@@ -423,6 +427,7 @@ def get_compute_type():
     if _is_on_aks():
         return _RP_Names.AKS.value
     return _RP_Names.UNKNOWN.value
+
 
 def _get_sha256_hash(input_str: str) -> str:
     return hashlib.sha256(input_str.encode("utf-8")).hexdigest()

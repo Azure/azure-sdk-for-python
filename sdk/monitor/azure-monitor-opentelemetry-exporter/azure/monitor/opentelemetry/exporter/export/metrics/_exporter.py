@@ -43,7 +43,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MetricDataPoint,
     MetricsData,
@@ -56,7 +56,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
 )
 from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
 from azure.monitor.opentelemetry.exporter._performance_counters._constants import (
-    _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS
+    _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS,
 )
 
 _logger = logging.getLogger(__name__)
@@ -176,13 +176,14 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             envelope.instrumentation_key = self._instrumentation_key
             # Only set SentToAMW on AKS Attach
             if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
-                if (
-                    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ
-                    and "otlp" in os.environ.get(OTEL_METRICS_EXPORTER, "")
+                properties = envelope.data.base_data.properties or {}  # type: ignore
+                if OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ and "otlp" in os.environ.get(
+                    OTEL_METRICS_EXPORTER, ""
                 ):
-                    envelope.data.base_data.properties["_MS.SentToAMW"] = "True"  # type: ignore
+                    properties["_MS.SentToAMW"] = "True"  # type: ignore
                 else:
-                    envelope.data.base_data.properties["_MS.SentToAMW"] = "False"  # type: ignore
+                    properties["_MS.SentToAMW"] = "False"  # type: ignore
+                envelope.data.base_data.properties = properties  # type: ignore
 
         return envelope
 
@@ -231,9 +232,10 @@ def _convert_point_to_envelope(
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
-    envelope.tags.update(_utils._populate_part_a_fields(resource))  # type: ignore
+    tags = envelope.tags
+    tags.update(_utils._populate_part_a_fields(resource))  # type: ignore
     if _utils._is_any_synthetic_source(point.attributes):
-        envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
+        tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     namespace = None
     if scope is not None and _is_metric_namespace_opted_in():
         namespace = str(scope.name)[:256]
@@ -274,6 +276,7 @@ def _convert_point_to_envelope(
     )
 
     envelope.data = MonitorBase(base_data=data, base_type="MetricData")
+    envelope.tags = tags
 
     return envelope
 

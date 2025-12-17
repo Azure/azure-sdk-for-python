@@ -39,11 +39,14 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter import _utils
 
+
 # Use a function to get VERSION lazily
 def _get_version() -> str:
     # Get VERSION using delayed import to avoid circular import.
     from azure.monitor.opentelemetry.exporter import VERSION
+
     return VERSION
+
 
 # cSpell:disable
 
