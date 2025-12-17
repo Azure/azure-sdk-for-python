@@ -190,4 +190,4 @@ class TestRequestTracingContextIntegration:
         correlation_header = headers["Correlation-Context"]
 
         # Should contain snapshot reference tag
-        assert "UsesSnapshotReference" in correlation_header
+        assert "SnapshotRef" in correlation_header
