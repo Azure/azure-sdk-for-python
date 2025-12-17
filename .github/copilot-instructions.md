@@ -109,6 +109,12 @@ This library is failing two release blocking checks - Mypy and Tests - CI. The l
 
 ---
 
+## SDK review
+
+For detailed workflow instructions, see [SDK Review](./instructions/sdk-review.instructions.md).
+
+---
+
 ## SDK release
 
 For detailed workflow instructions, see [SDK Release](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/instructions/copilot/sdk-release.instructions.md).
