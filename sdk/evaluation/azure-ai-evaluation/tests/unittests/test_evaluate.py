@@ -733,13 +733,13 @@ class TestEvaluate:
             ],
         }
         df = pd.DataFrame(data)
-        
+
         label_cols, defect_rates = _aggregate_label_defect_metrics(df)
-        
+
         # Should calculate defect rate for label column (all 4 rows)
         assert "evaluator.protected_material_defect_rate" in defect_rates
         assert defect_rates["evaluator.protected_material_defect_rate"] == 0.5
-        
+
         # Should calculate defect rates for detail keys (only from 2 valid dict rows)
         assert "evaluator.protected_material_details.detail1_defect_rate" in defect_rates
         assert "evaluator.protected_material_details.detail2_defect_rate" in defect_rates
