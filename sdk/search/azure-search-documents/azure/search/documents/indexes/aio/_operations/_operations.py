@@ -367,14 +367,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def _get_synonym_maps(
-        self, *, select: Optional[str] = None, **kwargs: Any
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
     ) -> _models2._models.ListSynonymMapsResult:
         """Lists all synonym maps available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: ListSynonymMapsResult. The ListSynonymMapsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListSynonymMapsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -838,13 +838,15 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_indexes(self, *, select: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models2.SearchIndex"]:
+    def list_indexes(
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models2.SearchIndex"]:
         """Lists all indexes available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: An iterator like instance of SearchIndex
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
@@ -3138,14 +3140,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def _get_data_source_connections(
-        self, *, select: Optional[str] = None, **kwargs: Any
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
     ) -> _models2._models.ListDataSourcesResult:
         """Lists all datasources available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: ListDataSourcesResult. The ListDataSourcesResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListDataSourcesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3927,14 +3929,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def _get_indexers(
-        self, *, select: Optional[str] = None, **kwargs: Any
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
     ) -> _models2._models.ListIndexersResult:
         """Lists all indexers available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: ListIndexersResult. The ListIndexersResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListIndexersResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4467,14 +4469,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def _get_skillsets(
-        self, *, select: Optional[str] = None, **kwargs: Any
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
     ) -> _models2._models.ListSkillsetsResult:
         """List all skillsets in a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
-        :paramtype select: str
+        :paramtype select: list[str]
         :return: ListSkillsetsResult. The ListSkillsetsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models._models.ListSkillsetsResult
         :raises ~azure.core.exceptions.HttpResponseError:
