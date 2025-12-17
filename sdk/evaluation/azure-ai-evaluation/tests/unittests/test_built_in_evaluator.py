@@ -1,3 +1,8 @@
+"""Unit tests for built-in evaluators."""
+
+# pylint: disable=missing-function-docstring,missing-class-docstring,missing-module-docstring
+# pylint: disable=protected-access,unused-argument,unused-import,line-too-long
+
 from unittest.mock import MagicMock, patch
 
 import pytest
