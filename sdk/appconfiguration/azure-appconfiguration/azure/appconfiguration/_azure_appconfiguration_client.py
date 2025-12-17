@@ -32,7 +32,7 @@ from ._models import (
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
 )
-from ._scope import get_default_scope, _DEFAULT_SCOPE_SUFFIX
+from ._credential_scope import get_default_scope, _DEFAULT_SCOPE_SUFFIX
 from ._utils import (
     get_key_filter,
     get_label_filter,
