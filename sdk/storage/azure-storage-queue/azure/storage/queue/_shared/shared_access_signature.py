@@ -242,7 +242,7 @@ class _SharedAccessHelper(object):
         self._sts_srh = "\n".join([f"{k}:{v}" for k, v in request_headers.items()]) + "\n"
 
         # SAS query param: comma-separated list of encoded header keys only
-        srh_keys = ",".join([url_quote(k) for k, _ in request_headers.items()])
+        srh_keys = ",".join([url_quote(k) for k in request_headers.keys()])
         self._add_query(QueryStringConstants.SIGNED_REQUEST_HEADERS, srh_keys)
 
     def add_request_query_params(self, request_query_params):
@@ -253,7 +253,7 @@ class _SharedAccessHelper(object):
         self._sts_srq = "\n" + "\n".join([f"{k}:{v}" for k, v in request_query_params.items()])
 
         # SAS query param: comma-separated list of encoded query-param keys only
-        srq_keys = ",".join([url_quote(k) for k, _ in request_query_params.items()])
+        srq_keys = ",".join([url_quote(k) for k in request_query_params.keys()])
         self._add_query(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS, srq_keys)
 
     def add_account_signature(self, account_name, account_key):

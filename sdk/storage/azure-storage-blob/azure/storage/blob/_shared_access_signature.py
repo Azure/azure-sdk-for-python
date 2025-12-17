@@ -310,9 +310,9 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
 
     def get_value_to_append(self, query):
         if query == QueryStringConstants.SIGNED_REQUEST_HEADERS:
-            return (self._sts_srh or "") + "\n"
+            return (self._sts_srh + "\n") if self._sts_srh else ""
         if query == QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS:
-            return (self._sts_srq or "") + "\n"
+            return (self._sts_srq + "\n") if self._sts_srq else ""
         return_value = self.query_dict.get(query) or ''
         return return_value + '\n'
 
@@ -381,7 +381,8 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         # a conscious decision was made to exclude the timestamp in the generated token
         # this is to avoid having two snapshot ids in the query parameters when the user appends the snapshot timestamp
         exclude = [BlobQueryStringConstants.SIGNED_TIMESTAMP]
-        return '&'.join([f'{n}={url_quote(v)}'
+        no_quote = [QueryStringConstants.SIGNED_REQUEST_HEADERS, QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS]
+        return '&'.join([f'{n}={url_quote(v)}' if n not in no_quote else f"{n}={v}"
                          for n, v in self.query_dict.items() if v is not None and n not in exclude])
 
 
