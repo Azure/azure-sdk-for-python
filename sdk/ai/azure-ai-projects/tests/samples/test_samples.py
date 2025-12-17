@@ -6,11 +6,13 @@
 import os, pytest, inspect, sys, json
 import importlib.util
 import unittest.mock as mock
-from typing import Union, cast, overload
+from typing import Optional, Union, cast, overload
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, RecordedTransport
+from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
+from devtools_testutils.fake_credentials import FakeTokenCredential
+from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from test_base import servicePreparer, patched_open_crlf_to_lf
 from pytest import MonkeyPatch
 from azure.ai.projects import AIProjectClient
@@ -20,6 +22,12 @@ from pydantic import BaseModel
 
 class SampleExecutor:
     """Helper class for executing sample files with proper environment setup and credential mocking."""
+
+    # Note that Python 3.9 doesn't support the | operator for type unions in annotations. That syntax was introduced
+    # in Python 3.10. So here we use Union from the typing module instead.
+    tokenCredential: Optional[
+        Union[TokenCredential, AsyncTokenCredential, FakeTokenCredential, AsyncFakeCredential]
+    ] = None
 
     class TestReport(BaseModel):
         """Schema for validation test report."""
@@ -64,7 +72,7 @@ class SampleExecutor:
 
     def _get_mock_credential(self, is_async: bool):
         """Get a mock credential that supports context manager protocol."""
-        credential_instance = self.test_instance.get_credential(AIProjectClient, is_async=is_async)
+        self.tokenCredential = self.test_instance.get_credential(AIProjectClient, is_async=is_async)
         if is_async:
             patch_target = "azure.identity.aio.DefaultAzureCredential"
         else:
@@ -72,9 +80,9 @@ class SampleExecutor:
 
         # Create a mock that returns a context manager wrapping the credential
         mock_credential_class = mock.MagicMock()
-        mock_credential_class.return_value.__enter__ = mock.MagicMock(return_value=credential_instance)
+        mock_credential_class.return_value.__enter__ = mock.MagicMock(return_value=self.tokenCredential)
         mock_credential_class.return_value.__exit__ = mock.MagicMock(return_value=None)
-        mock_credential_class.return_value.__aenter__ = mock.AsyncMock(return_value=credential_instance)
+        mock_credential_class.return_value.__aenter__ = mock.AsyncMock(return_value=self.tokenCredential)
         mock_credential_class.return_value.__aexit__ = mock.AsyncMock(return_value=None)
 
         return mock.patch(patch_target, new=mock_credential_class)
@@ -180,10 +188,14 @@ Always respond with `reason` indicating the reason for the response.""",
 
     def _validate_output(self):
         """Validate sample output using synchronous OpenAI client."""
-        credential = self.test_instance.get_credential(AIProjectClient, is_async=False)
+        endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        assert isinstance(self.tokenCredential, TokenCredential) or isinstance(
+            self.tokenCredential, FakeTokenCredential
+        )
         with (
             AIProjectClient(
-                endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=cast(TokenCredential, credential)
+                endpoint=endpoint, credential=cast(TokenCredential, self.tokenCredential)
             ) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
@@ -193,10 +205,14 @@ Always respond with `reason` indicating the reason for the response.""",
 
     async def _validate_output_async(self):
         """Validate sample output using asynchronous OpenAI client."""
-        credential = self.test_instance.get_credential(AIProjectClient, is_async=True)
+        endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        assert isinstance(self.tokenCredential, AsyncTokenCredential) or isinstance(
+            self.tokenCredential, AsyncFakeCredential
+        )
         async with (
             AsyncAIProjectClient(
-                endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=cast(AsyncTokenCredential, credential)
+                endpoint=endpoint, credential=cast(AsyncTokenCredential, self.tokenCredential)
             ) as project_client,
         ):
             async with project_client.get_openai_client() as openai_client:
@@ -221,41 +237,11 @@ class SamplePathPasser:
             return _wrapper_sync
 
 
-@overload
-def _get_sample_paths(sub_folder: str, *, samples_to_test: list[str]) -> list:
-    """Get sample paths for testing (whitelist mode).
-
-    Args:
-        sub_folder: Relative path to the samples subfolder (e.g., "agents/tools")
-        samples_to_test: Whitelist of sample filenames to include
-
-    Returns:
-        List of pytest.param objects with sample paths and test IDs
-    """
-    ...
-
-
-@overload
-def _get_sample_paths(sub_folder: str, *, samples_to_skip: list[str], is_async: bool) -> list:
-    """Get sample paths for testing (blacklist mode).
-
-    Args:
-        sub_folder: Relative path to the samples subfolder (e.g., "agents/tools")
-        samples_to_skip: Blacklist of sample filenames to exclude (auto-discovers all samples)
-        is_async: Whether to filter for async samples (_async.py suffix)
-
-    Returns:
-        List of pytest.param objects with sample paths and test IDs
-    """
-    ...
-
-
-def _get_sample_paths(
+def get_sample_paths(
     sub_folder: str,
     *,
-    samples_to_skip: Union[list[str], None] = None,
-    is_async: Union[bool, None] = None,
-    samples_to_test: Union[list[str], None] = None,
+    samples_to_skip: Optional[list[str]] = None,
+    is_async: Optional[bool] = False,
 ) -> list:
     # Get the path to the samples folder
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -265,22 +251,25 @@ def _get_sample_paths(
     if not os.path.exists(target_folder):
         raise ValueError(f"Target folder does not exist: {target_folder}")
 
-    # Discover all sample files in the folder
-    all_files = [f for f in os.listdir(target_folder) if f.startswith("sample_") and f.endswith(".py")]
+    print("Target folder for samples:", target_folder)
+    print("is_async:", is_async)
+    print("samples_to_skip:", samples_to_skip)
+    # Discover all sync or async sample files in the folder
+    all_files = [
+        f
+        for f in os.listdir(target_folder)
+        if (
+            f.startswith("sample_")
+            and (f.endswith("_async.py") if is_async else (f.endswith(".py") and not f.endswith("_async.py")))
+        )
+    ]
 
-    # Filter by async suffix only when using samples_to_skip
-    if samples_to_skip is not None and is_async is not None:
-        if is_async:
-            all_files = [f for f in all_files if f.endswith("_async.py")]
-        else:
-            all_files = [f for f in all_files if not f.endswith("_async.py")]
-
-    # Apply whitelist or blacklist
-    if samples_to_test is not None:
-        files_to_test = [f for f in all_files if f in samples_to_test]
-    else:  # samples_to_skip is not None
-        assert samples_to_skip is not None
+    if samples_to_skip:
         files_to_test = [f for f in all_files if f not in samples_to_skip]
+    else:
+        files_to_test = all_files
+
+    print(f"Running the following samples as test:\n{files_to_test}")
 
     # Create pytest.param objects
     samples = []
@@ -292,12 +281,41 @@ def _get_sample_paths(
     return samples
 
 
+def get_sample_environment_variables_map(operation_group: Optional[str] = None) -> dict[str, str]:
+    """Get the mapping of sample environment variables to test environment variables.
+
+    Args:
+        operation_group: Optional operation group name (e.g., "agents") to scope the endpoint variable.
+
+    Returns:
+        Dictionary mapping sample env var names to test env var names.
+    """
+    return {
+        "AZURE_AI_PROJECT_ENDPOINT": (
+            "azure_ai_projects_tests_project_endpoint"
+            if operation_group is None
+            else f"azure_ai_projects_tests_{operation_group}_project_endpoint"
+        ),
+        "AZURE_AI_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_model_deployment_name",
+        "IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_image_generation_model_deployment_name",
+        "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
+        "AI_SEARCH_INDEX_NAME": "azure_ai_projects_tests_ai_search_index_name",
+        "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",
+        "SHAREPOINT_USER_INPUT": "azure_ai_projects_tests_sharepoint_user_input",
+        "SHAREPOINT_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_sharepoint_project_connection_id",
+        "MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_memory_store_chat_model_deployment_name",
+        "MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_memory_store_embedding_model_deployment_name",
+    }
+
+
 class TestSamples(AzureRecordedTestCase):
 
+    # To run this test with a specific sample, use:
+    # pytest tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_memory_search]
     @servicePreparer()
     @pytest.mark.parametrize(
         "sample_path",
-        _get_sample_paths(
+        get_sample_paths(
             "agents/tools",
             samples_to_skip=[
                 "sample_agent_bing_custom_search.py",
@@ -305,7 +323,6 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_browser_automation.py",
                 "sample_agent_fabric.py",
                 "sample_agent_mcp_with_project_connection.py",
-                "sample_agent_memory_search.py",
                 "sample_agent_openapi_with_project_connection.py",
                 "sample_agent_to_agent.py",
             ],
@@ -315,37 +332,6 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = self._get_sample_environment_variables_map()
+        env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
         executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         executor.execute()
-
-    @servicePreparer()
-    @pytest.mark.parametrize(
-        "sample_path",
-        _get_sample_paths(
-            "agents/tools",
-            samples_to_skip=[
-                "sample_agent_mcp_with_project_connection_async.py",
-                "sample_agent_memory_search_async.py",
-            ],
-            is_async=True,
-        ),
-    )
-    @SamplePathPasser()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = self._get_sample_environment_variables_map()
-        executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
-        await executor.execute_async()
-
-    def _get_sample_environment_variables_map(self) -> dict[str, str]:
-        return {
-            "AZURE_AI_PROJECT_ENDPOINT": "azure_ai_projects_tests_project_endpoint",
-            "AZURE_AI_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_model_deployment_name",
-            "IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME": "azure_ai_projects_tests_image_generation_model_deployment_name",
-            "AI_SEARCH_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_ai_search_project_connection_id",
-            "AI_SEARCH_INDEX_NAME": "azure_ai_projects_tests_ai_search_index_name",
-            "AI_SEARCH_USER_INPUT": "azure_ai_projects_tests_ai_search_user_input",
-            "SHAREPOINT_USER_INPUT": "azure_ai_projects_tests_sharepoint_user_input",
-            "SHAREPOINT_PROJECT_CONNECTION_ID": "azure_ai_projects_tests_sharepoint_project_connection_id",
-        }
