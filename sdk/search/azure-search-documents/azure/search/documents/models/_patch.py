@@ -41,6 +41,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
     """
 
     def __init__(self) -> None:
+        super().__init__(actions=[])
         self._actions: List[IndexAction] = []
 
     def __repr__(self) -> str:
