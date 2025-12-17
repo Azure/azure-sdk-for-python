@@ -238,6 +238,34 @@ class TestBuiltInEvaluators:
         assert result["groundedness"] == result["gpt_groundedness"] == 1
         assert "groundedness_reason" in result
 
+    @patch(
+        "azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load"
+    )
+    def test_groundedness_evaluator_respects_reasoning_model_on_query_prompty(
+        self, mock_async_prompty, mock_model_config
+    ):
+        """Ensure is_reasoning_model and credentials propagate when switching templates"""
+        credential = object()
+        mock_async_prompty.return_value = quality_response_async_mock
+
+        groundedness_eval = GroundednessEvaluator(
+            model_config=mock_model_config, credential=credential, is_reasoning_model=True
+        )
+
+        result = groundedness_eval(
+            query="What is the capital of Japan?",
+            response="The capital of Japan is Tokyo.",
+            context="Tokyo is the capital of Japan.",
+        )
+
+        assert result["groundedness"] == result["gpt_groundedness"] == 1
+        assert mock_async_prompty.call_count >= 2
+
+        last_call = mock_async_prompty.call_args_list[-1]
+        assert last_call.kwargs["is_reasoning_model"] is True
+        assert last_call.kwargs["token_credential"] is credential
+        assert last_call.kwargs["source"].endswith(GroundednessEvaluator._PROMPTY_FILE_WITH_QUERY)
+
     def test_groundedness_evaluator_with_context(self, mock_model_config):
         """Test GroundednessEvaluator with direct context (traditional use)"""
         groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)

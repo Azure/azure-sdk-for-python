@@ -115,6 +115,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             **kwargs,
         )
         self._model_config = model_config
+        self._token_credential = credential
         self.threshold = threshold
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
@@ -212,13 +213,22 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_WITH_QUERY)
 
+        if os.path.basename(self._prompty_file) == self._PROMPTY_FILE_WITH_QUERY:
+            return
+
         self._prompty_file = prompty_path
+        user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={self.__class__.__name__})"
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(self._model_config),
             self._DEFAULT_OPEN_API_VERSION,
-            UserAgentSingleton().value,
+            user_agent,
         )
-        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+        self._flow = AsyncPrompty.load(
+            source=self._prompty_file,
+            model=prompty_model_config,
+            token_credential=self._token_credential,
+            is_reasoning_model=self._is_reasoning_model,
+        )
 
     def _has_context(self, eval_input: dict) -> bool:
         """
