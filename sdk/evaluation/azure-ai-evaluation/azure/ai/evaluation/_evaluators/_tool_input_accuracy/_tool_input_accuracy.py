@@ -153,11 +153,19 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: A dictionary containing the result of the evaluation.
         :rtype: Dict[str, Union[str, float]]
         """
-        # Format conversation history for cleaner evaluation
-        if "query" in eval_input:
-            eval_input["query"] = reformat_conversation_history(
-                eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        if eval_input.get("query") is None:
+            raise EvaluationException(
+                message=("Query is a required input to " "the Tool Input Accuracy evaluator."),
+                internal_message=("Query is a required input " "to the Tool Input Accuracy evaluator."),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
             )
+
+        # Format conversation history for cleaner evaluation
+        eval_input["query"] = reformat_conversation_history(
+            eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        )
 
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
