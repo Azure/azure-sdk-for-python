@@ -224,7 +224,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             raise EvaluationException(
                 message="Tool input accuracy evaluator returned invalid output.",
                 blame=ErrorBlame.SYSTEM_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
+                category=ErrorCategory.FAILED_EXECUTION,
                 target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
             )
 

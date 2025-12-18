@@ -278,7 +278,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             raise EvaluationException(
                 message="Tool call accuracy evaluator returned invalid output.",
                 blame=ErrorBlame.SYSTEM_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
+                category=ErrorCategory.FAILED_EXECUTION,
                 target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
             )
 
