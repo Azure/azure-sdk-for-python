@@ -386,17 +386,7 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     metrics = mean_value.to_dict()
 
     # Filter out NaN values from the metrics dict
-    # Also filter out content safety score columns that don't have a corresponding defect rate
-    # (which indicates all values were NaN)
-    filtered_metrics = {}
-    for k, v in metrics.items():
-        if pd.isna(v):
-            continue
-        # Check if this is a content safety score column
-        if k.endswith("_score") and k.replace("_score", "_defect_rate") not in defect_rates:
-            # Skip this metric - it had all NaN values
-            continue
-        filtered_metrics[k] = v
+    filtered_metrics = {k: v for k, v in metrics.items() if pd.notna(v)}
 
     # Add defect rates back into metrics
     filtered_metrics.update(defect_rates)
