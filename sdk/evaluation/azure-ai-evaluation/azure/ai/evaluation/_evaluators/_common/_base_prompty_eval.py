@@ -294,14 +294,14 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                             raise EvaluationException(
                                 message=f"Tool definition for {tool_name} not found",
                                 blame=ErrorBlame.USER_ERROR,
-                                category=ErrorCategory.INVALID_VALUE,
+                                category=ErrorCategory.NOT_APPLICABLE,
                                 target=error_target,
                             )
                     else:
                         raise EvaluationException(
                             message=f"Tool call missing name: {tool_call}",
                             blame=ErrorBlame.USER_ERROR,
-                            category=ErrorCategory.INVALID_VALUE,
+                            category=ErrorCategory.MISSING_FIELD,
                             target=error_target,
                         )
                 else:

@@ -136,7 +136,12 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 tool_calls = parsed_tool_calls
 
         if not tool_calls:
-            return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
+            raise EvaluationException(
+                message=self._NO_TOOL_CALLS_MESSAGE,
+                category=ErrorCategory.NOT_APPLICABLE,
+                target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
         if not isinstance(tool_calls, list):
             tool_calls = [tool_calls]
@@ -155,7 +160,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if len(needed_tool_definitions) == 0:
             raise EvaluationException(
                 message=self._NO_TOOL_DEFINITIONS_MESSAGE,
-                category=ErrorCategory.INVALID_VALUE,
+                category=ErrorCategory.NOT_APPLICABLE,
                 target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
                 blame=ErrorBlame.USER_ERROR,
             )
@@ -243,9 +248,6 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
-        if isinstance(eval_input, dict) and eval_input.get("error_message"):
-            return self._not_applicable_result(eval_input.get("error_message"), 1)
-
         result = await self._do_eval(eval_input)
 
         return result

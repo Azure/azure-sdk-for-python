@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from azure.ai.evaluation._evaluators._tool_selection import _ToolSelectionEvaluator
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import ErrorCategory, EvaluationException
 
 
 # Mock function for Tool Selection evaluator flow side effect
@@ -234,13 +234,13 @@ class TestToolSelectionEvaluator:
             }
         ]
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-
-        key = _ToolSelectionEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert f"{key}_reason" in result
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        
+        # The error message should mention the specific tool that's missing
+        assert "no tool calls found" in str(exc_info.value).lower()
+        assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
     def test_evaluate_tool_selection_no_tool_definitions_throws_exception(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
@@ -263,6 +263,7 @@ class TestToolSelectionEvaluator:
         
         # The error message should mention the specific tool that's missing
         assert "get_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
+        assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
     def test_evaluate_tool_selection_exception_invalid_score(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)

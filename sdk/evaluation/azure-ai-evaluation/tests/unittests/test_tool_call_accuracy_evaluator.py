@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from azure.ai.evaluation import ToolCallAccuracyEvaluator
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import ErrorCategory, EvaluationException
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
@@ -393,6 +393,7 @@ class TestToolCallAccuracyEvaluator:
         
         # The error should mention the specific tool that's missing
         assert "fetch_weather" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
+        assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -417,15 +418,14 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
-        assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
-        assert result[f"{key}_details"] == {}
+        
+        # Expect an exception to be raised
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        
+        # The error should mention the specific tool that's missing
+        assert "no tool calls found" in str(exc_info.value).lower()
+        assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
     def test_evaluate_bing_custom_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -609,6 +609,7 @@ class TestToolCallAccuracyEvaluator:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
         
         assert "openapi" in str(exc_info.value).lower() and "not found" in str(exc_info.value).lower()
+        assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
     def test_evaluate_open_api_with_tool_definition(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
