@@ -729,6 +729,7 @@ class TestToolCallAccuracyEvaluator:
             evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         assert "Tool call missing 'arguments' field" in str(exc_info.value)
+        assert exc_info.value.category is ErrorCategory.MISSING_FIELD
 
     def test_evaluate_tools_missing_arguments_in_tool_calls_param(self, mock_model_config):
         """Test that an exception is raised when tool_calls parameter contains calls without arguments field."""
@@ -766,3 +767,4 @@ class TestToolCallAccuracyEvaluator:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         assert "Tool call missing 'arguments' field" in str(exc_info.value)
+        assert exc_info.value.category is ErrorCategory.MISSING_FIELD

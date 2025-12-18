@@ -694,3 +694,4 @@ class TestToolInputAccuracyEvaluator:
             evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         assert "Tool call missing 'arguments' field" in str(exc_info.value)
+        assert exc_info.value.category is ErrorCategory.MISSING_FIELD
