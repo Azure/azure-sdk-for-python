@@ -218,8 +218,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
-        for log_record_processor in configurations[LOG_RECORD_PROCESSORS_ARG]:  # type: ignore
-            logger_provider.add_log_record_processor(log_record_processor)  # type: ignore
+        for custom_log_record_processor in configurations[LOG_RECORD_PROCESSORS_ARG]:  # type: ignore
+            logger_provider.add_log_record_processor(custom_log_record_processor)  # type: ignore
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
             qlp = _QuickpulseLogRecordProcessor()
             logger_provider.add_log_record_processor(qlp)
