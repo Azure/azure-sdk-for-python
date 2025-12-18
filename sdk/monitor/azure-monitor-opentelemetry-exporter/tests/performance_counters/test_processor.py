@@ -38,9 +38,9 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         # Setup mock manager
         mock_manager = MagicMock()
         mock_manager_class.return_value = mock_manager
-        
+
         processor = _PerformanceCountersLogRecordProcessor()
-        
+
         # Create mock log data
         mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
 
@@ -53,10 +53,10 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
     def test_emit_calls_on_emit(self):
         """Test emit method calls on_emit."""
         processor = _PerformanceCountersLogRecordProcessor()
-        
+
         # Mock the on_emit method
         processor.on_emit = MagicMock()
-        
+
         # Create mock log data
         mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
 
@@ -68,14 +68,14 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
     def test_shutdown(self):
         """Test shutdown method."""
         processor = _PerformanceCountersLogRecordProcessor()
-        
+
         # Should not raise exception
         processor.shutdown()
 
     def test_force_flush(self):
         """Test force_flush method."""
         processor = _PerformanceCountersLogRecordProcessor()
-        
+
         # Should not raise exception
         processor.force_flush()
         processor.force_flush(timeout_millis=5000)
@@ -87,12 +87,12 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         mock_manager = MagicMock()
         mock_manager._record_log_record.side_effect = Exception("Test error")
         mock_manager_class.return_value = mock_manager
-        
+
         processor = _PerformanceCountersLogRecordProcessor()
-        
+
         # Create mock log data
         mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
-        
+
         # Exception should be propagated
         with self.assertRaises(Exception) as context:
             processor.on_emit(mock_readable_log_record)
@@ -119,14 +119,14 @@ class TestPerformanceCountersSpanProcessor(unittest.TestCase):
         # Setup mock manager
         mock_manager = MagicMock()
         mock_manager_class.return_value = mock_manager
-        
+
         processor = _PerformanceCountersSpanProcessor()
-        
+
         # Create mock span
         mock_span = MagicMock(spec=ReadableSpan)
-        
+
         processor.on_end(mock_span)
-        
+
         # Verify manager was called
         mock_manager_class.assert_called_once()
         mock_manager._record_span.assert_called_once_with(mock_span)
@@ -138,27 +138,27 @@ class TestPerformanceCountersSpanProcessor(unittest.TestCase):
         mock_manager = MagicMock()
         mock_manager._record_span.side_effect = Exception("Test error")
         mock_manager_class.return_value = mock_manager
-        
+
         processor = _PerformanceCountersSpanProcessor()
-        
+
         # Create mock span
         mock_span = MagicMock(spec=ReadableSpan)
-        
+
         # Exception should be propagated
         with self.assertRaises(Exception) as context:
             processor.on_end(mock_span)
-        
+
         self.assertEqual(str(context.exception), "Test error")
 
     def test_on_end_calls_super(self):
         """Test on_end calls super method."""
         processor = _PerformanceCountersSpanProcessor()
-        
+
         # Mock the super class method
-        with mock.patch.object(processor.__class__.__bases__[0], 'on_end') as mock_super_on_end:
+        with mock.patch.object(processor.__class__.__bases__[0], "on_end") as mock_super_on_end:
             mock_span = MagicMock(spec=ReadableSpan)
-            
+
             processor.on_end(mock_span)
-            
+
             # Verify super was called
             mock_super_on_end.assert_called_once_with(mock_span)
