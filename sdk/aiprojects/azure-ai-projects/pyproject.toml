@@ -43,7 +43,7 @@ dynamic = [
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/aiprojects/azure-ai-projects"
+repository = "https://aka.ms/azsdk/azure-ai-projects-v2/python/code"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.ai.projects._version.VERSION"}
