@@ -17,7 +17,6 @@ if (os.name != "nt" or sys.version_info > (3, 8)) and sys.implementation.name !=
 
 
 class TestPsycopg2Instrumentation(unittest.TestCase):
-
     @pytest.mark.skipif(
         (os.name == "nt" and sys.version_info < (3, 9)) or sys.implementation.name == "pypy",
         reason="Psycopg2 not supported for pypy, Windows Py3.8",

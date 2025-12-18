@@ -24,7 +24,7 @@ class TestCustomerSdkStats(unittest.TestCase):
         """Set up test environment and ensure customer SDKStats is enabled."""
         # Enable customer SDK stats for testing
         os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "true"
-        
+
         # Reset the customer stats manager for each test
         manager = get_customer_stats_manager()
         manager.shutdown()
@@ -33,7 +33,7 @@ class TestCustomerSdkStats(unittest.TestCase):
         """Clean up test environment."""
         # Clean up environment variables
         os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, None)
-        
+
         # Shutdown customer stats
         manager = get_customer_stats_manager()
         manager.shutdown()
@@ -43,10 +43,10 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Create a mock exporter
         mock_exporter = mock.Mock()
         mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
-        
+
         # Collect customer SDK stats
         collect_customer_sdkstats(mock_exporter)
-        
+
         # Verify manager is initialized
         manager = get_customer_stats_manager()
         self.assertTrue(manager.is_initialized)
@@ -56,12 +56,12 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Create a mock exporter
         mock_exporter = mock.Mock()
         mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
-        
+
         # Call collect multiple times
         collect_customer_sdkstats(mock_exporter)
         collect_customer_sdkstats(mock_exporter)
         collect_customer_sdkstats(mock_exporter)
-        
+
         # Verify manager is still properly initialized
         manager = get_customer_stats_manager()
         self.assertTrue(manager.is_initialized)
@@ -72,10 +72,10 @@ class TestCustomerSdkStats(unittest.TestCase):
         manager = get_customer_stats_manager()
         manager.initialize("InstrumentationKey=12345678-1234-5678-abcd-12345678abcd")
         self.assertTrue(manager.is_initialized)
-        
+
         # Shutdown
         shutdown_customer_sdkstats_metrics()
-        
+
         # Verify shutdown
         self.assertFalse(manager.is_initialized)
 
@@ -85,10 +85,10 @@ class TestCustomerSdkStats(unittest.TestCase):
         manager = get_customer_stats_manager()
         manager.shutdown()
         self.assertFalse(manager.is_initialized)
-        
+
         # Shutdown when already shut down should not cause issues
         shutdown_customer_sdkstats_metrics()
-        
+
         # Verify still shut down
         self.assertFalse(manager.is_initialized)
 
@@ -97,24 +97,24 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Create a mock exporter
         mock_exporter = mock.Mock()
         mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
-        
+
         # Collect customer SDK stats
         collect_customer_sdkstats(mock_exporter)
         manager = get_customer_stats_manager()
         self.assertTrue(manager.is_initialized)
-        
+
         # Shutdown
         shutdown_customer_sdkstats_metrics()
         self.assertFalse(manager.is_initialized)
-        
+
         # Collect again
         collect_customer_sdkstats(mock_exporter)
         self.assertTrue(manager.is_initialized)
-        
+
         # Final shutdown
         shutdown_customer_sdkstats_metrics()
         self.assertFalse(manager.is_initialized)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
