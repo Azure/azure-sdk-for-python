@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "resourceGroupName": {
+        "value": "${AZURE_RESOURCE_GROUP}"
+      },
+      "environmentName": {
+        "value": "${AZURE_ENV_NAME}"
+      },
+      "location": {
+        "value": "${AZURE_LOCATION}"
+      },
+      "aiFoundryResourceName": {
+        "value": "${AZURE_AI_ACCOUNT_NAME}"
+      },
+      "aiFoundryProjectName": {
+        "value": "${AZURE_AI_PROJECT_NAME}"
+      },
+      "aiDeploymentsLocation": {
+        "value": "${AZURE_LOCATION}"
+      },
+      "principalId": {
+        "value": "${AZURE_PRINCIPAL_ID}"
+      },
+      "principalType": {
+        "value": "${AZURE_PRINCIPAL_TYPE}"
+      },
+      "aiProjectDeploymentsJson": {
+        "value": "${AI_PROJECT_DEPLOYMENTS=[]}"
+      },
+      "aiProjectConnectionsJson": {
+        "value": "${AI_PROJECT_CONNECTIONS=[]}"
+      },
+      "aiProjectDependentResourcesJson": {
+        "value": "${AI_PROJECT_DEPENDENT_RESOURCES=[]}"
+      },
+      "enableMonitoring": {
+        "value": "${ENABLE_MONITORING=true}"
+      },
+      "enableHostedAgents": {
+        "value": "${ENABLE_HOSTED_AGENTS=false}"
+      }
+    }
+}
