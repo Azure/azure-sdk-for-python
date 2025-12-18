@@ -34,13 +34,6 @@ extends:
     TestTimeoutInMinutes: 60
     # The job "Test ubuntu2404_pypy39" in the "python - aiprojects" pipeline hangs and eventually times out.
     # Disable it until the issue is understood.
-    MatrixConfigs:
-      - Name: communication_ci_matrix
-        Path: sdk/aiprojects/platform-matrix.json
-        Selection: sparse
-        GenerateVMJobs: true
-    MatrixFilters:
-      - PythonVersion=^(?!pypy3).*
     Artifacts:
     - name: azure-ai-projects
       safeName: azureaiprojects
