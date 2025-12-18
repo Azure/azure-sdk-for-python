@@ -104,11 +104,11 @@ class optional(Check):
                     logger.info(
                         f"{env_name} does not match targeted environment {target_env_name}, skipping this environment."
                     )
+                    config_results.append(True)
                     continue
 
             environment_exe = prepare_environment(package_dir, temp_dir, env_name)
 
-            # install the package (either building manually or pulling from prebuilt directory)
             create_package_and_install(
                 distribution_directory=temp_dir,
                 target_setup=package_dir,
@@ -159,7 +159,6 @@ class optional(Check):
 
             self.pip_freeze(environment_exe)
 
-            # TODO refactor with InstallAndTest
             # invoke tests
             log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
             junit_path = os.path.join(package_dir, f"test-junit-optional-{env_name}.xml")
@@ -208,6 +207,8 @@ class optional(Check):
             exit(0)
         else:
             for i, config in enumerate(optional_configs):
+                if i >= len(config_results):
+                    break
                 if not config_results[i]:
                     config_name = config.get("name")
                     logger.error(
