@@ -19,7 +19,7 @@ from opentelemetry.instrumentation.environment_variables import (
 from opentelemetry.sdk.environment_variables import (
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
     OTEL_TRACES_SAMPLER_ARG,
-    OTEL_TRACES_SAMPLER
+    OTEL_TRACES_SAMPLER,
 )
 from opentelemetry.sdk.resources import Resource
 
@@ -60,6 +60,7 @@ _SUPPORTED_RESOURCE_DETECTORS = (
 )
 
 _logger = getLogger(__name__)
+
 
 def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     configurations = {}
@@ -117,6 +118,7 @@ def _default_logger_name(configurations):
     else:
         configurations.setdefault(LOGGER_NAME_ARG, "")
 
+
 def _default_logging_formatter(configurations):
     formatter = configurations.get(LOGGING_FORMATTER_ARG)
     if formatter:
@@ -133,6 +135,7 @@ def _default_logging_formatter(configurations):
                 ex,
             )
             configurations[LOGGING_FORMATTER_ARG] = None
+
 
 def _default_resource(configurations):
     environ.setdefault(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, ",".join(_SUPPORTED_RESOURCE_DETECTORS))
@@ -199,6 +202,7 @@ def _default_sampling_ratio(configurations):
                 configurations[SAMPLING_RATIO_ARG],
             )
 
+
 def _default_instrumentation_options(configurations):
     otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
 
@@ -251,6 +255,7 @@ def _is_instrumentation_enabled(configurations, lib_name):
     if "enabled" not in library_options:
         return False
     return library_options["enabled"] is True
+
 
 def _default_enable_trace_based_sampling(configurations):
     configurations.setdefault(ENABLE_TRACE_BASED_SAMPLING_ARG, False)

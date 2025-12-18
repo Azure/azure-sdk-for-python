@@ -36,7 +36,9 @@ from .generate import generate
 from .breaking import breaking
 from .mindependency import mindependency
 from .latestdependency import latestdependency
+from .samples import samples
 from .devtest import devtest
+from .optional import optional
 
 from ci_tools.logging import configure_logging, logger
 
@@ -104,7 +106,9 @@ def build_parser() -> argparse.ArgumentParser:
     breaking().register(subparsers, [common])
     mindependency().register(subparsers, [common])
     latestdependency().register(subparsers, [common])
+    samples().register(subparsers, [common])
     devtest().register(subparsers, [common])
+    optional().register(subparsers, [common])
 
     return parser
 

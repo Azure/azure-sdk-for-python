@@ -283,8 +283,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     )
                 except Exception:  # pylint: disable=broad-except
                     pass
-            status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) \
-                or span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or span.attributes.get(
+                SpanAttributes.HTTP_STATUS_CODE
+            )
             if status_code:
                 try:
                     status_code = int(status_code)  # type: ignore
@@ -356,7 +357,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
                         span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                         span.attributes[SpanAttributes.HTTP_ROUTE],
-                )
+                    )
                 # data
                 if url:
                     data.data = url
@@ -367,16 +368,16 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # http specific logic for name
                 if path:
                     data.name = "{} {}".format(
-                        span.attributes.get(HTTP_REQUEST_METHOD) or \
-                            span.attributes.get(SpanAttributes.HTTP_METHOD),
+                        span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                         path,
                     )
                     envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
                         span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                         path,
                     )
-                status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or \
-                    span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+                status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or span.attributes.get(
+                    SpanAttributes.HTTP_STATUS_CODE
+                )
                 if status_code:
                     try:
                         status_code = int(status_code)  # type: ignore
@@ -579,8 +580,7 @@ def _is_standard_attribute(key: str) -> bool:
     for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
         if key.startswith(prefix):
             return True
-    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES or \
-        key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
+    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES or key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
 
 
 def _get_trace_export_result(result: ExportResult) -> SpanExportResult:
