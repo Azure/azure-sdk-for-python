@@ -8,6 +8,7 @@ from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_PYTHON
 
 logger = logging.getLogger(__name__)
 
+
 class _ConfigurationWorker:
     """Background worker thread for periodic configuration refresh from OneSettings.
 
@@ -49,11 +50,7 @@ class _ConfigurationWorker:
         self._lock = threading.Lock()  # Single lock for all worker state
 
         self._shutdown_event = threading.Event()
-        self._refresh_thread = threading.Thread(
-            target=self._get_configuration,
-            name="ConfigurationWorker",
-            daemon=True
-        )
+        self._refresh_thread = threading.Thread(target=self._get_configuration, name="ConfigurationWorker", daemon=True)
         self._refresh_interval = refresh_interval or self._default_refresh_interval
         self._shutdown_event.clear()
         self._refresh_thread.start()
@@ -138,8 +135,9 @@ class _ConfigurationWorker:
         while not self._shutdown_event.is_set():
             try:
                 with self._lock:
-                    self._refresh_interval = \
-                    self._configuration_manager.get_configuration_and_refresh_interval(_ONE_SETTINGS_PYTHON_TARGETING)
+                    self._refresh_interval = self._configuration_manager.get_configuration_and_refresh_interval(
+                        _ONE_SETTINGS_PYTHON_TARGETING
+                    )
                     # Capture interval while we have the lock
                     interval = self._refresh_interval
             except Exception as ex:  # pylint: disable=broad-exception-caught
