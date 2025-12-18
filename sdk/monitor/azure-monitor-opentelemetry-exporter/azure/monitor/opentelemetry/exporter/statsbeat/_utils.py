@@ -3,7 +3,7 @@
 import os
 import logging
 import json
-from collections.abc import Iterable
+from collections.abc import Iterable  # pylint: disable=import-error
 from typing import Optional, Dict
 
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -25,6 +25,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _REQUESTS_MAP_LOCK,
 )
+
 
 def _get_stats_connection_string(endpoint: str) -> str:
     cs_env = os.environ.get(_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME)
@@ -80,7 +81,9 @@ def _update_requests_map(type_name, value):
                 _REQUESTS_MAP[type_name] = {}
             _REQUESTS_MAP[type_name][value] = prev + 1
 
+
 ## OneSettings Config
+
 
 # pylint: disable=too-many-return-statements
 def _get_connection_string_for_region_from_config(target_region: str, settings: Dict[str, str]) -> Optional[str]:
@@ -135,8 +138,9 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
                     boundary_regions = json.loads(boundary_regions)
 
                 # Check if the region is in this boundary's regions
-                if isinstance(boundary_regions, list) and \
-                    any(target_region.lower() == r.lower() for r in boundary_regions):
+                if isinstance(boundary_regions, list) and any(
+                    target_region.lower() == r.lower() for r in boundary_regions
+                ):
                     # Found the boundary, get the corresponding connection string
                     connection_string_key = f"{boundary}_STATS_CONNECTION_STRING"
                     connection_string = settings.get(connection_string_key)
@@ -144,8 +148,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
                     if connection_string:
                         return connection_string
 
-                    logger.warning("Connection string key '%s' not found in configuration",
-                                    connection_string_key)
+                    logger.warning("Connection string key '%s' not found in configuration", connection_string_key)
 
         # Region not found in any specific boundary, try DEFAULT
         if not default_connection_string:
@@ -156,6 +159,5 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         logger.warning("Error parsing configuration for region '%s': %s", target_region, str(ex))
         return None
     except Exception as ex:  # pylint: disable=broad-exception-caught
-        logger.warning("Unexpected error getting stats connection string for region '%s': %s",
-                     target_region, str(ex))
+        logger.warning("Unexpected error getting stats connection string for region '%s': %s", target_region, str(ex))
         return None

@@ -11,6 +11,7 @@
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
 
+
 ### 4.15.0b2 (2025-12-16)
 
 #### Bugs Fixed
