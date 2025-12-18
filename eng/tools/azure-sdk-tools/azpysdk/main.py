@@ -32,6 +32,7 @@ from .bandit import bandit
 from .verify_keywords import verify_keywords
 from .generate import generate
 from .breaking import breaking
+from .samples import samples
 from .devtest import devtest
 from .optional import optional
 
@@ -97,6 +98,7 @@ def build_parser() -> argparse.ArgumentParser:
     verify_keywords().register(subparsers, [common])
     generate().register(subparsers, [common])
     breaking().register(subparsers, [common])
+    samples().register(subparsers, [common])
     devtest().register(subparsers, [common])
     optional().register(subparsers, [common])
 
