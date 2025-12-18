@@ -20,10 +20,12 @@ class LogRecordEnrichingProcessor(LogRecordProcessor):
 
     def on_emit(self, readable_log_record: ReadableLogRecord) -> None:
         current_span = trace.get_current_span()
-        if current_span and getattr(current_span, 'name', None):
+        if current_span and getattr(current_span, "name", None):
             if readable_log_record.log_record.attributes is None:
                 readable_log_record.log_record.attributes = {}
-            readable_log_record.log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] = current_span.name
+            readable_log_record.log_record.attributes[
+                ContextTagKeys.AI_OPERATION_NAME
+            ] = current_span.name
 
     def shutdown(self) -> None:
         pass
@@ -31,13 +33,12 @@ class LogRecordEnrichingProcessor(LogRecordProcessor):
     def force_flush(self, timeout_millis: int = 30000) -> bool:
         return True
 
+
 # Create the log record enriching processor
 log_enriching_processor = LogRecordEnrichingProcessor()
 
 # Configure Azure Monitor with the custom log record processor
-configure_azure_monitor(
-    log_record_processors=[log_enriching_processor]
-)
+configure_azure_monitor(log_record_processors=[log_enriching_processor])
 
 tracer = trace.get_tracer(__name__)
 

@@ -48,4 +48,3 @@ counter = meter.create_counter("example.counter")
 for _ in range(3):
     counter.add(1)
     sleep(1)
-
