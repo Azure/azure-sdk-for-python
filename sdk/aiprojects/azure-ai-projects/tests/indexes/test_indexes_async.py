@@ -12,7 +12,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 class TestIndexesAsync(TestBase):
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_indexes_async.py::TestIndexesAsync::test_indexes_async -s
     @servicePreparer()
     @recorded_by_proxy_async

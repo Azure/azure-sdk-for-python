@@ -23,7 +23,7 @@ data_file2 = os.path.join(data_folder, "data_file2.txt")
 
 class TestDatasetsAsync(TestBase):
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_file_async -s
     @servicePreparer()
     @pytest.mark.skipif(
@@ -131,7 +131,7 @@ class TestDatasetsAsync(TestBase):
                 assert "Could not find asset with ID" in e.message
             assert exception_thrown
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_folder_async -s
     @servicePreparer()
     @pytest.mark.skipif(

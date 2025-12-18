@@ -10,7 +10,7 @@ from devtools_testutils import recorded_by_proxy
 
 class TestDeployments(TestBase):
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_deployments.py::TestDeployments::test_deployments -s
     @servicePreparer()
     @recorded_by_proxy

@@ -16,7 +16,7 @@ from devtools_testutils import recorded_by_proxy
 
 class TestRedTeams(TestBase):
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_redteams.py::TestRedTeams::test_red_teams -s
     @servicePreparer()
     @recorded_by_proxy

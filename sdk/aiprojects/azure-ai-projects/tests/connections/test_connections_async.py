@@ -3,14 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.ai.projects.aio import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
 
 class TestConnectionsAsync(TestBase):
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_connections_async.py::TestConnectionsAsync::test_connections_async -s
     @servicePreparer()
     @recorded_by_proxy_async

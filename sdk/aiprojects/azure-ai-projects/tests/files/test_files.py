@@ -12,7 +12,7 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 
 class TestFiles(TestBase):
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_files.py::TestFiles::test_files -s
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)

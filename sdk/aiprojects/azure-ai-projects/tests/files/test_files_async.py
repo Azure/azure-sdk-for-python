@@ -13,7 +13,7 @@ from devtools_testutils import RecordedTransport
 
 class TestFilesAsync(TestBase):
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_files_async.py::TestFilesAsync::test_files_async -s
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)

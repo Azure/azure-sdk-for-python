@@ -22,7 +22,7 @@ data_file2 = os.path.join(data_folder, "data_file2.txt")
 
 class TestDatasets(TestBase):
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_datasets.py::TestDatasets::test_datasets_upload_file -s
     @servicePreparer()
     @pytest.mark.skipif(
@@ -130,7 +130,7 @@ class TestDatasets(TestBase):
                 assert "Could not find asset with ID" in e.message
             assert exception_thrown
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_datasets.py::TestDatasets::test_datasets_upload_folder -s
     @servicePreparer()
     @pytest.mark.skipif(
