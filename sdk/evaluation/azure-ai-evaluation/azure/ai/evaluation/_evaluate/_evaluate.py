@@ -384,13 +384,27 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     # This is different from label-based known evaluators, which have special handling.
     mean_value = df.mean(numeric_only=True)
     metrics = mean_value.to_dict()
+
+    # Filter out NaN values from the metrics dict
+    # Also filter out content safety score columns that don't have a corresponding defect rate
+    # (which indicates all values were NaN)
+    filtered_metrics = {}
+    for k, v in metrics.items():
+        if pd.isna(v):
+            continue
+        # Check if this is a content safety score column
+        if k.endswith("_score") and k.replace("_score", "_defect_rate") not in defect_rates:
+            # Skip this metric - it had all NaN values
+            continue
+        filtered_metrics[k] = v
+
     # Add defect rates back into metrics
-    metrics.update(defect_rates)
+    filtered_metrics.update(defect_rates)
 
     # Add binary threshold metrics based on pass/fail results
-    metrics.update(binary_metrics)
+    filtered_metrics.update(binary_metrics)
 
-    return metrics
+    return filtered_metrics
 
 
 def _validate_columns_for_target(

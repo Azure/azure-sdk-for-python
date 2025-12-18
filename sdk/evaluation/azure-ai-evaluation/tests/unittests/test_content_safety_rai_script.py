@@ -395,34 +395,44 @@ class TestContentSafetyEvaluator:
         )
 
     @pytest.mark.asyncio
-    @patch(
-        "azure.ai.evaluation._common.rai_service.fetch_or_reuse_token",
-        return_value="dummy-token",
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.get_rai_svc_url",
-        return_value="www.rai_url.com",
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.ensure_service_availability",
-        return_value=None,
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.submit_request",
-        return_value="op_id",
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.fetch_result",
-        return_value="response_object",
-    )
-    @patch(
-        "azure.ai.evaluation._common.rai_service.parse_response",
-        return_value="wow-that's-a-lot-of-patches",
-    )
     @patch("azure.identity.DefaultAzureCredential")
+    @patch("azure.ai.evaluation._common.rai_service.fetch_or_reuse_token")
+    @patch("azure.ai.evaluation._common.rai_service.get_rai_svc_url")
+    @patch("azure.ai.evaluation._common.rai_service.ensure_service_availability")
+    @patch("azure.ai.evaluation._common.rai_service.get_http_client")
     async def test_evaluate_with_rai_service_sync(
-        self, cred_mock, fetch_token_mock, scv_mock, avail_mock, submit_mock, fetch_result_mock, parse_mock
+        self, http_client_mock, ensure_avail_mock, get_url_mock, fetch_token_mock, cred_mock
     ):
+        # Mock token fetch
+        fetch_token_mock.return_value = "fake-token"
+
+        # Mock RAI service URL
+        get_url_mock.return_value = "https://fake-rai-url.com"
+
+        # Mock service availability (returns None)
+        ensure_avail_mock.return_value = None
+
+        # Mock the HTTP response
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "results": [
+                {
+                    "name": "hate_unfairness",
+                    "score": 2,
+                    "label": "Medium",
+                    "reason": "Test reason",
+                }
+            ]
+        }
+
+        # Mock the HTTP client's post method
+        mock_client = MagicMock()
+        mock_client.post.return_value = mock_response
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        http_client_mock.return_value = mock_client
+
         result = await evaluate_with_rai_service_sync(
             data={"query": "what is the weather outside?", "response": "test response"},
             metric_name=EvaluationMetrics.HATE_UNFAIRNESS,
@@ -434,13 +444,12 @@ class TestContentSafetyEvaluator:
             credential=DefaultAzureCredential(),
             annotation_task="content harm",
         )
-        assert result == "wow-that's-a-lot-of-patches"
-        assert fetch_token_mock._mock_call_count == 1
-        assert scv_mock._mock_call_count == 1
-        assert avail_mock._mock_call_count == 1
-        assert submit_mock._mock_call_count == 1
-        assert fetch_result_mock._mock_call_count == 1
-        assert parse_mock._mock_call_count == 1
+
+        assert "results" in result
+        assert mock_client.post.call_count == 1
+        fetch_token_mock.assert_called_once()
+        get_url_mock.assert_called_once()
+        ensure_avail_mock.assert_called_once()
 
     # RAI service templates are so different that it's not worth trying to test them all in one test.
     # Groundedness is JSON

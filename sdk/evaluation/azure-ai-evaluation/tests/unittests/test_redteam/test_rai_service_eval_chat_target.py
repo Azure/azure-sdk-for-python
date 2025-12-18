@@ -95,7 +95,13 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
         "score_value": True,
         "description": "Threshold: 3, Result: High Severity",
         "rationale": "Detected hateful content.",
-        "metadata": {"raw_score": 5, "threshold": 3, "result": "High Severity", "risk_category": "hate_unfairness"},
+        "metadata": {
+            "raw_score": 5,
+            "threshold": 3,
+            "result": "High Severity",
+            "risk_category": "hate_unfairness",
+            "passed": None,
+        },
     }
     assert json.loads(response_piece.converted_value) == expected_response_data
     MockLogger.info.assert_called()  # Check if logger was called
