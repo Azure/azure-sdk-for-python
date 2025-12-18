@@ -687,6 +687,44 @@ class TestToolCallAccuracyEvaluator:
         assert result[key] == 5.0
         assert result[f"{key}_result"] == "pass"
 
+    def test_evaluate_missing_query(self, mock_model_config):
+        """Test that evaluator raises exception when query is None or missing."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_good",
+                "name": "get_weather",
+                "arguments": {"location": "Paris"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string", "description": "The location"}},
+                    "required": ["location"],
+                },
+            }
+        ]
+
+        # Test with query=None
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=None, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)
+
+        # Test with query not provided at all
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)
+
     def test_evaluate_tools_missing_arguments_in_response(self, mock_model_config):
         """Test that an exception is raised when response contains tool calls without arguments field."""
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)

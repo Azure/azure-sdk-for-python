@@ -14,7 +14,7 @@ from azure.ai.evaluation._exceptions import (
     ErrorTarget,
     EvaluationException,
 )
-from ..._common.utils import reformat_conversation_history, _get_agent_response
+from ..._common.utils import reformat_conversation_history, reformat_agent_response
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -25,11 +25,11 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Input Accuracy evaluator performs a strict binary evaluation (PASS/FAIL) of parameters
     passed to tool calls. It ensures that ALL parameters meet ALL criteria:
 
-        - Parameter grounding: All parameters must be derived from conversation history/query
-        - Type compliance: All parameters must match exact types specified in tool definitions
-        - Format compliance: All parameters must follow exact format and structure requirements
-        - Completeness: All required parameters must be provided
-        - No unexpected parameters: Only defined parameters are allowed
+        - Parameter grounding: All parameters must be derived from conversation history/query.
+        - Type compliance: All parameters must match exact types specified in tool definitions.
+        - Format compliance: All parameters must follow exact format and structure requirements.
+        - Completeness: All required parameters must be provided.
+        - No unexpected parameters: Only defined parameters are allowed.
 
     The evaluator uses strict binary evaluation:
         - 1: Only when ALL criteria are satisfied perfectly for ALL parameters
@@ -157,8 +157,8 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 blame=ErrorBlame.USER_ERROR,
             )
 
-        # Get agent response with tool calls and results using _get_agent_response
-        agent_response_with_tools = _get_agent_response(response, include_tool_messages=True)
+        # Reformat agent response with tool calls and results using reformat_agent_response
+        agent_response_with_tools = reformat_agent_response(response, include_tool_messages=True)
 
         return {
             "query": query,
@@ -175,11 +175,19 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: A dictionary containing the result of the evaluation.
         :rtype: Dict[str, Union[str, float]]
         """
-        # Format conversation history for cleaner evaluation
-        if "query" in eval_input:
-            eval_input["query"] = reformat_conversation_history(
-                eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        if eval_input.get("query") is None:
+            raise EvaluationException(
+                message=("Query is a required input to " "the Tool Input Accuracy evaluator."),
+                internal_message=("Query is a required input " "to the Tool Input Accuracy evaluator."),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
             )
+
+        # Format conversation history for cleaner evaluation
+        eval_input["query"] = reformat_conversation_history(
+            eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        )
 
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)

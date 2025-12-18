@@ -56,7 +56,8 @@ __all__ = ["AzureMonitorLogExporter"]
 class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
 
-    def export(self, batch: Sequence[ReadableLogRecord], **kwargs: Any) -> LogRecordExportResult:  # pylint: disable=unused-argument
+    def export(self, batch: Sequence[ReadableLogRecord], **kwargs: Any) -> LogRecordExportResult:
+        # pylint: disable=unused-argument
         """Export log data.
 
         :param batch: OpenTelemetry ReadableLogRecord(s) to export.
@@ -110,8 +111,9 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
     log_record = readable_log_record.log_record
     is_event = None
     if log_record.attributes:
-        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or \
-            log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE)  # type: ignore
+        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or log_record.attributes.get(
+            _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE
+        )  # type: ignore
     return is_event is not None
 
 
@@ -133,7 +135,7 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         and ContextTagKeys.AI_OPERATION_NAME in log_record.attributes
         and log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] is not None
     ):
-        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get( # type: ignore
+        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
             ContextTagKeys.AI_OPERATION_NAME
         )
     if _utils._is_any_synthetic_source(log_record.attributes):
