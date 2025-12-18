@@ -606,6 +606,21 @@ try {
         $templateJson = Get-Content -LiteralPath $templateFile.jsonFilePath | ConvertFrom-Json
         $templateParameterNames = $templateJson.parameters.PSObject.Properties.Name
 
+        # Auto-resolve hpcCacheRpObjectId for AMLFS test resources if template expects it and it's not already supplied
+        if ($templateParameterNames -contains 'hpcCacheRpObjectId' -and -not $templateParameters.ContainsKey('hpcCacheRpObjectId')) {
+            try {
+                $sp = Get-AzADServicePrincipal -DisplayName 'HPC Cache Resource Provider' -ErrorAction Stop
+                if ($sp -and $sp.Id) {
+                    $templateParameters['hpcCacheRpObjectId'] = $sp.Id
+                    Write-Verbose "Resolved hpcCacheRpObjectId to '$($sp.Id)'"
+                } else {
+                    Write-Warning "HPC Cache Resource Provider service principal not found; 'hpcCacheRpObjectId' will be missing and deployment may fail."
+                }
+            } catch {
+                Write-Warning "Failed to resolve HPC Cache Resource Provider service principal: $_"
+            }
+        }
+
         $templateFileParameters = $templateParameters.Clone()
         foreach ($key in $templateParameters.Keys) {
             if ($templateParameterNames -notcontains $key) {
