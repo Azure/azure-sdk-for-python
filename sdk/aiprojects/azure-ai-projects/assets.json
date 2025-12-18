@@ -1,6 +1,6 @@
 {
   "AssetsRepo": "Azure/azure-sdk-assets",
   "AssetsRepoPrefixPath": "python",
-  "TagPrefix": "python/ai/azure-ai-projects",
-  "Tag": "python/ai/azure-ai-projects_ae8b55e649"
+  "TagPrefix": "python/aiprojects/azure-ai-projects",
+  "Tag": "python/aiprojects/azure-ai-projects_e889d3e836"
 }
