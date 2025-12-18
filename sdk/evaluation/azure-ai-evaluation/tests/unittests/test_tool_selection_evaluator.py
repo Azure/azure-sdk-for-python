@@ -237,8 +237,7 @@ class TestToolSelectionEvaluator:
         # Expect an exception to be raised
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-        
-        # The error message should mention the specific tool that's missing
+
         assert "no tool calls found" in str(exc_info.value).lower()
         assert exc_info.value.category is ErrorCategory.NOT_APPLICABLE
 
