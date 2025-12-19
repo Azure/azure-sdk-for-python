@@ -64,7 +64,11 @@ class optional(InstallAndTest):
             logger.info(f"Processing {package_name} using interpreter {executable}")
 
             try:
-                self.prepare_and_test_optional(package_name, package_dir, staging_directory, args.optional, args)
+                result = self.prepare_and_test_optional(
+                    package_name, package_dir, staging_directory, args.optional, args
+                )
+                if result != 0:
+                    results.append(result)
             except Exception as e:
                 logger.error(f"Optional check for package {package_name} failed with exception: {e}")
                 results.append(1)
@@ -76,7 +80,7 @@ class optional(InstallAndTest):
     # TODO remove pytest() function from ci_tools.functions as it was only used in the old version of this logic
     def prepare_and_test_optional(
         self, package_name: str, package_dir: str, temp_dir: str, target_env_name: str, args: argparse.Namespace
-    ) -> None:
+    ) -> int:
         """
         Prepare and test the optional environment for the given package.
         """
@@ -87,7 +91,7 @@ class optional(InstallAndTest):
 
         if len(optional_configs) == 0:
             logger.info(f"No optional environments detected in pyproject.toml within {package_dir}.")
-            exit(0)
+            return 0
 
         config_results = []
 
@@ -172,7 +176,6 @@ class optional(InstallAndTest):
 
         if all(config_results):
             logger.info(f"All optional environment(s) for {package_name} completed successfully.")
-            exit(0)
         else:
             for i, config in enumerate(optional_configs):
                 if i >= len(config_results):
@@ -182,4 +185,5 @@ class optional(InstallAndTest):
                     logger.error(
                         f"Optional environment {config_name} for {package_name} completed with non-zero exit-code. Check test results above."
                     )
-            exit(1)
+            return 1
+        return 0
