@@ -5,20 +5,21 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 """
-FILE: sample_configure_defaults.py
+FILE: sample_update_defaults.py
 
 DESCRIPTION:
     This sample demonstrates how to configure and retrieve default model deployment settings
-    for your Microsoft Foundry resource. This is a required one-time setup before using
-    prebuilt analyzers.
+    for your Microsoft Foundry resource. This is a required one-time setup per Microsoft Foundry
+    resource before using prebuilt or custom analyzers.
 
-    Content Understanding prebuilt analyzers require specific GPT model deployments to function:
-    - GPT-4.1: Used by most prebuilt analyzers (e.g., prebuilt-invoice, prebuilt-receipt)
-    - GPT-4.1-mini: Used by RAG analyzers (e.g., prebuilt-documentSearch, prebuilt-imageSearch, prebuilt-audioSearch)
+    Content Understanding prebuilt analyzers and custom analyzers require specific large language
+    model deployments to function. Currently, Content Understanding uses OpenAI GPT models:
+    - gpt-4.1: Used by most prebuilt analyzers (e.g., prebuilt-invoice, prebuilt-receipt, prebuilt-idDocument)
+    - gpt-4.1-mini: Used by RAG analyzers (e.g., prebuilt-documentSearch, prebuilt-imageSearch, prebuilt-audioSearch, prebuilt-videoSearch)
     - text-embedding-3-large: Used for semantic search and embeddings
 
 USAGE:
-    python sample_configure_defaults.py
+    python sample_update_defaults.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONTENT_UNDERSTANDING_ENDPOINT - the endpoint to your Content Understanding resource.

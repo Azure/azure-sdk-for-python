@@ -7,28 +7,28 @@
 # --------------------------------------------------------------------------
 
 """
-TEST FILE: test_sample_configure_defaults.py
+TEST FILE: test_sample_update_defaults_async.py
 
 DESCRIPTION:
-    These tests validate the sample_configure_defaults.py sample code.
+    These tests validate the sample_update_defaults.py sample code (async version).
     This sample demonstrates configuring model deployment settings for prebuilt analyzers.
 
 USAGE:
-    pytest test_sample_configure_defaults.py
+    pytest test_sample_update_defaults_async.py
 """
 
 import pytest
-from devtools_testutils import recorded_by_proxy
-from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from devtools_testutils.aio import recorded_by_proxy_async
+from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
 
 
-class TestSampleConfigureDefaults(ContentUnderstandingClientTestBase):
-    """Tests for sample_configure_defaults.py"""
+class TestSampleUpdateDefaultsAsync(ContentUnderstandingClientTestBaseAsync):
+    """Tests for sample_update_defaults.py (async version)"""
 
     @ContentUnderstandingPreparer()
-    @recorded_by_proxy
-    def test_sample_configure_defaults(self, azure_content_understanding_endpoint: str) -> None:
-        """Test configuring and getting model deployment defaults.
+    @recorded_by_proxy_async
+    async def test_sample_update_defaults_async(self, azure_content_understanding_endpoint: str) -> None:
+        """Test configuring and getting model deployment defaults (async version).
 
         This test validates:
         1. Optional model deployment configuration (UpdateDefaults)
@@ -37,17 +37,18 @@ class TestSampleConfigureDefaults(ContentUnderstandingClientTestBase):
 
         00_UpdateDefaults.UpdateDefaultsAsync()
         """
-        client = self.create_client(endpoint=azure_content_understanding_endpoint)
+        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
 
         # Test UpdateDefaults - only if deployment names are provided
-        self._test_update_defaults(client)
+        await self._test_update_defaults(client)
 
         # Test GetDefaults - always run
-        self._test_get_defaults(client)
+        await self._test_get_defaults(client)
 
-        print("\n[SUCCESS] All test_sample_configure_defaults assertions passed")
+        await client.close()
+        print("\n[SUCCESS] All test_sample_update_defaults_async assertions passed")
 
-    def _test_update_defaults(self, client):
+    async def _test_update_defaults(self, client):
         """Test updating model deployment defaults."""
         # Check if deployment names are configured in environment
         # In Python tests, these would come from environment variables or test configuration
@@ -55,7 +56,7 @@ class TestSampleConfigureDefaults(ContentUnderstandingClientTestBase):
 
         try:
             # Get current defaults to check structure
-            response = client.get_defaults()
+            response = await client.get_defaults()
             current_defaults = response
 
             # Verify the response structure exists
@@ -83,13 +84,13 @@ class TestSampleConfigureDefaults(ContentUnderstandingClientTestBase):
             # If update_defaults is not available or fails, that's okay
             print(f"[WARN]  UpdateDefaults: Skipping - {str(e)}")
 
-    def _test_get_defaults(self, client):
+    async def _test_get_defaults(self, client):
         """Test getting current model deployment defaults.
 
         and assertions
         """
         # Get current defaults
-        get_response = client.get_defaults()
+        get_response = await client.get_defaults()
 
         # Assertion: Verify response is not null
         assert get_response is not None, "GetDefaults response should not be null"
