@@ -4,39 +4,52 @@
 # pylint: disable=logging-fstring-interpolation,broad-exception-caught,logging-not-lazy
 # mypy: disable-error-code="valid-type,call-overload,attr-defined"
 import copy
+import json
 from typing import List
 
 from langchain_core import messages
 from langchain_core.messages import AnyMessage
+from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
+from .langgraph_hitl_helper import (
+    INTERRUPT_NODE_NAME,
+    LanggraphHumanInTheLoopHelper,
+)
 from .utils import extract_function_call
 
 logger = get_logger()
 
 
 class LangGraphResponseConverter:
-    def __init__(self, context: AgentRunContext, output):
+    def __init__(self, context: AgentRunContext, output, hitl_helper: LanggraphHumanInTheLoopHelper):
         self.context = context
         self.output = output
+        self.hitl_helper = hitl_helper
 
     def convert(self) -> list[project_models.ItemResource]:
         res = []
+        interrupt_messages = None
         for step in self.output:
             for node_name, node_output in step.items():
-                message_arr = node_output.get("messages")
-                if not message_arr:
-                    logger.warning(f"No messages found in node {node_name} output: {node_output}")
-                    continue
-                for message in message_arr:
-                    try:
-                        converted = self.convert_output_message(message)
-                        res.append(converted)
-                    except Exception as e:
-                        logger.error(f"Error converting message {message}: {e}")
+                if node_name == INTERRUPT_NODE_NAME:
+                    interrupt_messages = self.hitl_helper.convert_interrupts(node_output)
+                else:
+                    message_arr = node_output.get("messages")
+                    if not message_arr or not isinstance(message_arr, list):
+                        logger.warning(f"No messages found in node {node_name} output: {node_output}")
+                        continue
+                    for message in message_arr:
+                        try:
+                            converted = self.convert_output_message(message)
+                            res.append(converted)
+                        except Exception as e:
+                            logger.error(f"Error converting message {message}: {e}")
+        if interrupt_messages:
+            res.extend(interrupt_messages)
         return res
 
     def convert_output_message(self, output_message: AnyMessage):  # pylint: disable=inconsistent-return-statements
@@ -134,3 +147,4 @@ class LangGraphResponseConverter:
             content_dict["annotations"] = []  # annotation is required for output_text
 
         return project_models.ItemContent(content_dict)
+    

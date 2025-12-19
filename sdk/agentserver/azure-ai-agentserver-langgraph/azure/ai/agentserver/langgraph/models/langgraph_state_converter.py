@@ -23,11 +23,15 @@ from __future__ import annotations
 
 import time
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, AsyncIterator, Dict
+from typing import Any, AsyncGenerator, AsyncIterator, Dict, Union
+
+from langgraph.types import Command, Interrupt, StateSnapshot
 
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
+from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
+from .langgraph_hitl_helper import LanggraphHumanInTheLoopDefaultHelper
 from .langgraph_request_converter import LangGraphRequestConverter
 from .langgraph_response_converter import LangGraphResponseConverter
 from .langgraph_stream_response_converter import LangGraphStreamResponseConverter
@@ -56,7 +60,9 @@ class LanggraphStateConverter(ABC):
         """
 
     @abstractmethod
-    def request_to_state(self, context: AgentRunContext) -> Dict[str, Any]:
+    def request_to_state(
+            self, context: AgentRunContext, prev_state: StateSnapshot
+        ) -> Union[Dict[str, Any], Command]:
         """Convert the incoming request (via context) to an initial LangGraph state.
 
         Return a serializable dict that downstream graph execution expects.
@@ -64,9 +70,11 @@ class LanggraphStateConverter(ABC):
 
         :param context: The context for the agent run.
         :type context: AgentRunContext
+        :param prev_state: The previous LangGraph state if resuming a conversation.
+        :type prev_state: StateSnapshot
 
-        :return: The initial LangGraph state as a dictionary.
-        :rtype: Dict[str, Any]
+        :return: The initial LangGraph state as a dictionary or a Command object.
+        :rtype: Union[Dict[str, Any], Command]
         """
 
     @abstractmethod
@@ -114,12 +122,22 @@ class LanggraphMessageStateConverter(LanggraphStateConverter):
             return "messages"
         return "updates"
 
-    def request_to_state(self, context: AgentRunContext) -> Dict[str, Any]:
+    def request_to_state(self, context: AgentRunContext, prev_state: StateSnapshot) -> Union[Dict[str, Any], Command]:
+        hitl_helper = LanggraphHumanInTheLoopDefaultHelper()
+        command = hitl_helper.validate_and_convert_human_feedback(
+            prev_state, context.request.get("input")
+        )
+        if command is not None:
+            return command
         converter = LangGraphRequestConverter(context.request)
         return converter.convert()
 
     def state_to_response(self, state: Any, context: AgentRunContext) -> Response:
-        converter = LangGraphResponseConverter(context, state)
+        converter = LangGraphResponseConverter(
+            context,
+            state,
+            hitl_helper=LanggraphHumanInTheLoopDefaultHelper(),
+        )
         output = converter.convert()
 
         agent_id = context.get_agent_id_object()
