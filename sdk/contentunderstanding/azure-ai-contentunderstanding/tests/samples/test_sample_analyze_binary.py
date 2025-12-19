@@ -12,10 +12,19 @@ TEST FILE: test_sample_analyze_binary.py
 
 DESCRIPTION:
     These tests validate the sample_analyze_binary.py sample code.
-    This sample demonstrates how to analyze a PDF file from disk using the prebuilt-documentSearch
+    
+    This sample demonstrates how to analyze a PDF file from disk using the `prebuilt-documentSearch`
     analyzer. The service returns an AnalyzeResult that contains an array of MediaContent items
     in AnalyzeResult.contents. For documents, each item is a DocumentContent that exposes markdown
     plus detailed structure such as pages, tables, figures, and paragraphs.
+    
+    The prebuilt-documentSearch analyzer transforms unstructured documents into structured, machine-
+    readable data optimized for RAG scenarios. It extracts rich GitHub Flavored Markdown that preserves
+    document structure and can include: structured text, tables (in HTML format), charts and diagrams,
+    mathematical formulas, hyperlinks, barcodes, annotations, and page metadata.
+    
+    Content Understanding supports many document types including PDF, Word, Excel, PowerPoint, images
+    (including scanned image files with hand-written text), and more.
 
 USAGE:
     pytest test_sample_analyze_binary.py

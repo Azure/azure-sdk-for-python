@@ -8,8 +8,8 @@
 FILE: sample_analyze_binary_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze a PDF file from disk using the prebuilt-documentSearch
-    analyzer.
+    This sample demonstrates how to analyze a PDF file from disk using the `prebuilt-documentSearch`
+    analyzer (async version).
 
     One of the key values of Content Understanding is taking a content file and extracting the content
     for you in one call. The service returns an AnalyzeResult that contains an array of MediaContent
@@ -19,6 +19,14 @@ DESCRIPTION:
 
     This sample focuses on document analysis. For prebuilt RAG analyzers covering images, audio, and
     video, see sample_analyze_url_async.py.
+
+    The prebuilt-documentSearch analyzer transforms unstructured documents into structured, machine-
+    readable data optimized for RAG scenarios. It generates rich GitHub Flavored Markdown that preserves
+    document structure and can include structured text, tables (in HTML format), charts and diagrams,
+    mathematical formulas, hyperlinks, barcodes, annotations, and page metadata.
+
+    For documents that contain images with hand-written text, the prebuilt-documentSearch analyzer
+    includes OCR capabilities by default.
 
 USAGE:
     python sample_analyze_binary_async.py
@@ -52,15 +60,16 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_document_from_binary]
+        # Replace with the path to your local document file.
         file_path = "sample_files/sample_invoice.pdf"
 
         with open(file_path, "rb") as f:
-            pdf_bytes = f.read()
+            file_bytes = f.read()
 
         print(f"Analyzing {file_path} with prebuilt-documentSearch...")
         poller = await client.begin_analyze_binary(
             analyzer_id="prebuilt-documentSearch",
-            binary_input=pdf_bytes,
+            binary_input=file_bytes,
         )
         result: AnalyzeResult = await poller.result()
         # [END analyze_document_from_binary]
@@ -76,21 +85,28 @@ async def main() -> None:
         print("=" * 50)
         # [END extract_markdown]
 
-        # Access document properties
-        # Cast MediaContent to DocumentContent to access document-specific properties
-        # DocumentContent derives from MediaContent and provides additional properties
-        # to access full information about document, including pages, tables and many others
-        document_content: DocumentContent = content  # type: ignore
-        print(f"\nDocument Information:")
-        print(f"  Start page: {document_content.start_page_number}")
-        print(f"  End page: {document_content.end_page_number}")
+        # [START access_document_properties]
+        # Check if this is document content to access document-specific properties
+        if isinstance(content, DocumentContent):
+            print(f"\nDocument type: {content.mime_type or '(unknown)'}")
+            print(f"Start page: {content.start_page_number}")
+            print(f"End page: {content.end_page_number}")
 
-        # Check for pages
-        if document_content.pages and len(document_content.pages) > 0:
-            print(f"\nNumber of pages: {len(document_content.pages)}")
-            for page in document_content.pages:
-                unit = document_content.unit or "units"
-                print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
+            # Check for pages
+            if content.pages and len(content.pages) > 0:
+                print(f"\nNumber of pages: {len(content.pages)}")
+                for page in content.pages:
+                    unit = content.unit or "units"
+                    print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
+
+            # Check for tables
+            if content.tables and len(content.tables) > 0:
+                print(f"\nNumber of tables: {len(content.tables)}")
+                table_counter = 1
+                for table in content.tables:
+                    print(f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns")
+                    table_counter += 1
+        # [END access_document_properties]
 
     if not isinstance(credential, AzureKeyCredential):
         await credential.close()
