@@ -28,7 +28,10 @@ from opentelemetry.instrumentation.environment_variables import (
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
 )
-from azure.monitor.opentelemetry._constants import LOGGER_NAME_ENV_ARG, LOGGING_FORMAT_ENV_ARG
+from azure.monitor.opentelemetry._constants import (
+    LOGGER_NAME_ENV_ARG,
+    LOGGING_FORMAT_ENV_ARG,
+)
 from azure.monitor.opentelemetry._constants import (
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
@@ -45,10 +48,18 @@ from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry._version import VERSION
 
 
-TEST_DEFAULT_RESOURCE = Resource({"test.attributes.1": "test_value_1", "test.attributes.2": "test_value_2"})
-TEST_CUSTOM_RESOURCE = Resource({"test.attributes.2": "test_value_4", "test.attributes.3": "test_value_3"})
+TEST_DEFAULT_RESOURCE = Resource(
+    {"test.attributes.1": "test_value_1", "test.attributes.2": "test_value_2"}
+)
+TEST_CUSTOM_RESOURCE = Resource(
+    {"test.attributes.2": "test_value_4", "test.attributes.3": "test_value_3"}
+)
 TEST_MERGED_RESOURCE = Resource(
-    {"test.attributes.1": "test_value_1", "test.attributes.2": "test_value_4", "test.attributes.3": "test_value_3"}
+    {
+        "test.attributes.1": "test_value_1",
+        "test.attributes.2": "test_value_4",
+        "test.attributes.3": "test_value_3",
+    }
 )
 
 
@@ -58,7 +69,9 @@ class TestConfigurations(TestCase):
         "azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES",
         ("previewlib1", "previewlib2"),
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_MERGED_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create", return_value=TEST_MERGED_RESOURCE
+    )
     def test_get_configurations(self, resource_create_mock):
         configurations = _get_configurations(
             connection_string="test_cs",
@@ -84,8 +97,12 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
-        self.assertEqual(configurations["resource"].attributes, TEST_MERGED_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
+        self.assertEqual(
+            configurations["resource"].attributes, TEST_MERGED_RESOURCE.attributes
+        )
+        self.assertEqual(
+            environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm"
+        )
         resource_create_mock.assert_called_once_with(TEST_CUSTOM_RESOURCE.attributes)
         self.assertEqual(configurations["sampling_ratio"], 0.5)
         self.assertEqual(configurations["credential"], "test_credential")
@@ -113,7 +130,10 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], True)
 
     @patch.dict("os.environ", {}, clear=True)
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     def test_get_configurations_defaults(self, resource_create_mock):
         configurations = _get_configurations()
 
@@ -134,8 +154,12 @@ class TestConfigurations(TestCase):
                 "urllib3": {"enabled": True},
             },
         )
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
+        self.assertEqual(
+            configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes
+        )
+        self.assertEqual(
+            environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm"
+        )
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
         self.assertTrue("credential" not in configurations)
@@ -159,7 +183,10 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     def test_get_configurations_env_vars(self, resource_create_mock):
         configurations = _get_configurations()
 
@@ -180,8 +207,12 @@ class TestConfigurations(TestCase):
                 "urllib3": {"enabled": True},
             },
         )
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        self.assertEqual(
+            configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes
+        )
+        self.assertEqual(
+            environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector"
+        )
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
 
@@ -196,7 +227,10 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     def test_get_configurations_env_vars_validation(self, resource_create_mock):
         configurations = _get_configurations()
         self.assertTrue("connection_string" not in configurations)
@@ -212,7 +246,10 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     @patch(
         "azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES",
         ("previewlib1", "previewlib2"),
@@ -236,7 +273,9 @@ class TestConfigurations(TestCase):
                 "fastapi": {"enabled": True},
                 "flask": {"enabled": False},
                 "psycopg2": {"enabled": True},
-                "previewlib1": {"enabled": True},  # Explicit configuration takes priority
+                "previewlib1": {
+                    "enabled": True
+                },  # Explicit configuration takes priority
                 "previewlib2": {"enabled": False},
                 "requests": {"enabled": True},
                 "urllib": {"enabled": True},
@@ -249,7 +288,10 @@ class TestConfigurations(TestCase):
         "azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES",
         ("previewlib1", "previewlib2"),
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     def test_merge_instrumentation_options_extra_args(self, resource_create_mock):
         configurations = _get_configurations(
             instrumentation_options={
@@ -342,7 +384,9 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("azure.monitor.opentelemetry._utils.configurations._logger")
-    def test_get_configurations_logging_format_env_var_invalid_format(self, mock_logger):
+    def test_get_configurations_logging_format_env_var_invalid_format(
+        self, mock_logger
+    ):
         configurations = _get_configurations()
 
         # Should be None when format is invalid
@@ -350,7 +394,9 @@ class TestConfigurations(TestCase):
         # Should log a warning
         mock_logger.warning.assert_called_once()
         call_args = mock_logger.warning.call_args[0]
-        self.assertIn("Exception occurred when creating logging Formatter", call_args[0])
+        self.assertIn(
+            "Exception occurred when creating logging Formatter", call_args[0]
+        )
         self.assertIn("invalid format %(nonexistent)z", call_args[1])
 
     @patch.dict(
@@ -402,7 +448,10 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     def test_get_configurations_env_vars_rate_limited(self, resource_create_mock):
         configurations = _get_configurations()
 
@@ -423,13 +472,20 @@ class TestConfigurations(TestCase):
                 "urllib3": {"enabled": True},
             },
         )
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        self.assertEqual(
+            configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes
+        )
+        self.assertEqual(
+            environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector"
+        )
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["traces_per_second"], 0.5)
 
     @patch.dict("os.environ", {}, clear=True)
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     def test_get_configurations_rate_limited_sampler_param(self, resource_create_mock):
         configurations = _get_configurations(traces_per_second=2.5)
 
@@ -450,8 +506,12 @@ class TestConfigurations(TestCase):
                 "urllib3": {"enabled": True},
             },
         )
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
+        self.assertEqual(
+            configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes
+        )
+        self.assertEqual(
+            environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm"
+        )
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["traces_per_second"], 2.5)
 
@@ -467,7 +527,10 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     def test_get_configurations_env_vars_no_preference(self, resource_create_mock):
         configurations = _get_configurations()
 
@@ -488,8 +551,12 @@ class TestConfigurations(TestCase):
                 "urllib3": {"enabled": True},
             },
         )
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        self.assertEqual(
+            configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes
+        )
+        self.assertEqual(
+            environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector"
+        )
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
 
@@ -505,7 +572,10 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     def test_get_configurations_env_vars_check_default(self, resource_create_mock):
         configurations = _get_configurations()
 
@@ -526,8 +596,12 @@ class TestConfigurations(TestCase):
                 "urllib3": {"enabled": True},
             },
         )
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        self.assertEqual(
+            configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes
+        )
+        self.assertEqual(
+            environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector"
+        )
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 1.0)
 
@@ -544,7 +618,10 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch(
+        "opentelemetry.sdk.resources.Resource.create",
+        return_value=TEST_DEFAULT_RESOURCE,
+    )
     def test_get_configurations_env_vars_fixed_percentage(self, resource_create_mock):
         configurations = _get_configurations()
 
@@ -565,7 +642,11 @@ class TestConfigurations(TestCase):
                 "urllib3": {"enabled": True},
             },
         )
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        self.assertEqual(
+            configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes
+        )
+        self.assertEqual(
+            environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector"
+        )
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 0.9)
