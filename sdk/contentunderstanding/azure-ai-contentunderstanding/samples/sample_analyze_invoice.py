@@ -50,7 +50,7 @@ def main() -> None:
 
     # [START analyze_invoice]
     invoice_url = (
-        "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/docs/invoice.pdf"
+        "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
     )
 
     print(f"Analyzing invoice with prebuilt-invoice analyzer...")
@@ -136,28 +136,19 @@ def main() -> None:
                 item_dict: dict[str, ContentField] = item.value  # type: ignore
                 description_field = item_dict.get("Description")
                 quantity_field = item_dict.get("Quantity")
-                # Try UnitPrice first, then Amount (matching .NET sample pattern)
                 unit_price_field = item_dict.get("UnitPrice")
-                amount_field = item_dict.get("Amount")
 
-                description = description_field.value if description_field else "(no description)"
+                description = description_field.value if description_field else "N/A"
                 quantity = quantity_field.value if quantity_field else "N/A"
 
-                # Display price information - prefer UnitPrice if available, otherwise Amount
-                # UnitPrice is an ObjectField with Amount and CurrencyCode sub-fields (like TotalAmount)
-                price_info = ""
+                print(f"  Item {i}: {description} (Qty: {quantity})")
                 if unit_price_field and isinstance(unit_price_field, ObjectField) and unit_price_field.value:
                     unit_price_obj: dict[str, ContentField] = unit_price_field.value  # type: ignore
                     unit_price_amount_field = unit_price_obj.get("Amount")
                     unit_price_currency_field = unit_price_obj.get("CurrencyCode")
                     if unit_price_amount_field and unit_price_amount_field.value is not None:
                         currency = unit_price_currency_field.value if unit_price_currency_field else ""
-                        price_info = f"Unit Price: {unit_price_amount_field.value} {currency}".strip()
-                elif amount_field and amount_field.value is not None:
-                    price_info = f"Amount: {amount_field.value}"
-
-                print(f"  {i}. {description}")
-                print(f"     Quantity: {quantity}" + (f", {price_info}" if price_info else ""))
+                        print(f"    Unit Price: {unit_price_amount_field.value} {currency}".strip())
     # [END extract_invoice_fields]
 
 
