@@ -77,11 +77,13 @@ async def main() -> None:
                     type=ContentFieldType.STRING,
                     method=GenerationMethod.EXTRACT,
                     description="Name of the company",
+                    estimate_source_and_confidence=True,
                 ),
                 "total_amount": ContentFieldDefinition(
                     type=ContentFieldType.NUMBER,
                     method=GenerationMethod.EXTRACT,
                     description="Total amount on the document",
+                    estimate_source_and_confidence=True,
                 ),
                 "document_summary": ContentFieldDefinition(
                     type=ContentFieldType.STRING,
@@ -112,7 +114,10 @@ async def main() -> None:
             description="Custom analyzer for extracting company information",
             config=config,
             field_schema=field_schema,
-            models={"completion": "gpt-4.1"},  # Required when using field_schema
+            models={
+                "completion": "gpt-4.1",
+                "embedding": "text-embedding-3-large",
+            },  # Required when using field_schema
         )
 
         # Create the analyzer

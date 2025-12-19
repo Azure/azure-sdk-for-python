@@ -64,10 +64,16 @@ class TestSampleCreateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
             description="Schema for extracting company information",
             fields={
                 "company_name": ContentFieldDefinition(
-                    type="string", method="extract", description="Name of the company"
+                    type="string",
+                    method="extract",
+                    description="Name of the company",
+                    estimate_source_and_confidence=True,
                 ),
                 "total_amount": ContentFieldDefinition(
-                    type="number", method="extract", description="Total amount on the document"
+                    type="number",
+                    method="extract",
+                    description="Total amount on the document",
+                    estimate_source_and_confidence=True,
                 ),
                 "document_summary": ContentFieldDefinition(
                     type="string", method="generate", description="A brief summary of the document content"
