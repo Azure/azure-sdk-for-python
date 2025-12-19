@@ -3130,7 +3130,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                     isMinInclusive=True, isMaxInclusive=False)
 
                 # set the session token for this specific partition to avoid sending compound token for all partitions
-                base.set_session_token_header(self, req_headers, path, request_params, options,
+                await base.set_session_token_header_async(self, req_headers, path, request_params, options,
                                               over_lapping_range["id"])
                 if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
                     # The Epk Sub Range spans exactly one physical partition
