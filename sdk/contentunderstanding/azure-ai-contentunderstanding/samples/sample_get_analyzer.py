@@ -79,37 +79,53 @@ def main() -> None:
     print("=" * 80)
     # [END get_prebuilt_analyzer]
 
+    # [START get_prebuilt_invoice]
+    print("\nRetrieving prebuilt-invoice analyzer...")
+    invoice_analyzer = client.get_analyzer(analyzer_id="prebuilt-invoice")
+
+    # Display full analyzer JSON for prebuilt-invoice
+    print("\n" + "=" * 80)
+    print("Prebuilt-invoice Analyzer (Raw JSON):")
+    print("=" * 80)
+    invoice_json = json.dumps(invoice_analyzer.as_dict(), indent=2, default=str)
+    print(invoice_json)
+    print("=" * 80)
+    # [END get_prebuilt_invoice]
+
     # [START get_custom_analyzer]
     # First, create a custom analyzer
     analyzer_id = f"my_custom_analyzer_{int(time.time())}"
 
     print(f"\nCreating custom analyzer '{analyzer_id}'...")
 
+    # Define field schema with custom fields
     field_schema = ContentFieldSchema(
-        name="company_schema",
-        description="Schema for extracting company information",
+        name="test_schema",
+        description="Test schema for GetAnalyzer sample",
         fields={
             "company_name": ContentFieldDefinition(
                 type=ContentFieldType.STRING,
                 method=GenerationMethod.EXTRACT,
                 description="Name of the company",
             ),
-            "total_amount": ContentFieldDefinition(
-                type=ContentFieldType.NUMBER,
-                method=GenerationMethod.EXTRACT,
-                description="Total amount on the document",
-            ),
         },
     )
 
+    # Create analyzer configuration
+    config = ContentAnalyzerConfig(
+        return_details=True
+    )
+
+    # Create the custom analyzer
     custom_analyzer = ContentAnalyzer(
         base_analyzer_id="prebuilt-document",
-        description="Custom analyzer for extracting company information",
-        config=ContentAnalyzerConfig(return_details=True),
+        description="Test analyzer for GetAnalyzer sample",
+        config=config,
         field_schema=field_schema,
         models={"completion": "gpt-4.1"},
     )
 
+    # Create the analyzer
     poller = client.begin_create_analyzer(
         analyzer_id=analyzer_id,
         resource=custom_analyzer,
@@ -117,22 +133,23 @@ def main() -> None:
     poller.result()
     print(f"Custom analyzer '{analyzer_id}' created successfully!")
 
-    # Now retrieve the custom analyzer
-    print(f"\nRetrieving custom analyzer '{analyzer_id}'...")
-    retrieved_analyzer = client.get_analyzer(analyzer_id=analyzer_id)
+    try:
+        # Get information about the custom analyzer
+        retrieved_analyzer = client.get_analyzer(analyzer_id=analyzer_id)
 
-    # Display full analyzer JSON
-    print("\n" + "=" * 80)
-    print(f"Custom Analyzer '{analyzer_id}':")
-    print("=" * 80)
-    retrieved_json = json.dumps(retrieved_analyzer.as_dict(), indent=2, default=str)
-    print(retrieved_json)
-    print("=" * 80)
-
-    # Clean up - delete the analyzer
-    print(f"\nCleaning up: deleting analyzer '{analyzer_id}'...")
-    client.delete_analyzer(analyzer_id=analyzer_id)
-    print(f"Analyzer '{analyzer_id}' deleted successfully.")
+        # Get raw response JSON and format it for nice printing
+        # Display full analyzer JSON
+        print("\n" + "=" * 80)
+        print(f"Custom Analyzer '{analyzer_id}':")
+        print("=" * 80)
+        retrieved_json = json.dumps(retrieved_analyzer.as_dict(), indent=2, default=str)
+        print(retrieved_json)
+        print("=" * 80)
+    finally:
+        # Clean up - delete the analyzer
+        print(f"\nCleaning up: deleting analyzer '{analyzer_id}'...")
+        client.delete_analyzer(analyzer_id=analyzer_id)
+        print(f"Analyzer '{analyzer_id}' deleted successfully.")
     # [END get_custom_analyzer]
 
 
