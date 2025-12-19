@@ -139,15 +139,15 @@ class TestSampleAnalyzeConfigs(ContentUnderstandingClientTestBase):
 
     def _test_document_features(self, content):
         """Test extraction of document features like charts, annotations, hyperlinks."""
-        # Check for charts
-        charts = getattr(content, "charts", None)
-        if charts and len(charts) > 0:
-            print(f"[PASS] Found {len(charts)} chart(s) in document")
-            for i, chart in enumerate(charts, 1):
-                assert chart is not None, f"Chart {i} should not be null"
-                print(f"  Chart {i} detected")
+        # Check for figures
+        figures = getattr(content, "figures", None)
+        if figures and len(figures) > 0:
+            print(f"[PASS] Found {len(figures)} figure(s) in document")
+            for i, figure in enumerate(figures, 1):
+                assert figure is not None, f"Figure {i} should not be null"
+                print(f"  Figure {i} detected")
         else:
-            print("[INFO] No charts found in document")
+            print("[INFO] No figures found in document")
 
         # Check for annotations
         annotations = getattr(content, "annotations", None)
@@ -163,9 +163,16 @@ class TestSampleAnalyzeConfigs(ContentUnderstandingClientTestBase):
         else:
             print("[INFO] No hyperlinks found in document")
 
-        # Check for formulas
-        formulas = getattr(content, "formulas", None)
-        if formulas and len(formulas) > 0:
-            print(f"[PASS] Found {len(formulas)} formula(s) in document")
+        # Check for formulas in pages
+        formulas_count = 0
+        pages = getattr(content, "pages", None)
+        if pages:
+            for page in pages:
+                formulas = getattr(page, "formulas", None)
+                if formulas:
+                    formulas_count += len(formulas)
+        
+        if formulas_count > 0:
+            print(f"[PASS] Found {formulas_count} formula(s) in document pages")
         else:
-            print("[INFO] No formulas found in document")
+            print("[INFO] No formulas found in document pages")

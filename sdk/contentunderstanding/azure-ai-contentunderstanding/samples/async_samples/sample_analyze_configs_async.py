@@ -9,9 +9,11 @@ FILE: sample_analyze_configs_async.py
 
 DESCRIPTION:
     This sample demonstrates how to extract additional features from documents such as charts,
-    hyperlinks, formulas, and annotations using the prebuilt-documentSearch analyzer.
+    hyperlinks, formulas, and annotations using the `prebuilt-documentSearch` analyzer, which has
+    formulas, layout, and OCR enabled by default.
 
-    The prebuilt-documentSearch analyzer has the following configurations enabled by default:
+ABOUT ANALYSIS CONFIGS:
+    The `prebuilt-documentSearch` analyzer has the following configurations enabled by default:
     - ReturnDetails: true - Returns detailed information about document elements
     - EnableOcr: true - Performs OCR on documents
     - EnableLayout: true - Extracts layout information (tables, figures, hyperlinks, annotations)
@@ -30,6 +32,10 @@ DESCRIPTION:
 
     For custom analyzers, you can configure these options in ContentAnalyzerConfig when creating
     the analyzer.
+
+PREREQUISITES:
+    To get started you'll need a **Microsoft Foundry resource**. See sample_update_defaults.py
+    for setup guidance.
 
 USAGE:
     python sample_analyze_configs_async.py
@@ -51,6 +57,8 @@ from azure.ai.contentunderstanding.models import (
     AnalyzeResult,
     DocumentContent,
     DocumentChartFigure,
+    DocumentAnnotation,
+    DocumentFormula,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
