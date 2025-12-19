@@ -16,13 +16,12 @@ REPO_ROOT = discover_repo_root()
 MAX_PYTHON_VERSION = (3, 11)
 
 
-def get_package_wheel_path(pkg_root: str, out_path: Optional[str]) -> tuple[str, Optional[str]]:
+def get_package_wheel_path(pkg_root: str) -> str:
     # parse setup.py to get package name and version
     pkg_details = ParsedSetup.from_path(pkg_root)
 
     # Check if wheel is already built and available for current package
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
-    out_token_path = None
     if prebuilt_dir:
         found_whl = find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
         pkg_path = os.path.join(prebuilt_dir, found_whl) if found_whl else None
@@ -32,16 +31,10 @@ def get_package_wheel_path(pkg_root: str, out_path: Optional[str]) -> tuple[str,
                     pkg_details.name, pkg_details.version, prebuilt_dir
                 )
             )
-        # If the package is a wheel and out_path is given, the token file output path should be the parent directory of the wheel
-        if out_path:
-            out_token_path = out_path
-        return pkg_path, out_token_path
-
+        return pkg_path
     # Otherwise, use wheel created in staging directory, or fall back on source directory
     pkg_path = find_whl(pkg_root, pkg_details.name, pkg_details.version) or pkg_root
-    out_token_path = out_path
-
-    return pkg_path, out_token_path
+    return pkg_path
 
 
 def get_cross_language_mapping_path(pkg_root):
@@ -117,7 +110,8 @@ class apistub(Check):
 
             self.pip_freeze(executable)
 
-            pkg_path, out_token_path = get_package_wheel_path(package_dir, staging_directory)
+            pkg_path = get_package_wheel_path(package_dir)
+            out_token_path = staging_directory
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
             pkg_path = os.path.abspath(pkg_path)
