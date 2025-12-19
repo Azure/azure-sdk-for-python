@@ -34,15 +34,11 @@ class TestSampleListAnalyzers(ContentUnderstandingClientTestBase):
         1. Listing all analyzers using list_analyzers
         2. Counting prebuilt vs custom analyzers
         3. Displaying analyzer details
-
-        07_ListAnalyzers.ListAnalyzersAsync()
         """
         client = self.create_client(endpoint=azure_content_understanding_endpoint)
 
         # List all analyzers
-        analyzers = []
-        for analyzer in client.list_analyzers():
-            analyzers.append(analyzer)
+        analyzers = list(client.list_analyzers())
 
         # Assertions
         assert analyzers is not None, "Analyzers list should not be null"
@@ -53,11 +49,7 @@ class TestSampleListAnalyzers(ContentUnderstandingClientTestBase):
         prebuilt_count = sum(
             1 for a in analyzers if hasattr(a, "analyzer_id") and getattr(a, "analyzer_id", "").startswith("prebuilt-")
         )
-        custom_count = sum(
-            1
-            for a in analyzers
-            if hasattr(a, "analyzer_id") and not getattr(a, "analyzer_id", "").startswith("prebuilt-")
-        )
+        custom_count = len(analyzers) - prebuilt_count
 
         print(f"[INFO] Prebuilt analyzers: {prebuilt_count}")
         print(f"[INFO] Custom analyzers: {custom_count}")
@@ -72,27 +64,24 @@ class TestSampleListAnalyzers(ContentUnderstandingClientTestBase):
         assert prebuilt_count > 0, "Should have at least one prebuilt analyzer"
         print(f"[PASS] Prebuilt analyzers found: {prebuilt_count}")
 
-        # Display details for first 10 analyzers (for test output brevity)
-        print("\n[INFO] Analyzer details (first 10):")
-        for i, analyzer in enumerate(analyzers[:10]):
+        # Display details for each analyzer
+        print("\n[INFO] Analyzer details:")
+        for analyzer in analyzers:
             analyzer_id = getattr(analyzer, "analyzer_id", "unknown")
             description = getattr(analyzer, "description", "(none)")
             status = getattr(analyzer, "status", "unknown")
 
-            print(f"\n  [{i+1}] ID: {analyzer_id}")
+            print(f"  ID: {analyzer_id}")
             if description and description != "(none)":
-                print(f"      Description: {description[:80]}{'...' if len(description) > 80 else ''}")
+                print(f"  Description: {description[:80]}{'...' if len(description) > 80 else ''}")
             else:
-                print(f"      Description: (none)")
-            print(f"      Status: {status}")
+                print(f"  Description: (none)")
+            print(f"  Status: {status}")
 
             if analyzer_id.startswith("prebuilt-"):
-                print("      Type: Prebuilt analyzer")
+                print("  Type: Prebuilt analyzer")
             else:
-                print("      Type: Custom analyzer")
-
-        if len(analyzers) > 10:
-            print(f"\n[INFO] ... and {len(analyzers) - 10} more analyzer(s)")
+                print("  Type: Custom analyzer")
 
         # Verify each analyzer has required properties
         valid_analyzers = 0

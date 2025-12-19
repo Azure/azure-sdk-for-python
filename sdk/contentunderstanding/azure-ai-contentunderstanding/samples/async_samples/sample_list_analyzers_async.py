@@ -51,7 +51,7 @@ async def main() -> None:
         # List all analyzers
         analyzers = [analyzer async for analyzer in client.list_analyzers()]
 
-        print(f"\nFound {len(analyzers)} analyzer(s)")
+        print(f"Found {len(analyzers)} analyzer(s)")
 
         # Display summary
         prebuilt_count = sum(1 for a in analyzers if a.analyzer_id and a.analyzer_id.startswith("prebuilt-"))
@@ -60,9 +60,8 @@ async def main() -> None:
         print(f"  Custom analyzers: {custom_count}")
 
         # Display details for each analyzer
-        print("\n" + "=" * 60)
         for analyzer in analyzers:
-            print(f"ID: {analyzer.analyzer_id}")
+            print(f"  ID: {analyzer.analyzer_id}")
             print(f"  Description: {analyzer.description or '(none)'}")
             print(f"  Status: {analyzer.status}")
 
