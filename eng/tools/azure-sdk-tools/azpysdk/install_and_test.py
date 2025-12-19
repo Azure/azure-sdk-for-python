@@ -107,10 +107,18 @@ class InstallAndTest(Check):
             exit(coverage_result.returncode)
 
     def run_pytest(
-        self, executable: str, staging_directory: str, package_dir: str, package_name: str, pytest_args: List[str]
+        self,
+        executable: str,
+        staging_directory: str,
+        package_dir: str,
+        package_name: str,
+        pytest_args: List[str],
+        cwd: Optional[str] = None,
     ) -> None:
         pytest_command = ["-m", "pytest", *pytest_args]
-        pytest_result = self.run_venv_command(executable, pytest_command, cwd=staging_directory, immediately_dump=True)
+        pytest_result = self.run_venv_command(
+            executable, pytest_command, cwd=(cwd or staging_directory), immediately_dump=True
+        )
         if pytest_result.returncode != 0:
             if pytest_result.returncode == 5 and is_error_code_5_allowed(package_dir, package_name):
                 logger.info(
