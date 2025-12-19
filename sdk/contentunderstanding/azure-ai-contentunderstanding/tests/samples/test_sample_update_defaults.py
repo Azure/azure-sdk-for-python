@@ -13,6 +13,11 @@ DESCRIPTION:
     These tests validate the sample_update_defaults.py sample code.
     This sample demonstrates configuring model deployment settings for prebuilt analyzers.
 
+    The tests validate:
+    1. UpdateDefaults: Configuring model deployment mappings (optional, requires env vars)
+    2. GetDefaults: Retrieving current model deployment configuration
+    3. Model deployment mappings structure and data types
+
 USAGE:
     pytest test_sample_update_defaults.py
 """
@@ -48,45 +53,59 @@ class TestSampleUpdateDefaults(ContentUnderstandingClientTestBase):
         print("\n[SUCCESS] All test_sample_update_defaults assertions passed")
 
     def _test_update_defaults(self, client):
-        """Test updating model deployment defaults."""
-        # Check if deployment names are configured in environment
-        # In Python tests, these would come from environment variables or test configuration
-        # For now, we'll check if the deployments are configured
+        """Test updating model deployment defaults.
 
-        try:
-            # Get current defaults to check structure
-            response = client.get_defaults()
-            current_defaults = response
+        This test attempts to update model deployments if deployment names are provided
+        via environment variables. If not provided, it checks if defaults are already
+        configured. This is a best-effort test.
+        """
+        import os
 
-            # Verify the response structure exists
-            assert current_defaults is not None, "GetDefaults response should not be null"
+        gpt_4_1_deployment = os.getenv("GPT_4_1_DEPLOYMENT")
+        gpt_4_1_mini_deployment = os.getenv("GPT_4_1_MINI_DEPLOYMENT")
+        text_embedding_3_large_deployment = os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
 
-            # Check if model_deployments attribute exists
-            model_deployments = getattr(current_defaults, "model_deployments", None)
+        if gpt_4_1_deployment and gpt_4_1_mini_deployment and text_embedding_3_large_deployment:
+            # All deployment names are provided, attempt to update defaults
+            model_deployments = {
+                "gpt-4.1": gpt_4_1_deployment,
+                "gpt-4.1-mini": gpt_4_1_mini_deployment,
+                "text-embedding-3-large": text_embedding_3_large_deployment,
+            }
+            print("Configuring model deployments...")
+            updated_defaults = client.update_defaults(model_deployments=model_deployments)
+            assert updated_defaults is not None, "UpdateDefaults should return a valid response"
+            if updated_defaults.model_deployments:
+                print(
+                    f"[PASS] UpdateDefaults: Model deployments configured ({len(updated_defaults.model_deployments)} models)"
+                )
+        else:
+            # Deployment names not provided, check if defaults are already configured
+            print("[INFO] UpdateDefaults: Deployment names not set in environment variables.")
+            print("       Checking if defaults are already configured...")
 
-            if model_deployments and len(model_deployments) > 0:
-                print(f"[PASS] UpdateDefaults: Model deployments already configured ({len(model_deployments)} models)")
+            # Fallback: Check if defaults are already configured (read-only check)
+            try:
+                response = client.get_defaults()
+                current_defaults = response
+                model_deployments = getattr(current_defaults, "model_deployments", None)
 
-                # Validate structure of existing deployments
-                assert isinstance(model_deployments, dict), "Model deployments should be a dictionary"
-
-                for key, value in model_deployments.items():
-                    assert isinstance(key, str) and key.strip(), f"Model key should be non-empty string, got {key}"
-                    assert (
-                        isinstance(value, str) and value.strip()
-                    ), f"Deployment value should be non-empty string for key {key}"
-                    print(f"  {key} → {value}")
-            else:
-                print("[WARN]  UpdateDefaults: No model deployments configured (this is optional)")
-
-        except Exception as e:
-            # If update_defaults is not available or fails, that's okay
-            print(f"[WARN]  UpdateDefaults: Skipping - {str(e)}")
+                if model_deployments and len(model_deployments) > 0:
+                    print(
+                        f"[PASS] UpdateDefaults: Model deployments already configured ({len(model_deployments)} models)"
+                    )
+                else:
+                    print("[INFO] UpdateDefaults: No model deployments configured (valid state)")
+            except Exception as e:
+                print(f"[INFO] UpdateDefaults: Could not check if defaults are configured - {str(e)}")
 
     def _test_get_defaults(self, client):
         """Test getting current model deployment defaults.
 
-        and assertions
+        This test validates that:
+        1. The GetDefaults call returns a valid response
+        2. The response contains the expected structure (model_deployments dict)
+        3. If deployments are configured, they have valid string keys and values
         """
         # Get current defaults
         get_response = client.get_defaults()
@@ -117,7 +136,7 @@ class TestSampleUpdateDefaults(ContentUnderstandingClientTestBase):
                     assert key.strip(), "Model key should not be empty or whitespace"
                     assert isinstance(value, str), f"Deployment value should be string for key {key}, got {type(value)}"
                     assert value.strip(), f"Deployment value should not be empty for key {key}"
-                    print(f"  {key} → {value}")
+                    print(f"  {key}: {value}")
 
                 # Assertion: Check for expected model keys (if any configured)
                 # Common models: gpt-4.1, gpt-4.1-mini, text-embedding-3-large
