@@ -9,11 +9,9 @@ from .install_and_test import InstallAndTest
 from ci_tools.functions import (
     install_into_venv,
     uninstall_from_venv,
-    is_error_code_5_allowed,
 )
-from ci_tools.scenario.generation import create_package_and_install, prepare_environment
-from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
-from ci_tools.environment_exclusions import is_check_enabled
+from ci_tools.scenario.generation import prepare_environment
+from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.parsing import get_config_setting
 from ci_tools.logging import logger
 
@@ -64,13 +62,6 @@ class optional(InstallAndTest):
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} using interpreter {executable}")
-
-            # try:
-            #     self.install_dev_reqs(executable, args, package_dir)
-            # except CalledProcessError as exc:
-            #     logger.error(f"Failed to install dependencies for {package_name}: {exc}")
-            #     results.append(exc.returncode)
-            #     continue
 
             try:
                 self.prepare_and_test_optional(package_name, package_dir, staging_directory, args.optional, args)
