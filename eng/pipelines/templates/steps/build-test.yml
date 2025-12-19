@@ -36,6 +36,11 @@ steps:
 
   - template: set-dev-build.yml
 
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: ../steps/auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
+
   - pwsh: |
       Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
@@ -56,11 +61,6 @@ steps:
   - template: /eng/common/testproxy/test-proxy-tool.yml
     parameters:
       runProxy: false
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: ../steps/auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ parameters.BeforeTestSteps }}
 

@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.15.0b2 (Unreleased)
+### 4.15.0b3 (Unreleased)
 
 #### Features Added
 
@@ -9,6 +9,11 @@
 #### Bugs Fixed
 
 #### Other Changes
+
+### 4.15.0b2 (2025-12-16)
+
+#### Bugs Fixed
+* Fixed bug where sdk was not properly retrying requests in some edge cases after partition splits.See [PR 44425](https://github.com/Azure/azure-sdk-for-python/pull/44425)
 
 ### 4.15.0b1 (2025-11-26)
 
