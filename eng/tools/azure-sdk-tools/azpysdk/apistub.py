@@ -106,7 +106,7 @@ class apistub(Check):
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,
-                skip_install=True,
+                skip_install=False,
                 cache_dir=None,
                 work_dir=staging_directory,
                 force_create=False,
@@ -120,6 +120,12 @@ class apistub(Check):
             pkg_path, out_token_path = get_package_wheel_path(package_dir, staging_directory)
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
+            pkg_path = os.path.abspath(pkg_path)
+            if out_token_path:
+                out_token_path = os.path.abspath(out_token_path)
+            if cross_language_mapping_path:
+                cross_language_mapping_path = os.path.abspath(cross_language_mapping_path)
+
             cmds = ["-m", "apistub", "--pkg-path", pkg_path]
 
             if out_token_path:
@@ -130,7 +136,9 @@ class apistub(Check):
             logger.info("Running apistub {}.".format(cmds))
 
             try:
-                self.run_venv_command(executable, cmds, cwd=package_dir, check=True, immediately_dump=True)
+                # Run from staging directory instead of package_dir to avoid namespace collisions
+                # when the package has namespace packages (e.g., azure.core.experimental)
+                self.run_venv_command(executable, cmds, cwd=staging_directory, check=True, immediately_dump=True)
             except CalledProcessError as e:
                 logger.error(f"{package_name} exited with error {e.returncode}")
                 results.append(e.returncode)
