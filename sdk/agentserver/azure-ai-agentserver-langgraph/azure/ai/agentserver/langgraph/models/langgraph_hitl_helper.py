@@ -42,6 +42,7 @@ class LanggraphHumanInTheLoopHelper:
         if not interrupts or not isinstance(interrupts, tuple):
             return []
         result = []
+        # should be only one interrupt for now
         for interrupt_info in interrupts:
             item = self.convert_interrupt(interrupt_info)
             if item:

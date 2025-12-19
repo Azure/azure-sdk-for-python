@@ -32,11 +32,11 @@ class LangGraphResponseConverter:
 
     def convert(self) -> list[project_models.ItemResource]:
         res = []
-        interrupt_messages = None
         for step in self.output:
             for node_name, node_output in step.items():
                 if node_name == INTERRUPT_NODE_NAME:
                     interrupt_messages = self.hitl_helper.convert_interrupts(node_output)
+                    res.extend(interrupt_messages)
                 else:
                     message_arr = node_output.get("messages")
                     if not message_arr or not isinstance(message_arr, list):
@@ -49,8 +49,6 @@ class LangGraphResponseConverter:
                                 res.append(converted)
                         except Exception as e:
                             logger.error(f"Error converting message {message}: {e}")
-        if interrupt_messages:
-            res.extend(interrupt_messages)
         return res
 
     def convert_output_message(self, output_message: AnyMessage):  # pylint: disable=inconsistent-return-statements
