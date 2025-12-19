@@ -40,7 +40,9 @@ def _get_customer_ikey_from_env_var():
         try:
             _CUSTOMER_IKEY_ENV_VAR = ConnectionStringParser().instrumentation_key
         except ValueError as e:
-            logger.error("Failed to parse Instrumentation Key: %s", e)  # pylint: disable=C
+            logger.error(
+                "Failed to parse Instrumentation Key: %s", e
+            )  # pylint: disable=C
     return _CUSTOMER_IKEY_ENV_VAR
 
 
@@ -72,4 +74,6 @@ def _env_var_or_default(var_name, default_val=""):
         return default_val
 
 
-_EXTENSION_VERSION = _env_var_or_default("ApplicationInsightsAgent_EXTENSION_VERSION", "disabled")
+_EXTENSION_VERSION = _env_var_or_default(
+    "ApplicationInsightsAgent_EXTENSION_VERSION", "disabled"
+)

@@ -53,7 +53,9 @@ from azure.monitor.opentelemetry._version import VERSION
 
 
 _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
-_INVALID_TRACES_PER_SECOND_MESSAGE = "Value of %s must be a positive number for traces per second. Defaulting to %s: %s"
+_INVALID_TRACES_PER_SECOND_MESSAGE = (
+    "Value of %s must be a positive number for traces per second. Defaulting to %s: %s"
+)
 _SUPPORTED_RESOURCE_DETECTORS = (
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_VM_RESOURCE_DETECTOR_NAME,
@@ -127,7 +129,9 @@ def _default_logging_formatter(configurations):
             return
     elif LOGGING_FORMAT_ENV_ARG in environ:
         try:
-            configurations[LOGGING_FORMATTER_ARG] = Formatter(environ[LOGGING_FORMAT_ENV_ARG])
+            configurations[LOGGING_FORMATTER_ARG] = Formatter(
+                environ[LOGGING_FORMAT_ENV_ARG]
+            )
         except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                 "Exception occurred when creating logging Formatter from format: %s, %s.",
@@ -138,11 +142,15 @@ def _default_logging_formatter(configurations):
 
 
 def _default_resource(configurations):
-    environ.setdefault(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, ",".join(_SUPPORTED_RESOURCE_DETECTORS))
+    environ.setdefault(
+        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, ",".join(_SUPPORTED_RESOURCE_DETECTORS)
+    )
     if RESOURCE_ARG not in configurations:
         configurations[RESOURCE_ARG] = Resource.create()
     else:
-        configurations[RESOURCE_ARG] = Resource.create(configurations[RESOURCE_ARG].attributes)
+        configurations[RESOURCE_ARG] = Resource.create(
+            configurations[RESOURCE_ARG].attributes
+        )
 
 
 def _default_sampling_ratio(configurations):
@@ -155,10 +163,14 @@ def _default_sampling_ratio(configurations):
         try:
             sampler_value = float(sampler_arg)
             if sampler_value < 0:
-                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+                _logger.error(
+                    "Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number."
+                )
                 sampler_value = default_value
             else:
-                _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
+                _logger.info(
+                    "Using rate limited sampler: %s traces per second", sampler_value
+                )
             configurations[SAMPLING_TRACES_PER_SECOND_ARG] = sampler_value
         except ValueError as e:
             _logger.error(  # pylint: disable=C
@@ -174,7 +186,9 @@ def _default_sampling_ratio(configurations):
         try:
             sampler_value = float(sampler_arg)
             if sampler_value < 0:
-                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+                _logger.error(
+                    "Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number."
+                )
                 sampler_value = default_value
             else:
                 _logger.info("Using sampling ratio: %s", sampler_value)

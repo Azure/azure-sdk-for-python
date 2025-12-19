@@ -69,7 +69,11 @@ def get_dist_dependency_conflicts(
     instruments_any_marker = {extra: instruments_any}
     if dist.requires:
         for dep in dist.requires:
-            if extra not in dep or instruments not in dep and instruments_any not in dep:
+            if (
+                extra not in dep
+                or instruments not in dep
+                and instruments_any not in dep
+            ):
                 continue
 
             req = Requirement(dep)

@@ -27,7 +27,9 @@ from azure.monitor.opentelemetry._configure import (
     _setup_tracing,
     configure_azure_monitor,
 )
-from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_DETECTS_ATTACH
+from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
+    _DISTRO_DETECTS_ATTACH,
+)
 
 
 TEST_RESOURCE = Resource({"foo": "bar"})
@@ -348,18 +350,24 @@ class TestConfigure(unittest.TestCase):
             "span_processors": [custom_sp],
             "resource": TEST_RESOURCE,
         }
-        with patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled") as instr_mock:
+        with patch(
+            "azure.monitor.opentelemetry._configure._is_instrumentation_enabled"
+        ) as instr_mock:
             instr_mock.return_value = True
             with patch.dict(
                 "sys.modules",
                 {
                     "azure.core.settings": Mock(settings=settings_mock),
-                    "azure.core.tracing.ext.opentelemetry_span": Mock(OpenTelemetrySpan=opentelemetry_span_mock),
+                    "azure.core.tracing.ext.opentelemetry_span": Mock(
+                        OpenTelemetrySpan=opentelemetry_span_mock
+                    ),
                 },
             ):
                 _setup_tracing(configurations)
                 sampler_mock.assert_called_once_with(sampling_ratio=0.5)
-                tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
+                tp_mock.assert_called_once_with(
+                    sampler=sampler_init_mock, resource=TEST_RESOURCE
+                )
                 set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
                 trace_exporter_mock.assert_called_once_with(**configurations)
                 bsp_mock.assert_called_once_with(trace_exp_init_mock)
@@ -367,7 +375,9 @@ class TestConfigure(unittest.TestCase):
                 tp_init_mock.add_span_processor.assert_has_calls(
                     [call(custom_sp), call(pcsp_init_mock), call(bsp_init_mock)]
                 )
-                self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
+                self.assertEqual(
+                    settings_mock.tracing_implementation, opentelemetry_span_mock
+                )
                 pcsp_mock.assert_called_once_with()
 
     @patch(
@@ -421,18 +431,24 @@ class TestConfigure(unittest.TestCase):
             "span_processors": [custom_sp],
             "resource": TEST_RESOURCE,
         }
-        with patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled") as instr_mock:
+        with patch(
+            "azure.monitor.opentelemetry._configure._is_instrumentation_enabled"
+        ) as instr_mock:
             instr_mock.return_value = True
             with patch.dict(
                 "sys.modules",
                 {
                     "azure.core.settings": Mock(settings=settings_mock),
-                    "azure.core.tracing.ext.opentelemetry_span": Mock(OpenTelemetrySpan=opentelemetry_span_mock),
+                    "azure.core.tracing.ext.opentelemetry_span": Mock(
+                        OpenTelemetrySpan=opentelemetry_span_mock
+                    ),
                 },
             ):
                 _setup_tracing(configurations)
                 sampler_mock.assert_called_once_with(target_spans_per_second_limit=2.0)
-                tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
+                tp_mock.assert_called_once_with(
+                    sampler=sampler_init_mock, resource=TEST_RESOURCE
+                )
                 set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
                 trace_exporter_mock.assert_called_once_with(**configurations)
                 bsp_mock.assert_called_once_with(trace_exp_init_mock)
@@ -440,7 +456,9 @@ class TestConfigure(unittest.TestCase):
                 tp_init_mock.add_span_processor.assert_has_calls(
                     [call(custom_sp), call(pcsp_init_mock), call(bsp_init_mock)]
                 )
-                self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
+                self.assertEqual(
+                    settings_mock.tracing_implementation, opentelemetry_span_mock
+                )
                 pcsp_mock.assert_called_once_with()
 
     @patch(
@@ -494,27 +512,39 @@ class TestConfigure(unittest.TestCase):
             "span_processors": [custom_sp],
             "resource": TEST_RESOURCE,
         }
-        with patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled") as instr_mock:
+        with patch(
+            "azure.monitor.opentelemetry._configure._is_instrumentation_enabled"
+        ) as instr_mock:
             instr_mock.return_value = True
             with patch.dict(
                 "sys.modules",
                 {
                     "azure.core.settings": Mock(settings=settings_mock),
-                    "azure.core.tracing.ext.opentelemetry_span": Mock(OpenTelemetrySpan=opentelemetry_span_mock),
+                    "azure.core.tracing.ext.opentelemetry_span": Mock(
+                        OpenTelemetrySpan=opentelemetry_span_mock
+                    ),
                 },
             ):
                 _setup_tracing(configurations)
                 sampler_mock.assert_called_once_with(sampling_ratio=0.5)
-                tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
+                tp_mock.assert_called_once_with(
+                    sampler=sampler_init_mock, resource=TEST_RESOURCE
+                )
                 set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
                 trace_exporter_mock.assert_called_once_with(**configurations)
                 bsp_mock.assert_called_once_with(trace_exp_init_mock)
                 self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
-                tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
-                self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
+                tp_init_mock.add_span_processor.assert_has_calls(
+                    [call(custom_sp), call(bsp_init_mock)]
+                )
+                self.assertEqual(
+                    settings_mock.tracing_implementation, opentelemetry_span_mock
+                )
                 pcsp_mock.assert_not_called()
 
-    @patch("azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor")
+    @patch(
+        "azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor"
+    )
     @patch("azure.monitor.opentelemetry._configure.getLogger")
     def test_setup_logging(self, get_logger_mock, pclp_mock):
         lp_mock = Mock()
@@ -555,12 +585,18 @@ class TestConfigure(unittest.TestCase):
         with patch.dict(
             "sys.modules",
             {
-                "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
-                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock, LoggingHandler=logging_handler_mock),
+                "opentelemetry._logs": Mock(
+                    set_logger_provider=set_logger_provider_mock
+                ),
+                "opentelemetry.sdk._logs": Mock(
+                    LoggerProvider=lp_mock, LoggingHandler=logging_handler_mock
+                ),
                 "azure.monitor.opentelemetry.exporter.export.logs._processor": Mock(
                     _AzureBatchLogRecordProcessor=blrp_mock
                 ),
-                "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
+                "azure.monitor.opentelemetry.exporter": Mock(
+                    AzureMonitorLogExporter=log_exporter_mock
+                ),
                 "opentelemetry._events": Mock(_set_event_logger_provider=set_elp_mock),
                 "opentelemetry.sdk._events": Mock(EventLoggerProvider=elp_mock),
             },
@@ -571,20 +607,30 @@ class TestConfigure(unittest.TestCase):
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False})
+        blrp_mock.assert_called_once_with(
+            log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False}
+        )
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 2)
-        lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
+        lp_init_mock.add_log_record_processor.assert_has_calls(
+            [call(pclp_init_mock), call(blrp_init_mock)]
+        )
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
-        logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
+        logging_handler_init_mock.setFormatter.assert_called_once_with(
+            formatter_init_mock
+        )
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
         elp_mock.assert_called_once_with(lp_init_mock)
         set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
-    @patch("azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor")
+    @patch(
+        "azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor"
+    )
     @patch("azure.monitor.opentelemetry._configure.isinstance")
     @patch("azure.monitor.opentelemetry._configure.getLogger")
-    def test_setup_logging_duplicate_logger(self, get_logger_mock, instance_mock, pclp_mock):
+    def test_setup_logging_duplicate_logger(
+        self, get_logger_mock, instance_mock, pclp_mock
+    ):
         # Create all the necessary mocks
         lp_mock = Mock()
         set_logger_provider_mock = Mock()
@@ -628,12 +674,16 @@ class TestConfigure(unittest.TestCase):
         with patch.dict(
             "sys.modules",
             {
-                "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
+                "opentelemetry._logs": Mock(
+                    set_logger_provider=set_logger_provider_mock
+                ),
                 "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock),
                 "azure.monitor.opentelemetry.exporter.export.logs._processor": Mock(
                     _AzureBatchLogRecordProcessor=blrp_mock
                 ),
-                "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
+                "azure.monitor.opentelemetry.exporter": Mock(
+                    AzureMonitorLogExporter=log_exporter_mock
+                ),
                 "opentelemetry._events": Mock(_set_event_logger_provider=set_elp_mock),
                 "opentelemetry.sdk._events": Mock(EventLoggerProvider=elp_mock),
             },
@@ -644,18 +694,26 @@ class TestConfigure(unittest.TestCase):
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": True})
+        blrp_mock.assert_called_once_with(
+            log_exp_init_mock, {"enable_trace_based_sampling_for_logs": True}
+        )
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 2)
-        lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
+        lp_init_mock.add_log_record_processor.assert_has_calls(
+            [call(pclp_init_mock), call(blrp_init_mock)]
+        )
         get_logger_mock.assert_called_once_with("test")
         # The logger already has a LoggingHandler, so addHandler should not be called
         logger_mock.addHandler.assert_not_called()
         elp_mock.assert_called_once_with(lp_init_mock)
         set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
-    @patch("azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor")
+    @patch(
+        "azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor"
+    )
     @patch("azure.monitor.opentelemetry._configure.getLogger")
-    def test_setup_logging_disable_performance_counters(self, get_logger_mock, pclp_mock):
+    def test_setup_logging_disable_performance_counters(
+        self, get_logger_mock, pclp_mock
+    ):
         lp_mock = Mock()
         set_logger_provider_mock = Mock()
         log_exporter_mock = Mock()
@@ -694,12 +752,18 @@ class TestConfigure(unittest.TestCase):
         with patch.dict(
             "sys.modules",
             {
-                "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
-                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock, LoggingHandler=logging_handler_mock),
+                "opentelemetry._logs": Mock(
+                    set_logger_provider=set_logger_provider_mock
+                ),
+                "opentelemetry.sdk._logs": Mock(
+                    LoggerProvider=lp_mock, LoggingHandler=logging_handler_mock
+                ),
                 "azure.monitor.opentelemetry.exporter.export.logs._processor": Mock(
                     _AzureBatchLogRecordProcessor=blrp_mock
                 ),
-                "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
+                "azure.monitor.opentelemetry.exporter": Mock(
+                    AzureMonitorLogExporter=log_exporter_mock
+                ),
                 "opentelemetry._events": Mock(_set_event_logger_provider=set_elp_mock),
                 "opentelemetry.sdk._events": Mock(EventLoggerProvider=elp_mock),
             },
@@ -710,10 +774,14 @@ class TestConfigure(unittest.TestCase):
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False})
+        blrp_mock.assert_called_once_with(
+            log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False}
+        )
         lp_init_mock.add_log_record_processor.assert_called_once_with(blrp_init_mock)
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
-        logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
+        logging_handler_init_mock.setFormatter.assert_called_once_with(
+            formatter_init_mock
+        )
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
         elp_mock.assert_called_once_with(lp_init_mock)
@@ -736,7 +804,12 @@ class TestConfigure(unittest.TestCase):
         autospec=True,
     )
     def test_setup_metrics(
-        self, mp_mock, set_meter_provider_mock, metric_exporter_mock, reader_mock, mock_enable_performance_counters
+        self,
+        mp_mock,
+        set_meter_provider_mock,
+        metric_exporter_mock,
+        reader_mock,
+        mock_enable_performance_counters,
     ):
         mp_init_mock = Mock()
         mp_mock.return_value = mp_init_mock
@@ -760,7 +833,9 @@ class TestConfigure(unittest.TestCase):
         set_meter_provider_mock.assert_called_once_with(mp_init_mock)
         metric_exporter_mock.assert_called_once_with(**configurations)
         reader_mock.assert_called_once_with(metric_exp_init_mock)
-        mock_enable_performance_counters.assert_called_once_with(meter_provider=mp_init_mock)
+        mock_enable_performance_counters.assert_called_once_with(
+            meter_provider=mp_init_mock
+        )
 
     @patch(
         "azure.monitor.opentelemetry._configure.enable_performance_counters",
@@ -779,7 +854,12 @@ class TestConfigure(unittest.TestCase):
         autospec=True,
     )
     def test_setup_metrics_views(
-        self, mp_mock, set_meter_provider_mock, metric_exporter_mock, reader_mock, mock_enable_performance_counters
+        self,
+        mp_mock,
+        set_meter_provider_mock,
+        metric_exporter_mock,
+        reader_mock,
+        mock_enable_performance_counters,
     ):
         mp_init_mock = Mock()
         mp_mock.return_value = mp_init_mock
@@ -823,7 +903,12 @@ class TestConfigure(unittest.TestCase):
         autospec=True,
     )
     def test_setup_metrics_perf_counters_disabled(
-        self, mp_mock, set_meter_provider_mock, metric_exporter_mock, reader_mock, mock_enable_performance_counters
+        self,
+        mp_mock,
+        set_meter_provider_mock,
+        metric_exporter_mock,
+        reader_mock,
+        mock_enable_performance_counters,
     ):
         mp_init_mock = Mock()
         mp_mock.return_value = mp_init_mock
@@ -864,7 +949,10 @@ class TestConfigure(unittest.TestCase):
 
         enable_live_metrics_mock.assert_called_once_with(**configurations)
 
-    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr2"))
+    @patch(
+        "azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES",
+        ("test_instr2"),
+    )
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.entry_points")
@@ -891,8 +979,13 @@ class TestConfigure(unittest.TestCase):
         ep2_mock.load.assert_called_once()
         instrumentor_mock.instrument.assert_called_once()
 
-    @patch("azure.monitor.opentelemetry._configure._setup_additional_azure_sdk_instrumentations")
-    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("azure_sdk"))
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_additional_azure_sdk_instrumentations"
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES",
+        ("azure_sdk"),
+    )
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_additional_azure(
@@ -909,7 +1002,10 @@ class TestConfigure(unittest.TestCase):
         _setup_instrumentations({})
         additional_instrumentations_mock.assert_called_once()
 
-    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr"))
+    @patch(
+        "azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES",
+        ("test_instr"),
+    )
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
@@ -936,7 +1032,10 @@ class TestConfigure(unittest.TestCase):
         instrumentor_mock.instrument.assert_not_called()
         logger_mock.debug.assert_called_once()
 
-    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr"))
+    @patch(
+        "azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES",
+        ("test_instr"),
+    )
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
@@ -964,7 +1063,8 @@ class TestConfigure(unittest.TestCase):
         logger_mock.warning.assert_called_once()
 
     @patch(
-        "azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr1", "test_instr2")
+        "azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES",
+        ("test_instr1", "test_instr2"),
     )
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")

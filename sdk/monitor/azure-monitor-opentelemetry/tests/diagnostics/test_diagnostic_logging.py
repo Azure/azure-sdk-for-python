@@ -37,7 +37,10 @@ def check_file_for_messages(file_path, level, messages):
             json = loads(f.readline())
             assert json["time"]
             assert json["level"] == level
-            assert json["logger"] == "azure.monitor.opentelemetry._diagnostics.diagnostic_logging"
+            assert (
+                json["logger"]
+                == "azure.monitor.opentelemetry._diagnostics.diagnostic_logging"
+            )
             assert json["message"] == message
             properties = json["properties"]
             assert properties["operation"] == "Startup"
@@ -111,19 +114,25 @@ class TestDiagnosticLogger:
         set_up(temp_file_path, is_diagnostics_enabled=True)
         diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
         diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE2, "4301")
-        check_file_for_messages(temp_file_path, "INFO", ((MESSAGE1, "4200"), (MESSAGE2, "4301")))
+        check_file_for_messages(
+            temp_file_path, "INFO", ((MESSAGE1, "4200"), (MESSAGE2, "4301"))
+        )
 
     def test_warning(self, temp_file_path):
         set_up(temp_file_path, is_diagnostics_enabled=True)
         diagnostic_logger.AzureDiagnosticLogging.warning(MESSAGE1, "4200")
         diagnostic_logger.AzureDiagnosticLogging.warning(MESSAGE2, "4301")
-        check_file_for_messages(temp_file_path, "WARNING", ((MESSAGE1, "4200"), (MESSAGE2, "4301")))
+        check_file_for_messages(
+            temp_file_path, "WARNING", ((MESSAGE1, "4200"), (MESSAGE2, "4301"))
+        )
 
     def test_error(self, temp_file_path):
         set_up(temp_file_path, is_diagnostics_enabled=True)
         diagnostic_logger.AzureDiagnosticLogging.error(MESSAGE1, "4200")
         diagnostic_logger.AzureDiagnosticLogging.error(MESSAGE2, "4301")
-        check_file_for_messages(temp_file_path, "ERROR", ((MESSAGE1, "4200"), (MESSAGE2, "4301")))
+        check_file_for_messages(
+            temp_file_path, "ERROR", ((MESSAGE1, "4200"), (MESSAGE2, "4301"))
+        )
 
     def test_off_app_service_info(self, temp_file_path):
         set_up(temp_file_path, is_diagnostics_enabled=False)
@@ -152,7 +161,9 @@ class TestDiagnosticLogger:
         assert diagnostic_logger._SUBSCRIPTION_ID == TEST_SUBSCRIPTION_ID
         diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
         diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE2, "4301")
-        check_file_for_messages(temp_file_path, "INFO", ((MESSAGE1, "4200"), (MESSAGE2, "4301")))
+        check_file_for_messages(
+            temp_file_path, "INFO", ((MESSAGE1, "4200"), (MESSAGE2, "4301"))
+        )
 
     def test_subscription_id_no_plus(self, temp_file_path):
         set_up(
@@ -163,7 +174,9 @@ class TestDiagnosticLogger:
         assert diagnostic_logger._SUBSCRIPTION_ID == TEST_SUBSCRIPTION_ID
         diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
         diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE2, "4301")
-        check_file_for_messages(temp_file_path, "INFO", ((MESSAGE1, "4200"), (MESSAGE2, "4301")))
+        check_file_for_messages(
+            temp_file_path, "INFO", ((MESSAGE1, "4200"), (MESSAGE2, "4301"))
+        )
 
     def test_initialize_file_handler_exception(self, temp_file_path):
         """Test that initialization fails gracefully when FileHandler creation raises an exception."""
@@ -187,9 +200,14 @@ class TestDiagnosticLogger:
         """Test that initialization fails gracefully when makedirs raises a non-FileExistsError exception."""
         set_up(temp_file_path, is_diagnostics_enabled=True)
         # Mock makedirs to raise a PermissionError
-        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs") as mock_makedirs, patch(
-            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False
-        ), patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger") as mock_logger:
+        with patch(
+            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs"
+        ) as mock_makedirs, patch(
+            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists",
+            return_value=False,
+        ), patch(
+            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger"
+        ) as mock_logger:
             mock_makedirs.side_effect = PermissionError("Permission denied")
             # Attempt to log, which will trigger initialization
             diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
@@ -203,9 +221,14 @@ class TestDiagnosticLogger:
         """Test that FileExistsError from makedirs is handled gracefully and initialization continues."""
         set_up(temp_file_path, is_diagnostics_enabled=True)
         # Mock makedirs to raise FileExistsError (this should be handled gracefully)
-        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs") as mock_makedirs, patch(
-            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False
-        ), patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger") as mock_logger:
+        with patch(
+            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs"
+        ) as mock_makedirs, patch(
+            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists",
+            return_value=False,
+        ), patch(
+            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger"
+        ) as mock_logger:
             mock_makedirs.side_effect = FileExistsError("Directory already exists")
             # Attempt to log, which will trigger initialization
             diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")

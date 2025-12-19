@@ -27,7 +27,9 @@ def _get_status_logger_file_name(pid):
 
 class AzureStatusLogger:
     @classmethod
-    def _get_status_json(cls, agent_initialized_successfully, pid, reason=None, sdk_present=None):
+    def _get_status_json(
+        cls, agent_initialized_successfully, pid, reason=None, sdk_present=None
+    ):
         status_json = {
             "AgentInitializedSuccessfully": agent_initialized_successfully,
             "AppType": "python",
@@ -47,12 +49,16 @@ class AzureStatusLogger:
     def log_status(cls, agent_initialized_successfully, reason=None, sdk_present=None):
         if _is_diagnostics_enabled() and _STATUS_LOG_PATH:
             pid = getpid()
-            status_json = AzureStatusLogger._get_status_json(agent_initialized_successfully, pid, reason, sdk_present)
+            status_json = AzureStatusLogger._get_status_json(
+                agent_initialized_successfully, pid, reason, sdk_present
+            )
             if not exists(_STATUS_LOG_PATH):
                 makedirs(_STATUS_LOG_PATH)
             # Change to be hostname and pid
             status_logger_file_name = _get_status_logger_file_name(pid)
-            with open(join(_STATUS_LOG_PATH, status_logger_file_name), "w", encoding="utf8") as f:
+            with open(
+                join(_STATUS_LOG_PATH, status_logger_file_name), "w", encoding="utf8"
+            ) as f:
                 f.seek(0)
                 f.write(dumps(status_json))
                 f.truncate()

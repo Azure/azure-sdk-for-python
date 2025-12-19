@@ -152,12 +152,18 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
         traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
         tracer_provider = TracerProvider(
-            sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
+            sampler=RateLimitedSampler(
+                target_spans_per_second_limit=cast(float, traces_per_second)
+            ),
+            resource=resource,
         )
     else:
         sampling_ratio = configurations[SAMPLING_RATIO_ARG]
         tracer_provider = TracerProvider(
-            sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
+            sampler=ApplicationInsightsSampler(
+                sampling_ratio=cast(float, sampling_ratio)
+            ),
+            resource=resource,
         )
 
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
@@ -202,16 +208,22 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     try:
         from opentelemetry._logs import set_logger_provider
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-        from azure.monitor.opentelemetry.exporter.export.logs._processor import _AzureBatchLogRecordProcessor
+        from azure.monitor.opentelemetry.exporter.export.logs._processor import (
+            _AzureBatchLogRecordProcessor,
+        )
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
             AzureMonitorLogExporter,
         )
 
         resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
-        enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
+        enable_performance_counters_config = configurations[
+            ENABLE_PERFORMANCE_COUNTERS_ARG
+        ]
         logger_provider = LoggerProvider(resource=resource)
-        enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
+        enable_trace_based_sampling_for_logs = configurations[
+            ENABLE_TRACE_BASED_SAMPLING_ARG
+        ]
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
             qlp = _QuickpulseLogRecordProcessor()
             logger_provider.add_log_record_processor(qlp)
@@ -221,7 +233,9 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         log_exporter = AzureMonitorLogExporter(**configurations)
         log_record_processor = _AzureBatchLogRecordProcessor(
             log_exporter,
-            {"enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs},
+            {
+                "enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs
+            },
         )
         logger_provider.add_log_record_processor(log_record_processor)
         set_logger_provider(logger_provider)
@@ -290,7 +304,11 @@ def _setup_live_metrics(configurations):
 class _EntryPointDistFinder:
     @cached_property
     def _mapping(self):
-        return {self._key_for(ep): dist for dist in distributions() for ep in dist.entry_points}
+        return {
+            self._key_for(ep): dist
+            for dist in distributions()
+            for ep in dist.entry_points
+        }
 
     def dist_for(self, entry_point: EntryPoint):
         dist = getattr(entry_point, "dist", None)
@@ -347,7 +365,9 @@ def _send_attach_warning():
         )
 
 
-def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, ConfigurationValue]):
+def _setup_additional_azure_sdk_instrumentations(
+    configurations: Dict[str, ConfigurationValue],
+):
     if _AZURE_SDK_INSTRUMENTATION_NAME not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
         return
 

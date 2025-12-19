@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 """
 An example to show an application using Opentelemetry tracing api and sdk with a Azure Managed Identity
-Credential. Credentials are used for Azure Active Directory/EntraId Authentication. 
+Credential. Credentials are used for Azure Active Directory/EntraId Authentication.
 """
 # You will need to install azure-identity
 from azure.identity import ManagedIdentityCredential
