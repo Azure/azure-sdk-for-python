@@ -132,6 +132,7 @@ def main() -> None:
             for segment in document_content.segments:
                 print(f"  Category: {segment.category or '(unknown)'}")
                 print(f"  Pages: {segment.start_page_number}-{segment.end_page_number}")
+                print(f"  Segment ID: {segment.segment_id or '(not available)'}")
                 print()
         else:
             print("No segments found (document classified as a single unit).")
