@@ -37,8 +37,6 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
         1. Analyzing an invoice using prebuilt-invoice analyzer
         2. Extracting invoice-specific fields (CustomerName, InvoiceDate, TotalAmount, LineItems)
         3. Field confidence scores and source locations
-
-        03_AnalyzeInvoice.AnalyzeInvoiceAsync()
         """
         client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
 
@@ -106,6 +104,16 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
         else:
             print("[INFO] Document unit: unknown")
 
+        # Print page dimensions if available
+        pages = getattr(document_content, "pages", None)
+        if pages and len(pages) > 0:
+            page = pages[0]
+            width = getattr(page, "width", None)
+            height = getattr(page, "height", None)
+            if width is not None and height is not None:
+                unit_str = unit or "units"
+                print(f"[INFO] Page dimensions: {width} x {height} {unit_str}")
+
         # Extract and verify fields
         fields = getattr(document_content, "fields", {})
 
@@ -167,22 +175,24 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
             if hasattr(total_amount_field, "value") and isinstance(total_amount_field.value, dict):
                 amount_obj = total_amount_field.value
                 amount = amount_obj.get("Amount")
-                currency = amount_obj.get("CurrencyCode", "$")
+                currency = amount_obj.get("CurrencyCode")
 
                 if amount:
+                    amount_value = amount.value if hasattr(amount, "value") else amount
+                    currency_value = currency.value if hasattr(currency, "value") else (currency or "$")
                     print(
-                        f"[INFO] Total: {currency}{amount:.2f}"
-                        if isinstance(amount, (int, float))
-                        else f"[INFO] Total: {currency}{amount}"
+                        f"[INFO] Total: {currency_value}{amount_value:.2f}"
+                        if isinstance(amount_value, (int, float))
+                        else f"[INFO] Total: {currency_value}{amount_value}"
                     )
-            else:
-                value = getattr(total_amount_field, "value", None)
-                if value:
-                    print(f"[INFO] Total Amount: {value}")
 
             confidence = getattr(total_amount_field, "confidence", None)
             if confidence is not None:
                 print(f"[INFO] TotalAmount confidence: {confidence:.2f}")
+
+            source = getattr(total_amount_field, "source", None)
+            if source:
+                print(f"[INFO] TotalAmount source: {source}")
         else:
             print("[INFO] TotalAmount field not found in this document")
 
@@ -198,9 +208,15 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
 
                 for i, item in enumerate(items[:5]):  # Show first 5 items
                     if isinstance(item, dict):
-                        description = item.get("Description", "N/A")
-                        quantity = item.get("Quantity", "N/A")
-                        print(f"[INFO]   Item {i + 1}: {description} (Qty: {quantity})")
+                        description = item.get("Description")
+                        quantity = item.get("Quantity")
+                        description_value = description.value if hasattr(description, "value") else description
+                        quantity_value = quantity.value if hasattr(quantity, "value") else quantity
+                        print(f"[INFO]   Item {i + 1}: {description_value or 'N/A'} (Qty: {quantity_value or 'N/A'})")
+
+                    confidence = getattr(item, "confidence", None)
+                    if confidence is not None:
+                        print(f"[INFO]     Confidence: {confidence:.2f}")
 
                 if len(items) > 5:
                     print(f"[INFO]   ... and {len(items) - 5} more items")
