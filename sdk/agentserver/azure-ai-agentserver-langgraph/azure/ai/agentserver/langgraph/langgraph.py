@@ -113,7 +113,8 @@ class LangGraphAdapter(FoundryCBAgent):
             else:
                 graph = self._resolved_graph
 
-            input_data = self.state_converter.request_to_state(context)
+            prev_state = await self.get_prev_state(graph, context)
+            input_data = self.state_converter.request_to_state(context, prev_state)
             logger.debug(f"Converted input data: {input_data}")
             if not context.stream:
                 try:
@@ -265,6 +266,7 @@ class LangGraphAdapter(FoundryCBAgent):
             config = self.create_runnable_config(context)
             stream_mode = self.state_converter.get_stream_mode(context)
             result = await graph.ainvoke(input_data, config=config, stream_mode=stream_mode)
+            logger.info("State after invoke: %s", result)
             output = self.state_converter.state_to_response(result, context)
             return output
         except Exception as e:
@@ -311,7 +313,7 @@ class LangGraphAdapter(FoundryCBAgent):
                     logger.debug("Closed tool_client after streaming completed")
                 except Exception as e:
                     logger.warning(f"Error closing tool_client in stream: {e}")
-
+    
     def create_runnable_config(self, context: AgentRunContext) -> RunnableConfig:
         """
         Create a RunnableConfig from the converted request data.
@@ -323,12 +325,45 @@ class LangGraphAdapter(FoundryCBAgent):
         :rtype: RunnableConfig
         """
         config = RunnableConfig(
-            configurable={
-                "thread_id": context.conversation_id,
-            },
+            configurable=self.create_configurable(context),
             callbacks=[self.azure_ai_tracer] if self.azure_ai_tracer else None,
         )
         return config
+
+    async def get_prev_state(self, graph: CompiledStateGraph, context: AgentRunContext):
+        """
+        Get the previous state from the graph using the context.
+
+        :param graph: The compiled graph instance.
+        :type graph: CompiledStateGraph
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
+
+        :return: The previous state of the graph.
+        :rtype: StateSnapshot | None
+        """
+        if context.conversation_id and graph.checkpointer:
+            config = self.create_configurable(context)
+            prev_state = await graph.aget_state(
+                config=RunnableConfig(configurable=config)
+            )
+            logger.info(f"Retrieved previous state for thread {context.conversation_id}")
+            return prev_state
+        return None
+    
+    def create_configurable(self, context: AgentRunContext) -> dict:
+        """
+        Create a configurable dict from the context.
+
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
+
+        :return: The configurable dict containing conversation_id.
+        :rtype: dict
+        """
+        return {
+            "thread_id": context.conversation_id,
+        }
 
     def format_otlp_endpoint(self, endpoint: str) -> str:
         m = re.match(r"^(https?://[^/]+)", endpoint)
