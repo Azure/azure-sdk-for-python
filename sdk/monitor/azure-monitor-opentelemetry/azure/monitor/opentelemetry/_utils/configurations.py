@@ -228,12 +228,14 @@ def _default_instrumentation_options(configurations):
 def _default_span_processors(configurations):
     configurations.setdefault(SPAN_PROCESSORS_ARG, [])
 
+
 def _default_log_record_processors(configurations):
     configurations.setdefault(LOG_RECORD_PROCESSORS_ARG, [])
 
 
 def _default_metric_readers(configurations):
     configurations.setdefault(METRIC_READERS_ARG, [])
+
 
 def _default_enable_live_metrics(configurations):
     configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)

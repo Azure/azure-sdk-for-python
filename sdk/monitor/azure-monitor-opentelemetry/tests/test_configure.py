@@ -575,7 +575,9 @@ class TestConfigure(unittest.TestCase):
         log_exporter_mock.assert_called_once_with(**configurations)
         blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False})
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 3)
-        lp_init_mock.add_log_record_processor.assert_has_calls([call(custom_lrp), call(pclp_init_mock), call(blrp_init_mock)])
+        lp_init_mock.add_log_record_processor.assert_has_calls(
+            [call(custom_lrp), call(pclp_init_mock), call(blrp_init_mock)]
+        )
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 3)
         lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
