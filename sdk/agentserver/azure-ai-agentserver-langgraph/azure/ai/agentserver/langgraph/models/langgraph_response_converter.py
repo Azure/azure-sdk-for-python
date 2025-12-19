@@ -45,7 +45,8 @@ class LangGraphResponseConverter:
                     for message in message_arr:
                         try:
                             converted = self.convert_output_message(message)
-                            res.append(converted)
+                            if converted:
+                                res.append(converted)
                         except Exception as e:
                             logger.error(f"Error converting message {message}: {e}")
         if interrupt_messages:
@@ -100,6 +101,7 @@ class LangGraphResponseConverter:
                 output=output_message.content,
                 id=self.context.id_generator.generate_function_output_id(),
             )
+        logger.warning(f"Unsupported message type: {type(output_message)}, {output_message}")
 
     def convert_MessageContent(
         self, content, role: project_models.ResponsesMessageRole

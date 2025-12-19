@@ -123,7 +123,7 @@ class LanggraphMessageStateConverter(LanggraphStateConverter):
         return "updates"
 
     def request_to_state(self, context: AgentRunContext, prev_state: StateSnapshot) -> Union[Dict[str, Any], Command]:
-        hitl_helper = LanggraphHumanInTheLoopDefaultHelper()
+        hitl_helper = LanggraphHumanInTheLoopDefaultHelper(context)
         command = hitl_helper.validate_and_convert_human_feedback(
             prev_state, context.request.get("input")
         )
@@ -136,7 +136,7 @@ class LanggraphMessageStateConverter(LanggraphStateConverter):
         converter = LangGraphResponseConverter(
             context,
             state,
-            hitl_helper=LanggraphHumanInTheLoopDefaultHelper(),
+            hitl_helper=LanggraphHumanInTheLoopDefaultHelper(context),
         )
         output = converter.convert()
 

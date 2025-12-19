@@ -28,12 +28,14 @@ INTERRUPT_TOOL_NAME = "__hosted_agent_adapter_interrupt__"
 
 class LanggraphHumanInTheLoopHelper:
     """Helper class for managing human-in-the-loop interactions in LangGraph."""
-    
+    def __init__(self, context: AgentRunContext = None):
+        self.context = context
+
     def has_interrupt(self, state: StateSnapshot) -> bool:
         """Check if the LangGraph state contains an interrupt node."""
-        if not state or not isinstance(state, dict):
+        if not state or not isinstance(state, StateSnapshot):
             return False
-        return state.interrupts is not None
+        return state.interrupts is not None and len(state.interrupts) > 0
 
     def convert_interrupts(self, interrupts: tuple) -> list[project_models.ItemResource]:
         """Convert LangGraph interrupts to ItemResource objects."""
@@ -113,6 +115,7 @@ class LanggraphHumanInTheLoopDefaultHelper(LanggraphHumanInTheLoopHelper):
             ) -> Union[Command, None]:
         if not self.has_interrupt(state):
             # No interrupt in state
+            logger.info("No interrupt found in state.")
             return None
         interrupt_obj = state.interrupts[0]  # Assume single interrupt for simplicity
         if not interrupt_obj or not isinstance(interrupt_obj, Interrupt):

@@ -114,10 +114,7 @@ class LangGraphAdapter(FoundryCBAgent):
                 graph = self._resolved_graph
 
             prev_state = await self.get_prev_state(graph, context)
-            if prev_state:
-                logger.info(f"retried previous state for conversation {context.conversation_id}")
-
-            input_data = self.state_converter.request_to_state(context)
+            input_data = self.state_converter.request_to_state(context, prev_state)
             logger.debug(f"Converted input data: {input_data}")
             if not context.stream:
                 try:
@@ -347,7 +344,9 @@ class LangGraphAdapter(FoundryCBAgent):
         """
         if context.conversation_id and graph.checkpointer:
             config = self.create_configurable(context)
-            prev_state = await graph.aget_state(config=config)
+            prev_state = await graph.aget_state(
+                config=RunnableConfig(configurable=config)
+            )
             logger.info(f"Retrieved previous state for thread {context.conversation_id}")
             return prev_state
         return None
