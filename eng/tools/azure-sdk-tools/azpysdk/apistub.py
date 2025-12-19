@@ -136,8 +136,6 @@ class apistub(Check):
             logger.info("Running apistub {}.".format(cmds))
 
             try:
-                # Run from staging directory instead of package_dir to avoid namespace collisions
-                # when the package has namespace packages (e.g., azure.core.experimental)
                 self.run_venv_command(executable, cmds, cwd=staging_directory, check=True, immediately_dump=True)
             except CalledProcessError as e:
                 logger.error(f"{package_name} exited with error {e.returncode}")
