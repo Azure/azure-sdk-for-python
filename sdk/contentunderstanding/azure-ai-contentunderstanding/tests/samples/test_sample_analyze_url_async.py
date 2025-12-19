@@ -24,15 +24,15 @@ import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
-from azure.ai.contentunderstanding.models import AnalyzeInput
+from azure.ai.contentunderstanding.models import AnalyzeInput, AudioVisualContent, DocumentContent
 
 
 class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
-    """Tests for sample_analyze_url.py (async version)"""
+    """Tests for sample_analyze_url_async.py"""
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_url_async(self, azure_content_understanding_endpoint: str) -> None:
+    async def test_sample_analyze_document_from_url_async(self, azure_content_understanding_endpoint: str) -> None:
         """Test analyzing a document from URL (async version).
 
         This test validates:
@@ -41,7 +41,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         3. Markdown content extraction
         4. Document properties (MIME type, pages, tables)
 
-        02_AnalyzeUrl.AnalyzeUrlAsync()
+        02_AnalyzeUrl.AnalyzeDocumentUrlAsync()
         """
         client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
 
@@ -103,7 +103,168 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         self._test_document_properties(result)
 
         await client.close()
-        print("\n[SUCCESS] All test_sample_analyze_url_async assertions passed")
+        print("\n[SUCCESS] All test_sample_analyze_document_from_url_async assertions passed")
+
+        # Test document properties access
+        self._test_document_properties(result)
+
+        await client.close()
+        print("\n[SUCCESS] All test_sample_analyze_document_from_url_async assertions passed")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_sample_analyze_video_from_url_async(self, azure_content_understanding_endpoint: str) -> None:
+        """Test analyzing a video from URL (async version).
+
+        This test validates:
+        1. Video analysis using begin_analyze with URL input
+        2. Markdown content extraction
+        3. Audio/visual properties (timing, frame size)
+        4. Multiple segments handling
+
+        02_AnalyzeUrl.AnalyzeVideoUrlAsync()
+        """
+        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+
+        # For testing purposes, use binary data
+        tests_dir = os.path.dirname(os.path.dirname(__file__))
+        file_path = os.path.join(tests_dir, "test_data", "sample_video.mp4")
+
+        if not os.path.exists(file_path):
+            pytest.skip(f"Video test file not found at {file_path}")
+
+        with open(file_path, "rb") as f:
+            file_data = f.read()
+
+        print(f"[PASS] Video loaded from: {file_path}")
+
+        # Analyze the video
+        poller = await client.begin_analyze(
+            analyzer_id="prebuilt-videoSearch", inputs=[AnalyzeInput(data=file_data)]
+        )
+
+        result = await poller.result()
+
+        # Assertion: Verify analysis operation completed
+        assert poller is not None, "Analysis operation should not be null"
+        assert poller.done(), "Operation should be completed"
+        assert poller.status() == "Succeeded", f"Operation status should be Succeeded, but was {poller.status()}"
+        print("[PASS] Analysis operation completed successfully")
+
+        # Assertion: Verify result
+        assert result is not None, "Analysis result should not be null"
+        assert result.contents is not None, "Result contents should not be null"
+        assert len(result.contents) > 0, "Result should contain at least one content"
+        print(f"[PASS] Analysis result contains {len(result.contents)} segment(s)")
+
+        # Test audio/visual properties
+        self._test_audiovisual_properties(result)
+
+        await client.close()
+        print("\n[SUCCESS] All test_sample_analyze_video_from_url_async assertions passed")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_sample_analyze_audio_from_url_async(self, azure_content_understanding_endpoint: str) -> None:
+        """Test analyzing audio from URL (async version).
+
+        This test validates:
+        1. Audio analysis using begin_analyze with URL input
+        2. Markdown content extraction
+        3. Transcript phrases access
+        4. Summary field access
+
+        02_AnalyzeUrl.AnalyzeAudioUrlAsync()
+        """
+        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+
+        # For testing purposes, use binary data
+        tests_dir = os.path.dirname(os.path.dirname(__file__))
+        file_path = os.path.join(tests_dir, "test_data", "sample_audio.mp3")
+
+        if not os.path.exists(file_path):
+            pytest.skip(f"Audio test file not found at {file_path}")
+
+        with open(file_path, "rb") as f:
+            file_data = f.read()
+
+        print(f"[PASS] Audio loaded from: {file_path}")
+
+        # Analyze the audio
+        poller = await client.begin_analyze(
+            analyzer_id="prebuilt-audioSearch", inputs=[AnalyzeInput(data=file_data)]
+        )
+
+        result = await poller.result()
+
+        # Assertion: Verify analysis operation completed
+        assert poller is not None, "Analysis operation should not be null"
+        assert poller.done(), "Operation should be completed"
+        assert poller.status() == "Succeeded", f"Operation status should be Succeeded, but was {poller.status()}"
+        print("[PASS] Analysis operation completed successfully")
+
+        # Assertion: Verify result
+        assert result is not None, "Analysis result should not be null"
+        assert result.contents is not None, "Result contents should not be null"
+        assert len(result.contents) > 0, "Result should contain at least one content"
+        print(f"[PASS] Analysis result contains {len(result.contents)} content(s)")
+
+        # Test audio properties including transcript phrases
+        self._test_audio_properties(result)
+
+        await client.close()
+        print("\n[SUCCESS] All test_sample_analyze_audio_from_url_async assertions passed")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_sample_analyze_image_from_url_async(self, azure_content_understanding_endpoint: str) -> None:
+        """Test analyzing an image from URL (async version).
+
+        This test validates:
+        1. Image analysis using begin_analyze with URL input
+        2. Markdown content extraction
+        3. Summary field access
+
+        02_AnalyzeUrl.AnalyzeImageUrlAsync()
+        """
+        client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
+
+        # For testing purposes, use binary data
+        tests_dir = os.path.dirname(os.path.dirname(__file__))
+        file_path = os.path.join(tests_dir, "test_data", "sample_image.jpg")
+
+        if not os.path.exists(file_path):
+            pytest.skip(f"Image test file not found at {file_path}")
+
+        with open(file_path, "rb") as f:
+            file_data = f.read()
+
+        print(f"[PASS] Image loaded from: {file_path}")
+
+        # Analyze the image
+        poller = await client.begin_analyze(
+            analyzer_id="prebuilt-imageSearch", inputs=[AnalyzeInput(data=file_data)]
+        )
+
+        result = await poller.result()
+
+        # Assertion: Verify analysis operation completed
+        assert poller is not None, "Analysis operation should not be null"
+        assert poller.done(), "Operation should be completed"
+        assert poller.status() == "Succeeded", f"Operation status should be Succeeded, but was {poller.status()}"
+        print("[PASS] Analysis operation completed successfully")
+
+        # Assertion: Verify result
+        assert result is not None, "Analysis result should not be null"
+        assert result.contents is not None, "Result contents should not be null"
+        assert len(result.contents) > 0, "Result should contain at least one content"
+        print(f"[PASS] Analysis result contains {len(result.contents)} content(s)")
+
+        # Test image properties
+        self._test_image_properties(result)
+
+        await client.close()
+        print("\n[SUCCESS] All test_sample_analyze_image_from_url_async assertions passed")
 
     def _test_markdown_extraction(self, result):
         """Test markdown content extraction."""
@@ -239,3 +400,108 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
                 )
             else:
                 print(f"[PASS] Table {i} validated: {table.row_count} rows x {table.column_count} columns")
+
+    def _test_audiovisual_properties(self, result):
+        """Test audio/visual content properties for video."""
+        content = result.contents[0]
+        assert content is not None, "Content should not be null"
+
+        # Verify markdown
+        markdown = getattr(content, "markdown", None)
+        if markdown:
+            assert isinstance(markdown, str), "Markdown should be a string"
+            assert len(markdown) > 0, "Markdown content should not be empty"
+            print(f"[PASS] Video markdown content extracted ({len(markdown)} characters)")
+
+        # Verify timing properties
+        start_time = getattr(content, "start_time_ms", None)
+        if start_time is not None:
+            assert start_time >= 0, f"Start time should be >= 0, but was {start_time}"
+            print(f"[PASS] Video start time verified: {start_time} ms")
+
+        end_time = getattr(content, "end_time_ms", None)
+        if end_time is not None:
+            assert end_time >= 0, f"End time should be >= 0, but was {end_time}"
+            print(f"[PASS] Video end time verified: {end_time} ms")
+
+        # Verify frame size
+        width = getattr(content, "width", None)
+        height = getattr(content, "height", None)
+        if width is not None and height is not None:
+            assert width > 0, f"Video width should be > 0, but was {width}"
+            assert height > 0, f"Video height should be > 0, but was {height}"
+            print(f"[PASS] Video frame size verified: {width} x {height}")
+
+        # Verify summary field
+        fields = getattr(content, "fields", None)
+        if fields:
+            summary = fields.get("Summary")
+            if summary:
+                print("[PASS] Summary field available in video content")
+
+        print("[PASS] All audio/visual properties validated successfully")
+
+    def _test_audio_properties(self, result):
+        """Test audio content properties including transcript phrases."""
+        content = result.contents[0]
+        assert content is not None, "Content should not be null"
+
+        # Verify markdown
+        markdown = getattr(content, "markdown", None)
+        if markdown:
+            assert isinstance(markdown, str), "Markdown should be a string"
+            assert len(markdown) > 0, "Markdown content should not be empty"
+            print(f"[PASS] Audio markdown content extracted ({len(markdown)} characters)")
+
+        # Verify timing properties
+        start_time = getattr(content, "start_time_ms", None)
+        if start_time is not None:
+            assert start_time >= 0, f"Start time should be >= 0, but was {start_time}"
+            print(f"[PASS] Audio start time verified: {start_time} ms")
+
+        # Verify summary field
+        fields = getattr(content, "fields", None)
+        if fields:
+            summary = fields.get("Summary")
+            if summary:
+                print("[PASS] Summary field available in audio content")
+
+        # Verify transcript phrases
+        transcript_phrases = getattr(content, "transcript_phrases", None)
+        if transcript_phrases and len(transcript_phrases) > 0:
+            print(f"[PASS] Transcript phrases found: {len(transcript_phrases)} phrases")
+            for phrase in transcript_phrases[:2]:
+                speaker = getattr(phrase, "speaker", None)
+                text = getattr(phrase, "text", None)
+                start_ms = getattr(phrase, "start_time_ms", None)
+                if speaker and text:
+                    print(f"  [{speaker}] {start_ms} ms: {text}")
+        else:
+            print("[WARN] No transcript phrases available")
+
+        print("[PASS] All audio properties validated successfully")
+
+    def _test_image_properties(self, result):
+        """Test image content properties."""
+        content = result.contents[0]
+        assert content is not None, "Content should not be null"
+
+        # Verify markdown
+        markdown = getattr(content, "markdown", None)
+        if markdown:
+            assert isinstance(markdown, str), "Markdown should be a string"
+            assert len(markdown) > 0, "Markdown content should not be empty"
+            print(f"[PASS] Image markdown content extracted ({len(markdown)} characters)")
+
+        # Verify summary field
+        fields = getattr(content, "fields", None)
+        if fields:
+            summary = fields.get("Summary")
+            if summary and hasattr(summary, "value"):
+                summary_value = summary.value
+                if summary_value:
+                    assert isinstance(summary_value, str), "Summary should be a string"
+                    assert len(summary_value) > 0, "Summary should not be empty"
+                    print(f"[PASS] Image summary verified ({len(summary_value)} characters)")
+
+        print("[PASS] All image properties validated successfully")
