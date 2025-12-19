@@ -10,7 +10,7 @@
   "reportPossiblyUnboundVariable": false,
   "reportRedeclaration": false,
   "reportUndefinedVariable": false,
-  "pythonVersion": "3.10",
+  "pythonVersion": "3.11",
   "exclude": [
   ],
   "extraPaths": [
