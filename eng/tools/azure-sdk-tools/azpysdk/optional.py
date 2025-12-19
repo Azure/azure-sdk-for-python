@@ -110,8 +110,14 @@ class optional(InstallAndTest):
 
             # install package and testing requirements
             try:
-                self.install_all_requiremenmts(environment_exe, temp_dir, package_name, package_dir, args)
-            except Exception as exc:
+                install_result = self.install_all_requiremenmts(
+                    environment_exe, temp_dir, package_name, package_dir, args
+                )
+                if install_result != 0:
+                    logger.error(f"Failed to install base requirements for {package_name} in optional env {env_name}.")
+                    config_results.append(False)
+                    break
+            except CalledProcessError as exc:
                 logger.error(
                     f"Failed to install base requirements for {package_name} in optional env {env_name}: {exc}"
                 )
@@ -123,7 +129,7 @@ class optional(InstallAndTest):
             if additional_installs:
                 try:
                     install_into_venv(environment_exe, additional_installs, package_dir)
-                except Exception as exc:
+                except CalledProcessError as exc:
                     logger.error(
                         f"Unable to complete installation of additional packages {additional_installs} for {package_name}, check command output above."
                     )
@@ -135,7 +141,7 @@ class optional(InstallAndTest):
             if additional_uninstalls:
                 try:
                     uninstall_from_venv(environment_exe, additional_uninstalls, package_dir)
-                except Exception as exc:
+                except CalledProcessError as exc:
                     logger.error(
                         f"Unable to complete removal of packages targeted for uninstall {additional_uninstalls} for {package_name}, check command output above."
                     )
@@ -171,7 +177,7 @@ class optional(InstallAndTest):
                     environment_exe, temp_dir, package_dir, package_name, pytest_args, cwd=package_dir
                 )
                 config_results.append(True if pytest_result == 0 else False)
-            except Exception as exc:
+            except CalledProcessError as exc:
                 config_results.append(False)
 
         if all(config_results):

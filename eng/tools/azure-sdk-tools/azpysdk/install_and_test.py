@@ -59,10 +59,11 @@ class InstallAndTest(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} using interpreter {executable}")
 
-            try:
-                self.install_all_requiremenmts(executable, staging_directory, package_name, package_dir, args)
-            except CalledProcessError as exc:
-                results.append(exc.returncode or 1)
+            install_result = self.install_all_requiremenmts(
+                executable, staging_directory, package_name, package_dir, args
+            )
+            if install_result != 0:
+                results.append(install_result)
                 continue
 
             try:
@@ -73,26 +74,21 @@ class InstallAndTest(Check):
                 continue
 
             pytest_args = self._build_pytest_args(package_dir, args)
-            try:
-                pytest_result = self.run_pytest(executable, staging_directory, package_dir, package_name, pytest_args)
-                if pytest_result != 0:
-                    results.append(pytest_result)
-                    continue
-            except Exception as exc:
-                results.append(1)
+            pytest_result = self.run_pytest(executable, staging_directory, package_dir, package_name, pytest_args)
+            if pytest_result != 0:
+                results.append(pytest_result)
                 continue
 
             if not self.coverage_enabled:
                 continue
 
-            try:
-                self.check_coverage(executable, package_dir, package_name)
-            except CalledProcessError as exc:
-                results.append(exc.returncode or 1)
-                continue
+            coverage_result = self.check_coverage(executable, package_dir, package_name)
+            if coverage_result != 0:
+                results.append(coverage_result)
+
         return max(results) if results else 0
 
-    def check_coverage(self, executable: str, package_dir: str, package_name: str) -> None:
+    def check_coverage(self, executable: str, package_dir: str, package_name: str) -> int:
         coverage_command = [
             os.path.join(REPO_ROOT, "eng/tox/run_coverage.py"),
             "-t",
@@ -107,7 +103,8 @@ class InstallAndTest(Check):
                 logger.error(coverage_result.stdout)
             if coverage_result.stderr:
                 logger.error(coverage_result.stderr)
-            exit(coverage_result.returncode)
+            return coverage_result.returncode
+        return 0
 
     def run_pytest(
         self,
@@ -137,7 +134,7 @@ class InstallAndTest(Check):
 
     def install_all_requiremenmts(
         self, executable: str, staging_directory: str, package_name: str, package_dir: str, args: argparse.Namespace
-    ) -> None:
+    ) -> int:
         try:
             self._install_common_requirements(executable, package_dir)
             if self.should_install_dev_requirements():
@@ -145,7 +142,7 @@ class InstallAndTest(Check):
             self.after_dependencies_installed(executable, package_dir, staging_directory, args)
         except CalledProcessError as exc:
             logger.error(f"Failed to prepare dependencies for {package_name}: {exc}")
-            exit(exc.returncode or 1)
+            return exc.returncode or 1
 
         try:
             create_package_and_install(
@@ -162,6 +159,7 @@ class InstallAndTest(Check):
         except CalledProcessError as exc:
             logger.error(f"Failed to build/install {self.package_type} for {package_name}: {exc}")
             exit(1)
+        return 0
 
     def get_env_defaults(self) -> Dict[str, str]:
         defaults: Dict[str, str] = {}
