@@ -74,9 +74,12 @@ class InstallAndTest(Check):
 
             pytest_args = self._build_pytest_args(package_dir, args)
             try:
-                self.run_pytest(executable, staging_directory, package_dir, package_name, pytest_args)
-            except CalledProcessError as exc:
-                results.append(exc.returncode or 1)
+                pytest_result = self.run_pytest(executable, staging_directory, package_dir, package_name, pytest_args)
+                if pytest_result != 0:
+                    results.append(pytest_result)
+                    continue
+            except Exception as exc:
+                results.append(1)
                 continue
 
             if not self.coverage_enabled:
@@ -114,7 +117,7 @@ class InstallAndTest(Check):
         package_name: str,
         pytest_args: List[str],
         cwd: Optional[str] = None,
-    ) -> None:
+    ) -> int:
         pytest_command = ["-m", "pytest", *pytest_args]
         pytest_result = self.run_venv_command(
             executable, pytest_command, cwd=(cwd or staging_directory), immediately_dump=True
@@ -126,10 +129,11 @@ class InstallAndTest(Check):
                     package_name,
                 )
                 # Align with tox: skip coverage when tests are skipped entirely
-                return
+                return 0
             else:
                 logger.error(f"pytest failed for {package_name} with exit code {pytest_result.returncode}.")
-                exit(pytest_result.returncode)
+                return pytest_result.returncode
+        return 0
 
     def install_all_requiremenmts(
         self, executable: str, staging_directory: str, package_name: str, package_dir: str, args: argparse.Namespace

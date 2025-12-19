@@ -87,7 +87,8 @@ class optional(InstallAndTest):
             exit(0)
 
         config_results = []
-
+        print("??")
+        print(optional_configs)
         for config in optional_configs:
             env_name = config.get("name")
 
@@ -160,8 +161,10 @@ class optional(InstallAndTest):
             logger.info(f"Invoking tests for package {package_name} and optional environment {env_name}")
 
             try:
-                self.run_pytest(environment_exe, temp_dir, package_dir, package_name, pytest_args, cwd=package_dir)
-                config_results.append(True)
+                pytest_result = self.run_pytest(
+                    environment_exe, temp_dir, package_dir, package_name, pytest_args, cwd=package_dir
+                )
+                config_results.append(True if pytest_result == 0 else False)
             except Exception as exc:
                 config_results.append(False)
 
