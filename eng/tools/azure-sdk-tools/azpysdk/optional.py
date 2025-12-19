@@ -82,13 +82,15 @@ class optional(InstallAndTest):
         """
         optional_configs = get_config_setting(package_dir, "optional")
 
+        if not isinstance(optional_configs, list):
+            optional_configs = []
+
         if len(optional_configs) == 0:
             logger.info(f"No optional environments detected in pyproject.toml within {package_dir}.")
             exit(0)
 
         config_results = []
-        print("??")
-        print(optional_configs)
+
         for config in optional_configs:
             env_name = config.get("name")
 
