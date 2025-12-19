@@ -35,7 +35,7 @@ USAGE:
     1) AZURE_CONTENT_UNDERSTANDING_ENDPOINT - the endpoint to your Content Understanding resource.
     2) AZURE_CONTENT_UNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
 
-    See sample_configure_defaults.py for model deployment setup guidance.
+    See sample_update_defaults.py for model deployment setup guidance.
 """
 
 import os

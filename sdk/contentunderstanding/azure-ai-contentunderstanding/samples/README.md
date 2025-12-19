@@ -20,7 +20,7 @@ These code samples demonstrate common scenarios with the Azure AI Content Unders
 * Python 3.9 or later is required to use this package
 * You need an [Azure subscription][azure_sub] and a [Microsoft Foundry resource][contentunderstanding_quickstart] to use this package.
 * The Microsoft Foundry resource must be created in a [supported region][contentunderstanding_regions].
-* **Required setup:** GPT-4.1, GPT-4.1-mini, and text-embedding-3-large models must be deployed in your Microsoft Foundry project and configured using `sample_configure_defaults.py` before using prebuilt analyzers.
+* **Required setup:** GPT-4.1, GPT-4.1-mini, and text-embedding-3-large models must be deployed in your Microsoft Foundry project and configured using `sample_update_defaults.py` before using prebuilt analyzers.
 
 ## Setup
 
@@ -44,7 +44,7 @@ cp ../env.sample .env
 # Edit .env with your credentials
 
 # 5. Configure model deployments (required for prebuilt analyzers)
-python sample_configure_defaults.py
+python sample_update_defaults.py
 
 # 6. Run a sync sample
 python sample_analyze_url.py
@@ -104,9 +104,9 @@ cp ../env.sample .env
 Set the following in `.env`:
 * `AZURE_CONTENT_UNDERSTANDING_ENDPOINT` (required) - Your Microsoft Foundry resource endpoint
 * `AZURE_CONTENT_UNDERSTANDING_KEY` (optional) - Your API key. If not set, `DefaultAzureCredential` will be used.
-* `GPT_4_1_DEPLOYMENT` (required for sample_configure_defaults.py) - Your GPT-4.1 deployment name in Microsoft Foundry
-* `GPT_4_1_MINI_DEPLOYMENT` (required for sample_configure_defaults.py) - Your GPT-4.1-mini deployment name in Microsoft Foundry
-* `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` (required for sample_configure_defaults.py) - Your text-embedding-3-large deployment name in Microsoft Foundry
+* `GPT_4_1_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1 deployment name in Microsoft Foundry
+* `GPT_4_1_MINI_DEPLOYMENT` (required for sample_update_defaults.py) - Your GPT-4.1-mini deployment name in Microsoft Foundry
+* `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` (required for sample_update_defaults.py) - Your text-embedding-3-large deployment name in Microsoft Foundry
 
 **Example `.env` file:**
 ```bash
@@ -188,7 +188,7 @@ python sample_analyze_binary_async.py
 
 ### Sample 00: Configure Defaults
 
-#### `sample_configure_defaults.py` / `sample_configure_defaults_async.py`
+#### `sample_update_defaults.py` / `sample_update_defaults_async.py`
 **Required setup!** Configures and retrieves default model deployment settings for your Content Understanding resource. This is a one-time setup before using prebuilt analyzers.
 
 **Key concepts:**
@@ -453,7 +453,7 @@ pip install -e . --force-reinstall
 ```bash
 source .venv/bin/activate
 cd samples
-python sample_configure_defaults.py
+  python sample_update_defaults.py
 ```
 
 This configures the required GPT-4.1, GPT-4.1-mini, and text-embedding-3-large model deployments that prebuilt analyzers depend on.

@@ -28,7 +28,7 @@ USAGE:
     2) AZURE_CONTENT_UNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
 
     Before using prebuilt analyzers, you MUST configure model deployments for your Microsoft Foundry
-    resource. See sample_configure_defaults.py for setup instructions.
+    resource. See sample_update_defaults.py for setup instructions.
 """
 
 import asyncio

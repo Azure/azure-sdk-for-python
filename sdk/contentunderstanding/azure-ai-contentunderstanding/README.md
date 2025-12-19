@@ -545,19 +545,19 @@ After setting the environment variables, you can run the code examples shown in 
 
 **Alternatively, use the prepared sample script:**
 
-For a complete, ready-to-use example, see `sample_configure_defaults.py` in the [samples directory][sample_readme]. This sample includes error handling and additional features:
+For a complete, ready-to-use example, see `sample_update_defaults.py` in the [samples directory][sample_readme]. This sample includes error handling and additional features:
 
 ```bash
 # Navigate to samples directory
 cd samples
 
 # Run the prepared sample
-python sample_configure_defaults.py
+python sample_update_defaults.py
 ```
 
 For async version:
 ```bash
-python async_samples/sample_configure_defaults_async.py
+python async_samples/sample_update_defaults_async.py
 ```
 
 For comprehensive documentation on all available samples, see the [samples README][sample_readme].
