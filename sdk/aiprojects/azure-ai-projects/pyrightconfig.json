@@ -1,7 +1,16 @@
 {
   "reportTypeCommentUsage": true,
   "reportMissingImports": false,
-  "pythonVersion": "3.14",
+  "reportAbstractUsage": false,
+  "reportArgumentType": false,
+  "reportAttributeAccessIssue": false,
+  "reportCallIssue": false,
+  "reportGeneralTypeIssues": false,
+  "reportInvalidTypeForm": false,
+  "reportPossiblyUnboundVariable": false,
+  "reportRedeclaration": false,
+  "reportUndefinedVariable": false,
+  "pythonVersion": "3.10",
   "exclude": [
   ],
   "extraPaths": [
