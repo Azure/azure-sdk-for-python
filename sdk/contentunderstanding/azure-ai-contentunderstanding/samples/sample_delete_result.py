@@ -55,47 +55,31 @@ def main() -> None:
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
     # [START analyze_and_delete_result]
+    # You can replace this URL with your own invoice file URL
     document_url = (
-        "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/docs/invoice.pdf"
+        "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
     )
 
-    print("Document Analysis Workflow")
-    print("=" * 60)
-    print(f"  Document URL: {document_url}")
-    print(f"  Analyzer: prebuilt-invoice")
-    print("=" * 60)
-
-    # Step 1: Start the analysis operation
-    print("\nStep 1: Starting document analysis...")
-    poller = client.begin_analyze(
+    # Step 1: Analyze and wait for completion
+    analyze_operation = client.begin_analyze(
         analyzer_id="prebuilt-invoice",
         inputs=[AnalyzeInput(url=document_url)],
     )
 
-    # Get the operation ID from the poller
-    operation_id = poller.operation_id
-
-    if not operation_id:
-        print("Error: Could not extract operation ID from response")
-        return
-
-    print(f"  Operation ID: {operation_id}")
-
-    # Wait for completion
-    print("  Waiting for analysis to complete...")
-    result: AnalyzeResult = poller.result()
+    # Get the operation ID - this is needed to delete the result later
+    operation_id = analyze_operation.operation_id
+    print(f"Operation ID: {operation_id}")
+    result: AnalyzeResult = analyze_operation.result()
     print("Analysis completed successfully!")
 
     # Display some sample results
     if result.contents and len(result.contents) > 0:
-        doc_content: DocumentContent = result.contents[0]  # type: ignore
-        if doc_content.fields:
-            print(f"  Total fields extracted: {len(doc_content.fields)}")
-            customer_name_field = doc_content.fields.get("CustomerName")
-            if customer_name_field:
-                print(f"  Customer Name: {customer_name_field.value or '(not found)'}")
+        document_content: DocumentContent = result.contents[0]  # type: ignore
+        if document_content.fields:
+            print(f"Total fields extracted: {len(document_content.fields)}")
+
     # Step 2: Delete the analysis result
-    print(f"\nStep 2: Deleting analysis result (Operation ID: {operation_id})...")
+    print(f"Deleting analysis result (Operation ID: {operation_id})...")
     client.delete_result(operation_id=operation_id)
     print("Analysis result deleted successfully!")
 

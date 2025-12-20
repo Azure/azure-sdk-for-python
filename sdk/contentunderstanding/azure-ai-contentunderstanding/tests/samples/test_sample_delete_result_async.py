@@ -10,7 +10,7 @@
 TEST FILE: test_sample_delete_result_async.py
 
 DESCRIPTION:
-    These tests validate the sample_delete_result.py sample code (async version).
+    These tests validate the sample_delete_result_async.py sample code (async version).
     This sample demonstrates deleting analysis results for immediate cleanup.
 
 USAGE:
@@ -21,6 +21,7 @@ import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult
 
 
 class TestSampleDeleteResultAsync(ContentUnderstandingClientTestBaseAsync):
@@ -33,16 +34,17 @@ class TestSampleDeleteResultAsync(ContentUnderstandingClientTestBaseAsync):
 
         This test validates:
         1. Document analysis to create a result
-        2. Extracting result ID
-        3. Deleting the result
+        2. Extracting operation ID
+        3. Deleting the result using operation ID
 
-        13_DeleteResult.DeleteResultAsync()
+        Equivalent to: Sample13_DeleteResult.DeleteResultAsync()
         """
         client = self.create_async_client(endpoint=azure_content_understanding_endpoint)
 
         # First, analyze a document to create a result
-        tests_dir = os.path.dirname(os.path.dirname(__file__))
-        file_path = os.path.join(tests_dir, "test_data", "sample_invoice.pdf")
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        test_data_dir = os.path.join(os.path.dirname(current_dir), "test_data")
+        file_path = os.path.join(test_data_dir, "sample_invoice.pdf")
 
         assert os.path.exists(file_path), f"Sample file not found at {file_path}"
         print(f"[PASS] Sample file exists: {file_path}")
@@ -53,59 +55,45 @@ class TestSampleDeleteResultAsync(ContentUnderstandingClientTestBaseAsync):
         assert len(file_bytes) > 0, "File should not be empty"
         print(f"[PASS] File loaded: {len(file_bytes)} bytes")
 
-        # Analyze to get a result ID
-        poller = await client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch", binary_input=file_bytes, content_type="application/pdf"
+        # Analyze to get an operation ID
+        analyze_operation = await client.begin_analyze(
+            analyzer_id="prebuilt-invoice", inputs=[AnalyzeInput(data=file_bytes)]
         )
 
-        result = await poller.result()
+        result: AnalyzeResult = await analyze_operation.result()
 
         # Assertions for analysis
-        assert poller is not None, "Analysis operation should not be null"
-        assert poller.done(), "Operation should be completed"
+        assert analyze_operation is not None, "Analysis operation should not be null"
+        assert analyze_operation.done(), "Operation should be completed"
         assert result is not None, "Analysis result should not be null"
         print("[PASS] Analysis completed successfully")
 
-        # Extract operation ID from the poller
-        # The operation ID is needed to delete the result
-        operation_id = None
+        # Get operation ID - this is needed to delete the result
+        operation_id = analyze_operation.operation_id
+        assert operation_id is not None, "Operation ID should not be null"
+        assert isinstance(operation_id, str), "Operation ID should be a string"
+        assert operation_id.strip(), "Operation ID should not be empty"
+        print(f"[PASS] Operation ID extracted: {operation_id[:50]}...")
+
+        # Verify we have analysis content
+        assert hasattr(result, "contents"), "Result should contain contents"
+        contents = getattr(result, "contents", None)
+        assert contents is not None, "Result contents should not be null"
+        assert len(contents) > 0, "Result should have at least one content"
+        print(f"[PASS] Analysis result contains {len(contents)} content item(s)")
+
+        # Delete the result
         try:
-            # Extract operation ID from polling URL
-            if hasattr(poller, "_polling_method"):
-                polling_method = getattr(poller, "_polling_method", None)
-                if polling_method and hasattr(polling_method, "_operation"):
-                    operation = getattr(polling_method, "_operation", None)  # type: ignore
-                    if operation and hasattr(operation, "get_polling_url"):
-                        polling_url = operation.get_polling_url()  # type: ignore
-                        # Extract operation ID from URL (last segment before query string)
-                        operation_id = polling_url.split("/")[-1]
-                        if "?" in operation_id:
-                            operation_id = operation_id.split("?")[0]
+            await client.delete_result(operation_id=operation_id)
+            print(f"[PASS] Result deleted successfully (operation ID: {operation_id[:50]}...)")
+            print("[INFO] Deletion success verified by no exception thrown")
         except Exception as e:
-            print(f"[WARN] Could not extract operation ID: {str(e)[:100]}")
-
-        # Assertion: Verify we have an operation ID
-        if operation_id:
-            assert operation_id is not None, "Operation ID should not be null"
-            assert isinstance(operation_id, str), "Operation ID should be a string"
-            assert operation_id.strip(), "Operation ID should not be empty"
-            print(f"[PASS] Operation ID extracted: {operation_id[:50]}...")
-
-            # Delete the result
-            try:
-                await client.delete_result(operation_id=operation_id)
-                print(f"[PASS] Result deleted successfully (operation ID: {operation_id[:50]}...)")
-                print("[INFO] Deletion success verified by no exception thrown")
-            except Exception as e:
-                error_msg = str(e)
-                # Some implementations might not support result deletion or result might auto-expire
-                if "not found" in error_msg.lower() or "404" in error_msg:
-                    print(f"[INFO] Result already deleted or not found: {error_msg[:100]}")
-                else:
-                    print(f"[WARN] Delete result failed: {error_msg[:100]}")
-        else:
-            print("[INFO] Operation ID not available in response")
-            print("[INFO] Delete result operation skipped - operation ID extraction not supported")
+            error_msg = str(e)
+            # Some implementations might not support result deletion or result might auto-expire
+            if "not found" in error_msg.lower() or "404" in error_msg:
+                print(f"[INFO] Result already deleted or not found: {error_msg[:100]}")
+            else:
+                raise
 
         await client.close()
         print("\n[SUCCESS] All test_sample_delete_result_async assertions passed")
