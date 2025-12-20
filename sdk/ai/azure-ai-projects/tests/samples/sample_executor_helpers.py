@@ -17,7 +17,7 @@ from pytest import MonkeyPatch
 
 class BaseSampleExecutor:
     """Base helper class for executing sample files with proper environment setup.
-    
+
     This class contains all shared logic that doesn't require async/aio imports.
     Subclasses implement sync/async specific credential and execution logic.
     """
@@ -29,9 +29,7 @@ class BaseSampleExecutor:
         correct: bool
         reason: str
 
-    def __init__(
-        self, test_instance, sample_path: str, env_var_mapping: dict[str, str], **kwargs
-    ):
+    def __init__(self, test_instance, sample_path: str, env_var_mapping: dict[str, str], **kwargs):
         self.test_instance = test_instance
         self.sample_path = sample_path
         self.print_calls: list[str] = []
@@ -123,7 +121,7 @@ Always respond with `reason` indicating the reason for the response.""",
         """Execute the module with environment setup and mocking."""
         if self.spec.loader is None:
             raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
-        
+
         with (
             mock.patch("builtins.print", side_effect=self._capture_print),
             mock.patch("builtins.open", side_effect=patched_open_fn),
@@ -133,6 +131,7 @@ Always respond with `reason` indicating the reason for the response.""",
 
 class SamplePathPasser:
     """Decorator for passing sample path to test functions."""
+
     def __call__(self, fn):
         if inspect.iscoroutinefunction(fn):
 
@@ -185,6 +184,7 @@ def get_sample_paths(
 
     # Create pytest.param objects
     import pytest
+
     samples = []
     for filename in sorted(files_to_test):
         sample_path = os.path.join(target_folder, filename)
