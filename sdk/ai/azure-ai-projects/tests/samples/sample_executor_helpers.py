@@ -6,13 +6,11 @@
 """Shared base code for sample tests - sync dependencies only."""
 import os
 import sys
-import json
+import pytest
 import inspect
 import importlib.util
-import unittest.mock as mock
 from typing import Optional
 from pydantic import BaseModel
-from pytest import MonkeyPatch
 
 
 class BaseSampleExecutor:
@@ -117,17 +115,6 @@ Always respond with `reason` indicating the reason for the response.""",
         assert test_report["correct"], f"Error is identified: {test_report['reason']}"
         print(f"Reason: {test_report['reason']}")
 
-    def _execute_module(self, patched_open_fn):
-        """Execute the module with environment setup and mocking."""
-        if self.spec.loader is None:
-            raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
-
-        with (
-            mock.patch("builtins.print", side_effect=self._capture_print),
-            mock.patch("builtins.open", side_effect=patched_open_fn),
-        ):
-            self.spec.loader.exec_module(self.module)
-
 
 class SamplePathPasser:
     """Decorator for passing sample path to test functions."""
@@ -183,8 +170,6 @@ def get_sample_paths(
     print(f"Running the following samples as test:\n{files_to_test}")
 
     # Create pytest.param objects
-    import pytest
-
     samples = []
     for filename in sorted(files_to_test):
         sample_path = os.path.join(target_folder, filename)

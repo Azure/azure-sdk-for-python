@@ -59,13 +59,13 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
 
-            self._execute_module_without_patches()
+            self._execute_module()
             await self.module.main()
 
             if enable_llm_validation:
                 await self._validate_output_async()
 
-    def _execute_module_without_patches(self):
+    def _execute_module(self):
         """Execute the module without applying patches (patches applied at caller level)."""
         if self.spec.loader is None:
             raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")

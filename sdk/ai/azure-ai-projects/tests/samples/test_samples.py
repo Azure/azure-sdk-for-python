@@ -61,6 +61,17 @@ class SyncSampleExecutor(BaseSampleExecutor):
             if enable_llm_validation:
                 self._validate_output()
 
+    def _execute_module(self, patched_open_fn):
+        """Execute the module with environment setup and mocking."""
+        if self.spec.loader is None:
+            raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
+
+        with (
+            mock.patch("builtins.print", side_effect=self._capture_print),
+            mock.patch("builtins.open", side_effect=patched_open_fn),
+        ):
+            self.spec.loader.exec_module(self.module)
+
     def _validate_output(self):
         """Validate sample output using synchronous OpenAI client."""
         endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
