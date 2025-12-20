@@ -10,10 +10,10 @@
 TEST FILE: test_sample_analyze_return_raw_json_async.py
 
 DESCRIPTION:
-    These tests validate the sample_analyze_return_raw_json.py sample code (async version).
+    These tests validate the sample_analyze_return_raw_json_async.py sample code (async version).
 
-    This sample demonstrates how to access the raw JSON response from analysis operations.
-    This is useful for:
+    This sample demonstrates how to access the raw JSON response from analysis operations
+    using the convenience method and then accessing the raw response. This is useful for:
     - Easy inspection: View the complete response structure in the exact format returned by the service
     - Debugging: Inspect the raw response to troubleshoot issues or verify service behavior
     - Advanced scenarios: Work with response structures that may include additional metadata
@@ -37,7 +37,7 @@ class TestSampleAnalyzeReturnRawJsonAsync(ContentUnderstandingClientTestBaseAsyn
         """Test analyzing a document and getting raw JSON response (async version).
 
         This test validates:
-        1. Document analysis using 'cls' callback to get raw HTTP response
+        1. Document analysis using convenience method to get raw HTTP response
         2. Raw JSON response format for easy inspection and debugging
         3. JSON structure validation
 
@@ -60,8 +60,8 @@ class TestSampleAnalyzeReturnRawJsonAsync(ContentUnderstandingClientTestBaseAsyn
         assert len(file_bytes) > 0, "File should not be empty"
         print(f"[PASS] File loaded: {len(file_bytes)} bytes")
 
-        # Use 'cls' callback to get raw HTTP response
-        # This allows access to the complete response structure for easy inspection and debugging
+        # Use convenience method to analyze the document
+        # The cls callback allows access to the complete response structure for easy inspection and debugging
         poller = await client.begin_analyze_binary(
             analyzer_id="prebuilt-documentSearch",
             binary_input=file_bytes,
@@ -84,7 +84,7 @@ class TestSampleAnalyzeReturnRawJsonAsync(ContentUnderstandingClientTestBaseAsyn
         assert raw_http_response is not None, "Raw HTTP response should not be null"
         print("[PASS] Raw HTTP response is not null")
 
-        # Parse the raw JSON response
+        # Get the raw JSON response
         response_json = raw_http_response.json()
 
         # Assertion: Verify JSON is not empty

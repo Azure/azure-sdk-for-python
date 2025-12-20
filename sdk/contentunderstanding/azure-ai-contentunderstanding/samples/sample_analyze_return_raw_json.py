@@ -9,8 +9,9 @@ FILE: sample_analyze_return_raw_json.py
 
 DESCRIPTION:
     This sample demonstrates how to access the raw JSON response from analysis operations
-    using the 'cls' callback parameter. This is useful for scenarios where you need to
-    inspect the full response structure exactly as returned by the service.
+    using the convenience method and then accessing the raw response. This is useful for
+    scenarios where you need to inspect the full response structure exactly as returned by
+    the service.
 
     The Content Understanding SDK provides a convenient object model approach (shown in
     sample_analyze_binary.py) that returns AnalyzeResult objects with deeper navigation
@@ -66,8 +67,8 @@ def main() -> None:
 
     print(f"Analyzing {file_path} with prebuilt-documentSearch...")
 
-    # Use the 'cls' callback parameter to get the raw HTTP response
-    # This allows access to the complete response structure for easy inspection and debugging
+    # Use the convenience method to analyze the document
+    # The cls callback allows access to the complete response structure for easy inspection and debugging
     poller = client.begin_analyze_binary(
         analyzer_id="prebuilt-documentSearch",
         binary_input=file_bytes,
@@ -82,8 +83,10 @@ def main() -> None:
     # [END analyze_return_raw_json]
 
     # [START parse_raw_json]
-    # Pretty-print the raw JSON response
+    # Get the raw JSON response
     response_json = raw_http_response.json()
+
+    # Pretty-print the raw JSON response
     pretty_json = json.dumps(response_json, indent=2, ensure_ascii=False)
     print(pretty_json)
     # [END parse_raw_json]
