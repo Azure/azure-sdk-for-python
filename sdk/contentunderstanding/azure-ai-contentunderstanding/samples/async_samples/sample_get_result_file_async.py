@@ -9,15 +9,18 @@ FILE: sample_get_result_file_async.py
 
 DESCRIPTION:
     This sample demonstrates how to retrieve result files (such as keyframe images) from a
-    video analysis operation using the get_result_file API.
+    video analysis operation using the `get_result_file` API.
 
-    When analyzing video content, the Content Understanding service can generate result files:
+    About result files:
+    When analyzing video content, the Content Understanding service can generate result files such as:
     - Keyframe images: Extracted frames from the video at specific timestamps
     - Other result files: Additional files generated during analysis
 
-    The get_result_file API allows you to retrieve these files using:
+    The `get_result_file` API allows you to retrieve these files using:
     - Operation ID: Extracted from the analysis operation
-    - File path: The path to the specific result file (e.g., "keyframes/{frameTimeMs}")
+    - File path: The path to the specific result file. In the recording, keyframes were accessed
+                 with paths like `keyframes/733` and `keyframes/9000`, following the
+                 `keyframes/{frameTimeMs}` pattern.
 
 USAGE:
     python sample_get_result_file_async.py
@@ -54,25 +57,25 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_video_for_result_files]
-        # Use a sample video URL
+        # Use a sample video URL to get keyframes for GetResultFile testing
+        # You can replace this with your own video file URL
         video_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/videos/sdk_samples/FlightSimulator.mp4"
 
-        print(f"Analyzing video with prebuilt-videoSearch...")
+        print("Analyzing video with prebuilt-videoSearch...")
         print(f"  URL: {video_url}")
 
-        # Start the analysis operation (using begin_analyze which returns a poller)
-        poller = await client.begin_analyze(
+        # Analyze and wait for completion
+        analyze_operation = await client.begin_analyze(
             analyzer_id="prebuilt-videoSearch",
             inputs=[AnalyzeInput(url=video_url)],
         )
 
-        # Get the operation ID from the poller
-        operation_id = poller.operation_id
+        # Get the operation ID - this is needed to retrieve result files later
+        operation_id = analyze_operation.operation_id
         print(f"  Operation ID: {operation_id}")
 
-        # Wait for completion
         print("  Waiting for analysis to complete...")
-        result: AnalyzeResult = await poller.result()
+        result: AnalyzeResult = await analyze_operation.result()
         # [END analyze_video_for_result_files]
 
         # [START get_result_file]
@@ -80,16 +83,16 @@ async def main() -> None:
             print("No content found in the analysis result.")
             return
 
-        content = result.contents[0]
-
-        # For video analysis, keyframes would be found in AudioVisualContent.KeyFrameTimesMs
+        # For video analysis, keyframes would be found in AudioVisualContent.key_frame_times_ms
+        # Cast MediaContent to AudioVisualContent to access video-specific properties
         video_content: AudioVisualContent = result.contents[0]  # type: ignore
 
+        # Print keyframe information
         if video_content.key_frame_times_ms and len(video_content.key_frame_times_ms) > 0:
             total_keyframes = len(video_content.key_frame_times_ms)
             first_frame_time_ms = video_content.key_frame_times_ms[0]
 
-            print(f"\nTotal keyframes: {total_keyframes}")
+            print(f"Total keyframes: {total_keyframes}")
             print(f"First keyframe time: {first_frame_time_ms} ms")
 
             # Get the first keyframe as an example
@@ -97,7 +100,7 @@ async def main() -> None:
 
             print(f"Getting result file: {frame_path}")
 
-            # Get the result file (keyframe image)
+            # Get the result file (keyframe image) using the operation ID obtained from Operation<T>.id
             file_response = await client.get_result_file(
                 operation_id=operation_id,
                 path=frame_path,
@@ -120,11 +123,6 @@ async def main() -> None:
             print("\nNote: This sample demonstrates GetResultFile API usage.")
             print("      For video analysis with keyframes, use prebuilt-videoSearch analyzer.")
             print("      Keyframes are available in AudioVisualContent.key_frame_times_ms.")
-            print()
-            print(f"Example usage with operation ID '{operation_id}':")
-            print("  file_response = await client.get_result_file(")
-            print("      operation_id=operation_id,")
-            print('      path="keyframes/1000")')
         # [END get_result_file]
 
     if not isinstance(credential, AzureKeyCredential):
