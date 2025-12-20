@@ -44,15 +44,23 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         with (
             MonkeyPatch.context() as mp,
             self._get_mock_credential(),
+            mock.patch("builtins.print", side_effect=self._capture_print),
+            mock.patch("builtins.open", side_effect=patched_open_fn),
         ):
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
 
-            self._execute_module(patched_open_fn)
+            self._execute_module_without_patches()
             await self.module.main()
 
             if enable_llm_validation:
                 await self._validate_output_async()
+
+    def _execute_module_without_patches(self):
+        """Execute the module without applying patches (patches applied at caller level)."""
+        if self.spec.loader is None:
+            raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
+        self.spec.loader.exec_module(self.module)
 
     async def _validate_output_async(self):
         """Validate sample output using asynchronous OpenAI client."""
