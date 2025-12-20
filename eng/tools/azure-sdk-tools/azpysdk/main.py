@@ -27,11 +27,15 @@ from .verifytypes import verifytypes
 from .apistub import apistub
 from .verify_sdist import verify_sdist
 from .whl import whl
+from .sdist import sdist
+from .whl_no_aio import whl_no_aio
 from .verify_whl import verify_whl
 from .bandit import bandit
 from .verify_keywords import verify_keywords
 from .generate import generate
 from .breaking import breaking
+from .mindependency import mindependency
+from .latestdependency import latestdependency
 from .samples import samples
 from .devtest import devtest
 from .optional import optional
@@ -93,11 +97,15 @@ def build_parser() -> argparse.ArgumentParser:
     apistub().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])
     whl().register(subparsers, [common])
+    sdist().register(subparsers, [common])
+    whl_no_aio().register(subparsers, [common])
     verify_whl().register(subparsers, [common])
     bandit().register(subparsers, [common])
     verify_keywords().register(subparsers, [common])
     generate().register(subparsers, [common])
     breaking().register(subparsers, [common])
+    mindependency().register(subparsers, [common])
+    latestdependency().register(subparsers, [common])
     samples().register(subparsers, [common])
     devtest().register(subparsers, [common])
     optional().register(subparsers, [common])
