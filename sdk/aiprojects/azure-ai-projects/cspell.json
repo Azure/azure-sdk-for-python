@@ -1,0 +1,43 @@
+{
+  "ignoreWords": [
+    "agentic",
+    "aiproject",
+    "aiprojectclient",
+    "aiprojects",
+    "aiservices",
+    "ansii",
+    "aread",
+    "azureai",
+    "azureml",
+    "azureopenai",
+    "balapvbyostoragecanary",
+    "closefd",
+    "cogsvc",
+    "CSDL",
+    "evals",
+    "FineTuning",
+    "fspath",
+    "fstring",
+    "ftchkpt",
+    "ftjob",
+    "GENAI",
+    "getconnectionwithcredentials",
+    "GLEU",
+    "inpainting",
+    "Ministral",
+    "quantitive",
+    "roups",
+    "Tadmaq",
+    "Udbk",
+    "UPIA",
+    "wsid"
+  ],
+    "ignorePaths": [
+        "*.csv",
+        "*.json",
+        "*.jsonl"
+    ],
+    "words": [
+        "Pxqzykebv"
+    ]
+}

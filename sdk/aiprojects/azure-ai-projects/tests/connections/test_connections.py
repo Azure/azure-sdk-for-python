@@ -9,7 +9,7 @@ from devtools_testutils import recorded_by_proxy
 
 class TestConnections(TestBase):
 
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # To run this test, use the following command in the \sdk\aiprojects\azure-ai-projects folder:
     # cls & pytest tests\test_connections.py::TestConnections::test_connections -s
     @servicePreparer()
     @recorded_by_proxy

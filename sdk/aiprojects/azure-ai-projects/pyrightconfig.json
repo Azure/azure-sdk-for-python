@@ -1,0 +1,22 @@
+{
+  "reportTypeCommentUsage": true,
+  "reportMissingImports": false,
+  "reportAbstractUsage": false,
+  "reportArgumentType": false,
+  "reportAttributeAccessIssue": false,
+  "reportCallIssue": false,
+  "reportGeneralTypeIssues": false,
+  "reportInvalidTypeForm": false,
+  "reportPossiblyUnboundVariable": false,
+  "reportRedeclaration": false,
+  "reportUndefinedVariable": false,
+  "pythonVersion": "3.11",
+  "exclude": [
+  ],
+  "extraPaths": [
+    "./../../core/azure-core",
+    "./../../evaluation/azure-ai-evaluation",
+    "./../../identity/azure-identity",
+    "./../../monitor/azure-monitor-opentelemetry"
+  ]
+}

@@ -5,7 +5,7 @@ The instructions below are for running tests locally, on a Windows machine, agai
 ## Build and install the client library
 
 - Clone or download this sample repository.
-- Open a command prompt window in the folder `sdk\ai\azure-ai-projects`
+- Open a command prompt window in the folder `sdk\aiprojects\azure-ai-projects`
 - Install development dependencies:
     ```bash
     pip install -r dev_requirements.txt

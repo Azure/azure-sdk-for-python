@@ -42,8 +42,6 @@ extends:
     MatrixFilters:
       - PythonVersion=^(?!pypy3).*
     Artifacts:
-    - name: azure-ai-projects
-      safeName: azureaiprojects
     - name: azure-ai-agents
       safeName: azureaiagents
     - name: azure-ai-voicelive

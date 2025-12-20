@@ -35,6 +35,10 @@
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @trrwilson
 
+# PRLabel: %AI Projects
+# ServiceLabel: %AI Projects %Service Attention
+/sdk/aiprojects                                                      @dargilco @trrwilson @trangevi @glharper @nick863 @howieleung @kingernupur @singankit
+
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
 
@@ -255,14 +259,9 @@
 # ServiceLabel: %AI Agents %Service Attention
 /sdk/ai/azure-ai-agents/                                             @dargilco @trrwilson @trangevi @glharper @nick863 @howieleung
 
-# PRLabel: %AI Projects
-# ServiceLabel: %AI Projects %Service Attention
-/sdk/ai/azure-ai-projects/                                           @dargilco @trrwilson @trangevi @glharper @nick863 @howieleung @kingernupur
-
 # PRLabel: %Voice Live
 # ServiceLabel: %Voice Live %Service Attention
 /sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
-
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
