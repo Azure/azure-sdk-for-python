@@ -20,8 +20,7 @@ FULL_BUILD_SET = [
     "mindependency",
     "whl_no_aio",
 ]
-# this branch is checking only whl for now. rest will follow as they migrate
-PR_BUILD_SET = ["whl"] #, "sdist", "mindependency"
+PR_BUILD_SET = ["whl", "sdist", "mindependency"]
 
 
 def resolve_devops_variable(var_value: str) -> List[str]:
@@ -43,7 +42,7 @@ def remove_unsupported_values(selected_set: List[str], unsupported_values: List[
             selected_set.remove(unsupported_tox_env)
 
 
-def process_ci_skips(glob_string: str, service: str ) -> None:
+def process_ci_skips(glob_string: str, service: str) -> None:
     checks_with_global_skip = ["pylint", "verifywhl", "verifysdist" "bandit", "mypy", "pyright", "verifytypes"]
     root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
@@ -65,10 +64,9 @@ def process_ci_skips(glob_string: str, service: str ) -> None:
             all_packages = set([os.path.basename(pkg) for pkg in targeted_packages])
             set_ci_variable(f"Skip.{check[0].upper()}{check[1:]}", "true")
             output_ci_warning(
-                    f"All targeted packages {all_packages} skip the {check} check. Omitting step from build.",
-                    "set_tox_environment.py",
+                f"All targeted packages {all_packages} skip the {check} check. Omitting step from build.",
+                "set_tox_environment.py",
             )
-
 
 
 if __name__ == "__main__":
@@ -93,14 +91,14 @@ if __name__ == "__main__":
         "-o",
         "--override",
         dest="override_set",
-        help="If you have a set of tox environments that should override the defaults, provide it here. In CI this is runtime variable $(Run.ToxCustomEnvs). EG: \"whl,sdist\".",
+        help='If you have a set of tox environments that should override the defaults, provide it here. In CI this is runtime variable $(Run.ToxCustomEnvs). EG: "whl,sdist".',
     )
 
     parser.add_argument(
         "-u",
         "--unsupported",
         dest="unsupported",
-        help="A list of unsupported environments. EG: \"pylint,sdist\"",
+        help='A list of unsupported environments. EG: "pylint,sdist"',
     )
 
     parser.add_argument(
