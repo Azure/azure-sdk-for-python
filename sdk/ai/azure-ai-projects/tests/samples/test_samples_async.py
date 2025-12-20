@@ -6,13 +6,13 @@
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, RecordedTransport
-from test_samples import (
-    SampleExecutor,
+from test_base import servicePreparer
+from test_samples_base import (
     SamplePathPasser,
     get_sample_paths,
     get_sample_environment_variables_map,
-    servicePreparer,
 )
+from async_sample_executor import AsyncSampleExecutor
 
 
 def _get_async_sample_paths(sub_folder: str, *, samples_to_skip: list[str]) -> list:
@@ -38,5 +38,5 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
-        executor = SampleExecutor(self, sample_path, env_var_mapping, **kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         await executor.execute_async()
