@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add Browser SDK loader SDK Stats feature bit
+
 ### Breaking Changes
 
 ### Bugs Fixed

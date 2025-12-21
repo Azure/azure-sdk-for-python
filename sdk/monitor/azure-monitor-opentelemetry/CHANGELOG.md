@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add Browser SDK loader feature ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
+
+
 ### Breaking Changes
 
 ### Bugs Fixed
