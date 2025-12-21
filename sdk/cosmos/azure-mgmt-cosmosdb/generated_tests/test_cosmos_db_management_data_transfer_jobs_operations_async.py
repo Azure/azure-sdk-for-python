@@ -44,7 +44,7 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +109,7 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -121,7 +121,7 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
         response = self.client.data_transfer_jobs.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

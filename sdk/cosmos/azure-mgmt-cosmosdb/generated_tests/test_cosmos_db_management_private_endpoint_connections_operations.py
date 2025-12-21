@@ -24,7 +24,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
         response = self.client.private_endpoint_connections.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +59,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-10-15",
+            api_version="2025-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
