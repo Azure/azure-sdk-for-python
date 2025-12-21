@@ -88,7 +88,7 @@ class FoundryIdGenerator(IdGenerator):
 
         infix = infix or ""
         prefix_part = f"{prefix}{delimiter}" if prefix else ""
-        return f"{prefix_part}{entropy}{infix}{pkey}"
+        return f"{prefix_part}{infix}{pkey}{entropy}"
 
     @staticmethod
     def _secure_entropy(string_length: int) -> str:
@@ -133,4 +133,4 @@ class FoundryIdGenerator(IdGenerator):
         if len(segment) < string_length + partition_key_length:
             raise ValueError(f"Id '{id_str}' does not contain a valid id.")
 
-        return segment[-partition_key_length:]
+        return segment[:partition_key_length]
