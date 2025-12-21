@@ -8,9 +8,13 @@
 
 ### Bugs Fixed
 
+- Fixed leaked requests and aiohttp exceptions for streamed responses #43200
+- Improved granularity of ServiceRequestError and ServiceResponseError exceptions raised in timeout scenarios from the requests and aiohttp transports #43200
+
 ### Other Changes
 
 - Updated `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to set the `enable_cae` parameter to `True` by default. This change enables Continuous Access Evaluation (CAE) for all token requests made through these policies.  #42941
+- Added jitter to token refresh timing in `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to prevent simultaneous token refresh attempts across multiple processes. This helps mitigate the thundering herd problem during token refresh operations.  #43720
 
 ## 1.37.0 (2025-12-11)
 
@@ -29,8 +33,6 @@
 ### Bugs Fixed
 
 - Fixed repeated import attempts of cchardet and chardet when charset_normalizer is used #43092
-- Fixed leaked requests and aiohttp exceptions for streamed responses #43200
-- Improved granularity of ServiceRequestError and ServiceResponseError exceptions raised in timeout scenarios from the requests and aiohttp transports #43200
 
 ### Other Changes
 
