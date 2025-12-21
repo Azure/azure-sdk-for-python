@@ -11,6 +11,7 @@ from azure.appconfiguration import (  # type:ignore
 from sample_utilities import get_client_modifications
 import os
 import time
+import random
 
 kwargs = get_client_modifications()
 connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
@@ -27,10 +28,13 @@ def my_callback_on_fail(error):
     print("Refresh failed!")
 
 
+rand = random.random()
+watch_key = WatchKey("message" + str(rand))
+
 # Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message changes
 config = load(
     connection_string=connection_string,
-    refresh_on=[WatchKey("message")],
+    refresh_on=[watch_key],
     refresh_interval=1,
     on_refresh_error=my_callback_on_fail,
     **kwargs,
@@ -41,6 +45,10 @@ print(config["my_json"]["key"])
 
 # Updating the configuration setting
 configuration_setting.value = "Hello World Updated!"
+
+configuration_setting2 = ConfigurationSetting(key="message" + str(rand), value="2")
+
+client.set_configuration_setting(configuration_setting=configuration_setting2)
 
 client.set_configuration_setting(configuration_setting=configuration_setting)
 
