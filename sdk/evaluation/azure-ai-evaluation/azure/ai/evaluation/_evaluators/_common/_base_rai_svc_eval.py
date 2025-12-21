@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, TypeVar, Union, Optional
+from typing import Any, Dict, List, TypeVar, Union, Optional
 
 from typing_extensions import override
 
@@ -11,7 +11,10 @@ from azure.ai.evaluation._common.constants import (
     Tasks,
     _InternalAnnotationTasks,
 )
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_multimodal
+from azure.ai.evaluation._common.rai_service import (
+    evaluate_with_rai_service_sync,
+    evaluate_with_rai_service_sync_multimodal,
+)
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
@@ -115,27 +118,56 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         return await self._evaluate_conversation(conversation)
 
     async def _evaluate_conversation(self, conversation: Dict) -> Dict[str, T]:
+        """Evaluates content according to this evaluator's metric.
+        Evaluates each turn separately to maintain per-turn granularity.
         """
-        Evaluates content according to this evaluator's metric.
-        :keyword conversation: The conversation contains list of messages to be evaluated.
-            Each message should have "role" and "content" keys.
-
-        :param conversation: The conversation to evaluate.
-        :type conversation: ~azure.ai.evaluation.Conversation
-        :return: The evaluation score computation based on the Content Safety metric (self.metric).
-        :rtype: Dict[str, Union[float, str]]
-        """
-        # validate inputs
         validate_conversation(conversation)
         messages = conversation["messages"]
-        # Run score computation based on supplied metric.
-        result = await evaluate_with_rai_service_multimodal(
-            messages=messages,
-            metric_name=self._eval_metric,
-            project_scope=self._azure_ai_project,
-            credential=self._credential,
-        )
+
+        # Convert enum to string value
+        metric_value = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
+
+        # Extract conversation turns (user-assistant pairs)
+        turns = self._extract_turns(messages)
+
+        # Evaluate each turn separately
+        per_turn_results = []
+        for turn in turns:
+            turn_result = await evaluate_with_rai_service_sync_multimodal(
+                messages=turn,  # Single turn
+                metric_name=metric_value,
+                project_scope=self._azure_ai_project,
+                credential=self._credential,
+            )
+            parsed = self._parse_eval_result(turn_result)
+            per_turn_results.append(parsed)
+
+        result = self._aggregate_results(per_turn_results)
         return result
+
+    def _extract_turns(self, messages: List[Dict]) -> List[List[Dict]]:
+        """Split conversation into user-assistant turn pairs.
+
+        : param messages: List of conversation messages
+        :type messages: List[Dict]
+        :return: List of turns, where each turn is a list of messages
+        :rtype: List[List[Dict]]
+        """
+        turns = []
+        current_turn = []
+
+        for msg in messages:
+            current_turn.append(msg)
+            # End turn when we see an assistant message
+            if msg.get("role") == "assistant":
+                turns.append(current_turn)
+                current_turn = []
+
+        # Handle case where conversation ends without assistant response
+        if current_turn:
+            turns.append(current_turn)
+
+        return turns
 
     async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
         query = eval_input.get("query", None)
@@ -165,7 +197,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 )
             input_data["context"] = context
 
-        return await evaluate_with_rai_service(  # type: ignore
+        eval_result = await evaluate_with_rai_service_sync(  # type: ignore
             metric_name=self._eval_metric,
             data=input_data,
             project_scope=self._azure_ai_project,
@@ -173,6 +205,167 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             annotation_task=self._get_task(),
             evaluator_name=self.__class__.__name__,
         )
+
+        # Parse the EvalRunOutputItem format to the expected dict format
+        return self._parse_eval_result(eval_result)
+
+    def _parse_eval_result(self, eval_result) -> Dict[str, T]:
+        """Parse the EvalRunOutputItem format into the expected dict format.
+
+        : param eval_result: The result from evaluate_with_rai_service_sync (EvalRunOutputItem).
+        :return: The parsed result in the expected format.
+        : rtype: Dict[str, T]
+        """
+        # Handle EvalRunOutputItem structure
+        if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
+            results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
+
+            # Find the result matching our metric
+            for result_item in results:
+                result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
+
+                # Get metric name
+                metric_name = result_dict.get("metric")
+                if not metric_name:
+                    continue
+
+                # Check if this result matches our evaluator's metric
+                if metric_name == self._eval_metric or metric_name == self._eval_metric.value:
+                    # Extract common fields
+                    score = result_dict.get("score", 0)
+                    reason = result_dict.get("reason", "")
+                    properties = result_dict.get("properties", {})
+
+                    # Special handling for evaluators that use _label format
+                    if self._eval_metric in [
+                        EvaluationMetrics.CODE_VULNERABILITY,
+                        EvaluationMetrics.PROTECTED_MATERIAL,
+                        EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
+                        EvaluationMetrics.XPIA,
+                        _InternalEvaluationMetrics.ECI,
+                    ]:
+                        # Extract label from scoreProperties
+                        score_properties = properties.get("scoreProperties", {})
+                        label_str = score_properties.get("label", "false")
+
+                        # Convert string to boolean
+                        label = label_str.lower() == "true" if isinstance(label_str, str) else bool(label_str)
+
+                        parsed_result = {
+                            f"{self._eval_metric.value}_label": label,
+                            f"{self._eval_metric.value}_reason": reason,
+                        }
+
+                        # For protected_material, also extract breakdown if available
+                        if self._eval_metric == EvaluationMetrics.PROTECTED_MATERIAL:
+                            for component in ["fictional_characters", "logos_and_brands", "artwork"]:
+                                component_value = score_properties.get(component)
+                                if component_value is not None:
+                                    # Convert string to boolean if needed
+                                    component_label = (
+                                        component_value.lower() == "true"
+                                        if isinstance(component_value, str)
+                                        else bool(component_value)
+                                    )
+                                    parsed_result[f"{component}_label"] = component_label
+                                    # Reason might be in a separate field or computed
+                                    component_reason = score_properties.get(f"{component}_reasoning", "")
+                                    if component_reason:
+                                        parsed_result[f"{component}_reason"] = component_reason
+
+                        # Extract details from scoreProperties
+                        if score_properties:
+                            parsed_result[f"{self._eval_metric. value}_details"] = _prepare_details(score_properties)
+
+                        # Extract token counts from metrics
+                        metrics = properties.get("metrics", {})
+                        prompt_tokens = metrics.get("promptTokens", "")
+                        completion_tokens = metrics.get("completionTokens", "")
+
+                        # Calculate total tokens
+                        try:
+                            total_tokens = (
+                                str(int(prompt_tokens) + int(completion_tokens))
+                                if prompt_tokens and completion_tokens
+                                else ""
+                            )
+                        except (ValueError, TypeError):
+                            total_tokens = ""
+
+                        # Add token metadata (matching old format)
+                        parsed_result[f"{self._eval_metric. value}_total_tokens"] = total_tokens
+                        parsed_result[f"{self._eval_metric.value}_prompt_tokens"] = prompt_tokens
+                        parsed_result[f"{self._eval_metric.value}_completion_tokens"] = completion_tokens
+
+                        # Add empty placeholders for fields that sync_evals doesn't provide
+                        parsed_result[f"{self._eval_metric.value}_finish_reason"] = ""
+                        parsed_result[f"{self._eval_metric.value}_sample_input"] = ""
+                        parsed_result[f"{self._eval_metric.value}_sample_output"] = ""
+                        parsed_result[f"{self._eval_metric.value}_model"] = ""
+
+                        return parsed_result
+
+                    # Standard handling for harm severity evaluators
+                    # Convert score to severity label if needed
+                    severity_label = result_dict.get("label")
+                    if severity_label is None:
+                        # Calculate severity from score
+                        from azure.ai.evaluation._common.utils import get_harm_severity_level
+
+                        severity_label = get_harm_severity_level(score)
+
+                    # Extract token counts
+                    metrics = properties.get("metrics", {})
+                    prompt_tokens = metrics.get("promptTokens", "")
+                    completion_tokens = metrics.get("completionTokens", "")
+
+                    try:
+                        total_tokens = (
+                            str(int(prompt_tokens) + int(completion_tokens))
+                            if prompt_tokens and completion_tokens
+                            else ""
+                        )
+                    except (ValueError, TypeError):
+                        total_tokens = ""
+
+                    # Return in the expected format matching parse_response output
+                    return {
+                        self._eval_metric.value: severity_label,
+                        f"{self._eval_metric.value}_score": score,
+                        f"{self._eval_metric.value}_reason": reason,
+                        f"{self._eval_metric.value}_total_tokens": total_tokens,
+                        f"{self._eval_metric.value}_prompt_tokens": prompt_tokens,
+                        f"{self._eval_metric.value}_completion_tokens": completion_tokens,
+                        f"{self._eval_metric.value}_finish_reason": "",
+                        f"{self._eval_metric.value}_sample_input": "",
+                        f"{self._eval_metric.value}_sample_output": "",
+                        f"{self._eval_metric.value}_model": "",
+                    }
+
+            # If no matching result found, fall through
+
+        # If we can't parse as EvalRunOutputItem or no matching result found,
+        # check if it's already in the correct format (might be legacy response)
+        if isinstance(eval_result, dict):
+            # Check if it already has the expected keys
+            expected_key = (
+                f"{self._eval_metric.value}_label"
+                if self._eval_metric
+                in [
+                    EvaluationMetrics.CODE_VULNERABILITY,
+                    EvaluationMetrics.PROTECTED_MATERIAL,
+                    EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
+                    EvaluationMetrics.XPIA,
+                    _InternalEvaluationMetrics.ECI,
+                ]
+                else self._eval_metric.value
+            )
+
+            if expected_key in eval_result:
+                return eval_result
+
+        # Return empty dict if we can't parse
+        return {}
 
     def _get_task(self):
         """Get the annotation task for the current evaluation metric.
@@ -196,3 +389,53 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         if self._eval_metric == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
             return Tasks.UNGROUNDED_ATTRIBUTES
         return Tasks.CONTENT_HARM
+
+
+def _coerce_string_boolean(value: Any) -> Any:
+    """Convert common string boolean values to their bool equivalents."""
+
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered == "true":
+            return True
+        if lowered == "false":
+            return False
+    return value
+
+
+def _prepare_details(details: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize detail keys and coerce string booleans recursively.
+
+    Excludes internal/metadata fields that shouldn't be exposed in details.
+    """
+    # Fields to exclude from details
+    EXCLUDED_FIELDS = {
+        "label",  # Exposed as top-level _label field, not in details
+        "refusalDetectionTokensIncluded",  # Internal metadata
+        "version",
+        "totalTokenCount",
+        "inputTokenCount",
+        "outputTokenCount",
+        "finish_reason",
+        "sample_input",
+        "sample_output",
+        "model",
+    }
+
+    normalized: Dict[str, Any] = {}
+    for key, value in details.items():
+        # Skip excluded fields
+        if key in EXCLUDED_FIELDS:
+            continue
+
+        normalized_key = key.replace("-", "_") if isinstance(key, str) else key
+        normalized[normalized_key] = _prepare_detail_value(value)
+    return normalized
+
+
+def _prepare_detail_value(value: Any) -> Any:
+    if isinstance(value, dict):
+        return _prepare_details(value)
+    if isinstance(value, list):
+        return [_prepare_detail_value(item) for item in value]
+    return _coerce_string_boolean(value)

@@ -1057,7 +1057,7 @@ class TestRedTeamProcessing:
             "azure.ai.evaluation.red_team._utils.metric_mapping.get_metric_from_risk_category",
             return_value="test_metric",
         ), patch(
-            "azure.ai.evaluation._common.rai_service.evaluate_with_rai_service", new_callable=AsyncMock
+            "azure.ai.evaluation._common.rai_service.evaluate_with_rai_service_sync", new_callable=AsyncMock
         ) as mock_evaluate_rai, patch(
             "uuid.uuid4", return_value="test-uuid"
         ), patch(
@@ -1074,7 +1074,7 @@ class TestRedTeamProcessing:
             red_team.evaluation_processor, "evaluate_conversation", mock_evaluate_conversation
         ):  # Correctly patch the object
 
-            mock_evaluate_rai.return_value = {  # Keep this mock if evaluate_with_rai_service is still used
+            mock_evaluate_rai.return_value = {
                 "violence": "high",
                 "violence_reason": "Test reason",
                 "violence_score": 5,
