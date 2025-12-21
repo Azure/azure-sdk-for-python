@@ -27,15 +27,11 @@ extends:
   parameters:
     ServiceDirectory: evaluation
     TestProxy: true
-    # This custom matrix config should be dropped once:
-    #  * Once azure-ai-ml supports 3.13 (currently crashes due to type annotation)
     MatrixConfigs:
       - Name: ai_ci_matrix
         Path: sdk/evaluation/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
-    MatrixFilters:
-      - PythonVersion=^(?!3\.14)
     Artifacts:
     - name: azure-ai-evaluation
       safeName: azureaievaluation
