@@ -11,7 +11,7 @@
 
 # Getting Started
 
-### Install the package
+## Install the package
 Install the [azure-batch](pypi_batch) package v15.x or above for the most modern version of the package and [azure-identity](pypi_identity) with [pip](https://pypi.org/project/pip/):
 
 ```Bash
@@ -66,6 +66,11 @@ This section contains code snippets covering common Azure Batch operations:
 * [Create a pool](#create-a-pool)
 * [Create a job](#create-a-job) 
 * [Submit a task](#submit-a-task)
+
+## Pool Operations
+A pool is the collection of nodes that your application runs on.
+
+Azure Batch pools build on top of the core Azure compute platform. They provide large-scale allocation, application installation, data distribution, health monitoring, and flexible adjustment (scaling) of the number of compute nodes within a pool. For more information, see [Pools in Azure Batch](https://learn.microsoft.com/en-us/azure/batch/nodes-and-pools#pools).
 
 ### Create a pool
 
@@ -139,12 +144,12 @@ my_pool = models.BatchPoolCreateOptions(
 client.create_pool(pool=my_pool)
 ```
 
-### Job Operations
+## Job Operations
 A job is a collection of tasks. It manages how computation is performed by its tasks on the compute nodes in a pool.
 
 A job specifies the pool in which the work is to be run. You can create a new pool for each job, or use one pool for many jobs. You can create a pool for each job that is associated with a job schedule, or one pool for all jobs that are associated with a job schedule. For more information see [Job and Tasks in Azure Batch](https://learn.microsoft.com/en-us/azure/batch/jobs-and-tasks).
 
-### Create Job
+### Create a Job
 Create a job that will contain and manage your tasks. Jobs are associated with a specific pool.
 
 ```python
@@ -162,8 +167,7 @@ job_spec = models.BatchJobCreateOptions(
 client.create_job(job=job_spec)
 ```
 
-### Task Operations
-
+## Task Operations
 A task is a unit of computation that is associated with a job. It runs on a node. Tasks are assigned to a node for execution, or are queued until a node becomes free. Put simply, a task runs one or more programs or scripts on a compute node to perform the work you need done. For more information, see [Jobs and Tasks in Azure Batch](https://learn.microsoft.com/en-us/azure/batch/jobs-and-tasks).
 
 ### Submit a task
