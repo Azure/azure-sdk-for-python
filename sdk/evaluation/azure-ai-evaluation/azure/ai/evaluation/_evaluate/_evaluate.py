@@ -236,6 +236,10 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
 
 
 def _process_rows(row, detail_defect_rates):
+    # Ignore the failed rows (NaN, None, etc.), which is not a expected dict
+    if _is_none_or_nan(row):
+        return detail_defect_rates
+
     for key, value in row.items():
         if key not in detail_defect_rates:
             detail_defect_rates[key] = []

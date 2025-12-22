@@ -259,7 +259,11 @@ Generate images based on text prompts with customizable resolution, quality, and
 <!-- SNIPPET:sample_agent_image_generation.tool_declaration -->
 
 ```python
-tool = ImageGenTool(quality="low", size="1024x1024")
+tool = ImageGenTool(  # type: ignore[call-overload]
+    model=image_generation_model,  # Model such as "gpt-image-1-mini"  # type: ignore
+    quality="low",
+    size="1024x1024",
+)
 ```
 
 <!-- END SNIPPET -->
@@ -269,11 +273,10 @@ After calling `responses.create()`, you can download file using the returned res
 
 ```python
 image_data = [output.result for output in response.output if output.type == "image_generation_call"]
-
 if image_data and image_data[0]:
     print("Downloading generated image...")
     filename = "microsoft.png"
-    file_path = os.path.abspath(filename)
+    file_path = os.path.join(tempfile.gettempdir(), filename)
 
     with open(file_path, "wb") as f:
         f.write(base64.b64decode(image_data[0]))
@@ -573,6 +576,9 @@ Enable multi-agent collaboration where agents can communicate and delegate tasks
 tool = A2ATool(
     project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
 )
+# If the connection is missing target, we need to set the A2A endpoint URL.
+if os.environ.get("A2A_ENDPOINT"):
+    tool.base_url = os.environ["A2A_ENDPOINT"]
 ```
 
 <!-- END SNIPPET -->
