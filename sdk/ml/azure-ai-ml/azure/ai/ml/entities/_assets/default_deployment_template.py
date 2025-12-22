@@ -5,6 +5,7 @@
 from typing import Optional
 from azure.ai.ml._utils._experimental import experimental
 
+
 @experimental
 class DefaultDeploymentTemplate:
     """Default deployment template reference for a model.
