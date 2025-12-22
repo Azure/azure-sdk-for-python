@@ -16,7 +16,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_create_crg.py
+    python managed_clusters_create_update_with_enable_namespace_resources.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -40,19 +40,20 @@ def main():
                 "addonProfiles": {},
                 "agentPoolProfiles": [
                     {
-                        "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Compute/capacityReservationGroups/crg1",
+                        "availabilityZones": ["1", "2", "3"],
                         "count": 3,
                         "enableNodePublicIP": True,
                         "mode": "System",
                         "name": "nodepool1",
                         "osType": "Linux",
                         "type": "VirtualMachineScaleSets",
-                        "vmSize": "Standard_DS2_v2",
+                        "vmSize": "Standard_DS1_v2",
                     }
                 ],
                 "autoScalerProfile": {"scale-down-delay-after-add": "15m", "scan-interval": "20s"},
-                "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
+                "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
                 "dnsPrefix": "dnsprefix1",
+                "enableNamespaceResources": True,
                 "enableRBAC": True,
                 "kubernetesVersion": "",
                 "linuxProfile": {"adminUsername": "azureuser", "ssh": {"publicKeys": [{"keyData": "keydata"}]}},
@@ -71,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-10-01/examples/ManagedClustersCreate_CRG.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/preview/2025-10-02-preview/examples/ManagedClustersCreate_UpdateWithEnableNamespaceResources.json
 if __name__ == "__main__":
     main()

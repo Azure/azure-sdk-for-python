@@ -16,7 +16,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_list_cluster_admin_credentials.py
+    python identity_bindings_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,13 +31,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.managed_clusters.list_cluster_admin_credentials(
+    client.identity_bindings.begin_delete(
         resource_group_name="rg1",
         resource_name="clustername1",
-    )
-    print(response)
+        identity_binding_name="identitybinding1",
+    ).result()
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-10-01/examples/ManagedClustersListClusterAdminCredentials.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/preview/2025-10-02-preview/examples/IdentityBindings_Delete.json
 if __name__ == "__main__":
     main()
