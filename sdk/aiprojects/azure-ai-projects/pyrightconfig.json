@@ -1,4 +1,5 @@
 {
+  // See https://github.com/microsoft/pyright/blob/main/docs/configuration.md#pyright-configuration
   "reportTypeCommentUsage": true,
   "reportMissingImports": false,
   "reportAbstractUsage": false,
