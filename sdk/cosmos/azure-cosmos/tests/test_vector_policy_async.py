@@ -46,6 +46,26 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
+    async def test_create_valid_vector_embedding_policy_async(self):
+        # Using valid data types
+        data_types = ["float32", "float16", "int8", "uint8"]
+        for data_type in data_types:
+            vector_embedding_policy = {
+                "vectorEmbeddings": [
+                    {
+                        "path": "/vector1",
+                        "dataType": data_type,
+                        "dimensions": 256,
+                        "distanceFunction": "euclidean"
+                    }]}
+            created_container = await self.test_db.create_container(
+                id='vector_container_' + data_type,
+                partition_key=PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy)
+            properties = await created_container.read()
+            assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
+            self.test_db.delete_container('vector_container_' + data_type)
+
     async def test_create_vector_embedding_container_async(self):
         indexing_policy = {
             "vectorIndexes": [
