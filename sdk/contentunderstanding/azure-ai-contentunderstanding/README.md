@@ -4,11 +4,12 @@ Azure AI Content Understanding is a multimodal AI service that extracts semantic
 
 Use the client library for Azure AI Content Understanding to:
 
-* **Extract document content** - Extract text, tables, figures, layout information, and structured markdown from documents (PDF, images, Office documents)
+* **Extract document content** - Extract text, tables, figures, layout information, and structured markdown from documents (PDF, images with text or hand-written text, Office documents and more)
 * **Transcribe and analyze audio** - Convert audio content into searchable transcripts with speaker diarization and timing information
 * **Analyze video content** - Extract visual frames, transcribe audio tracks, and generate structured summaries from video files
-* **Create custom analyzers** - Build domain-specific analyzers for specialized content extraction needs
-* **Classify documents** - Automatically categorize and organize documents by type or content
+* **Leverage prebuilt analyzers** - Use production-ready prebuilt analyzers across industries including finance and tax (invoices, receipts, tax forms), identity verification (passports, driver's licenses), mortgage and lending (loan applications, appraisals), procurement and contracts (purchase orders, agreements), and utilities (billing statements)
+* **Create custom analyzers** - Build domain-specific analyzers for specialized content extraction needs across all four modalities (documents, video, audio, and images)
+* **Classify documents and video** - Automatically categorize and extract information from documents and video by type
 
 [Source code][python_cu_src] | [Package (PyPI)][python_cu_pypi] | [Product documentation][python_cu_product_docs] | [Samples][python_cu_samples]
 
@@ -258,28 +259,30 @@ For more information on authentication, see [Azure Identity client library][azur
 
 ## Key concepts
 
-### Prebuilt Analyzers
+### Prebuilt analyzers
 
-Content Understanding provides prebuilt analyzers that are ready to use without any configuration. These analyzers use the `*Search` naming pattern:
+Content Understanding provides a rich set of prebuilt analyzers that are ready to use without any configuration. These analyzers are powered by knowledge bases of thousands of real-world document examples, enabling them to understand document structure and adapt to variations in format and content.
 
-* **`prebuilt-documentSearch`** - Extracts content from documents (PDF, images, Office documents) with layout preservation, table detection, figure analysis, and structured markdown output. Optimized for RAG scenarios.
-* **`prebuilt-audioSearch`** - Transcribes audio content with speaker diarization, timing information, and conversation summaries. Supports multilingual transcription.
-* **`prebuilt-videoSearch`** - Analyzes video content with visual frame extraction, audio transcription, and structured summaries. Provides temporal alignment of visual and audio content.
+Prebuilt analyzers are organized into several categories:
 
-> **Note:** The prebuilt analyzers use the `prebuilt-{type}Search` naming pattern (not `prebuilt-{type}Analyzer`). This is a recent change in the Content Understanding service.
+* **RAG analyzers** - Optimized for retrieval-augmented generation scenarios with semantic analysis and markdown extraction. These analyzers return markdown and a one-paragraph `Summary` for each content item:
+  * **`prebuilt-documentSearch`** - Extracts content from documents (PDF, images, Office documents) with layout preservation, table detection, figure analysis, and structured markdown output. Optimized for RAG scenarios.
+  * **`prebuilt-imageSearch`** - Analyzes standalone images and returns a one-paragraph description of the image content. Optimized for image understanding and search scenarios. For images that contain text (including hand-written text), use `prebuilt-documentSearch`.
+  * **`prebuilt-audioSearch`** - Transcribes audio content with speaker diarization, timing information, and conversation summaries. Supports multilingual transcription.
+  * **`prebuilt-videoSearch`** - Analyzes video content with visual frame extraction, audio transcription, and structured summaries. Provides temporal alignment of visual and audio content and can return multiple segments per video.
+* **Content extraction analyzers** - Focus on OCR and layout analysis (e.g., `prebuilt-read`, `prebuilt-layout`)
+* **Base analyzers** - Fundamental content processing capabilities used as parent analyzers for custom analyzers (e.g., `prebuilt-document`, `prebuilt-image`, `prebuilt-audio`, `prebuilt-video`)
+* **Domain-specific analyzers** - Preconfigured analyzers for common document categories including financial documents (invoices, receipts, bank statements), identity documents (passports, driver's licenses), tax forms, mortgage documents, and contracts
+* **Utility analyzers** - Specialized tools for schema generation and field extraction (e.g., `prebuilt-documentFieldSchema`, `prebuilt-documentFields`)
 
-For a full list of prebuilt analyzers, see [Azure AI Content Understanding prebuilt analyzers][cu_prebuilt_analyzers].
+For a complete list of available prebuilt analyzers and their capabilities, see the [Prebuilt analyzers documentation][cu_prebuilt_analyzers].
 
-### Custom Analyzers
+### Content types
 
-You can create custom analyzers with specific field schemas for multi-modal content processing (documents, images, audio, video). Custom analyzers allow you to extract domain-specific information tailored to your use case.
+The API returns different content types based on the input. Both `DocumentContent` and `AudioVisualContent` classes derive from `MediaContent` class, which provides basic information and markdown representation. Each derived class provides additional properties to access detailed information:
 
-### Content Types
-
-The API returns different content types based on the input:
-
-* **`document`** - For document files (PDF, images, Office documents). Contains pages, tables, figures, paragraphs, and markdown representation.
-* **`audioVisual`** - For audio and video files. Contains transcript phrases, timing information, and for video, visual frame references.
+* **`DocumentContent`** - For document files (PDF, HTML, images, Office documents such as Word, Excel, PowerPoint, and more). Provides basic information such as page count and MIME type. Retrieve detailed information including pages, tables, figures, paragraphs, and many others.
+* **`AudioVisualContent`** - For audio and video files. Provides basic information such as timing information (start/end times) and frame dimensions (for video). Retrieve detailed information including transcript phrases, timing information, and for video, key frame references and more.
 
 ### Asynchronous Operations
 
@@ -317,11 +320,15 @@ You can familiarize yourself with different APIs using [Samples][python_cu_sampl
 
 The samples demonstrate:
 
-* **Document Analysis** - Extract content from PDFs and images using `prebuilt-documentSearch`
-* **Audio Analysis** - Transcribe and analyze audio files using `prebuilt-audioSearch`
-* **Video Analysis** - Analyze video content using `prebuilt-videoSearch`
-* **Custom Analyzers** - Create domain-specific analyzers for specialized extraction needs
-* **Document Classification** - Classify documents by type or content
+* **Configuration** - Configure model deployment defaults for prebuilt analyzers and custom analyzers
+* **Document Content Extraction** - Extract structured markdown content from PDFs and images using `prebuilt-documentSearch`, optimized for RAG (Retrieval-Augmented Generation) applications
+* **Multi-Modal Content Analysis** - Analyze content from URLs across all modalities: extract markdown and summaries from documents, images, audio, and video using `prebuilt-documentSearch`, `prebuilt-imageSearch`, `prebuilt-audioSearch`, and `prebuilt-videoSearch`
+* **Domain-Specific Analysis** - Extract structured fields from invoices using `prebuilt-invoice`
+* **Advanced Document Features** - Extract charts, hyperlinks, formulas, and annotations from documents
+* **Custom Analyzers** - Create custom analyzers with field schemas for specialized extraction needs
+* **Document Classification** - Create and use classifiers to categorize documents
+* **Analyzer Management** - Get, list, update, and delete analyzers
+* **Result Management** - Retrieve result files from video analysis and delete analysis results
 
 See the [samples directory][python_cu_samples] for complete examples.
 
@@ -495,15 +502,9 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 ## Next steps
 
-### More sample code
-
-See the [Sample README][sample_readme] for several code snippets illustrating common patterns used in the Content Understanding Python API.
-
-### Additional documentation
-
-For more extensive documentation on Azure AI Content Understanding, see the [Content Understanding documentation][python_cu_product_docs] on docs.microsoft.com.
-
-* Explore the [samples directory][python_cu_samples] for complete code examples
+* [`sample_update_defaults.py`][sample00] – One-time setup to configure model deployments for prebuilt and custom analyzers
+* [`sample_analyze_binary.py`][sample01] – Analyze PDF files from disk using `prebuilt-documentSearch`
+* Explore the [`samples` directory][python_cu_samples] for more code examples
 * Read the [Azure AI Content Understanding documentation][python_cu_product_docs] for detailed service information
 
 ## Running the Update Defaults Sample
@@ -659,3 +660,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [opencode_email]: mailto:opencode@microsoft.com
+[sample00]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_update_defaults.py
+[sample01]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary.py
