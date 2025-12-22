@@ -652,3 +652,46 @@ class TestToolInputAccuracyEvaluator:
         assert result is not None
         assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_missing_query(self, mock_model_config):
+        """Test that evaluator raises exception when query is None or missing."""
+        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_123",
+                        "name": "get_weather",
+                        "arguments": {"location": "Paris"},
+                    }
+                ],
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information for a location",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string", "description": "The location to get weather for"}},
+                    "required": ["location"],
+                },
+            }
+        ]
+
+        # Test with query=None
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=None, response=response, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)
+
+        # Test with query not provided at all
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(response=response, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)

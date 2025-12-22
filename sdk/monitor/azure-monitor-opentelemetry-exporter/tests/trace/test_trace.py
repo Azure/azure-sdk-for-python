@@ -452,10 +452,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "www.example.com")
 
-        span._attributes = {
-            "http.request.method": "GET",
-            "gen_ai.system": "az.ai.inference"
-        }
+        span._attributes = {"http.request.method": "GET", "gen_ai.system": "az.ai.inference"}
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(envelope.data.base_data.name, "GET /")
@@ -465,7 +462,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "server.address": "www.example.com",
             "server.port": 80,
             "url.scheme": "http",
-            "gen_ai.system": "az.ai.inference"
+            "gen_ai.system": "az.ai.inference",
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "www.example.com")
@@ -799,7 +796,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
         self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
-        
+
     def test_span_to_envelope_client_internal_gen_ai_type(self):
         exporter = self._exporter
         start_time = 1575494316027613500
@@ -822,7 +819,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._status = Status(status_code=StatusCode.UNSET)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
-    
+
     def test_span_to_envelope_client_multiple_types_with_gen_ai(self):
         exporter = self._exporter
         start_time = 1575494316027613500
