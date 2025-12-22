@@ -33,6 +33,7 @@ from azure.monitor.opentelemetry._constants import (
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
     ENABLE_TRACE_BASED_SAMPLING_ARG,
+    METRIC_READERS_ARG,
 )
 from opentelemetry.environment_variables import (
     OTEL_LOGS_EXPORTER,
@@ -113,7 +114,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["logger_name"], "test_logger")
         self.assertEqual(configurations["span_processors"], ["test_processor"])
         self.assertEqual(configurations["log_record_processors"], ["test_log_record_processor"])
-        self.assertEqual(configurations["metric_readers"], ["test_metric_reader"])
+        self.assertEqual(configurations[METRIC_READERS_ARG], ["test_metric_reader"])
         self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], True)
 
     @patch.dict("os.environ", {}, clear=True)
