@@ -68,7 +68,6 @@ Previously in v14.x, to create a `BatchServiceClient` developers would rely on t
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.batch import BatchServiceClient
 
-# Create AAD credentials with manual resource specification
 credentials = ServicePrincipalCredentials(
     client_id='your-client-id',
     secret='your-client-secret',
@@ -76,7 +75,6 @@ credentials = ServicePrincipalCredentials(
     resource='https://batch.core.windows.net/'
 )
 
-# Create client with base URL
 client = BatchServiceClient(credentials, 'https://<your account>.eastus.batch.azure.com')
 ```
 
@@ -87,7 +85,6 @@ Now, the v15.x approach consolidates all authentication scenarios under the [Azu
 from azure.identity import DefaultAzureCredential, ClientSecretCredential
 from azure.batch import BatchClient
 
-# Automatic credential discovery
 credentials = DefaultAzureCredential()
 client = BatchClient(
     endpoint='https://<your account>.eastus.batch.azure.com',
