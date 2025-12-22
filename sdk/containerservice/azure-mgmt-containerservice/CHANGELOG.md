@@ -1,6 +1,6 @@
 # Release History
 
-## 41.0.0b3 (2025-12-21)
+## 41.0.0b3 (2025-12-22)
 
 ### Features Added
 
