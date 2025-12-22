@@ -137,10 +137,7 @@ Sync samples are in the `samples/` directory. Run them from the package director
 
 ```bash
 # Make sure virtual environment is activated
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 
 # From the package directory, run sync samples
 python samples/sample_analyze_url.py
@@ -151,10 +148,7 @@ Or navigate to the samples directory first:
 
 ```bash
 # Make sure virtual environment is activated
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 
 # Navigate to samples directory
 cd samples
@@ -170,10 +164,7 @@ Async samples are in the `samples/async_samples/` directory. Run them from the p
 
 ```bash
 # Make sure virtual environment is activated
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 
 # From the package directory, run async samples
 python samples/async_samples/sample_analyze_url_async.py
@@ -184,10 +175,7 @@ Or navigate to the async_samples directory:
 
 ```bash
 # Make sure virtual environment is activated
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 
 # Navigate to async_samples directory
 cd samples/async_samples
@@ -449,10 +437,7 @@ if content.kind == MediaContentKind.DOCUMENT:
 
 **Solution:** Make sure the virtual environment is activated and the SDK is installed:
 ```bash
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 pip install -e .
 ```
 
@@ -460,10 +445,7 @@ pip install -e .
 
 **Solution:** Install the development dependencies:
 ```bash
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 pip install -r dev_requirements.txt
 ```
 
@@ -479,10 +461,7 @@ pip install -r dev_requirements.txt
 
 **Solution:** Reinstall the SDK in the virtual environment:
 ```bash
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 pip install -e . --force-reinstall
 ```
 
@@ -490,12 +469,9 @@ pip install -e . --force-reinstall
 
 **Solution:** Run the setup sample to configure model deployments:
 ```bash
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 cd samples
-python sample_update_defaults.py
+  python sample_update_defaults.py
 ```
 
 This configures the required GPT-4.1, GPT-4.1-mini, and text-embedding-3-large model deployments that prebuilt analyzers depend on.
@@ -513,20 +489,14 @@ You can assign this role in the Azure portal under your Microsoft Foundry resour
 
 **Solution:** Make sure you run samples that use local files from the `samples/` directory:
 ```bash
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 cd samples
 python sample_analyze_binary.py  # This will find sample_files/sample_invoice.pdf
 ```
 
 If running from the package directory, use the full path:
 ```bash
-# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
 python samples/sample_analyze_binary.py  # Make sure you're in the package directory
 ```
 
