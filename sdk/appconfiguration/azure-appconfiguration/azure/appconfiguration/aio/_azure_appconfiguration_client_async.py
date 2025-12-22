@@ -35,6 +35,7 @@ from .._models import (
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
 )
+from .._credential_scope import get_default_scope, _DEFAULT_SCOPE_SUFFIX
 from .._utils import (
     get_key_filter,
     get_label_filter,
@@ -69,10 +70,11 @@ class AzureAppConfigurationClient:
 
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
-        credential_scopes = kwargs.pop("credential_scopes", [f"{base_url.strip('/')}/.default"])
-        # Ensure all scopes end with /.default
+        credential_scopes = kwargs.pop("credential_scopes", [get_default_scope(base_url)])
+        # Ensure all scopes end with /.default and strip any trailing slashes before adding suffix
         kwargs["credential_scopes"] = [
-            scope if scope.endswith("/.default") else f"{scope}/.default" for scope in credential_scopes
+            scope if scope.endswith(_DEFAULT_SCOPE_SUFFIX) else f"{scope.rstrip('/')}{_DEFAULT_SCOPE_SUFFIX}"
+            for scope in credential_scopes
         ]
 
         if isinstance(credential, AzureKeyCredential):
