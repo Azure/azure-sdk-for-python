@@ -82,6 +82,7 @@ class TestRedTeam:
                 scan_name="test_basic_scan",
                 attack_strategies=[AttackStrategy.Base64],
                 timeout=4800,
+                skip_upload=True,
             )
         )
 

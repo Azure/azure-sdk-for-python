@@ -3,10 +3,12 @@
 
 import time
 import unittest
+import unittest.mock
 from typing import Mapping, Any
 
 import pytest
 from azure.cosmos import documents
+from azure.cosmos._service_request_retry_policy import ServiceRequestRetryPolicy
 
 from azure.cosmos.documents import DatabaseAccount, _OperationType
 from azure.cosmos.http_constants import ResourceType
@@ -216,9 +218,9 @@ class TestLocationCache:
             location_cache.perform_on_database_account_read(database_account)
 
             # Init requests and set excluded regions on requests
-            write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+            write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, {})
             write_doc_request.excluded_locations = excluded_locations_on_requests
-            read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+            read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, {})
             read_doc_request.excluded_locations = excluded_locations_on_requests
 
             # Test if read endpoints were correctly filtered on client level
@@ -248,7 +250,7 @@ class TestLocationCache:
         options: Mapping[str, Any] = {"excludedLocations": excluded_locations}
 
         expected_excluded_locations = excluded_locations
-        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, {})
         read_doc_request.set_excluded_location_from_options(options)
         actual_excluded_locations = read_doc_request.excluded_locations
         assert actual_excluded_locations == expected_excluded_locations
@@ -354,6 +356,121 @@ class TestLocationCache:
         # All preferred write locations ([loc1, loc2]) are excluded.
         # The fallback for write is the default_endpoint.
         assert write_doc_resolved == default_endpoint
+
+    def test_resolve_endpoint_respects_excluded_regions_when_use_preferred_locations_is_false(self):
+
+        # 1. Setup: LocationCache with multiple locations enabled.
+        lc = refresh_location_cache(preferred_locations=[], use_multiple_write_locations=True)
+        db_acc = create_database_account(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # 2. Create a write request.
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+
+        # 3. Set use_preferred_locations to False and exclude the first write location.
+        write_request.use_preferred_locations = False
+        write_request.excluded_locations = [location1_name]
+
+        # 4. Resolve the endpoint.
+        # With the fix, the excluded_locations list is respected.
+        # It should resolve to the next available write location, which is location2.
+        resolved_endpoint = lc.resolve_service_endpoint(write_request)
+
+        # 5. Assert the correct behavior for the write request.
+        assert resolved_endpoint == location2_endpoint
+
+        # 6. Repeat for a read request.
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_request.use_preferred_locations = False
+        read_request.excluded_locations = [location1_name]
+
+        # It should resolve to the next available read location, which is location2.
+        resolved_endpoint = lc.resolve_service_endpoint(read_request)
+
+        # Assert the correct behavior.
+        assert resolved_endpoint == location2_endpoint
+
+    def test_regional_fallback_when_primary_is_excluded(self):
+        # This test simulates a scenario where the primary preferred region is excluded
+        # by the user, and the secondary is excluded by the circuit breaker.
+        # The expected behavior is to fall back to the circuit-breaker-excluded region
+        # as a last resort, instead of the global endpoint.
+
+        # 1. Setup: LocationCache with two preferred write locations.
+        preferred_locations = [location1_name, location2_name]
+        lc = refresh_location_cache(preferred_locations, use_multiple_write_locations=True)
+        db_acc = create_database_account(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # 2. Create a write request.
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+
+        # 3. Exclude the primary region by user and the secondary by circuit breaker.
+        write_request.excluded_locations = [location1_name]
+        write_request.excluded_locations_circuit_breaker = [location2_name]
+
+        # 4. Resolve the endpoint.
+        # the user-excluded location should be filtered out, and the
+        # circuit-breaker-excluded location moved to the end of the list.
+        # Since it's the only one left, it should be selected.
+        resolved_endpoint = lc.resolve_service_endpoint(write_request)
+
+        # 5. Assert that the resolved endpoint is the circuit-breaker-excluded one, not the global default.
+        assert resolved_endpoint == location2_endpoint
+
+    def test_write_fallback_to_global_after_regional_retries_exhausted(self):
+        # This test simulates the client pipeline retrying preferred locations for writes
+        # after all of them have been tried and marked as unavailable.
+
+        # 1. Setup: LocationCache with two preferred write locations.
+        preferred_locations = [location1_name, location2_name]
+        lc = refresh_location_cache(preferred_locations, use_multiple_write_locations=True)
+        db_acc = create_database_account(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Mock the GlobalEndpointManager to use our LocationCache and forward calls.
+        mock_gem = unittest.mock.Mock()
+        mock_gem.location_cache = lc
+        # Simulate resolving to the next preferred location on the first retry.
+        mock_gem.resolve_service_endpoint_for_partition.side_effect = [location2_endpoint]
+        mock_gem.mark_endpoint_unavailable_for_write = lc.mark_endpoint_unavailable_for_write
+
+        # Mock ConnectionPolicy and pk_range_wrapper
+        mock_connection_policy = unittest.mock.Mock()
+        mock_connection_policy.EnableEndpointDiscovery = True
+        mock_pk_range_wrapper = unittest.mock.Mock()
+
+        # 2. Initial Request: The client resolves the first endpoint.
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        resolved_endpoint = lc.resolve_service_endpoint(write_request)
+        assert resolved_endpoint == location1_endpoint
+
+        # 3. First Failure and Retry: The request to location1 fails. The retry policy is invoked.
+        write_request.location_endpoint_to_route = location1_endpoint  # Simulate request was sent here
+        retry_policy = ServiceRequestRetryPolicy(mock_connection_policy, mock_gem, mock_pk_range_wrapper, write_request)
+
+        # The policy should decide to retry and route to the next endpoint (location2).
+        should_retry = retry_policy.ShouldRetry()
+        assert should_retry is True
+        assert write_request.location_endpoint_to_route == location2_endpoint
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Write") is True
+
+        # 4. Second Failure and Exhaustion: The request to location2 also fails.
+        should_retry_again = retry_policy.ShouldRetry()
+
+        # The policy has now exhausted all regional retries and should return False.
+        assert should_retry_again is False
+        assert lc.is_endpoint_unavailable(location2_endpoint, "Write") is True
+
+        # 5. Fallback to Global: After the retry policy gives up, the client clears the regional
+        # routing preference to make a final attempt at the global endpoint.
+        write_request.clear_route_to_location()
+        write_request.use_preferred_locations = False
+
+        # A final call to resolve the endpoint should now return the first preferred location,
+        # even though it's marked as unavailable, as a last resort.
+        final_endpoint = lc.resolve_service_endpoint(write_request)
+        assert final_endpoint == location1_endpoint
 
 if __name__ == "__main__":
     unittest.main()

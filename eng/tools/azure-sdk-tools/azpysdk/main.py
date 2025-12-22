@@ -8,11 +8,10 @@ A minimal command-line interface using argparse. This file provides a
 from __future__ import annotations
 
 import argparse
-import sys
+import shutil
 import os
 from typing import Sequence, Optional
 
-from .whl import whl
 from .import_all import import_all
 from .mypy import mypy
 from .next_mypy import next_mypy
@@ -25,9 +24,17 @@ from .pyright import pyright
 from .next_pyright import next_pyright
 from .ruff import ruff
 from .verifytypes import verifytypes
-from .verify_whl import verify_whl
+from .apistub import apistub
 from .verify_sdist import verify_sdist
+from .whl import whl
+from .verify_whl import verify_whl
+from .bandit import bandit
 from .verify_keywords import verify_keywords
+from .generate import generate
+from .breaking import breaking
+from .samples import samples
+from .devtest import devtest
+from .optional import optional
 
 from ci_tools.logging import configure_logging, logger
 
@@ -71,7 +78,6 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(title="commands", dest="command")
 
     # register our checks with the common params as their parent
-    whl().register(subparsers, [common])
     import_all().register(subparsers, [common])
     mypy().register(subparsers, [common])
     next_mypy().register(subparsers, [common])
@@ -84,9 +90,17 @@ def build_parser() -> argparse.ArgumentParser:
     next_pyright().register(subparsers, [common])
     ruff().register(subparsers, [common])
     verifytypes().register(subparsers, [common])
+    apistub().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])
+    whl().register(subparsers, [common])
     verify_whl().register(subparsers, [common])
+    bandit().register(subparsers, [common])
     verify_keywords().register(subparsers, [common])
+    generate().register(subparsers, [common])
+    breaking().register(subparsers, [common])
+    samples().register(subparsers, [common])
+    devtest().register(subparsers, [common])
+    optional().register(subparsers, [common])
 
     return parser
 
@@ -108,6 +122,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if not hasattr(args, "func"):
         parser.print_help()
         return 1
+
+    # default to uv if available
+    uv_path = shutil.which("uv")
+    if uv_path:
+        os.environ["TOX_PIP_IMPL"] = "uv"
 
     try:
         result = args.func(args)

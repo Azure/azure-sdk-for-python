@@ -36,7 +36,7 @@ version = {attr = "azure.template._version.VERSION"}
 readme = {file = ["README.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "samples*", "azure"]
+exclude = ["tests*", "samples*", "azure", "build*"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
@@ -48,3 +48,5 @@ verifytypes = true
 pyright = true
 pylint = true
 black = true
+generate = false
+apistub = false

@@ -24,7 +24,7 @@ class TestNetworkManagementNetworkSecurityPerimetersOperations(AzureMgmtRecorded
         response = self.client.network_security_perimeters.get(
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestNetworkManagementNetworkSecurityPerimetersOperations(AzureMgmtRecorded
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestNetworkManagementNetworkSecurityPerimetersOperations(AzureMgmtRecorded
         response = self.client.network_security_perimeters.begin_delete(
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestNetworkManagementNetworkSecurityPerimetersOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             parameters={"id": "str", "tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestNetworkManagementNetworkSecurityPerimetersOperations(AzureMgmtRecorded
     @recorded_by_proxy
     def test_network_security_perimeters_list_by_subscription(self, resource_group):
         response = self.client.network_security_perimeters.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestNetworkManagementNetworkSecurityPerimetersOperations(AzureMgmtRecorded
     def test_network_security_perimeters_list(self, resource_group):
         response = self.client.network_security_perimeters.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

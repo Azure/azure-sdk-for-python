@@ -1,23 +1,23 @@
 {
   "name": "dist/src/index.js",
   "dependencies": {
-    "@azure-tools/typespec-python": "0.52.1"
+    "@azure-tools/typespec-python": "0.56.1"
   },
   "devDependencies": {
-    "@typespec/compiler": "^1.5.0",
-    "@typespec/http": "^1.5.0",
-    "@typespec/rest": "~0.75.0",
-    "@typespec/versioning": "~0.75.0",
-    "@typespec/openapi": "^1.5.0",
-    "@typespec/events": "~0.75.0",
-    "@typespec/sse": "~0.75.0",
-    "@typespec/streams": "~0.75.0",
-    "@typespec/xml": "~0.75.0",
-    "@azure-tools/typespec-azure-core": "~0.61.0",
-    "@azure-tools/typespec-azure-resource-manager": "~0.61.0",
-    "@azure-tools/typespec-autorest": "~0.61.0",
-    "@azure-tools/typespec-azure-rulesets": "~0.61.0",
-    "@azure-tools/typespec-client-generator-core": "~0.61.0",
-    "@azure-tools/typespec-liftr-base": "0.10.0"
+    "@typespec/compiler": "^1.7.1",
+    "@typespec/http": "^1.7.0",
+    "@typespec/rest": "~0.77.0",
+    "@typespec/versioning": "~0.77.0",
+    "@typespec/openapi": "^1.7.0",
+    "@typespec/events": "~0.77.0",
+    "@typespec/sse": "~0.77.0",
+    "@typespec/streams": "~0.77.0",
+    "@typespec/xml": "~0.77.0",
+    "@azure-tools/typespec-azure-core": "~0.63.0",
+    "@azure-tools/typespec-azure-resource-manager": "~0.63.0",
+    "@azure-tools/typespec-autorest": "~0.63.1",
+    "@azure-tools/typespec-azure-rulesets": "~0.63.0",
+    "@azure-tools/typespec-client-generator-core": "~0.63.1",
+    "@azure-tools/typespec-liftr-base": "0.11.0"
   }
 }

@@ -34,7 +34,15 @@ Install the Azure Conversation Authoring client library for Python with [pip][pi
 pip install azure-ai-language-conversations-authoring
 ```
 
-> Note: This version of the client library defaults to the 2025-05-15-preview version of the service
+> Note: This version of the client library defaults to the 2025-11-15-preview version of the service
+
+This table shows the relationship between SDK versions and supported API versions of the service
+
+| SDK version  | Supported API version of service  |
+| ------------ | --------------------------------- |
+| 1.0.0b3 - Latest preview release | 2023-04-01, 2025-11-01, 2025-05-15-preview, 2025-11-15-preview (default) |
+| 1.0.0b2 | 2023-04-01, 2025-05-15-preview, 2025-11-15-preview (default) |
+| 1.0.0b1 | 2023-04-01, 2024-11-15-preview, 2025-05-15-preview (default) |
 
 ### Authenticate the client
 
@@ -129,180 +137,216 @@ The following examples show common **Conversation Authoring** scenarios using th
 
 ### Create a Conversation Project
 
+<!-- SNIPPET:sample_create_project.conversation_authoring_create_project -->
+
 ```python
-# import libraries
 import os
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import CreateProjectOptions, ProjectKind
-
-# get secrets
-endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
-
-project_name = os.environ.get("PROJECT_NAME", "<project-name>")
-
-# create client
-client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
-
-# create project
-body = CreateProjectOptions(
-    project_kind=ProjectKind.CONVERSATION,
-    project_name=project_name,
-    language="<language-tag>",  # e.g. "en-us"
-    multilingual=True,
-    description="Sample project created via Python SDK",
+from azure.ai.language.conversations.authoring.models import (
+    CreateProjectOptions,
+    ProjectKind,
 )
 
-# create project
-result = client.create_project(project_name=project_name, body=body)
 
-# print project details (direct attribute access; no getattr)
-print("=== Create Project Result ===")
-print(f"Project Name: {result.project_name}")
-print(f"Language: {result.language}")
-print(f"Kind: {result.project_kind}")
-print(f"Multilingual: {result.multilingual}")
-print(f"Description: {result.description}")
+def sample_create_project():
+    # settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
+    project_name = os.environ.get("PROJECT_NAME", "<project-name>")
+
+    # create a client with AAD
+    credential = DefaultAzureCredential()
+    client = ConversationAuthoringClient(endpoint, credential=credential)
+
+    # build project definition
+    body = CreateProjectOptions(
+        project_kind=ProjectKind.CONVERSATION,
+        project_name=project_name,
+        language="<language-tag>",  # e.g. "en-us"
+        multilingual=True,
+        description="Sample project created via Python SDK",
+    )
+
+    # create project
+    result = client.create_project(project_name=project_name, body=body)
+
+    # print project details (direct attribute access; no getattr)
+    print("=== Create Project Result ===")
+    print(f"Project Name: {result.project_name}")
+    print(f"Language: {result.language}")
+    print(f"Kind: {result.project_kind}")
+    print(f"Multilingual: {result.multilingual}")
+    print(f"Description: {result.description}")
 ```
+
+<!-- END SNIPPET -->
 
 ### Import a Project
 
+<!-- SNIPPET:sample_import_project.conversation_authoring_import_project -->
+
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
-    ExportedProject, CreateProjectOptions, ProjectKind, ProjectSettings
+    ConversationExportedIntent,
+    ConversationExportedEntity,
+    ConversationExportedUtterance,
+    ExportedUtteranceEntityLabel,
+    ConversationExportedProjectAsset,
+    CreateProjectOptions,
+    ProjectKind,
+    ProjectSettings,
+    ExportedProject,
+    ExportedProjectFormat,
 )
 
-endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
-project_name = os.environ.get("PROJECT_NAME", "<project-name>")
 
-client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
-project_client = client.get_project_client(project_name)
+def sample_import_project():
+    # settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
+    project_name = os.environ.get("PROJECT_NAME", "<project-name>")
 
-# Build assets using objects
-intents = [
-    ConversationExportedIntent(category="<intent-a>"),
-    ConversationExportedIntent(category="<intent-b>"),
-]
+    # create a client with AAD
+    credential = DefaultAzureCredential()
+    client = ConversationAuthoringClient(endpoint, credential=credential)
+    project_client = client.get_project_client(project_name)
 
-entities = [
-    ConversationExportedEntity(
-        category="<entity-a>",
-        composition_mode="combineComponents",
+    # ----- Build assets using objects -----
+    intents = [
+        ConversationExportedIntent(category="<intent-a>"),
+        ConversationExportedIntent(category="<intent-b>"),
+    ]
+
+    entities = [
+        ConversationExportedEntity(
+            category="<entity-a>",
+            composition_mode="combineComponents",
+        )
+    ]
+
+    u1 = ConversationExportedUtterance(
+        text="<utterance-1>",
+        intent="<intent-b>",
+        language="<language-tag>",  # e.g., "en-us"
+        dataset="Train",
+        entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=5)],
     )
-]
 
-u1 = ConversationExportedUtterance(
-    text="<utterance-1>",
-    intent="<intent-b>",
-    language="<language-tag>",  # e.g., "en-us"
-    dataset="Train",
-    entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=5)],
-)
+    u2 = ConversationExportedUtterance(
+        text="<utterance-2>",
+        intent="<intent-b>",
+        language="<language-tag>",
+        dataset="Train",
+        entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=5)],
+    )
 
-u2 = ConversationExportedUtterance(
-    text="<utterance-2>",
-    intent="<intent-b>",
-    language="<language-tag>",
-    dataset="Train",
-    entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=5)],
-)
+    u3 = ConversationExportedUtterance(
+        text="<utterance-3>",
+        intent="<intent-b>",
+        language="<language-tag>",
+        dataset="Train",
+        entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=4)],
+    )
 
-u3 = ConversationExportedUtterance(
-    text="<utterance-3>",
-    intent="<intent-b>",
-    language="<language-tag>",
-    dataset="Train",
-    entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=4)],
-)
+    assets = ConversationExportedProjectAsset(
+        intents=intents,
+        entities=entities,
+        utterances=[u1, u2, u3],
+    )
 
-assets = ConversationExportedProjectAsset(
-    intents=intents,
-    entities=entities,
-    utterances=[u1, u2, u3],
-)
+    metadata = CreateProjectOptions(
+        project_kind=ProjectKind.CONVERSATION,
+        project_name=project_name,  # required
+        language="<language-tag>",  # required (e.g., "en-us")
+        settings=ProjectSettings(confidence_threshold=0.0),
+        multilingual=False,
+        description="",
+    )
 
-metadata = CreateProjectOptions(
-    project_kind=ProjectKind.CONVERSATION,
-    project_name=project_name,  # required
-    language="<language-tag>",  # required (e.g., "en-us")
-    settings=ProjectSettings(confidence_threshold=0.0),
-    multilingual=False,
-    description="",
-)
+    exported_project = ExportedProject(
+        project_file_version="<project-file-version>",  # e.g., "2025-05-15-preview"
+        string_index_type="Utf16CodeUnit",
+        metadata=metadata,
+        assets=assets,
+    )
 
-exported_project = ExportedProject(
-    project_file_version="<project-file-version>",  # e.g., "2025-05-15-preview"
-    string_index_type="Utf16CodeUnit",
-    metadata=metadata,
-    assets=assets,
-)
+    # ----- begin import (long-running operation) -----
+    poller = project_client.project.begin_import(
+        body=exported_project,
+        exported_project_format=ExportedProjectFormat.CONVERSATION,
+    )
 
-# begin import (long-running operation)
-poller = project_client.project.begin_import(
-    body=exported_project,
-    exported_project_format=ExportedProjectFormat.CONVERSATION,
-)
-
-try:
-    poller.result()
-    print("Import completed.")
-    print(f"done: {poller.done()}")
-    print(f"status: {poller.status()}")
-except HttpResponseError as e:
-    msg = getattr(getattr(e, "error", None), "message", str(e))
-    print(f"Operation failed: {msg}")
+    try:
+        poller.result()
+        print("Import completed.")
+        print(f"done: {poller.done()}")
+        print(f"status: {poller.status()}")
+    except HttpResponseError as e:
+        print(f"Operation failed: {e.message}")
+        print(e.error)
 ```
+
+<!-- END SNIPPET -->
 
 ### Train a Model
 
+<!-- SNIPPET:sample_train.conversation_authoring_train -->
+
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
-    TrainingJobDetails, TrainingMode, EvaluationDetails, EvaluationKind
+    TrainingJobDetails,
+    TrainingMode,
+    EvaluationDetails,
+    EvaluationKind,
 )
 
-endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
-project_name = os.environ.get("PROJECT_NAME", "<project-name>")
 
-client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
-project_client = client.get_project_client(project_name)
+def sample_train():
+    # settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
+    project_name = os.environ.get("PROJECT_NAME", "<project-name>")
 
-# build training request
-training_job_details = TrainingJobDetails(
-    model_label="<model-label>",
-    training_mode=TrainingMode.STANDARD,
-    training_config_version="<config-version>",
-    evaluation_options=EvaluationDetails(
-        kind=EvaluationKind.PERCENTAGE,
-        testing_split_percentage=20,
-        training_split_percentage=80,
-    ),
-)
+    # create a client with AAD
+    credential = DefaultAzureCredential()
+    client = ConversationAuthoringClient(endpoint, credential=credential)
+    project_client = client.get_project_client(project_name)
 
-# start training job (long-running operation)
-poller = project_client.project.begin_train(body=training_job_details)
+    # build training request
+    training_job_details = TrainingJobDetails(
+        model_label="<model-label>",
+        training_mode=TrainingMode.STANDARD,
+        training_config_version="<config-version>",
+        evaluation_options=EvaluationDetails(
+            kind=EvaluationKind.PERCENTAGE,
+            testing_split_percentage=20,
+            training_split_percentage=80,
+        ),
+    )
 
-# wait for job completion and get the result (no explicit type variables)
-result = poller.result()
+    # start training job (long-running operation)
+    poller = project_client.project.begin_train(body=training_job_details)
 
-# print result details
-print("=== Training Result ===")
-print(f"Model Label: {result.model_label}")
-print(f"Training Config Version: {result.training_config_version}")
-print(f"Training Mode: {result.training_mode}")
-print(f"Training Status: {result.training_status}")
-print(f"Data Generation Status: {result.data_generation_status}")
-print(f"Evaluation Status: {result.evaluation_status}")
-print(f"Estimated End: {result.estimated_end_on}")
+    # wait for job completion and get the result (no explicit type variables)
+    result = poller.result()
+
+    # print result details
+    print("=== Training Result ===")
+    print(f"Model Label: {result.model_label}")
+    print(f"Training Config Version: {result.training_config_version}")
+    print(f"Training Mode: {result.training_mode}")
+    print(f"Training Status: {result.training_status}")
+    print(f"Data Generation Status: {result.data_generation_status}")
+    print(f"Evaluation Status: {result.evaluation_status}")
+    print(f"Estimated End: {result.estimated_end_on}")
 ```
+
+<!-- END SNIPPET -->
 
 ## Optional Configuration
 
@@ -401,9 +445,8 @@ For more information, see the [Code of Conduct FAQ][coc_faq] or contact [opencod
 [conversation_authoring_pypi_package]: https://pypi.org/project/azure-ai-language-conversations-authoring/
 [conversation_authoring_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/README.md
 [conversation_authoring_docs]: https://learn.microsoft.com/azure/ai-services/language-service/conversational-language-understanding/overview
-[api_reference_authoring]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring
-<!-- TODO: change api_reference_documentation to azuresdkdocs link after first publish -->
-[conversation_authoring_restdocs]: https://learn.microsoft.com/rest/api/language/conversation-authoring-project?view=rest-language-2023-04-01
+[api_reference_authoring]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations-authoring/latest/azure.ai.language.conversations.authoring.html
+[conversation_authoring_restdocs]: https://learn.microsoft.com/rest/api/language/analyze-conversations-authoring/conversation-authoring-project?view=rest-language-analyze-conversations-authoring-2025-11-01
 [azure_language_portal]: https://language.cognitive.azure.com/home
 [cognitive_authentication_aad]: https://learn.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials

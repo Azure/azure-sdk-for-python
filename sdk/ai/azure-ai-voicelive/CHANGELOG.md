@@ -1,14 +1,91 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.2.0 (2025-12-10)
 
 ### Features Added
 
-### Breaking Changes
+- **MCP (Model Context Protocol) Support**: Added comprehensive support for Model Context Protocol integration:
+  - `MCPServer` tool type for defining MCP server configurations with authorization, headers, and approval requirements
+  - `MCPTool` model for representing MCP tool definitions with input schemas and annotations
+  - `MCPApprovalType` enum for controlling approval workflows (`never`, `always`, or tool-specific)
+  - New item types: `MCPApprovalResponseRequestItem`, `ResponseMCPApprovalRequestItem`, `ResponseMCPApprovalResponseItem`, `ResponseMCPCallItem`, and `ResponseMCPListToolItem`
+  - New server events: `ServerEventMcpListToolsInProgress`, `ServerEventMcpListToolsCompleted`, `ServerEventMcpListToolsFailed`, `ServerEventResponseMcpCallArgumentsDelta`, `ServerEventResponseMcpCallArgumentsDone`, `ServerEventResponseMcpCallInProgress`, `ServerEventResponseMcpCallCompleted`, and `ServerEventResponseMcpCallFailed`
+  - Client event `MCP_APPROVAL_RESPONSE` for responding to approval requests
+  - Enhanced `ItemType` enum with MCP-related types: `mcp_list_tools`, `mcp_call`, `mcp_approval_request`, and `mcp_approval_response`
+- **Enhanced Avatar Configuration**: Expanded avatar functionality with new configuration options:
+  - Added `AvatarConfigTypes` enum with support for `video-avatar` and `photo-avatar` types
+  - Added `PhotoAvatarBaseModes` enum for photo avatar base models (e.g., `vasa-1`)
+  - Added `AvatarOutputProtocol` enum for avatar streaming protocols (`webrtc`, `websocket`)
+  - Enhanced `AvatarConfig` model with new properties: `type`, `model`, and `output_protocol`
+- **Image Content Support**: Added support for image inputs in conversations:
+  - New `RequestImageContentPart` model for including images in requests
+  - New `RequestImageContentPartDetail` enum for controlling image detail levels (`auto`, `low`, `high`)
+  - Added `INPUT_IMAGE` to `ContentPartType` enum
+  - Enhanced token details models (`InputTokenDetails`, `CachedTokenDetails`) with `image_tokens` tracking
+- **Enhanced OpenAI Voices**: Added new OpenAI voice options:
+  - Added `marin` and `cedar` voices to `OpenAIVoiceName` enum
+- **Extended Azure Personal Voice Configuration**: Enhanced `AzurePersonalVoice` with additional customization options:
+  - Added support for custom lexicon via `custom_lexicon_url`
+  - Added `prefer_locales` for locale preferences
+  - Added `locale`, `style`, `pitch`, `rate`, and `volume` properties for fine-tuned voice control
+- **Pre-generated Assistant Messages**: Added support for pre-generated assistant messages in `ResponseCreateParams` via the `pre_generated_assistant_message` property
 
-### Bugs Fixed
+## 1.2.0b2 (2025-11-20)
 
-### Other Changes
+### Features Added
+
+- **Enhanced Avatar Configuration**: Expanded avatar functionality with new configuration options:
+  - Added `AvatarConfigTypes` enum with support for `video-avatar` and `photo-avatar` types
+  - Added `PhotoAvatarBaseModes` enum for photo avatar base models (e.g., `vasa-1`)
+  - Added `AvatarOutputProtocol` enum for avatar streaming protocols (`webrtc`, `websocket`)
+  - Enhanced `AvatarConfig` model with new properties: `type`, `model`, and `output_protocol`
+- **Image Content Support**: Added support for image inputs in conversations:
+  - New `RequestImageContentPart` model for including images in requests
+  - New `RequestImageContentPartDetail` enum for controlling image detail levels (`auto`, `low`, `high`)
+  - Added `INPUT_IMAGE` to `ContentPartType` enum
+  - Enhanced token details models (`InputTokenDetails`, `CachedTokenDetails`) with `image_tokens` tracking
+- **Enhanced OpenAI Voices**: Added new OpenAI voice options:
+  - Added `marin` and `cedar` voices to `OpenAIVoiceName` enum
+- **Extended Azure Personal Voice Configuration**: Enhanced `AzurePersonalVoice` with additional customization options:
+  - Added support for custom lexicon via `custom_lexicon_url`
+  - Added `prefer_locales` for locale preferences
+  - Added `locale`, `style`, `pitch`, `rate`, and `volume` properties for fine-tuned voice control
+- **Enhanced MCP Server Events**: Added completion status events for MCP tool calls:
+  - `ServerEventResponseMcpCallInProgress` for tracking in-progress MCP calls
+  - `ServerEventResponseMcpCallCompleted` for successful MCP call completion
+  - `ServerEventResponseMcpCallFailed` for failed MCP calls
+- **Pre-generated Assistant Messages**: Added support for pre-generated assistant messages in `ResponseCreateParams` via the `pre_generated_assistant_message` property
+
+## 1.2.0b1 (2025-11-14)
+
+### Features Added
+
+- **MCP (Model Context Protocol) Support**: Added comprehensive support for Model Context Protocol integration:
+  - `MCPServer` tool type for defining MCP server configurations with authorization, headers, and approval requirements
+  - `MCPTool` model for representing MCP tool definitions with input schemas and annotations
+  - `MCPApprovalType` enum for controlling approval workflows (`never`, `always`, or tool-specific)
+  - New item types: `MCPApprovalResponseRequestItem`, `ResponseMCPApprovalRequestItem`, `ResponseMCPApprovalResponseItem`, `ResponseMCPCallItem`, and `ResponseMCPListToolItem`
+  - New server events: `ServerEventMcpListToolsInProgress`, `ServerEventMcpListToolsCompleted`, `ServerEventMcpListToolsFailed`, `ServerEventResponseMcpCallArgumentsDelta`, and `ServerEventResponseMcpCallArgumentsDone`
+  - Client event `MCP_APPROVAL_RESPONSE` for responding to approval requests
+  - Enhanced `ItemType` enum with MCP-related types: `mcp_list_tools`, `mcp_call`, `mcp_approval_request`, and `mcp_approval_response`
+
+## 1.1.0 (2025-11-03)
+
+### Features Added
+
+- Added support for Agent configuration through the new `AgentConfig` model
+- Added `agent` field to `ResponseSession` model to support agent-based conversations
+- The `AgentConfig` model includes properties for agent type, name, description, agent_id, and thread_id
+
+## 1.1.0b1 (2025-10-06)
+
+### Features Added
+
+- **AgentConfig Support**: Re-introduced `AgentConfig` functionality with enhanced capabilities:
+  - `AgentConfig` model added back to public API with full import and export support
+  - `agent` field re-added to `ResponseSession` model for session-level agent configuration
+  - Updated cross-language package mappings to include `AgentConfig` support
+  - Provides foundation for advanced agent configuration scenarios
 
 ## 1.0.0 (2025-10-01)
 

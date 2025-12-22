@@ -60,6 +60,23 @@
       }
     },
     {
+      "PerPartitionAutomaticFailoverTestConfig": {
+        "Ubuntu2004_313_partition_automatic_failover": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosPerPartitionAutomaticFailover"
+        }
+      },
+      "ArmConfig": {
+        "MultiRegion": {
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true;}"
+        }
+      }
+    },
+    {
       "MacTestConfig": {
         "macos311_search_query": {
           "OSVmImage": "env:MACVMIMAGE",
@@ -73,10 +90,10 @@
     },
     {
       "PyPyConfig": {
-        "ubuntu2404_pypy39_query": {
+        "ubuntu2404_pypy311_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "pypy3.9",
+          "PythonVersion": "pypy3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosQuery"

@@ -33,7 +33,7 @@ class TestContainerServiceResolvePrivateLinkServiceIdOperationsAsync(AzureMgmtRe
                 "requiredMembers": ["str"],
                 "type": "str",
             },
-            api_version="2025-08-01",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself

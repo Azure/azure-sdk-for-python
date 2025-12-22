@@ -10,7 +10,7 @@ from urllib.parse import parse_qs
 
 from azure.storage.queue._shared import sign_string
 from azure.storage.queue._shared.constants import X_MS_VERSION
-from azure.storage.queue._shared.models import Services
+from azure.storage.queue._shared.models import Services, UserDelegationKey
 from azure.storage.queue._shared.shared_access_signature import (
     QueryStringConstants,
     SharedAccessSignature,
@@ -30,14 +30,24 @@ class QueueSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     """
 
-    def __init__(self, account_name: str, account_key: str) -> None:
+    def __init__(
+        self,
+        account_name: str,
+        account_key: Optional[str] = None,
+        user_delegation_key: Optional[UserDelegationKey] = None,
+    ) -> None:
         """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
-        :param str account_key:
+        :param Optional[str] account_key:
             The access key to generate the shares access signatures.
+        :param Optional[~azure.storage.queue.models.UserDelegationKey] user_delegation_key:
+            Instead of an account key, the user could pass in a user delegation key.
+            A user delegation key can be obtained from the service by authenticating with an AAD identity;
+            this can be accomplished by calling get_user_delegation_key on any Queue service object.
         """
         super(QueueSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
+        self.user_delegation_key = user_delegation_key
 
     def generate_queue(
         self,
@@ -48,6 +58,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         policy_id: Optional[str] = None,
         ip: Optional[str] = None,
         protocol: Optional[str] = None,
+        user_delegation_oid: Optional[str] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
     ) -> str:
         """
@@ -62,7 +73,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: ~azure.storage.queue.QueueSasPermissions or str
+        :type permission: Optional[Union[~azure.storage.queue.QueueSasPermissions, str]]
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -70,25 +81,29 @@ class QueueSharedAccessSignature(SharedAccessSignature):
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: ~datetime.datetime or str
+        :type expiry: Optional[Union[~datetime.datetime, str]]
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. The provided datetime will always
             be interpreted as UTC.
-        :type start: ~datetime.datetime or str
-        :param str policy_id:
+        :type start: Optional[Union[~datetime.datetime, str]]
+        :param Optional[str] policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy.
-        :param str ip:
+        :param Optional[str] ip:
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
             or address range specified on the SAS token, the request is not authenticated.
             For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
-        :param str protocol:
+        :param Optional[str] protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+        :param Optional[str] user_delegation_oid:
+            Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+            The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+            issued to the user specified in this value.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
@@ -99,7 +114,10 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         sas = _QueueSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
-        sas.add_resource_signature(self.account_name, self.account_key, queue_name)
+        sas.add_user_delegation_oid(user_delegation_oid)
+        sas.add_resource_signature(
+            self.account_name, self.account_key, queue_name, user_delegation_key=self.user_delegation_key
+        )
 
         if sts_hook is not None:
             sts_hook(sas.string_to_sign)
@@ -109,7 +127,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
 
 class _QueueSharedAccessHelper(_SharedAccessHelper):
 
-    def add_resource_signature(self, account_name: str, account_key: str, path: str):
+    def add_resource_signature(self, account_name: str, account_key: str, path: str, user_delegation_key=None):
         def get_value_to_append(query):
             return_value = self.query_dict.get(query) or ""
             return return_value + "\n"
@@ -126,8 +144,31 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
             + get_value_to_append(QueryStringConstants.SIGNED_START)
             + get_value_to_append(QueryStringConstants.SIGNED_EXPIRY)
             + canonicalized_resource
-            + get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
-            + get_value_to_append(QueryStringConstants.SIGNED_IP)
+        )
+
+        if user_delegation_key is not None:
+            self._add_query(QueryStringConstants.SIGNED_OID, user_delegation_key.signed_oid)
+            self._add_query(QueryStringConstants.SIGNED_TID, user_delegation_key.signed_tid)
+            self._add_query(QueryStringConstants.SIGNED_KEY_START, user_delegation_key.signed_start)
+            self._add_query(QueryStringConstants.SIGNED_KEY_EXPIRY, user_delegation_key.signed_expiry)
+            self._add_query(QueryStringConstants.SIGNED_KEY_SERVICE, user_delegation_key.signed_service)
+            self._add_query(QueryStringConstants.SIGNED_KEY_VERSION, user_delegation_key.signed_version)
+
+            string_to_sign += (
+                get_value_to_append(QueryStringConstants.SIGNED_OID)
+                + get_value_to_append(QueryStringConstants.SIGNED_TID)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_START)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID)
+                + get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID)
+            )
+        else:
+            string_to_sign += get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
+
+        string_to_sign += (
+            get_value_to_append(QueryStringConstants.SIGNED_IP)
             + get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL)
             + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
         )
@@ -136,7 +177,10 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
         if string_to_sign[-1] == "\n":
             string_to_sign = string_to_sign[:-1]
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE, sign_string(account_key, string_to_sign))
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            sign_string(account_key if user_delegation_key is None else user_delegation_key.value, string_to_sign),
+        )
         self.string_to_sign = string_to_sign
 
 
@@ -161,23 +205,23 @@ def generate_account_sas(
         The storage account name used to generate the shared access signature.
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param ~azure.storage.queue.ResourceTypes resource_types:
+    :param Optional[Union[~azure.storage.queue.ResourceTypes, str]] resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-    :type permission: ~azure.storage.queue.AccountSasPermissions or str
+    :type permission: Optional[Union[~azure.storage.queue.AccountSasPermissions, str]]
     :param expiry:
         The time at which the shared access signature becomes invalid.
         The provided datetime will always be interpreted as UTC.
-    :type expiry: ~datetime.datetime or str
+    :type expiry: Optional[Union[~datetime.datetime, str]]
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. The provided datetime will always
         be interpreted as UTC.
-    :type start: ~datetime.datetime or str
-    :param str ip:
+    :type start: Optional[Union[~datetime.datetime, str]]
+    :param Optional[str] ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
@@ -211,13 +255,15 @@ def generate_account_sas(
 def generate_queue_sas(
     account_name: str,
     queue_name: str,
-    account_key: str,
+    account_key: Optional[str] = None,
     permission: Optional[Union["QueueSasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
     start: Optional[Union["datetime", str]] = None,
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
+    user_delegation_key: Optional[UserDelegationKey] = None,
+    user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -229,7 +275,7 @@ def generate_queue_sas(
         The storage account name used to generate the shared access signature.
     :param str queue_name:
         The name of the queue.
-    :param str account_key:
+    :param Optional[str] account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
     :param permission:
         The permissions associated with the shared access signature. The
@@ -237,7 +283,7 @@ def generate_queue_sas(
         Required unless a policy_id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: ~azure.storage.queue.QueueSasPermissions or str
+    :type permission: Optional[Union[~azure.storage.queue.QueueSasPermissions, str]]
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless a policy_id is given referencing a stored access policy
@@ -245,18 +291,18 @@ def generate_queue_sas(
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: ~datetime.datetime or str
+    :type expiry: Optional[Union[~datetime.datetime, str]]
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. The provided datetime will always
         be interpreted as UTC.
-    :type start: ~datetime.datetime or str
-    :param str policy_id:
+    :type start: Optional[Union[~datetime.datetime, str]]
+    :param Optional[str] policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
         :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
-    :param str ip:
+    :param Optional[str] ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
@@ -264,6 +310,15 @@ def generate_queue_sas(
         restricts the request to those IP addresses.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword Optional[~azure.storage.queue.UserDelegationKey] user_delegation_key:
+        Instead of an account shared key, the user could pass in a user delegation key.
+        A user delegation key can be obtained from the service by authenticating with an AAD identity;
+        this can be accomplished by calling :func:`~azure.storage.queue.QueueServiceClient.get_user_delegation_key`.
+        When present, the SAS is signed with the user delegation key instead.
+    :keyword str user_delegation_oid:
+        Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+        The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+        issued to the user specified in this value.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -285,7 +340,9 @@ def generate_queue_sas(
             raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
         if not permission:
             raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
-    sas = QueueSharedAccessSignature(account_name, account_key)
+    if not user_delegation_key and not account_key:
+        raise ValueError("Either user_delegation_key or account_key must be provided.")
+    sas = QueueSharedAccessSignature(account_name, account_key=account_key, user_delegation_key=user_delegation_key)
     return sas.generate_queue(
         queue_name,
         permission=permission,
@@ -294,6 +351,7 @@ def generate_queue_sas(
         policy_id=policy_id,
         ip=ip,
         sts_hook=sts_hook,
+        user_delegation_oid=user_delegation_oid,
         **kwargs
     )
 

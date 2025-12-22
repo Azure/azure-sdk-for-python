@@ -49,6 +49,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     """
 
     id = "azureai://built-in/evaluators/azure-openai/score_model_grader"
+    _type = "score_model"
 
     def __init__(
         self,
@@ -80,7 +81,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
         self.pass_threshold = pass_threshold
 
         # Create OpenAI ScoreModelGrader instance
-        grader_kwargs = {"input": input, "model": model, "name": name, "type": "score_model"}
+        grader_kwargs = {"input": input, "model": model, "name": name, "type": AzureOpenAIScoreModelGrader._type}
 
         if range is not None:
             grader_kwargs["range"] = range

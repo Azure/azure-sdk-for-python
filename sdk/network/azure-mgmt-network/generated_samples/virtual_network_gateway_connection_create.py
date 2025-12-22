@@ -37,6 +37,15 @@ def main():
         parameters={
             "location": "centralus",
             "properties": {
+                "authenticationType": "Certificate",
+                "certificateAuthentication": {
+                    "inboundAuthCertificateChain": [
+                        "MIIC+TCCAeGgAwIBAgIQFOJUqDaxV5xJcKpTKO...",
+                        "MIIC+TCCAeGgAwIBAgIQPJerInitNblK7yBgkqh...",
+                    ],
+                    "inboundAuthCertificateSubjectName": "CN=rootCert.com",
+                    "outboundAuthCertificate": "https://customerKv.vault.azure.net/Certificates/outBoundcert/Version",
+                },
                 "connectionMode": "Default",
                 "connectionProtocol": "IKEv2",
                 "connectionType": "IPsec",
@@ -114,6 +123,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/VirtualNetworkGatewayConnectionCreate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/VirtualNetworkGatewayConnectionCreate.json
 if __name__ == "__main__":
     main()

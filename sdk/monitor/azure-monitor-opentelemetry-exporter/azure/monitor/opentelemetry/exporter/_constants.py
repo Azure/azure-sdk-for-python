@@ -9,8 +9,6 @@ from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
     HTTP_SERVER_REQUEST_DURATION,
 )
-# pylint:disable=no-name-in-module
-from fixedint import Int32
 from azure.core import CaseInsensitiveEnumMeta
 
 
@@ -164,6 +162,7 @@ _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_EN
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
 _CUSTOMER_SDKSTATS_LANGUAGE = "python"
 
+
 class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_READONLY = "CLIENT_READONLY"
     CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
@@ -171,19 +170,24 @@ class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_STORAGE_DISABLED = "CLIENT_STORAGE_DISABLED"
     UNKNOWN = "UNKNOWN"
 
+
 DropCodeType = Union[DropCode, int]
+
 
 class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
     CLIENT_TIMEOUT = "CLIENT_TIMEOUT"
     UNKNOWN = "UNKNOWN"
 
+
 RetryCodeType = Union[RetryCode, int]
+
 
 class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_SUCCESS_COUNT = "preview.item.success.count"
     ITEM_DROP_COUNT = "preview.item.dropped.count"
     ITEM_RETRY_COUNT = "preview.item.retry.count"
+
 
 ## Map from Azure Monitor envelope base_types to TelemetryType
 _TYPE_MAP = {
@@ -198,12 +202,14 @@ _TYPE_MAP = {
     "AvailabilityData": _AVAILABILITY,
 }
 
+
 # Exception categories
 class _exception_categories(Enum):
     CLIENT_EXCEPTION = "Client exception"
     STORAGE_EXCEPTION = "Storage exception"
     NETWORK_EXCEPTION = "Network exception"
     TIMEOUT_EXCEPTION = "Timeout exception"
+
 
 # Map RP names
 class _RP_Names(Enum):
@@ -212,6 +218,7 @@ class _RP_Names(Enum):
     AKS = "aks"
     VM = "vm"
     UNKNOWN = "unknown"
+
 
 # Instrumentations
 
@@ -278,7 +285,7 @@ _INSTRUMENTATIONS_LIST = [
     "openai_v2",
     "vertexai",
     # Instrumentations below this line have not been added to statsbeat report yet
-    _AZURE_AI_SDK_NAME
+    _AZURE_AI_SDK_NAME,
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
@@ -319,8 +326,8 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
 _SAMPLING_HASH = 5381
-_INTEGER_MAX: int = Int32.maxval
-_INTEGER_MIN: int = Int32.minval
+_INT32_MAX: int = 2**31 - 1  # 2147483647
+_INT32_MIN: int = -(2**31)  # -2147483648
 
 # AAD Auth
 

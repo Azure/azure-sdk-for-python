@@ -192,6 +192,38 @@ async def query_items_cross_partition_with_pagination(container):
     print(f'  - Pages: {page_count}')
     print(f'  - Total items: {total_item_count}')
 
+async def query_items_with_feed_ranges_and_pagination(container):
+    print('\n1.5c Querying with Feed Range and Pagination\n')
+    # We again use max_item_count to control page size
+    max_items_per_page = 3
+
+    # First we fetch the relevant feed ranges for the container - feed ranges represent logical partitions
+    # or ranges of partition key values, and can be used to query as well
+    feed_ranges = container.read_feed_ranges()
+
+    # For this example, we will just use the first feed range
+    feed_ranges_list = [feed_range async for feed_range in feed_ranges]
+    query_iterable = container.query_items(
+        query="SELECT * FROM c",
+        feed_range=feed_ranges_list[0],  # Query specific feed range
+        max_item_count=max_items_per_page
+    )
+
+    # Iterate through pages and count both pages and total items
+    total_item_count = 0
+    page_count = 0
+
+    item_pages = query_iterable.by_page()
+    async for page in item_pages:
+        page_count += 1
+        items_in_page = [item async for item in page]
+        total_item_count += len(items_in_page)
+
+        print(f'Page {page_count}: {len(items_in_page)} items from across partitions')
+
+    print(f'\nCross-partition query completed:')
+    print(f'  - Pages: {page_count}')
+    print(f'  - Total items: {total_item_count}')
 
 async def replace_item(container, doc_id):
     print('\n1.6 Replace an Item\n')
@@ -613,6 +645,7 @@ async def run_sample():
             await read_items(container)
             await query_items(container, 'SalesOrder1')
             await query_items_with_continuation_token(container)
+            await query_items_with_feed_ranges_and_pagination(container)
             await query_items_single_partition_with_pagination(container)
             await query_items_cross_partition_with_pagination(container)
             await replace_item(container, 'SalesOrder1')

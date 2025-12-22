@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from itertools import chain
 import math
 import os
 import logging
@@ -17,44 +16,10 @@ from azure.ai.evaluation._exceptions import (
 )
 from ..._common.utils import check_score_is_valid
 from azure.ai.evaluation._common._experimental import experimental
-from ..._converters._models import (
-    _BUILT_IN_DESCRIPTIONS,
-    _BUILT_IN_PARAMS,
-)
 
 logger = logging.getLogger(__name__)
 
 T_EvalValue = TypeVar("T_EvalValue")
-
-
-def _get_built_in_definition(tool_name: str):
-    """Get the definition for the built-in tool."""
-    if tool_name in _BUILT_IN_DESCRIPTIONS:
-        return {
-            "type": tool_name,
-            "description": _BUILT_IN_DESCRIPTIONS[tool_name],
-            "name": tool_name,
-            "parameters": _BUILT_IN_PARAMS.get(tool_name, {}),
-        }
-    return None
-
-
-def _get_needed_built_in_definitions(tool_calls: List[Dict]) -> List[Dict]:
-    """Extract tool definitions needed for the given built-in tool calls."""
-    needed_definitions = []
-    for tool_call in tool_calls:
-        if isinstance(tool_call, dict):
-            tool_type = tool_call.get("type")
-
-            # Only support converter format: {type: "tool_call", name: "bing_custom_search", arguments: {...}}
-            if tool_type == "tool_call":
-                tool_name = tool_call.get("name")
-                if tool_name in _BUILT_IN_DESCRIPTIONS:
-                    built_in_def = _get_built_in_definition(tool_name)
-                    if built_in_def and built_in_def not in needed_definitions:
-                        needed_definitions.append(built_in_def)
-
-    return needed_definitions
 
 
 @experimental
@@ -100,9 +65,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. note::
 
+        The output field "details" has been renamed to "tool_call_accuracy_details" for clarity.
+
         To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
         To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+
     """
 
     _PROMPTY_FILE = "tool_call_accuracy.prompty"
@@ -132,6 +100,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             credential=credential,
+            threshold=threshold,
             **kwargs,
         )
 
@@ -207,7 +176,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
         try:
-            needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions)
+            needed_tool_definitions = self._extract_needed_tool_definitions(
+                tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+            )
         except EvaluationException as e:
             # Check if this is because no tool definitions were provided at all
             if len(tool_definitions) == 0:
@@ -234,9 +205,18 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
-        # Single LLM call for all tool calls
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        if eval_input.get("query") is None:
+            raise EvaluationException(
+                message=("Query is a required input to the Tool Call Accuracy evaluator."),
+                internal_message=("Query is a required input to the Tool Call Accuracy evaluator."),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+            )
 
+        # Single LLM call for all tool calls
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = prompty_output_dict.get("llm_output", {})
         if isinstance(llm_output, dict):
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
@@ -248,6 +228,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
+                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
 
@@ -257,10 +238,18 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             score_result = "pass" if score >= self.threshold else "fail"
             response_dict = {
                 self._result_key: score,
+                f"gpt_{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
-                "details": llm_output.get("details", {}),
+                f"{self._result_key}_details": llm_output.get("details", {}),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
+                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
             return response_dict
 
@@ -275,104 +264,20 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
-        :keyword kwargs: The inputs to evaluate.
+        :keyword kwargs: The inputs to evaluate
         :type kwargs: Dict
-        :return: The evaluation result.
+        :return: The evaluation result
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get("error_message"))
+            return self._not_applicable_result(eval_input.get("error_message"), self.threshold)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result
         return result
-
-    def _not_applicable_result(self, error_message):
-        """Return a result indicating that the tool call is not applicable for evaluation.
-        :param eval_input: The input to the evaluator.
-        :type eval_input: Dict
-        :return: A dictionary containing the result of the evaluation.
-        :rtype: Dict[str, Union[str, float]]
-        """
-        # If no tool calls were made or tool call type is not supported, return not applicable result
-        return {
-            self._result_key: self._NOT_APPLICABLE_RESULT,
-            f"{self._result_key}_result": "pass",
-            f"{self._result_key}_threshold": self.threshold,
-            f"{self._result_key}_reason": error_message,
-            "details": {},
-        }
-
-    def _extract_needed_tool_definitions(self, tool_calls, tool_definitions):
-        """Extract the tool definitions that are needed for the provided tool calls."""
-        needed_tool_definitions = []
-
-        # Add all user-provided tool definitions
-        needed_tool_definitions.extend(tool_definitions)
-
-        # Add the needed built-in tool definitions (if they are called)
-        built_in_definitions = _get_needed_built_in_definitions(tool_calls)
-        needed_tool_definitions.extend(built_in_definitions)
-
-        # OpenAPI tool is a collection of functions, so we need to expand it
-        tool_definitions_expanded = list(
-            chain.from_iterable(
-                tool.get("functions", []) if tool.get("type") == "openapi" else [tool]
-                for tool in needed_tool_definitions
-            )
-        )
-
-        # Validate that all tool calls have corresponding definitions
-        for tool_call in tool_calls:
-            if isinstance(tool_call, dict):
-                tool_type = tool_call.get("type")
-
-                if tool_type == "tool_call":
-                    tool_name = tool_call.get("name")
-                    if tool_name and tool_name in _BUILT_IN_DESCRIPTIONS:
-                        # This is a built-in tool from converter, already handled above
-                        continue
-                    elif tool_name:
-                        # This is a regular function tool from converter
-                        tool_definition_exists = any(
-                            tool.get("name") == tool_name and tool.get("type", "function") == "function"
-                            for tool in tool_definitions_expanded
-                        )
-                        if not tool_definition_exists:
-                            raise EvaluationException(
-                                message=f"Tool definition for {tool_name} not found",
-                                blame=ErrorBlame.USER_ERROR,
-                                category=ErrorCategory.INVALID_VALUE,
-                                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                            )
-                    else:
-                        raise EvaluationException(
-                            message=f"Tool call missing name: {tool_call}",
-                            blame=ErrorBlame.USER_ERROR,
-                            category=ErrorCategory.INVALID_VALUE,
-                            target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                        )
-                else:
-                    # Unsupported tool format - only converter format is supported
-                    raise EvaluationException(
-                        message=f"Unsupported tool call format. Only converter format is supported: {tool_call}",
-                        blame=ErrorBlame.USER_ERROR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                    )
-            else:
-                # Tool call is not a dictionary
-                raise EvaluationException(
-                    message=f"Tool call is not a dictionary: {tool_call}",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                )
-
-        return needed_tool_definitions
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param

@@ -1,3 +1,4 @@
+import sys
 from functools import partial
 from pathlib import Path
 
@@ -36,6 +37,9 @@ class TestInitFinalizeJob:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
         from azure.ai.ml.dsl import pipeline
 
+        # Access class attributes directly to avoid capturing self in closures
+        component_func = TestInitFinalizeJob.component_func
+
         def assert_pipeline_job_init_finalize_job(pipeline_job: PipelineJob):
             assert pipeline_job._validate_init_finalize_job().passed
             assert pipeline_job.settings.on_init == "init_job"
@@ -47,10 +51,10 @@ class TestInitFinalizeJob:
         # pipeline.settings.on_init/on_finalize
         @pipeline()
         def job_settings_func():
-            init_job = self.component_func()  # noqa: F841
-            work1 = self.component_func()  # noqa: F841
-            work2 = self.component_func()  # noqa: F841
-            finalize_job = self.component_func()  # noqa: F841
+            init_job = component_func()  # noqa: F841
+            work1 = component_func()  # noqa: F841
+            work2 = component_func()  # noqa: F841
+            finalize_job = component_func()  # noqa: F841
 
         pipeline1 = job_settings_func()
         pipeline1.settings.on_init = "init_job"
@@ -60,10 +64,10 @@ class TestInitFinalizeJob:
         # dsl.settings()
         @pipeline()
         def dsl_settings_func():
-            init_job = self.component_func()
-            work1 = self.component_func()  # noqa: F841
-            work2 = self.component_func()  # noqa: F841
-            finalize_job = self.component_func()  # noqa: F841
+            init_job = component_func()  # noqa: F841
+            work1 = component_func()  # noqa: F841
+            work2 = component_func()  # noqa: F841
+            finalize_job = component_func()  # noqa: F841
             # `set_pipeline_settings` can receive either `BaseNode` or str, both should work
             set_pipeline_settings(on_init=init_job, on_finalize="finalize_job")
 
@@ -76,10 +80,10 @@ class TestInitFinalizeJob:
             on_finalize="finalize_job",
         )
         def in_decorator_func():
-            init_job = self.component_func()  # noqa: F841
-            work1 = self.component_func()  # noqa: F841
-            work2 = self.component_func()  # noqa: F841
-            finalize_job = self.component_func()  # noqa: F841
+            init_job = component_func()  # noqa: F841
+            work1 = component_func()  # noqa: F841
+            work2 = component_func()  # noqa: F841
+            finalize_job = component_func()  # noqa: F841
 
         pipeline3 = in_decorator_func()
         assert_pipeline_job_init_finalize_job(pipeline3)
@@ -94,10 +98,14 @@ class TestInitFinalizeJob:
         )
 
     def test_invalid_init_finalize_job_from_sdk(self) -> None:
+        # Access class attributes directly to avoid capturing self in closures
+        component_func = TestInitFinalizeJob.component_func
+        hello_world_func = TestInitFinalizeJob.hello_world_func
+
         # invalid case: job name not exists
         @dsl.pipeline()
         def invalid_init_finalize_job_func():
-            self.component_func()
+            component_func()
 
         invalid_pipeline1 = invalid_init_finalize_job_func()
         invalid_pipeline1.settings.on_init = "init_job"
@@ -113,8 +121,8 @@ class TestInitFinalizeJob:
         # invalid case: no normal node, on_init/on_finalize job is not isolated
         @dsl.pipeline()
         def init_finalize_with_invalid_connection_func(int_param: int, str_param: str):
-            node1 = self.hello_world_func(component_in_number=int_param, component_in_path=str_param)
-            node2 = self.hello_world_func(  # noqa: F841
+            node1 = hello_world_func(component_in_number=int_param, component_in_path=str_param)
+            node2 = hello_world_func(  # noqa: F841
                 component_in_number=int_param,
                 component_in_path=node1.outputs.component_out_path,
             )
@@ -145,13 +153,13 @@ class TestInitFinalizeJob:
         # invalid case: set on_init for pipeline component
         @dsl.pipeline
         def subgraph_func():
-            node = self.component_func()
+            node = component_func()
             set_pipeline_settings(on_init=node)  # set on_init for subgraph (pipeline component)
 
         @dsl.pipeline
         def subgraph_with_init_func():
             subgraph_func()
-            self.component_func()
+            component_func()
 
         with pytest.raises(UserErrorException) as e:
             subgraph_with_init_func()
@@ -160,10 +168,13 @@ class TestInitFinalizeJob:
     def test_init_finalize_job_with_subgraph(self) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
 
+        # Access class attributes directly to avoid capturing self in closures
+        component_func = TestInitFinalizeJob.component_func
+
         # happy path
         @dsl.pipeline()
         def subgraph_func():
-            node = self.component_func()
+            node = component_func()
             node.compute = "cpu-cluster"
 
         @dsl.pipeline()

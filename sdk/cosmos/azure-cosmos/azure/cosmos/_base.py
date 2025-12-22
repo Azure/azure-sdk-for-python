@@ -23,6 +23,7 @@
 """
 
 import base64
+import time
 from email.utils import formatdate
 import json
 import uuid
@@ -46,9 +47,13 @@ from .partition_key import _Empty, _Undefined
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
+    from ._global_partition_endpoint_manager_per_partition_automatic_failover import (
+        _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover)
     from ._request_object import RequestObject
+    from ._routing.routing_range import PartitionKeyRangeWrapper
 
 # pylint: disable=protected-access
+#cspell:ignore PPAF, ppaf
 
 _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
@@ -69,7 +74,8 @@ _COMMON_OPTIONS = {
     'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
-    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS
+    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
+    "availability_strategy_config": Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -109,12 +115,128 @@ def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
+    if 'read_timeout' in kwargs:
+        options['read_timeout'] = kwargs['read_timeout']
+    if 'timeout' in kwargs:
+        options['timeout'] = kwargs['timeout']
+
+
+    options[Constants.OperationStartTime] = time.time()
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
     if if_none_match:
         options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': if_none_match}
     return options
+
+def _merge_query_results(
+        results: dict[str, Any],
+        partial_result: dict[str, Any],
+        query: Optional[Union[str, dict[str, Any]]]
+) -> dict[str, Any]:
+    """Merges partial query results from different partitions.
+
+    This method is required for queries that are manually fanned out to multiple
+    partitions or ranges within the SDK, such as prefix partition key queries.
+    For non-aggregated queries, results from each partition are simply concatenated.
+    However, for aggregate queries (COUNT, SUM, MIN, MAX, AVG), each partition
+    returns a partial aggregate. This method merges these partial results to compute
+    the final, correct aggregate value.
+
+    TODO:This client-side aggregation is a temporary workaround. Ideally, this logic
+    should be integrated into the core pipeline as aggregate queries are handled by DefaultExecutionContext,
+    not MultiAggregatorExecutionContext, which is not split proof until the logic is moved to the core pipeline.
+    This method handles the aggregation of results when a query spans multiple
+    partitions. It specifically handles:
+    1. Standard queries: Appends documents from partial_result to results.
+    2. Aggregate queries that return a JSON object (e.g., `SELECT COUNT(1) FROM c`, `SELECT MIN(c.field) FROM c`).
+    3. VALUE queries with aggregation that return a scalar value (e.g., `SELECT VALUE COUNT(1) FROM c`).
+
+    :param dict[str, Any] results: The accumulated result's dictionary.
+    :param dict[str, Any] partial_result: The new partial result dictionary to merge.
+    :param query: The query being executed.
+    :type query: str or dict[str, Any]
+    :return: The merged result's dictionary.
+    :rtype: dict[str, Any]
+    """
+    if not results:
+        return partial_result
+
+    partial_docs = partial_result.get("Documents")
+    if not partial_docs:
+        return results
+
+    results_docs = results.get("Documents")
+
+    # Check if both results are aggregate queries
+    is_partial_agg = (
+            isinstance(partial_docs, list)
+            and len(partial_docs) == 1
+            and isinstance(partial_docs[0], dict)
+            and partial_docs[0].get("_aggregate") is not None
+    )
+    is_results_agg = (
+            results_docs
+            and isinstance(results_docs, list)
+            and len(results_docs) == 1
+            and isinstance(results_docs[0], dict)
+            and results_docs[0].get("_aggregate") is not None
+    )
+
+    if is_partial_agg and is_results_agg:
+        agg_results = results_docs[0]["_aggregate"] # type: ignore[index]
+        agg_partial = partial_docs[0]["_aggregate"]
+        for key in agg_partial:
+            if key not in agg_results:
+                agg_results[key] = agg_partial[key]
+            elif isinstance(agg_partial.get(key), dict) and "count" in agg_partial[key]:  # AVG
+                if isinstance(agg_results.get(key), dict):
+                    agg_results[key]["sum"] += agg_partial[key]["sum"]
+                    agg_results[key]["count"] += agg_partial[key]["count"]
+            elif key.lower().startswith("min"):
+                agg_results[key] = min(agg_results[key], agg_partial[key])
+            elif key.lower().startswith("max"):
+                agg_results[key] = max(agg_results[key], agg_partial[key])
+            else:  # COUNT, SUM
+                agg_results[key] += agg_partial[key]
+        return results
+
+    # Check if both are VALUE aggregate queries
+    is_partial_value_agg = (
+            isinstance(partial_docs, list)
+            and len(partial_docs) == 1
+            and isinstance(partial_docs[0], (int, float))
+    )
+    is_results_value_agg = (
+            results_docs
+            and isinstance(results_docs, list)
+            and len(results_docs) == 1
+            and isinstance(results_docs[0], (int, float))
+    )
+
+    if is_partial_value_agg and is_results_value_agg:
+        query_text = query.get("query") if isinstance(query, dict) else query
+        if query_text:
+            query_upper = query_text.upper()
+            # For MIN/MAX, we find the min/max of the partial results.
+            # For COUNT/SUM, we sum the partial results.
+            # Without robust query parsing, we can't distinguish them reliably.
+            # Defaulting to sum for COUNT/SUM. MIN/MAX VALUE queries are not fully supported client-side.
+            if " SELECT VALUE MIN" in query_upper:
+                results_docs[0] = min(results_docs[0], partial_docs[0]) # type: ignore[index]
+            elif " SELECT VALUE MAX" in query_upper:
+                results_docs[0] = max(results_docs[0], partial_docs[0]) # type: ignore[index]
+            else:  # For COUNT/SUM, we sum the partial results
+                results_docs[0] += partial_docs[0] # type: ignore[index]
+        return results
+
+    # Standard query, append documents
+    if results_docs is None:
+        results["Documents"] = partial_docs
+    elif isinstance(results_docs, list) and isinstance(partial_docs, list):
+        results_docs.extend(partial_docs)
+    results["_count"] = len(results["Documents"])
+    return results
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
@@ -945,3 +1067,17 @@ def _build_properties_cache(properties: dict[str, Any], container_link: str) -> 
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
+
+def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
+    """Formats the partition key range options to be used internally from the query ones.
+    :param dict query_options: The query options being used.
+    :return: The relevant partition key range options.
+    :rtype: dict
+    """
+    pk_range_options: dict[str, Any] = {}
+    if query_options is not None:
+        if "containerRID" in query_options:
+            pk_range_options["containerRID"] = query_options["containerRID"]
+        if "excludedLocations" in query_options:
+            pk_range_options["excludedLocations"] = query_options["excludedLocations"]
+    return pk_range_options

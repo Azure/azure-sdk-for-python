@@ -207,12 +207,20 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         name_starts_with: Optional[str] = None,
         include: Optional[Union[str, List[str]]] = None,
         *,
+        results_per_page: Optional[int] = None,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> ItemPaged[BlobProperties]: ...
     @distributed_trace
     def list_blob_names(
-        self, *, name_starts_with: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        name_starts_with: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        start_from: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> ItemPaged[str]: ...
     @distributed_trace
     def walk_blobs(
@@ -221,6 +229,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         include: Optional[Union[List[str], str]] = None,
         delimiter: str = "/",
         *,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> ItemPaged[Union[BlobProperties, BlobPrefix]]: ...
