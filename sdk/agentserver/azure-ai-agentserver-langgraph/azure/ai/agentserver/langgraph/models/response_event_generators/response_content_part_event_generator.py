@@ -93,7 +93,7 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         )
         stream_state.sequence_number += 1
         if self.parent:
-            self.parent.aggregate_content(aggregated_content.as_dict())
+            self.parent.aggregate_content(aggregated_content)
         return [done_event]
 
     def try_create_item_content_helper(self, message):
