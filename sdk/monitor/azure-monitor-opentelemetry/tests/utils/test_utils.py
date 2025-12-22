@@ -62,9 +62,7 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
         return_value=False,
     )
-    def test_diagnostics_app_service_attach(
-        self, attach_mock, app_service_mock, aks_mock, functions_mock
-    ):
+    def test_diagnostics_app_service_attach(self, attach_mock, app_service_mock, aks_mock, functions_mock):
         reload(_utils)
         self.assertTrue(_utils._is_diagnostics_enabled())
 
@@ -84,9 +82,7 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
         return_value=False,
     )
-    def test_diagnostics_aks_attach(
-        self, attach_mock, app_service_mock, aks_mock, functions_mock
-    ):
+    def test_diagnostics_aks_attach(self, attach_mock, app_service_mock, aks_mock, functions_mock):
         reload(_utils)
         self.assertTrue(_utils._is_diagnostics_enabled())
 
@@ -108,9 +104,7 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
         return_value=True,
     )
-    def test_diagnostics_functions_attach(
-        self, attach_mock, app_service_mock, aks_mock, functions_mock
-    ):
+    def test_diagnostics_functions_attach(self, attach_mock, app_service_mock, aks_mock, functions_mock):
         reload(_utils)
         # Functions attach does not currently enable diagnostics
         self.assertFalse(_utils._is_diagnostics_enabled())

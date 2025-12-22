@@ -36,6 +36,14 @@ pip install azure-ai-language-conversations-authoring
 
 > Note: This version of the client library defaults to the 2025-11-15-preview version of the service
 
+This table shows the relationship between SDK versions and supported API versions of the service
+
+| SDK version  | Supported API version of service  |
+| ------------ | --------------------------------- |
+| 1.0.0b3 - Latest preview release | 2023-04-01, 2025-11-01, 2025-05-15-preview, 2025-11-15-preview (default) |
+| 1.0.0b2 | 2023-04-01, 2025-05-15-preview, 2025-11-15-preview (default) |
+| 1.0.0b1 | 2023-04-01, 2024-11-15-preview, 2025-05-15-preview (default) |
+
 ### Authenticate the client
 
 To interact with the Conversation Authoring service, you'll need to create an instance of the `ConversationAuthoringClient`. You will need an **endpoint** and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
