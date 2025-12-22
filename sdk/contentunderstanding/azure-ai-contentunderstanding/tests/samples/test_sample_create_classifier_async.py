@@ -11,9 +11,9 @@
 TEST FILE: test_sample_create_classifier_async.py
 
 DESCRIPTION:
-    These tests validate the sample_create_classifier.py sample code (async version).
-    This sample demonstrates creating a classifier analyzer to categorize documents
-    into predefined categories with optional automatic segmentation.
+    These tests validate the sample_create_classifier_async.py sample code.
+    This sample demonstrates how to create a classifier analyzer to categorize documents and use it
+    to analyze documents with and without automatic segmentation.
 
 USAGE:
     pytest test_sample_create_classifier_async.py

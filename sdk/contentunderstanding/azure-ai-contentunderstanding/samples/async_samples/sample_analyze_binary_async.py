@@ -8,8 +8,10 @@
 FILE: sample_analyze_binary_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze a PDF file from disk using the `prebuilt-documentSearch`
-    analyzer (async version).
+    This sample demonstrates how to analyze a PDF file from disk using the prebuilt-documentSearch
+    analyzer.
+
+    ## About analyzing documents from binary data
 
     One of the key values of Content Understanding is taking a content file and extracting the content
     for you in one call. The service returns an AnalyzeResult that contains an array of MediaContent
@@ -20,13 +22,24 @@ DESCRIPTION:
     This sample focuses on document analysis. For prebuilt RAG analyzers covering images, audio, and
     video, see sample_analyze_url_async.py.
 
-    The prebuilt-documentSearch analyzer transforms unstructured documents into structured, machine-
-    readable data optimized for RAG scenarios. It generates rich GitHub Flavored Markdown that preserves
-    document structure and can include structured text, tables (in HTML format), charts and diagrams,
-    mathematical formulas, hyperlinks, barcodes, annotations, and page metadata.
+    ## Prebuilt analyzers
 
-    For documents that contain images with hand-written text, the prebuilt-documentSearch analyzer
-    includes OCR capabilities by default.
+    Content Understanding provides prebuilt RAG analyzers (the prebuilt-*Search analyzers, such as
+    prebuilt-documentSearch) that return markdown and a one-paragraph Summary for each content item,
+    making them useful for retrieval-augmented generation (RAG) and other downstream applications:
+
+    - prebuilt-documentSearch - Extracts content from documents (PDF, images, Office documents) with
+      layout preservation, table detection, figure analysis, and structured markdown output.
+      Optimized for RAG scenarios.
+    - prebuilt-audioSearch - Transcribes audio content with speaker diarization, timing information,
+      and conversation summaries. Supports multilingual transcription.
+    - prebuilt-videoSearch - Analyzes video content with visual frame extraction, audio transcription,
+      and structured summaries. Provides temporal alignment of visual and audio content.
+    - prebuilt-imageSearch - Analyzes standalone images and returns a one-paragraph Summary of the
+      image content. For images that contain text (including hand-written text), use
+      prebuilt-documentSearch.
+
+    This sample uses prebuilt-documentSearch to extract structured content from PDF documents.
 
 USAGE:
     python sample_analyze_binary_async.py

@@ -11,7 +11,8 @@ TEST FILE: test_sample_copy_analyzer_async.py
 
 DESCRIPTION:
     These tests validate the sample_copy_analyzer.py sample code (async version).
-    This sample demonstrates copying an analyzer within the same resource.
+    This sample demonstrates how to copy an analyzer from source to target within the same
+    Microsoft Foundry resource using the begin_copy_analyzer API.
 
 USAGE:
     pytest test_sample_copy_analyzer_async.py

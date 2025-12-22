@@ -12,8 +12,8 @@ DESCRIPTION:
     Microsoft Foundry resource to a target Microsoft Foundry resource (cross-resource copying).
     This is useful for copying analyzers between different Azure resources or subscriptions.
 
-ABOUT CROSS-RESOURCE COPYING:
-    The `grant_copy_authorization` and `copy_analyzer` APIs allow you to copy an analyzer
+    About cross-resource copying
+    The grant_copy_authorization and begin_copy_analyzer APIs allow you to copy an analyzer
     between different Azure resources:
     - Cross-resource copy: Copies an analyzer from one Azure resource to another
     - Authorization required: You must grant copy authorization before copying
@@ -28,26 +28,36 @@ ABOUT CROSS-RESOURCE COPYING:
     use the sample_copy_analyzer_async.py sample instead.
 
 PREREQUISITES:
-    To get started you'll need a **Microsoft Foundry resource**. For this cross-resource scenario,
-    you'll also need:
+    To get started you'll need a Microsoft Foundry resource. See Sample 00: Configure model
+    deployment defaults for setup guidance. For this cross-resource scenario, you'll also need:
     - Source Microsoft Foundry resource with model deployments configured
     - Target Microsoft Foundry resource with model deployments configured
-    
+
     Important: Both the source and target resources require the 'Cognitive Services User' role
     to be granted to the credential used to run the code. This role is required for cross-resource
-    copying operations. Without this role, the grant_copy_authorization and copy_analyzer
+    copying operations. Without this role, the grant_copy_authorization and begin_copy_analyzer
     operations will fail with authorization errors.
 
 HOW AUTHORIZATION WORKS:
     The grant_copy_authorization method must be called on the source Microsoft Foundry resource
     (where the analyzer currently exists). This is because the source resource needs to explicitly
     grant permission for its analyzer to be copied. The method creates a time-limited authorization
-    record that grants permission to a specific target resource.
+    record that grants permission to a specific target resource. The method takes:
+    - The source analyzer ID to be copied
+    - The target Azure resource ID that is allowed to receive the copy
+    - The target region where the copy will be performed (optional, defaults to current region)
 
-    Where copy is performed: The copy_analyzer method must be called on the target Microsoft Foundry
-    resource (where the analyzer will be copied to). This is because the target resource is the one
-    receiving and creating the copy. When the target resource calls copy_analyzer, the service
-    validates that authorization was previously granted by the source resource.
+    The method returns a CopyAuthorization object containing:
+    - The full path of the source analyzer
+    - The target Azure resource ID
+    - An expiration timestamp for the authorization
+
+    Where copy is performed: The begin_copy_analyzer method must be called on the target Microsoft
+    Foundry resource (where the analyzer will be copied to). This is because the target resource
+    is the one receiving and creating the copy. When the target resource calls begin_copy_analyzer,
+    the service validates that authorization was previously granted by the source resource. The
+    authorization must be active (not expired) and match the target resource ID and region
+    specified in the copy request.
 
 USAGE:
     python sample_grant_copy_auth_async.py

@@ -11,10 +11,9 @@
 TEST FILE: test_sample_analyze_url_async.py
 
 DESCRIPTION:
-    These tests validate the sample_analyze_url.py sample code (async version).
-    This sample demonstrates prebuilt RAG analyzers with URL inputs. Content Understanding supports
-    both local binary inputs (see sample_analyze_binary_async.py) and URL inputs across all modalities.
-    For URL inputs, use begin_analyze() with AnalyzeInput objects that wrap the URL.
+    These tests validate the sample_analyze_url_async.py sample code.
+    This sample demonstrates how to analyze content from URLs across modalities using prebuilt RAG
+    analyzers.
 
 USAGE:
     pytest test_sample_analyze_url_async.py

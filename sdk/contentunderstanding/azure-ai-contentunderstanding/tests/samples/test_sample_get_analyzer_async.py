@@ -10,8 +10,9 @@
 TEST FILE: test_sample_get_analyzer_async.py
 
 DESCRIPTION:
-    These tests validate the sample_get_analyzer.py sample code (async version).
-    This sample demonstrates retrieving information about prebuilt and custom analyzers.
+    These tests validate the sample_get_analyzer_async.py sample code.
+    This sample demonstrates how to retrieve information about analyzers, including prebuilt
+    analyzers and custom analyzers.
 
 USAGE:
     pytest test_sample_get_analyzer_async.py

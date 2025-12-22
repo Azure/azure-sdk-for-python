@@ -9,17 +9,38 @@ FILE: sample_create_analyzer.py
 
 DESCRIPTION:
     This sample demonstrates how to create a custom analyzer with a field schema to extract
-    structured data from documents.
+    structured data from documents. While this sample shows document modalities, custom analyzers
+    can also be created for video, audio, and image content. The same concepts apply across all
+    modalities.
 
-    Custom analyzers allow you to:
+    ## About custom analyzers
+
+    Custom analyzers allow you to define a field schema that specifies what structured data to
+    extract from documents. You can:
     - Define custom fields (string, number, date, object, array)
-    - Specify extraction methods:
-      - extract: Values are extracted as they appear in the content (literal text extraction)
-      - generate: Values are generated freely based on the content using AI models
-      - classify: Values are classified against a predefined set of categories
-    - Use prebuilt analyzers as a base (prebuilt-document, prebuilt-audio, prebuilt-video, prebuilt-image)
+    - Specify extraction methods to control how field values are extracted:
+      - generate - Values are generated freely based on the content using AI models (best for
+        complex or variable fields requiring interpretation)
+      - classify - Values are classified against a predefined set of categories (best when using
+        enum with a fixed set of possible values)
+      - extract - Values are extracted as they appear in the content (best for literal text
+        extraction from specific locations). Note: This method is only available for document
+        content. Requires estimateSourceAndConfidence to be set to true for the field.
+
+      When not specified, the system automatically determines the best method based on the field
+      type and description.
+    - Use prebuilt analyzers as a base. Supported base analyzers include:
+      - prebuilt-document - for document-based custom analyzers
+      - prebuilt-audio - for audio-based custom analyzers
+      - prebuilt-video - for video-based custom analyzers
+      - prebuilt-image - for image-based custom analyzers
     - Configure analysis options (OCR, layout, formulas)
-    - Enable source and confidence tracking for extracted field values
+    - Enable source and confidence tracking: Set estimateFieldSourceAndConfidence to true at the
+      analyzer level (in ContentAnalyzerConfig) or estimateSourceAndConfidence to true at the field
+      level to get source location (page number, bounding box) and confidence scores for extracted
+      field values. This is required for fields with method = extract and is useful for validation,
+      quality assurance, debugging, and highlighting source text in user interfaces. Field-level
+      settings override analyzer-level settings.
 
 USAGE:
     python sample_create_analyzer.py

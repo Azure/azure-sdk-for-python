@@ -9,21 +9,21 @@ FILE: sample_update_defaults.py
 
 DESCRIPTION:
     This sample demonstrates how to configure and retrieve default model deployment settings
-    for your Microsoft Foundry resource. This is a **required one-time setup per Microsoft Foundry
-    resource** before using prebuilt or custom analyzers.
+    for your Microsoft Foundry resource. This is a required one-time setup per Microsoft Foundry
+    resource before using prebuilt or custom analyzers.
 
     ## About model deployment configuration
 
     Content Understanding prebuilt analyzers and custom analyzers require specific large language
     model deployments to function. Currently, Content Understanding uses OpenAI GPT models:
 
-    - **gpt-4.1** - Used by most prebuilt analyzers (e.g., prebuilt-invoice, prebuilt-receipt,
+    - gpt-4.1 - Used by most prebuilt analyzers (e.g., prebuilt-invoice, prebuilt-receipt,
       prebuilt-idDocument)
-    - **gpt-4.1-mini** - Used by RAG analyzers (e.g., prebuilt-documentSearch, prebuilt-imageSearch,
+    - gpt-4.1-mini - Used by RAG analyzers (e.g., prebuilt-documentSearch, prebuilt-imageSearch,
       prebuilt-audioSearch, prebuilt-videoSearch)
-    - **text-embedding-3-large** - Used for semantic search and embeddings
+    - text-embedding-3-large - Used for semantic search and embeddings
 
-    This configuration is **per Microsoft Foundry resource** and persists across sessions.
+    This configuration is per Microsoft Foundry resource and persists across sessions.
     You only need to configure it once per Microsoft Foundry resource (or when you change
     deployment names).
 
@@ -31,20 +31,20 @@ DESCRIPTION:
 
     To get started you'll need:
 
-    1. An Azure subscription and a **Microsoft Foundry resource**. To create a Microsoft Foundry
+    1. An Azure subscription and a Microsoft Foundry resource. To create a Microsoft Foundry
        resource, follow the steps in the Azure Content Understanding quickstart.
        You must create your Microsoft Foundry resource in a region that supports Content Understanding.
 
-    2. After creating your Microsoft Foundry resource, you must grant yourself the **Cognitive Services
-       User** role to enable API calls for setting default model deployments. This role assignment
+    2. After creating your Microsoft Foundry resource, you must grant yourself the Cognitive Services
+       User role to enable API calls for setting default model deployments. This role assignment
        is required even if you are the owner of the resource.
 
-    3. Take note of your Microsoft Foundry resource **endpoint** and, if you plan to use key-based
-       authentication, the **API key**. A typical endpoint looks like:
+    3. Take note of your Microsoft Foundry resource endpoint and, if you plan to use key-based
+       authentication, the API key. A typical endpoint looks like:
        https://your-foundry.services.ai.azure.com
 
-    4. If you plan to use `DefaultAzureCredential` for authentication, you will need to log in to
-       Azure first. Typically, you can do this by running `az login` (Azure CLI) or `azd login`
+    4. If you plan to use DefaultAzureCredential for authentication, you will need to log in to
+       Azure first. Typically, you can do this by running az login (Azure CLI) or azd login
        (Azure Developer CLI) in your terminal.
 
     5. Deploy the following models in Microsoft Foundry:
@@ -52,9 +52,9 @@ DESCRIPTION:
        - gpt-4.1-mini
        - text-embedding-3-large
 
-    6. Take note of the **deployment names** used for each model. The convention is to use the model
+    6. Take note of the deployment names used for each model. The convention is to use the model
        names (e.g., "gpt-4.1", "gpt-4.1-mini", "text-embedding-3-large"), but you can change these
-       during deployment.
+       during deployment. You'll use these deployment names when configuring defaults.
 
 USAGE:
     python sample_update_defaults.py

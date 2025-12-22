@@ -11,7 +11,17 @@ TEST FILE: test_sample_list_analyzers.py
 
 DESCRIPTION:
     These tests validate the sample_list_analyzers.py sample code.
-    This sample demonstrates listing all available analyzers (prebuilt and custom).
+    This sample demonstrates how to list all available analyzers in your Microsoft Foundry
+    resource, including both prebuilt and custom analyzers.
+
+    The list_analyzers method returns all analyzers in your resource, including:
+    - Prebuilt analyzers: System-provided analyzers like prebuilt-documentSearch, prebuilt-invoice, etc.
+    - Custom analyzers: Analyzers you've created
+
+    This is useful for:
+    - Discovery: See what analyzers are available in your resource
+    - Management: Get an overview of all your custom analyzers
+    - Debugging: Verify that analyzers were created successfully
 
 USAGE:
     pytest test_sample_list_analyzers.py

@@ -11,7 +11,13 @@ TEST FILE: test_sample_delete_analyzer_async.py
 
 DESCRIPTION:
     These tests validate the sample_delete_analyzer.py sample code (async version).
-    This sample demonstrates permanently deleting a custom analyzer.
+    This sample demonstrates how to delete a custom analyzer.
+
+    The delete_analyzer method permanently removes a custom analyzer from your resource.
+    This operation cannot be undone.
+
+    Important notes:
+    - Only custom analyzers can be deleted. Prebuilt analyzers cannot be deleted.
 
 USAGE:
     pytest test_sample_delete_analyzer_async.py

@@ -11,14 +11,18 @@ DESCRIPTION:
     This sample demonstrates how to retrieve information about analyzers, including prebuilt
     analyzers and custom analyzers.
 
-    The get_analyzer method allows you to retrieve detailed information about any analyzer:
-    - Prebuilt analyzers: System-provided analyzers like prebuilt-documentSearch, prebuilt-invoice
+    ## About getting analyzer information
+
+    The get_analyzer method allows you to retrieve detailed information about any analyzer,
+    including:
+    - Prebuilt analyzers: System-provided analyzers like prebuilt-documentSearch, prebuilt-invoice,
+      etc.
     - Custom analyzers: Analyzers you've created with custom field schemas or classifiers
 
     This is useful for:
-    - Verifying analyzer configuration
-    - Inspecting prebuilt analyzers to learn about their capabilities
-    - Debugging analyzer behavior
+    - Verifying analyzer configuration: Check the current state of an analyzer
+    - Inspecting prebuilt analyzers: Learn about available prebuilt analyzers and their capabilities
+    - Debugging: Understand why an analyzer behaves a certain way
 
 USAGE:
     python sample_get_analyzer.py

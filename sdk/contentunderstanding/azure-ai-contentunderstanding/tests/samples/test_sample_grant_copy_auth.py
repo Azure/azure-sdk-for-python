@@ -12,7 +12,8 @@ TEST FILE: test_sample_grant_copy_auth.py
 
 DESCRIPTION:
     These tests validate the sample_grant_copy_auth.py sample code.
-    This sample demonstrates cross-resource analyzer copying with authorization.
+    This sample demonstrates how to grant copy authorization and copy an analyzer from a source
+    Microsoft Foundry resource to a target Microsoft Foundry resource (cross-resource copying).
 
 USAGE:
     pytest test_sample_grant_copy_auth.py

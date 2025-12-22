@@ -12,10 +12,14 @@ DESCRIPTION:
     This is useful for removing temporary or sensitive analysis results immediately, rather
     than waiting for automatic deletion after 24 hours.
 
-    Analysis results are stored temporarily and can be deleted using the delete_result API:
-    - Immediate deletion: Results are marked for deletion and permanently removed
-    - Automatic deletion: Results are automatically deleted after 24 hours if not manually deleted
-    - Operation ID required: You need the operation ID from the analysis operation to delete
+    About deleting results:
+    Analysis results from analyze or begin_analyze are automatically deleted after 24 hours.
+    However, you may want to delete results earlier in certain cases:
+    - Remove sensitive data immediately: Ensure sensitive information is not retained longer than necessary
+    - Comply with data retention policies: Meet requirements for data deletion
+
+    To delete results earlier than the 24-hour automatic deletion, use delete_result.
+    This method requires the operation ID from the analysis operation.
 
     Important: Once deleted, results cannot be recovered. Make sure you have saved any data
     you need before deleting.

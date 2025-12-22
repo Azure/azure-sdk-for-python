@@ -11,8 +11,7 @@ TEST FILE: test_sample_analyze_invoice.py
 
 DESCRIPTION:
     These tests validate the sample_analyze_invoice.py sample code.
-    This sample demonstrates extracting structured invoice fields (customer name, line items,
-    totals, etc.) using the prebuilt-invoice analyzer.
+    This sample demonstrates how to analyze an invoice using the prebuilt-invoice analyzer.
 
 USAGE:
     pytest test_sample_analyze_invoice.py

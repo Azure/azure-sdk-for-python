@@ -9,18 +9,26 @@ FILE: sample_analyze_url_async.py
 
 DESCRIPTION:
     Another great value of Content Understanding is its rich set of prebuilt analyzers. Great examples
-    of these are the RAG analyzers that work for all modalities (prebuilt-documentSearch, prebuilt-imageSearch,
-    prebuilt-audioSearch, and prebuilt-videoSearch).
+    of these are the RAG analyzers that work for all modalities (prebuilt-documentSearch,
+    prebuilt-imageSearch, prebuilt-audioSearch, and prebuilt-videoSearch). This sample demonstrates
+    these RAG analyzers. Many more prebuilt analyzers are available (for example, prebuilt-invoice);
+    see the invoice sample or the prebuilt analyzer documentation to explore the full list.
 
-    This sample demonstrates these RAG analyzers with URL inputs. Content Understanding supports both
-    local binary inputs (see sample_analyze_binary_async.py) and URL inputs across all modalities.
+    ## About analyzing URLs across modalities
+
+    Content Understanding supports both local binary inputs (see sample_analyze_binary_async.py) and URL
+    inputs across all modalities. This sample focuses on prebuilt RAG analyzers (the prebuilt-*Search
+    analyzers, such as prebuilt-documentSearch) with URL inputs.
 
     Important: For URL inputs, use begin_analyze() with AnalyzeInput objects that wrap the URL.
-    For binary data (local files), use begin_analyze_binary() instead.
+    For binary data (local files), use begin_analyze_binary() instead. This sample demonstrates
+    begin_analyze() with URL inputs.
 
     Documents, HTML, and images with text are returned as DocumentContent (derived from MediaContent),
     while audio and video are returned as AudioVisualContent (also derived from MediaContent). These
-    prebuilt RAG analyzers return markdown and a one-paragraph Summary for each content item.
+    prebuilt RAG analyzers return markdown and a one-paragraph Summary for each content item;
+    prebuilt-videoSearch can return multiple segments, so iterate over all contents rather than just
+    the first.
 
 USAGE:
     python sample_analyze_url_async.py

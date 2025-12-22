@@ -11,7 +11,8 @@ TEST FILE: test_sample_get_result_file.py
 
 DESCRIPTION:
     These tests validate the sample_get_result_file.py sample code.
-    This sample demonstrates retrieving result files (like keyframe images) from video analysis.
+    This sample demonstrates how to retrieve result files (such as keyframe images) from a
+    video analysis operation using the get_result_file API.
 
 USAGE:
     pytest test_sample_get_result_file.py

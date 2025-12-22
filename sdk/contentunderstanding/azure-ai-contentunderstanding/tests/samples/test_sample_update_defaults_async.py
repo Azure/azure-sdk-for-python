@@ -10,8 +10,10 @@
 TEST FILE: test_sample_update_defaults_async.py
 
 DESCRIPTION:
-    These tests validate the sample_update_defaults_async.py sample code (async version).
-    This sample demonstrates configuring model deployment settings for prebuilt analyzers.
+    These tests validate the sample_update_defaults_async.py sample code.
+    This sample demonstrates how to configure and retrieve default model deployment settings
+    for your Microsoft Foundry resource. This is a required one-time setup per Microsoft Foundry
+    resource before using prebuilt or custom analyzers.
 
     The tests validate:
     1. UpdateDefaults: Configuring model deployment mappings (optional, requires env vars)

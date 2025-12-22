@@ -9,18 +9,18 @@ FILE: sample_get_result_file_async.py
 
 DESCRIPTION:
     This sample demonstrates how to retrieve result files (such as keyframe images) from a
-    video analysis operation using the `get_result_file` API.
+    video analysis operation using the get_result_file API.
 
     About result files:
     When analyzing video content, the Content Understanding service can generate result files such as:
     - Keyframe images: Extracted frames from the video at specific timestamps
     - Other result files: Additional files generated during analysis
 
-    The `get_result_file` API allows you to retrieve these files using:
+    The get_result_file API allows you to retrieve these files using:
     - Operation ID: Extracted from the analysis operation
     - File path: The path to the specific result file. In the recording, keyframes were accessed
-                 with paths like `keyframes/733` and `keyframes/9000`, following the
-                 `keyframes/{frameTimeMs}` pattern.
+                 with paths like keyframes/733 and keyframes/9000, following the
+                 keyframes/{frameTimeMs} pattern.
 
 USAGE:
     python sample_get_result_file_async.py

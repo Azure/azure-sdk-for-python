@@ -11,7 +11,13 @@ TEST FILE: test_sample_update_analyzer_async.py
 
 DESCRIPTION:
     These tests validate the sample_update_analyzer.py sample code (async version).
-    This sample demonstrates updating an existing custom analyzer's description and tags.
+    This sample demonstrates how to update an existing custom analyzer, including updating
+    its description and tags.
+
+    The update_analyzer method allows you to modify certain properties of an existing analyzer.
+    The following properties can be updated:
+    - Description: Update the analyzer's description
+    - Tags: Add or update tags
 
 USAGE:
     pytest test_sample_update_analyzer_async.py

@@ -9,13 +9,13 @@ FILE: sample_copy_analyzer.py
 
 DESCRIPTION:
     This sample demonstrates how to copy an analyzer from source to target within the same
-    resource using the copy_analyzer API. This is useful for creating copies of analyzers
-    for testing, staging, or production deployment.
+    Microsoft Foundry resource using the begin_copy_analyzer API. This is useful for
+    creating copies of analyzers for testing, staging, or production deployment.
 
-    The copy_analyzer API allows you to copy an analyzer within the same Azure resource:
+    About copying analyzers
+    The begin_copy_analyzer API allows you to copy an analyzer within the same Azure resource:
     - Same-resource copy: Copies an analyzer from one ID to another within the same resource
     - Exact copy: The target analyzer is an exact copy of the source analyzer
-    - Use cases: Testing, staging, production deployment, versioning
 
     Note: For cross-resource copying (copying between different Azure resources or subscriptions),
     use the grant_copy_auth sample instead.

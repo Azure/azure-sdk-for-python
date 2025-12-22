@@ -8,14 +8,31 @@
 FILE: sample_create_classifier_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a classifier analyzer to categorize documents and
-    use it to analyze documents with and without automatic segmentation.
+    This sample demonstrates how to create a classifier analyzer to categorize documents and use it
+    to analyze documents with and without automatic segmentation.
 
-    Classifiers are a type of custom analyzer that categorize documents into predefined categories.
-    They're useful for:
-    - Document routing: Automatically route documents to the right processing pipeline
-    - Content organization: Organize large document collections by type
-    - Multi-document processing: Process files containing multiple document types by segmenting them
+    ## About classifiers
+
+    Classifiers are a type of custom analyzer that create classification workflows to categorize
+    documents into predefined custom categories using ContentCategories. They allow you to perform
+    classification and content extraction as part of a single API call. Classifiers are useful for:
+    - Content organization: Organize large document collections by type through categorization
+    - Data routing (optional): Optionally route your data to specific custom analyzers based on
+      category, ensuring your data is routed to the best analyzer for processing when needed
+    - Multi-document processing: Process files containing multiple document types by automatically
+      segmenting them
+
+    Classifiers use custom categories to define the types of documents they can identify. Each
+    category has a Description that helps the AI model understand what documents belong to that
+    category. You can define up to 200 category names and descriptions. You can include an "other"
+    category to handle unmatched content; otherwise, all files are forced to be classified into one
+    of your defined categories.
+
+    The enable_segment property in the analyzer configuration controls whether multi-document files
+    are split into segments:
+    - enable_segment = False: Classifies the entire file as a single category (classify only)
+    - enable_segment = True: Automatically splits the file into segments by category (classify and
+      segment)
 
 USAGE:
     python sample_create_classifier_async.py

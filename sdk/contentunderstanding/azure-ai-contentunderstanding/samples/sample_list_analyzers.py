@@ -12,7 +12,7 @@ DESCRIPTION:
     resource, including both prebuilt and custom analyzers.
 
     The list_analyzers method returns all analyzers in your resource, including:
-    - Prebuilt analyzers: System-provided analyzers like prebuilt-documentSearch, prebuilt-invoice
+    - Prebuilt analyzers: System-provided analyzers like prebuilt-documentSearch, prebuilt-invoice, etc.
     - Custom analyzers: Analyzers you've created
 
     This is useful for:

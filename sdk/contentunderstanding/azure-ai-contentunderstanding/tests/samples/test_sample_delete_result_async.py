@@ -11,7 +11,7 @@ TEST FILE: test_sample_delete_result_async.py
 
 DESCRIPTION:
     These tests validate the sample_delete_result_async.py sample code (async version).
-    This sample demonstrates deleting analysis results for immediate cleanup.
+    This sample demonstrates how to delete analysis results using the delete_result API.
 
 USAGE:
     pytest test_sample_delete_result_async.py

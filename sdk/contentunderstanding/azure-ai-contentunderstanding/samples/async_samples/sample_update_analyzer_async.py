@@ -11,7 +11,8 @@ DESCRIPTION:
     This sample demonstrates how to update an existing custom analyzer, including updating
     its description and tags.
 
-    The update_analyzer method allows you to modify certain properties of an existing analyzer:
+    The update_analyzer method allows you to modify certain properties of an existing analyzer.
+    The following properties can be updated:
     - Description: Update the analyzer's description
     - Tags: Add or update tags
 

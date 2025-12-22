@@ -11,7 +11,8 @@ TEST FILE: test_sample_get_analyzer.py
 
 DESCRIPTION:
     These tests validate the sample_get_analyzer.py sample code.
-    This sample demonstrates retrieving information about prebuilt and custom analyzers.
+    This sample demonstrates how to retrieve information about analyzers, including prebuilt
+    analyzers and custom analyzers.
 
 USAGE:
     pytest test_sample_get_analyzer.py

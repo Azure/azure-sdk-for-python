@@ -8,11 +8,27 @@
 FILE: sample_analyze_invoice.py
 
 DESCRIPTION:
-    Analyze an invoice using prebuilt analyzer
+    This sample demonstrates how to analyze an invoice from a URL using the prebuilt-invoice analyzer
+    and extract structured fields from the result.
 
-    This sample demonstrates how to analyze an invoice from a URL using the `prebuilt-invoice` analyzer
-    and extract structured fields from the result. The prebuilt-invoice analyzer automatically extracts
-    structured fields including:
+    ## About analyzing invoices
+
+    Content Understanding provides a rich set of prebuilt analyzers that are ready to use without any
+    configuration. These analyzers are powered by knowledge bases of thousands of real-world document
+    examples, enabling them to understand document structure and adapt to variations in format and
+    content.
+
+    Prebuilt analyzers are ideal for:
+    - Content ingestion in search and retrieval-augmented generation (RAG) workflows
+    - Intelligent document processing (IDP) to extract structured data from common document types
+    - Agentic flows as tools for extracting structured representations from input files
+
+    ### The prebuilt-invoice analyzer
+
+    The prebuilt-invoice analyzer is a domain-specific analyzer optimized for processing invoices,
+    utility bills, sales orders, and purchase orders. It automatically extracts structured fields
+    including:
+
     - Customer/Vendor information: Name, address, contact details
     - Invoice metadata: Invoice number, date, due date, purchase order number
     - Line items: Description, quantity, unit price, total for each item
@@ -20,6 +36,12 @@ DESCRIPTION:
     - Payment information: Payment terms, payment method, remittance address
 
     The analyzer works out of the box with various invoice formats and requires no configuration.
+    It's part of the financial documents category of prebuilt analyzers, which also includes:
+    - prebuilt-receipt - Sales receipts from retail and dining establishments
+    - prebuilt-creditCard - Credit card statements
+    - prebuilt-bankStatement.us - US bank statements
+    - prebuilt-check.us - US bank checks
+    - prebuilt-creditMemo - Credit memos and refund documents
 
 USAGE:
     python sample_analyze_invoice.py
