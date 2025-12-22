@@ -3,7 +3,7 @@
 [Batch][azure_batch] allows users to run large-scale parallel and high-performance computing (HPC) batch jobs efficiently in Azure. To learn more about Azure Batch, please see the [Azure Batch Overview](https://learn.microsoft.com/en-us/azure/batch/batch-technical-overview) documentation.
 
 [Source code][batch_source_code]
-| [Batch package (PyPI)][pypi_batch]
+| [Batch package (PyPI)](https://pypi.org/project/azure-batch/)
 | [API reference documentation](https://learn.microsoft.com/en-us/python/api/overview/azure/batch?view=azure-python)
 | [Product documentation](https://learn.microsoft.com/en-us/azure/batch/)
 
@@ -12,12 +12,12 @@
 # Getting Started
 
 ## Install the package
-Install the [azure-batch](pypi_batch) package v15.x or above for the most modern version of the package and [azure-identity](pypi_identity) with [pip](https://pypi.org/project/pip/):
+Install the [azure-batch](https://pypi.org/project/azure-batch/) package v15.x or above for the most modern version of the package and [azure-identity](https://pypi.org/project/azure-identity/) with [pip](https://pypi.org/project/pip/):
 
 ```Bash
 pip install azure-batch azure-identity
 ```
-[azure-identity](pypi_identity) is used for authentication and is mentioned in the authentication section below.
+[azure-identity](https://pypi.org/project/azure-identity/) is used for authentication and is mentioned in the authentication section below.
 
 ### Prerequisites
 * An Azure subscription. If you don't have one, [create an account for free][azure_sub]
@@ -204,9 +204,6 @@ section of the project.
 
 
 <!-- LINKS -->
-[pypi_batch]: https://pypi.org/project/azure-batch/
-[pypi_identity]: https://pypi.org/project/azure-identity/
-
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_batch]: https://azure.microsoft.com/en-us/products/batch
 [azure_storage]: https://azure.microsoft.com/en-us/products/category/storage
