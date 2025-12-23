@@ -68,7 +68,6 @@ with (
     print(f"Agent created (id: {student_agent.id}, name: {student_agent.name}, version: {student_agent.version})")
 
     # Create Multi-Agent Workflow
-
     workflow_yaml = f"""
 kind: workflow
 trigger:
@@ -187,4 +186,4 @@ trigger:
 
     project_client.agents.delete_version(agent_name=teacher_agent.name, agent_version=teacher_agent.version)
     print("Teacher Agent deleted")
-    # [END create_multi_agent_workflow]
+    
