@@ -35,6 +35,9 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :type similarity_threshold: int
     :param f1_score_threshold: The threshold for F1 score evaluation. Default is 0.5.
     :type f1_score_threshold: float
+    :keyword is_reasoning_model: If True, the evaluator will use reasoning model configuration (o1/o3 models).
+        This will adjust parameters like max_completion_tokens and remove unsupported parameters. Default is False.
+    :paramtype is_reasoning_model: bool
     :return: A callable class that evaluates and generates metrics for "question-answering" scenario.
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
@@ -101,12 +104,34 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
             if not isinstance(value, (int, float)):
                 raise TypeError(f"{name} must be an int or float, got {type(value)}")
 
+        is_reasoning_model = kwargs.pop("is_reasoning_model", False)
+
         evaluators = [
-            GroundednessEvaluator(model_config, threshold=groundedness_threshold),
-            RelevanceEvaluator(model_config, threshold=relevance_threshold),
-            CoherenceEvaluator(model_config, threshold=coherence_threshold),
-            FluencyEvaluator(model_config, threshold=fluency_threshold),
-            SimilarityEvaluator(model_config, threshold=similarity_threshold),
+            GroundednessEvaluator(
+                model_config,
+                threshold=groundedness_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
+            RelevanceEvaluator(
+                model_config,
+                threshold=relevance_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
+            CoherenceEvaluator(
+                model_config,
+                threshold=coherence_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
+            FluencyEvaluator(
+                model_config,
+                threshold=fluency_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
+            SimilarityEvaluator(
+                model_config,
+                threshold=similarity_threshold,
+                is_reasoning_model=is_reasoning_model,
+            ),
             F1ScoreEvaluator(threshold=f1_score_threshold),
         ]
         super().__init__(evaluators=evaluators, **kwargs)

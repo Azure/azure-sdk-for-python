@@ -1,38 +1,39 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os, logging
-from typing import Dict, List, Optional, Union, Any, Tuple
+"""Groundedness evaluator implementation."""
+# pylint: disable=line-too-long
+
+import logging
+import os
+from typing import Any, Dict, List, Optional, Union
 
 from typing_extensions import overload, override
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
-from ..._common.utils import (
-    ErrorBlame,
-    ErrorTarget,
-    EvaluationException,
-    ErrorCategory,
-    construct_prompty_model_config,
-    validate_model_config,
-    simplify_messages,
-)
+from ..._common.utils import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from ..._common.utils import construct_prompty_model_config, simplify_messages, validate_model_config
 
 try:
     from ..._user_agent import UserAgentSingleton
 except ImportError:
 
-    class UserAgentSingleton:
+    class UserAgentSingleton:  # pylint: disable=too-few-public-methods
+        """Fallback user agent when import fails."""
+
         @property
         def value(self) -> str:
+            """Return default user agent value."""
             return "None"
 
 
 logger = logging.getLogger(__name__)
+_NO_CONTEXT_MARKER = "<>"
 
 
-class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
+class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):  # pylint: disable=too-few-public-methods
     """Evaluates groundedness score for a given query (optional), response, and context or a multi-turn conversation,
     including reasoning.
 
@@ -115,6 +116,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             **kwargs,
         )
         self._model_config = model_config
+        self._token_credential = credential
         self.threshold = threshold
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
@@ -176,7 +178,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param
+    def __call__(
         self,
         *args,
         **kwargs,
@@ -212,13 +214,22 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_WITH_QUERY)
 
+        if os.path.basename(self._prompty_file) == self._PROMPTY_FILE_WITH_QUERY:
+            return
+
         self._prompty_file = prompty_path
+        user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={self.__class__.__name__})"
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(self._model_config),
             self._DEFAULT_OPEN_API_VERSION,
-            UserAgentSingleton().value,
+            user_agent,
         )
-        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+        self._flow = AsyncPrompty.load(
+            source=self._prompty_file,
+            model=prompty_model_config,
+            token_credential=self._token_credential,
+            is_reasoning_model=self._is_reasoning_model,
+        )
 
     def _has_context(self, eval_input: dict) -> bool:
         """
@@ -275,8 +286,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     f"{self._result_key}_threshold": self.threshold,
                     f"{self._result_key}_reason": f"Supported tools were not called. Supported tools for groundedness are {self._SUPPORTED_TOOLS}.",
                 }
-            else:
-                raise ex
+            raise ex
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
         if kwargs.get("context") or kwargs.get("conversation"):
@@ -288,8 +298,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if query and self._prompty_file != self._PROMPTY_FILE_WITH_QUERY:
             self._ensure_query_prompty_loaded()
 
-        if (not query) or (not response):  # or not tool_definitions:
-            msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
+        if (not query) or (not response):
+            msg = (
+                f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided. "
+                "For Agent groundedness 'query' and 'response' are required."
+            )
             raise EvaluationException(
                 message=msg,
                 blame=ErrorBlame.USER_ERROR,
@@ -308,17 +321,21 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             msg for msg in messages if not (msg.get("role") == "tool" and msg.get("tool_call_id") in file_search_ids)
         ]
 
-    def _get_context_from_agent_response(self, response, tool_definitions):
+    def _get_context_from_agent_response(
+        self, response, tool_definitions
+    ):  # pylint: disable=too-many-locals,too-many-nested-blocks
         """Extract context text from file_search tool results in the agent response."""
-        NO_CONTEXT = "<>"
+        del tool_definitions  # unused
+        # pylint: disable=too-many-nested-blocks
+
         context = ""
         try:
             logger.debug("Extracting context from response")
             tool_calls = self._parse_tools_from_response(response=response)
-            logger.debug(f"Tool Calls parsed successfully: {tool_calls}")
+            logger.debug("Tool Calls parsed successfully: %s", tool_calls)
 
             if not tool_calls:
-                return NO_CONTEXT
+                return _NO_CONTEXT_MARKER
 
             context_lines = []
             for tool_call in tool_calls:
@@ -341,11 +358,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
             context = "\n".join(context_lines) if len(context_lines) > 0 else None
 
-        except Exception as ex:
-            logger.debug(f"Error extracting context from agent response : {str(ex)}")
+        except Exception as ex:  # pylint: disable=broad-except
+            logger.debug("Error extracting context from agent response : %s", ex)
             context = None
 
-        context = context if context else NO_CONTEXT
+        context = context if context else _NO_CONTEXT_MARKER
         return context
 
     def _get_file_search_tool_call_ids(self, query_or_response):

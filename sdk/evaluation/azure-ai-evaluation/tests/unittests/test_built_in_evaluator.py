@@ -1,3 +1,8 @@
+"""Unit tests for built-in evaluators."""
+
+# pylint: disable=missing-function-docstring,missing-class-docstring,missing-module-docstring
+# pylint: disable=protected-access,unused-argument,unused-import,line-too-long
+
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -9,6 +14,7 @@ from azure.ai.evaluation import (
     RetrievalEvaluator,
     RelevanceEvaluator,
     GroundednessEvaluator,
+    QAEvaluator,
 )
 
 
@@ -59,7 +65,8 @@ class TestBuiltInEvaluators:
             fluency_eval(response=None)
 
         assert (
-            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided."
+            in exc_info.value.args[0]
         )
 
     def test_similarity_evaluator_keys(self, mock_model_config):
@@ -110,7 +117,10 @@ class TestBuiltInEvaluators:
                     "content": "2 + 2 = 4",
                     "context": {
                         "citations": [
-                            {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
+                            {
+                                "id": "math_doc.md",
+                                "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4",
+                            }
                         ]
                     },
                 },
@@ -142,14 +152,21 @@ class TestBuiltInEvaluators:
         quality_eval._flow = MagicMock(return_value=quality_response_async_mock())
 
         with pytest.raises(EvaluationException) as exc_info:
-            quality_eval(response="The capital of Japan is Tokyo.")  # Retrieval requires query and context
+            quality_eval(
+                response="The capital of Japan is Tokyo."
+            )  # Retrieval requires query and context
 
         assert (
-            "RetrievalEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+            "RetrievalEvaluator: Either 'conversation' or individual inputs must be provided."
+            in exc_info.value.args[0]
         )
 
-    @patch("azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load")
-    def test_groundedness_evaluator_with_agent_response(self, mock_async_prompty, mock_model_config):
+    @patch(
+        "azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load"
+    )
+    def test_groundedness_evaluator_with_agent_response(
+        self, mock_async_prompty, mock_model_config
+    ):
         """Test GroundednessEvaluator with query, response, and tool_definitions"""
         groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
         mock_async_prompty.return_value = quality_response_async_mock
@@ -188,7 +205,10 @@ class TestBuiltInEvaluators:
                     "run_id": "run_CmSdDdrq0CzwGOwqmWVADYwi",
                     "role": "assistant",
                     "content": [
-                        {"type": "text", "text": "One of the Contoso products identified is the **SmartView Glasses**"}
+                        {
+                            "type": "text",
+                            "text": "One of the Contoso products identified is the **SmartView Glasses**",
+                        }
                     ],
                 },
                 {
@@ -200,19 +220,56 @@ class TestBuiltInEvaluators:
                             "type": "tool_call",
                             "tool_call_id": "call_AU6kCcVwxv1cjM8HIQHMFFGh",
                             "name": "file_search",
-                            "arguments": {"ranking_options": {"ranker": "default_2024_08_21", "score_threshold": 0.0}},
+                            "arguments": {
+                                "ranking_options": {
+                                    "ranker": "default_2024_08_21",
+                                    "score_threshold": 0.0,
+                                }
+                            },
                         }
                     ],
                 },
             ],
             tool_definitions=[
-                {"name": "file_search", "type": "file_search", "description": "Search for information in files"}
+                {
+                    "name": "file_search",
+                    "type": "file_search",
+                    "description": "Search for information in files",
+                }
             ],
         )
 
         assert result is not None
         assert result["groundedness"] == result["gpt_groundedness"] == 1
         assert "groundedness_reason" in result
+
+    @patch(
+        "azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load"
+    )
+    def test_groundedness_evaluator_respects_reasoning_model_on_query_prompty(
+        self, mock_async_prompty, mock_model_config
+    ):
+        """Ensure is_reasoning_model and credentials propagate when switching templates"""
+        credential = object()
+        mock_async_prompty.return_value = quality_response_async_mock
+
+        groundedness_eval = GroundednessEvaluator(
+            model_config=mock_model_config, credential=credential, is_reasoning_model=True
+        )
+
+        result = groundedness_eval(
+            query="What is the capital of Japan?",
+            response="The capital of Japan is Tokyo.",
+            context="Tokyo is the capital of Japan.",
+        )
+
+        assert result["groundedness"] == result["gpt_groundedness"] == 1
+        assert mock_async_prompty.call_count >= 2
+
+        last_call = mock_async_prompty.call_args_list[-1]
+        assert last_call.kwargs["is_reasoning_model"] is True
+        assert last_call.kwargs["token_credential"] is credential
+        assert last_call.kwargs["source"].endswith(GroundednessEvaluator._PROMPTY_FILE_WITH_QUERY)
 
     def test_groundedness_evaluator_with_context(self, mock_model_config):
         """Test GroundednessEvaluator with direct context (traditional use)"""
@@ -243,3 +300,19 @@ class TestBuiltInEvaluators:
             "Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
             in exc_info.value.args[0]
         )
+
+    def test_qa_evaluator_is_reasoning_model_default(self, mock_model_config):
+        """Test QAEvaluator initializes with is_reasoning_model defaulting to False"""
+        qa_eval = QAEvaluator(model_config=mock_model_config)
+        # Check that all model-based evaluators have is_reasoning_model set to False
+        for evaluator in qa_eval._evaluators:
+            if hasattr(evaluator, "_is_reasoning_model"):
+                assert evaluator._is_reasoning_model is False
+
+    def test_qa_evaluator_is_reasoning_model_true(self, mock_model_config):
+        """Test QAEvaluator properly passes is_reasoning_model=True to sub-evaluators"""
+        qa_eval = QAEvaluator(model_config=mock_model_config, is_reasoning_model=True)
+        # Check that all model-based evaluators have is_reasoning_model set to True
+        for evaluator in qa_eval._evaluators:
+            if hasattr(evaluator, "_is_reasoning_model"):
+                assert evaluator._is_reasoning_model is True
