@@ -55,7 +55,7 @@ from ._attack_objective_generator import (
 )
 
 # PyRIT imports
-from pyrit.common import initialize_pyrit, DUCK_DB
+from pyrit.common import initialize_pyrit, SQLITE
 from pyrit.prompt_target import PromptChatTarget
 
 # Local imports - constants and utilities
@@ -218,8 +218,10 @@ class RedTeam:
         # keep track of prompt content to risk_sub_type mapping for evaluation
         self.prompt_to_risk_subtype = {}
 
-        # Initialize PyRIT
-        initialize_pyrit(memory_db_type=DUCK_DB)
+        # Initialize PyRIT with SQLite (only option in 0.10.0+)
+        db_path = os.path.join(self.output_dir, "pyrit_memory.db")
+        initialize_pyrit(memory_db_type=SQLITE, memory_db_path=db_path)
+        self.logger.debug(f"Initialized PyRIT with SQLite at {db_path}")
 
         # Initialize attack objective generator
         self.attack_objective_generator = _AttackObjectiveGenerator(
