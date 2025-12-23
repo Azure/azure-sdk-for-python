@@ -145,8 +145,8 @@ async def main() -> None:
             amount = amount_field.value if amount_field else None
             currency = currency_field.value if currency_field else "$"
             print(f"\nTotal: {currency}{amount:.2f}" if isinstance(amount, (int, float)) else f"\nTotal: {currency}{amount}")
-            print(f"  Confidence: {total_amount_field.confidence:.2f}" if total_amount_field.confidence else "  Confidence: N/A")
-            print(f"  Source: {total_amount_field.source or 'N/A'}")
+            print(f"  Confidence: {total_amount_field.confidence:.2f}" if total_amount_field.confidence else "  Confidence: N/A")  # type: ignore
+            print(f"  Source: {total_amount_field.source or 'N/A'}")  # type: ignore
 
         # Extract array fields (collections like line items)
         line_items_field = document_content.fields.get("LineItems")
@@ -159,7 +159,7 @@ async def main() -> None:
                     description = description_field.value if description_field else "N/A"
                     quantity = quantity_field.value if quantity_field else "N/A"
                     print(f"  Item {i}: {description} (Qty: {quantity})")
-                    print(f"    Confidence: {item.confidence:.2f}" if item.confidence else "    Confidence: N/A")
+                    print(f"    Confidence: {item.confidence:.2f}" if item.confidence else "    Confidence: N/A")  # type: ignore
         # [END extract_invoice_fields]
 
         if not isinstance(credential, AzureKeyCredential):

@@ -112,10 +112,9 @@ async def main() -> None:
         # [START extract_formulas]
         # Extract formulas from document pages (enabled by EnableFormula config)
         content: DocumentContent = result.contents[0]  # type: ignore
-        all_formulas = []
+        all_formulas: list = []
         for page in content.pages or []:
             all_formulas.extend(page.formulas or [])
-
         print(f"Found {len(all_formulas)} formula(s)")
         for formula in all_formulas:
             print(f"  Formula Kind: {formula.kind}")

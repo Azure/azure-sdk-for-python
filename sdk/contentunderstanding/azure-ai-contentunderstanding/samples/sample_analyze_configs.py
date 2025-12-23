@@ -112,7 +112,7 @@ def main() -> None:
     # [START extract_formulas]
     # Extract formulas from document pages (enabled by EnableFormula config)
     content: DocumentContent = result.contents[0]  # type: ignore
-    all_formulas = []
+    all_formulas: list = []
     for page in content.pages or []:
         all_formulas.extend(page.formulas or [])
 
