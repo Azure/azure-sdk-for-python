@@ -101,7 +101,7 @@ with (
                 ],
             }
         ],
-       extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         truncation="auto",
     )
 
@@ -151,7 +151,7 @@ with (
                     },
                 }
             ],
-           extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             truncation="auto",
         )
 

@@ -33,6 +33,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     ResponseStreamEventType,
     WorkflowAgentDefinition,
+    ItemType,
 )
 
 load_dotenv()
@@ -156,21 +157,25 @@ trigger:
         )
 
         async for event in stream:
-            if event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE:
-                print("\t", event.text)
-            elif (
+            print(f"Event {event.sequence_number} type '{event.type}'", end="", flush=True)
+            if (
                 event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-                and event.item.type == "workflow_action"
-                and (event.item.action_id == "teacher_agent" or event.item.action_id == "student_agent")
+                and event.item.type == ItemType.WORKFLOW_ACTION
             ):
-                print(f"********************************\nActor - '{event.item.action_id}' :")
-            # feel free to uncomment below to see more events
-            # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED and event.item.type == "workflow_action":
-            #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was : '{event.item.previous_action_id}')")
-            # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE and event.item.type == "workflow_action":
-            #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was: '{event.item.previous_action_id}')")
-            # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA:
-            #     print(event.delta)
+                print(
+                    f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
+                    flush=True,
+                )
+            elif (
+                event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE
+                and event.item.type == ItemType.WORKFLOW_ACTION
+            ):
+                print(
+                    f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
+                    flush=True,
+                )
+            else:
+                print("", flush=True)
 
         await openai_client.conversations.delete(conversation_id=conversation.id)
         print("Conversation deleted")

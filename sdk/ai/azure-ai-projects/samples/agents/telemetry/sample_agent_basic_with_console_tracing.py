@@ -106,7 +106,7 @@ with tracer.start_as_current_span(scenario):
         request = "Hello, tell me a joke."
         response = openai_client.responses.create(
             conversation=conversation.id,
-           extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             input=request,
         )
         print(f"Answer: {response.output}")
@@ -114,7 +114,7 @@ with tracer.start_as_current_span(scenario):
         response = openai_client.responses.create(
             conversation=conversation.id,
             input="Tell another one about computers.",
-           extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Answer: {response.output}")
 
