@@ -41,6 +41,7 @@ from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import (
     WorkspaceAssetReference as WorkspaceModelReference,
 )
+from _assets.default_deployment_template import DefaultDeploymentTemplate
 from ._autogen_entities.models import (
     AzureOpenAIDeployment,
     MarketplacePlan,
@@ -571,6 +572,7 @@ __all__ = [
     "GitSource",
     "LocalSource",
     "IndexModelConfiguration",
+    "DefaultDeploymentTemplate",
 ]
 
 # Allow importing these types for backwards compatibility
