@@ -9,8 +9,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import TYPE_CHECKING, Any, IO, Optional, Union, overload
-from typing_extensions import Self
-from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._client import ContentUnderstandingClient as GeneratedClient
@@ -283,38 +281,6 @@ class ContentUnderstandingClient(GeneratedClient):
             poller._polling_method._deserialization_callback,  # type: ignore # pylint: disable=protected-access
             poller._polling_method,  # pylint: disable=protected-access
         )
-
-    async def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
-    ) -> AsyncHttpResponse:  # pylint: disable=invalid-overridden-method,useless-parent-delegation
-        """Runs the network request through the client's chained policies.
-
-        >>> from azure.core.rest import HttpRequest
-        >>> request = HttpRequest("GET", "https://www.example.org/")
-        <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
-
-        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
-
-        :param request: The network request you want to make. Required.
-        :type request: ~azure.core.rest.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
-        """
-        return await super().send_request(request, stream=stream, **kwargs)
-
-    async def close(self) -> None:  # pylint: disable=useless-parent-delegation
-        """Close the client session."""
-        await super().close()
-
-    async def __aenter__(self) -> Self:
-        await super().__aenter__()
-        return self
-
-    async def __aexit__(self, *exc_details: Any) -> None:  # pylint: disable=useless-parent-delegation
-        await super().__aexit__(*exc_details)
 
 
 def patch_sdk():
