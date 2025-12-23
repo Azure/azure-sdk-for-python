@@ -18,4 +18,4 @@ def patch_sdk():
     Previous patches for copy_analyzer URL path and status codes have been
     incorporated into the generated code.
     """
-    pass
+    # No patches currently required
