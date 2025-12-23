@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.15.0b2 (Unreleased)
+### 4.15.0b3 (Unreleased)
 
 #### Features Added
 
@@ -9,6 +9,13 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
+
+
+### 4.15.0b2 (2025-12-16)
+
+#### Bugs Fixed
+* Fixed bug where sdk was not properly retrying requests in some edge cases after partition splits.See [PR 44425](https://github.com/Azure/azure-sdk-for-python/pull/44425)
 
 ### 4.15.0b1 (2025-11-26)
 
@@ -746,4 +753,3 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 ## 1.0.1
 
 - Supports proxy connection
-

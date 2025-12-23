@@ -416,7 +416,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, _DEFAULT_LOG_MESSAGE)
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
-    
+
     def test_log_to_envelope_log_empty_with_whitespaces(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_empty_with_whitespaces)
