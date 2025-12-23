@@ -78,7 +78,7 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
     def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
         run: Run = self.get_result(client_run)
         result_df = self._pf_client.get_details(run, all_results=all_results)
-        result_df.replace("(Failed)", math.nan, inplace=True)
+        result_df = result_df.mask(result_df == "(Failed)", math.nan)
         return result_df
 
     def get_metrics(self, client_run: BatchClientRun) -> Dict[str, Any]:
