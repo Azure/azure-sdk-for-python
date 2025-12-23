@@ -98,16 +98,15 @@ def deploy_model(openai_client, credential, job_id):
         deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
 
         print(f"Deploying fine-tuned model: {fine_tuned_model_name} with deployment name: {deployment_name}")
-        deployment = cogsvc_client.deployments.begin_create_or_update(
+        deployment_operation = cogsvc_client.deployments.begin_create_or_update(
             resource_group_name=resource_group,
             account_name=account_name,
             deployment_name=deployment_name,
             deployment=deployment_config,
         )
 
-        while deployment.status() not in ["Succeeded", "Failed"]:
-            time.sleep(30)
-            print(f"Deployment status: {deployment.status()}")
+        print("Waiting for deployment to complete...")
+        deployment_operation.result()
 
     print(f"Model deployment completed: {deployment_name}")
     return deployment_name
