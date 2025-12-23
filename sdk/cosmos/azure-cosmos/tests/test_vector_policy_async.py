@@ -64,7 +64,6 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 vector_embedding_policy=vector_embedding_policy)
             properties = await created_container.read()
             assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
-            self.test_db.delete_container('vector_container_' + data_type)
 
     async def test_create_vector_embedding_container_async(self):
         indexing_policy = {
