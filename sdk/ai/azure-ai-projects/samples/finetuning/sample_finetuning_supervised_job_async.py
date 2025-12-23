@@ -107,9 +107,8 @@ async def deploy_model(openai_client, credential, job_id):
             deployment=deployment_config,
         )
 
-        while deployment.status() not in ["Succeeded", "Failed"]:
-            await asyncio.sleep(30)
-            print(f"Deployment status: {deployment.status()}")
+        print(f"Waiting for deployment to complete...")
+        await deployment.result()
 
     print(f"Model deployment completed: {deployment_name}")
     return deployment_name
@@ -215,7 +214,7 @@ async def main():
 
         # await cancel_job(openai_client, fine_tuning_job.id)
 
-        # deployment_name = await deploy_model(openai_client, credential, fine_tuning_job.id)
+        # deployment_name = await deploy_model(openai_client, credential, "ftjob-b525297af36e4cfda898d13c3f91d3dc")
 
         # await infer(openai_client, deployment_name)
 
