@@ -30,6 +30,8 @@ This repo is currently migrating all checks from a slower `tox`-based framework,
 |`import_all`| Installs the package w/ default dependencies, then attempts to `import *` from the base namespace. Ensures that all imports will resolve after a base install and import. | `azpysdk import_all .` |
 |`generate`| Regenerates the code. | `azpysdk generate .` |
 |`breaking`| Checks for breaking changes. | `azpysdk breaking .` |
+|`samples`| Runs the package's samples. | `azpysdk samples .` |
+|`optional`| Invokes 'optional' requirements for a given package. | `azpysdk optional .` |
 |`devtest`| Tests a package against dependencies installed from a dev index. | `azpysdk devtest .` |
 
 ## Common arguments
