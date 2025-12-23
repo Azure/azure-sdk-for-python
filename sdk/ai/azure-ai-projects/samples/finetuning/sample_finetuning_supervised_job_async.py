@@ -214,7 +214,7 @@ async def main():
 
         # await cancel_job(openai_client, fine_tuning_job.id)
 
-        # deployment_name = await deploy_model(openai_client, credential, "ftjob-b525297af36e4cfda898d13c3f91d3dc")
+        # deployment_name = await deploy_model(openai_client, credential, fine_tuning_job.id)
 
         # await infer(openai_client, deployment_name)
 
