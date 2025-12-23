@@ -41,7 +41,7 @@ from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import (
     WorkspaceAssetReference as WorkspaceModelReference,
 )
-from _assets.default_deployment_template import DefaultDeploymentTemplate
+from ._assets.default_deployment_template import DefaultDeploymentTemplate
 from ._autogen_entities.models import (
     AzureOpenAIDeployment,
     MarketplacePlan,
