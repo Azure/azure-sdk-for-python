@@ -30,7 +30,6 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentReference,
     PromptAgentDefinition,
     ResponseStreamEventType,
     WorkflowAgentDefinition,
@@ -50,7 +49,7 @@ async def main():
     ):
 
         teacher_agent = await project_client.agents.create_version(
-            agent_name="teacher-agent",
+            agent_name="teacher-agent-async",
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="""You are a teacher that create pre-school math question for student and check answer. 
@@ -61,7 +60,7 @@ async def main():
         print(f"Agent created (id: {teacher_agent.id}, name: {teacher_agent.name}, version: {teacher_agent.version})")
 
         student_agent = await project_client.agents.create_version(
-            agent_name="student-agent",
+            agent_name="student-agent-async",
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="""You are a student who answers questions from the teacher. 
@@ -139,7 +138,7 @@ trigger:
 """
 
         workflow = await project_client.agents.create_version(
-            agent_name="student-teacherworkflow",
+            agent_name="student-teacher-workflow-async",
             definition=WorkflowAgentDefinition(workflow=workflow_yaml),
         )
 
@@ -150,7 +149,7 @@ trigger:
 
         stream = await openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
+            extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
             input="1 + 1 = ?",
             stream=True,
             metadata={"x-ms-debug-mode-enabled": "1"},
