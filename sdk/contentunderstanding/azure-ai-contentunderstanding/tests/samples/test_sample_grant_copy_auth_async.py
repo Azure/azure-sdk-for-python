@@ -106,7 +106,10 @@ class TestSampleGrantCopyAuthAsync(ContentUnderstandingClientTestBaseAsync):
 
             if target_endpoint != azure_content_understanding_endpoint or target_key:
                 # Create target client with different endpoint/credential
-                target_credential = AzureKeyCredential(target_key) if target_key else DefaultAzureCredential()
+                if target_key:
+                    target_credential = AzureKeyCredential(target_key)
+                else:
+                    target_credential = self.get_credential(ContentUnderstandingClient, is_async=True)
                 target_client = cast(
                     ContentUnderstandingClient,
                     self.create_client_from_credential(
