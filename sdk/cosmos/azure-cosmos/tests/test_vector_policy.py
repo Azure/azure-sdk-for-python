@@ -53,7 +53,6 @@ class TestVectorPolicy(unittest.TestCase):
                 vector_embedding_policy=vector_embedding_policy)
             properties = created_container.read()
             assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
-            self.test_db.delete_container('vector_container_' + data_type)
 
     def test_create_vector_embedding_container(self):
         indexing_policy = {
