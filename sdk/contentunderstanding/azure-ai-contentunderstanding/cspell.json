@@ -1,5 +1,7 @@
 {
     "ignoreWords": [
+        "Agentic",
+        "chartjs",
         "laren",
         "Milsa",
         "nlaren",
@@ -12,6 +14,6 @@
     "ignorePaths": [
         "sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_files/training_samples/*.json"
     ],
-    "_comment": "ignoreWords: laren/Milsa/nlaren/PTIN from sample JSON files (IRS tax form test data); UPCA/UPCE/upca/upce are barcode types from _enums.py and _models.py as OCR Barcode types standardized in the ISO/IEC 15415:2019 standard"
+    "_comment": "ignoreWords: laren/Milsa/nlaren/PTIN from sample JSON files (IRS tax form test data); UPCA/UPCE/upca/upce are barcode types from _enums.py and _models.py as OCR Barcode types standardized in the ISO/IEC 15415:2019 standard; Agentic is a term for agentic AI; chartjs refers to Chart.js format"
 }
 
