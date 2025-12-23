@@ -155,25 +155,16 @@ trigger:
     )
 
     for event in stream:
-        print(f"Event {event.sequence_number} type '{event.type}'", end="", flush=True)
+        print(f"Event {event.sequence_number} type '{event.type}'", end="")
         if (
             event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-            and event.item.type == ItemType.WORKFLOW_ACTION
-        ):
+            or event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE
+        ) and event.item.type == ItemType.WORKFLOW_ACTION:
             print(
                 f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
-                flush=True,
+                end="",
             )
-        elif (
-            event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE
-            and event.item.type == ItemType.WORKFLOW_ACTION
-        ):
-            print(
-                f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
-                flush=True,
-            )
-        else:
-            print("", flush=True)
+        print("", flush=True)
 
     openai_client.conversations.delete(conversation_id=conversation.id)
     print("Conversation deleted")
@@ -186,4 +177,3 @@ trigger:
 
     project_client.agents.delete_version(agent_name=teacher_agent.name, agent_version=teacher_agent.version)
     print("Teacher Agent deleted")
-    
