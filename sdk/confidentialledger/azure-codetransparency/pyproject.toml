@@ -34,6 +34,8 @@ dependencies = [
     "isodate>=0.6.1",
     "azure-core>=1.35.0",
     "typing-extensions>=4.6.0",
+    "cryptography>=2.1.4",
+    "azure-confidentialledger-certificate>=1.0.0b1",
 ]
 dynamic = [
 "version", "readme"
