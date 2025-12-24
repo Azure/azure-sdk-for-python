@@ -85,7 +85,7 @@ with (
             "evaluator_name": "builtin.task_adherence",
             "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
             "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
-        }
+        },
     ]
     eval_object = openai_client.evals.create(
         name="Agent Evaluation",

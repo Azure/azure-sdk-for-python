@@ -122,20 +122,19 @@ See the "responses" folder in the [package samples][samples] for additional samp
 <!-- SNIPPET:sample_responses_basic.responses -->
 
 ```python
-openai_client = project_client.get_openai_client()
+with project_client.get_openai_client() as openai_client:
+    response = openai_client.responses.create(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        input="What is the size of France in square miles?",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-    input="What is the size of France in square miles?",
-)
-print(f"Response output: {response.output_text}")
-
-response = openai_client.responses.create(
-    model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-    input="And what is the capital city?",
-    previous_response_id=response.id,
-)
-print(f"Response output: {response.output_text}")
+    response = openai_client.responses.create(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        input="And what is the capital city?",
+        previous_response_id=response.id,
+    )
+    print(f"Response output: {response.output_text}")
 ```
 
 <!-- END SNIPPET -->
@@ -151,44 +150,43 @@ See the "agents" folder in the [package samples][samples] for an extensive set o
 <!-- SNIPPET:sample_agent_basic.prompt_agent_basic -->
 
 ```python
-openai_client = project_client.get_openai_client()
+with project_client.get_openai_client() as openai_client:
+    agent = project_client.agents.create_version(
+        agent_name="MyAgent",
+        definition=PromptAgentDefinition(
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+        ),
+    )
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-agent = project_client.agents.create_version(
-    agent_name="MyAgent",
-    definition=PromptAgentDefinition(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-        instructions="You are a helpful assistant that answers general questions",
-    ),
-)
-print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+    conversation = openai_client.conversations.create(
+        items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
+    )
+    print(f"Created conversation with initial user message (id: {conversation.id})")
 
-conversation = openai_client.conversations.create(
-    items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
-)
-print(f"Created conversation with initial user message (id: {conversation.id})")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    conversation=conversation.id,
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",
-)
-print(f"Response output: {response.output_text}")
+    openai_client.conversations.items.create(
+        conversation_id=conversation.id,
+        items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
+    )
+    print(f"Added a second user message to the conversation")
 
-openai_client.conversations.items.create(
-    conversation_id=conversation.id,
-    items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
-)
-print(f"Added a second user message to the conversation")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
+    )
+    print(f"Response output: {response.output_text}")
 
-response = openai_client.responses.create(
-    conversation=conversation.id,
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",
-)
-print(f"Response output: {response.output_text}")
-
-openai_client.conversations.delete(conversation_id=conversation.id)
-print("Conversation deleted")
+    openai_client.conversations.delete(conversation_id=conversation.id)
+    print("Conversation deleted")
 
 project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 print("Agent deleted")
@@ -668,7 +666,7 @@ with (
             "evaluator_name": "builtin.task_adherence",
             "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
             "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
-        }
+        },
     ]
     eval_object = openai_client.evals.create(
         name="Agent Evaluation",
@@ -844,9 +842,7 @@ folder in the [package samples][samples].
 <!-- SNIPPET:sample_indexes.indexes_sample-->
 
 ```python
-print(
-    f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
-)
+print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
 index = project_client.indexes.create_or_update(
     name=index_name,
     version=index_version,
@@ -884,20 +880,24 @@ with open(file_path, "rb") as f:
     uploaded_file = openai_client.files.create(file=f, purpose="fine-tune")
 print(uploaded_file)
 
-print(f"Retrieving file metadata with ID: {uploaded_file.id}")
-retrieved_file = openai_client.files.retrieve(uploaded_file.id)
+print("Waits for the given file to be processed, default timeout is 30 mins")
+processed_file = openai_client.files.wait_for_processing(uploaded_file.id)
+print(processed_file)
+
+print(f"Retrieving file metadata with ID: {processed_file.id}")
+retrieved_file = openai_client.files.retrieve(processed_file.id)
 print(retrieved_file)
 
-print(f"Retrieving file content with ID: {uploaded_file.id}")
-file_content = openai_client.files.content(uploaded_file.id)
+print(f"Retrieving file content with ID: {processed_file.id}")
+file_content = openai_client.files.content(processed_file.id)
 print(file_content.content)
 
 print("Listing all files:")
 for file in openai_client.files.list():
     print(file)
 
-print(f"Deleting file with ID: {uploaded_file.id}")
-deleted_file = openai_client.files.delete(uploaded_file.id)
+print(f"Deleting file with ID: {processed_file.id}")
+deleted_file = openai_client.files.delete(processed_file.id)
 print(f"Successfully deleted file: {deleted_file.id}")
 ```
 
