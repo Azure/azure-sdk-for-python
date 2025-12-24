@@ -27,7 +27,30 @@ python -m pip install azure-codetransparency
 
 ## Examples
 
-<!-- TODO -->
+
+There are two main use cases: submitting a COSE signature envelope and verifying the cryptographic submission receipt, which proves that the signature file was accepted.
+
+Before submitting the COSE file, ensure the service is configured with the appropriate policy to be able to accept it.
+
+Use the following code to submit the signature:
+
+```python
+# TODO
+```
+
+Then obtain the transparent statement:
+
+```python
+# TODO
+```
+
+After obtaining the transparent statement, you can distribute it so others can verify its inclusion in the service. The verifier checks that the receipt was issued for the given signature and that its signature was endorsed by the service. Because users might not know which service instance the statement came from, they can extract that information from the receipt to create the client for verification.
+
+```python
+# TODO
+```
+
+If verification completes without errors, you can trust the signature and the receipt. You can then safely inspect the files, especially the payload embedded in the COSE signature envelope.
 
 ## Troubleshooting
 

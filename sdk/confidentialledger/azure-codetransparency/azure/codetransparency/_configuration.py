@@ -35,8 +35,6 @@ class CodeTransparencyClientConfiguration:  # pylint: disable=too-many-instance-
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
 
         self.endpoint = endpoint
         self.credential = credential
