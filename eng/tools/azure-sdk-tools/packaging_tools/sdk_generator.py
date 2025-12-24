@@ -5,6 +5,7 @@ import argparse
 import json
 import logging
 from pathlib import Path
+import subprocess
 from subprocess import check_call
 import shutil
 import re
@@ -244,6 +245,10 @@ def main(generate_input, generate_output):
                         ],
                         cwd=package_path,
                         timeout=600,
+                        # known issue that higher python version meet install warning with lower pylint.
+                        # we skip the output here to reduce confusion and will remove it after apiview tool upgrade to higher pylint version.
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
                     )
                     cmds = ["apistubgen", "--pkg-path", "."]
                     cross_language_mapping_path = Path(package_path, "apiview-properties.json")
