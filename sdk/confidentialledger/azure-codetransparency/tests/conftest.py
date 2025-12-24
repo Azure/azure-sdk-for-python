@@ -21,8 +21,3 @@ def pytest_sessionfinish(session, exitstatus):
     """
 
 
-def pytest_unconfigure(config):
-    """
-    called before test process is exited.
-    """
-
