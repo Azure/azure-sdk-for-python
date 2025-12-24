@@ -51,6 +51,8 @@ with (
         item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
         include_sample_schema=True,
     )
+    # Notes: for data_mapping:
+    # {{sample.output_text}} is the string output of the provide model target for the given input in {{item.query}}
     testing_criteria = [
         {
             "type": "azure_ai_evaluator",
@@ -116,5 +118,5 @@ with (
     else:
         print("\n✗ Evaluation run failed.")
 
-    # openai_client.evals.delete(eval_id=eval_object.id)
+    openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
