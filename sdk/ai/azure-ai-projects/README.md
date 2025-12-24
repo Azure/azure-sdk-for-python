@@ -262,7 +262,9 @@ Generate images based on text prompts with customizable resolution, quality, and
 
 ```python
 tool = ImageGenTool(  # type: ignore[call-overload]
-    model=image_generation_model, quality="low", size="1024x1024"  # Model such as "gpt-image-1-mini"  # type: ignore
+    model=image_generation_model,  # Model such as "gpt-image-1-mini"  # type: ignore
+    quality="low",
+    size="1024x1024",
 )
 ```
 

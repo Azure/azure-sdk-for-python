@@ -1,5 +1,72 @@
 # Release History
 
+## 10.0.0 (2025-12-15)
+
+### Features Added
+
+  - Model `AVSClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AVSClient` added method `send_request`
+  - Client `AVSClient` added operation group `licenses`
+  - Client `AVSClient` added operation group `maintenances`
+  - Model `Host` added property `properties`
+  - Added model `AvailableWindowForMaintenanceWhileRescheduleOperation`
+  - Added model `AvailableWindowForMaintenanceWhileScheduleOperation`
+  - Added enum `BlockedDatesConstraintCategory`
+  - Added model `BlockedDatesConstraintTimeRange`
+  - Added model `BlockedWhileRescheduleOperation`
+  - Added model `BlockedWhileScheduleOperation`
+  - Added model `ImpactedMaintenanceResource`
+  - Added model `ImpactedMaintenanceResourceError`
+  - Added model `Label`
+  - Added model `License`
+  - Added enum `LicenseKind`
+  - Added enum `LicenseName`
+  - Added model `LicenseProperties`
+  - Added enum `LicenseProvisioningState`
+  - Added model `Maintenance`
+  - Added enum `MaintenanceCheckType`
+  - Added model `MaintenanceFailedCheck`
+  - Added model `MaintenanceManagementOperation`
+  - Added enum `MaintenanceManagementOperationKind`
+  - Added model `MaintenanceProperties`
+  - Added enum `MaintenanceProvisioningState`
+  - Added model `MaintenanceReadiness`
+  - Added model `MaintenanceReadinessRefreshOperation`
+  - Added enum `MaintenanceReadinessRefreshOperationStatus`
+  - Added enum `MaintenanceReadinessStatus`
+  - Added model `MaintenanceReschedule`
+  - Added model `MaintenanceSchedule`
+  - Added model `MaintenanceState`
+  - Added enum `MaintenanceStateName`
+  - Added enum `MaintenanceStatusFilter`
+  - Added enum `MaintenanceType`
+  - Added model `PlacementPolicyUpdateProperties`
+  - Added model `RescheduleOperation`
+  - Added model `RescheduleOperationConstraint`
+  - Added enum `RescheduleOperationConstraintKind`
+  - Added model `ScheduleOperation`
+  - Added model `ScheduleOperationConstraint`
+  - Added enum `ScheduleOperationConstraintKind`
+  - Added model `SchedulingWindow`
+  - Added model `Vcf5License`
+  - Added model `VcfLicense`
+  - Added enum `VcfLicenseKind`
+  - Added model `VmwareFirewallLicenseProperties`
+  - Operation group `PrivateCloudsOperations` added method `get_vcf_license`
+  - Added operation group `LicensesOperations`
+  - Added operation group `MaintenancesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `Host` moved instance variables `kind`, `provisioning_state`, `display_name`, `mo_ref_id`, `fqdn`, `maintenance` and `fault_domain` under property `properties`
+  - Model `PlacementPolicyUpdate` moved instance variables `state`, `vm_members`, `host_members`, `affinity_strength` and `azure_hybrid_benefit_type` under property `properties`
+  - Model `ResourceSkuRestrictions` renamed its instance variable `values` to `values_property`
+
+### Other Changes
+
+  - Deleted model `PagedResourceSku`/`AddonList`/`CloudLinkList`/`ClusterList`/`DatastoreList`/`ExpressRouteAuthorizationList`/`GlobalReachConnectionList`/`HcxEnterpriseSiteList`/`PlacementPoliciesList`/`PrivateCloudList`/`ScriptCmdletsList`/`ScriptExecutionsList`/`ScriptPackagesList`/`VirtualMachinesList`/`WorkloadNetworkDhcpList`/`WorkloadNetworkDnsServicesList`/`WorkloadNetworkDnsZonesList`/`WorkloadNetworkGatewayList`/`WorkloadNetworkList`/`WorkloadNetworkPortMirroringList`/`WorkloadNetworkPublicIPsList`/`WorkloadNetworkSegmentsList`/`WorkloadNetworkVMGroupsList`/`WorkloadNetworkVirtualMachinesList` which actually were not used by SDK users
+
 ## 9.1.0 (2025-06-03)
 
 ### Features Added
