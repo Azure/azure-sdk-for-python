@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
+# cSpell:ignore operationid
 import hashlib
 import os
 import time
