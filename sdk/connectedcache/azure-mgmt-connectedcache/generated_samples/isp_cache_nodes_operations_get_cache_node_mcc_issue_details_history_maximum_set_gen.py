@@ -15,7 +15,7 @@ from azure.mgmt.connectedcache import ConnectedCacheMgmtClient
     pip install azure-identity
     pip install azure-mgmt-connectedcache
 # USAGE
-    python cache_nodes_operations_list_by_subscription_maximum_set_gen.py
+    python isp_cache_nodes_operations_get_cache_node_mcc_issue_details_history_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.cache_nodes_operations.list_by_subscription()
-    for item in response:
-        print(item)
+    response = client.isp_cache_nodes_operations.get_cache_node_mcc_issue_details_history(
+        resource_group_name="rgConnectedCache",
+        customer_resource_name="MccRPTest1",
+        cache_node_resource_name="MCCCachenode1",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2023-05-01-preview/CacheNodesOperations_ListBySubscription_MaximumSet_Gen.json
+# x-ms-original-file: 2024-11-30-preview/IspCacheNodesOperations_GetCacheNodeMccIssueDetailsHistory_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

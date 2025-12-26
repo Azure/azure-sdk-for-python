@@ -59,11 +59,42 @@ class TestConnectedCacheMgmtIspCacheNodesOperationsOperations(AzureMgmtRecordedT
                         "cacheNodeState": 0,
                         "cacheNodeStateDetailedText": "str",
                         "cacheNodeStateShortText": "str",
+                        "creationMethod": 0,
+                        "currentTlsCertificate": {
+                            "actionRequired": "str",
+                            "certificateFileName": "str",
+                            "expiryDate": "2020-02-20 00:00:00",
+                            "notBeforeDate": "2020-02-20 00:00:00",
+                            "subject": "str",
+                            "subjectAltName": "str",
+                            "thumbprint": "str",
+                        },
                         "driveConfiguration": [
                             {"cacheNumber": 0, "nginxMapping": "str", "physicalPath": "str", "sizeInGb": 0}
                         ],
                         "isProvisioned": bool,
                         "isProxyRequired": "str",
+                        "issuesCount": 0,
+                        "issuesList": ["str"],
+                        "lastAutoUpdateInfo": {
+                            "autoUpdateLastAppliedStatus": 0,
+                            "autoUpdateLastAppliedStatusDetailedText": "str",
+                            "autoUpdateLastAppliedStatusText": "str",
+                            "autoUpdateRingType": 0,
+                            "createdDateTimeUtc": "2020-02-20 00:00:00",
+                            "imageUriBeforeUpdate": "str",
+                            "imageUriTargeted": "str",
+                            "imageUriTerminal": "str",
+                            "movedToTerminalStateDateTime": "2020-02-20 00:00:00",
+                            "planChangeLogText": "str",
+                            "planId": 0,
+                            "ruleRequestedDay": 0,
+                            "ruleRequestedHour": "str",
+                            "ruleRequestedMinute": "str",
+                            "ruleRequestedWeek": 0,
+                            "timeToGoLiveDateTime": "str",
+                            "updatedRegistryDateTimeUtc": "2020-02-20 00:00:00",
+                        },
                         "optionalProperty1": "str",
                         "optionalProperty2": "str",
                         "optionalProperty3": "str",
@@ -71,9 +102,8 @@ class TestConnectedCacheMgmtIspCacheNodesOperationsOperations(AzureMgmtRecordedT
                         "optionalProperty5": "str",
                         "osType": "str",
                         "productVersion": "str",
-                        "proxyUrl": "str",
                         "proxyUrlConfiguration": {"proxyUrl": "str"},
-                        "updateCycleType": "str",
+                        "tlsStatus": "str",
                         "updateInfoDetails": "str",
                         "updateRequestedDateTime": "2020-02-20 00:00:00",
                     },
@@ -212,6 +242,30 @@ class TestConnectedCacheMgmtIspCacheNodesOperationsOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_isp_cache_nodes_operations_get_cache_node_install_details(self, resource_group):
         response = self.client.isp_cache_nodes_operations.get_cache_node_install_details(
+            resource_group_name=resource_group.name,
+            customer_resource_name="str",
+            cache_node_resource_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_isp_cache_nodes_operations_get_cache_node_auto_update_history(self, resource_group):
+        response = self.client.isp_cache_nodes_operations.get_cache_node_auto_update_history(
+            resource_group_name=resource_group.name,
+            customer_resource_name="str",
+            cache_node_resource_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_isp_cache_nodes_operations_get_cache_node_mcc_issue_details_history(self, resource_group):
+        response = self.client.isp_cache_nodes_operations.get_cache_node_mcc_issue_details_history(
             resource_group_name=resource_group.name,
             customer_resource_name="str",
             cache_node_resource_name="str",
