@@ -10,6 +10,12 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
 class ActivationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The activation state of the WAF. Use 'Enabled' to enable the WAF and 'Disabled' to disable it."""
 
@@ -27,7 +33,7 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IdentityType."""
+    """Identity Type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
@@ -42,15 +48,55 @@ class Level(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WARNING = "Warning"
 
 
+class NginxDeploymentWafPolicyApplyingStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Machine readable code indicating the applying status code of a WAF Policy."""
+
+    NOT_APPLIED = "NotApplied"
+    """The policy is not referenced in the nginx config and not applied."""
+    APPLYING = "Applying"
+    """The policy is referenced in the nginx config and is applying."""
+    SUCCEEDED = "Succeeded"
+    """The policy is referenced in the nginx config and that config has been successfully applied."""
+    FAILED = "Failed"
+    """The policy is referenced in the nginx config and that config failed to apply."""
+    REMOVING = "Removing"
+    """The policy is now not referenced in the nginx config and its being removed from the applied
+    nginx config."""
+
+
+class NginxDeploymentWafPolicyCompilingStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Machine readable code indicating the compilation status of a WAF Policy."""
+
+    NOT_STARTED = "NotStarted"
+    """The compilation of the custom waf policy has not started"""
+    IN_PROGRESS = "InProgress"
+    """The compilation of the custom waf policy is in progress"""
+    SUCCEEDED = "Succeeded"
+    """The compilation of the custom waf policy is completed successfully and can now be referenced in
+    the nginx config."""
+    FAILED = "Failed"
+    """The compilation of the custom waf policy failed."""
+
+
 class NginxPrivateIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NginxPrivateIPAllocationMethod."""
+    """Nginx Private IP Allocation Method."""
 
     STATIC = "Static"
     DYNAMIC = "Dynamic"
 
 
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ProvisioningState."""
+    """Provisioning State."""
 
     ACCEPTED = "Accepted"
     CREATING = "Creating"
