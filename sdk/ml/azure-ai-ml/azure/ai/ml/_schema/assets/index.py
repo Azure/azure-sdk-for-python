@@ -14,7 +14,7 @@ from .artifact import ArtifactSchema
 class IndexAssetSchema(ArtifactSchema):
     name = fields.Str(required=True, allow_none=False)
     id = ArmStr(azureml_type=AzureMLResourceType.INDEX, dump_only=True)
-    stage = fields.Str(default="Development")
+    stage = fields.Str(dump_default="Development")
     path = fields.Str(
         required=True,
         metadata={

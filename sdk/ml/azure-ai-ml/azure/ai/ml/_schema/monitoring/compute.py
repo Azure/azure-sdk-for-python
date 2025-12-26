@@ -4,12 +4,12 @@
 
 # pylint: disable=unused-argument
 
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, validate
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
 class ComputeConfigurationSchema(metaclass=PatchedSchemaMeta):
-    compute_type = fields.Str(allowed_values=["ServerlessSpark"])
+    compute_type = fields.Str(validate=validate.OneOf(["ServerlessSpark"]))
 
 
 class ServerlessSparkComputeSchema(ComputeConfigurationSchema):
