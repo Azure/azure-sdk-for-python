@@ -33,7 +33,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         env_var_mapping = get_sample_environment_variables_map(operation_group="agents")
         executor = AsyncSampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm(
+        await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
             project_endpoint=os.environ["azure_ai_projects_agents_project_endpoint"],
         )

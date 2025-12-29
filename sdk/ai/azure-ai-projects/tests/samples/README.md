@@ -40,7 +40,7 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=agent_tools_instructions,
-            project_endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+            project_endpoint=os.environ["azure_ai_projects_tests_project_endpoint"],
         )        
 ```
 
@@ -72,9 +72,9 @@ class TestSamplesAsync(AzureRecordedTestCase):
         env_var_mapping = get_sample_environment_variables_map()
         executor = AsyncSampleExecutor(self, sample_path, env_var_mapping, **kwargs)
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm(
+        await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
-            project_endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+            project_endpoint=os.environ["azure_ai_projects_tests_project_endpoint"],
         )
 ```
 
@@ -106,4 +106,4 @@ def get_sample_environment_variables_map(operation_group: str | None = None) -> 
     }
 ```
 - `execute` / `execute_async`: Run the sample; any exception fails the test.
-- `validate_print_calls_by_llm`: Optionally validate captured print output with LLM instructions and an explicit `project_endpoint` (and optional `model`).
+- `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Optionally validate captured print output with LLM instructions and an explicit `project_endpoint` (and optional `model`).

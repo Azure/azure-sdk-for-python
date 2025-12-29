@@ -358,7 +358,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             self.spec.loader.exec_module(self.module)
             await self.module.main()
 
-    async def validate_print_calls_by_llm(
+    async def validate_print_calls_by_llm_async(
         self,
         *,
         instructions: str,
@@ -379,10 +379,10 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             AsyncAIProjectClient(
                 endpoint=endpoint, credential=cast(AsyncTokenCredential, self.tokenCredential)
             ) as project_client,
+            project_client.get_openai_client() as openai_client,
         ):
-            async with project_client.get_openai_client() as openai_client:
-                response = await openai_client.responses.create(
-                    **self._get_validation_request_params(instructions, model=model)
-                )
-                test_report = json.loads(response.output_text)
-                self._assert_validation_result(test_report)
+            response = await openai_client.responses.create(
+                **self._get_validation_request_params(instructions, model=model)
+            )
+            test_report = json.loads(response.output_text)
+            self._assert_validation_result(test_report)
