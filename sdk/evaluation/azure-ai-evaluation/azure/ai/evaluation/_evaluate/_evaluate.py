@@ -1473,7 +1473,7 @@ def _preprocess_data(
                             # and convert to ${data.__outputs.column_name}
                             new_value = map_value.replace("${run.outputs.", f"${{data.{Prefixes.TSG_OUTPUTS}")
                             column_mapping[evaluator_name][map_to_key] = new_value
-                    
+
                     # Then, add auto-generated mappings for target columns not explicitly mapped
                     mapped_to_values = set(column_mapping[evaluator_name].values())
                     for col in target_generated_columns:
