@@ -1695,7 +1695,7 @@ class TestTagsInLoggingFunctions:
         assert row_result_df["outputs.quote_checker.ground_truth_value"][1] == "quoted"
         assert row_result_df["outputs.quote_checker.match"][1] == 0
         
-        # Row 2: response='"start', ground_truth='middle"end' - should NOT match
-        assert row_result_df["outputs.quote_checker.response_value"][2] == '"start'
-        assert row_result_df["outputs.quote_checker.ground_truth_value"][2] == 'middle"end'
+        # Row 2: response='start', ground_truth='"end' - should NOT match
+        assert row_result_df["outputs.quote_checker.response_value"][2] == 'start'
+        assert row_result_df["outputs.quote_checker.ground_truth_value"][2] == '"end'
         assert row_result_df["outputs.quote_checker.match"][2] == 0

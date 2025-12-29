@@ -1,4 +1,4 @@
 response,ground_truth
 test,"test"
 "quoted",quoted
-"start,middle"end
+start,"end
