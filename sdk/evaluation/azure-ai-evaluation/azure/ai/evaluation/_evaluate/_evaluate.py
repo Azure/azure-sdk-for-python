@@ -1465,13 +1465,23 @@ def _preprocess_data(
 
                 # Update column mappings to use data references instead of run outputs
                 for evaluator_name, mapping in column_mapping.items():
-                    mapped_to_values = set(mapping.values())
+                    # First, convert any existing ${run.outputs.} references to ${data.__outputs.}
+                    # This handles user-provided column mappings that reference target outputs
+                    for map_to_key, map_value in list(mapping.items()):
+                        if "${run.outputs." in map_value:
+                            # Extract the column name from ${run.outputs.column_name}
+                            # and convert to ${data.__outputs.column_name}
+                            new_value = map_value.replace("${run.outputs.", f"${{data.{Prefixes.TSG_OUTPUTS}")
+                            column_mapping[evaluator_name][map_to_key] = new_value
+                    
+                    # Then, add auto-generated mappings for target columns not explicitly mapped
+                    mapped_to_values = set(column_mapping[evaluator_name].values())
                     for col in target_generated_columns:
                         # Use data reference instead of run output to ensure we get all rows
                         target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
 
                         # We will add our mapping only if customer did not map target output.
-                        if col not in mapping and target_reference not in mapped_to_values:
+                        if col not in column_mapping[evaluator_name] and target_reference not in mapped_to_values:
                             column_mapping[evaluator_name][col] = target_reference
 
                 # Don't pass the target_run since we're now using the complete dataframe
