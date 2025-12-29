@@ -17,7 +17,9 @@ CONDA_DIR = os.path.join(ROOT_DIR, "conda")
 CONDA_RECIPES_DIR = os.path.join(CONDA_DIR, "conda-recipes")
 CONDA_RELEASE_LOGS_DIR = os.path.join(CONDA_DIR, "conda-releaselogs")
 CONDA_ENV_PATH = os.path.join(CONDA_RECIPES_DIR, "conda_env.yml")
-CONDA_CLIENT_YAML_PATH = os.path.join(ROOT_DIR, "eng", "pipelines", "templates", "stages", "conda-sdk-client.yml")
+CONDA_CLIENT_YAML_PATH = os.path.join(
+    ROOT_DIR, "eng", "pipelines", "templates", "stages", "conda-sdk-client.yml"
+)
 
 # constants
 RELEASE_PERIOD_MONTHS = 3
@@ -32,6 +34,15 @@ PACKAGES_WITH_DOWNLOAD_URI = [
     "msal",
     "msal-extensions",
 ]
+
+
+class quoted(str):
+    pass
+
+
+def quoted_presenter(dumper, data):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="'")
+
 
 def update_conda_version() -> (
     Tuple[datetime, str]
@@ -48,7 +59,9 @@ def update_conda_version() -> (
 
     # bump version
     new_version = new_date.strftime("%Y.%m.%d")
-    conda_env_data["variables"]["AZURESDK_CONDA_VERSION"] = new_version
+    conda_env_data["variables"]["AZURESDK_CONDA_VERSION"] = quoted(new_version)
+
+    yaml.add_representer(quoted, quoted_presenter)
 
     with open(CONDA_ENV_PATH, "w") as file:
         yaml.dump(conda_env_data, file, default_flow_style=False, sort_keys=False)
@@ -124,7 +137,9 @@ def package_needs_update(
         else package_row.get(LATEST_GA_DATE_COL)
     )
 
-    logger.debug(f"Checking {'new package' if is_new else 'outdated package'} for package {package_row.get(PACKAGE_COL)} with against date: {compare_date}")
+    logger.debug(
+        f"Checking {'new package' if is_new else 'outdated package'} for package {package_row.get(PACKAGE_COL)} with against date: {compare_date}"
+    )
 
     if not compare_date:
         logger.debug(
@@ -149,39 +164,48 @@ def package_needs_update(
         )
         return False
 
-def get_package_data_from_pypi(package_name: str) -> Tuple[Optional[str], Optional[str]]:
+
+def get_package_data_from_pypi(
+    package_name: str,
+) -> Tuple[Optional[str], Optional[str]]:
     """Fetch the latest version and download URI for a package from PyPI."""
     pypi_url = f"https://pypi.org/pypi/{package_name}/json"
     try:
         with urllib.request.urlopen(pypi_url, timeout=10) as response:
             data = json.loads(response.read().decode("utf-8"))
-            
+
             # Get the latest version
             latest_version = data["info"]["version"]
             # Construct download URL from releases data
             if latest_version in data["releases"] and data["releases"][latest_version]:
                 # Get the source distribution (sdist) if available, otherwise get the first file
                 files = data["releases"][latest_version]
-                source_dist = next((f for f in files if f["packagetype"] == "sdist"), None)
+                source_dist = next(
+                    (f for f in files if f["packagetype"] == "sdist"), None
+                )
                 if source_dist:
                     download_url = source_dist["url"]
-                    logger.info(f"Found download URL for {package_name}=={latest_version}: {download_url}")
+                    logger.info(
+                        f"Found download URL for {package_name}=={latest_version}: {download_url}"
+                    )
                     return latest_version, download_url
-                
+
     except Exception as e:
         logger.error(f"Failed to fetch download URI from PyPI for {package_name}: {e}")
     return None, None
+
 
 def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int]]:
     """Build an index of package name -> (artifact_idx, checkout_idx) for fast lookups in conda-sdk-client.yml."""
     package_index = {}
     for artifact_idx, artifact in enumerate(conda_artifacts):
-        if 'checkout' in artifact:
-            for checkout_idx, checkout_item in enumerate(artifact['checkout']):
-                package_name = checkout_item.get('package')
+        if "checkout" in artifact:
+            for checkout_idx, checkout_item in enumerate(artifact["checkout"]):
+                package_name = checkout_item.get("package")
                 if package_name:
                     package_index[package_name] = (artifact_idx, checkout_idx)
     return package_index
+
 
 def update_package_versions(
     packages: List[Dict[str, str]], prev_release_date: str
@@ -193,16 +217,20 @@ def update_package_versions(
     :param prev_release_date: The date of the previous release in "mm/dd/yyyy" format.
     """
     packages_to_update = []
-    
+
     for package in packages:
         if package_needs_update(package, prev_release_date, is_new=False):
-            packages_to_update.append((package.get(PACKAGE_COL), package.get(VERSION_GA_COL)))
-    
+            packages_to_update.append(
+                (package.get(PACKAGE_COL), package.get(VERSION_GA_COL))
+            )
+
     if not packages_to_update:
         logger.info("No packages need version updates")
         return
-        
-    logger.info(f"Detected {len(packages_to_update)} outdated package versions to update")
+
+    logger.info(
+        f"Detected {len(packages_to_update)} outdated package versions to update"
+    )
 
     with open(CONDA_CLIENT_YAML_PATH, "r") as file:
         conda_client_data = yaml.safe_load(file)
@@ -210,52 +238,132 @@ def update_package_versions(
     updated_count = 0
 
     # Navigate to the CondaArtifacts section
-    conda_artifacts = conda_client_data['extends']['parameters']['stages'][0]['jobs'][0]['steps'][0]['parameters']['CondaArtifacts']
+    conda_artifacts = conda_client_data["extends"]["parameters"]["stages"][0]["jobs"][
+        0
+    ]["steps"][0]["parameters"]["CondaArtifacts"]
     package_index = build_package_index(conda_artifacts)
 
     for pkg_name, new_version in packages_to_update:
         if pkg_name in package_index:
             artifact_idx, checkout_idx = package_index[pkg_name]
-            checkout_item = conda_artifacts[artifact_idx]['checkout'][checkout_idx]
-            
-            if 'version' in checkout_item:
-                old_version = checkout_item.get('version', '')
-                checkout_item['version'] = new_version
+            checkout_item = conda_artifacts[artifact_idx]["checkout"][checkout_idx]
+
+            if "version" in checkout_item:
+                old_version = checkout_item.get("version", "")
+                checkout_item["version"] = new_version
                 logger.info(f"Updated {pkg_name}: {old_version} -> {new_version}")
                 updated_count += 1
             else:
-                logger.warning(f"Package {pkg_name} has no 'version' field, skipping update")
+                logger.warning(
+                    f"Package {pkg_name} has no 'version' field, skipping update"
+                )
         else:
-            logger.warning(f"Package {pkg_name} not found in conda-sdk-client.yml, skipping update")
+            logger.warning(
+                f"Package {pkg_name} not found in conda-sdk-client.yml, skipping update"
+            )
 
     # handle download_uri for packages known to be missing from the csv
     for pkg_name in PACKAGES_WITH_DOWNLOAD_URI:
         if pkg_name in package_index:
             artifact_idx, checkout_idx = package_index[pkg_name]
-            checkout_item = conda_artifacts[artifact_idx]['checkout'][checkout_idx]
+            checkout_item = conda_artifacts[artifact_idx]["checkout"][checkout_idx]
 
-            curr_download_uri = checkout_item.get('download_uri', '')
+            curr_download_uri = checkout_item.get("download_uri", "")
             latest_version, download_uri = get_package_data_from_pypi(pkg_name)
 
             if curr_download_uri != download_uri:
-                # version needs update 
-                logger.info(f"Package {pkg_name} download_uri mismatch with PyPi, updating {curr_download_uri} to {download_uri}")
-                checkout_item['version'] = latest_version
-                checkout_item['download_uri'] = download_uri
-                logger.info(f"Updated download_uri for {pkg_name} with version {latest_version}: {download_uri}")
+                # version needs update
+                logger.info(
+                    f"Package {pkg_name} download_uri mismatch with PyPi, updating {curr_download_uri} to {download_uri}"
+                )
+                checkout_item["version"] = latest_version
+                checkout_item["download_uri"] = download_uri
+                logger.info(
+                    f"Updated download_uri for {pkg_name} with version {latest_version}: {download_uri}"
+                )
                 updated_count += 1
 
     if updated_count > 0:
         with open(CONDA_CLIENT_YAML_PATH, "w") as file:
-            yaml.dump(conda_client_data, file, default_flow_style=False, sort_keys=False, width=float('inf'))
-        logger.info(f"Successfully updated {updated_count} package versions in conda-sdk-client.yml")
+            yaml.dump(
+                conda_client_data,
+                file,
+                default_flow_style=False,
+                sort_keys=False,
+                width=float("inf"),
+            )
+        logger.info(
+            f"Successfully updated {updated_count} package versions in conda-sdk-client.yml"
+        )
     else:
         logger.warning("No packages were found in the YAML file to update")
 
 
-def add_new_data_plane_packages(
-    new_packages: List[Dict[str, str]]
-) -> None:
+def generate_data_plane_meta_yaml(
+    package_name: str, version: str, download_uri: Optional[str]
+) -> str:
+    """Generate the meta.yaml content for a data plane package."""
+
+    # TODO how to determine this? e.g. azure-ai-voicelive uses AGENTS_SOURCE_DISTRIBUTION
+    src_distribution_env_var = "AGENTS_SOURCE_DISTRIBUTION"  # TODO placeholder
+
+    meta_yaml_content = f"""
+    {{% set name = "{package_name}" %}}
+    package:
+        name: "{{ name|lower }}"
+        version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+    source:
+       url: {{ environ.get('{src_distribution_env_var}', '') }}
+
+    build:
+        noarch: python
+        number: 0
+        script: "{{ PYTHON }} -m pip install . -vv"
+
+    requirements:
+        host:
+            - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+            - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+            - cryptography
+            - pip
+            - python
+            - requests-oauthlib >=0.5.0
+            - aiohttp
+            - isodate
+    run:
+        - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+        - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+        - cryptography
+        - python
+        - requests-oauthlib >=0.5.0
+        - aiohttp
+        - isodate
+
+    test:
+        imports:
+            - azure.ai.agents
+
+    about:
+        home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents"
+        license: MIT
+        license_family: MIT
+        license_file: 
+        summary: "Microsoft Azure AI Agents Client Library for Python"
+        description: |
+            This is the Microsoft Azure AI Agents Client Library.
+            Please see https://aka.ms/azsdk/conda/releases/agents for version details.
+        doc_url: 
+        dev_url: 
+
+    extra:
+        recipe-maintainers:
+          - xiangyan99
+    """
+    return meta_yaml_content
+
+
+def add_new_data_plane_packages(new_packages: List[Dict[str, str]]) -> None:
     """Create meta.yaml files for new data plane packages and add import tests."""
     logger.info(f"Adding {len(new_packages)} new data plane packages")
 
@@ -269,16 +377,15 @@ def add_new_data_plane_packages(
 
         pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, package_name, "meta.yaml")
         os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
-        
-        with open(pkg_yaml_path, "w") as f:
+
+        # with open(pkg_yaml_path, "w") as f:
 
 
-def add_new_mgmt_plane_packages(
-    new_packages: List[Dict[str, str]]
-) -> None:
+def add_new_mgmt_plane_packages(new_packages: List[Dict[str, str]]) -> None:
     """Update azure-mgmt/meta.yaml with new management libraries, and add import tests."""
     # TODO implement logic to add new management plane packages
     logger.info(f"Adding {len(new_packages)} new management plane packages")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -306,16 +413,16 @@ if __name__ == "__main__":
     logger.info(f"Filtered to {len(packages)} GA packages")
 
     # update existing package versions
-     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
+    # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
     update_package_versions(packages, old_version)
 
     # handle new packages
     new_packages = [
-        pkg
-        for pkg in packages
-        if package_needs_update(pkg, old_version, is_new=True)
+        pkg for pkg in packages if package_needs_update(pkg, old_version, is_new=True)
     ]
-    new_data_plane_packages, new_mgmt_plane_packages = separate_packages_by_type(new_packages)
+    new_data_plane_packages, new_mgmt_plane_packages = separate_packages_by_type(
+        new_packages
+    )
 
     # handle new data plane libraries
     add_new_data_plane_packages(new_data_plane_packages)
