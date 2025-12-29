@@ -1,0 +1,576 @@
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+# mypy: disable-error-code=override
+# pyright: reportIncompatibleMethodOverride=false
+# pylint: disable=docstring-should-be-keyword,C4743
+"""Customize generated code here.
+
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
+import re
+from typing import List, Optional, Any, Union, overload, IO, TypeVar, Mapping
+from collections.abc import MutableMapping
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller, PollingMethod
+from ._operations import FacesOperations as FacesOperationsGenerated
+from ..models import DetectFacesResult
+from ._operations import ContentAnalyzersOperations as ContentAnalyzersOperationsGenerated
+from .. import models as _models
+from ._operations import ContentClassifiersOperations as ContentClassifiersOperationsGenerated
+
+JSON = MutableMapping[str, Any]
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
+
+__all__: List[str] = [
+    "FacesOperations",
+    "ContentAnalyzersOperations",
+    "ContentClassifiersOperations",
+    "AnalyzeLROPoller"
+]
+
+
+def _parse_operation_id(operation_location_header: str) -> str:
+    """Parse operation ID from Operation-Location header for analyze operations.
+    
+    :param operation_location_header: The Operation-Location header value
+    :type operation_location_header: str
+    :return: The extracted operation ID
+    :rtype: str
+    :raises ValueError: If operation ID cannot be extracted
+    """
+    # Pattern: https://endpoint/.../analyzerResults/{operation_id}?api-version=...
+    regex = r".*/analyzerResults/([^?/]+)"
+
+    match = re.search(regex, operation_location_header)
+    if not match:
+        raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
+
+    return match.group(1)
+
+
+class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
+    """Custom LROPoller for Content Understanding analyze operations.
+
+    Provides access to operation details including the operation ID.
+    """
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the long-running operation.
+
+        :return: Returns metadata associated with the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
+        try:
+            operation_location = self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore # pylint: disable=protected-access
+            operation_id = _parse_operation_id(operation_location)
+            return {
+                "operation_id": operation_id,
+                "operation_type": "analyze"
+            }
+        except (KeyError, ValueError) as e:
+            return {
+                "operation_id": None,
+                "operation_type": "analyze",
+                "error": f"Could not extract operation details: {str(e)}"
+            }
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
+    ) -> "AnalyzeLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token
+        :type continuation_token: str
+        :return: An instance of ContentUnderstandingAnalyzeLROPoller
+        :rtype: ContentUnderstandingAnalyzeLROPoller
+        :raises ~azure.core.exceptions.HttpResponseError: If the continuation token is invalid.
+        """
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
+
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+def patch_sdk():
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+
+    :return: None
+    :rtype: None
+    """
+
+
+class FacesOperations(FacesOperationsGenerated):
+    """Extended FacesOperations with url/data mutual exclusivity enforcement."""
+
+    @overload
+    def detect(self, *, url: str, max_detected_faces: Optional[int] = None, **kwargs: Any) -> DetectFacesResult:
+        """Detect faces using image URL.
+
+        :keyword url: Image URL. Required.
+        :paramtype url: str
+        :keyword max_detected_faces: Maximum number of faces to return (up to 100)
+        :paramtype max_detected_faces: int
+        :return: DetectFacesResult
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def detect(self, *, data: bytes, max_detected_faces: Optional[int] = None, **kwargs: Any) -> DetectFacesResult:
+        """Detect faces using image data.
+
+        :keyword data: Binary image data as bytes. Required.
+        :paramtype data: bytes
+        :keyword max_detected_faces: Maximum number of faces to return (up to 100)
+        :paramtype max_detected_faces: int
+        :return: DetectFacesResult
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def detect(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> DetectFacesResult:
+        """Detect faces in an image.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DetectFacesResult. The DetectFacesResult is compatible with MutableMapping
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def detect(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> DetectFacesResult:
+        """Detect faces in an image.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DetectFacesResult. The DetectFacesResult is compatible with MutableMapping
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def detect(self, *args: Any, **kwargs: Any) -> DetectFacesResult:  # type: ignore[override]
+        """Detect faces in an image with url/data mutual exclusivity.
+
+        This method enforces that url and data cannot be provided simultaneously,
+        while allowing all other original behaviors including body parameters.
+
+        :param args: Variable length argument list.
+        :type args: Any
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: Any
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
+        :return: DetectFacesResult
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Validate that url and data are not provided together
+        if "url" in kwargs and kwargs["url"] is not None and "data" in kwargs and kwargs["data"] is not None:
+            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
+
+        # Handle bytes data - no conversion needed, pass through directly
+        # The original detect method will handle bytes data appropriately
+
+        # Call the original method for all cases
+        return super().detect(*args, **kwargs)
+
+
+class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
+    """Extended ContentAnalyzersOperations with url/data mutual exclusivity enforcement."""
+
+    @overload
+    def begin_analyze(
+        self,
+        analyzer_id: str,
+        *,
+        url: str,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        inputs: Optional[List[_models.AnalyzeInput]] = None,
+        **kwargs: Any
+    ) -> AnalyzeLROPoller:
+        """Extract content and fields from input using URL.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :keyword url: The URL of the primary input to analyze. Required.
+        :paramtype url: str
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword inputs: Additional inputs to analyze. Only supported in analyzers with mode=pro.
+         Default value is None.
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalyzeInput]
+        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_analyze(
+        self,
+        analyzer_id: str,
+        *,
+        data: bytes,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/octet-stream",
+        inputs: Optional[List[_models.AnalyzeInput]] = None,
+        **kwargs: Any
+    ) -> AnalyzeLROPoller:
+        """Extract content and fields from input using binary data.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :keyword data: Binary content of the document to analyze. Will be automatically base64-encoded. Required.
+        :paramtype data: bytes
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Content type for binary data. Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword inputs: Additional inputs to analyze. Only supported in analyzers with mode=pro.
+         Default value is None.
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalyzeInput]
+        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_analyze(
+        self,
+        analyzer_id: str,
+        body: JSON,
+        *,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AnalyzeLROPoller:
+        """Extract content and fields from input.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_analyze(
+        self,
+        analyzer_id: str,
+        body: IO[bytes],
+        *,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AnalyzeLROPoller:
+        """Extract content and fields from input.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_analyze(
+        self, analyzer_id: str, *args: Any, **kwargs: Any
+    ) -> AnalyzeLROPoller:  # type: ignore[override]
+        """Extract content and fields from input with url/data mutual exclusivity.
+
+        This method enforces that url and data cannot be provided simultaneously,
+        while allowing all other original behaviors including body parameters and inputs.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :param args: Variable length argument list.
+        :type args: Any
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: Any
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
+        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Validate that url and data are not provided together
+        if "url" in kwargs and kwargs["url"] is not None and "data" in kwargs and kwargs["data"] is not None:
+            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
+
+        # Handle bytes data by calling begin_analyze_binary for better efficiency
+        # Only route to begin_analyze_binary when:
+        # 1. data is provided and is bytes (raw binary data)
+        # 2. inputs is None (begin_analyze_binary doesn't support inputs parameter)
+        if (
+            "data" in kwargs
+            and kwargs["data"] is not None
+            and isinstance(kwargs["data"], bytes)
+            and ("inputs" not in kwargs or kwargs.get("inputs") is None)
+        ):
+            data_bytes = kwargs.pop("data")
+            # Extract parameters that begin_analyze_binary supports
+            string_encoding = kwargs.pop("string_encoding", None)
+            processing_location = kwargs.pop("processing_location", None)
+            content_type = kwargs.pop("content_type", "application/octet-stream")
+
+            poller = super().begin_analyze_binary(
+                analyzer_id=analyzer_id,
+                binary_input=data_bytes,
+                string_encoding=string_encoding,
+                processing_location=processing_location,
+                content_type=content_type,
+                **kwargs
+            )
+            return AnalyzeLROPoller(
+                self._client,  # type: ignore
+                poller._polling_method._initial_response,  # type: ignore  # pylint: disable=protected-access
+                poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access
+                poller._polling_method  # pylint: disable=protected-access
+            )
+
+        # Call the original method for all other cases and wrap in custom poller
+        poller = super().begin_analyze(analyzer_id, *args, **kwargs)
+        return AnalyzeLROPoller(
+            self._client,  # type: ignore
+            poller._polling_method._initial_response,  # type: ignore  # pylint: disable=protected-access
+            poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access
+            poller._polling_method  # pylint: disable=protected-access
+        )
+
+
+class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
+    """Extended ContentClassifiersOperations with url/data mutual exclusivity enforcement."""
+
+    @overload
+    def begin_classify(
+        self,
+        classifier_id: str,
+        *,
+        url: str,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.ClassifyResult]:
+        """Classify content using URL.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :keyword url: The URL of the document to classify. Required.
+        :paramtype url: str
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_classify(
+        self,
+        classifier_id: str,
+        *,
+        data: bytes,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.ClassifyResult]:
+        """Classify content using binary data.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :keyword data: Binary content of the document to classify. Will be automatically base64-encoded. Required.
+        :paramtype data: bytes
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_classify(
+        self,
+        classifier_id: str,
+        body: JSON,
+        *,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ClassifyResult]:
+        """Classify content with optional splitting.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_classify(
+        self,
+        classifier_id: str,
+        body: IO[bytes],
+        *,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ClassifyResult]:
+        """Classify content with optional splitting.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_classify(
+        self, classifier_id: str, *args: Any, **kwargs: Any
+    ) -> LROPoller[_models.ClassifyResult]:  # type: ignore[override]
+        """Classify content with url/data mutual exclusivity.
+
+        This method enforces that url and data cannot be provided simultaneously,
+        while allowing all other original behaviors including body parameters.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :param args: Variable length argument list.
+        :type args: Any
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: Any
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
+        :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Validate that url and data are not provided together
+        if "url" in kwargs and kwargs["url"] is not None and "data" in kwargs and kwargs["data"] is not None:
+            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
+
+        # Handle bytes data by calling begin_classify_binary for better efficiency
+        if "data" in kwargs and kwargs["data"] is not None and isinstance(kwargs["data"], bytes):
+            data_bytes = kwargs.pop("data")
+            # Extract parameters that begin_classify_binary supports
+            string_encoding = kwargs.pop("string_encoding", None)
+            processing_location = kwargs.pop("processing_location", None)
+            content_type = kwargs.pop("content_type", "application/octet-stream")
+
+            return super().begin_classify_binary(
+                classifier_id=classifier_id,
+                binary_input=data_bytes,
+                string_encoding=string_encoding,
+                processing_location=processing_location,
+                content_type=content_type,
+                **kwargs
+            )
+
+        # Call the original method for all other cases
+        return super().begin_classify(classifier_id, *args, **kwargs)
