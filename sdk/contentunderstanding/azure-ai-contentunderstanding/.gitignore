@@ -1,0 +1,28 @@
+# Sample and test output files (any directory starting with these names)
+**/test_output*/
+**/sample_output*/
+
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+tests/recordings/
+
+# Environment variables
+.env
+
+.local_only/
