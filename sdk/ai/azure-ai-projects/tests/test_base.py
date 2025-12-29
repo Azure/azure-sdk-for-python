@@ -70,14 +70,6 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_memory_store_embedding_model_deployment_name="text-embedding-ada-002",
 )
 
-# Load secrets from environment variables
-originalServicePreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "",
-    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="gpt-4o",
-)
-
 # Fine-tuning job type constants
 SFT_JOB_TYPE: Final[str] = "sft"
 DPO_JOB_TYPE: Final[str] = "dpo"

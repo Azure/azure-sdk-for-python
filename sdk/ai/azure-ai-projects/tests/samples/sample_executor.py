@@ -15,12 +15,10 @@ from pydantic import BaseModel
 import json
 import unittest.mock as mock
 from typing import cast
-import pytest
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
-from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
 from azure.ai.projects import AIProjectClient
 from pytest import MonkeyPatch
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
@@ -86,7 +84,6 @@ def get_async_sample_paths(sub_folder: str, *, samples_to_skip: list[str]) -> li
     Args:
         sub_folder: Relative path to the samples subfolder (e.g., "agents/tools")
         samples_to_skip: Blacklist of sample filenames to exclude (auto-discovers all samples)
-        is_async: Whether to filter for async samples (_async.py suffix)
 
     Returns:
         List of pytest.param objects with sample paths and test IDs
@@ -340,8 +337,8 @@ class AsyncSampleExecutor(BaseSampleExecutor):
 
         return mock.patch(patch_target, new=mock_credential_class)
 
-    async def execute(self, patched_open_fn=None):
-        """Execute a synchronous sample with proper mocking and environment setup."""
+    async def execute_async(self, patched_open_fn=None):
+        """Execute an asynchronous sample with proper mocking and environment setup."""
         # Import patched_open_crlf_to_lf here to avoid circular import
         if patched_open_fn is None:
             from test_base import patched_open_crlf_to_lf
