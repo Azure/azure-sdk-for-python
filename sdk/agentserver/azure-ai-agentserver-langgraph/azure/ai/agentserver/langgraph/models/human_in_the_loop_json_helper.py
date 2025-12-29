@@ -17,11 +17,9 @@ from azure.ai.agentserver.core.models.openai import (
     ResponseInputParam,
     ResponseInputItemParam,
 )
+from azure.ai.agentserver.core.server.common.constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME
 
-from .human_in_the_loop_helper import (
-    HumanInTheLoopHelper,
-    INTERRUPT_TOOL_NAME,
-)
+from .human_in_the_loop_helper import HumanInTheLoopHelper
 
 logger = get_logger()
 
@@ -61,7 +59,7 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
             arguments = interrupt.value
         else:
             arguments = json.dumps(interrupt.value)
-        return INTERRUPT_TOOL_NAME, interrupt.id, arguments
+        return HUMAN_IN_THE_LOOP_FUNCTION_NAME, interrupt.id, arguments
     
     def validate_and_convert_human_feedback(
             self, state: StateSnapshot, input: Union[str, ResponseInputParam]

@@ -5,11 +5,9 @@
 from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.models import projects as project_models
+from azure.ai.agentserver.core.server.common.constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME
 
-from ..human_in_the_loop_helper import (
-    HumanInTheLoopHelper,
-    INTERRUPT_TOOL_NAME,
-)
+from ..human_in_the_loop_helper import HumanInTheLoopHelper
 from ..utils import extract_function_call
 
 class ItemResourceHelper:

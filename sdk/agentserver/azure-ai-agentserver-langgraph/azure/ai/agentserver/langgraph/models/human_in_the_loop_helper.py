@@ -18,7 +18,6 @@ from azure.ai.agentserver.core.models.openai import (
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
 INTERRUPT_NODE_NAME = "__interrupt__"
-INTERRUPT_TOOL_NAME = "__hosted_agent_adapter_interrupt__"
 
 
 class HumanInTheLoopHelper:

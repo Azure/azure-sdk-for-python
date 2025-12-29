@@ -112,7 +112,7 @@ class LangGraphAdapter(FoundryCBAgent):
                 graph = self._resolved_graph
 
             input_arguments = await self.orchestrator.convert_request(context)
-            self.insure_runnable_config(context, input_arguments)
+            self.ensure_runnable_config(context, input_arguments)
             if not context.stream:
                 try:
                     response = await self.agent_run_non_stream(input_arguments, context, graph)
@@ -304,7 +304,7 @@ class LangGraphAdapter(FoundryCBAgent):
                 except Exception as e:
                     logger.warning(f"Error closing tool_client in stream: {e}")
 
-    def insure_runnable_config(self, context: AgentRunContext, input_arguments: GraphInputArguments):
+    def ensure_runnable_config(self, context: AgentRunContext, input_arguments: GraphInputArguments):
         """
         Ensure the RunnableConfig is set in the input arguments.
 

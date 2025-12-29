@@ -31,9 +31,12 @@ class ResponseAPINonStreamResponseConverter(ABC):
     One converter instance handles one response.
     """
     @abstractmethod
-    def convert(self) -> list[project_models.ItemResource]:
+    def convert(self, output: dict[str, Any]) -> list[project_models.ItemResource]:
         """
         Convert the Langgraph output to a list of ItemResource objects.
+
+        :param output: The Langgraph output to be converted.
+        :type output: dict[str, Any]
 
         :return: A list of ItemResource objects representing the converted output.
         :rtype: list[project_models.ItemResource]
