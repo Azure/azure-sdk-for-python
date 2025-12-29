@@ -451,7 +451,7 @@ pip install -r dev_requirements.txt
 
 ### "KeyError: 'AZURE_CONTENT_UNDERSTANDING_ENDPOINT'"
 
-**Solution:** Create a `.env` file with your credentials (see Setup step 3).
+**Solution:** Create a `.env` file with your credentials (see [Setup step 3](#3-configure-environment-variables)).
 
 ### "Could not load credentials from the environment"
 
