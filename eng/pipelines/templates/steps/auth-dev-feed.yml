@@ -24,3 +24,11 @@ steps:
     inputs:
       artifactFeeds: $(DevFeedName)
       onlyAddExtraIndex: false
+
+  # disabled until completion of python part of azure/azure-sdk-tools#9101
+  # - pwsh: |
+  #     if ($env:PIP_INDEX_URL) {
+  #       Write-Host "PIP Index URL detected: $env:PIP_INDEX_URL"
+  #       Write-Host "##vso[task.setvariable variable=UV_DEFAULT_INDEX]$($env:PIP_INDEX_URL)"
+  #     }
+  #   displayName: 'Mirror PIP Index URL to UV Index URL'

@@ -12,10 +12,10 @@ from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from openai import OpenAI
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 
-from test_base import servicePreparer, recorded_by_proxy_httpx
+from test_base import servicePreparer
 from test_ai_instrumentor_base import (
     TestAiAgentsInstrumentorBase,
     CONTENT_TRACING_ENV_VARIABLE,
@@ -56,7 +56,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         openai_client = project_client.get_openai_client()
 
         # Get the model deployment name from test parameters
-        model_deployment_name = self.test_agents_params["model_deployment_name"]
+        model_deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         return openai_client, model_deployment_name
 
@@ -188,7 +188,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_non_streaming_with_content_recording(self, **kwargs):
         """Test synchronous non-streaming responses with content recording enabled."""
         self.cleanup()
@@ -205,7 +205,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -268,7 +268,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_non_streaming_without_content_recording(self, **kwargs):
         """Test synchronous non-streaming responses with content recording disabled."""
         self.cleanup()
@@ -285,7 +285,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -348,7 +348,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_streaming_with_content_recording(self, **kwargs):
         """Test synchronous streaming responses with content recording enabled."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -367,7 +367,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -438,7 +438,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_conversations_create(self, **kwargs):
         """Test synchronous conversations.create() method."""
         self.cleanup()
@@ -455,7 +455,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -482,7 +482,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_list_conversation_items_with_content_recording(self, **kwargs):
         """Test synchronous list_conversation_items with content recording enabled."""
         self.cleanup()
@@ -499,7 +499,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -558,7 +558,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_list_conversation_items_without_content_recording(self, **kwargs):
         """Test synchronous list_conversation_items with content recording disabled."""
         self.cleanup()
@@ -575,7 +575,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -670,7 +670,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_non_streaming_without_conversation(self, **kwargs):
         """Test synchronous non-streaming responses without conversation parameter."""
         self.cleanup()
@@ -685,7 +685,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = self.test_agents_params["model_deployment_name"]
+        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
         with project_client:
             # Get the OpenAI client from the project client
@@ -741,10 +741,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_with_content_recording_non_streaming(self, **kwargs):
         """Test synchronous function tool usage with content recording enabled (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -763,7 +762,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -869,7 +868,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
                 },
             },
         ]
@@ -900,7 +899,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
                 },
             },
             {
@@ -915,10 +914,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_with_content_recording_streaming(self, **kwargs):
         """Test synchronous function tool usage with content recording enabled (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -937,7 +935,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1066,7 +1064,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
                 },
             },
         ]
@@ -1097,7 +1095,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
                 },
             },
             {
@@ -1112,10 +1110,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_without_content_recording_non_streaming(self, **kwargs):
         """Test synchronous function tool usage without content recording (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -1134,7 +1131,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1239,7 +1236,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
                 },
             },
         ]
@@ -1270,7 +1267,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
                 },
             },
             {
@@ -1285,10 +1282,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_without_content_recording_streaming(self, **kwargs):
         """Test synchronous function tool usage without content recording (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -1307,7 +1303,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1430,7 +1426,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
                 },
             },
         ]
@@ -1461,7 +1457,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
                 },
             },
             {
@@ -1476,10 +1472,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_list_conversation_items_with_content_recording(self, **kwargs):
         """Test listing conversation items after function tool usage with content recording enabled."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -1498,7 +1493,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1603,7 +1598,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.conversation.item.id": "*",
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
                 },
             },
             {
@@ -1611,7 +1606,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.conversation.item.id": "*",
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
                 },
             },
             {
@@ -1626,10 +1621,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(list_span, expected_events)
         assert events_match == True
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_list_conversation_items_without_content_recording(self, **kwargs):
         """Test listing conversation items after function tool usage without content recording."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -1648,7 +1642,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1753,7 +1747,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.conversation.item.id": "*",
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
                 },
             },
             {
@@ -1761,7 +1755,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.conversation.item.id": "*",
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
                 },
             },
             {
@@ -1778,7 +1772,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_multiple_text_inputs_with_content_recording_non_streaming(self, **kwargs):
         """Test synchronous non-streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
@@ -1795,7 +1789,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -1874,7 +1868,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_multiple_text_inputs_with_content_recording_streaming(self, **kwargs):
         """Test synchronous streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
@@ -1891,7 +1885,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -1978,7 +1972,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_multiple_text_inputs_without_content_recording_non_streaming(self, **kwargs):
         """Test synchronous non-streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
@@ -1995,7 +1989,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2074,7 +2068,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_multiple_text_inputs_without_content_recording_streaming(self, **kwargs):
         """Test synchronous streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
@@ -2086,7 +2080,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2173,7 +2167,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_image_only_content_off_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -2189,7 +2183,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2243,7 +2237,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_image_only_content_off_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
@@ -2259,7 +2253,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2312,7 +2306,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_image_only_content_on_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -2328,7 +2322,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2381,7 +2375,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_image_only_content_on_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
@@ -2397,7 +2391,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2454,7 +2448,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_text_and_image_content_off_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -2470,7 +2464,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2528,7 +2522,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_text_and_image_content_off_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
@@ -2544,7 +2538,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2601,7 +2595,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_text_and_image_content_on_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
@@ -2617,7 +2611,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2674,7 +2668,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_text_and_image_content_on_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
@@ -2690,7 +2684,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2751,7 +2745,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_image_only_content_off_binary_off_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
@@ -2767,7 +2761,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2829,7 +2823,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_image_only_content_off_binary_on_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
@@ -2845,7 +2839,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2906,7 +2900,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_image_only_content_on_binary_off_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
@@ -2922,7 +2916,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -2983,7 +2977,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_image_only_content_on_binary_on_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (streaming)."""
         self.cleanup()
@@ -2999,7 +2993,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -3064,7 +3058,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_text_and_image_content_off_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
@@ -3080,7 +3074,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -3145,7 +3139,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_text_and_image_content_off_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
@@ -3161,7 +3155,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -3226,7 +3220,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_text_and_image_content_on_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
@@ -3242,7 +3236,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -3307,7 +3301,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_text_and_image_content_on_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (streaming)."""
         self.cleanup()
@@ -3323,7 +3317,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -3392,7 +3386,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_responses_stream_method_with_content_recording(self, **kwargs):
         """Test sync responses.stream() method with content recording enabled."""
         os.environ["AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API"] = "True"
@@ -3401,7 +3395,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -3465,7 +3459,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_responses_stream_method_without_content_recording(self, **kwargs):
         """Test sync responses.stream() method without content recording."""
         os.environ["AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API"] = "True"
@@ -3474,7 +3468,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             conversation = client.conversations.create()
 
@@ -3538,7 +3532,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_responses_stream_method_with_tools_with_content_recording(self, **kwargs):
         """Test sync responses.stream() method with function tools and content recording enabled."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -3549,7 +3543,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -3653,7 +3647,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
                 },
             },
         ]
@@ -3668,7 +3662,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}]',
                 },
             },
             {
@@ -3685,7 +3679,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_responses_stream_method_with_tools_without_content_recording(self, **kwargs):
         """Test sync responses.stream() method with function tools without content recording."""
         from openai.types.responses.response_input_param import FunctionCallOutput
@@ -3703,7 +3697,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -3791,7 +3785,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
                 },
             },
         ]
@@ -3806,7 +3800,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function", "id": "*"}}]}]',
+                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
                 },
             },
             {
@@ -3825,10 +3819,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     # Workflow Agent Tracing Tests
     # ========================================
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_non_streaming_with_content_recording(self, **kwargs):
         """Test workflow agent with non-streaming and content recording enabled."""
         from azure.ai.projects.models import (
@@ -3848,7 +3841,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
             openai_client = project_client.get_openai_client()
 
             # Create Teacher Agent
@@ -4021,10 +4014,9 @@ trigger:
             # With content recording ON, action_id should be present
             assert "action_id" in part["content"]
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_non_streaming_without_content_recording(self, **kwargs):
         """Test workflow agent with non-streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
@@ -4040,7 +4032,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
             openai_client = project_client.get_openai_client()
 
             workflow_yaml = """
@@ -4129,10 +4121,9 @@ trigger:
             assert "action_id" not in part["content"]
             assert "previous_action_id" not in part["content"]
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_streaming_with_content_recording(self, **kwargs):
         """Test workflow agent with streaming and content recording enabled."""
         from azure.ai.projects.models import (
@@ -4153,7 +4144,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
             openai_client = project_client.get_openai_client()
 
             # Create Teacher Agent
@@ -4332,10 +4323,9 @@ trigger:
             # With content recording ON, action_id should be present
             assert "action_id" in part["content"]
 
-    @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_streaming_without_content_recording(self, **kwargs):
         """Test workflow agent with streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
@@ -4351,7 +4341,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = self.test_agents_params["model_deployment_name"]
+            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
             openai_client = project_client.get_openai_client()
 
             workflow_yaml = """

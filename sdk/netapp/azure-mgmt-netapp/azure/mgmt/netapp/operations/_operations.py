@@ -19170,6 +19170,9 @@ class CachesOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -19191,7 +19194,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Cache]:
         """Patch the specified Cache.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19208,8 +19211,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19224,7 +19228,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Cache]:
         """Patch the specified Cache.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19241,8 +19245,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19257,7 +19262,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Cache]:
         """Patch the specified Cache.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19274,8 +19279,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19304,7 +19310,7 @@ class CachesOperations:
         cache_name: str,
         body: Union[_models.CacheUpdate, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Cache]:
         """Patch the specified Cache.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19319,15 +19325,16 @@ class CachesOperations:
         :param body: The resource properties to be updated. Is one of the following types: CacheUpdate,
          JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.netapp.models.CacheUpdate or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -19347,9 +19354,12 @@ class CachesOperations:
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -19364,13 +19374,15 @@ class CachesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller[_models.Cache].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @api_version_validation(
         method_added_on="2025-09-01-preview",
@@ -21425,6 +21437,9 @@ class ElasticCapacityPoolsOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -22837,6 +22852,9 @@ class ElasticVolumesOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -24806,6 +24824,9 @@ class ElasticSnapshotPoliciesOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -25835,6 +25856,9 @@ class ElasticBackupVaultsOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -27691,6 +27715,9 @@ class ElasticBackupsOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -28613,6 +28640,9 @@ class ActiveDirectoryConfigsOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
