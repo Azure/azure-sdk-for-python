@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 # pylint: disable=logging-fstring-interpolation
 # mypy: disable-error-code="assignment,valid-type"
-from typing import List
+from abc import ABC, abstractmethod
+from typing import Any, List, Union
 
 from langchain_core.messages import AnyMessage
 
@@ -11,6 +12,7 @@ from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import ResponseStreamEvent
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
+from ..human_in_the_loop_helper import HumanInTheLoopHelper
 from .response_event_generators import (
     ResponseEventGenerator,
     ResponseStreamEventGenerator,
@@ -20,27 +22,54 @@ from .response_event_generators import (
 logger = get_logger()
 
 
-class LangGraphStreamResponseConverter:
-    def __init__(self, stream, context: AgentRunContext):
-        self.stream = stream
+class StreamResponseConverter(ABC):
+    """
+    Abstract base class for converting Langgraph streamed output to ResponseStreamEvent objects.
+    One converter instance handles one response stream.
+    """
+    @abstractmethod
+    async def convert(self, event: Union[AnyMessage, dict, Any, None]):
+        """
+        Convert the Langgraph streamed output to ResponseStreamEvent objects.
+
+        :return: An asynchronous generator yielding ResponseStreamEvent objects.
+        :rtype: AsyncGenerator[ResponseStreamEvent, None]
+        """
+        pass
+
+    @abstractmethod
+    async def finalize(self, args=None):
+        """
+        Finalize the conversion process after the stream ends.
+
+        :return: An asynchronous generator yielding final ResponseStreamEvent objects.
+        :rtype: AsyncGenerator[ResponseStreamEvent, None]
+        """
+        pass
+
+
+class MessagesStreamResponseConverter(StreamResponseConverter):
+    def __init__(self, stream, context: AgentRunContext, hitl_helper: HumanInTheLoopHelper):
+        # self.stream = stream
         self.context = context
+        self.hitl_helper = hitl_helper
 
         self.stream_state = StreamEventState()
         self.current_generator: ResponseEventGenerator = None
 
-    async def convert(self):
-        async for message, _ in self.stream:
-            try:
-                if self.current_generator is None:
-                    self.current_generator = ResponseStreamEventGenerator(logger, None)
-
-                converted = self.try_process_message(message, self.context)
-                for event in converted:
-                    yield event  # yield each event separately
-            except Exception as e:
-                logger.error(f"Error converting message {message}: {e}")
-                raise ValueError(f"Error converting message {message}") from e
-
+    async def convert(self, output_event: Union[AnyMessage, dict, Any, None]):
+        try:
+            if self.current_generator is None:
+                self.current_generator = ResponseStreamEventGenerator(logger, None)
+            message= output_event[0] # expect a tuple
+            converted = self.try_process_message(message, self.context)
+            for event in converted:
+                yield event  # yield each event separately
+        except Exception as e:
+            logger.error(f"Error converting message {message}: {e}")
+            raise ValueError(f"Error converting message {message}") from e
+    
+    async def finalize(self, args=None):
         logger.info("Stream ended, finalizing response.")
         # finalize the stream
         converted = self.try_process_message(None, self.context)

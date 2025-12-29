@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 # pylint: disable=unused-argument
 # mypy: ignore-errors
-from typing import List
+from typing import List, Union
 
 from langchain_core import messages as langgraph_messages
 from langchain_core.messages import AnyMessage
+from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
@@ -25,7 +26,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         self.item_resource_helper = None
 
     def try_process_message(
-        self, message: AnyMessage, context: AgentRunContext, stream_state: StreamEventState
+        self, message: Union[AnyMessage, Interrupt], context: AgentRunContext, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         is_processed = False
         next_processor = self
@@ -65,7 +66,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return is_processed, next_processor, events
 
     def on_start(
-        self, event: AnyMessage, context: AgentRunContext, stream_state: StreamEventState
+        self, event: Union[AnyMessage, Interrupt], context: AgentRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if self.started:
             return True, []
@@ -83,7 +84,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         self.started = True
         return True, [item_added_event]
 
-    def should_end(self, event: AnyMessage) -> bool:
+    def should_end(self, event: Union[AnyMessage, Interrupt]) -> bool:
         if event is None:
             self.logger.info("Received None event, ending processor.")
             return True
@@ -92,7 +93,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return False
 
     def on_end(
-        self, message: AnyMessage, context: AgentRunContext, stream_state: StreamEventState
+        self, message: Union[AnyMessage, Interrupt], context: AgentRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if not self.started:  # should not happen
             return []
@@ -112,7 +113,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         # aggregate content from child processor
         self.item_resource_helper.add_aggregate_content(content)
 
-    def try_create_item_resource_helper(self, event: AnyMessage, id_generator: IdGenerator):  # pylint: disable=too-many-return-statements
+    def try_create_item_resource_helper(self, event: Union[AnyMessage, Interrupt], id_generator: IdGenerator):  # pylint: disable=too-many-return-statements
         if isinstance(event, langgraph_messages.AIMessageChunk) and event.tool_call_chunks:
             self.item_resource_helper = item_resource_helpers.FunctionCallItemResourceHelper(
                 item_id=id_generator.generate_function_call_id(), tool_call=event.tool_call_chunks[0]
@@ -143,9 +144,14 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
                 item_id=id_generator.generate_function_output_id(), call_id=event.tool_call_id
             )
             return True
+        if isinstance(event, Interrupt):
+            self.item_resource_helper = item_resource_helpers.FunctionCallInterruptItemResourceHelper(
+                item_id=id_generator.generate_function_output_id(), interrupt=event
+            )
+            return True
         return False
 
-    def create_child_processor(self, message: AnyMessage):
+    def create_child_processor(self, message: Union[AnyMessage, Interrupt]):
         if self.item_resource_helper is None:
             return None
         if self.item_resource_helper.item_type == project_models.ItemType.FUNCTION_CALL:

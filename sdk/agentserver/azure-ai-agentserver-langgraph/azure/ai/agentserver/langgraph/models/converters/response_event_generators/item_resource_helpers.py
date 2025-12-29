@@ -2,10 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # mypy: disable-error-code="assignment"
+from langgraph.types import Interrupt
+
 from azure.ai.agentserver.core.models import projects as project_models
 
-from ..utils import extract_function_call
-
+from ...human_in_the_loop_helper import (
+    HumanInTheLoopHelper,
+    INTERRUPT_TOOL_NAME,
+)
+from ...utils import extract_function_call
 
 class ItemResourceHelper:
     def __init__(self, item_type: str, item_id: str = None):
@@ -56,6 +61,26 @@ class FunctionCallItemResourceHelper(ItemResourceHelper):
 
     def get_aggregated_content(self):
         return self.create_item_resource(is_done=True)
+
+
+class FunctionCallInterruptItemResourceHelper(ItemResourceHelper):
+    def __init__(self,
+            item_id: str = None,
+            hitl_helper: HumanInTheLoopHelper = None,
+            interrupt: Interrupt = None):
+        super().__init__(project_models.ItemType.FUNCTION_CALL, item_id)
+        self.hitl_helper = hitl_helper
+        self.interrupt = interrupt
+
+    def create_item_resource(self, is_done: bool):
+        interrupt_list = self.hitl_helper.convert_interrupts(self.interrupt)
+        return interrupt_list[0] if interrupt_list else None
+
+    def add_aggregate_content(self, item):
+        pass
+
+    def get_aggregated_content(self):
+        return self.create_item_resource(is_done=False)
 
 
 class FunctionCallOutputItemResourceHelper(ItemResourceHelper):
