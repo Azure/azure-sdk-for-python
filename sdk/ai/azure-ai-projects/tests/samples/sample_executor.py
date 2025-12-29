@@ -270,9 +270,13 @@ class SyncSampleExecutor(BaseSampleExecutor):
 
         return mock.patch(patch_target, new=mock_credential_class)
 
-    def execute(self):
+    def execute(self, patched_open_fn=None):
         """Execute a synchronous sample with proper mocking and environment setup."""
-        from test_base import patched_open_crlf_to_lf
+        # Import patched_open_crlf_to_lf here to avoid circular import
+        if patched_open_fn is None:
+            from test_base import patched_open_crlf_to_lf
+
+            patched_open_fn = patched_open_crlf_to_lf
 
         with (
             MonkeyPatch.context() as mp,
@@ -285,7 +289,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
 
             with (
                 mock.patch("builtins.print", side_effect=self._capture_print),
-                mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
+                mock.patch("builtins.open", side_effect=patched_open_fn),
             ):
                 self.spec.loader.exec_module(self.module)
 
@@ -336,15 +340,19 @@ class AsyncSampleExecutor(BaseSampleExecutor):
 
         return mock.patch(patch_target, new=mock_credential_class)
 
-    async def execute_async(self):
-        """Execute an asynchronous sample with proper mocking and environment setup."""
-        from test_base import patched_open_crlf_to_lf
+    async def execute(self, patched_open_fn=None):
+        """Execute a synchronous sample with proper mocking and environment setup."""
+        # Import patched_open_crlf_to_lf here to avoid circular import
+        if patched_open_fn is None:
+            from test_base import patched_open_crlf_to_lf
+
+            patched_open_fn = patched_open_crlf_to_lf
 
         with (
             MonkeyPatch.context() as mp,
             self._get_mock_credential(),
             mock.patch("builtins.print", side_effect=self._capture_print),
-            mock.patch("builtins.open", side_effect=patched_open_crlf_to_lf),
+            mock.patch("builtins.open", side_effect=patched_open_fn),
         ):
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
