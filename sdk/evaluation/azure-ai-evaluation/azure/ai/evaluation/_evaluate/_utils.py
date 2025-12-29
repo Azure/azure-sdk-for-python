@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import csv
 import json
 import logging
 import os
@@ -479,7 +480,7 @@ class CSVDataFileLoader:
         self.filename = filename
 
     def load(self) -> pd.DataFrame:
-        return pd.read_csv(self.filename, dtype=str)
+        return pd.read_csv(self.filename, dtype=str, quoting=csv.QUOTE_NONE, escapechar="\\")
 
 
 class DataLoaderFactory:

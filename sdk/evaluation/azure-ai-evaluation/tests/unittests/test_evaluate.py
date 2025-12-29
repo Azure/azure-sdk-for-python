@@ -1652,3 +1652,50 @@ class TestTagsInLoggingFunctions:
         call_args = mock_client.start_evaluation_run.call_args
         eval_upload = call_args[1]["evaluation"]
         assert eval_upload.tags == tags
+
+    def test_csv_preserves_quotes_in_values(self):
+        """Test that CSV loading preserves quotes in cell values.
+        
+        This test validates the fix for the issue where custom code evaluators
+        were dropping leading and trailing quotation marks from parameter values.
+        The issue occurs when a CSV cell value starts AND ends with quotes.
+        """
+        # Get the test CSV file
+        csv_file = _get_file("test_csv_quotes.csv")
+        
+        # Define a custom evaluator that checks if quotes are preserved
+        def quote_checker(response: str, ground_truth: str):
+            """Custom evaluator that checks if values match exactly."""
+            return {
+                "match": 1 if response == ground_truth else 0,
+                "response_value": response,
+                "ground_truth_value": ground_truth,
+            }
+        
+        # Run evaluation with the custom evaluator
+        result = evaluate(
+            data=csv_file,
+            evaluators={"quote_checker": quote_checker},
+        )
+        
+        # Verify the results
+        assert result is not None
+        row_result_df = pd.DataFrame(result["rows"])
+        
+        # Check that we have the expected rows
+        assert len(row_result_df) == 3
+        
+        # Row 0: response='test', ground_truth='"test"' - should NOT match
+        assert row_result_df["outputs.quote_checker.response_value"][0] == "test"
+        assert row_result_df["outputs.quote_checker.ground_truth_value"][0] == '"test"'
+        assert row_result_df["outputs.quote_checker.match"][0] == 0
+        
+        # Row 1: response='"quoted"', ground_truth='quoted' - should NOT match
+        assert row_result_df["outputs.quote_checker.response_value"][1] == '"quoted"'
+        assert row_result_df["outputs.quote_checker.ground_truth_value"][1] == "quoted"
+        assert row_result_df["outputs.quote_checker.match"][1] == 0
+        
+        # Row 2: response='"start', ground_truth='middle"end' - should NOT match
+        assert row_result_df["outputs.quote_checker.response_value"][2] == '"start'
+        assert row_result_df["outputs.quote_checker.ground_truth_value"][2] == 'middle"end'
+        assert row_result_df["outputs.quote_checker.match"][2] == 0
