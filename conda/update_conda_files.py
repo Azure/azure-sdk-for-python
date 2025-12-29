@@ -118,15 +118,15 @@ def package_needs_update(
     :param is_new: Whether to check for new package (FirstGADate) or outdated package (LatestGADate).
     :return: if the package is new or needs an update.
     """
-    compareDate = (
+    compare_date = (
         package_row.get(FIRST_GA_DATE_COL)
         if is_new
         else package_row.get(LATEST_GA_DATE_COL)
     )
 
-    logger.debug(f"Checking {'new package' if is_new else 'outdated package'} for package {package_row.get(PACKAGE_COL)} with against date: {compareDate}")
+    logger.debug(f"Checking {'new package' if is_new else 'outdated package'} for package {package_row.get(PACKAGE_COL)} with against date: {compare_date}")
 
-    if not compareDate:
+    if not compare_date:
         logger.debug(
             f"Package {package_row.get(PACKAGE_COL)} is skipped due to missing {FIRST_GA_DATE_COL if is_new else LATEST_GA_DATE_COL}."
         )
@@ -137,7 +137,7 @@ def package_needs_update(
 
     try:
         # Convert string dates to datetime objects for proper comparison
-        compare_date = datetime.strptime(compareDate, "%m/%d/%Y")
+        compare_date = datetime.strptime(compare_date, "%m/%d/%Y")
         prev_date = datetime.strptime(prev_release_date, "%m/%d/%Y")
         logger.debug(
             f"Comparing {package_row.get(PACKAGE_COL)} CompareDate {compare_date} with previous release date {prev_date}"
@@ -240,8 +240,9 @@ def update_package_versions(
             if curr_download_uri != download_uri:
                 # version needs update 
                 logger.info(f"Package {pkg_name} download_uri mismatch with PyPi, updating {curr_download_uri} to {download_uri}")
+                checkout_item['version'] = latest_version
                 checkout_item['download_uri'] = download_uri
-                logger.info(f"Updated download_uri for {pkg_name}: {download_uri}")
+                logger.info(f"Updated download_uri for {pkg_name} with version {latest_version}: {download_uri}")
                 updated_count += 1
 
     if updated_count > 0:
@@ -255,14 +256,27 @@ def update_package_versions(
 def add_new_data_plane_packages(
     new_packages: List[Dict[str, str]]
 ) -> None:
-    """Handle adding new data plane packages."""
-    # TODO implement logic to add new data plane packages
+    """Create meta.yaml files for new data plane packages and add import tests."""
     logger.info(f"Adding {len(new_packages)} new data plane packages")
+
+    for pkg in new_packages:
+        package_name = pkg.get(PACKAGE_COL)
+        if not package_name:
+            logger.warning("Skipping package with missing name")
+            continue
+
+        logger.info(f"Adding new data plane package: {package_name}")
+
+        pkg_yaml_path = os.path.join(CONDA_RECIPES_DIR, package_name, "meta.yaml")
+        os.makedirs(os.path.dirname(pkg_yaml_path), exist_ok=True)
+        
+        with open(pkg_yaml_path, "w") as f:
+
 
 def add_new_mgmt_plane_packages(
     new_packages: List[Dict[str, str]]
 ) -> None:
-    """Handle adding new management plane packages."""
+    """Update azure-mgmt/meta.yaml with new management libraries, and add import tests."""
     # TODO implement logic to add new management plane packages
     logger.info(f"Adding {len(new_packages)} new management plane packages")
 
@@ -292,6 +306,7 @@ if __name__ == "__main__":
     logger.info(f"Filtered to {len(packages)} GA packages")
 
     # update existing package versions
+     # TODO handle packages missing from conda-sdk-client that aren't new relative to the last release...
     update_package_versions(packages, old_version)
 
     # handle new packages
@@ -303,10 +318,10 @@ if __name__ == "__main__":
     new_data_plane_packages, new_mgmt_plane_packages = separate_packages_by_type(new_packages)
 
     # handle new data plane libraries
+    add_new_data_plane_packages(new_data_plane_packages)
 
     # handle new mgmt plane libraries
 
     # update conda-sdk-client
 
     # add/update release logs
-
